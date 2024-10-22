@@ -37,7 +37,7 @@ const grpcWebTransport = new GrpcWebFetchTransport({
 
 const grpcWebsocketTransport = useGRPCWebsocketTransport();
 
-const throttledErrorCodes = ['internal', 'deadline_exceeded', 'cancelled', 'permission_denied', 'unauthenticated'];
+const throttledErrorCodes = ['INTERNAL', 'DEADLINE_EXCEEDED', 'CANCELLED', 'PERMISSION_DENIED', 'UNAUTHENTICATED'];
 
 const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
     receivedAt: undefined,
@@ -93,25 +93,25 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         }
 
         switch (code) {
-            case 'internal':
+            case 'INTERNAL':
                 break;
 
-            case 'deadline_exceeded':
+            case 'DEADLINE_EXCEEDED':
                 notification.title = { key: 'notifications.grpc_errors.deadline_exceeded.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.deadline_exceeded.content', parameters: {} };
                 addCopyActionToNotification(notification, err, traceId);
                 break;
 
-            case 'cancelled':
+            case 'CANCELLED':
                 // Don't send notifications for cancelled requests
                 return true;
 
-            case 'unavailable':
+            case 'UNAVAILABLE':
                 notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
                 break;
 
-            case 'unauthenticated':
+            case 'UNAUTHENTICATED':
                 useAuthStore().clearAuthInfo();
 
                 notification.type = NotificationType.WARNING;
@@ -127,7 +127,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 });
                 break;
 
-            case 'permission_denied':
+            case 'PERMISSION_DENIED':
                 if (!err.message.includes('ErrCharLock')) {
                     notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
                 } else {
@@ -140,7 +140,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 }
                 break;
 
-            case 'not_found':
+            case 'NOT_FOUND':
                 notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: {} };
                 break;
 

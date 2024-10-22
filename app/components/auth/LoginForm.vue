@@ -109,6 +109,7 @@ function togglePasswordVisibility() {
             class="mt-2"
             icon="i-mdi-alert"
             :title="$t('components.auth.LoginForm.login_error')"
+            :description="isTranslatedError(loginError) ? $t(loginError) : loginError"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',
@@ -117,10 +118,6 @@ function togglePasswordVisibility() {
                 padded: false,
             }"
             @close="loginError = ''"
-        >
-            <template #description>
-                {{ isTranslatedError(loginError) ? $t(loginError) : loginError }}
-            </template>
-        </UAlert>
+        />
     </UForm>
 </template>

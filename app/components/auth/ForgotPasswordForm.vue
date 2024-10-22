@@ -27,7 +27,7 @@ async function forgotPassword(values: Schema): Promise<void> {
 
         emits('toggle');
     } catch (e) {
-        accountError.value = (e as RpcError).message;
+        accountError.value = getErrorMessage((e as RpcError).message);
         handleGRPCError(e as RpcError);
         throw e;
     }
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             v-if="accountError"
             class="mt-2"
             :title="$t('components.auth.ForgotPassword.create_error')"
-            :description="getErrorMessage(accountError)"
+            :description="isTranslatedError(accountError) ? $t(accountError) : accountError"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',
