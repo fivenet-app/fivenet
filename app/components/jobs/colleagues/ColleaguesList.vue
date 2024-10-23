@@ -158,12 +158,19 @@ defineShortcuts({
                 </UInput>
             </UFormGroup>
 
-            <UFormGroup name="absent" :label="$t('common.absent')">
-                <UToggle v-model="query.absent">
-                    <span class="sr-only">
-                        {{ $t('common.absent') }}
-                    </span>
-                </UToggle>
+            <UFormGroup
+                name="absent"
+                :label="$t('common.absent')"
+                class="flex flex-initial flex-col"
+                :ui="{ container: 'flex-1 flex' }"
+            >
+                <div class="flex flex-1 items-center">
+                    <UToggle v-model="query.absent">
+                        <span class="sr-only">
+                            {{ $t('common.absent') }}
+                        </span>
+                    </UToggle>
+                </div>
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>

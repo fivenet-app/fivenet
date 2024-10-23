@@ -288,8 +288,15 @@ const input = ref<{ input: HTMLInputElement }>();
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="day" :label="$t('common.per_day')">
-                            <UToggle v-model="query.perDay" class="mt-2" />
+                        <UFormGroup
+                            name="day"
+                            :label="$t('common.per_day')"
+                            class="flex flex-initial flex-col"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <div class="flex flex-1 items-center">
+                                <UToggle v-model="query.perDay" />
+                            </div>
                         </UFormGroup>
                     </div>
                 </UForm>
@@ -549,7 +556,9 @@ const input = ref<{ input: HTMLInputElement }>();
                                 </UFormGroup>
 
                                 <UFormGroup v-if="query.mode !== TimeclockMode.DAILY" name="day" :label="$t('common.per_day')">
-                                    <UToggle v-model="query.perDay" class="mt-2" />
+                                    <div class="flex flex-1 items-center">
+                                        <UToggle v-model="query.perDay" />
+                                    </div>
                                 </UFormGroup>
                             </div>
                         </div>

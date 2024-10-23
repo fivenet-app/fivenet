@@ -598,22 +598,22 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         </div>
 
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
-                                {{ $t('common.discord') }}
-                            </h2>
-
                             <UAccordion
                                 :items="[{ slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' }]"
                             >
                                 <template #discord>
                                     <UContainer>
-                                        <UFormGroup name="discordSettings.enabled" :label="$t('common.enabled')">
+                                        <UFormGroup
+                                            name="discordSettings.enabled"
+                                            :label="$t('common.enabled')"
+                                            :ui="{ container: 'inline-flex gap-2' }"
+                                        >
                                             <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
                                                 <span class="sr-only">
                                                     {{ $t('common.enabled') }}
                                                 </span>
                                             </UToggle>
-                                            <span class="ml-3 text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                            <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
                                         </UFormGroup>
 
                                         <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">

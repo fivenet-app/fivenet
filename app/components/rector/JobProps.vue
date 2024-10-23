@@ -14,6 +14,7 @@ import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { DiscordSyncChange, JobProps } from '~~/gen/ts/resources/users/jobs';
 import { UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
+import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t } = useI18n();
 
@@ -327,17 +328,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 >
                                     <div class="flex flex-col gap-2">
                                         <div class="space-y-4">
-                                            <div class="flex items-center">
+                                            <div class="flex items-center gap-2">
                                                 <UToggle v-model="state.quickButtons.penaltyCalculator" />
-                                                <span class="ml-3 text-sm font-medium">{{
+                                                <span class="text-sm font-medium">{{
                                                     $t('components.penaltycalculator.title')
                                                 }}</span>
                                             </div>
                                         </div>
                                         <div class="space-y-4">
-                                            <div class="flex items-center">
+                                            <div class="flex items-center gap-2">
                                                 <UToggle v-model="state.quickButtons.bodyCheckup" />
-                                                <span class="ml-3 text-sm font-medium">{{
+                                                <span class="text-sm font-medium">{{
                                                     $t('components.bodycheckup.title')
                                                 }}</span>
                                             </div>

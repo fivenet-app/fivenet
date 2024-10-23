@@ -108,10 +108,17 @@ const canSubmit = ref(true);
         <template #default>
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup name="includeRead" :label="$t('components.notifications.include_read')" class="flex-initial">
-                        <UToggle v-model="query.includeRead">
-                            <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                        </UToggle>
+                    <UFormGroup
+                        name="includeRead"
+                        :label="$t('components.notifications.include_read')"
+                        class="flex flex-initial flex-col"
+                        :ui="{ container: 'flex-1 flex' }"
+                    >
+                        <div class="flex flex-1 items-center">
+                            <UToggle v-model="query.includeRead">
+                                <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
+                            </UToggle>
+                        </div>
                     </UFormGroup>
 
                     <UFormGroup name="categories" :label="$t('common.category', 2)" class="flex-1">

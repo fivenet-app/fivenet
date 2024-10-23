@@ -263,13 +263,16 @@ defineShortcuts({
                     <UFormGroup
                         name="showExpired"
                         :label="$t('components.jobs.conduct.List.show_expired')"
-                        class="flex-initial"
+                        class="flex flex-initial flex-col"
+                        :ui="{ container: 'flex-1 flex' }"
                     >
-                        <UToggle v-model="query.showExpired">
-                            <span class="sr-only">
-                                {{ $t('components.jobs.conduct.List.show_expired') }}
-                            </span>
-                        </UToggle>
+                        <div class="flex flex-1 items-center">
+                            <UToggle v-model="query.showExpired">
+                                <span class="sr-only">
+                                    {{ $t('components.jobs.conduct.List.show_expired') }}
+                                </span>
+                            </UToggle>
+                        </div>
                     </UFormGroup>
 
                     <UFormGroup

@@ -68,7 +68,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			return err
 		}
 
-		store, err := store.New(ctx, p.Logger, p.JS, "cron",
+		st, err := store.New(c, p.Logger, p.JS, "cron",
 			store.WithOnUpdateFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], cj *cron.Cronjob) (*cron.Cronjob, error) {
 				if cj == nil {
 					return cj, nil
@@ -100,13 +100,13 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		if err != nil {
 			return err
 		}
-		s.store = store
+		s.store = st
 
-		if err := store.Start(ctx); err != nil {
+		if err := st.Start(ctx); err != nil {
 			return err
 		}
 
-		return s.registerSubscriptions(ctx, p.JS)
+		return s.registerSubscriptions(c, ctx, p.JS)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
@@ -180,7 +180,7 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
 	return nil
 }
 
-func (s *Scheduler) registerSubscriptions(ctx context.Context, js *events.JSWrapper) error {
+func (s *Scheduler) registerSubscriptions(ctx context.Context, c context.Context, js *events.JSWrapper) error {
 	consumer, err := js.CreateConsumer(ctx, CronScheduleStreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
@@ -191,9 +191,9 @@ func (s *Scheduler) registerSubscriptions(ctx context.Context, js *events.JSWrap
 	}
 
 	if _, err := consumer.Consume(s.watchForCompletions,
-		js.ConsumeErrHandlerWithRestart(context.Background(), s.logger,
+		js.ConsumeErrHandlerWithRestart(c, s.logger,
 			func(ctx context.Context, c context.Context) error {
-				return s.registerSubscriptions(c, js)
+				return s.registerSubscriptions(ctx, c, js)
 			})); err != nil {
 		return err
 	}
