@@ -109,6 +109,12 @@ Gameserver plugins are available in the separate [GitHub fivenet-app/plugins rep
 
 Please see [development documentation](https://fivenet.app/development).
 
+## Translations (i18n)
+
+Want to help translate FiveNet or fix a translation issue? You can join the translation group by heading over to [FiveNet's POEditor.com project here](https://poeditor.com/join/project/hszo85uo3K).
+
+Thanks to [POEditor](https://poeditor.com/) for providing FiveNet with a free translation project!
+
 ## Security
 
 If you find a vulnerability or a potential vulnerability in FiveNet, please see the [security release process](SECURITY.md).
