@@ -338,8 +338,11 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 }
 
 func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
-	hasPrefix := s.prefix+prefix != ""
+	hasPrefix := (s.prefix + prefix) != ""
 	if hasPrefix {
+		if prefix != "" {
+			prefix += "."
+		}
 		prefix = s.prefix + events.SanitizeKey(prefix)
 	}
 

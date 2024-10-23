@@ -331,6 +331,9 @@ func (s *Server) watchForChanges(msg jetstream.Msg) {
 				DispatchStatus: dest,
 			}
 		}
+
+	default:
+		s.logger.Error("unknown centrum nats change response", zap.String("subject", msg.Subject()))
 	}
 
 	broker.Publish(resp)
