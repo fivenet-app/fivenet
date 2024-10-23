@@ -60,6 +60,10 @@ func New(p Params) *Routes {
 					return
 
 				case cfg := <-configUpdateCh:
+					if cfg == nil {
+						continue
+					}
+
 					r.handleAppConfigUpdate(providers, cfg)
 				}
 			}

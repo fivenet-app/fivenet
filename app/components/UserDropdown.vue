@@ -40,7 +40,7 @@ const items = computed(() => [
         },
         can(['CanBeSuper', 'SuperUser']).value
             ? {
-                  label: t('common.superuser') + ': ' + isSuperuser.value,
+                  label: `${t('common.superuser')}: ${isSuperuser.value ? t('common.enabled') : t('common.disabled')}`,
                   icon: 'i-mdi-square-root',
                   click: () => authStore.setSuperUserMode(!isSuperuser.value),
               }
@@ -50,7 +50,7 @@ const items = computed(() => [
                   slot: 'job',
                   label: 'Select Job',
                   icon: 'i-mdi-briefcase',
-                  disabled: true,
+                  disabled: false,
               }
             : undefined,
         {

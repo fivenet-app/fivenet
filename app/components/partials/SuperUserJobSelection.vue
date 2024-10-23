@@ -45,6 +45,7 @@ watch(selectedJob, () => {
             "
             search-lazy
             :search-placeholder="$t('common.search_field')"
+            :ui-menu="{ height: 'max-h-40' }"
         >
             <template #option-empty="{ query: search }">
                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -91,7 +91,7 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
-	discord      *state.State
+	dc           *state.State
 	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
 }
 
@@ -111,10 +111,10 @@ func NewBot(p BotParams) (*Bot, error) {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
+	cancelCtx, cancel := context.WithCancel(context.Background())
 
 	b := &Bot{
-		ctx:      ctx,
+		ctx:      cancelCtx,
 		logger:   p.Logger,
 		tracer:   p.TP.Tracer("discord_bot"),
 		db:       p.DB,
@@ -127,13 +127,13 @@ func NewBot(p BotParams) (*Bot, error) {
 
 		wg: sync.WaitGroup{},
 
-		discord:      state,
+		dc:           state,
 		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go func() {
-			if err := state.Connect(ctx); err != nil {
+			if err := state.Connect(cancelCtx); err != nil {
 				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
@@ -141,7 +141,7 @@ func NewBot(p BotParams) (*Bot, error) {
 			}
 		}()
 
-		if err := b.start(ctx); err != nil {
+		if err := b.start(cancelCtx); err != nil {
 			return err
 		}
 
@@ -150,17 +150,20 @@ func NewBot(p BotParams) (*Bot, error) {
 			configUpdateCh := b.appCfg.Subscribe()
 			for {
 				select {
-				case <-ctx.Done():
+				case <-cancelCtx.Done():
 					b.appCfg.Unsubscribe(configUpdateCh)
 					return
 
 				case cfg := <-configUpdateCh:
+					if cfg == nil {
+						continue
+					}
 					b.handleAppConfigUpdate(cfg)
 				}
 			}
 		}()
 
-		if err := b.getGuilds(ctx); err != nil {
+		if err := b.getGuilds(cancelCtx); err != nil {
 			return fmt.Errorf("failed to get guilds from db. %w", err)
 		}
 
@@ -192,16 +195,16 @@ func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
 func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
 
-	b.discord.AddHandler(func(ev *gateway.ReadyEvent) {
+	b.dc.AddHandler(func(ev *gateway.ReadyEvent) {
 		b.logger.Info(fmt.Sprintf("connected to gateway, ready with %d guilds", len(ev.Guilds)), zap.String("me", ev.User.Tag()))
 		ready.Store(true)
 	})
 
-	b.discord.AddHandler(func(ev *gateway.GuildCreateEvent) {
+	b.dc.AddHandler(func(ev *gateway.GuildCreateEvent) {
 		b.logger.Info("discord server joined", zap.Uint64("discord_guild_id", uint64(ev.ID)))
 	})
 
-	b.discord.AddHandler(func(ev *gateway.GuildMemberAddEvent) {
+	b.dc.AddHandler(func(ev *gateway.GuildMemberAddEvent) {
 		g, ok := b.activeGuilds.Load(ev.GuildID)
 		if !ok {
 			return
@@ -210,15 +213,9 @@ func (b *Bot) start(ctx context.Context) error {
 		g.events.Publish(ev)
 	})
 
-	go func() {
-		if err := b.discord.Open(ctx); err != nil {
-			b.logger.Error("error opening discord connection", zap.Error(err))
-		}
-	}()
-
 	for {
-		if b.discord.Ready().Version > 0 && ready.Load() {
-			if _, err := b.discord.Me(); err != nil {
+		if b.dc.Ready().Version > 0 && ready.Load() {
+			if _, err := b.dc.Me(); err != nil {
 				return fmt.Errorf("failed to obtain bot account details: %w", err)
 			}
 
@@ -227,7 +224,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 		select {
 		case <-ctx.Done():
-			return fmt.Errorf("discord client failed to get ready, version %d", b.discord.Ready().Version)
+			return fmt.Errorf("discord client failed to get ready, version %d", b.dc.Ready().Version)
 
 		case <-time.After(750 * time.Millisecond):
 		}
@@ -278,13 +275,9 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 		return nil
 	}
 
-	if _, err := b.discord.Guilds(); err != nil {
-		return fmt.Errorf("failed to get guild info from discord. %w", err)
-	}
-
-	guilds, err := b.discord.GuildStore.Guilds()
+	guilds, err := b.dc.Guilds()
 	if err != nil {
-		return fmt.Errorf("failed to get guilds from store. %w", err)
+		return fmt.Errorf("failed to get guilds from dc state. %w", err)
 	}
 
 	for job, guildID := range jobGuilds {
@@ -414,5 +407,5 @@ func (b *Bot) stop() error {
 		return errs
 	}
 
-	return b.discord.Close()
+	return b.dc.Close()
 }

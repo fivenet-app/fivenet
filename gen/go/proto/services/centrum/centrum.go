@@ -113,6 +113,9 @@ func NewServer(p Params) (*Server, error) {
 					return
 
 				case cfg := <-configUpdateCh:
+					if cfg == nil {
+						continue
+					}
 					s.handleAppConfigUpdate(ctxCancel, cfg)
 				}
 			}

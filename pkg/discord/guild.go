@@ -76,7 +76,7 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guil
 	g.settings.Store(settings)
 
 	g.base = modules.NewBaseModule(ctx, g.logger.Named("module"),
-		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
+		g.bot.db, g.bot.dc, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
 		settings,
 	)
 
@@ -120,7 +120,7 @@ func (g *Guild) Run() error {
 		planDiff = &users.DiscordSyncChanges{}
 	}
 
-	if _, err := g.bot.discord.Members(g.guild.ID); err != nil {
+	if _, err := g.bot.dc.Members(g.guild.ID); err != nil {
 		g.logger.Error("failed to request guild members. %w", zap.Error(err))
 	}
 
@@ -159,7 +159,7 @@ func (g *Guild) Run() error {
 		logs = append(logs, mLogs...)
 	}
 
-	plan, ls, err := state.Calculate(g.ctx, g.bot.discord, settings.DryRun)
+	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, settings.DryRun)
 	if err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("error during plan calculation. %w", err))
 		return errs
@@ -180,7 +180,7 @@ func (g *Guild) Run() error {
 	})
 
 	if !plan.DryRun {
-		pLogs, err := plan.Apply(g.ctx, g.bot.discord)
+		pLogs, err := plan.Apply(g.ctx, g.bot.dc)
 		logs = append(logs, pLogs...)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("error during plan apply. %w", err))
@@ -212,12 +212,12 @@ func (g *Guild) Stop() {
 }
 
 func (g *Guild) sendStartStatusLog(channelId discord.ChannelID) error {
-	channel, err := g.bot.discord.Channel(channelId)
+	channel, err := g.bot.dc.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
 
-	if _, err := g.bot.discord.SendEmbeds(channel.ID, discord.Embed{
+	if _, err := g.bot.dc.SendEmbeds(channel.ID, discord.Embed{
 		Type:   discord.NormalEmbed,
 		Title:  "Starting sync...",
 		Author: embeds.EmbedAuthor,
@@ -235,7 +235,7 @@ func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed)
 		return nil
 	}
 
-	channel, err := g.bot.discord.Channel(channelId)
+	channel, err := g.bot.dc.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
@@ -248,7 +248,7 @@ func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed)
 			end = len(logs)
 		}
 
-		if _, err := g.bot.discord.SendEmbeds(channel.ID, logs[i:end]...); err != nil {
+		if _, err := g.bot.dc.SendEmbeds(channel.ID, logs[i:end]...); err != nil {
 			return fmt.Errorf("failed to send status log embeds. %w", err)
 		}
 	}
@@ -257,7 +257,7 @@ func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed)
 }
 
 func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Duration, errs error) error {
-	channel, err := g.bot.discord.Channel(channelId)
+	channel, err := g.bot.dc.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
@@ -280,7 +280,7 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 		Footer:      embeds.EmbedFooterVersion,
 	})
 
-	if _, err := g.bot.discord.SendEmbeds(channel.ID, logs...); err != nil {
+	if _, err := g.bot.dc.SendEmbeds(channel.ID, logs...); err != nil {
 		return fmt.Errorf("failed to send status log completed embeds. %w", err)
 	}
 

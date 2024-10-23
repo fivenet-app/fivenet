@@ -39,7 +39,7 @@ func (b *Bot) setBotPresence(cfg *rector.DiscordBotPresence) error {
 			activity.URL = *cfg.Url
 		}
 
-		if err := b.discord.Gateway().Send(b.ctx, &gateway.UpdatePresenceCommand{
+		if err := b.dc.Gateway().Send(b.ctx, &gateway.UpdatePresenceCommand{
 			Activities: []discord.Activity{*activity},
 			Status:     discord.OnlineStatus,
 		}); err != nil {

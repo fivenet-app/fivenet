@@ -59,6 +59,10 @@ func NewServer(p Params) *Server {
 					return
 
 				case cfg := <-configUpdateCh:
+					if cfg == nil {
+						continue
+					}
+
 					if cfg.Website.StatsPage {
 						s.worker.Start()
 					} else {
