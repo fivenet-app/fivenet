@@ -15,8 +15,10 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
 
 ## Features
 
+Be sure to checkout the website for an uptodate list of features with screenshots [here](https://fivenet.app/).
+
 <details>
-  <summary>Show Feature List</summary>
+  <summary>Show partial feature List</summary>
 
 - [x] Authentication
     - [x] Separate "accounts" table that allows users to log in to the network
@@ -114,6 +116,8 @@ Please see [development documentation](https://fivenet.app/development).
 Want to help translate FiveNet or fix a translation issue? You can join the translation group by heading over to [FiveNet's POEditor.com project here](https://poeditor.com/join/project/hszo85uo3K).
 
 Thanks to [POEditor](https://poeditor.com/) for providing FiveNet with a free translation project!
+
+![POEditor Logo](https://poeditor.com/public/images/ui/logos/logo_dark.svg)
 
 ## Security
 
