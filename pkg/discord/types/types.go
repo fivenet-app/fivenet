@@ -24,6 +24,8 @@ type Role struct {
 	Permissions *discord.Permissions `yaml:"permissions,omitempty"`
 	Job         string               `yaml:"-"`
 
+	KeepIfJobDifferent bool `yaml:"-"`
+
 	Module string `yaml:"module,omitempty"`
 }
 

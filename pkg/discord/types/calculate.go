@@ -27,6 +27,7 @@ func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*P
 	if err != nil {
 		return plan, logs, fmt.Errorf("failed to get guild members. %w", err)
 	}
+	fmt.Printf("discord state calculation received %d members in slice\n", len(members))
 
 	for _, member := range members {
 		// Ignore bots and system users
@@ -127,7 +128,8 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 	}
 
 	for _, role := range member.RoleIDs {
-		// If the role is bot managed, and the user is not assigned to the role, remove the role
+		// If the role is bot managed, and the user is not assigned to the role, remove the role,
+		// unless it is ignored (e.g., unemployed role)
 		if idx := slices.IndexFunc(s.Roles, func(r *Role) bool {
 			return r.ID == role
 		}); idx > -1 {

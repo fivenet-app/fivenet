@@ -112,6 +112,10 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 		}
 
 		for _, role := range user.Roles.ToRemove {
+			if user.Job != role.Job && role.KeepIfJobDifferent {
+				continue
+			}
+
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.Name, role.ID, err))
 				continue

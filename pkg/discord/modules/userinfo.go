@@ -174,6 +174,8 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 			Name:   settings.UserInfoSyncSettings.UnemployedRoleName,
 			Module: userInfoRoleModuleUnemployed,
 			Job:    g.job,
+
+			KeepIfJobDifferent: true,
 		}
 		roles = append(roles, g.unemployedRole)
 	}

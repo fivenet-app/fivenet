@@ -102,7 +102,6 @@ func NewBot(p BotParams) (*Bot, error) {
 
 	// Create a new Discord session using the provided login information.
 	state := state.New("Bot " + p.Config.Discord.Token)
-	state.AddIntents(gateway.IntentGuilds)
 	state.AddIntents(gateway.IntentGuildMembers)
 	state.AddIntents(gateway.IntentGuildPresences)
 	state.AddIntents(gateway.IntentGuildIntegrations)
