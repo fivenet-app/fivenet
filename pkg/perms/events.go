@@ -29,7 +29,7 @@ type JobAttrUpdateEvent struct {
 	Job string
 }
 
-func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) error {
+func (p *Perms) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "PERMS",
 		Description: "Perms system events",
@@ -40,11 +40,11 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		Storage:     jetstream.MemoryStorage,
 	}
 
-	if _, err := p.js.CreateOrUpdateStream(ctx, cfg); err != nil {
+	if _, err := p.js.CreateOrUpdateStream(ctxStartup, cfg); err != nil {
 		return err
 	}
 
-	consumer, err := p.js.CreateConsumer(ctx, cfg.Name, jetstream.ConsumerConfig{
+	consumer, err := p.js.CreateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 	})
@@ -57,7 +57,8 @@ func (p *Perms) registerSubscriptions(ctx context.Context, c context.Context) er
 		p.jsCons = nil
 	}
 
-	p.jsCons, err = consumer.Consume(p.handleMessageFunc(c), p.js.ConsumeErrHandlerWithRestart(c, p.logger, p.registerSubscriptions))
+	p.jsCons, err = consumer.Consume(p.handleMessageFunc(ctxCancel),
+		p.js.ConsumeErrHandlerWithRestart(ctxCancel, p.logger, p.registerSubscriptions))
 	if err != nil {
 		return err
 	}

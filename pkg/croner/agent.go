@@ -41,25 +41,25 @@ type Agent struct {
 }
 
 func NewAgent(p AgentParams) (*Agent, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	ag := &Agent{
 		logger: p.Logger.Named("cron_agent"),
-		ctx:    ctx,
+		ctx:    ctxCancel,
 		js:     p.JS,
 
 		handlers: p.Handlers,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		if err := registerCronStreams(ctx, ag.js); err != nil {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := registerCronStreams(ctxCancel, ag.js); err != nil {
 			return err
 		}
 
-		return ag.registerSubscriptions(ctx, p.JS)
+		return ag.registerSubscriptions(ctxStartup, ctxCancel)
 	}))
 
-	p.LC.Append(fx.StopHook(func(c context.Context) error {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
 		return nil
@@ -68,8 +68,8 @@ func NewAgent(p AgentParams) (*Agent, error) {
 	return ag, nil
 }
 
-func (ag *Agent) registerSubscriptions(ctx context.Context, js *events.JSWrapper) error {
-	consumer, err := js.CreateConsumer(ctx, CronScheduleStreamName, jetstream.ConsumerConfig{
+func (ag *Agent) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+	consumer, err := ag.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic),
 		MaxDeliver:    3,
@@ -79,10 +79,9 @@ func (ag *Agent) registerSubscriptions(ctx context.Context, js *events.JSWrapper
 	}
 
 	if _, err := consumer.Consume(ag.watchForEvents,
-		js.ConsumeErrHandlerWithRestart(context.Background(), ag.logger,
-			func(ctx context.Context, c context.Context) error {
-				return ag.registerSubscriptions(c, js)
-			})); err != nil {
+		ag.js.ConsumeErrHandlerWithRestart(ctxCancel, ag.logger,
+			ag.registerSubscriptions,
+		)); err != nil {
 		return err
 	}
 

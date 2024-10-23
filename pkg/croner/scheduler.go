@@ -52,29 +52,29 @@ type Scheduler struct {
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Scheduler{
 		logger: p.Logger.Named("cron_scheduler"),
-		ctx:    ctx,
+		ctx:    ctxCancel,
 		js:     p.JS,
 		gron:   gronx.New(),
 
 		jobs: xsync.NewMapOf[string, *jobWrapper](),
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		if err := registerCronStreams(ctx, s.js); err != nil {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := registerCronStreams(ctxStartup, s.js); err != nil {
 			return err
 		}
 
-		st, err := store.New(c, p.Logger, p.JS, "cron",
+		st, err := store.New(ctxStartup, p.Logger, p.JS, "cron",
 			store.WithOnUpdateFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], cj *cron.Cronjob) (*cron.Cronjob, error) {
 				if cj == nil {
 					return cj, nil
 				}
 
-				ctx, cancel := context.WithCancel(context.Background())
+				ctx, cancel := context.WithCancel(ctxCancel)
 				s.jobs.Store(cj.Name, &jobWrapper{
 					ctx:    ctx,
 					cancel: cancel,
@@ -102,11 +102,11 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		}
 		s.store = st
 
-		if err := st.Start(ctx); err != nil {
+		if err := st.Start(ctxCancel); err != nil {
 			return err
 		}
 
-		return s.registerSubscriptions(c, ctx, p.JS)
+		return s.registerSubscriptions(ctxStartup, ctxCancel)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
@@ -180,8 +180,8 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
 	return nil
 }
 
-func (s *Scheduler) registerSubscriptions(ctx context.Context, c context.Context, js *events.JSWrapper) error {
-	consumer, err := js.CreateConsumer(ctx, CronScheduleStreamName, jetstream.ConsumerConfig{
+func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+	consumer, err := s.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
 		MaxDeliver:    2,
@@ -191,10 +191,9 @@ func (s *Scheduler) registerSubscriptions(ctx context.Context, c context.Context
 	}
 
 	if _, err := consumer.Consume(s.watchForCompletions,
-		js.ConsumeErrHandlerWithRestart(c, s.logger,
-			func(ctx context.Context, c context.Context) error {
-				return s.registerSubscriptions(ctx, c, js)
-			})); err != nil {
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger,
+			s.registerSubscriptions,
+		)); err != nil {
 		return err
 	}
 

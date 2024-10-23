@@ -52,7 +52,7 @@ func NewRetention(p RetentionParams) *Retention {
 		auditRetentionDays: p.Config.Audit.RetentionDays,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		p.CronHandlers.Add("auditlog-retention", func(ctx context.Context, data *cron.CronjobData) error {
 			ctx, span := r.tracer.Start(ctx, "audit-retention")
 			defer span.End()
@@ -65,7 +65,7 @@ func NewRetention(p RetentionParams) *Retention {
 			return nil
 		})
 
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "auditlog-retention",
 			Schedule: "@30minutes",
 		}); err != nil {

@@ -69,21 +69,21 @@ func (j *JSWrapper) ConsumeErrHandler(logger *zap.Logger) jetstream.PullConsumeO
 	})
 }
 
-type ConsumeErrRestartFn func(ctx context.Context, c context.Context) error
+type ConsumeErrRestartFn func(ctxTimeout context.Context, ctxCancel context.Context) error
 
-func (j *JSWrapper) ConsumeErrHandlerWithRestart(c context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) jetstream.PullConsumeOpt {
-	return jetstream.ConsumeErrHandler(func(consumeCtx jetstream.ConsumeContext, err error) {
+func (j *JSWrapper) ConsumeErrHandlerWithRestart(ctxCancel context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) jetstream.PullConsumeOpt {
+	return jetstream.ConsumeErrHandler(func(ctxConsume jetstream.ConsumeContext, err error) {
 		if err != nil {
 			logger.Error("error during jetstream consume, trying to restart...", zap.Error(err))
 
 			sleep := InitialRestartBackoffTime
 			var restartErr error
 			for try := 0; try < MaxRestartRetries; try++ {
-				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				ctxTimeout, cancel := context.WithTimeout(ctxCancel, 10*time.Second)
 				defer cancel()
 
 				// Pass in a timeout context and the outer "passed in" context
-				if restartErr = restartFn(ctx, c); restartErr != nil {
+				if restartErr = restartFn(ctxTimeout, ctxCancel); restartErr != nil {
 					logger.Error(fmt.Sprintf("failed to restart jetstream consume, try %d of %d ...", try+1, MaxRestartRetries), zap.Error(restartErr))
 
 					if try < MaxRestartRetries {

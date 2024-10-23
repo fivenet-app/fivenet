@@ -129,10 +129,10 @@ type Params struct {
 }
 
 func New(p Params) (Permissions, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	userCanCache := cache.NewContext(
-		ctx,
+		ctxCancel,
 		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(1024)),
 		cache.WithJanitorInterval[userCacheKey, bool](15*time.Second),
 	)
@@ -161,32 +161,29 @@ func New(p Params) (Permissions, error) {
 		userCanCache:    userCanCache,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		cfgDefaultPerms := p.AppConfig.Get().Perms.Default
 		defaultPerms := make([]string, len(cfgDefaultPerms))
 		for i := 0; i < len(cfgDefaultPerms); i++ {
 			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
 		}
 
-		ctx, span := ps.tracer.Start(ctx, "perms-start")
-		defer span.End()
-
-		if err := ps.load(ctx); err != nil {
+		if err := ps.load(ctxStartup); err != nil {
 			return err
 		}
 
-		if err := ps.registerSubscriptions(c, ctx); err != nil {
+		if err := ps.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
 		}
 
-		if err := ps.register(ctx, defaultPerms); err != nil {
+		if err := ps.register(ctxStartup, defaultPerms); err != nil {
 			return fmt.Errorf("failed to register permissions. %w", err)
 		}
 
 		ps.wg.Add(1)
 		go func() {
 			defer ps.wg.Done()
-			if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
+			if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
 				ps.logger.Error("failed to apply job permissions", zap.Error(err))
 				return
 			}

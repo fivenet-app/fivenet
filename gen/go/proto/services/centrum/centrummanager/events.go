@@ -22,13 +22,13 @@ func (s *Manager) registerStream(ctx context.Context) (jetstream.StreamConfig, e
 	return streamCfg, nil
 }
 
-func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) error {
-	streamCfg, err := s.registerStream(c)
+func (s *Manager) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+	streamCfg, err := s.registerStream(ctxStartup)
 	if err != nil {
 		return err
 	}
 
-	consumer, err := s.js.CreateConsumer(ctx, streamCfg.Name, jetstream.ConsumerConfig{
+	consumer, err := s.js.CreateConsumer(ctxStartup, streamCfg.Name, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverLastPerSubjectPolicy,
 		FilterSubject: fmt.Sprintf("%s.*.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicGeneral),
 	})
@@ -41,8 +41,8 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 		s.jsCons = nil
 	}
 
-	s.jsCons, err = consumer.Consume(s.watchTopicGeneralFunc(c),
-		s.js.ConsumeErrHandlerWithRestart(c, s.logger, s.registerSubscriptions))
+	s.jsCons, err = consumer.Consume(s.watchTopicGeneralFunc(ctxCancel),
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerSubscriptions))
 	if err != nil {
 		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err

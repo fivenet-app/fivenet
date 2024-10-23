@@ -71,7 +71,7 @@ type Params struct {
 }
 
 func NewServer(p Params) (*Server, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	brokers := map[string]*broker.Broker[*StreamResponse]{}
 
@@ -96,10 +96,10 @@ func NewServer(p Params) (*Server, error) {
 		state: p.Manager,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		s.handleAppConfigUpdate(ctx, p.AppConfig.Get())
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		s.handleAppConfigUpdate(ctxCancel, p.AppConfig.Get())
 
-		if err := s.registerSubscriptions(c); err != nil {
+		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to subscribe to events: %w", err)
 		}
 
@@ -108,12 +108,12 @@ func NewServer(p Params) (*Server, error) {
 			configUpdateCh := p.AppConfig.Subscribe()
 			for {
 				select {
-				case <-ctx.Done():
+				case <-ctxCancel.Done():
 					p.AppConfig.Unsubscribe(configUpdateCh)
 					return
 
 				case cfg := <-configUpdateCh:
-					s.handleAppConfigUpdate(ctx, cfg)
+					s.handleAppConfigUpdate(ctxCancel, cfg)
 				}
 			}
 		}()
@@ -141,13 +141,13 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterCentrumServiceServer(srv, s)
 }
 
-func (s *Server) registerSubscriptions(ctx context.Context) error {
-	streamCfg, err := eventscentrum.RegisterStream(ctx, s.js)
+func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+	streamCfg, err := eventscentrum.RegisterStream(ctxStartup, s.js)
 	if err != nil {
 		return fmt.Errorf("failed to register events: %w", err)
 	}
 
-	consumer, err := s.js.CreateConsumer(ctx, streamCfg.Name, jetstream.ConsumerConfig{
+	consumer, err := s.js.CreateConsumer(ctxStartup, streamCfg.Name, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverLastPerSubjectPolicy,
 		FilterSubject: fmt.Sprintf("%s.>", eventscentrum.BaseSubject),
 	})
@@ -161,10 +161,9 @@ func (s *Server) registerSubscriptions(ctx context.Context) error {
 	}
 
 	s.jsCons, err = consumer.Consume(s.watchForChanges,
-		s.js.ConsumeErrHandlerWithRestart(context.Background(), s.logger,
-			func(ctx context.Context, c context.Context) error {
-				return s.registerSubscriptions(c)
-			}))
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger,
+			s.registerSubscriptions,
+		))
 	if err != nil {
 		return err
 	}

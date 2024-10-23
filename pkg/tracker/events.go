@@ -48,8 +48,8 @@ func (m *Manager) sendUpdateEvent(ctx context.Context, tType events.Type, event 
 	return nil
 }
 
-func (s *Tracker) registerSubscriptions(ctx context.Context) error {
-	consumer, err := s.js.CreateConsumer(ctx, StreamName, jetstream.ConsumerConfig{
+func (s *Tracker) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
+	consumer, err := s.js.CreateConsumer(ctxStartup, StreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 	})
@@ -63,10 +63,9 @@ func (s *Tracker) registerSubscriptions(ctx context.Context) error {
 	}
 
 	s.jsCons, err = consumer.Consume(s.watchForChanges,
-		s.js.ConsumeErrHandlerWithRestart(context.Background(), s.logger,
-			func(_ context.Context, ctx context.Context) error {
-				return s.registerSubscriptions(ctx)
-			}))
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger,
+			s.registerSubscriptions,
+		))
 	if err != nil {
 		return err
 	}

@@ -68,7 +68,7 @@ type Params struct {
 }
 
 func NewCache(p Params) (*Cache, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	cc := &Cache{
 		logger: p.Logger,
@@ -81,8 +81,8 @@ func NewCache(p Params) (*Cache, error) {
 		lawBooks:           xsync.NewMapOf[uint64, *laws.LawBook](),
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		jobs, err := store.New[users.Job, *users.Job](ctx, p.Logger, p.JS, "cache",
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		jobs, err := store.New[users.Job, *users.Job](ctxStartup, p.Logger, p.JS, "cache",
 			store.WithLocks[users.Job, *users.Job](nil),
 			store.WithKVPrefix[users.Job, *users.Job]("jobs"),
 		)
@@ -91,7 +91,7 @@ func NewCache(p Params) (*Cache, error) {
 		}
 		cc.jobs = jobs
 
-		docCategories, err := store.New[documents.Category, *documents.Category](ctx, p.Logger, p.JS, "cache",
+		docCategories, err := store.New[documents.Category, *documents.Category](ctxStartup, p.Logger, p.JS, "cache",
 			store.WithLocks[documents.Category, *documents.Category](nil),
 			store.WithKVPrefix[documents.Category, *documents.Category]("doc_categories"),
 		)
@@ -100,15 +100,15 @@ func NewCache(p Params) (*Cache, error) {
 		}
 		cc.docCategories = docCategories
 
-		if err := jobs.Start(ctx); err != nil {
+		if err := jobs.Start(ctxCancel); err != nil {
 			return err
 		}
 
-		if err := docCategories.Start(ctx); err != nil {
+		if err := docCategories.Start(ctxCancel); err != nil {
 			return err
 		}
 
-		if err := cc.refreshCache(c); err != nil {
+		if err := cc.refreshCache(ctxStartup); err != nil {
 			return err
 		}
 
@@ -129,7 +129,7 @@ func NewCache(p Params) (*Cache, error) {
 			return nil
 		})
 
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata-cache",
 			Schedule: "@10minutes",
 		}); err != nil {

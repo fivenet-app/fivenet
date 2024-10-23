@@ -57,7 +57,7 @@ type ManagerParams struct {
 }
 
 func NewManager(p ManagerParams) (*Manager, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	m := &Manager{
 		logger:   p.Logger,
@@ -70,24 +70,24 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		appCfg:   p.AppConfig,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](c, p.Logger, p.JS, "tracker",
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 		)
 		if err != nil {
 			return err
 		}
 
-		if err := userStore.Start(ctx); err != nil {
+		if err := userStore.Start(ctxCancel); err != nil {
 			return err
 		}
 		m.userStore = userStore
 
-		if err := registerStreams(c, m.js); err != nil {
+		if err := registerStreams(ctxStartup, m.js); err != nil {
 			return err
 		}
 
-		go m.start(ctx)
+		go m.start(ctxCancel)
 
 		return nil
 	}))

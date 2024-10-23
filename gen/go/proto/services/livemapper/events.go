@@ -19,7 +19,7 @@ const (
 	MarkerUpdate events.Type = "marker_update"
 )
 
-func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
+func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "LIVEMAP",
 		Description: "Livemapper Service events",
@@ -29,11 +29,11 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		MaxAge:      2 * time.Minute,
 		Storage:     jetstream.MemoryStorage,
 	}
-	if _, err := s.js.CreateOrUpdateStream(ctx, cfg); err != nil {
+	if _, err := s.js.CreateOrUpdateStream(ctxStartup, cfg); err != nil {
 		return err
 	}
 
-	consumer, err := s.js.CreateConsumer(ctx, cfg.Name, jetstream.ConsumerConfig{
+	consumer, err := s.js.CreateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 	})
@@ -45,7 +45,8 @@ func (s *Server) registerEvents(ctx context.Context, c context.Context) error {
 		s.jsCons.Stop()
 	}
 
-	s.jsCons, err = consumer.Consume(s.watchForEventsFunc(c), s.js.ConsumeErrHandlerWithRestart(c, s.logger, s.registerEvents))
+	s.jsCons, err = consumer.Consume(s.watchForEventsFunc(ctxCancel),
+		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger, s.registerSubscriptions))
 	if err != nil {
 		return err
 	}

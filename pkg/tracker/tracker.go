@@ -60,7 +60,7 @@ type Params struct {
 }
 
 func New(p Params) (ITracker, error) {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	t := &Tracker{
 		logger: p.Logger.Named("tracker"),
@@ -72,14 +72,14 @@ func New(p Params) (ITracker, error) {
 		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		if err := registerStreams(c, p.JS); err != nil {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := registerStreams(ctxStartup, p.JS); err != nil {
 			return err
 		}
 
-		go t.broker.Start(ctx)
+		go t.broker.Start(ctxCancel)
 
-		userIDs, err := store.New(c, p.Logger, p.JS, "tracker",
+		userIDs, err := store.New(ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithOnUpdateFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], um *livemap.UserMarker) (*livemap.UserMarker, error) {
 				if um == nil || um.Info == nil {
@@ -112,12 +112,12 @@ func New(p Params) (ITracker, error) {
 			return err
 		}
 
-		if err := userIDs.Start(ctx); err != nil {
+		if err := userIDs.Start(ctxCancel); err != nil {
 			return err
 		}
 		t.userStore = userIDs
 
-		if err := t.registerSubscriptions(c); err != nil {
+		if err := t.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to register tracker nats subscriptions. %w", err)
 		}
 

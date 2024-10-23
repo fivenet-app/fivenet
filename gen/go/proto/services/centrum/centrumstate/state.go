@@ -51,7 +51,7 @@ type Params struct {
 func New(p Params) (*State, error) {
 	logger := p.Logger.Named("centrum_state")
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &State{
 		js: p.JS,
@@ -64,25 +64,25 @@ func New(p Params) (*State, error) {
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		s.handleAppConfigUpdate(p.AppConfig.Get())
 
-		disponents, err := store.New[centrum.Disponents, *centrum.Disponents](c, logger, p.JS, "centrum_disponents")
+		disponents, err := store.New[centrum.Disponents, *centrum.Disponents](ctxStartup, logger, p.JS, "centrum_disponents")
 		if err != nil {
 			return err
 		}
 
-		units, err := store.New[centrum.Unit, *centrum.Unit](c, logger, p.JS, "centrum_units")
+		units, err := store.New[centrum.Unit, *centrum.Unit](ctxStartup, logger, p.JS, "centrum_units")
 		if err != nil {
 			return err
 		}
 
-		userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](c, logger, p.JS, "centrum_usersunits")
+		userIDToUnitID, err := store.New[centrum.UserUnitMapping, *centrum.UserUnitMapping](ctxStartup, logger, p.JS, "centrum_usersunits")
 		if err != nil {
 			return err
 		}
 
-		dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctx, logger, p.JS, "centrum_dispatches",
+		dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctxCancel, logger, p.JS, "centrum_dispatches",
 			store.WithOnUpdateFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
 				if dsp == nil {
 					logger.Warn("unable to update dispatch location, got nil dispatch")
@@ -107,6 +107,7 @@ func New(p Params) (*State, error) {
 
 				return dsp, nil
 			}),
+
 			store.WithOnDeleteFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
 				if dsp == nil {
 					logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
@@ -126,22 +127,22 @@ func New(p Params) (*State, error) {
 			return err
 		}
 
-		if err := userIDToUnitID.Start(ctx); err != nil {
+		if err := userIDToUnitID.Start(ctxCancel); err != nil {
 			return err
 		}
 		s.userIDToUnitID = userIDToUnitID
 
-		if err := disponents.Start(ctx); err != nil {
+		if err := disponents.Start(ctxCancel); err != nil {
 			return err
 		}
 		s.disponents = disponents
 
-		if err := units.Start(ctx); err != nil {
+		if err := units.Start(ctxCancel); err != nil {
 			return err
 		}
 		s.units = units
 
-		if err := dispatches.Start(ctx); err != nil {
+		if err := dispatches.Start(ctxCancel); err != nil {
 			return err
 		}
 		s.dispatches = dispatches
@@ -151,7 +152,7 @@ func New(p Params) (*State, error) {
 			configUpdateCh := p.AppConfig.Subscribe()
 			for {
 				select {
-				case <-ctx.Done():
+				case <-ctxCancel.Done():
 					p.AppConfig.Unsubscribe(configUpdateCh)
 					return
 

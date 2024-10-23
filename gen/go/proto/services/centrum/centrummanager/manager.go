@@ -56,7 +56,7 @@ type Params struct {
 }
 
 func New(p Params) *Manager {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Manager{
 		logger: p.Logger.Named("centrum.state"),
@@ -73,16 +73,16 @@ func New(p Params) *Manager {
 		State: p.State,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		if _, err := s.registerStream(c); err != nil {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if _, err := s.registerStream(ctxStartup); err != nil {
 			return err
 		}
 
-		if err := s.loadData(ctx); err != nil {
+		if err := s.loadData(ctxStartup); err != nil {
 			return err
 		}
 
-		if err := s.registerSubscriptions(c, ctx); err != nil {
+		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
 		}
 

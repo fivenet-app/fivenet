@@ -18,7 +18,7 @@ const (
 	UpdateSubject events.Type = "update"
 )
 
-func (c *Config) registerSubscriptions(ctx context.Context, bc context.Context) error {
+func (c *Config) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "APPCONFIG",
 		Description: "AppConfig update events",
@@ -29,11 +29,11 @@ func (c *Config) registerSubscriptions(ctx context.Context, bc context.Context) 
 		Storage:     jetstream.MemoryStorage,
 	}
 
-	if _, err := c.js.CreateOrUpdateStream(ctx, cfg); err != nil {
+	if _, err := c.js.CreateOrUpdateStream(ctxStartup, cfg); err != nil {
 		return err
 	}
 
-	consumer, err := c.js.CreateConsumer(ctx, cfg.Name, jetstream.ConsumerConfig{
+	consumer, err := c.js.CreateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 	})
@@ -46,11 +46,10 @@ func (c *Config) registerSubscriptions(ctx context.Context, bc context.Context) 
 		c.jsCons = nil
 	}
 
-	c.jsCons, err = consumer.Consume(c.handleMessageFunc(bc),
-		c.js.ConsumeErrHandlerWithRestart(context.Background(), c.logger,
-			func(_ context.Context, ctx context.Context) error {
-				return c.registerSubscriptions(bc, bc)
-			}))
+	c.jsCons, err = consumer.Consume(c.handleMessageFunc(ctxCancel),
+		c.js.ConsumeErrHandlerWithRestart(ctxCancel, c.logger,
+			c.registerSubscriptions,
+		))
 	if err != nil {
 		return err
 	}

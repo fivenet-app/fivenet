@@ -63,10 +63,10 @@ type HousekeeperParams struct {
 }
 
 func NewHousekeeper(p HousekeeperParams) *Housekeeper {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Housekeeper{
-		ctx:         ctx,
+		ctx:         ctxCancel,
 		logger:      p.Logger.Named("centrum.manager.housekeeper"),
 		wg:          sync.WaitGroup{},
 		tracer:      p.TP.Tracer("centrum-manager-housekeeper"),
@@ -75,7 +75,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		Manager:     p.Manager,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
@@ -89,7 +89,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		}()
 
 		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
 			Schedule: "@everysecond", // Every second
 		}); err != nil {
@@ -97,7 +97,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		}
 
 		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_deduplication",
 			Schedule: "*/2 * * * * *", // Every 2 seconds
 		}); err != nil {
@@ -105,7 +105,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		}
 
 		p.CronHandlers.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cleanup_units",
 			Schedule: "*/5 * * * * *", // Every 5 seconds
 		}); err != nil {
@@ -113,7 +113,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		}
 
 		p.CronHandlers.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
 			Schedule: "*/4 * * * *", // Every 4 minutes
 		}); err != nil {
@@ -121,7 +121,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		}
 
 		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
-		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
 			Schedule: "*/15 * * * * *", // Every 15 seconds
 		}); err != nil {

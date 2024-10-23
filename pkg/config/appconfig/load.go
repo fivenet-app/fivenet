@@ -78,15 +78,15 @@ func New(p Params) (IConfig, error) {
 		broker: broker.New[*Cfg](),
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go cfg.broker.Start(ctx)
+	ctxCancel, cancel := context.WithCancel(context.Background())
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		go cfg.broker.Start(ctxCancel)
 
-		if _, err := cfg.updateConfigFromDB(c); err != nil {
+		if _, err := cfg.updateConfigFromDB(ctxStartup); err != nil {
 			return err
 		}
 
-		return cfg.registerSubscriptions(c, ctx)
+		return cfg.registerSubscriptions(ctxStartup, ctxCancel)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {

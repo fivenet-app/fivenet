@@ -73,7 +73,7 @@ func NewManager(p Params) *Manager {
 		tracker: p.Tracker,
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		b.wg.Add(1)
 		go func() {
 			defer b.wg.Done()

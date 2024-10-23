@@ -79,7 +79,7 @@ type brokerEvent struct {
 }
 
 func NewServer(p Params) *Server {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
 		logger: p.Logger,
@@ -98,21 +98,21 @@ func NewServer(p Params) *Server {
 		broker: broker.New[*brokerEvent](),
 	}
 
-	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		go s.broker.Start(ctx)
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		go s.broker.Start(ctxCancel)
 
-		if err := s.registerEvents(c, ctx); err != nil {
+		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
 		}
 
 		go func() {
 			for {
 				select {
-				case <-ctx.Done():
+				case <-ctxCancel.Done():
 					return
 
 				case <-time.After(30 * time.Second):
-					if err := s.refreshData(ctx); err != nil {
+					if err := s.refreshData(ctxCancel); err != nil {
 						s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
 					}
 				}
