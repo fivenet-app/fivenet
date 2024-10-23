@@ -48,7 +48,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 
 	resp.Units = s.state.FilterUnits(ctx, userInfo.Job, req.Status, nil, nil)
 	if resp.Units == nil {
-		return nil, errorscentrum.ErrModeForbidsAction
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)

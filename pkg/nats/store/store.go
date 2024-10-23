@@ -349,8 +349,13 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error)
 	keys := []string{}
 	s.data.Range(func(key string, _ U) bool {
 		if hasPrefix {
-			if after, ok := strings.CutPrefix(key, prefix); ok {
-				keys = append(keys, after)
+			if strings.HasPrefix(key, prefix) {
+				if s.prefix == "" {
+					keys = append(keys, key)
+				} else {
+					after, _ := strings.CutPrefix(key, s.prefix)
+					keys = append(keys, after)
+				}
 			}
 		} else {
 			keys = append(keys, key)
