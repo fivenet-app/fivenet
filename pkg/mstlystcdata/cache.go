@@ -108,12 +108,12 @@ func NewCache(p Params) (*Cache, error) {
 			return err
 		}
 
-		if err := cc.refreshCache(ctxStartup); err != nil {
+		cc.searcher, err = NewSearcher(cc)
+		if err != nil {
 			return err
 		}
 
-		cc.searcher, err = NewSearcher(cc)
-		if err != nil {
+		if err := cc.refreshCache(ctxStartup); err != nil {
 			return err
 		}
 

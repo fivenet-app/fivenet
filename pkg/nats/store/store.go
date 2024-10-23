@@ -338,7 +338,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 }
 
 func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
-	hasPrefix := prefix != ""
+	hasPrefix := s.prefix+prefix != ""
 	if hasPrefix {
 		prefix = s.prefix + events.SanitizeKey(prefix)
 	}
@@ -346,8 +346,8 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error)
 	keys := []string{}
 	s.data.Range(func(key string, _ U) bool {
 		if hasPrefix {
-			if strings.HasPrefix(key, prefix+".") {
-				keys = append(keys, key)
+			if after, ok := strings.CutPrefix(key, prefix); ok {
+				keys = append(keys, after)
 			}
 		} else {
 			keys = append(keys, key)
