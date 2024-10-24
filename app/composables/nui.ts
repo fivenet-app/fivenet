@@ -24,11 +24,12 @@ export async function onFocusHandler(event: FocusEvent): Promise<void> {
         return;
     }
 
-    event.stopPropagation();
     const element = event.target as HTMLElement;
     if (!focusNUITargets.includes(element.tagName.toLowerCase())) {
         return;
     }
+    event.stopPropagation();
+    logger.debug('focus handler event:', event.type, element.tagName.toLowerCase());
 
     focusTablet(event.type === 'focusin');
 }
