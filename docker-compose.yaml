@@ -1,25 +1,28 @@
+#
+# README - BEFORE YOU START
+# Make sure to replace `VIRTUAL_HOST: "example.com"` with your domain
+# The first container is the NGINX Proxy which if you already have one make sure to remove this one and connect your network_mode
+# See https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#multiple-networks
+#
+# The path (volume) for the `config.yaml` expects the file to be in the same folder of your `docker-compose.yaml`
+#
+
+name: fivenet
+
 services:
-  # Database - Used for testing only
-  mysql:
-    container_name: mysql
-    image: docker.io/library/mysql:9.1.0
-    command:
-      - "mysqld"
-      - "--innodb-ft-min-token-size=2"
-      - "--innodb-ft-max-token-size=40"
-      - "--default-time-zone=Europe/Berlin"
-      - '--sql-mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-secret-pw-for-root-user}
-      MYSQL_USER: ${MYSQL_USER:-fivenet}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-fivenet}
-    volumes:
-      - mysql:/var/lib/mysql
+  # NGINX reverse proxy
+  nginx-proxy:
+    image: docker.io/nginxproxy/nginx-proxy:1.6
+    container_name: nginx-proxy
+    environment: {}
     ports:
-      - "3306:3306"
-    network_mode: host
-    restart: unless-stopped
+      - "80:80"
+      #- "443:443" # HTTPS/SSL requires additional setup https://github.com/nginx-proxy/nginx-proxy/tree/main/docs#ssl-support
+    networks:
+      - fivenet
+    restart: on-failure
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
 
   # Message Queue
   nats:
@@ -27,71 +30,87 @@ services:
     image: docker.io/library/nats:2.10.22-alpine3.20
     command:
       - --jetstream
-      # If you change the user/password, you must update the `.nats.url` in FiveNet's `config.yaml`
+      # If you change the user/password, you must update the FiveNet's `config.yaml` (`.nats.url`) as well
       - --user=fivenet
       - --pass=fivenet_topsecret
-    ports:
-      - "4222:4222"
-      - "8222:8222"
-      - "6222:6222"
-    network_mode: host
-    restart: unless-stopped
+    # Only uncomment the ports section if you want to make NATS externally available
+    #ports:
+    #  - "4222:4222"
+    #  - "8222:8222"
+    #  - "6222:6222"
+    networks:
+      - fivenet
+    restart: on-failure
 
   # FiveNet Server
-  #fivenet_server:
-  #  container_name: fivenet-server
-  #  image: ghcr.io/fivenet-app/fivenet:main
-  #  environment:
-  #    #VIRTUAL_HOST: "example.com"
-  #    VIRTUAL_PATH: "/"
-  #  command:
-  #    - server
-  #  ports:
-  #    - "7070:7070"
-  #    - "8080:8080"
-  #  network_mode: host
-  #  restart: unless-stopped
-  #  volumes:
-  #    - ./config.yaml:/config/config.yaml
+  fivenet_server:
+    container_name: fivenet-server
+    image: ghcr.io/fivenet-app/fivenet:main
+    environment:
+      VIRTUAL_HOST: "example.com"
+      VIRTUAL_PORT: "8080"
+      VIRTUAL_PATH: "/"
+    command:
+      - server
+    #ports:
+    #  - "7070:7070" # User for metrics only
+    #  - "8080:8080" # Only needed when exposing FiveNet directly
+    networks:
+      - fivenet
+    restart: on-failure
+    volumes:
+      - ./config.yaml:/config/config.yaml
 
   # FiveNet Worker
-  #fivenet_worker:
-  #  container_name: fivenet-worker
-  #  image: ghcr.io/fivenet-app/fivenet:main
-  #  command:
-  #    - worker
-  #  ports:
-  #    - "7070:7070"
-  #  restart: unless-stopped
-  #  volumes:
-  #    - ./config.yaml:/config/config.yaml
+  fivenet_worker:
+    container_name: fivenet-worker
+    image: ghcr.io/fivenet-app/fivenet:main
+    command:
+      - worker
+    #ports:
+    #  - "7072:7070" # User for metrics only
+    networks:
+      - fivenet
+    restart: on-failure
+    volumes:
+      - ./config.yaml:/config/config.yaml
 
-  # FiveNet Discord
-  #fivenet_discord:
-  #  container_name: fivenet-discord
-  #  image: ghcr.io/fivenet-app/fivenet:main
-  #  command:
-  #    - discord
-  #  ports:
-  #    - "7070:7070"
-  #  restart: unless-stopped
-  #  volumes:
-  #    - ./config.yaml:/config/config.yaml
+  # FiveNet Discord bot
+  fivenet_discord:
+    container_name: fivenet-discord
+    image: ghcr.io/fivenet-app/fivenet:main
+    command:
+      - worker
+      - --module-audit-retention=false
+      - --module-centrum-bot=false
+      - --module-centrum-housekeeper=false
+      - --module-user-tracker=false
+    #ports:
+    #  - "7073:7070" # User for metrics only
+    networks:
+      - fivenet
+    restart: on-failure
+    volumes:
+      - ./config.yaml:/config/config.yaml
 
-  # Iconify - Requires an ingress controller (e.g., jwilder/nginx-proxy), like Traefik, that makes iconify available under `/api/icons`
-  #iconify:
-  #  container_name: iconify
-  #  image: docker.io/iconify/api:latest
-  #  environment:
-  #    #VIRTUAL_HOST: "example.com"
-  #    VIRTUAL_PATH: "/api/icons"
-  #    ICONIFY_SOURCE: "full"
-  #    REDIRECT_INDEX: "/about"
-  #    ALLOW_UPDATE: "false"
-  #    ENABLE_ICON_LISTS: "false"
-  #    ENABLE_SEARCH_ENGINE: "false"
-  #  ports:
-  #    - "3000:3000"
+  # Iconify - Requires an "ingress" controller (e.g., jwilder/nginx-proxy), like Traefik, that makes iconify available under `/api/icons`
+  iconify:
+    container_name: iconify
+    image: docker.io/iconify/api:latest
+    environment:
+      VIRTUAL_HOST: "example.com"
+      VIRTUAL_PORT: "3000"
+      VIRTUAL_PATH: "/api/icons"
+      ICONIFY_SOURCE: "full"
+      REDIRECT_INDEX: "/about"
+      ALLOW_UPDATE: "false"
+      ENABLE_ICON_LISTS: "false"
+      ENABLE_SEARCH_ENGINE: "false"
+    #ports:
+    #  - "3000:3000"
+    networks:
+      - fivenet
+    restart: on-failure
 
-volumes:
-  mysql:
+networks:
+  fivenet:

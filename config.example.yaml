@@ -1,3 +1,5 @@
+# Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
+#
 logLevel: "DEBUG"
 # debug or release
 mode: "release"
@@ -45,8 +47,8 @@ database:
       user:
         filterEmptyName: false
 nats:
-  # This NATS url is for using the `docker-compose.yaml` NATS server
-  url: "nats://fivenet:fivenet_topsecret@localhost:4222"
+  # This NATS url is for using the NATS server from the `docker-compose.yaml`
+  url: "nats://fivenet:fivenet_topsecret@nats:4222"
   replicas: 1
 jwt:
   secret: "your_generated_jwt_secret"

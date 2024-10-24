@@ -1,0 +1,42 @@
+# This docker-compose.yaml is only used for development of FiveNet
+
+services:
+  # Database - Used for testing only
+  mysql:
+    container_name: mysql
+    image: docker.io/library/mysql:9.1.0
+    command:
+      - "mysqld"
+      - "--innodb-ft-min-token-size=2"
+      - "--innodb-ft-max-token-size=40"
+      - "--default-time-zone=Europe/Berlin"
+      - '--sql-mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-secret-pw-for-root-user}
+      MYSQL_USER: ${MYSQL_USER:-fivenet}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-fivenet}
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    network_mode: host
+    restart: unless-stopped
+
+  # Message Queue
+  nats:
+    container_name: nats
+    image: docker.io/library/nats:2.10.22-alpine3.20
+    command:
+      - --jetstream
+      - --user=fivenet
+      - --pass=fivenet_topsecret
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+      - "6222:6222"
+    network_mode: host
+    restart: unless-stopped
+
+volumes:
+  mysql:
