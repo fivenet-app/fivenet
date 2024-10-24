@@ -50,7 +50,7 @@ const items = computed(() => [
                   slot: 'job',
                   label: 'Select Job',
                   icon: 'i-mdi-briefcase',
-                  disabled: false,
+                  click: ($event: Event) => $event.preventDefault(),
               }
             : undefined,
         {

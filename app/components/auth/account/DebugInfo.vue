@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
@@ -13,7 +14,7 @@ const clipboardStore = useClipboardStore();
 const settings = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
+const { activeChar, permissions, getAccessTokenExpiration, isSuperuser } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
@@ -52,6 +53,13 @@ async function sendTestNotifications(): Promise<void> {
 function triggerErrorPage(): void {
     showError(new Error('You pressed the trigger error page button'));
 }
+
+function setLogLevel(): void {
+    setDefaultLogLevel(getDefaultLogLevel() !== LogLevels.debug ? LogLevels.debug : LogLevels.warn);
+    console.warn('Log Level set to', getDefaultLogLevel() === 4 ? 'DEBUG' : 'WARN');
+}
+
+const isDevEnv = import.meta.dev;
 
 const version = APP_VERSION;
 </script>
@@ -151,6 +159,9 @@ const version = APP_VERSION;
                     </UButton>
                     <UButton block color="gray" @click="triggerErrorPage">
                         <span>{{ $t('components.debug_info.trigger_error') }}</span>
+                    </UButton>
+                    <UButton v-if="isDevEnv || isSuperuser" block color="white" @click="setLogLevel">
+                        <span>{{ $t('components.debug_info.toggle_log_level') }}</span>
                     </UButton>
                 </UButtonGroup>
             </UFormGroup>

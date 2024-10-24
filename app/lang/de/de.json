@@ -725,7 +725,8 @@
             "nui_info": "NUI-Info",
             "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
             "test_notifications": "Teste Benachrichtigungen",
-            "trigger_error": "Fehlerseite auslösen"
+            "trigger_error": "Fehlerseite auslösen",
+            "toggle_log_level": "Log-Level zwischen Debug/Warn umschalten"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"

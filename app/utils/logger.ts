@@ -17,9 +17,9 @@ export class Logger {
         this.prefix = prefix?.trim();
 
         if (this.prefix !== undefined) {
-            this.consola = consola.withTag(this.prefix?.trim());
+            this.consola = consola.withTag(this.prefix);
         } else {
-            this.consola = consola;
+            this.consola = consola.create({});
         }
 
         if (level === undefined) {
@@ -27,11 +27,10 @@ export class Logger {
             if (import.meta.dev) {
                 level = LogLevels.debug;
             } else {
-                level = LogLevels.info;
+                level = LogLevels.warn;
             }
+            this.consola.level = level;
         }
-
-        this.consola.level = level;
     }
 
     log(message?: any, ...optionalParams: any[]): void {
@@ -53,4 +52,12 @@ export class Logger {
     error(message?: any, ...optionalParams: any[]): void {
         this.consola.error(message, ...optionalParams);
     }
+}
+
+export function setDefaultLogLevel(level: LogLevel): void {
+    consola.level = level;
+}
+
+export function getDefaultLogLevel(): LogLevel {
+    return consola.level;
 }
