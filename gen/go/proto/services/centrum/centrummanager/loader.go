@@ -69,6 +69,8 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
+		settings.Default(settings.Job)
+
 		if err := s.State.UpdateSettings(ctx, settings.Job, settings); err != nil {
 			return err
 		}

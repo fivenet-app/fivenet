@@ -27,7 +27,6 @@ export interface CentrumState {
     cleanupIntervalId: NodeJS.Timeout | undefined;
     reconnecting: boolean;
     reconnectBackoffTime: number;
-    timingsIntervalId: NodeJS.Timeout | undefined;
 
     timeCorrection: number;
 
@@ -99,13 +98,6 @@ export const useCentrumStore = defineStore('centrum', {
                 this.settings.timings = settings.timings;
             } else {
                 this.settings = settings;
-            }
-
-            if (this.timingsIntervalId !== undefined) {
-                clearInterval(this.timingsIntervalId);
-                this.timingsIntervalId = undefined;
-
-                this.handleOwnUnitForTimings();
             }
         },
 
@@ -180,8 +172,6 @@ export const useCentrumStore = defineStore('centrum', {
         },
         setOwnUnit(id: string | undefined): void {
             this.ownUnitId = id;
-
-            this.handleOwnUnitForTimings();
         },
         removeUnit(id: string): void {
             // User's unit has been deleted, reset it
@@ -785,33 +775,6 @@ export const useCentrumStore = defineStore('centrum', {
                     dispatch.units.splice(idx, 1);
                 }
             });
-        },
-
-        handleOwnUnitForTimings(): void {
-            if (this.ownUnitId === undefined) {
-                if (this.settings?.timings !== undefined && this.settings.timings.requireUnit) {
-                    this.timingsIntervalId = setInterval(
-                        this.sendRequireUnitNotification,
-                        this.settings.timings.requireUnitReminderSeconds * 1000,
-                    );
-                }
-            } else {
-                if (this.timingsIntervalId !== undefined) {
-                    clearInterval(this.timingsIntervalId);
-                    this.timingsIntervalId = undefined;
-                }
-            }
-        },
-        sendRequireUnitNotification(): void {
-            useNotificatorStore().add({
-                title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
-                description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
-                type: NotificationType.WARNING,
-                timeout: 12500,
-                actions: this.getNotificationActions(),
-            });
-
-            useSound().play({ name: 'centrum/attention', rate: 1.85 });
         },
 
         getNotificationActions(): NotificationActionI18n[] {

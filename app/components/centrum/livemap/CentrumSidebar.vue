@@ -35,7 +35,7 @@ const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection } =
+const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection, settings } =
     storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
@@ -141,8 +141,30 @@ async function toggleSidebarBasedOnUnit(): Promise<void> {
     }
 }
 
+const requireUnitInterval = computed(() => settings.value?.timings?.requireUnitReminderSeconds ?? 900 * 1000);
+const { pause, resume } = useIntervalFn(
+    () => sendRequireUnitNotification(),
+    () => requireUnitInterval.value * 1000,
+    {
+        immediate: false,
+    },
+);
+
+function toggleRequireUnitNotification(): void {
+    if (canStream.value) {
+        if (getOwnUnit.value === undefined) {
+            resume();
+        } else {
+            pause();
+        }
+    }
+}
+
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-watch(getOwnUnit, toggleSidebarBasedOnUnit);
+watch(getOwnUnit, () => {
+    toggleSidebarBasedOnUnit();
+    toggleRequireUnitNotification();
+});
 
 watch(open, async () => {
     if (open.value === true && getOwnUnit.value === undefined) {
@@ -235,6 +257,7 @@ onBeforeMount(async () => {
             }
         }, 550);
         toggleSidebarBasedOnUnit();
+        toggleRequireUnitNotification();
     }
 });
 
@@ -285,6 +308,17 @@ async function checkup(): Promise<void> {
     });
 
     lastCheckupNotification.value = now;
+}
+
+function sendRequireUnitNotification(): void {
+    useNotificatorStore().add({
+        title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
+        description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
+        type: NotificationType.WARNING,
+        timeout: 12500,
+    });
+
+    useSound().play({ name: 'centrum/attention', rate: 1.85 });
 }
 
 function openTakeDispatches(): void {

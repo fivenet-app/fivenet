@@ -9,18 +9,9 @@ import (
 
 func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
 	settings, _ := s.settings.LoadOrCompute(job, func() *centrum.Settings {
-		return &centrum.Settings{
-			Job:              job,
-			Enabled:          false,
-			Mode:             centrum.CentrumMode_CENTRUM_MODE_MANUAL,
-			FallbackMode:     centrum.CentrumMode_CENTRUM_MODE_MANUAL,
-			PredefinedStatus: &centrum.PredefinedStatus{},
-			Timings: &centrum.Timings{
-				DispatchMaxWait:            900,
-				RequireUnit:                false,
-				RequireUnitReminderSeconds: 180,
-			},
-		}
+		s := &centrum.Settings{}
+		s.Default(job)
+		return s
 	})
 
 	return proto.Clone(settings).(*centrum.Settings)
