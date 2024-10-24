@@ -34,7 +34,7 @@ require (
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.78
+	github.com/minio/minio-go/v7 v7.0.79
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.10.22
 	github.com/nats-io/nats.go v1.37.0
