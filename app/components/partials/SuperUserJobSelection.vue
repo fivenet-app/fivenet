@@ -15,7 +15,13 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const selectedJob = ref<undefined | Job>(jobs.value.find((j) => j.name === activeChar.value?.job));
+const selectedJob = ref<undefined | Job>(
+    jobs.value.find((j) => j.name === activeChar.value?.job) ?? {
+        name: activeChar.value?.job ?? 'na',
+        label: activeChar.value?.jobLabel ?? 'N/A',
+        grades: [],
+    },
+);
 
 watchOnce(jobs, () => (selectedJob.value = jobs.value.find((j) => j.name === activeChar.value?.job)));
 
@@ -50,6 +56,7 @@ watch(selectedJob, () => {
             <template #option-empty="{ query: search }">
                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
             </template>
+
             <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
         </UInputMenu>
     </ClientOnly>

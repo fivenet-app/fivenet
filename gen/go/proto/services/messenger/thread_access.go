@@ -103,7 +103,7 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 		return true
 	}
 
-	// If no levels set, assume "Own" as default
+	// If no levels set, assume "Own" as a safe default
 	if len(levels) == 0 {
 		return creator.UserId == userInfo.UserId
 	}

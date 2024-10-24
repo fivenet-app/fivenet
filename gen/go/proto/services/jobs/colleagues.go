@@ -586,7 +586,7 @@ func (s *Server) checkIfHasAccessToColleague(levels []string, userInfo *userinfo
 		return true
 	}
 
-	// If no levels set, assume "Own" as default
+	// If no levels set, assume "Own" as a safe default
 	if len(levels) == 0 {
 		return target.UserId == userInfo.UserId
 	}
@@ -619,7 +619,7 @@ func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserA
 		return condition
 	}
 
-	// If no levels set, assume "Own" as default
+	// If no levels set, assume "Own" as a safe default
 	if len(levels) == 0 {
 		return actTable.TargetUserID.EQ(jet.Int32(userInfo.UserId))
 	}
