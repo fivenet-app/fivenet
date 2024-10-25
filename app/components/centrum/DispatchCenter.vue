@@ -26,7 +26,9 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.dispatch_center')">
             <template #right>
-                <DisponentsInfo />
+                <ClientOnly>
+                    <DisponentsInfo />
+                </ClientOnly>
             </template>
         </UDashboardNavbar>
 
