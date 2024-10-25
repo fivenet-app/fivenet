@@ -780,14 +780,14 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 		// Send original char job props to user
 		_, _, jProps, err := s.getJobWithProps(ctx, char.Job)
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props from '%s' job. %w", char.Job, err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", char.Job, err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 	} else if req.Job != nil {
 		// Only set job if requested
 		job, jobGrade, jProps, err := s.getJobWithProps(ctx, *req.Job)
 		if err != nil {
-			return nil, errswrap.NewError(fmt.Errorf("failed to get job props from '%s' job. %w", *req.Job, err), errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", *req.Job, err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 
