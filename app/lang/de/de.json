@@ -880,6 +880,9 @@
             },
             "rector_roles_superuser": {
                 "content": "Sollten Sie bestimmte Berechtigungen vermissen oder eine leere Berechtigungsliste haben, kontaktieren Sie einen FiveNet Administrator damit dieser die Berechtigungen für ihre Fraktion einstellt."
+            },
+            "sociallogin_discord": {
+                "content": "Wenn Ihre Fraktion den FiveNet-Discord-Bot verwendet, stellen Sie sicher, dass Sie Ihr Discord-Konto über die Kontoinformationen verbunden haben. Der Bot synchronisiert Ränge Rollen automatisch."
             }
         },
         "notifications": {
@@ -2451,6 +2454,16 @@
                     "STREAMING": "Streaming",
                     "WATCH": "Watch",
                     "UNSPECIFIED": "Unspecified"
+                }
+            },
+            "AuditLog": {
+                "EventType": {
+                    "UNSPECIFIED": "Unbestimmt",
+                    "ERRORED": "Fehlerhaft",
+                    "VIEWED": "Aufgerufen",
+                    "CREATED": "Erstellt",
+                    "UPDATED": "Aktualisiert",
+                    "DELETED": "Gelöscht"
                 }
             }
         },

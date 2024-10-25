@@ -16,6 +16,8 @@ import type { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { EventType } from '~~/gen/ts/resources/rector/audit';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
+import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
 
@@ -25,8 +27,8 @@ const schema = z.object({
     users: z.custom<UserShort>().array().max(5),
     from: z.date().optional(),
     to: z.date().optional(),
-    method: z.string().max(64),
-    service: z.string().max(64),
+    services: z.string().max(64).array().max(10),
+    methods: z.string().max(64).array().max(10),
     search: z.string().max(128),
 });
 
@@ -34,8 +36,8 @@ type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
     users: [],
-    method: '',
-    service: '',
+    services: [],
+    methods: [],
     search: '',
 });
 
@@ -55,7 +57,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `rector-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.from}-${query.to}-${query.method}-${query.service}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
+    `rector-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.from}-${query.to}-${query.methods}-${query.services}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
     () => viewAuditLog(),
     {
         watch: [sort],
@@ -69,6 +71,8 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         },
         sort: sort.value,
         userIds: [],
+        services: query.services,
+        methods: query.methods,
     };
 
     req.userIds = query.users.map((v) => v.userId);
@@ -78,13 +82,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
     if (query.to) {
         req.to = toTimestamp(query.to!);
-    }
-
-    if (query.method !== '') {
-        req.method = query.method;
-    }
-    if (query.service !== '') {
-        req.service = query.service;
     }
 
     if (query.search !== '') {
@@ -237,11 +234,41 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup name="service" :label="$t('common.service')" class="flex-1">
-                        <UInput v-model="query.service" type="text" name="service" :placeholder="$t('common.service')" block />
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.services"
+                                multiple
+                                searchable
+                                name="service"
+                                :placeholder="$t('common.service')"
+                                :options="grpcServices"
+                            >
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.service')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="method" :label="$t('common.method')" class="flex-1">
-                        <UInput v-model="query.method" type="text" name="method" block :placeholder="$t('common.method')" />
+                        <USelectMenu
+                            v-model="query.methods"
+                            multiple
+                            searchable
+                            name="method"
+                            :placeholder="$t('common.method')"
+                            :options="grpcMethods.filter((m) => query.services.some((s) => m.startsWith(s + '/')))"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.method')]) }}
+                            </template>
+                        </USelectMenu>
                     </UFormGroup>
 
                     <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
@@ -264,16 +291,25 @@ const columns = [
                     @click="addToClipboard(row)"
                 />
             </template>
+
             <template #createdAt-data="{ row }">
                 <GenericTime :value="row.createdAt" type="long" />
             </template>
+
             <template #user-data="{ row }">
                 <CitizenInfoPopover :user="row.user" />
             </template>
-            <template #service-data="{ row }"> {{ row.service }}/{{ row.method }} </template>
-            <template #state-data="{ row }">
-                {{ EventType[row.state] }}
+
+            <template #service-data="{ row }">
+                <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
             </template>
+
+            <template #state-data="{ row }">
+                <UBadge :color="eventTypeToBadgeColor(row.state)">
+                    {{ $t(`enums.rector.AuditLog.EventType.${EventType[row.state]}`) }}
+                </UBadge>
+            </template>
+
             <template #expand="{ row }">
                 <div class="px-2 py-1">
                     <span v-if="!row.data">{{ $t('common.na') }}</span>

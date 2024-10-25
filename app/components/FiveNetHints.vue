@@ -16,6 +16,10 @@ const hints = shuffle([
         id: 'documenteditor',
         to: { name: 'settings' },
     },
+    {
+        id: 'sociallogin_discord',
+        to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
+    },
 ] as Hint[]);
 </script>
 

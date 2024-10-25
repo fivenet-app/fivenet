@@ -880,6 +880,9 @@
             },
             "rector_roles_superuser": {
                 "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
+            },
+            "sociallogin_discord": {
+                "content": "If your faction uses the FiveNet Discord bot, make sure to have connected your Discord account via the Account information. The bot automatically syncs your rank's roles."
             }
         },
         "notifications": {
@@ -2452,6 +2455,16 @@
                     "STREAMING": "Streaming",
                     "WATCH": "Watch",
                     "UNSPECIFIED": "Unspecified"
+                }
+            },
+            "AuditLog": {
+                "EventType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ERRORED": "Failed",
+                    "VIEWED": "Viewed",
+                    "CREATED": "Created",
+                    "UPDATED": "Updated",
+                    "DELETED": "Deleted"
                 }
             }
         },

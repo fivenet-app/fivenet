@@ -3,7 +3,6 @@ package rector
 import (
 	"context"
 	"errors"
-	"strings"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -61,13 +60,19 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
-	if req.Service != nil && *req.Service != "" {
-		service := strings.ReplaceAll(*req.Service, "%", "")
-		condition = condition.AND(tAuditLog.Service.LIKE(jet.String(service + "%")))
+	if len(req.Services) > 0 {
+		svcs := make([]jet.Expression, len(req.Services))
+		for i := 0; i < len(req.Services); i++ {
+			svcs[i] = jet.String(req.Services[i])
+		}
+		condition = condition.AND(tAuditLog.Service.IN(svcs...))
 	}
-	if req.Method != nil && *req.Method != "" {
-		method := strings.ReplaceAll(*req.Method, "%", "")
-		condition = condition.AND(tAuditLog.Method.LIKE(jet.String(method + "%")))
+	if len(req.Methods) > 0 {
+		methods := make([]jet.Expression, len(req.Methods))
+		for i := 0; i < len(req.Methods); i++ {
+			methods[i] = jet.String(req.Methods[i])
+		}
+		condition = condition.AND(tAuditLog.Method.IN(methods...))
 	}
 	if req.Search != nil && *req.Search != "" {
 		condition = condition.AND(jet.BoolExp(

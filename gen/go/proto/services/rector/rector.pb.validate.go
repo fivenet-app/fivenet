@@ -2479,6 +2479,60 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 		}
 	}
 
+	if len(m.GetServices()) > 10 {
+		err := ViewAuditLogRequestValidationError{
+			field:  "Services",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetServices() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 64 {
+			err := ViewAuditLogRequestValidationError{
+				field:  fmt.Sprintf("Services[%v]", idx),
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(m.GetMethods()) > 10 {
+		err := ViewAuditLogRequestValidationError{
+			field:  "Methods",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetMethods() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 64 {
+			err := ViewAuditLogRequestValidationError{
+				field:  fmt.Sprintf("Methods[%v]", idx),
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Sort != nil {
 
 		if all {
@@ -2574,36 +2628,6 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.Service != nil {
-
-		if utf8.RuneCountInString(m.GetService()) > 64 {
-			err := ViewAuditLogRequestValidationError{
-				field:  "Service",
-				reason: "value length must be at most 64 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Method != nil {
-
-		if utf8.RuneCountInString(m.GetMethod()) > 64 {
-			err := ViewAuditLogRequestValidationError{
-				field:  "Method",
-				reason: "value length must be at most 64 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}

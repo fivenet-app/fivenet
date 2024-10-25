@@ -12,5 +12,6 @@ func main() {
 		pgs.SupportedFeatures(&optional),
 	).RegisterModule(
 		Permify(),
+		ListSvcMethods(),
 	).Render()
 }

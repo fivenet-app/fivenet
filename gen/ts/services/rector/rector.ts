@@ -242,13 +242,13 @@ export interface ViewAuditLogRequest {
      */
     to?: Timestamp;
     /**
-     * @generated from protobuf field: optional string service = 6;
+     * @generated from protobuf field: repeated string services = 6;
      */
-    service?: string;
+    services: string[];
     /**
-     * @generated from protobuf field: optional string method = 7;
+     * @generated from protobuf field: repeated string methods = 7;
      */
-    method?: string;
+    methods: string[];
     /**
      * @generated from protobuf field: optional string search = 8;
      */
@@ -1209,14 +1209,16 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "from", kind: "message", T: () => Timestamp },
             { no: 5, name: "to", kind: "message", T: () => Timestamp },
-            { no: 6, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
-            { no: 7, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
+            { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
             { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userIds = [];
+        message.services = [];
+        message.methods = [];
         if (value !== undefined)
             reflectionMergePartial<ViewAuditLogRequest>(this, message, value);
         return message;
@@ -1245,11 +1247,11 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                 case /* optional resources.timestamp.Timestamp to */ 5:
                     message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
                     break;
-                case /* optional string service */ 6:
-                    message.service = reader.string();
+                case /* repeated string services */ 6:
+                    message.services.push(reader.string());
                     break;
-                case /* optional string method */ 7:
-                    message.method = reader.string();
+                case /* repeated string methods */ 7:
+                    message.methods.push(reader.string());
                     break;
                 case /* optional string search */ 8:
                     message.search = reader.string();
@@ -1285,12 +1287,12 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         /* optional resources.timestamp.Timestamp to = 5; */
         if (message.to)
             Timestamp.internalBinaryWrite(message.to, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional string service = 6; */
-        if (message.service !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.service);
-        /* optional string method = 7; */
-        if (message.method !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.method);
+        /* repeated string services = 6; */
+        for (let i = 0; i < message.services.length; i++)
+            writer.tag(6, WireType.LengthDelimited).string(message.services[i]);
+        /* repeated string methods = 7; */
+        for (let i = 0; i < message.methods.length; i++)
+            writer.tag(7, WireType.LengthDelimited).string(message.methods[i]);
         /* optional string search = 8; */
         if (message.search !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.search);

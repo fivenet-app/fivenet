@@ -75,10 +75,11 @@ func (c *ServerCmd) Run(ctx *Context) error {
 
 type WorkerCmd struct {
 	ModuleAuditRetention     bool `help:"Start Audit log retention module" default:"true"`
-	ModuleDiscordBot         bool `help:"Start Discord bot module" default:"true"`
 	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
+
+	ModuleDiscordBot bool `help:"Start Discord bot module (disabled by default as it should be run separately)" default:"false"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -93,11 +94,12 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	if c.ModuleCentrumHousekeeper {
 		fxOpts = append(fxOpts, fx.Invoke(func(*centrummanager.Housekeeper) {}))
 	}
-	if c.ModuleDiscordBot {
-		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
-	}
 	if c.ModuleUserTracker {
 		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
+	}
+
+	if c.ModuleDiscordBot {
+		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
 	}
 
 	// Only run cron agent in worker
