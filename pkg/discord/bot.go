@@ -192,6 +192,10 @@ func NewBot(p BotParams) (*Bot, error) {
 
 func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
 	b.setBotPresence(cfg.Discord.BotPresence)
+
+	if b.syncTimer != nil {
+		b.syncTimer.Reset(cfg.Discord.SyncInterval.AsDuration())
+	}
 }
 
 func (b *Bot) start(ctx context.Context) error {
@@ -256,8 +260,11 @@ func (b *Bot) syncLoop() {
 		}()
 
 		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
-
-		b.syncTimer = time.NewTimer(syncInterval)
+		if b.syncTimer == nil {
+			b.syncTimer = time.NewTimer(syncInterval)
+		} else {
+			b.syncTimer.Reset(syncInterval)
+		}
 
 		select {
 		case <-b.ctx.Done():
