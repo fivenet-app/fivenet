@@ -403,6 +403,12 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.User)
 	}
 
+	if resp.User.Props == nil {
+		resp.User.Props = &users.UserProps{
+			UserId: resp.User.UserId,
+		}
+	}
+
 	// Check if user can see licenses and fetch them
 	if !infoOnly && slices.Contains(fields, "Licenses") {
 		stmt := tUser.

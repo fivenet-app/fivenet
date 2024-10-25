@@ -91,6 +91,8 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
+	syncTimer *time.Timer
+
 	dc           *state.State
 	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
 }
@@ -254,11 +256,14 @@ func (b *Bot) syncLoop() {
 		}()
 
 		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
+
+		b.syncTimer = time.NewTimer(syncInterval)
+
 		select {
 		case <-b.ctx.Done():
 			return
 
-		case <-time.After(syncInterval):
+		case <-b.syncTimer.C:
 		}
 	}
 }

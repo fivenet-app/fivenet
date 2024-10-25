@@ -17,7 +17,13 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
         icon="i-mdi-close-circle"
         class="relative block w-full min-w-60"
         :title="title ?? $t('components.partials.data_error_block.default_title')"
-        :description="message ?? $t('components.partials.data_error_block.default_message')"
+        :description="
+            message
+                ? isTranslatedError(message)
+                    ? $t(message)
+                    : message
+                : $t('components.partials.data_error_block.default_message')
+        "
         :actions="
             retry !== undefined
                 ? [

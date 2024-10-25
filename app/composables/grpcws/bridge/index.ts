@@ -103,9 +103,9 @@ export class GrpcWSTransport implements RpcTransport {
                 if (err instanceof Error) {
                     if (err.name === 'AbortError') {
                         err = errTimeout;
+                    } else {
+                        err = errInternal;
                     }
-                } else {
-                    err = errInternal;
                 }
 
                 defHeader.rejectPending(err);
@@ -150,9 +150,9 @@ export class GrpcWSTransport implements RpcTransport {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
+                        } else {
+                            err = errInternal;
                         }
-                    } else {
-                        err = errInternal;
                     }
 
                     defHeader.rejectPending(err);
@@ -218,9 +218,9 @@ export class GrpcWSTransport implements RpcTransport {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
+                        } else {
+                            err = errInternal;
                         }
-                    } else {
-                        err = errInternal;
                     }
 
                     defHeader.rejectPending(err);
@@ -279,9 +279,9 @@ export class GrpcWSTransport implements RpcTransport {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
+                        } else {
+                            err = errInternal;
                         }
-                    } else {
-                        err = errInternal;
                     }
 
                     defHeader.rejectPending(err);
