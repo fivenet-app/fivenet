@@ -28,7 +28,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	defer s.aud.Log(auditEntry, req)
 
 	if err := s.state.DisponentSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		return nil, err
 	}
 
 	if req.Signon {

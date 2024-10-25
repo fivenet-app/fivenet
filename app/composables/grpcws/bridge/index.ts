@@ -2,6 +2,7 @@ import {
     ClientStreamingCall,
     Deferred,
     DuplexStreamingCall,
+    RpcError,
     RpcOutputStreamController,
     ServerStreamingCall,
     UnaryCall,
@@ -100,7 +101,7 @@ export class GrpcWSTransport implements RpcTransport {
                 defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
             },
             onEnd(err) {
-                if (err instanceof Error) {
+                if (err !== undefined && !(err instanceof RpcError)) {
                     if (err.name === 'AbortError') {
                         err = errTimeout;
                     } else {
@@ -147,7 +148,7 @@ export class GrpcWSTransport implements RpcTransport {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err instanceof Error) {
+                    if (err !== undefined && !(err instanceof RpcError)) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
                         } else {
@@ -215,7 +216,7 @@ export class GrpcWSTransport implements RpcTransport {
                     defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err instanceof Error) {
+                    if (err !== undefined && !(err instanceof RpcError)) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
                         } else {
@@ -276,7 +277,7 @@ export class GrpcWSTransport implements RpcTransport {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err instanceof Error) {
+                    if (err !== undefined && !(err instanceof RpcError)) {
                         if (err.name === 'AbortError') {
                             err = errTimeout;
                         } else {
