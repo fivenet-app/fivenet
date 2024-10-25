@@ -168,12 +168,16 @@ export const useClipboardStore = defineStore('clipboard', {
         },
 
         // Users
-        addUser(user: User): void {
+        addUser(user: User, active?: boolean): void {
             const idx = this.users.findIndex((o: ClipboardUser) => {
                 return o.userId === user.userId;
             });
             if (idx === -1) {
                 this.users.unshift(new ClipboardUser(user!));
+            }
+
+            if (active === true) {
+                this.promoteToActiveStack('users');
             }
         },
         removeUser(id: number): void {

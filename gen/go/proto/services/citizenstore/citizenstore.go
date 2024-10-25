@@ -811,6 +811,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 	}
 	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
+		fmt.Printf("Set User Props DEBUG: %+v - %+v\n", req.Props, props)
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
 			fmt.Sprintf("%s|%s", props.Job.Label, props.JobGrade.Label), fmt.Sprintf("%s|%s", req.Props.Job.Label, req.Props.JobGrade.Label), req.Reason); err != nil {
@@ -922,6 +923,8 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 			return nil, err
 		}
 	}
+
+	dest.UserId = userId
 
 	attributes, err := s.getUserAttributes(ctx, userInfo, userId)
 	if err != nil {

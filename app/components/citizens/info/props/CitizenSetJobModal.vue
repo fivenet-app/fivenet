@@ -26,7 +26,7 @@ const { listJobs } = completorStore;
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
-    job: z.custom<Job>(),
+    job: z.custom<Job>().optional(),
     grade: z.custom<JobGrade>().optional(),
     reset: z.boolean(),
 });
@@ -43,7 +43,7 @@ const state = reactive<Schema>({
 async function setJobProp(values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
-        jobName: values.job.name,
+        jobName: values.job?.name,
         jobGradeNumber: values.grade?.grade,
     };
 
@@ -117,11 +117,11 @@ onBeforeMount(async () => listJobs());
                             >
                                 <template #label>
                                     <template v-if="state.job">
-                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                        <span class="truncate">{{ state.job?.label }}</span>
                                     </template>
                                 </template>
                                 <template #option="{ option: job }">
-                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    <span class="truncate">{{ job.label }}</span>
                                 </template>
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -46,7 +46,7 @@ function openTemplates(): void {
         return;
     }
 
-    clipboardStore.addUser(props.user);
+    clipboardStore.addUser(props.user, true);
 
     modal.open(TemplatesModal, {});
 }
