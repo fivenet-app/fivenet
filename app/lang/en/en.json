@@ -2456,6 +2456,16 @@
                     "WATCH": "Watch",
                     "UNSPECIFIED": "Unspecified"
                 }
+            },
+            "AuditLog": {
+                "EventType": {
+                    "UNSPECIFIED": "Unspecified",
+                    "ERRORED": "Failed",
+                    "VIEWED": "Viewed",
+                    "CREATED": "Created",
+                    "UPDATED": "Updated",
+                    "DELETED": "Deleted"
+                }
             }
         },
         "calendar": {
