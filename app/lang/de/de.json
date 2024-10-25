@@ -836,14 +836,14 @@
                 }
             },
             "timeclock": {
-                "colleagues": "Kollegium",
                 "Stats": {
                     "7_days": "Letzten 7 Tage",
                     "weekly": "Wöchentliche Zusammenfassung",
                     "sum": "Gesamte Dienstzeit",
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
-                }
+                },
+                "colleagues": "Kollegium"
             },
             "self_service": {
                 "title": "Eigenverwaltung",
@@ -1249,7 +1249,8 @@
                 "title": "Zugriff verweigert"
             },
             "internal": {
-                "title": "Ein interner Serverfehler ist aufgetreten"
+                "title": "Ein interner Serverfehler ist aufgetreten",
+                "content": "Server Fehler aufgetreten: {msg}"
             },
             "unavailable": {
                 "title": "Server ist nicht erreichbar",
@@ -2454,16 +2455,6 @@
                     "STREAMING": "Streaming",
                     "WATCH": "Watch",
                     "UNSPECIFIED": "Unspecified"
-                }
-            },
-            "AuditLog": {
-                "EventType": {
-                    "UNSPECIFIED": "Unbestimmt",
-                    "ERRORED": "Fehlerhaft",
-                    "VIEWED": "Aufgerufen",
-                    "CREATED": "Erstellt",
-                    "UPDATED": "Aktualisiert",
-                    "DELETED": "Gelöscht"
                 }
             }
         },
