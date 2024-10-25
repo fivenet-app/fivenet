@@ -84,7 +84,7 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 					}
 					comment = strings.TrimRight(comment, "\n")
 
-					perm, err := p.parseComment(sName, mName, comment)
+					perm, err := p.parseComment(mName, comment)
 					if err != nil {
 						p.Failf("failed to parse comment in %s method %s (comment: '%s'), error: %w", f.InputPath(), mName, comment, err)
 						return nil
@@ -125,7 +125,7 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 	return p.Artifacts()
 }
 
-func (p *PermifyModule) parseComment(service string, method string, comment string) (*Perm, error) {
+func (p *PermifyModule) parseComment(method string, comment string) (*Perm, error) {
 	comment = strings.TrimPrefix(comment, "@perm: ")
 	comment = strings.TrimPrefix(comment, "@perm")
 
