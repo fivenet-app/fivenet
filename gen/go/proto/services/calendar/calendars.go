@@ -316,8 +316,10 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 	} else {
 		// Allow only one private calendar per user (job field will be null for private calendars)
 		if req.Calendar.Job == nil {
-			calendar, err := s.getCalendar(ctx, userInfo, tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)).
-				AND(tCalendar.Job.IS_NULL()))
+			calendar, err := s.getCalendar(ctx, userInfo, jet.AND(
+				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)).
+					AND(tCalendar.Job.IS_NULL()),
+			))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 			}
@@ -325,6 +327,8 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			if calendar != nil {
 				return nil, errorscalendar.ErrOnePrivateCal
 			}
+		} else {
+			req.Calendar.Job = &userInfo.Job
 		}
 
 		tCalendar := table.FivenetCalendar
@@ -347,7 +351,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				req.Calendar.Closed,
 				req.Calendar.Color,
 				userInfo.UserId,
-				userInfo.Job,
+				req.Calendar.Job,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tCalendar.Name.SET(jet.String(req.Calendar.Name)),
