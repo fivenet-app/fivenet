@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -622,7 +623,7 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 				continue
 			}
 
-			for i := len(dsp.Units) - 1; i >= 0; i-- {
+			for i := range slices.Backward(dsp.Units) {
 				if i > (len(dsp.Units) - 1) {
 					break
 				}
@@ -728,7 +729,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 			}
 
 			toRemove := []int32{}
-			for i := len(unit.Users) - 1; i >= 0; i-- {
+			for i := range slices.Backward(unit.Users) {
 				if i > (len(unit.Users) - 1) {
 					break
 				}

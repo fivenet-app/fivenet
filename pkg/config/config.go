@@ -27,6 +27,8 @@ type Config struct {
 	DispatchCenter DispatchCenter `yaml:"dispatchCenter"`
 
 	Discord Discord `yaml:"discord"`
+
+	Game Game `yaml:"game"`
 }
 
 type TracingExporter string
@@ -221,4 +223,8 @@ type DiscordGroupRole struct {
 
 type DiscordCommands struct {
 	Enabled bool `default:"false" yaml:"enabled"`
+}
+
+type Game struct {
+	StartJobGrade int32 `default:"0" yaml:"startJobGrade"`
 }

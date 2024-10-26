@@ -94,7 +94,7 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		return nil
 	}
 
-	role, err := p.CreateRole(ctx, DefaultRoleJob, DefaultRoleJobGrade)
+	role, err := p.CreateRole(ctx, DefaultRoleJob, p.startJobGrade)
 	if err != nil {
 		return err
 	}
@@ -260,14 +260,13 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 		}
 	}
 	jobName := DefaultRoleJob
-	jobGrade := DefaultRoleJobGrade
 	// Add default job to avoid it being deleted
 	dest = append(dest, &users.Job{
 		Name: DefaultRoleJob,
 		Grades: []*users.JobGrade{
 			{
 				JobName: &jobName,
-				Grade:   jobGrade,
+				Grade:   p.startJobGrade,
 			},
 		},
 	})

@@ -238,10 +238,10 @@ func (m *Role) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetGrade() <= 0 {
+	if m.GetGrade() < 0 {
 		err := RoleValidationError{
 			field:  "Grade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err

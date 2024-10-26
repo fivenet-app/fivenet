@@ -25,6 +25,10 @@ const props = defineProps<{
     documentId?: string;
 }>();
 
+const { t } = useI18n();
+
+const { game } = useAppConfig();
+
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -35,8 +39,6 @@ const completorStore = useCompletorStore();
 const documentStore = useDocumentEditorStore();
 
 const notifications = useNotificatorStore();
-
-const { t } = useI18n();
 
 const route = useRoute();
 
@@ -231,7 +233,7 @@ onMounted(async () => {
             type: 1,
             values: {
                 job: activeChar.value?.job,
-                minimumGrade: 1,
+                minimumGrade: game.startJobGrade,
                 accessRole: AccessLevel.EDIT,
             },
         });

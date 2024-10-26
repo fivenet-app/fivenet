@@ -314,7 +314,7 @@ class Role$Type extends MessageType<Role> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 5, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 5, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "permissions", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Permission },
             { no: 8, name: "attributes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RoleAttribute }

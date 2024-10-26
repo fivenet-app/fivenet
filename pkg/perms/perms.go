@@ -11,6 +11,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -89,6 +90,8 @@ type Perms struct {
 	js     *events.JSWrapper
 	jsCons jetstream.ConsumeContext
 
+	startJobGrade int32
+
 	permsMap *xsync.MapOf[uint64, *cachePerm]
 	// Guard name to permission ID
 	permsGuardToIDMap *xsync.MapOf[string, uint64]
@@ -125,6 +128,7 @@ type Params struct {
 	DB        *sql.DB
 	TP        *tracesdk.TracerProvider
 	JS        *events.JSWrapper
+	Cfg       *config.Config
 	AppConfig appconfig.IConfig
 }
 
@@ -145,6 +149,8 @@ func New(p Params) (Permissions, error) {
 		tracer: p.TP.Tracer("perms"),
 
 		js: p.JS,
+
+		startJobGrade: p.Cfg.Game.StartJobGrade,
 
 		permsMap:          xsync.NewMapOf[uint64, *cachePerm](),
 		permsGuardToIDMap: xsync.NewMapOf[string, uint64](),

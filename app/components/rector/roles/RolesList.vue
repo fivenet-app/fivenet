@@ -52,7 +52,7 @@ const availableJobGrades = computed(
 );
 
 async function createRole(): Promise<void> {
-    if (state.jobGrade === undefined || state.jobGrade.grade <= 0) {
+    if (state.jobGrade === undefined || state.jobGrade.grade < 0) {
         return;
     }
 
@@ -143,7 +143,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
                                                 :disabled="
-                                                    state.jobGrade === undefined || state.jobGrade!.grade <= 0 || !canSubmit
+                                                    state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit
                                                 "
                                                 :loading="!canSubmit"
                                                 @click="onSubmitThrottle"

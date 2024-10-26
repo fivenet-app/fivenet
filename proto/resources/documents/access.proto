@@ -36,7 +36,7 @@ message DocumentJobAccess {
   uint64 document_id = 3 [jstype = JS_STRING];
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0];
+  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
   optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
   optional bool required = 9; // @gotags: alias:"required"

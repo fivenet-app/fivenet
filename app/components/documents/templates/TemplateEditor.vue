@@ -21,15 +21,16 @@ const props = defineProps<{
     templateId?: string;
 }>();
 
+const { t } = useI18n();
+
+const { game } = useAppConfig();
+
 const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
-
-const { activeChar } = storeToRefs(authStore);
-
-const { t } = useI18n();
 
 const maxAccessEntries = 10;
 
@@ -500,7 +501,7 @@ onMounted(async () => {
             type: 1,
             values: {
                 job: activeChar.value?.job,
-                minimumGrade: 1,
+                minimumGrade: game.startJobGrade,
                 accessRole: AccessLevel.VIEW,
             },
         });

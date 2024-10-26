@@ -664,7 +664,7 @@ class CreateRoleRequest$Type extends MessageType<CreateRoleRequest> {
     constructor() {
         super("services.rector.CreateRoleRequest", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+            { no: 2, name: "grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<CreateRoleRequest>): CreateRoleRequest {

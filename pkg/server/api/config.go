@@ -43,4 +43,5 @@ type FeatureGates struct{}
 
 type Game struct {
 	UnemployedJobName string `json:"unemployedJobName"`
+	StartJobGrade     int32  `json:"startJobGrade"`
 }

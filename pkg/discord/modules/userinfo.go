@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"sync"
@@ -190,8 +191,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, g.absenceRole)
 	}
 
-	for i := len(job.Grades) - 1; i >= 0; i-- {
-		grade := job.Grades[i]
+	for _, grade := range slices.Backward(job.Grades) {
 		name := strings.ReplaceAll(settings.UserInfoSyncSettings.GradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
 		name = strings.ReplaceAll(name, "%grade_single%", fmt.Sprintf("%d", grade.Grade))

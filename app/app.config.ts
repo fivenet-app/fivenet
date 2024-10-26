@@ -13,6 +13,7 @@ export default defineAppConfig({
     website: {} as WebsiteConfig,
     game: {
         unemployedJobName: 'unemployed',
+        startJobGrade: 0,
     } as GameConfig,
 
     // File upload related config
@@ -25,6 +26,7 @@ export default defineAppConfig({
             images: ['image/jpeg', 'image/jpg', 'image/png'],
         },
     },
+    // Request timeouts
     timeouts: {
         grpc: {
             unary: 9000,

@@ -50,7 +50,7 @@ message JobInfo {
 
 message UnemployedJob {
   string name = 1 [(validate.rules).string.max_len = 20];
-  int32 grade = 2 [(validate.rules).int32.gt = 0];
+  int32 grade = 2 [(validate.rules).int32.gte = 0];
 }
 
 message UserTracker {

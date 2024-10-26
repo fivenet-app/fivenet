@@ -16,8 +16,7 @@ import (
 )
 
 const (
-	DefaultRoleJob      = "__default__"
-	DefaultRoleJobGrade = int32(1)
+	DefaultRoleJob = "__default__"
 )
 
 var (

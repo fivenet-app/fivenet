@@ -2,6 +2,7 @@ package perms
 
 import (
 	"fmt"
+	"slices"
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -13,7 +14,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.Job, userInfo.JobGrade)
 	if !ok {
 		// Fallback to default role
-		roleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		roleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 		if !ok {
 			return nil, fmt.Errorf("failed to fallback to default role")
 		}
@@ -40,7 +41,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 
 func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 	perms := map[uint64]bool{}
-	for i := len(roleIds) - 1; i >= 0; i-- {
+	for i := range slices.Backward(roleIds) {
 		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue
@@ -108,13 +109,13 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		// Fallback to default role
-		roleIds, ok = p.lookupRoleIDsForJobUpToGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		roleIds, ok = p.lookupRoleIDsForJobUpToGrade(DefaultRoleJob, p.startJobGrade)
 		if !ok {
 			return false
 		}
 	}
 
-	for i := len(roleIds) - 1; i >= 0; i-- {
+	for i := range slices.Backward(roleIds) {
 		ps, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue

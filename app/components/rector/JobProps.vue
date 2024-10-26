@@ -49,8 +49,8 @@ const schema = z.object({
             groupMapping: z
                 .object({
                     name: z.string().max(64),
-                    fromGrade: z.number(),
-                    toGrade: z.number(),
+                    fromGrade: z.number().min(0).max(99999),
+                    toGrade: z.number().min(0).max(99999),
                 })
                 .array()
                 .max(25),
@@ -788,8 +788,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             @click="
                                                 state.discordSyncSettings?.userInfoSyncSettings.groupMapping.push({
                                                     name: '',
-                                                    fromGrade: 1,
-                                                    toGrade: 1,
+                                                    fromGrade: appConfig.game.startJobGrade,
+                                                    toGrade: appConfig.game.startJobGrade,
                                                 })
                                             "
                                         />

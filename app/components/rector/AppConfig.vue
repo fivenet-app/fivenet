@@ -13,6 +13,8 @@ import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 
 const { t } = useI18n();
 
+const { game } = useAppConfig();
+
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
@@ -62,7 +64,7 @@ const schema = z.object({
     jobInfo: z.object({
         unemployedJob: z.object({
             name: z.string().min(1).max(20),
-            grade: z.coerce.number().min(1).max(99),
+            grade: z.coerce.number().min(0).max(99),
         }),
         publicJobs: z.string().array().max(99),
         hiddenJobs: z.string().array().max(99),
@@ -109,7 +111,7 @@ const state = reactive<Schema>({
         publicJobs: [],
         unemployedJob: {
             name: '',
-            grade: 1,
+            grade: game.startJobGrade,
         },
     },
     userTracker: {

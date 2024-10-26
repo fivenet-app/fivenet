@@ -262,10 +262,10 @@ func (m *CalendarJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetMinimumGrade() <= 0 {
+	if m.GetMinimumGrade() < 0 {
 		err := CalendarJobAccessValidationError{
 			field:  "MinimumGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
@@ -453,10 +453,10 @@ func (m *CalendarUserAccess) validate(all bool) error {
 
 	// no validation rules for CalendarId
 
-	if m.GetUserId() <= 0 {
+	if m.GetUserId() < 0 {
 		err := CalendarUserAccessValidationError{
 			field:  "UserId",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err

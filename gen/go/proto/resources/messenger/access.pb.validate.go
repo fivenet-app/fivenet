@@ -261,10 +261,10 @@ func (m *ThreadJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetMinimumGrade() <= 0 {
+	if m.GetMinimumGrade() < 0 {
 		err := ThreadJobAccessValidationError{
 			field:  "MinimumGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
@@ -450,10 +450,10 @@ func (m *ThreadUserAccess) validate(all bool) error {
 
 	// no validation rules for ThreadId
 
-	if m.GetUserId() <= 0 {
+	if m.GetUserId() < 0 {
 		err := ThreadUserAccessValidationError{
 			field:  "UserId",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err

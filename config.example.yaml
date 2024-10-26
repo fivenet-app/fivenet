@@ -125,3 +125,6 @@ discord:
         #color: "#9B59B6"
   commands:
     enabled: true
+game:
+  # First grade "number/id", some servers start at 0, but I have seen some start at 1
+  startJobGrade: 0

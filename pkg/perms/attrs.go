@@ -260,7 +260,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 		return nil
 	}
 
-	for i := len(roleIds) - 1; i >= 0; i-- {
+	for i := range slices.Backward(roleIds) {
 		val, ok := p.lookupRoleAttribute(roleIds[i], attrId)
 		if !ok {
 			continue
@@ -416,7 +416,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) (
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	roleId, ok := p.lookupRoleIDForJobAndGrade(job, grade)
 	if !ok {
-		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, DefaultRoleJobGrade)
+		roleId, ok = p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
 		if !ok {
 			return nil, fmt.Errorf("failed to fallback to default role")
 		}
@@ -474,7 +474,7 @@ func (p *Perms) getRoleAttributesFromCache(job string, grade int32) ([]*cacheRol
 		return as, nil
 	}
 
-	for i := len(roleIds) - 1; i >= 0; i-- {
+	for i := range slices.Backward(roleIds) {
 		attrMap, ok := p.attrsRoleMap.Load(roleIds[i])
 		if !ok {
 			continue

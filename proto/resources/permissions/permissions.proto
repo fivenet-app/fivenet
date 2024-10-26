@@ -21,7 +21,7 @@ message Role {
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 3 [(validate.rules).string.max_len = 255];
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
-  int32 grade = 5 [(validate.rules).int32.gt = 0];
+  int32 grade = 5 [(validate.rules).int32.gte = 0];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
   repeated Permission permissions = 7;
   repeated RoleAttribute attributes = 8;

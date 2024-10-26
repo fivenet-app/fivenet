@@ -17,6 +17,8 @@ const emit = defineEmits<{
 
 const { isOpen } = useModal();
 
+const { game } = useAppConfig();
+
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
@@ -63,7 +65,7 @@ async function setJobProp(values: Schema): Promise<void> {
 
         emit('update:job', {
             job: response.props?.job ?? { name: '', label: '', grades: [] },
-            grade: response.props?.jobGrade ?? { grade: 1, label: '' },
+            grade: response.props?.jobGrade ?? { grade: game.startJobGrade, label: '' },
         });
 
         notifications.add({

@@ -42,6 +42,7 @@ export type Links = {
 
 export type GameConfig = {
     unemployedJobName: string;
+    startJobGrade: number;
 };
 
 export type OpenClose = { id: number; label: string; closed?: boolean };

@@ -35,7 +35,7 @@ message QualificationJobAccess {
   uint64 qualification_id = 4 [jstype = JS_STRING];
   string job = 5 [(validate.rules).string.max_len = 20];
   optional string job_label = 6 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
+  int32 minimum_grade = 7 [(validate.rules).int32.gte = 0];
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
   AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
 }

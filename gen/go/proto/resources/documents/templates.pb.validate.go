@@ -1485,10 +1485,10 @@ func (m *TemplateJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetMinimumGrade() <= 0 {
+	if m.GetMinimumGrade() < 0 {
 		err := TemplateJobAccessValidationError{
 			field:  "MinimumGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err

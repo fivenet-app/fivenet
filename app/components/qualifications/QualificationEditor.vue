@@ -31,6 +31,8 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { game } = useAppConfig();
+
 const notifications = useNotificatorStore();
 
 const authStore = useAuthStore();
@@ -181,7 +183,7 @@ onMounted(async () => {
             type: 0,
             values: {
                 job: activeChar.value?.job,
-                minimumGrade: 1,
+                minimumGrade: game.startJobGrade,
                 accessRole: AccessLevel.EDIT,
             },
         });

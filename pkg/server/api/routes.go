@@ -16,6 +16,7 @@ import (
 type Routes struct {
 	logger *zap.Logger
 
+	cfg       *config.Config
 	clientCfg *atomic.Pointer[ClientConfig]
 }
 
@@ -32,6 +33,7 @@ type Params struct {
 func New(p Params) *Routes {
 	r := &Routes{
 		logger:    p.Logger,
+		cfg:       p.Config,
 		clientCfg: &atomic.Pointer[ClientConfig]{},
 	}
 
@@ -102,6 +104,7 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 		FeatureGates: FeatureGates{},
 		Game: Game{
 			UnemployedJobName: "unemployed",
+			StartJobGrade:     0,
 		},
 	}
 
@@ -117,6 +120,7 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 	if appCfg.JobInfo.UnemployedJob != nil {
 		clientCfg.Game.UnemployedJobName = appCfg.JobInfo.UnemployedJob.Name
 	}
+	clientCfg.Game.StartJobGrade = r.cfg.Game.StartJobGrade
 
 	return clientCfg
 }

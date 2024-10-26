@@ -211,10 +211,10 @@ func (m *JobGrade) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetGrade() <= 0 {
+	if m.GetGrade() < 0 {
 		err := JobGradeValidationError{
 			field:  "Grade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
@@ -1534,10 +1534,10 @@ func (m *GroupMapping) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetFromGrade() <= 0 {
+	if m.GetFromGrade() < 0 {
 		err := GroupMappingValidationError{
 			field:  "FromGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
@@ -1545,10 +1545,10 @@ func (m *GroupMapping) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetToGrade() <= 0 {
+	if m.GetToGrade() < 0 {
 		err := GroupMappingValidationError{
 			field:  "ToGrade",
-			reason: "value must be greater than 0",
+			reason: "value must be greater than or equal to 0",
 		}
 		if !all {
 			return err
