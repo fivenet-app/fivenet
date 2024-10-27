@@ -344,6 +344,7 @@ func (s *Server) DeleteConductEntry(ctx context.Context, req *DeleteConductEntry
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.
 		DELETE().
 		WHERE(jet.AND(
