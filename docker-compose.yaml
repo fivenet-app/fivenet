@@ -81,6 +81,7 @@ services:
     image: ghcr.io/fivenet-app/fivenet:main
     command:
       - worker
+      - --module-discord-bot=true
       - --module-audit-retention=false
       - --module-centrum-bot=false
       - --module-centrum-housekeeper=false
