@@ -107,8 +107,5 @@
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.1.8"
     },
-    "overrides": {
-        "@nuxt/icon": "1.5.6"
-    },
     "packageManager": "pnpm@9.12.2"
 }
