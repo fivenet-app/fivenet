@@ -108,8 +108,8 @@ importers:
         specifier: 3.1.5
         version: 3.1.5
       uuid:
-        specifier: 10.0.0
-        version: 10.0.0
+        specifier: 11.0.0
+        version: 11.0.0
       v-calendar:
         specifier: 3.1.2
         version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.12(typescript@5.6.3))
@@ -6131,8 +6131,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@10.0.0:
-    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+  uuid@11.0.0:
+    resolution: {integrity: sha512-iE8Fa5fgBY4rN5GvNUJ8TSwO1QG7TzdPfhrJczf6XJ6mZUxh/GX433N70fCiJL9h8EKP5ayEIo0Q6EBQGWHFqA==}
     hasBin: true
 
   uuid@9.0.1:
@@ -13210,7 +13210,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@10.0.0: {}
+  uuid@11.0.0: {}
 
   uuid@9.0.1: {}
 
