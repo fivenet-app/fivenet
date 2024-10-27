@@ -317,8 +317,9 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		// Allow only one private calendar per user (job field will be null for private calendars)
 		if req.Calendar.Job == nil {
 			calendar, err := s.getCalendar(ctx, userInfo, jet.AND(
-				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)).
-					AND(tCalendar.Job.IS_NULL()),
+				tCalendar.DeletedAt.IS_NULL(),
+				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tCalendar.Job.IS_NULL(),
 			))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
