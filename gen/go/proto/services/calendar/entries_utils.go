@@ -1,12 +1,11 @@
 package calendar
 
 import (
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo, rsvpResponse calendar.RsvpResponses) jet.SelectStatement {
+func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,

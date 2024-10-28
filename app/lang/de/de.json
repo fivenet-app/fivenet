@@ -484,7 +484,8 @@
         "field": "Field | Fields",
         "expiration": "Ablauf",
         "own": "Eigene",
-        "per_day": "Pro Tag"
+        "per_day": "Pro Tag",
+        "view": "Ansicht"
     },
     "components": {
         "partials": {

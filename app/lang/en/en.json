@@ -484,7 +484,8 @@
         "field": "Field | Fields",
         "expiration": "Expiration",
         "own": "Eigene",
-        "per_day": "Per Day"
+        "per_day": "Per Day",
+        "view": "View"
     },
     "components": {
         "partials": {

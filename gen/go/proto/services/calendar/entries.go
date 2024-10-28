@@ -85,7 +85,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
 	}
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo, rsvpResponse)
+	stmt := s.listCalendarEntriesQuery(condition, userInfo)
 
 	if req.After != nil {
 		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
@@ -139,7 +139,7 @@ func (s *Server) GetUpcomingEntries(ctx context.Context, req *GetUpcomingEntries
 		),
 	)
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.RsvpResponses_RSVP_RESPONSES_NO)
+	stmt := s.listCalendarEntriesQuery(condition, userInfo)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

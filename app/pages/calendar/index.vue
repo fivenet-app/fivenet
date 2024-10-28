@@ -23,7 +23,7 @@ definePageMeta({
     requiresAuth: true,
 });
 
-const { d } = useI18n();
+const { t, d } = useI18n();
 
 const { can } = useAuth();
 
@@ -31,7 +31,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-const { activeCalendarIds, currentDate, weeklyView, calendars, entries } = storeToRefs(calendarStore);
+const { activeCalendarIds, currentDate, view, calendars, entries } = storeToRefs(calendarStore);
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
 
@@ -263,6 +263,12 @@ watchDebounced(
     },
 );
 
+const viewOptions = [
+    { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', value: 'week' },
+    { label: t('common.time_ago.month'), icon: 'i-mdi-view-headline', value: 'month' },
+    { label: t('common.summary'), icon: 'i-mdi-view-agenda-outline', value: 'summary' },
+];
+
 const isOpen = ref(false);
 </script>
 
@@ -377,9 +383,10 @@ const isOpen = ref(false);
 
             <div v-else class="relative flex flex-1 overflow-x-auto">
                 <MonthCalendarClient
+                    v-if="view !== 'summary'"
                     ref="calRef"
-                    class="hidden md:flex md:flex-1"
-                    :view="weeklyView ? 'weekly' : 'monthly'"
+                    class="flex flex-1"
+                    :view="view === 'week' ? 'weekly' : 'monthly'"
                     :attributes="transformedCalendarEntries"
                     @selected="
                         slideover.open(EntryViewSlideover, {
@@ -392,7 +399,7 @@ const isOpen = ref(false);
                     "
                 />
 
-                <UContainer class="flex flex-1 flex-col py-2 md:hidden">
+                <UContainer v-else class="flex flex-1 flex-col py-2">
                     <DataErrorBlock v-if="error" :title="$t('common.not_found', [$t('common.entry', 2)])" :retry="refresh" />
 
                     <template v-else>
@@ -494,9 +501,29 @@ const isOpen = ref(false);
             </div>
 
             <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
-                <div class="hidden items-center gap-2 md:inline-flex">
-                    <UToggle v-model="weeklyView" />
-                    <span class="text-sm">{{ $t('common.weekly_view') }}</span>
+                <div class="items-center gap-2">
+                    <UFormGroup
+                        :label="$t('common.view')"
+                        :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
+                        class="flex flex-row items-center gap-2"
+                    >
+                        <ClientOnly>
+                            <USelectMenu v-model="view" :options="viewOptions" value-attribute="value" class="min-w-44">
+                                <template #label>
+                                    <UIcon
+                                        :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
+                                        class="size-5"
+                                    />
+                                    {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
+                                </template>
+
+                                <template #option="{ option }">
+                                    <UIcon :name="option.icon" class="size-5" />
+                                    <span class="truncate">{{ option.label }}</span>
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
                 </div>
 
                 <UButton
@@ -588,11 +615,6 @@ const isOpen = ref(false);
                 <div class="flex-1" />
 
                 <UDivider class="sticky bottom-0" />
-
-                <div class="inline-flex items-center gap-2">
-                    <UToggle v-model="weeklyView" />
-                    <span class="text-sm">{{ $t('common.weekly_view') }}</span>
-                </div>
 
                 <UButton
                     icon="i-mdi-refresh"

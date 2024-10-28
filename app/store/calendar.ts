@@ -32,7 +32,7 @@ const logger = useLogger('📅 Calendar');
 
 export interface CalendarState {
     activeCalendarIds: string[];
-    weeklyView: boolean;
+    view: 'month' | 'week' | 'summary';
     currentDate: {
         year: number;
         month: number;
@@ -46,7 +46,7 @@ export const useCalendarStore = defineStore('calendar', {
     state: () =>
         ({
             activeCalendarIds: [],
-            weeklyView: false,
+            view: 'month',
             currentDate: {
                 year: new Date().getFullYear(),
                 month: new Date().getMonth() + 1,
@@ -56,7 +56,7 @@ export const useCalendarStore = defineStore('calendar', {
             eventReminders: new Map<string, number>(),
         }) as CalendarState,
     persist: {
-        pick: ['activeCalendarIds', 'weeklyView'],
+        pick: ['activeCalendarIds', 'view'],
     },
     actions: {
         async checkAppointments(): Promise<void> {
