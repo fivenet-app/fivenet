@@ -84,6 +84,7 @@ type WorkerCmd struct {
 	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
+	ModuleJobsTimeclock      bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -100,6 +101,9 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	}
 	if c.ModuleUserTracker {
 		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
+	}
+	if c.ModuleJobsTimeclock {
+		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
 	}
 
 	// Only run cron agent in worker
@@ -184,6 +188,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			tracker.New,
 			tracker.NewManager,
 			userinfo.NewUIRetriever,
+			pbjobs.NewHousekeeper,
 
 			// HTTP Services
 			server.AsService(api.New),

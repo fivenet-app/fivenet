@@ -20,8 +20,6 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	tracesdk "go.opentelemetry.io/otel/sdk/trace"
-	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -41,7 +39,6 @@ type Server struct {
 	logger *zap.Logger
 	wg     sync.WaitGroup
 
-	tracer   trace.Tracer
 	db       *sql.DB
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
@@ -56,23 +53,19 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger            *zap.Logger
-	TP                *tracesdk.TracerProvider
 	DB                *sql.DB
 	Perms             perms.Permissions
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
 	Config            *config.Config
 
-	Cron         croner.ICron
-	CronHandlers *croner.Handlers
+	Cron croner.ICron
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
 		logger: p.Logger.Named("jobs"),
 		wg:     sync.WaitGroup{},
-
-		tracer: p.TP.Tracer("jobs"),
 
 		db:       p.DB,
 		ps:       p.Perms,
@@ -83,36 +76,12 @@ func NewServer(p Params) *Server {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		p.CronHandlers.Add("jobs.timeclock_cleanup", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := s.tracer.Start(ctx, "jobs.timeclock_cleanup")
-			defer span.End()
-
-			if err := s.timeclockCleanup(ctx); err != nil {
-				s.logger.Error("error during timeclock cleanup", zap.Error(err))
-				return err
-			}
-
-			return nil
-		})
-
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "jobs.timeclock_cleanup",
 			Schedule: "@daily", // Daily
 		}); err != nil {
 			return err
 		}
-
-		p.CronHandlers.Add("jobs.timeclock_handling", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := s.tracer.Start(ctx, "jobs-timeclock-handling")
-			defer span.End()
-
-			if err := s.timeclockHandler(ctx); err != nil {
-				s.logger.Error("error during timeclock handling", zap.Error(err))
-				return err
-			}
-
-			return nil
-		})
 
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "jobs.timeclock_handling",
