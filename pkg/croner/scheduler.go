@@ -74,13 +74,20 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 					return cj, nil
 				}
 
-				ctx, cancel := context.WithCancel(ctxCancel)
-				s.jobs.Store(cj.Name, &jobWrapper{
-					ctx:    ctx,
-					cancel: cancel,
+				jw, ok := s.jobs.Load(cj.Name)
+				if !ok {
+					ctx, cancel := context.WithCancel(ctxCancel)
+					s.jobs.Store(cj.Name, &jobWrapper{
+						ctx:    ctx,
+						cancel: cancel,
 
-					schedule: cj.Schedule,
-				})
+						schedule: cj.Schedule,
+					})
+				} else {
+					if cj.Schedule != jw.schedule {
+						jw.schedule = cj.Schedule
+					}
+				}
 
 				return cj, nil
 			}),
