@@ -83,8 +83,8 @@ func NewServer(p Params) *Server {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		p.CronHandlers.Add("jobs-timeclock-cleanup", func(ctx context.Context, data *cron.CronjobData) error {
-			ctx, span := s.tracer.Start(ctx, "jobs-timeclock-cleanup")
+		p.CronHandlers.Add("jobs.timeclock_cleanup", func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "jobs.timeclock_cleanup")
 			defer span.End()
 
 			if err := s.timeclockCleanup(ctx); err != nil {
@@ -96,13 +96,13 @@ func NewServer(p Params) *Server {
 		})
 
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "jobs-timeclock-cleanup",
-			Schedule: "@daily",
+			Name:     "jobs.timeclock_cleanup",
+			Schedule: "@daily", // Daily
 		}); err != nil {
 			return err
 		}
 
-		p.CronHandlers.Add("jobs-timeclock-handling", func(ctx context.Context, data *cron.CronjobData) error {
+		p.CronHandlers.Add("jobs.timeclock_handling", func(ctx context.Context, data *cron.CronjobData) error {
 			ctx, span := s.tracer.Start(ctx, "jobs-timeclock-handling")
 			defer span.End()
 
@@ -115,11 +115,13 @@ func NewServer(p Params) *Server {
 		})
 
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "jobs-timeclock-handling",
-			Schedule: "@everysecond",
+			Name:     "jobs.timeclock_handling",
+			Schedule: "@everysecond", // Every second
 		}); err != nil {
 			return err
 		}
+
+		p.Cron.UnregisterCronjob(ctx, "jobs-timeclock-handling")
 
 		return nil
 	}))
