@@ -24,6 +24,8 @@ defineProps<{
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const slideover = useSlideover();
 
 const settingsStore = useSettingsStore();

@@ -5,7 +5,6 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -24,6 +23,8 @@ const schema = z.object({
 });
 
 type Schema = z.output<typeof schema>;
+
+const { attr, can } = useAuth();
 
 const query = ref<Schema>({});
 
@@ -321,25 +322,32 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #jobLabel-data="{ row: citizen }">
             {{ citizen.jobLabel.value }}
             {{ citizen.props?.jobName || citizen.props?.jobGradeNumber ? '*' : '' }}
         </template>
+
         <template #sex-data="{ row: citizen }">
             {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}
         </template>
+
         <template #phoneNumber-data="{ row: citizen }">
             <PhoneNumberBlock :number="citizen.phoneNumber" />
         </template>
+
         <template #openFines-data="{ row: citizen }">
             <template v-if="(citizen.props?.openFines ?? 0) > 0">
                 {{ $n(parseInt((citizen.props?.openFines ?? 0).toString()), 'currency') }}
             </template>
         </template>
+
         <template #dateofbirth-data="{ row: citizen }">
             {{ citizen.dateofbirth.value }}
         </template>
+
         <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
+
         <template v-if="can('CitizenStoreService.GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
                 <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />

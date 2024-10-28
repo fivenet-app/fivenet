@@ -4,7 +4,6 @@ import { z } from 'zod';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
@@ -20,8 +19,7 @@ const props = defineProps<{
 
 const { isOpen } = useModal();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { attr, can, activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
 

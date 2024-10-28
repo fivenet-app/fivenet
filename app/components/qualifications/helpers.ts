@@ -1,5 +1,4 @@
 import type { BadgeColor } from '#ui/types';
-import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import type { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
 import type { QualificationRequirement } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -12,22 +11,21 @@ export function checkQualificationAccess(
     level: AccessLevel,
     perm?: Perms,
 ): boolean {
-    const authStore = useAuthStore();
-    if (authStore.isSuperuser) {
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
         return true;
     }
 
-    const activeChar = authStore.activeChar;
-    if (activeChar === null) {
+    if (activeChar.value === null) {
         return false;
     }
 
-    if (!checkBaseQualificationAccess(activeChar, qualiAccess, creator, level)) {
+    if (!checkBaseQualificationAccess(activeChar.value, qualiAccess, creator, level)) {
         return false;
     }
 
-    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.job) {
-        return checkIfCanAccessOwnJobQualification(activeChar, creator, perm);
+    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.value.job) {
+        return checkIfCanAccessOwnJobQualification(activeChar.value, creator, perm);
     }
 
     return true;
@@ -43,10 +41,7 @@ function checkBaseQualificationAccess(
 }
 
 function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShort, perm: Perms): boolean {
-    const authStore = useAuthStore();
-    if (authStore.isSuperuser) {
-        return true;
-    }
+    const { attrList } = useAuth();
 
     const fields = attrList(perm, 'Access').value;
     if (fields.length === 0) {

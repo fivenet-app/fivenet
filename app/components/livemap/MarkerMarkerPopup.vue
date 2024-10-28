@@ -11,6 +11,8 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
+const { can } = useAuth();
+
 const modal = useModal();
 const slideover = useSlideover();
 

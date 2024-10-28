@@ -6,7 +6,6 @@ import DocumentReferenceManager from '~/components/documents/DocumentReferenceMa
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
 import DocEditor from '~/components/partials/DocEditor.vue';
-import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -27,10 +26,9 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { game } = useAppConfig();
+const { can, activeChar } = useAuth();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { game } = useAppConfig();
 
 const clipboardStore = useClipboardStore();
 
@@ -124,8 +122,8 @@ onMounted(async () => {
             state.category = template.category;
 
             if (template?.contentAccess) {
-                if (authStore.activeChar !== null) {
-                    docCreator.value = authStore.activeChar;
+                if (activeChar.value !== null) {
+                    docCreator.value = activeChar.value;
                 }
                 const docAccess = template.contentAccess!;
                 let accessId = 0;

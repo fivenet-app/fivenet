@@ -16,7 +16,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
@@ -32,12 +31,11 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { can, activeChar, isSuperuser } = useAuth();
+
 const clipboardStore = useClipboardStore();
 
 const notifications = useNotificatorStore();
-
-const authStore = useAuthStore();
-const { activeChar, isSuperuser } = storeToRefs(authStore);
 
 const modal = useModal();
 

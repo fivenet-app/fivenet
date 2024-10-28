@@ -29,6 +29,8 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const notifications = useNotificatorStore();

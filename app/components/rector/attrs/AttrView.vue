@@ -21,6 +21,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const { isSuperuser } = useAuth();
+
 const modal = useModal();
 
 const notifications = useNotificatorStore();
@@ -309,9 +311,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </h2>
 
                     <UButton
-                        v-if="can('SuperUser').value"
+                        v-if="isSuperuser"
                         variant="link"
                         icon="i-mdi-trash-can"
+                        color="red"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteFaction(role!.id),

@@ -11,6 +11,8 @@ definePageMeta({
     permission: 'CitizenStoreService.ListCitizens',
 });
 
+const { can } = useAuth();
+
 const modal = useModal();
 </script>
 

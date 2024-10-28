@@ -3,6 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
+const { can } = useAuth();
+
 const { data, pending: loading, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
@@ -49,7 +51,7 @@ async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     }
 }
 
-const canEdit = can('JobsService.SetMOTD').value;
+const canDo = can('JobsService.SetMOTD');
 
 const editing = ref(false);
 
@@ -70,11 +72,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UForm :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
         <div class="flex items-center">
-            <h4 v-if="data && (data.motd.length > 0 || canEdit)" class="flex-1 text-base font-semibold leading-6">
+            <h4 v-if="data && (data.motd.length > 0 || canDo)" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
             </h4>
 
-            <template v-if="canEdit">
+            <template v-if="canDo">
                 <UButton v-if="!editing" variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
                 <div v-else class="flex flex-row gap-1">
                     <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />

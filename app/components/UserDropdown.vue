@@ -6,10 +6,11 @@ import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 const { isDashboardSearchModalOpen } = useUIState();
 const { metaSymbol } = useShortcuts();
 
+const { can, activeChar, username, isSuperuser } = useAuth();
+
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { activeChar, username, isSuperuser } = storeToRefs(authStore);
 
 const modal = useModal();
 
@@ -45,7 +46,7 @@ const items = computed(() => [
                   click: () => authStore.setSuperUserMode(!isSuperuser.value),
               }
             : undefined,
-        can('SuperUser').value
+        isSuperuser.value
             ? {
                   slot: 'job',
                   label: 'Select Job',
@@ -120,7 +121,7 @@ const open = ref(false);
             </div>
         </template>
 
-        <template v-if="can('SuperUser').value" #job>
+        <template v-if="isSuperuser" #job>
             <SuperUserJobSelection />
         </template>
     </UDropdown>

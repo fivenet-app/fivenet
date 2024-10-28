@@ -33,6 +33,8 @@ const props = withDefaults(
 
 const { t } = useI18n();
 
+const { attr, can } = useAuth();
+
 const completorStore = useCompletorStore();
 
 const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');

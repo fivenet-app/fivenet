@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { format } from 'date-fns';
+import type { DatePicker as VCalendarDatePicker } from 'v-calendar';
 import DatePickerClient from './DatePicker.client.vue';
 
 defineOptions({
@@ -12,7 +13,7 @@ const props = withDefaults(
         modelValue?: Date | undefined;
         popover?: object;
         button?: object;
-        datePicker?: unknown;
+        datePicker?: (typeof VCalendarDatePicker)['$props'];
         dateFormat?: string;
     }>(),
     {

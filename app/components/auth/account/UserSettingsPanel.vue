@@ -1,14 +1,12 @@
 <script lang="ts" setup>
 import type { RoutePathSchema } from '@typed-router';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
-import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { can, activeChar } = useAuth();
 
 const settings = useSettingsStore();
 const { startpage, design, streamerMode, audio, calendar } = storeToRefs(settings);

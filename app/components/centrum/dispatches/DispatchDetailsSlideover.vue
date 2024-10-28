@@ -22,6 +22,8 @@ const props = defineProps<{
     dispatch?: Dispatch;
 }>();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const { isOpen } = useSlideover();

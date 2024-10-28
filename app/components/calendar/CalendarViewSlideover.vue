@@ -14,6 +14,8 @@ const props = defineProps<{
     calendarId: string;
 }>();
 
+const { can } = useAuth();
+
 const modal = useModal();
 const { isOpen } = useSlideover();
 
@@ -73,6 +75,7 @@ const calendar = computed(() => data.value?.calendar);
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"
+                                color="red"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => calendarStore.deleteCalendar(calendar?.id!),

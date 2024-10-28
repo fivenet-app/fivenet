@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { attr } from '~/composables/can';
 import type { User } from '~~/gen/ts/resources/users/users';
 
 defineProps<{
     user: User;
 }>();
+
+const { attr } = useAuth();
 </script>
 
 <template>

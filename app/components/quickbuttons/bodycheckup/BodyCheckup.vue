@@ -187,12 +187,12 @@ function reset(): void {
                     class="mt-2"
                 />
                 <ol v-else>
-                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center gap-1">
+                    <li v-for="(pin, idx) in pins" :key="idx" class="my-1 inline-flex w-full items-center gap-1">
                         <span class="w-4 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
 
                         <UInput v-model="pin.description" type="text" block class="flex-1" @focusin="selectPin(pin)" />
 
-                        <UButton variant="link" icon="i-mdi-trash-can" class="ml-1" @click="removePin(idx)" />
+                        <UButton variant="link" icon="i-mdi-trash-can" color="red" @click="removePin(idx)" />
                     </li>
                 </ol>
             </div>

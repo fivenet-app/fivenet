@@ -4,7 +4,6 @@ import { z } from 'zod';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import QualificationAccessEntry from '~/components/qualifications/QualificationAccessEntry.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
-import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -33,10 +32,9 @@ const { t } = useI18n();
 
 const { game } = useAppConfig();
 
-const notifications = useNotificatorStore();
+const { can, activeChar } = useAuth();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 

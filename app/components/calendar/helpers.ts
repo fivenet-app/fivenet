@@ -1,4 +1,3 @@
-import { useAuthStore } from '~/store/auth';
 import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -7,15 +6,14 @@ export function checkCalendarAccess(
     creator: UserShort | undefined,
     level: AccessLevel,
 ): boolean {
-    const authStore = useAuthStore();
-    if (authStore.isSuperuser) {
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
         return true;
     }
 
-    const activeChar = authStore.activeChar;
-    if (activeChar === null) {
+    if (activeChar.value === null) {
         return false;
     }
 
-    return checkAccess(activeChar, access, creator, level);
+    return checkAccess(activeChar.value, access, creator, level);
 }

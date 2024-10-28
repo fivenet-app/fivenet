@@ -4,7 +4,6 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useAuthStore } from '~/store/auth';
 import type { ClassProp } from '~/typings';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
@@ -27,8 +26,7 @@ const props = withDefaults(
     },
 );
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
 
@@ -153,7 +151,7 @@ watchOnce(opened, async () => {
                     </div>
                     <div>
                         <UButton
-                            v-if="can('JobsService.GetColleague').value && activeChar?.job === user.job"
+                            v-if="activeChar?.job === user.job && can('JobsService.GetColleague').value"
                             variant="link"
                             :padded="false"
                             :to="{

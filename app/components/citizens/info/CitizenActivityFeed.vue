@@ -5,15 +5,13 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import { useAuthStore } from '~/store/auth';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const props = defineProps<{
     userId: number;
 }>();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { attr, activeChar } = useAuth();
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));

@@ -5,6 +5,8 @@ defineProps<{
     documentId: string;
 }>();
 
+const { attr, can } = useAuth();
+
 const modal = useModal();
 </script>
 

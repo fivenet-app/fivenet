@@ -20,6 +20,8 @@ const props = withDefaults(
     },
 );
 
+const { attrList } = useAuth();
+
 const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);

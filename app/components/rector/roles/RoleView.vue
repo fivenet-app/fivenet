@@ -19,6 +19,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const notifications = useNotificatorStore();
@@ -268,6 +270,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         v-if="can('RectorService.DeleteRole').value"
                         variant="link"
                         icon="i-mdi-trash-can"
+                        color="red"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteRole(role!.id),

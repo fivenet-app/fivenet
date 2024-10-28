@@ -4,7 +4,6 @@ import type { TypedRouteFromName } from '@typed-router';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -33,8 +32,7 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { attr, can } = useAuth();
 
 const schema = z.object({
     note: z.string().min(0).max(512),
@@ -90,7 +88,7 @@ const canDo = computed(() => ({
     edit:
         can('JobsService.SetJobsUserProps').value &&
         attr('JobsService.SetJobsUserProps', 'Types', 'Note').value &&
-        checkIfCanAccessColleague(activeChar.value!, props.colleague, 'JobsService.SetJobsUserProps'),
+        checkIfCanAccessColleague(props.colleague, 'JobsService.SetJobsUserProps'),
 }));
 
 const editing = ref(false);

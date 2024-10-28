@@ -25,6 +25,8 @@ const props = withDefaults(
     },
 );
 
+const { can } = useAuth();
+
 const { popover } = useAppConfig();
 
 const documentId = computed(() => props.documentId ?? props.document?.id ?? '0');

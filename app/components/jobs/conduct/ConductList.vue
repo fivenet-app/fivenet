@@ -21,11 +21,13 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const completorStore = useCompletorStore();
+const { can } = useAuth();
 
 const modal = useModal();
 
 const slideover = useSlideover();
+
+const completorStore = useCompletorStore();
 
 const schema = z.object({
     id: z.string().max(16).optional(),
@@ -384,6 +386,7 @@ defineShortcuts({
                         v-if="can('JobsConductService.DeleteConductEntry').value"
                         variant="link"
                         icon="i-mdi-trash-can"
+                        color="red"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteConductEntry(conduct.id),

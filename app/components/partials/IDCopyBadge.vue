@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ButtonSize, ButtonVariant } from '#ui/types';
-import type { TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

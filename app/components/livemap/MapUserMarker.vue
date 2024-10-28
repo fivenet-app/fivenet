@@ -5,7 +5,6 @@ import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { useAuthStore } from '~/store/auth';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -28,12 +27,11 @@ defineEmits<{
     (e: 'selected'): void;
 }>();
 
+const { can, activeChar } = useAuth();
+
 const { livemap } = useAppConfig();
 
 const slideover = useSlideover();
-
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
 
 const { goto } = useLivemapStore();
 

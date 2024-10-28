@@ -19,6 +19,8 @@ definePageMeta({
 
 const modal = useModal();
 
+const { can } = useAuth();
+
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 

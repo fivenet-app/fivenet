@@ -12,6 +12,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import DisponentsInfo from './disponents/DisponentsInfo.vue';
 
+const { can } = useAuth();
+
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
 const { startStream } = centrumStore;

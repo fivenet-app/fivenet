@@ -5,8 +5,8 @@ import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+    const { can, activeChar, username } = useAuth();
     const authStore = useAuthStore();
-    const { activeChar, username, lastCharID } = storeToRefs(authStore);
 
     // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.requiresAuth === false) {
@@ -40,7 +40,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
         if (activeChar.value === null) {
             // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-            if (lastCharID.value !== undefined && lastCharID.value > 0) {
+            if (authStore.lastCharID !== undefined && authStore.lastCharID > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {
                     await authStore.chooseCharacter(authStore.lastCharID);

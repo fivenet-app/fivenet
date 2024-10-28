@@ -14,6 +14,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const items: { key: string; slot: string; label: string; icon: string }[] = [
     {
         key: 'yours',

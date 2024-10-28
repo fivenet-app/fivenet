@@ -4,7 +4,6 @@ import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -22,8 +21,7 @@ const comment = useVModel(props, 'modelValue', emits);
 
 const modal = useModal();
 
-const authStore = useAuthStore();
-const { activeChar, permissions } = storeToRefs(authStore);
+const { can, activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificatorStore();
 
@@ -125,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <span>{{ $t('common.deleted') }}</span>
                     </div>
 
-                    <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
+                    <div v-if="comment.creatorId === activeChar?.userId || isSuperuser">
                         <UButton
                             v-if="can('DocStoreService.PostComment').value"
                             variant="link"
@@ -137,6 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-if="can('DocStoreService.DeleteComment').value"
                             variant="link"
                             icon="i-mdi-trash-can"
+                            color="red"
                             @click="
                                 modal.open(ConfirmModal, {
                                     confirm: async () => deleteComment(comment!.id),

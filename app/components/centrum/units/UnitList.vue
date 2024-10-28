@@ -4,6 +4,8 @@ import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
+const { can } = useAuth();
+
 const centrumStore = useCentrumStore();
 const { getSortedUnits, abort, reconnecting } = storeToRefs(centrumStore);
 

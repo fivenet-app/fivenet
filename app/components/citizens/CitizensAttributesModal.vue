@@ -5,6 +5,8 @@ import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
+const { can } = useAuth();
+
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();

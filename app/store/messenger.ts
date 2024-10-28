@@ -11,7 +11,6 @@ import type {
     PostMessageRequest,
     PostMessageResponse,
 } from '~~/gen/ts/services/messenger/messenger';
-import { useAuthStore } from './auth';
 
 const logger = useLogger('💬 Messenger');
 
@@ -37,9 +36,8 @@ export const useMessengerStore = defineStore('messenger', {
 
                 if (!msg) {
                     // Only set unread state when message isn't from user himself
-                    const authStore = useAuthStore();
-                    const { activeChar } = authStore;
-                    if (event.data.messageUpdate.creatorId !== activeChar?.userId) {
+                    const { activeChar } = useAuth();
+                    if (event.data.messageUpdate.creatorId !== activeChar.value?.userId) {
                         useSound().play({ name: 'notification' });
                     }
 
@@ -69,6 +67,8 @@ export const useMessengerStore = defineStore('messenger', {
                 }
             }
 
+            const { activeChar } = useAuth();
+
             try {
                 const call = getGRPCMessengerClient().getThread({
                     threadId: threadId,
@@ -78,7 +78,7 @@ export const useMessengerStore = defineStore('messenger', {
                 if (response.thread) {
                     if (!response.thread.userState) {
                         response.thread.userState = {
-                            userId: useAuthStore().activeChar?.userId ?? 0,
+                            userId: activeChar.value?.userId ?? 0,
                             threadId: response.thread.id,
                             unread: false,
                             favorite: false,

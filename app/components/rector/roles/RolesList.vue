@@ -3,7 +3,6 @@ import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import RoleView from '~/components/rector/roles/RoleView.vue';
-import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -14,8 +13,7 @@ const { t } = useI18n();
 
 const notifications = useNotificatorStore();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { can, activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
 const { getJobByName } = completorStore;

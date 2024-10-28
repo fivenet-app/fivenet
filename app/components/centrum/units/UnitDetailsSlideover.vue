@@ -15,6 +15,8 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
+const { can } = useAuth();
+
 const { isOpen } = useSlideover();
 
 const { goto } = useLivemapStore();

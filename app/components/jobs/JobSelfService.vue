@@ -3,7 +3,6 @@ import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
-import { useAuthStore } from '~/store/auth';
 
 defineProps<{
     userId: number;
@@ -11,8 +10,7 @@ defineProps<{
 
 const modal = useModal();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { can, activeChar } = useAuth();
 
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {

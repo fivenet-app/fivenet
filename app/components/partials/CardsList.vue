@@ -15,6 +15,8 @@ withDefaults(
 defineEmits<{
     (e: 'selected', idx: number): void;
 }>();
+
+const { can } = useAuth();
 </script>
 
 <template>

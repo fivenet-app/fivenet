@@ -8,6 +8,8 @@ import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const { data: units, pending: loading, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
@@ -139,6 +141,7 @@ const columns = [
                     v-if="can('CentrumService.DeleteUnit').value"
                     variant="link"
                     icon="i-mdi-trash-can"
+                    color="red"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => deleteUnit(unit.id),

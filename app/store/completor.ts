@@ -47,6 +47,7 @@ export const useCompletorStore = defineStore('completor', {
             );
         },
         async completeCitizens(req: CompleteCitizensRequest): Promise<UserShort[]> {
+            const { can } = useAuth();
             if (!can('CompletorService.CompleteCitizens').value) {
                 return [];
             }
@@ -87,6 +88,7 @@ export const useCompletorStore = defineStore('completor', {
 
         // Document Categories
         async completeDocumentCategories(search: string): Promise<Category[]> {
+            const { can } = useAuth();
             if (!can('CompletorService.CompleteDocumentCategories').value) {
                 return [];
             }

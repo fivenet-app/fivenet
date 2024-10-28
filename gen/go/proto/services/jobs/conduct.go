@@ -283,9 +283,6 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 	if req.Entry.Type == 0 {
 		req.Entry.Type = entry.Type
 	}
-	if req.Entry.ExpiresAt == nil {
-		req.Entry.ExpiresAt = entry.ExpiresAt
-	}
 	if req.Entry.TargetUser == nil {
 		req.Entry.TargetUser = entry.TargetUser
 	}

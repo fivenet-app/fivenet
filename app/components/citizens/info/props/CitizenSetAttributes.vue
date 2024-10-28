@@ -15,6 +15,8 @@ const emits = defineEmits<{
     (e: 'update:modelValue', attributes: CitizenAttributes | undefined): void;
 }>();
 
+const { attr, can } = useAuth();
+
 const attributes = useVModel(props, 'modelValue', emits);
 
 const notifications = useNotificatorStore();

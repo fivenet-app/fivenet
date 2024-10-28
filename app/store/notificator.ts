@@ -62,6 +62,7 @@ export const useNotificatorStore = defineStore('notifications', {
             this.abort = new AbortController();
             this.reconnecting = false;
             const authStore = useAuthStore();
+            const { can } = useAuth();
 
             try {
                 this.abort = new AbortController();

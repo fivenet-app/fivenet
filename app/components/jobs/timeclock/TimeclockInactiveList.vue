@@ -6,14 +6,12 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 
 const { t } = useI18n();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { can } = useAuth();
 
 const form = ref<null | Form<Schema>>();
 
@@ -174,7 +172,7 @@ const columns = [
         <template #actions-data="{ row: colleague }">
             <div :key="colleague.id">
                 <ULink
-                    v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
+                    v-if="checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')"
                     icon="i-mdi-eye"
                     :to="{
                         name: 'jobs-colleagues-id-info',

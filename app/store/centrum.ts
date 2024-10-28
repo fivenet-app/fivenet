@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';
-import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -358,7 +357,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             logger.debug('Starting Data Stream');
 
-            const authStore = useAuthStore();
+            const { activeChar } = useAuth();
             const notifications = useNotificatorStore();
 
             this.abort = new AbortController();
@@ -399,7 +398,7 @@ export const useCentrumStore = defineStore('centrum', {
                         }
                         this.disponents.length = 0;
                         this.disponents.push(...resp.change.latestState.disponents);
-                        this.isDisponent = this.checkIfDisponent(authStore.activeChar?.userId);
+                        this.isDisponent = this.checkIfDisponent(activeChar.value?.userId);
 
                         const foundUnits: string[] = [];
                         resp.change.latestState.units.forEach((u) => {
@@ -438,8 +437,8 @@ export const useCentrumStore = defineStore('centrum', {
                         this.disponents.push(...resp.change.disponents.disponents);
 
                         // If user is not part of disponents list anymore
-                        this.isDisponent = this.checkIfDisponent(authStore.activeChar?.userId);
-                        const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
+                        this.isDisponent = this.checkIfDisponent(activeChar.value?.userId);
+                        const idx = this.disponents.findIndex((d) => d.userId === activeChar.value?.userId);
                         if (idx > -1) {
                             this.isDisponent = true;
                         } else {
@@ -453,7 +452,7 @@ export const useCentrumStore = defineStore('centrum', {
                         this.addOrUpdateUnit(resp.change.unitUpdated);
 
                         // User added/in this unit
-                        const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
+                        const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === activeChar.value?.userId);
                         if (idx > -1) {
                             // User already in that unit
                             if (this.ownUnitId === resp.change.unitUpdated.id) {
@@ -501,7 +500,7 @@ export const useCentrumStore = defineStore('centrum', {
                         }
 
                         // Check if the unit status is about us
-                        if (resp.change.unitStatus.userId !== authStore.activeChar?.userId) {
+                        if (resp.change.unitStatus.userId !== activeChar.value?.userId) {
                             continue;
                         }
 
@@ -674,6 +673,8 @@ export const useCentrumStore = defineStore('centrum', {
 
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
+            const { can } = useAuth();
+
             switch (action) {
                 case 'TakeControl':
                     return can('CentrumService.TakeControl').value;

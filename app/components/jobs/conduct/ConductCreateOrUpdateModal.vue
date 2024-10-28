@@ -96,16 +96,16 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
     }
 }
 
-async function setFormFromProps(): Promise<void> {
+async function setFromProps(): Promise<void> {
     state.targetUser = props.entry?.targetUser;
     state.type = props.entry?.type ?? ConductType.NOTE;
     state.message = props.entry?.message ?? '';
     state.expiresAt = props.entry?.expiresAt ? toDate(props.entry?.expiresAt) : undefined;
 }
 
-watch(props, () => setFormFromProps());
+watch(props, () => setFromProps());
 
-onMounted(() => setFormFromProps());
+onMounted(() => setFromProps());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

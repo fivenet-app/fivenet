@@ -5,7 +5,6 @@ import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/Citiz
 import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File } from '~~/gen/ts/resources/filestore/file';
@@ -30,8 +29,7 @@ const emits = defineEmits<{
     (e: 'update:mugShot', value?: File): void;
 }>();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { attr, can, activeChar } = useAuth();
 
 const clipboardStore = useClipboardStore();
 
@@ -217,7 +215,7 @@ if (props.registerShortcuts) {
             v-if="
                 activeChar?.job === user.job &&
                 can('JobsService.GetColleague').value &&
-                checkIfCanAccessColleague(activeChar!, user, 'JobsService.GetColleague')
+                checkIfCanAccessColleague(user, 'JobsService.GetColleague')
             "
             block
             icon="i-mdi-account-circle"

@@ -25,6 +25,8 @@ definePageMeta({
 
 const { d } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 const slideover = useSlideover();
 

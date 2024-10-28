@@ -7,17 +7,15 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useAuthStore } from '~/store/auth';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
 const { t } = useI18n();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
-
 const modal = useModal();
+
+const { attr, can, activeChar } = useAuth();
 
 const schema = z.object({
     name: z.string().max(50),
@@ -239,7 +237,7 @@ defineShortcuts({
                         can('JobsService.SetJobsUserProps').value &&
                         (colleague.userId === activeChar!.userId ||
                             attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
-                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
+                        checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                     "
                     variant="link"
                     icon="i-mdi-island"
@@ -254,7 +252,7 @@ defineShortcuts({
                 <UButton
                     v-if="
                         can('JobsService.GetColleague').value &&
-                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
+                        checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
                     "
                     variant="link"
                     icon="i-mdi-eye"

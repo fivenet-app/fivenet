@@ -1,5 +1,4 @@
 import type { NotificationAction } from '#ui/types';
-import type { TranslateItem } from '~/composables/i18n';
 import type { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

@@ -138,7 +138,13 @@ watch(props, (newVal) => {
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                    <UButton v-if="selected.length > 0" variant="link" icon="i-mdi-trash-can" @click="removeAll()" />
+                    <UButton
+                        v-if="selected.length > 0"
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        color="red"
+                        @click="removeAll()"
+                    />
                 </th>
             </tr>
         </thead>
@@ -177,7 +183,7 @@ watch(props, (newVal) => {
                     {{ item.owner.firstname }} {{ item.owner.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <UButton variant="link" icon="i-mdi-trash-can" @click="remove(item, true)" />
+                    <UButton variant="link" icon="i-mdi-trash-can" color="red" @click="remove(item, true)" />
                 </td>
             </tr>
         </tbody>

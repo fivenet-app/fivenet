@@ -23,6 +23,8 @@ const props = defineProps<{
 const modal = useModal();
 const { isOpen } = useSlideover();
 
+const { can } = useAuth();
+
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
 
@@ -97,6 +99,7 @@ const canDo = computed(() => ({
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"
+                                color="red"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),

@@ -16,11 +16,13 @@ const props = defineProps<{
     templateId: string;
 }>();
 
+const { t } = useI18n();
+
+const { can } = useAuth();
+
 const modal = useModal();
 
 const notifications = useNotificatorStore();
-
-const { t } = useI18n();
 
 const reqs = ref<undefined | TemplateRequirements>();
 
@@ -203,8 +205,8 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     v-if="can('DocStoreService.DeleteTemplate').value"
                     block
                     class="flex-1"
-                    color="red"
                     trailing-icon="i-mdi-trash-can"
+                    color="red"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => deleteTemplate(templateId),

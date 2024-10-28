@@ -18,7 +18,6 @@ import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideove
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
-import { useAuthStore } from '~/store/auth';
 import { logger, useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
@@ -31,8 +30,7 @@ const modal = useModal();
 
 const slideover = useSlideover();
 
-const authStore = useAuthStore();
-const { jobProps } = storeToRefs(authStore);
+const { can, jobProps } = useAuth();
 
 const centrumStore = useCentrumStore();
 const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection, settings } =

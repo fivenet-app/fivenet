@@ -33,6 +33,8 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const page = ref(1);
@@ -234,8 +236,8 @@ defineExpose({
                             <UButton
                                 v-if="can('QualificationsService.DeleteQualificationReq').value"
                                 variant="link"
-                                color="red"
                                 icon="i-mdi-trash-can"
+                                color="red"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () =>

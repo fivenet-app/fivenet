@@ -11,6 +11,8 @@ definePageMeta({
     permission: 'DocStoreService.ListTemplates',
 });
 
+const { can } = useAuth();
+
 async function selected(t: TemplateShort | undefined): Promise<void> {
     if (!t) {
         return;

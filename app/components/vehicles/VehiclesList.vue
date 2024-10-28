@@ -28,6 +28,8 @@ const props = withDefaults(
     },
 );
 
+const { can } = useAuth();
+
 const schema = z.object({
     licensePlate: z.string().max(32),
     model: z.string().min(6).max(32).optional(),

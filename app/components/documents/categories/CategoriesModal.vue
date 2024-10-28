@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'update'): void;
 }>();
 
+const { can } = useAuth();
+
 const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();

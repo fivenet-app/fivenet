@@ -1,10 +1,9 @@
 import type { BadgeColor, ButtonColor } from '#ui/types';
-import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
-import type { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export const logger = useLogger('📃 Docstore');
 
@@ -14,22 +13,21 @@ export function checkDocAccess(
     level: AccessLevel,
     perm?: Perms,
 ): boolean {
-    const authStore = useAuthStore();
-    if (authStore.isSuperuser) {
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
         return true;
     }
 
-    const activeChar = authStore.activeChar;
-    if (activeChar === null) {
+    if (activeChar.value === null) {
         return false;
     }
 
-    if (!checkBaseDocAccess(activeChar, docAccess, creator, level)) {
+    if (!checkBaseDocAccess(activeChar.value, docAccess, creator, level)) {
         return false;
     }
 
-    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.job) {
-        return checkIfCanAccessOwnJobDocument(activeChar, creator, perm);
+    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.value.job) {
+        return checkIfCanAccessOwnJobDocument(activeChar.value, creator, perm);
     }
 
     return true;
@@ -44,11 +42,8 @@ function checkBaseDocAccess(
     return checkAccess(activeChar, access, creator, level);
 }
 
-function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, perm: Perms): boolean {
-    const authStore = useAuthStore();
-    if (authStore.isSuperuser) {
-        return true;
-    }
+function checkIfCanAccessOwnJobDocument(activeChar: UserShort, creator: UserShort, perm: Perms): boolean {
+    const { attrList } = useAuth();
 
     const fields = attrList(perm, 'Access').value;
     if (fields.length === 0) {

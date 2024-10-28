@@ -4,7 +4,6 @@ import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
-import { useAuthStore } from '~/store/auth';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -14,9 +13,7 @@ definePageMeta({
     requiresAuth: true,
 });
 
-const authStore = useAuthStore();
-
-const { activeChar, jobProps } = storeToRefs(authStore);
+const { can, activeChar, jobProps } = useAuth();
 
 const { game } = useAppConfig();
 

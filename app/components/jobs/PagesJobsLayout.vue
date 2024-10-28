@@ -4,6 +4,8 @@ import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const links = [
     {
         label: t('common.overview'),

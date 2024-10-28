@@ -29,6 +29,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const route = useRoute('jobs-colleagues-id-info');
 
 const {

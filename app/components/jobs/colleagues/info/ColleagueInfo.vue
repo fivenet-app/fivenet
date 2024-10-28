@@ -4,7 +4,6 @@ import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfS
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
@@ -18,8 +17,7 @@ defineEmits<{
 
 const modal = useModal();
 
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
+const { attr, can, activeChar } = useAuth();
 </script>
 
 <template>
@@ -68,7 +66,7 @@ const { activeChar } = storeToRefs(authStore);
                     can('JobsService.SetJobsUserProps').value &&
                     (colleague.userId === activeChar!.userId ||
                         attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
-                    checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
+                    checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                 "
                 icon="i-mdi-island"
                 size="md"

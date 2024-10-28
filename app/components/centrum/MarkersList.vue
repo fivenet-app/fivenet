@@ -7,6 +7,8 @@ import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);

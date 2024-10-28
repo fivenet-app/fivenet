@@ -18,6 +18,8 @@ definePageMeta({
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const modal = useModal();
 
 const messengerStore = useMessengerStore();

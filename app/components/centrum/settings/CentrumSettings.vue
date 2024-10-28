@@ -9,6 +9,8 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const { t } = useI18n();
 
+const { isSuperuser } = useAuth();
+
 const { isOpen } = useModal();
 
 const {
@@ -188,7 +190,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UToggle
                                     v-model="state.enabled"
                                     name="enabled"
-                                    :disabled="!can('SuperUser').value"
+                                    :disabled="!isSuperuser"
                                     :placeholder="$t('common.enabled')"
                                 />
                             </UFormGroup>

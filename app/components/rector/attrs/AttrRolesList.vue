@@ -11,6 +11,8 @@ import type { Job } from '~~/gen/ts/resources/users/jobs';
 
 const { t } = useI18n();
 
+const { can } = useAuth();
+
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();

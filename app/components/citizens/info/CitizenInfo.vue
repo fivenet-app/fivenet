@@ -23,6 +23,8 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
+const { attr, can } = useAuth();
+
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
 

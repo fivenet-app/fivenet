@@ -8,12 +8,10 @@ import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupM
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
-import { useAuthStore } from '~/store/auth';
 import { messengerDB } from '~/store/messenger';
 import type { Perms } from '~~/gen/ts/perms';
 
-const authStore = useAuthStore();
-const { activeChar, jobProps } = storeToRefs(authStore);
+const { can, activeChar, jobProps } = useAuth();
 
 const { t } = useI18n();
 
@@ -351,7 +349,7 @@ const groups = computed(() => [
 const clipboardLink = computed(() =>
     [
         activeChar.value &&
-        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles'], 'oneof').value
+        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles']).value
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
