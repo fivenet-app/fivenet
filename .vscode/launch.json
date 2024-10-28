@@ -41,7 +41,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker", "--module-discord-bot=false"],
+            "args": ["worker"],
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",

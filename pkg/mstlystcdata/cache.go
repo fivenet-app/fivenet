@@ -117,7 +117,7 @@ func NewCache(p Params) (*Cache, error) {
 			return err
 		}
 
-		p.CronHandlers.Add("mstlystcdata-cache", func(ctx context.Context, data *cron.CronjobData) error {
+		p.CronHandlers.Add("mstlystcdata.cache", func(ctx context.Context, data *cron.CronjobData) error {
 			ctx, span := cc.tracer.Start(ctx, "mstlystcdata-cache")
 			defer span.End()
 
@@ -130,7 +130,7 @@ func NewCache(p Params) (*Cache, error) {
 		})
 
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "mstlystcdata-cache",
+			Name:     "mstlystcdata.cache",
 			Schedule: "@10minutes",
 		}); err != nil {
 			return err
