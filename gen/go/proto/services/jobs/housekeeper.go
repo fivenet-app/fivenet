@@ -89,7 +89,7 @@ func (s *Housekeeper) timeclockHandler(ctx context.Context) error {
 	stmt := tTimeClock.
 		UPDATE().
 		SET(
-			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("CAST((TIMESTAMPDIFF(SECOND, `timeclock_entry`.`start_time`, `timeclock_entry`.`end_time`) / 3600) AS DECIMAL(10,2))"))),
+			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("`timeclock_entry`.`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `timeclock_entry`.`start_time`, `timeclock_entry`.`end_time`) / 3600) AS DECIMAL(10,2))"))),
 			tTimeClock.StartTime.SET(jet.TimestampExp(jet.NULL)),
 			tTimeClock.EndTime.SET(jet.TimestampExp(jet.NULL)),
 		).
