@@ -30,7 +30,10 @@ const notifications = useNotificatorStore();
 
 const maxAccessEntries = 10;
 
-const canCreateNonPrivateCalendar = attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value;
+const canDo = computed(() => ({
+    privatecalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value,
+    publicCalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public').value,
+}));
 
 const schema = z.object({
     name: z.string().min(3).max(255),
@@ -318,18 +321,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                             class="flex-1"
                         >
-                            <UToggle
-                                v-model="state.private"
-                                :disabled="!canCreateNonPrivateCalendar || calendarId !== undefined"
-                            />
+                            <UToggle v-model="state.private" :disabled="!canDo.privatecalendar || calendarId !== undefined" />
                         </UFormGroup>
 
-                        <UFormGroup
-                            v-if="attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public').value"
-                            name="public"
-                            :label="$t('common.public')"
-                            class="flex-1"
-                        >
+                        <UFormGroup v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">
                             <UToggle v-model="state.public" />
                         </UFormGroup>
 
