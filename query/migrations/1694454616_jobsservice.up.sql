@@ -33,25 +33,8 @@ CREATE TABLE
         CONSTRAINT `fk_fivenet_jobs_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
+-- Trigger: `fivenet_jobs_timeclock_spent_time_calc` isn't used anymore in the future
 DROP TRIGGER IF EXISTS `fivenet_jobs_timeclock_spent_time_calc`;
-
--- Trigger: fivenet_jobs_timeclock_spent_time_calc
--- Requires `SUPER` privilege to be created...
-/*
-CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivenet_jobs_timeclock`
-    FOR EACH ROW BEGIN
-        DECLARE `duration` DECIMAL(10,2);
-
-      IF (NEW.`start_time` IS NOT NULL AND NEW.`end_time` IS NOT NULL) THEN
-          SELECT CAST((TIMESTAMPDIFF(SECOND, NEW.`start_time`, NEW.`end_time`) / 3600) AS DECIMAL(10,2))
-              INTO `duration`;
-
-        SET NEW.`spent_time` = (OLD.`spent_time` + `duration`);
-        SET NEW.`start_time` = NULL;
-        SET NEW.`end_time` = NULL;
-    END IF;
-END;
-*/
 
 -- Table: fivenet_jobs_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_props` (

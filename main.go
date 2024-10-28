@@ -61,11 +61,17 @@ import (
 
 type Context struct{}
 
-type ServerCmd struct{}
+type ServerCmd struct {
+	ModuleCronAgent bool `help:"Run the cron agent, should only be used for single container/binary deployments." default:"false"`
+}
 
 func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(cli.StartTimeout)
 	fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
+
+	if c.ModuleCronAgent {
+		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+	}
 
 	app := fx.New(fxOpts...)
 	app.Run()
@@ -78,8 +84,6 @@ type WorkerCmd struct {
 	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
-
-	ModuleDiscordBot bool `help:"Start Discord bot module (disabled by default as it should be run separately)" default:"false"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -98,12 +102,26 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
 	}
 
-	if c.ModuleDiscordBot {
-		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
-	}
-
 	// Only run cron agent in worker
 	fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+
+	app := fx.New(fxOpts...)
+	app.Run()
+
+	return nil
+}
+
+type DiscordCmd struct {
+	ModuleCronAgent bool `help:"Run the cron agent." default:"false"`
+}
+
+func (c *DiscordCmd) Run(ctx *Context) error {
+	fxOpts := getFxBaseOpts(cli.StartTimeout)
+	fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
+
+	if c.ModuleCronAgent {
+		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+	}
 
 	app := fx.New(fxOpts...)
 	app.Run()
@@ -115,8 +133,9 @@ var cli struct {
 	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
 	StartTimeout time.Duration `help:"App start timeout duration" default:"180s"`
 
-	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
-	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
+	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
+	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`
+	Discord DiscordCmd `cmd:"" help:"Run FiveNet Discord bot."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration) []fx.Option {

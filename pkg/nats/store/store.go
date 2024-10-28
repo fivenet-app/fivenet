@@ -418,7 +418,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 					continue
 				}
 
-				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()), zap.Uint64("delta", entry.Delta()))
+				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()), zap.Uint64("delta", entry.Delta()), zap.Uint8("op", uint8(entry.Operation())))
 
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:

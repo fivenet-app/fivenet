@@ -119,7 +119,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 	c.logger.Debug("registering cronjob", zap.String("job_name", job.Name))
 	cj, err := c.scheduler.store.GetOrLoad(ctx, job.Name)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
-		return err
+		return fmt.Errorf("failed to load existing cron job %s. %w", job.Name, err)
 	}
 
 	if cj != nil {
@@ -133,10 +133,18 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		cj.Data = &cron.CronjobData{}
 	}
 
-	return c.scheduler.store.Put(ctx, strings.ToLower(job.Name), cj)
+	if err := c.scheduler.store.Put(ctx, strings.ToLower(job.Name), cj); err != nil {
+		return fmt.Errorf("failed to register cron job %s in store. %w", job.Name, err)
+	}
+
+	return nil
 }
 
 func (c *Cron) UnregisterCronjob(ctx context.Context, name string) error {
 	c.logger.Debug("unregistering cronjob", zap.String("job_name", name))
-	return c.scheduler.store.Delete(ctx, name)
+	if err := c.scheduler.store.Delete(ctx, name); err != nil {
+		return fmt.Errorf("failed to unregister cron job %s from store. %w", name, err)
+	}
+
+	return nil
 }

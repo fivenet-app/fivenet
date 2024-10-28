@@ -80,12 +80,7 @@ services:
     container_name: fivenet-discord
     image: ghcr.io/fivenet-app/fivenet:main
     command:
-      - worker
-      - --module-discord-bot=true
-      - --module-audit-retention=false
-      - --module-centrum-bot=false
-      - --module-centrum-housekeeper=false
-      - --module-user-tracker=false
+      - discord
     #ports:
     #  - "7073:7070" # User for metrics only
     networks:
@@ -94,7 +89,7 @@ services:
     volumes:
       - ./config.yaml:/config/config.yaml
 
-  # Iconify - Requires an "ingress" controller (e.g., jwilder/nginx-proxy), like Traefik, that makes iconify available under `/api/icons`
+  # Iconify - Requires a reverse prox/"ingress controller" (e.g., jwilder/nginx-proxy, Traefik), that makes the Iconify container available under `/api/icons`
   iconify:
     container_name: iconify
     image: docker.io/iconify/api:latest

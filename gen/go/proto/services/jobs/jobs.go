@@ -95,10 +95,31 @@ func NewServer(p Params) *Server {
 			return nil
 		})
 
-		p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "jobs-timeclock-cleanup",
 			Schedule: "@daily",
+		}); err != nil {
+			return err
+		}
+
+		p.CronHandlers.Add("jobs-timeclock-handling", func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "jobs-timeclock-handling")
+			defer span.End()
+
+			if err := s.timeclockHandler(ctx); err != nil {
+				s.logger.Error("error during timeclock handling", zap.Error(err))
+				return err
+			}
+
+			return nil
 		})
+
+		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
+			Name:     "jobs-timeclock-handling",
+			Schedule: "@everysecond",
+		}); err != nil {
+			return err
+		}
 
 		return nil
 	}))

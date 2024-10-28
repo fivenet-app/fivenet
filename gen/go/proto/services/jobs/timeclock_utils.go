@@ -33,6 +33,26 @@ func (s *Server) timeclockCleanup(ctx context.Context) error {
 	return nil
 }
 
+func (s *Server) timeclockHandler(ctx context.Context) error {
+	stmt := tTimeClock.
+		UPDATE().
+		SET(
+			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("CAST((TIMESTAMPDIFF(SECOND, `timeclock_entry`.`start_time`, `timeclock_entry`.`end_time`) / 3600) AS DECIMAL(10,2))"))),
+			tTimeClock.StartTime.SET(jet.TimestampExp(jet.NULL)),
+			tTimeClock.EndTime.SET(jet.TimestampExp(jet.NULL)),
+		).
+		WHERE(jet.AND(
+			tTimeClock.StartTime.IS_NOT_NULL(),
+			tTimeClock.EndTime.IS_NOT_NULL(),
+		))
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpression) (*jobs.TimeclockStats, error) {
 	stmt := tTimeClock.
 		SELECT(
