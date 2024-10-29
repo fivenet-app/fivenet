@@ -19,6 +19,7 @@ import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateMo
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { logger, useCentrumStore } from '~/store/centrum';
+import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -33,9 +34,12 @@ const slideover = useSlideover();
 const { can, jobProps } = useAuth();
 
 const centrumStore = useCentrumStore();
+const { startStream, stopStream } = centrumStore;
 const { getCurrentMode, getOwnUnit, dispatches, getSortedOwnDispatches, pendingDispatches, timeCorrection, settings } =
     storeToRefs(centrumStore);
-const { startStream, stopStream } = centrumStore;
+
+const livemapStore = useLivemapStore();
+const { userOnDuty } = storeToRefs(livemapStore);
 
 const notifications = useNotificatorStore();
 
@@ -309,6 +313,10 @@ async function checkup(): Promise<void> {
 }
 
 function sendRequireUnitNotification(): void {
+    if (!userOnDuty.value) {
+        return;
+    }
+
     useNotificatorStore().add({
         title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
         description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
