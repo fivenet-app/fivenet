@@ -121,6 +121,7 @@ type CalEntry = {
 
 const transformedCalendarEntries = computedAsync(async () =>
     entries.value
+        .filter((e) => activeCalendarIds.value.includes(e.calendarId))
         .map((entry) => {
             const startTime = toDate(entry.startTime);
             const endTime = entry.endTime ? toDate(entry.endTime) : undefined;
@@ -501,30 +502,28 @@ const isOpen = ref(false);
             </div>
 
             <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
-                <div class="items-center gap-2">
-                    <UFormGroup
-                        :label="$t('common.view')"
-                        :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
-                        class="flex flex-row items-center gap-2"
-                    >
-                        <ClientOnly>
-                            <USelectMenu v-model="view" :options="viewOptions" value-attribute="value" class="min-w-44">
-                                <template #label>
-                                    <UIcon
-                                        :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
-                                        class="size-5"
-                                    />
-                                    {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
-                                </template>
+                <UFormGroup
+                    :label="$t('common.view')"
+                    :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"
+                    class="flex flex-row items-center gap-2"
+                >
+                    <ClientOnly>
+                        <USelectMenu v-model="view" :options="viewOptions" value-attribute="value" class="min-w-44">
+                            <template #label>
+                                <UIcon
+                                    :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
+                                    class="size-5"
+                                />
+                                {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
+                            </template>
 
-                                <template #option="{ option }">
-                                    <UIcon :name="option.icon" class="size-5" />
-                                    <span class="truncate">{{ option.label }}</span>
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-                </div>
+                            <template #option="{ option }">
+                                <UIcon :name="option.icon" class="size-5" />
+                                <span class="truncate">{{ option.label }}</span>
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormGroup>
 
                 <UButton
                     icon="i-mdi-refresh"
