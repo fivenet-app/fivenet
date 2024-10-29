@@ -198,6 +198,22 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		canContent = canGrade
 	}
 
+	// Allow content if the qualification has the exam mode enabled and the user has the access to take the qualification
+	canTake, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_TAKE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	if canTake {
+		quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		if quali.ExamMode == qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_ENABLED {
+			canContent = true
+		}
+	}
+
 	resp := &GetQualificationResponse{}
 	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
 		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo, canContent)

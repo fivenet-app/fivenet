@@ -74,7 +74,7 @@ async function deleteQualification(qualificationId: string): Promise<DeleteQuali
             query: {
                 tab: 'tab=all',
             },
-            hash: '',
+            hash: '#',
         });
 
         return response;
