@@ -28,7 +28,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
+	tUser := tUser.AS("colleague")
+	condition := jet.AND(tUser.Job.EQ(jet.String(userInfo.Job)))
 	statsCondition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
@@ -94,10 +95,28 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		}
 	}
 
-	countStmt := tTimeClock.
-		SELECT(jet.COUNT(tTimeClock.Date).AS("datacount.totalcount")).
-		FROM(tTimeClock).
-		WHERE(condition)
+	var countStmt jet.SelectStatement
+	if req.PerDay {
+		countStmt = tTimeClock.
+			SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					),
+			).
+			WHERE(condition)
+	} else {
+		countStmt = tTimeClock.
+			SELECT(jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount")).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					),
+			).
+			WHERE(condition)
+	}
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -125,7 +144,6 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		return resp, nil
 	}
 
-	tUser := tUser.AS("colleague")
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {

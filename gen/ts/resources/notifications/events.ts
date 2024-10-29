@@ -13,6 +13,8 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { JobProps } from "../users/jobs";
 import { MessengerEvent } from "../messenger/events";
 import { Notification } from "./notifications";
+// User Events
+
 /**
  * @generated from protobuf message resources.notifications.UserEvent
  */
@@ -46,6 +48,8 @@ export interface UserEvent {
         oneofKind: undefined;
     };
 }
+// Job Events
+
 /**
  * @generated from protobuf message resources.notifications.JobEvent
  */
@@ -63,6 +67,8 @@ export interface JobEvent {
         oneofKind: undefined;
     };
 }
+// System Events
+
 /**
  * @generated from protobuf message resources.notifications.SystemEvent
  */

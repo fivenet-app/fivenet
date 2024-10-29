@@ -8,6 +8,8 @@ import "resources/users/jobs.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
 
+ // User Events
+
 message UserEvent {
   oneof data {
     bool refresh_token = 1;
@@ -18,10 +20,14 @@ message UserEvent {
   }
 }
 
+// Job Events
+
 message JobEvent {
   oneof data {
     resources.users.JobProps job_props = 1;
   }
 }
+
+// System Events
 
 message SystemEvent {}

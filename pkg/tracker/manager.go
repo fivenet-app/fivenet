@@ -184,6 +184,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("markerInfo.id"),
 			tLocs.Job.AS("user.job"),
+			tLocs.Hidden.AS("usermarker.hidden"),
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
@@ -200,7 +201,6 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 				),
 		).
 		WHERE(jet.AND(
-			tLocs.Hidden.IS_FALSE(),
 			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 		))
 

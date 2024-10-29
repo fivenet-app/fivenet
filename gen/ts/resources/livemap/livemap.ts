@@ -100,6 +100,10 @@ export interface UserMarker {
      * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
      */
     unit?: Unit;
+    /**
+     * @generated from protobuf field: bool hidden = 6;
+     */
+    hidden: boolean;
 }
 /**
  * @generated from protobuf message resources.livemap.MarkerMarker
@@ -348,12 +352,14 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => UserShort },
             { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "unit", kind: "message", T: () => Unit }
+            { no: 5, name: "unit", kind: "message", T: () => Unit },
+            { no: 6, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserMarker>): UserMarker {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
+        message.hidden = false;
         if (value !== undefined)
             reflectionMergePartial<UserMarker>(this, message, value);
         return message;
@@ -377,6 +383,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
                     break;
                 case /* optional resources.centrum.Unit unit */ 5:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
+                    break;
+                case /* bool hidden */ 6:
+                    message.hidden = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -405,6 +414,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
         /* optional resources.centrum.Unit unit = 5; */
         if (message.unit)
             Unit.internalBinaryWrite(message.unit, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool hidden = 6; */
+        if (message.hidden !== false)
+            writer.tag(6, WireType.Varint).bool(message.hidden);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

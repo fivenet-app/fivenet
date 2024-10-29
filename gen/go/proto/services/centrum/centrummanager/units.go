@@ -57,10 +57,10 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 			return nil, err
 		}
 
-		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
-			in.X = &marker.Info.X
-			in.Y = &marker.Info.Y
-			in.Postal = marker.Info.Postal
+		if um, ok := s.tracker.GetUserById(*in.UserId); ok {
+			in.X = &um.Info.X
+			in.Y = &um.Info.Y
+			in.Postal = um.Info.Postal
 		}
 	}
 	if in.CreatorId != nil {
@@ -140,10 +140,10 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	var x, y *float64
 	var postal *string
 	if userId != nil {
-		if marker, ok := s.tracker.GetUserById(*userId); ok {
-			x = &marker.Info.X
-			y = &marker.Info.Y
-			postal = marker.Info.Postal
+		if um, ok := s.tracker.GetUserById(*userId); ok {
+			x = &um.Info.X
+			y = &um.Info.Y
+			postal = um.Info.Postal
 		}
 	}
 
@@ -178,7 +178,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	if len(toAdd) > 0 {
 		addIds := []jet.IntegerExpression{}
 		for i := 0; i < len(toAdd); i++ {
-			if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
+			if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
 				continue
 			}
 
@@ -272,7 +272,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		if len(toAdd) > 0 {
 			notFound := []int32{}
 			for i := 0; i < len(toAdd); i++ {
-				if _, ok := s.tracker.GetUserById(toAdd[i]); !ok {
+				if um, ok := s.tracker.GetUserById(toAdd[i]); !ok || um.Hidden {
 					continue
 				}
 

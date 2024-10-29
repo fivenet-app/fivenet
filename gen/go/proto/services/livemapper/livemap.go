@@ -253,7 +253,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 // Sends out chunked current user markers
 func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
-	userMarkers, _, err := s.getUserLocations(usersJobs, userInfo)
+	userMarkers, onDutyState, err := s.getUserLocations(usersJobs, userInfo)
 	if err != nil {
 		return true, errswrap.NewError(err, ErrStreamFailed)
 	}
@@ -267,6 +267,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 					Part:  0,
 				},
 			},
+			UserOnDuty: &onDutyState,
 		}
 
 		if err := srv.Send(resp); err != nil {
@@ -285,6 +286,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 					Part:  parts,
 				},
 			},
+			UserOnDuty: &onDutyState,
 		}
 		parts--
 
@@ -310,6 +312,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 					Part:  0,
 				},
 			},
+			UserOnDuty: &onDutyState,
 		}
 		if err := srv.Send(resp); err != nil {
 			return true, err
@@ -356,12 +359,12 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 
 		markers.Range(func(key int32, marker *livemap.UserMarker) bool {
 			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
-			if grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId) {
+			if (grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId)) && !marker.Hidden {
 				ds = append(ds, marker)
 			}
 
-			// If the user is found in the list of user markers, set found state
-			if !found && (userInfo.Job == job && key == userInfo.UserId) {
+			// If the user is found in the list of user markers and not "off duty" (hidden), set found state
+			if !found && !marker.Hidden && (userInfo.Job == job && key == userInfo.UserId) {
 				found = true
 			}
 

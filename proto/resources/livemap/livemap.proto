@@ -49,6 +49,8 @@ message UserMarker {
   resources.users.UserShort user = 3; // @gotags: alias:"user"
   optional uint64 unit_id = 4 [jstype = JS_STRING];
   optional resources.centrum.Unit unit = 5;
+
+  bool hidden = 6;
 }
 
 message MarkerMarker {

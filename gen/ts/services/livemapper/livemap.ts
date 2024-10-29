@@ -47,6 +47,10 @@ export interface StreamResponse {
     } | {
         oneofKind: undefined;
     };
+    /**
+     * @generated from protobuf field: optional bool user_on_duty = 4;
+     */
+    userOnDuty?: boolean;
 }
 /**
  * @generated from protobuf message services.livemapper.JobsList
@@ -146,7 +150,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         super("services.livemapper.StreamResponse", [
             { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => JobsList },
             { no: 2, name: "markers", kind: "message", oneof: "data", T: () => MarkerMarkersUpdates },
-            { no: 3, name: "users", kind: "message", oneof: "data", T: () => UserMarkersUpdates }
+            { no: 3, name: "users", kind: "message", oneof: "data", T: () => UserMarkersUpdates },
+            { no: 4, name: "user_on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -179,6 +184,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         users: UserMarkersUpdates.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
                     };
                     break;
+                case /* optional bool user_on_duty */ 4:
+                    message.userOnDuty = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -200,6 +208,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* services.livemapper.UserMarkersUpdates users = 3; */
         if (message.data.oneofKind === "users")
             UserMarkersUpdates.internalBinaryWrite(message.data.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool user_on_duty = 4; */
+        if (message.userOnDuty !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.userOnDuty);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

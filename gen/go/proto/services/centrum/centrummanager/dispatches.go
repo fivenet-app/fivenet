@@ -65,10 +65,10 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 			return nil, err
 		}
 
-		if marker, ok := s.tracker.GetUserById(*in.UserId); ok {
-			in.X = &marker.Info.X
-			in.Y = &marker.Info.Y
-			in.Postal = marker.Info.Postal
+		if um, ok := s.tracker.GetUserById(*in.UserId); ok {
+			in.X = &um.Info.X
+			in.Y = &um.Info.Y
+			in.Postal = um.Info.Postal
 		}
 	}
 
@@ -136,10 +136,10 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	var x, y *float64
 	var postal *string
 	if userId != nil {
-		if marker, ok := s.tracker.GetUserById(*userId); ok {
-			x = &marker.Info.X
-			y = &marker.Info.Y
-			postal = marker.Info.Postal
+		if um, ok := s.tracker.GetUserById(*userId); ok {
+			x = &um.Info.X
+			y = &um.Info.Y
+			postal = um.Info.Postal
 		}
 	}
 
@@ -706,10 +706,10 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 	var x, y *float64
 	var postal *string
-	if marker, ok := s.tracker.GetUserById(userId); ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
+	if um, ok := s.tracker.GetUserById(userId); ok {
+		x = &um.Info.X
+		y = &um.Info.Y
+		postal = um.Info.Postal
 	}
 
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts

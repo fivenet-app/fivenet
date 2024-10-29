@@ -22,6 +22,7 @@ export interface LivemapState {
 
     initiated: boolean;
 
+    userOnDuty: boolean;
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
@@ -45,6 +46,7 @@ export const useLivemapStore = defineStore('livemap', {
 
             initiated: false,
 
+            userOnDuty: false,
             jobsMarkers: [],
             jobsUsers: [],
 
@@ -84,6 +86,10 @@ export const useLivemapStore = defineStore('livemap', {
 
                     if (resp === undefined || !resp.data) {
                         continue;
+                    }
+
+                    if (resp.userOnDuty !== undefined) {
+                        this.userOnDuty = resp.userOnDuty;
                     }
 
                     logger.debug('Received change - Kind:', resp.data.oneofKind, resp.data);

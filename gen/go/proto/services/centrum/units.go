@@ -204,7 +204,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user is on duty, if not make sure to unset any unit id
-	if _, ok := s.tracker.GetUserById(userInfo.UserId); !ok {
+	if um, ok := s.tracker.GetUserById(userInfo.UserId); !ok || um.Hidden {
 		if err := s.state.UnsetUnitIDForUser(ctx, userInfo.UserId); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}

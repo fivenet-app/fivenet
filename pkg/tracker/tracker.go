@@ -27,7 +27,6 @@ var (
 type ITracker interface {
 	GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
 	GetUserById(id int32) (*livemap.UserMarker, bool)
-	GetAllActiveUsers() ([]*livemap.UserMarker, error)
 	IsUserOnDuty(userId int32) bool
 
 	Subscribe() chan *livemap.UsersUpdateEvent
@@ -164,17 +163,17 @@ func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMa
 	return s.usersByJob.Load(job)
 }
 
-func (s *Tracker) GetAllActiveUsers() ([]*livemap.UserMarker, error) {
-	return s.userStore.List()
+func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
+	return s.userStore.Get(userIdKey(id))
 }
 
 func (s *Tracker) IsUserOnDuty(userId int32) bool {
-	_, ok := s.userStore.Get(userIdKey(userId))
-	return ok
-}
+	um, ok := s.userStore.Get(userIdKey(userId))
+	if !ok {
+		return false
+	}
 
-func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
-	return s.userStore.Get(userIdKey(id))
+	return !um.Hidden
 }
 
 func (s *Tracker) Subscribe() chan *livemap.UsersUpdateEvent {

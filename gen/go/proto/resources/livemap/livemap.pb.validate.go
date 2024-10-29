@@ -375,6 +375,8 @@ func (m *UserMarker) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Hidden
+
 	if m.UnitId != nil {
 		// no validation rules for UnitId
 	}

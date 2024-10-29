@@ -3022,6 +3022,7 @@
 | user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
 | unit_id | [uint64](#uint64) | optional |  |
 | unit | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
+| hidden | [bool](#bool) |  |  |
 
 
 
@@ -8690,6 +8691,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | jobs | [JobsList](#services-livemapper-JobsList) |  |  |
 | markers | [MarkerMarkersUpdates](#services-livemapper-MarkerMarkersUpdates) |  |  |
 | users | [UserMarkersUpdates](#services-livemapper-UserMarkersUpdates) |  |  |
+| user_on_duty | [bool](#bool) | optional |  |
 
 
 

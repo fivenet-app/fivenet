@@ -66,17 +66,6 @@ func (s *TestTracker) GetUserByJobAndID(job string, userId int32) (*livemap.User
 	return user, true
 }
 
-func (s *TestTracker) GetAllActiveUsers() ([]*livemap.UserMarker, error) {
-	list := []*livemap.UserMarker{}
-
-	s.usersIDs.Range(func(key int32, value *livemap.UserMarker) bool {
-		list = append(list, value)
-		return true
-	})
-
-	return list, nil
-}
-
 func (s *TestTracker) IsUserOnDuty(userId int32) bool {
 	if _, ok := s.usersIDs.Load(userId); !ok {
 		return false

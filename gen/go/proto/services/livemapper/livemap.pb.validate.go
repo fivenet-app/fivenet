@@ -285,6 +285,10 @@ func (m *StreamResponse) validate(all bool) error {
 		_ = v // ensures v is used
 	}
 
+	if m.UserOnDuty != nil {
+		// no validation rules for UserOnDuty
+	}
+
 	if len(errors) > 0 {
 		return StreamResponseMultiError(errors)
 	}

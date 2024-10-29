@@ -16,6 +16,8 @@ message StreamResponse {
     MarkerMarkersUpdates markers = 2;
     UserMarkersUpdates users = 3;
   }
+
+  optional bool user_on_duty = 4;
 }
 
 message JobsList {
