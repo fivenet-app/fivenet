@@ -476,7 +476,7 @@
         "pinned": "Angeheftet",
         "pin": "Anheften",
         "unpin": "Lösen",
-        "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
+        "pinned_document": "Angehefteten Dokumente | Angeheftetes Dokument | Angeheftete Dokumente",
         "or": "ODER",
         "retrying": "Erneuter Versuch...",
         "reduction": "Minderung",
@@ -484,9 +484,7 @@
         "field": "Field | Fields",
         "expiration": "Ablauf",
         "own": "Eigene",
-        "per_day": "Pro Tag",
-        "view": "Ansicht",
-        "answer_key": "Antwortschlüssel"
+        "per_day": "Pro Tag"
     },
     "components": {
         "partials": {
