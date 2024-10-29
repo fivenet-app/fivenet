@@ -143,7 +143,7 @@ const isOpen = ref(false);
                             <DataNoDataBlock
                                 v-else-if="!data || data.documents.length === 0"
                                 icon="i-mdi-pin-outline"
-                                :type="$t('common.pinned_document', 2)"
+                                :type="$t('common.pinned_document', 0)"
                             />
 
                             <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
