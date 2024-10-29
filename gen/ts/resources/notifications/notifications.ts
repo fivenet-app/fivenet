@@ -162,7 +162,7 @@ class Notification$Type extends MessageType<Notification> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 5, name: "title", kind: "message", T: () => TranslateItem },
             { no: 6, name: "type", kind: "enum", T: () => ["resources.notifications.NotificationType", NotificationType, "NOTIFICATION_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "content", kind: "message", T: () => TranslateItem },

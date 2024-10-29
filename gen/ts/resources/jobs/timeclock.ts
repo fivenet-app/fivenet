@@ -129,7 +129,7 @@ export enum TimeclockUserMode {
 class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
     constructor() {
         super("resources.jobs.TimeclockEntry", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 2, name: "date", kind: "message", T: () => Timestamp },
             { no: 3, name: "user", kind: "message", T: () => Colleague },
             { no: 4, name: "start_time", kind: "message", T: () => Timestamp },

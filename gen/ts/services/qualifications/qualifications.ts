@@ -1090,7 +1090,7 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsRequest>): ListQualificationRequestsRequest {
@@ -1316,7 +1316,7 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
     constructor() {
         super("services.qualifications.DeleteQualificationReqRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationReqRequest>): DeleteQualificationReqRequest {
@@ -1399,7 +1399,7 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResultsRequest>): ListQualificationsResultsRequest {
@@ -2012,7 +2012,7 @@ class GetUserExamRequest$Type extends MessageType<GetUserExamRequest> {
     constructor() {
         super("services.qualifications.GetUserExamRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<GetUserExamRequest>): GetUserExamRequest {

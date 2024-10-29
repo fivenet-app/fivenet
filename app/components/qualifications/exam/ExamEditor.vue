@@ -84,6 +84,10 @@ if (!settings.value.time) {
                                     separator: {},
                                 },
                             },
+                            answer: {
+                                answerKey: '',
+                            },
+                            points: 0,
                         })
                     "
                 />

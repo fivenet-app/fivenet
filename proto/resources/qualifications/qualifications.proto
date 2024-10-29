@@ -115,7 +115,7 @@ message QualificationRequest {
   optional resources.timestamp.Timestamp deleted_at = 2;
   uint64 qualification_id = 3 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"qualification_id"
   optional QualificationShort qualification = 4;
-  int32 user_id = 5; // @gotags: sql:"primary_key"
+  int32 user_id = 5 [(validate.rules).int32.gte = 0]; // @gotags: sql:"primary_key"
   resources.users.UserShort user = 6; // @gotags: alias:"user"
   // @sanitize: method=StripTags
   optional string user_comment = 7 [(validate.rules).string = {max_len: 512}];
@@ -141,7 +141,7 @@ message QualificationResult {
   optional resources.timestamp.Timestamp deleted_at = 3;
   uint64 qualification_id = 4 [jstype = JS_STRING];
   optional QualificationShort qualification = 5;
-  int32 user_id = 6;
+  int32 user_id = 6 [(validate.rules).int32.gte = 0];
   resources.users.UserShort user = 7; // @gotags: alias:"user"
   ResultStatus status = 8 [(validate.rules).enum.defined_only = true];
   optional uint32 score = 9 [(validate.rules).uint32.lt = 1000];

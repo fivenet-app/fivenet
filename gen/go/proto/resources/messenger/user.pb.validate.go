@@ -57,7 +57,16 @@ func (m *UserStatus) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := UserStatusValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetLastSeen()).(type) {

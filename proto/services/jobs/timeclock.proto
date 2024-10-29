@@ -54,7 +54,7 @@ message TimeclockRange {
 }
 
 message GetTimeclockStatsRequest {
-  optional int32 user_id = 1;
+  optional int32 user_id = 1 [(validate.rules).int32.gte = 0];
 }
 
 message GetTimeclockStatsResponse {

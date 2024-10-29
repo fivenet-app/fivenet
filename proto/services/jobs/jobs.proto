@@ -15,7 +15,7 @@ message ListColleaguesRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   string search = 3 [(validate.rules).string.max_len = 50];
-  optional int32 user_id = 4;
+  optional int32 user_id = 4 [(validate.rules).int32.gte = 0];
   optional bool absent = 5;
 }
 
@@ -31,7 +31,7 @@ message GetSelfResponse {
 }
 
 message GetColleagueRequest {
-  int32 user_id = 1;
+  int32 user_id = 1 [(validate.rules).int32.gte = 0];
   optional bool info_only = 2;
 }
 

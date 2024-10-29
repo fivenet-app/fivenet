@@ -234,7 +234,7 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
     constructor() {
         super("resources.messenger.ThreadUserState", [
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "last_read", kind: "message", T: () => Timestamp },
             { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },

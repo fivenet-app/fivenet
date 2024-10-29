@@ -44,18 +44,27 @@ async function getUserExam(): Promise<GetUserExamResponse> {
 
     totalQuestions.value = response.exam?.questions.filter((q) => q.data?.data.oneofKind !== 'separator').length ?? 0;
 
+    totalPoints.value = 0;
+    response.exam?.questions
+        .filter((q) => q.data?.data.oneofKind !== 'separator')
+        .forEach((q) => (totalPoints.value += q.points ?? 0));
+
     return response;
 }
 
+const totalPoints = ref(0);
+const pointCount = ref(0);
+
 const totalQuestions = ref(0);
 const correctCount = ref(0);
-const score = computed(() => (100 / totalQuestions.value) * correctCount.value);
 
-function updateCount(add: boolean): void {
+function updateCount(add: boolean, points?: number): void {
     if (add) {
         correctCount.value++;
+        pointCount.value += points ?? 0;
     } else {
         correctCount.value--;
+        pointCount.value -= points ?? 0;
     }
 }
 </script>
@@ -66,7 +75,7 @@ function updateCount(add: boolean): void {
             :qualification-id="qualificationId"
             :user-id="userId"
             :result-id="resultId"
-            :score="score"
+            :score="pointCount"
             :view-only="viewOnly"
             @refresh="$emit('refresh')"
             @close="isOpen = false"
@@ -84,18 +93,28 @@ function updateCount(add: boolean): void {
                     :responses="data.responses"
                 >
                     <template #question-after="{ question }">
-                        <UCheckbox
-                            v-if="question.question.data?.data.oneofKind !== 'separator'"
-                            :label="$t('components.qualifications.correct_question')"
-                            @update:model-value="updateCount($event)"
-                        />
+                        <div v-if="question.question.data?.data.oneofKind !== 'separator'" class="flex flex-col gap-2">
+                            <UCheckbox
+                                :label="$t('components.qualifications.correct_question')"
+                                @update:model-value="updateCount($event, question.question.points)"
+                            />
+
+                            <div class="inline-flex flex-col gap-2">
+                                <p class="text-sm font-semibold">{{ $t('common.answer_key') }}:</p>
+                                <p class="text-sm">{{ question.question.answer?.answerKey ?? $t('common.na') }}</p>
+                            </div>
+                        </div>
                     </template>
                 </ExamViewQuestions>
 
-                <div v-if="!viewOnly" class="flex flex-1 justify-end p-2">
+                <div v-if="!viewOnly" class="flex flex-1 justify-end gap-2 p-2">
                     <p class="text-sm">
                         <span class="font-semibold">{{ $t('components.qualifications.correct_question') }}</span
                         >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
+                    </p>
+                    <p class="text-sm">
+                        <span class="font-semibold">{{ $t('common.points', 2) }}</span
+                        >: {{ pointCount }} / {{ totalPoints }} {{ $t('common.points', 2) }}
                     </p>
                 </div>
 

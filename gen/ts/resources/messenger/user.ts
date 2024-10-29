@@ -34,7 +34,7 @@ export interface UserStatus {
 class UserStatus$Type extends MessageType<UserStatus> {
     constructor() {
         super("resources.messenger.UserStatus", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 2, name: "last_seen", kind: "message", T: () => Timestamp },
             { no: 3, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } }
         ]);

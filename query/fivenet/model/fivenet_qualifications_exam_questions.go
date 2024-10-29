@@ -20,4 +20,5 @@ type FivenetQualificationsExamQuestions struct {
 	Description     *string    `json:"description"`
 	Data            *string    `json:"data"`
 	Answer          *string    `json:"answer"`
+	Points          *int32     `json:"points"`
 }

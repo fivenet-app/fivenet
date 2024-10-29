@@ -80,7 +80,7 @@ message ListQualificationRequestsRequest {
   // Search params
   optional uint64 qualification_id = 3 [jstype = JS_STRING];
   repeated resources.qualifications.RequestStatus status = 4;
-  optional int32 user_id = 5;
+  optional int32 user_id = 5 [(validate.rules).int32.gte = 0];
 }
 
 message ListQualificationRequestsResponse {
@@ -98,7 +98,7 @@ message CreateOrUpdateQualificationRequestResponse {
 
 message DeleteQualificationReqRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
 }
 
 message DeleteQualificationReqResponse {}
@@ -111,7 +111,7 @@ message ListQualificationsResultsRequest {
   // Search params
   optional uint64 qualification_id = 3 [jstype = JS_STRING];
   repeated resources.qualifications.ResultStatus status = 4;
-  optional int32 user_id = 5;
+  optional int32 user_id = 5 [(validate.rules).int32.gte = 0];
 }
 
 message ListQualificationsResultsResponse {
@@ -166,7 +166,7 @@ message SubmitExamResponse {
 
 message GetUserExamRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
 }
 
 message GetUserExamResponse {

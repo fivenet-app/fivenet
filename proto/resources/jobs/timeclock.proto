@@ -22,7 +22,7 @@ enum TimeclockUserMode {
 }
 
 message TimeclockEntry {
-  int32 user_id = 1; // @gotags: sql:"primary_key"
+  int32 user_id = 1 [(validate.rules).int32.gte = 0]; // @gotags: sql:"primary_key"
   resources.timestamp.Timestamp date = 2; // @gotags: sql:"primary_key"
   optional resources.jobs.Colleague user = 3;
   optional resources.timestamp.Timestamp start_time = 4;

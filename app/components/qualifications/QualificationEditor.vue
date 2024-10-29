@@ -138,6 +138,13 @@ async function getQualification(qualificationId: string): Promise<void> {
                 state.examSettings = qualification.examSettings;
             }
             if (qualification.exam) {
+                qualification.exam.questions.forEach((q) => {
+                    if (q.answer === undefined) {
+                        q.answer = {
+                            answerKey: '',
+                        };
+                    }
+                });
                 state.exam = qualification.exam;
             }
 

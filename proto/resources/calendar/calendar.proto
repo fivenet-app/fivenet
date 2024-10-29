@@ -52,7 +52,7 @@ message CalendarShort {
 
 message CalendarSub {
   uint64 calendar_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
   optional resources.users.UserShort user = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   bool confirmed = 5;

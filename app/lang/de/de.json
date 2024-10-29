@@ -485,7 +485,8 @@
         "expiration": "Ablauf",
         "own": "Eigene",
         "per_day": "Pro Tag",
-        "view": "Ansicht"
+        "view": "Ansicht",
+        "answer_key": "Antwortschlüssel"
     },
     "components": {
         "partials": {

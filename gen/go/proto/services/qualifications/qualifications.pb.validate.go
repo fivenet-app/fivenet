@@ -1931,7 +1931,18 @@ func (m *ListQualificationRequestsRequest) validate(all bool) error {
 	}
 
 	if m.UserId != nil {
-		// no validation rules for UserId
+
+		if m.GetUserId() < 0 {
+			err := ListQualificationRequestsRequestValidationError{
+				field:  "UserId",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -2489,7 +2500,16 @@ func (m *DeleteQualificationReqRequest) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := DeleteQualificationReqRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteQualificationReqRequestMultiError(errors)
@@ -2776,7 +2796,18 @@ func (m *ListQualificationsResultsRequest) validate(all bool) error {
 	}
 
 	if m.UserId != nil {
-		// no validation rules for UserId
+
+		if m.GetUserId() < 0 {
+			err := ListQualificationsResultsRequestValidationError{
+				field:  "UserId",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -4344,7 +4375,16 @@ func (m *GetUserExamRequest) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := GetUserExamRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetUserExamRequestMultiError(errors)

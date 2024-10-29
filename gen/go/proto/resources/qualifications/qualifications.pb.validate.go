@@ -1491,7 +1491,16 @@ func (m *QualificationRequest) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := QualificationRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {
@@ -1846,7 +1855,16 @@ func (m *QualificationResult) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := QualificationResultValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {

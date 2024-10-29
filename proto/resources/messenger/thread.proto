@@ -31,7 +31,7 @@ message Thread {
 
 message ThreadUserState {
   uint64 thread_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
   bool unread = 3;
   optional resources.timestamp.Timestamp last_read = 4;
   bool important = 5;

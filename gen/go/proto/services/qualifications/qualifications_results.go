@@ -87,7 +87,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 
 	countStmt := tQualiResults.
 		SELECT(
-			jet.COUNT(tQualiResults.ID).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tQualiResults.QualificationID)).AS("datacount.totalcount"),
 		).
 		FROM(
 			tQualiResults.

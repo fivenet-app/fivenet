@@ -45,6 +45,7 @@ const schema = z.object({
             }),
         ]),
     }),
+    points: z.coerce.number().min(0).max(99999),
 });
 
 watch(question, () => {
@@ -53,6 +54,9 @@ watch(question, () => {
             id: '0',
             qualificationId: '0',
             title: '',
+            answer: {
+                answerKey: '',
+            },
         };
     }
 });
@@ -294,13 +298,23 @@ function changeQuestionType(qt: string): void {
                         </UFormGroup>
                     </div>
                 </template>
+
+                <div v-if="question.data!.data.oneofKind !== 'separator'" class="mt-2 flex flex-row gap-2">
+                    <UFormGroup name="answer.answerKey" :label="$t('common.answer_key')" class="flex-1">
+                        <UTextarea v-model="question.answer!.answerKey" :placeholder="$t('common.answer_key')" />
+                    </UFormGroup>
+
+                    <UFormGroup name="points" :label="$t('common.points', 2)" class="max-w-24">
+                        <UInput v-model="question.points" type="number" name="points" :placeholder="$t('common.points', 2)" />
+                    </UFormGroup>
+                </div>
             </div>
         </div>
 
         <UButton
             icon="i-mdi-close"
             :ui="{ rounded: 'rounded-full' }"
-            class="flex-initial self-start"
+            class="mt-1 flex-initial self-start"
             @click="$emit('delete')"
         />
     </UForm>

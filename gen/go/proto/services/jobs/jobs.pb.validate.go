@@ -146,7 +146,18 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 	}
 
 	if m.UserId != nil {
-		// no validation rules for UserId
+
+		if m.GetUserId() < 0 {
+			err := ListColleaguesRequestValidationError{
+				field:  "UserId",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Absent != nil {
@@ -649,7 +660,16 @@ func (m *GetColleagueRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := GetColleagueRequestValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.InfoOnly != nil {
 		// no validation rules for InfoOnly

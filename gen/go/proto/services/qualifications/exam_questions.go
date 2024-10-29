@@ -19,6 +19,7 @@ func (s *Server) getExamQuestions(ctx context.Context, qualificationId uint64, w
 		tExamQuestions.Title,
 		tExamQuestions.Description,
 		tExamQuestions.Data,
+		tExamQuestions.Points,
 	}
 
 	if withAnswers {
@@ -98,6 +99,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				tExamQuestions.Description,
 				tExamQuestions.Data,
 				tExamQuestions.Answer,
+				tExamQuestions.Points,
 			)
 
 		for _, question := range toCreate {
@@ -107,6 +109,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				question.Description,
 				question.Data,
 				question.Answer,
+				question.Points,
 			)
 		}
 
@@ -123,12 +126,14 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 					tExamQuestions.Description,
 					tExamQuestions.Data,
 					tExamQuestions.Answer,
+					tExamQuestions.Points,
 				).
 				SET(
 					question.Title,
 					question.Description,
 					question.Data,
 					question.Answer,
+					question.Points,
 				).
 				WHERE(jet.AND(
 					tExamQuestions.ID.EQ(jet.Uint64(question.Id)),

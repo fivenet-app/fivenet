@@ -19,7 +19,7 @@ const response = useVModel(props, 'modelValue', emits);
 </script>
 
 <template>
-    <div v-if="modelValue?.question" class="flex flex-1 justify-between py-4">
+    <div v-if="modelValue?.question" class="flex flex-1 justify-between gap-2 py-4">
         <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
                 <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
@@ -34,10 +34,14 @@ const response = useVModel(props, 'modelValue', emits);
             v-else-if="
                 modelValue?.question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'
             "
-            class="flex flex-col gap-2"
+            class="flex flex-1 flex-col gap-2"
         >
             <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
-            <p>{{ modelValue?.question.description }}</p>
+
+            <div class="flex flex-1 justify-between gap-2">
+                <p>{{ modelValue?.question.description }}</p>
+                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+            </div>
 
             <UButtonGroup>
                 <UButton
@@ -74,13 +78,17 @@ const response = useVModel(props, 'modelValue', emits);
                 modelValue?.question.data!.data.oneofKind === 'freeText' &&
                 response?.response?.response.oneofKind === 'freeText'
             "
-            class="flex flex-col gap-2"
+            class="flex flex-1 flex-col gap-2"
         >
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-1 flex-col gap-2">
                 <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
                     {{ modelValue?.question.title }}
                 </h4>
-                <p>{{ modelValue?.question.description }}</p>
+
+                <div class="inline-flex gap-2">
+                    <p>{{ modelValue?.question.description }}</p>
+                    <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+                </div>
 
                 <div>
                     <UBadge v-if="modelValue?.question.data!.data.freeText.minLength > 0">
@@ -102,10 +110,14 @@ const response = useVModel(props, 'modelValue', emits);
                 modelValue?.question.data!.data.oneofKind === 'singleChoice' &&
                 response?.response?.response.oneofKind === 'singleChoice'
             "
-            class="flex flex-col gap-2"
+            class="flex flex-1 flex-col gap-2"
         >
             <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
-            <p>{{ modelValue?.question.description }}</p>
+
+            <div class="inline-flex gap-2">
+                <p>{{ modelValue?.question.description }}</p>
+                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+            </div>
 
             <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
                 <URadioGroup
@@ -121,10 +133,14 @@ const response = useVModel(props, 'modelValue', emits);
                 modelValue?.question.data?.data.oneofKind === 'multipleChoice' &&
                 response?.response?.response.oneofKind === 'multipleChoice'
             "
-            class="flex flex-col gap-2"
+            class="flex flex-1 flex-col gap-2"
         >
             <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
-            <p>{{ modelValue?.question.description }}</p>
+
+            <div class="inline-flex gap-2">
+                <p>{{ modelValue?.question.description }}</p>
+                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+            </div>
 
             <div>
                 <UBadge
@@ -139,7 +155,7 @@ const response = useVModel(props, 'modelValue', emits);
             </div>
 
             <UFormGroup :label="$t('common.option', 2)" required class="flex-1"> </UFormGroup>
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-1 flex-col gap-2">
                 <UCheckbox
                     v-for="choice in modelValue?.question.data.data.multipleChoice.choices"
                     :key="choice"

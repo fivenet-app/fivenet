@@ -485,7 +485,8 @@
         "expiration": "Expiration",
         "own": "Eigene",
         "per_day": "Per Day",
-        "view": "View"
+        "view": "View",
+        "answer_key": "Solution key"
     },
     "components": {
         "partials": {

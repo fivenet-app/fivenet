@@ -304,7 +304,16 @@ func (m *UserUnitMapping) validate(all bool) error {
 
 	// no validation rules for Job
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := UserUnitMappingValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {

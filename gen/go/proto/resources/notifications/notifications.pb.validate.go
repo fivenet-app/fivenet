@@ -117,7 +117,16 @@ func (m *Notification) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := NotificationValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetTitle()).(type) {

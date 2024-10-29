@@ -45,11 +45,11 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             title: t('notifications.grpc_errors.unavailable.title'),
             description: t('notifications.grpc_errors.unavailable.content'),
             timeout: 0,
-            ui: {
-                closeButton: {
-                    ui: { rounded: 'rounded-full', base: 'hidden' },
-                },
+
+            closeButton: {
+                disabled: true,
             },
+
             actions: [
                 {
                     label: t('common.retrying'),

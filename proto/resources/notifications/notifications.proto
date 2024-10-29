@@ -28,7 +28,7 @@ message Notification {
   uint64 id = 1 [jstype = JS_STRING];
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp read_at = 3;
-  int32 user_id = 4;
+  int32 user_id = 4 [(validate.rules).int32.gte = 0];
   // @sanitize
   resources.common.TranslateItem title = 5;
   NotificationType type = 6 [(validate.rules).enum.defined_only = true];

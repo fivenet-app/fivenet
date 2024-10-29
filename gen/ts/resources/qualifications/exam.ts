@@ -62,6 +62,10 @@ export interface ExamQuestion {
      * @generated from protobuf field: optional resources.qualifications.ExamQuestionAnswerData answer = 8;
      */
     answer?: ExamQuestionAnswerData;
+    /**
+     * @generated from protobuf field: optional int32 points = 9;
+     */
+    points?: number;
 }
 /**
  * @generated from protobuf message resources.qualifications.ExamQuestionData
@@ -153,6 +157,10 @@ export interface ExamQuestionMultipleChoice {
  * @generated from protobuf message resources.qualifications.ExamQuestionAnswerData
  */
 export interface ExamQuestionAnswerData {
+    /**
+     * @generated from protobuf field: string answer_key = 1;
+     */
+    answerKey: string;
 }
 // User Response
 
@@ -369,7 +377,8 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 7, name: "data", kind: "message", T: () => ExamQuestionData, options: { "validate.rules": { message: { required: true } } } },
-            { no: 8, name: "answer", kind: "message", T: () => ExamQuestionAnswerData }
+            { no: 8, name: "answer", kind: "message", T: () => ExamQuestionAnswerData },
+            { no: 9, name: "points", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestion>): ExamQuestion {
@@ -410,6 +419,9 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
                 case /* optional resources.qualifications.ExamQuestionAnswerData answer */ 8:
                     message.answer = ExamQuestionAnswerData.internalBinaryRead(reader, reader.uint32(), options, message.answer);
                     break;
+                case /* optional int32 points */ 9:
+                    message.points = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -446,6 +458,9 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         /* optional resources.qualifications.ExamQuestionAnswerData answer = 8; */
         if (message.answer)
             ExamQuestionAnswerData.internalBinaryWrite(message.answer, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 points = 9; */
+        if (message.points !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.points);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -703,7 +718,7 @@ class ExamQuestionMultipleChoice$Type extends MessageType<ExamQuestionMultipleCh
     constructor() {
         super("resources.qualifications.ExamQuestionMultipleChoice", [
             { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
-            { no: 2, name: "limit", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "limit", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { lte: 10, gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestionMultipleChoice>): ExamQuestionMultipleChoice {
@@ -755,18 +770,40 @@ export const ExamQuestionMultipleChoice = new ExamQuestionMultipleChoice$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ExamQuestionAnswerData$Type extends MessageType<ExamQuestionAnswerData> {
     constructor() {
-        super("resources.qualifications.ExamQuestionAnswerData", []);
+        super("resources.qualifications.ExamQuestionAnswerData", [
+            { no: 1, name: "answer_key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } }
+        ]);
     }
     create(value?: PartialMessage<ExamQuestionAnswerData>): ExamQuestionAnswerData {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.answerKey = "";
         if (value !== undefined)
             reflectionMergePartial<ExamQuestionAnswerData>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamQuestionAnswerData): ExamQuestionAnswerData {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string answer_key */ 1:
+                    message.answerKey = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ExamQuestionAnswerData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string answer_key = 1; */
+        if (message.answerKey !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.answerKey);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -782,7 +819,7 @@ class ExamUser$Type extends MessageType<ExamUser> {
     constructor() {
         super("resources.qualifications.ExamUser", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "ends_at", kind: "message", T: () => Timestamp },
@@ -865,7 +902,7 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.ExamResponses", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "responses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamResponse, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
@@ -928,7 +965,7 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
     constructor() {
         super("resources.qualifications.ExamResponse", [
             { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "question", kind: "message", T: () => ExamQuestion },
             { no: 4, name: "response", kind: "message", T: () => ExamResponseData }
         ]);

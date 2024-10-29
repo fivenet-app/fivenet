@@ -95,7 +95,8 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 	}
 
 	countStmt := s.listQualificationsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("datacount.totalcount")}, userInfo)
+		condition, jet.ProjectionList{jet.COUNT(tQuali.ID).AS("datacount.totalcount")}, userInfo).
+		GROUP_BY(tQuali.ID)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

@@ -163,7 +163,7 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
         super("resources.centrum.UserUnitMapping", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
         ]);
     }

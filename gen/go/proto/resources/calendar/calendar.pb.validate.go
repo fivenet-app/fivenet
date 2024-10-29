@@ -634,7 +634,16 @@ func (m *CalendarSub) validate(all bool) error {
 
 	// no validation rules for CalendarId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := CalendarSubValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Confirmed
 

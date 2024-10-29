@@ -63,7 +63,7 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesRequest>): ListVehiclesRequest {

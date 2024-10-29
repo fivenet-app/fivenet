@@ -371,6 +371,21 @@ func (m *ExamQuestion) validate(all bool) error {
 
 	}
 
+	if m.Points != nil {
+
+		if m.GetPoints() < 0 {
+			err := ExamQuestionValidationError{
+				field:  "Points",
+				reason: "value must be greater than or equal to 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ExamQuestionMultiError(errors)
 	}
@@ -1213,7 +1228,18 @@ func (m *ExamQuestionMultipleChoice) validate(all bool) error {
 	}
 
 	if m.Limit != nil {
-		// no validation rules for Limit
+
+		if val := m.GetLimit(); val < 0 || val > 10 {
+			err := ExamQuestionMultipleChoiceValidationError{
+				field:  "Limit",
+				reason: "value must be inside range [0, 10]",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1317,6 +1343,17 @@ func (m *ExamQuestionAnswerData) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if utf8.RuneCountInString(m.GetAnswerKey()) > 1024 {
+		err := ExamQuestionAnswerDataValidationError{
+			field:  "AnswerKey",
+			reason: "value length must be at most 1024 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ExamQuestionAnswerDataMultiError(errors)
@@ -1422,7 +1459,16 @@ func (m *ExamUser) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := ExamUserValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.CreatedAt != nil {
 
@@ -1657,7 +1703,16 @@ func (m *ExamResponses) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := ExamResponsesValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(m.GetResponses()) > 50 {
 		err := ExamResponsesValidationError{
@@ -1806,7 +1861,16 @@ func (m *ExamResponse) validate(all bool) error {
 
 	// no validation rules for QuestionId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := ExamResponseValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetQuestion()).(type) {

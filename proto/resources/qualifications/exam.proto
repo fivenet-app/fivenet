@@ -27,6 +27,7 @@ message ExamQuestion {
   optional string description = 6 [(validate.rules).string.max_len = 1024];
   ExamQuestionData data = 7 [(validate.rules).message.required = true];
   optional ExamQuestionAnswerData answer = 8;
+  optional int32 points = 9 [(validate.rules).int32.gte = 0];
 }
 
 message ExamQuestionData {
@@ -54,16 +55,18 @@ message ExamQuestionSingleChoice {
 
 message ExamQuestionMultipleChoice {
   repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
-  optional int32 limit = 2;
+  optional int32 limit = 2 [(validate.rules).int32 = {gte: 0, lte: 10}];
 }
 
-message ExamQuestionAnswerData {}
+message ExamQuestionAnswerData {
+  string answer_key = 1 [(validate.rules).string.max_len = 1024];
+}
 
 // User Response
 
 message ExamUser {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
   optional resources.timestamp.Timestamp ends_at = 5;
@@ -72,13 +75,13 @@ message ExamUser {
 
 message ExamResponses {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
   repeated ExamResponse responses = 3 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
   uint64 question_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2;
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
 
   ExamQuestion question = 3;
   ExamResponseData response = 4;

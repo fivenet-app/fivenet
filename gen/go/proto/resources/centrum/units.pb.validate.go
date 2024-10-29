@@ -560,7 +560,16 @@ func (m *UnitAssignment) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	// no validation rules for UserId
+	if m.GetUserId() < 0 {
+		err := UnitAssignmentValidationError{
+			field:  "UserId",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.User != nil {
 

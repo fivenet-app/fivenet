@@ -565,7 +565,7 @@ class CalendarSub$Type extends MessageType<CalendarSub> {
     constructor() {
         super("resources.calendar.CalendarSub", [
             { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => UserShort },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "confirmed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },

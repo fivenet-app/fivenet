@@ -587,7 +587,7 @@ export const TimeclockRange = new TimeclockRange$Type();
 class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest> {
     constructor() {
         super("services.jobs.GetTimeclockStatsRequest", [
-            { no: 1, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<GetTimeclockStatsRequest>): GetTimeclockStatsRequest {

@@ -3738,6 +3738,7 @@
 | description | [string](#string) | optional | @sanitize: method=StripTags |
 | data | [ExamQuestionData](#resources-qualifications-ExamQuestionData) |  |  |
 | answer | [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData) | optional |  |
+| points | [int32](#int32) | optional |  |
 
 
 
@@ -3748,6 +3749,11 @@
 
 ### ExamQuestionAnswerData
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| answer_key | [string](#string) |  |  |
 
 
 
