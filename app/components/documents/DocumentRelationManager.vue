@@ -272,6 +272,7 @@ function removeRelation(id: string): void {
                                     type="text"
                                     name="name"
                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                    leading-icon="i-mdi-search"
                                 />
                             </UFormGroup>
 

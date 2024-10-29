@@ -128,6 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             type="text"
                                             name="search"
                                             :placeholder="$t('common.search')"
+                                            leading-icon="i-mdi-search"
                                         />
                                     </UFormGroup>
                                 </dd>

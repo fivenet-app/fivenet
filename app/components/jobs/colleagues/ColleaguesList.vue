@@ -148,6 +148,7 @@ defineShortcuts({
                     name="name"
                     :placeholder="$t('common.name')"
                     block
+                    leading-icon="i-mdi-search"
                     @keydown.esc="$event.target.blur()"
                 >
                     <template #trailing>

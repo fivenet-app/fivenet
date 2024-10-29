@@ -56,6 +56,7 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                         "
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
+                        leading-icon="i-mdi-search"
                     >
                         <template #label>
                             <span v-if="query.user" class="truncate">

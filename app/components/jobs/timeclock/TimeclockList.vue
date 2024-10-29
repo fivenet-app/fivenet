@@ -455,6 +455,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                         block
                                         trailing
                                         by="userId"
+                                        leading-icon="i-mdi-search"
                                     >
                                         <template #label>
                                             <span v-if="query.users?.length" class="truncate">

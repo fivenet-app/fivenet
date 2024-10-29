@@ -144,6 +144,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.citizen', 1)"
                                 trailing
                                 by="userId"
+                                leading-icon="i-mdi-user"
                             >
                                 <template #label>
                                     <template v-if="selectedUser">
@@ -203,6 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :max="100"
                             :placeholder="$t('common.score')"
                             :label="$t('common.score')"
+                            trailing-icon="i-mdi-star-check"
                         />
                     </UFormGroup>
 

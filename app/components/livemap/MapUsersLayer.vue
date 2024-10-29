@@ -85,6 +85,7 @@ const playerMarkersFiltered = computedAsync(async () =>
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                 autocomplete="off"
                 :ui="{ icon: { trailing: { pointer: '' } } }"
+                leading-icon="i-mdi-user-multiple"
             >
                 <template #trailing>
                     <UButton

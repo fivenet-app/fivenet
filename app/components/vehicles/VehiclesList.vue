@@ -166,6 +166,7 @@ defineShortcuts({
                         name="licensePlate"
                         :placeholder="$t('common.license_plate')"
                         block
+                        leading-icon="i-mdi-search"
                     >
                         <template #trailing>
                             <UKbd value="/" />
@@ -230,12 +231,15 @@ defineShortcuts({
         <template #plate-data="{ row: vehicle }">
             <LicensePlate :plate="vehicle.plate" class="mr-2" />
         </template>
+
         <template #type-data="{ row: vehicle }">
             {{ toTitleCase(vehicle.type) }}
         </template>
+
         <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
             <CitizenInfoPopover :user="vehicle.owner" />
         </template>
+
         <template #actions-data="{ row: vehicle }">
             <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
                 <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />

@@ -310,6 +310,7 @@ function removeReference(id: string): void {
                                     type="text"
                                     name="title"
                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
+                                    leading-icon="i-mdi-search"
                                 />
                             </UFormGroup>
 

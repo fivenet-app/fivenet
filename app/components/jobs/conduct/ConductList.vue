@@ -215,6 +215,7 @@ defineShortcuts({
                                 :placeholder="$t('common.colleague')"
                                 trailing
                                 by="userId"
+                                leading-icon="i-mdi-search"
                                 @keydown.esc="$event.target.blur()"
                             >
                                 <template #option="{ option: user }">

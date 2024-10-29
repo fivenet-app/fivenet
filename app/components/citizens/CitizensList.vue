@@ -179,7 +179,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
             <div class="flex w-full flex-row gap-2">
-                <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
+                <UFormGroup class="flex-1" :label="$t('common.search')">
                     <UInput
                         ref="input"
                         v-model="query.name"
@@ -187,6 +187,7 @@ defineShortcuts({
                         name="name"
                         :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                         block
+                        leading-icon="i-mdi-search"
                         @keydown.esc="$event.target.blur()"
                     >
                         <template #trailing>

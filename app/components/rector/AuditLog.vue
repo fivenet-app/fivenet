@@ -272,7 +272,14 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
-                        <UInput v-model="query.search" type="text" name="data" block :placeholder="$t('common.search')" />
+                        <UInput
+                            v-model="query.search"
+                            type="text"
+                            name="data"
+                            block
+                            :placeholder="$t('common.search')"
+                            leading-icon="i-mdi-search"
+                        />
                     </UFormGroup>
                 </div>
             </UForm>

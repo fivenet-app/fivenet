@@ -351,7 +351,7 @@ defineShortcuts({
                             <UButton
                                 class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                                 size="2xs"
-                                :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
+                                :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
                                 @click="open = !open"
                             >
                                 <span v-if="!open" class="inline-flex items-center justify-center">
