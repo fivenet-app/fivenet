@@ -176,11 +176,6 @@ const columns = [
 
 const table = useTemplateRef<typeof Table>('table');
 
-watch(table, () => {
-    console.log('table', table.value);
-    table.value?.toggleOpened(0);
-});
-
 const editing = ref(props.startInEdit);
 </script>
 
