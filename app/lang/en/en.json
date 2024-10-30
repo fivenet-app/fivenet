@@ -486,7 +486,8 @@
         "own": "Eigene",
         "per_day": "Per Day",
         "view": "View",
-        "answer_key": "Solution key"
+        "answer_key": "Solution key",
+        "hint": "Hint"
     },
     "components": {
         "partials": {

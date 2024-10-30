@@ -23,6 +23,7 @@ type fivenetLawbooksLawsTable struct {
 	LawbookID     mysql.ColumnInteger
 	Name          mysql.ColumnString
 	Description   mysql.ColumnString
+	Hint          mysql.ColumnString
 	Fine          mysql.ColumnInteger
 	DetentionTime mysql.ColumnInteger
 	StvoPoints    mysql.ColumnInteger
@@ -72,11 +73,12 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		LawbookIDColumn     = mysql.IntegerColumn("lawbook_id")
 		NameColumn          = mysql.StringColumn("name")
 		DescriptionColumn   = mysql.StringColumn("description")
+		HintColumn          = mysql.StringColumn("hint")
 		FineColumn          = mysql.IntegerColumn("fine")
 		DetentionTimeColumn = mysql.IntegerColumn("detention_time")
 		StvoPointsColumn    = mysql.IntegerColumn("stvo_points")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 	)
 
 	return fivenetLawbooksLawsTable{
@@ -89,6 +91,7 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		LawbookID:     LawbookIDColumn,
 		Name:          NameColumn,
 		Description:   DescriptionColumn,
+		Hint:          HintColumn,
 		Fine:          FineColumn,
 		DetentionTime: DetentionTimeColumn,
 		StvoPoints:    StvoPointsColumn,

@@ -365,10 +365,25 @@ func (m *Law) validate(all bool) error {
 
 	if m.Description != nil {
 
-		if utf8.RuneCountInString(m.GetDescription()) > 511 {
+		if utf8.RuneCountInString(m.GetDescription()) > 512 {
 			err := LawValidationError{
 				field:  "Description",
-				reason: "value length must be at most 511 runes",
+				reason: "value length must be at most 512 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Hint != nil {
+
+		if utf8.RuneCountInString(m.GetHint()) > 512 {
+			err := LawValidationError{
+				field:  "Hint",
+				reason: "value length must be at most 512 runes",
 			}
 			if !all {
 				return err

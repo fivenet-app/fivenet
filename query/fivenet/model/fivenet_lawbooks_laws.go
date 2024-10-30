@@ -18,6 +18,7 @@ type FivenetLawbooksLaws struct {
 	LawbookID     uint64     `json:"lawbook_id"`
 	Name          string     `json:"name"`
 	Description   *string    `json:"description"`
+	Hint          *string    `json:"hint"`
 	Fine          *uint64    `json:"fine"`
 	DetentionTime *uint64    `json:"detention_time"`
 	StvoPoints    *uint64    `json:"stvo_points"`

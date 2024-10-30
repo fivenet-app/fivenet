@@ -77,15 +77,21 @@ export interface Law {
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional uint32 fine = 7;
+     * @sanitize
+     *
+     * @generated from protobuf field: optional string hint = 7;
+     */
+    hint?: string;
+    /**
+     * @generated from protobuf field: optional uint32 fine = 8;
      */
     fine?: number;
     /**
-     * @generated from protobuf field: optional uint32 detention_time = 8;
+     * @generated from protobuf field: optional uint32 detention_time = 9;
      */
     detentionTime?: number;
     /**
-     * @generated from protobuf field: optional uint32 stvo_points = 9;
+     * @generated from protobuf field: optional uint32 stvo_points = 10;
      */
     stvoPoints?: number;
 }
@@ -182,10 +188,11 @@ class Law$Type extends MessageType<Law> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "511" } } } },
-            { no: 7, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 8, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 9, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 7, name: "hint", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 8, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 9, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 10, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<Law>): Law {
@@ -220,13 +227,16 @@ class Law$Type extends MessageType<Law> {
                 case /* optional string description */ 6:
                     message.description = reader.string();
                     break;
-                case /* optional uint32 fine */ 7:
+                case /* optional string hint */ 7:
+                    message.hint = reader.string();
+                    break;
+                case /* optional uint32 fine */ 8:
                     message.fine = reader.uint32();
                     break;
-                case /* optional uint32 detention_time */ 8:
+                case /* optional uint32 detention_time */ 9:
                     message.detentionTime = reader.uint32();
                     break;
-                case /* optional uint32 stvo_points */ 9:
+                case /* optional uint32 stvo_points */ 10:
                     message.stvoPoints = reader.uint32();
                     break;
                 default:
@@ -259,15 +269,18 @@ class Law$Type extends MessageType<Law> {
         /* optional string description = 6; */
         if (message.description !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.description);
-        /* optional uint32 fine = 7; */
+        /* optional string hint = 7; */
+        if (message.hint !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.hint);
+        /* optional uint32 fine = 8; */
         if (message.fine !== undefined)
-            writer.tag(7, WireType.Varint).uint32(message.fine);
-        /* optional uint32 detention_time = 8; */
+            writer.tag(8, WireType.Varint).uint32(message.fine);
+        /* optional uint32 detention_time = 9; */
         if (message.detentionTime !== undefined)
-            writer.tag(8, WireType.Varint).uint32(message.detentionTime);
-        /* optional uint32 stvo_points = 9; */
+            writer.tag(9, WireType.Varint).uint32(message.detentionTime);
+        /* optional uint32 stvo_points = 10; */
         if (message.stvoPoints !== undefined)
-            writer.tag(9, WireType.Varint).uint32(message.stvoPoints);
+            writer.tag(10, WireType.Varint).uint32(message.stvoPoints);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -278,6 +278,7 @@ defineShortcuts({
                                 :min="0"
                                 :placeholder="`${$t('common.fine')}`"
                                 block
+                                leading-icon="i-mdi-dollar"
                             />
                         </UFormGroup>
                     </div>

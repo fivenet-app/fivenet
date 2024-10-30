@@ -12,7 +12,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 const completorStore = useCompletorStore();
 const notifications = useNotificatorStore();
 
-const { t, d } = useI18n();
+const { t, d, n } = useI18n();
 
 const { data: lawBooks, pending: loading, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
@@ -86,9 +86,11 @@ function calculate(e: SelectedPenalty): void {
     if (idx > -1) {
         const existing = state.value.selectedPenalties.at(idx)!;
         state.value.selectedPenalties[idx] = e;
+
         if (existing.count !== e.count) {
             count = e.count - existing.count;
         }
+
         // If the selected penalty count is 0, remove it from the list
         if (e.count === 0) {
             state.value.selectedPenalties.splice(idx, 1);
@@ -116,7 +118,7 @@ async function copyToClipboard(): Promise<void> {
         d(new Date(), 'long') +
         `)
 
-${t('common.fine')}: $${state.value.fine}${
+${t('common.fine')}: ${n(state.value.fine, 'currency')}${
             leeway.value > 0 && state.value.fine > 0 ? ` ($-${(state.value.fine * leeway.value).toFixed(0)})` : ''
         }
 ${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime)}${
@@ -237,9 +239,19 @@ const columns = [
                                 <div class="max-w-full">
                                     <UTable :columns="columns" :rows="lawBook.book.laws">
                                         <template #name-data="{ row: law }">
-                                            <p class="whitespace-pre-line text-gray-900 dark:text-gray-300">
-                                                {{ law.name }}
-                                            </p>
+                                            <div class="inline-flex items-center gap-2">
+                                                <span class="whitespace-pre-line text-gray-900 dark:text-white">
+                                                    {{ law.name }}
+                                                </span>
+
+                                                <UTooltip v-if="law.hint" :text="law.hint">
+                                                    <UIcon name="i-mdi-information-slab-circle-outline" class="size-5" />
+                                                </UTooltip>
+                                            </div>
+                                        </template>
+
+                                        <template #fine-data="{ row: law }">
+                                            {{ $n(law.fine, 'currency') }}
                                         </template>
 
                                         <template #description-data="{ row: law }">

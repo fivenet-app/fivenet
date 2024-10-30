@@ -54,9 +54,15 @@ const leeway = computed(() => props.reduction / 100);
 
     <UTable v-else :columns="columns" :rows="selectedLaws" class="max-w-full divide-y divide-base-600">
         <template #law-data="{ row: law }">
-            <p class="whitespace-pre-line text-gray-900 dark:text-gray-300">
-                {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
-            </p>
+            <div class="inline-flex items-center gap-2">
+                <p class="whitespace-pre-line text-gray-900 dark:text-white">
+                    {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
+                </p>
+
+                <UTooltip v-if="law.law.hint" :text="law.law.hint">
+                    <UIcon name="i-mdi-information-slab-circle-outline" class="size-5" />
+                </UTooltip>
+            </div>
         </template>
 
         <template #fine-data="{ row: law }">

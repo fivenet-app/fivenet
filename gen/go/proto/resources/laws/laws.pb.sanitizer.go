@@ -13,6 +13,10 @@ func (m *Law) Sanitize() error {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
+	if m.Hint != nil {
+		*m.Hint = htmlsanitizer.Sanitize(*m.Hint)
+	}
+
 	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	return nil

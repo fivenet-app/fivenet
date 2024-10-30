@@ -486,7 +486,8 @@
         "own": "Eigene",
         "per_day": "Pro Tag",
         "view": "Ansicht",
-        "answer_key": "Antwortschlüssel"
+        "answer_key": "Antwortschlüssel",
+        "hint": "Hinweis"
     },
     "components": {
         "partials": {

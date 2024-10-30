@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type Table from '#ui/components/data/Table.vue';
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -17,6 +18,8 @@ const emits = defineEmits<{
     (e: 'update:laws', laws: Law[]): void;
     (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
+
+const { t } = useI18n();
 
 const lawBook = useVModel(props, 'modelValue', emits);
 
@@ -123,15 +126,71 @@ function resetForm(): void {
 onMounted(() => resetForm());
 watch(props, () => resetForm());
 
+async function deleteLaw(id: string): Promise<void> {
+    const i = parseInt(id);
+    if (i < 0) {
+        deletedLaw(id);
+        return;
+    }
+
+    try {
+        const call = getGRPCRectorLawsClient().deleteLaw({
+            id,
+        });
+        await call;
+
+        deletedLaw(id);
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const columns = [
+    {
+        key: 'actions',
+        label: '',
+        sortable: false,
+    },
+    {
+        key: 'crime',
+        label: t('common.crime'),
+    },
+    {
+        key: 'fine',
+        label: t('common.fine'),
+    },
+    {
+        key: 'detentionTime',
+        label: t('common.detention_time'),
+    },
+    {
+        key: 'service',
+        label: t('common.traffic_infraction_points', 2),
+    },
+    {
+        key: 'description',
+        label: t('common.description'),
+    },
+];
+
+const table = useTemplateRef<typeof Table>('table');
+
+watch(table, () => {
+    console.log('table', table.value);
+    table.value?.toggleOpened(0);
+});
+
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <UCard v-if="lawBook">
+    <UCard v-if="lawBook" class="overflow-y-auto">
         <template #header>
             <div v-if="!editing" class="flex items-center gap-x-2">
-                <UButtonGroup class="inline-flex w-full">
+                <UButtonGroup class="inline-flex">
                     <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+
                     <UButton
                         variant="link"
                         icon="i-mdi-trash-can"
@@ -145,13 +204,13 @@ const editing = ref(props.startInEdit);
                     />
                 </UButtonGroup>
 
-                <div class="inline-flex flex-col">
+                <div class="inline-flex w-full flex-col">
                     <h2 class="text-xl">{{ lawBook.name }}</h2>
 
                     <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
-                <UButton @click="addLaw">
+                <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
                     {{ $t('pages.rector.laws.add_new_law') }}
                 </UButton>
             </div>
@@ -188,39 +247,69 @@ const editing = ref(props.startInEdit);
             </UForm>
         </template>
 
-        <div class="table min-w-full divide-y divide-base-600">
-            <div class="table-header-group">
-                <div class="table-row">
-                    <div class="table-cell py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
-                        {{ $t('common.action', 2) }}
-                    </div>
-                    <div class="table-cell py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
-                        {{ $t('common.crime') }}
-                    </div>
-                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
-                        {{ $t('common.fine') }}
-                    </div>
-                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
-                        {{ $t('common.detention_time') }}
-                    </div>
-                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
-                        {{ $t('common.traffic_infraction_points', 2) }}
-                    </div>
-                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
-                        {{ $t('common.description') }}
-                    </div>
-                </div>
-            </div>
-            <div class="table-row-group divide-y divide-base-800">
+        <UTable
+            ref="table"
+            :columns="columns"
+            :rows="laws"
+            :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
+            :ui="{ wrapper: '' }"
+        >
+            <template #expand="{ row: law, index }">
                 <LawEntry
-                    v-for="law in laws"
-                    :key="law.id"
                     :law="law"
                     :start-in-edit="parseInt(law.id) < 0"
-                    @update:law="$emit('update:law', $event)"
-                    @deleted="deletedLaw($event)"
+                    @update:law="
+                        $emit('update:law', $event);
+                        table?.toggleOpened(index);
+                    "
+                    @close="
+                        table?.toggleOpened(index);
+                        if (parseInt(law.id) < 0) {
+                            deleteLaw(law.id);
+                        }
+                    "
                 />
-            </div>
-        </div>
+            </template>
+
+            <template #actions-data="{ row: law }">
+                <UButton
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    color="red"
+                    :title="$t('common.delete')"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteLaw(law.id),
+                        })
+                    "
+                />
+            </template>
+
+            <template #crime-data="{ row: law }">
+                <span class="truncate text-gray-900 dark:text-white">
+                    {{ law.name }}
+                </span>
+            </template>
+
+            <template #fine-data="{ row: law }">{{ $n(law.fine, 'currency') }}</template>
+
+            <template #detentionTime-data="{ row: law }">
+                {{ law.detentionTime }}
+            </template>
+
+            <template #stvoPoints-data="{ row: law }">
+                {{ law.stvoPoints }}
+            </template>
+
+            <template #description-data="{ row: law }">
+                <span class="line-clamp-2 truncate hover:line-clamp-4">
+                    {{ law.description }}
+                </span>
+
+                <span class="line-clamp-2 truncate hover:line-clamp-4">
+                    <span class="font-semibold">{{ $t('common.hint') }}:</span> {{ law.hint }}
+                </span>
+            </template>
+        </UTable>
     </UCard>
 </template>
