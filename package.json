@@ -77,9 +77,9 @@
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.5",
-        "@vueuse/core": "11.1.0",
-        "@vueuse/nuxt": "11.1.0",
-        "@vueuse/router": "11.1.0",
+        "@vueuse/core": "11.2.0",
+        "@vueuse/nuxt": "11.2.0",
+        "@vueuse/router": "11.2.0",
         "autoprefixer": "10.4.20",
         "cssnano": "7.0.6",
         "eslint": "9.13.0",
@@ -105,7 +105,7 @@
         "typescript": "5.6.3",
         "vue": "3.5.12",
         "vue-i18n-routing": "1.2.0",
-        "vue-tsc": "2.1.8"
+        "vue-tsc": "2.1.10"
     },
     "packageManager": "pnpm@9.12.2"
 }
