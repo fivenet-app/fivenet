@@ -301,7 +301,7 @@ const editing = ref(props.startInEdit);
                     {{ law.description }}
                 </span>
 
-                <span class="line-clamp-2 truncate hover:line-clamp-4">
+                <span v-if="law.hint !== undefined && law.hint !== ''" class="line-clamp-2 truncate hover:line-clamp-4">
                     <span class="font-semibold">{{ $t('common.hint') }}:</span> {{ law.hint }}
                 </span>
             </template>
