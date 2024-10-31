@@ -65,5 +65,7 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 		proto.Merge(x.Info, in.Info)
 	}
 
+	x.Hidden = in.Hidden
+
 	return x
 }
