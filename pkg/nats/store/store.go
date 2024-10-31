@@ -16,6 +16,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -468,4 +469,40 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 	}()
 
 	return nil
+}
+
+func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) error {
+	keys, err := s.Keys(ctx, "")
+	if err != nil {
+		return err
+	}
+
+	for _, key := range keys {
+		v, ok := s.get(key)
+		if !ok {
+			continue
+		}
+
+		if !fn(key, v) {
+			break
+		}
+	}
+
+	return nil
+}
+
+func (s *Store[T, U]) Clear(ctx context.Context) error {
+	keys, err := s.Keys(ctx, "")
+	if err != nil {
+		return err
+	}
+
+	errs := multierr.Combine()
+	for _, key := range keys {
+		if err := s.Delete(ctx, key); err != nil {
+			errs = multierr.Append(errs, err)
+		}
+	}
+
+	return errs
 }

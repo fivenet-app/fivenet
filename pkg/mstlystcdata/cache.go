@@ -112,6 +112,7 @@ func NewCache(p Params) (*Cache, error) {
 		if err != nil {
 			return err
 		}
+		// TODO we have to run addDataToIndex every now and then
 
 		if err := cc.refreshCache(ctxStartup); err != nil {
 			return err
@@ -245,10 +246,32 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 
 	// Update cache
 	errs := multierr.Combine()
-	for _, job := range dest {
-		if err := c.jobs.Put(ctx, strings.ToLower(job.Name), job); err != nil {
-			errs = multierr.Append(errs, err)
+	if len(dest) == 0 {
+		if err := c.jobs.Clear(ctx); err != nil {
+			return err
 		}
+	} else {
+		// Update cache
+		found := []string{}
+		for _, job := range dest {
+			jobName := strings.ToLower(job.Name)
+			if err := c.jobs.Put(ctx, jobName, job); err != nil {
+				errs = multierr.Append(errs, err)
+			}
+			found = append(found, jobName)
+		}
+
+		// Delete non-existing jobs, based on which are in the database
+		c.jobs.Range(ctx, func(key string, value *users.Job) bool {
+			if !slices.ContainsFunc(found, func(in string) bool {
+				return in == key
+			}) {
+				if err := c.jobs.Delete(ctx, key); err != nil {
+					errs = multierr.Append(errs, err)
+				}
+			}
+			return true
+		})
 	}
 
 	return errs
