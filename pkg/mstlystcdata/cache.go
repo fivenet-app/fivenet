@@ -10,6 +10,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/bep/debounce"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
@@ -81,10 +82,27 @@ func NewCache(p Params) (*Cache, error) {
 		lawBooks:           xsync.NewMapOf[uint64, *laws.LawBook](),
 	}
 
+	debouncedFn := func() {
+		if err := cc.searcher.addDataToIndex(ctxCancel); err != nil {
+			cc.logger.Error("failed to add jobs data to index debounced", zap.Error(err))
+			return
+		}
+	}
+	debouncer := debounce.New(200 * time.Millisecond)
+
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		jobs, err := store.New[users.Job, *users.Job](ctxStartup, p.Logger, p.JS, "cache",
 			store.WithLocks[users.Job, *users.Job](nil),
 			store.WithKVPrefix[users.Job, *users.Job]("jobs"),
+			store.WithOnUpdateFn[users.Job, *users.Job](func(_ *store.Store[users.Job, *users.Job], value *users.Job) (*users.Job, error) {
+				if value == nil {
+					return value, nil
+				}
+
+				debouncer(debouncedFn)
+
+				return value, nil
+			}),
 		)
 		if err != nil {
 			return err

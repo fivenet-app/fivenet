@@ -96,19 +96,31 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	}
 
 	var countStmt jet.SelectStatement
-	if req.PerDay {
-		countStmt = tTimeClock.
-			SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
-			FROM(
-				tTimeClock.
-					INNER_JOIN(tUser,
-						tUser.ID.EQ(tTimeClock.UserID),
-					),
-			).
-			WHERE(condition)
+	if req.UserMode == jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_ALL {
+		if req.PerDay {
+			countStmt = tTimeClock.
+				SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
+				FROM(
+					tTimeClock.
+						INNER_JOIN(tUser,
+							tUser.ID.EQ(tTimeClock.UserID),
+						),
+				).
+				WHERE(condition)
+		} else {
+			countStmt = tTimeClock.
+				SELECT(jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount")).
+				FROM(
+					tTimeClock.
+						INNER_JOIN(tUser,
+							tUser.ID.EQ(tTimeClock.UserID),
+						),
+				).
+				WHERE(condition)
+		}
 	} else {
 		countStmt = tTimeClock.
-			SELECT(jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount")).
+			SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
 			FROM(
 				tTimeClock.
 					INNER_JOIN(tUser,

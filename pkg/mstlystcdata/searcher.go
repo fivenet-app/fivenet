@@ -43,24 +43,16 @@ func (s *Searcher) newJobsIndex() (bleve.Index, error) {
 }
 
 func (s *Searcher) addDataToIndex(ctx context.Context) error {
-	// Fill jobs search from cache
-	keys, err := s.cache.jobs.Keys(ctx, "")
-	if err != nil {
-		return err
-	}
-
 	errs := multierr.Combine()
 
-	for _, k := range keys {
-		job, ok := s.cache.jobs.Get(k)
-		if !ok {
-			continue
-		}
-
-		if err := s.jobs.Index(k, job); err != nil {
+	// Fill jobs search from cache
+	s.cache.jobs.Range(ctx, func(key string, value *users.Job) bool {
+		if err := s.jobs.Index(key, value); err != nil {
 			errs = multierr.Append(errs, err)
 		}
-	}
+
+		return true
+	})
 
 	return errs
 }

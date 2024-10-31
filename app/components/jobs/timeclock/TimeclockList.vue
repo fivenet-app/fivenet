@@ -117,6 +117,10 @@ const {
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
+        if (!isBefore(query.date.start, query.date.end)) {
+            query.date.start = query.mode > TimeclockMode.DAILY ? subWeeks(query.date.end, 1) : query.date.start;
+        }
+
         const req: ListTimeclockRequest = {
             pagination: {
                 offset: offset.value,
@@ -127,7 +131,9 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             date: {
                 start: {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(
-                        query.mode === TimeclockMode.DAILY ? query.date.end : query.date.start,
+                        query.userMode === TimeclockUserMode.ALL && query.mode === TimeclockMode.DAILY
+                            ? query.date.end
+                            : query.date.start,
                     ),
                 },
                 end: {
