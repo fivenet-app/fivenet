@@ -478,7 +478,7 @@ func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bo
 	}
 
 	for _, key := range keys {
-		v, ok := s.get(key)
+		v, ok := s.Get(key)
 		if !ok {
 			continue
 		}

@@ -88,7 +88,7 @@ func NewCache(p Params) (*Cache, error) {
 			return
 		}
 	}
-	debouncer := debounce.New(200 * time.Millisecond)
+	debouncer := debounce.New(175 * time.Millisecond)
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		jobs, err := store.New[users.Job, *users.Job](ctxStartup, p.Logger, p.JS, "cache",
@@ -130,7 +130,6 @@ func NewCache(p Params) (*Cache, error) {
 		if err != nil {
 			return err
 		}
-		// TODO we have to run addDataToIndex every now and then
 
 		if err := cc.refreshCache(ctxStartup); err != nil {
 			return err
