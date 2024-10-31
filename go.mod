@@ -8,6 +8,7 @@ require (
 	github.com/XSAM/otelsql v0.35.0
 	github.com/adhocore/gronx v1.19.3
 	github.com/alecthomas/kong v1.2.1
+	github.com/bep/debounce v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.2
 	github.com/coder/websocket v1.8.12
 	github.com/creasty/defaults v1.8.0
@@ -84,7 +85,6 @@ require (
 	github.com/RoaringBitmap/roaring v1.9.4 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/bep/debounce v1.2.1 // indirect
 	github.com/bits-and-blooms/bitset v1.14.3 // indirect
 	github.com/blevesearch/bleve_index_api v1.1.12 // indirect
 	github.com/blevesearch/geo v0.1.20 // indirect
