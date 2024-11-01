@@ -1921,10 +1921,10 @@ func (m *QualificationResult) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetSummary()); l < 3 || l > 512 {
+	if utf8.RuneCountInString(m.GetSummary()) > 512 {
 		err := QualificationResultValidationError{
 			field:  "Summary",
-			reason: "value length must be between 3 and 512 runes, inclusive",
+			reason: "value length must be at most 512 runes",
 		}
 		if !all {
 			return err

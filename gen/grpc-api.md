@@ -11,24 +11,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/calendar/access.proto](#resources_calendar_access-proto)
-    - [CalendarAccess](#resources-calendar-CalendarAccess)
-    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
-    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
-  
-    - [AccessLevel](#resources-calendar-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-calendar-AccessLevelUpdateMode)
-  
-- [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
-    - [Calendar](#resources-calendar-Calendar)
-    - [CalendarEntry](#resources-calendar-CalendarEntry)
-    - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
-    - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
-    - [CalendarShort](#resources-calendar-CalendarShort)
-    - [CalendarSub](#resources-calendar-CalendarSub)
-  
-    - [RsvpResponses](#resources-calendar-RsvpResponses)
-  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -40,13 +22,6 @@
     - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
-  
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
   
 - [resources/centrum/general.proto](#resources_centrum_general-proto)
     - [Attributes](#resources-centrum-Attributes)
@@ -61,11 +36,22 @@
   
     - [StatusUnit](#resources-centrum-StatusUnit)
   
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+  
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
     - [PaginationResponse](#resources-common-database-PaginationResponse)
     - [Sort](#resources-common-database-Sort)
+  
+- [resources/common/i18n.proto](#resources_common_i18n-proto)
+    - [TranslateItem](#resources-common-TranslateItem)
+    - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
   
 - [resources/common/grpcws/grpcws.proto](#resources_common_grpcws_grpcws-proto)
     - [Body](#resources-common-grpcws-Body)
@@ -79,10 +65,6 @@
     - [HeaderValue](#resources-common-grpcws-HeaderValue)
     - [Ping](#resources-common-grpcws-Ping)
   
-- [resources/common/i18n.proto](#resources_common_i18n-proto)
-    - [TranslateItem](#resources-common-TranslateItem)
-    - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
-  
 - [resources/common/cron/cron.proto](#resources_common_cron_cron-proto)
     - [Cronjob](#resources-common-cron-Cronjob)
     - [CronjobCompletedEvent](#resources-common-cron-CronjobCompletedEvent)
@@ -94,6 +76,14 @@
   
 - [resources/common/uuid.proto](#resources_common_uuid-proto)
     - [UUID](#resources-common-UUID)
+  
+- [resources/documents/access.proto](#resources_documents_access-proto)
+    - [DocumentAccess](#resources-documents-DocumentAccess)
+    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
+    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
+  
+    - [AccessLevel](#resources-documents-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
   
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
@@ -107,29 +97,8 @@
 - [resources/documents/comment.proto](#resources_documents_comment-proto)
     - [Comment](#resources-documents-Comment)
   
-- [resources/documents/documents.proto](#resources_documents_documents-proto)
-    - [Document](#resources-documents-Document)
-    - [DocumentReference](#resources-documents-DocumentReference)
-    - [DocumentRelation](#resources-documents-DocumentRelation)
-    - [DocumentShort](#resources-documents-DocumentShort)
-  
-    - [DocContentType](#resources-documents-DocContentType)
-    - [DocReference](#resources-documents-DocReference)
-    - [DocRelation](#resources-documents-DocRelation)
-  
 - [resources/documents/requests.proto](#resources_documents_requests-proto)
     - [DocRequest](#resources-documents-DocRequest)
-  
-- [resources/documents/category.proto](#resources_documents_category-proto)
-    - [Category](#resources-documents-Category)
-  
-- [resources/documents/access.proto](#resources_documents_access-proto)
-    - [DocumentAccess](#resources-documents-DocumentAccess)
-    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
-    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
-  
-    - [AccessLevel](#resources-documents-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
   
 - [resources/documents/templates.proto](#resources_documents_templates-proto)
     - [ObjectSpecs](#resources-documents-ObjectSpecs)
@@ -140,9 +109,27 @@
     - [TemplateSchema](#resources-documents-TemplateSchema)
     - [TemplateShort](#resources-documents-TemplateShort)
   
+- [resources/documents/documents.proto](#resources_documents_documents-proto)
+    - [Document](#resources-documents-Document)
+    - [DocumentReference](#resources-documents-DocumentReference)
+    - [DocumentRelation](#resources-documents-DocumentRelation)
+    - [DocumentShort](#resources-documents-DocumentShort)
+  
+    - [DocContentType](#resources-documents-DocContentType)
+    - [DocReference](#resources-documents-DocReference)
+    - [DocRelation](#resources-documents-DocRelation)
+  
+- [resources/documents/category.proto](#resources_documents_category-proto)
+    - [Category](#resources-documents-Category)
+  
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
+  
+- [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
+    - [ConductEntry](#resources-jobs-ConductEntry)
+  
+    - [ConductType](#resources-jobs-ConductType)
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
@@ -153,11 +140,6 @@
     - [JobsUserProps](#resources-jobs-JobsUserProps)
   
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
-  
-- [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
-    - [ConductEntry](#resources-jobs-ConductEntry)
-  
-    - [ConductType](#resources-jobs-ConductType)
   
 - [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
     - [TimeclockEntry](#resources-jobs-TimeclockEntry)
@@ -185,33 +167,6 @@
   
     - [MarkerType](#resources-livemap-MarkerType)
   
-- [resources/messenger/events.proto](#resources_messenger_events-proto)
-    - [MessengerEvent](#resources-messenger-MessengerEvent)
-  
-- [resources/messenger/message.proto](#resources_messenger_message-proto)
-    - [Message](#resources-messenger-Message)
-    - [MessageData](#resources-messenger-MessageData)
-  
-- [resources/messenger/access.proto](#resources_messenger_access-proto)
-    - [ThreadAccess](#resources-messenger-ThreadAccess)
-    - [ThreadJobAccess](#resources-messenger-ThreadJobAccess)
-    - [ThreadUserAccess](#resources-messenger-ThreadUserAccess)
-  
-    - [AccessLevel](#resources-messenger-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-messenger-AccessLevelUpdateMode)
-  
-- [resources/messenger/thread.proto](#resources_messenger_thread-proto)
-    - [Thread](#resources-messenger-Thread)
-    - [ThreadUserState](#resources-messenger-ThreadUserState)
-  
-- [resources/messenger/user.proto](#resources_messenger_user-proto)
-    - [UserStatus](#resources-messenger-UserStatus)
-  
-- [resources/notifications/events.proto](#resources_notifications_events-proto)
-    - [JobEvent](#resources-notifications-JobEvent)
-    - [SystemEvent](#resources-notifications-SystemEvent)
-    - [UserEvent](#resources-notifications-UserEvent)
-  
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [CalendarData](#resources-notifications-CalendarData)
     - [Data](#resources-notifications-Data)
@@ -220,6 +175,11 @@
   
     - [NotificationCategory](#resources-notifications-NotificationCategory)
     - [NotificationType](#resources-notifications-NotificationType)
+  
+- [resources/notifications/events.proto](#resources_notifications_events-proto)
+    - [JobEvent](#resources-notifications-JobEvent)
+    - [SystemEvent](#resources-notifications-SystemEvent)
+    - [UserEvent](#resources-notifications-UserEvent)
   
 - [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
@@ -305,10 +265,6 @@
   
     - [UserActivityType](#resources-users-UserActivityType)
   
-- [resources/users/jobs.proto](#resources_users_jobs-proto)
-    - [Job](#resources-users-Job)
-    - [JobGrade](#resources-users-JobGrade)
-  
 - [resources/users/job_props.proto](#resources_users_job_props-proto)
     - [DiscordSyncChange](#resources-users-DiscordSyncChange)
     - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
@@ -324,8 +280,52 @@
   
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
   
+- [resources/users/jobs.proto](#resources_users_jobs-proto)
+    - [Job](#resources-users-Job)
+    - [JobGrade](#resources-users-JobGrade)
+  
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
+  
+- [resources/calendar/access.proto](#resources_calendar_access-proto)
+    - [CalendarAccess](#resources-calendar-CalendarAccess)
+    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
+    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
+  
+    - [AccessLevel](#resources-calendar-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-calendar-AccessLevelUpdateMode)
+  
+- [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
+    - [Calendar](#resources-calendar-Calendar)
+    - [CalendarEntry](#resources-calendar-CalendarEntry)
+    - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
+    - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
+    - [CalendarShort](#resources-calendar-CalendarShort)
+    - [CalendarSub](#resources-calendar-CalendarSub)
+  
+    - [RsvpResponses](#resources-calendar-RsvpResponses)
+  
+- [resources/messenger/access.proto](#resources_messenger_access-proto)
+    - [ThreadAccess](#resources-messenger-ThreadAccess)
+    - [ThreadJobAccess](#resources-messenger-ThreadJobAccess)
+    - [ThreadUserAccess](#resources-messenger-ThreadUserAccess)
+  
+    - [AccessLevel](#resources-messenger-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-messenger-AccessLevelUpdateMode)
+  
+- [resources/messenger/events.proto](#resources_messenger_events-proto)
+    - [MessengerEvent](#resources-messenger-MessengerEvent)
+  
+- [resources/messenger/message.proto](#resources_messenger_message-proto)
+    - [Message](#resources-messenger-Message)
+    - [MessageData](#resources-messenger-MessageData)
+  
+- [resources/messenger/thread.proto](#resources_messenger_thread-proto)
+    - [Thread](#resources-messenger-Thread)
+    - [ThreadUserState](#resources-messenger-ThreadUserState)
+  
+- [resources/messenger/user.proto](#resources_messenger_user-proto)
+    - [UserStatus](#resources-messenger-UserStatus)
   
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
@@ -355,38 +355,6 @@
     - [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse)
   
     - [AuthService](#services-auth-AuthService)
-  
-- [services/calendar/calendar.proto](#services_calendar_calendar-proto)
-    - [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest)
-    - [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse)
-    - [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest)
-    - [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse)
-    - [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest)
-    - [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse)
-    - [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest)
-    - [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse)
-    - [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest)
-    - [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse)
-    - [GetCalendarRequest](#services-calendar-GetCalendarRequest)
-    - [GetCalendarResponse](#services-calendar-GetCalendarResponse)
-    - [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest)
-    - [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse)
-    - [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest)
-    - [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse)
-    - [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest)
-    - [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse)
-    - [ListCalendarsRequest](#services-calendar-ListCalendarsRequest)
-    - [ListCalendarsResponse](#services-calendar-ListCalendarsResponse)
-    - [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest)
-    - [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse)
-    - [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest)
-    - [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse)
-    - [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest)
-    - [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse)
-    - [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest)
-    - [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse)
-  
-    - [CalendarService](#services-calendar-CalendarService)
   
 - [services/centrum/centrum.proto](#services_centrum_centrum-proto)
     - [AssignDispatchRequest](#services-centrum-AssignDispatchRequest)
@@ -601,28 +569,6 @@
   
     - [LivemapperService](#services-livemapper-LivemapperService)
   
-- [services/messenger/messenger.proto](#services_messenger_messenger-proto)
-    - [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest)
-    - [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse)
-    - [DeleteMessageRequest](#services-messenger-DeleteMessageRequest)
-    - [DeleteMessageResponse](#services-messenger-DeleteMessageResponse)
-    - [DeleteThreadRequest](#services-messenger-DeleteThreadRequest)
-    - [DeleteThreadResponse](#services-messenger-DeleteThreadResponse)
-    - [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest)
-    - [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse)
-    - [GetThreadRequest](#services-messenger-GetThreadRequest)
-    - [GetThreadResponse](#services-messenger-GetThreadResponse)
-    - [LeaveThreadRequest](#services-messenger-LeaveThreadRequest)
-    - [LeaveThreadResponse](#services-messenger-LeaveThreadResponse)
-    - [ListThreadsRequest](#services-messenger-ListThreadsRequest)
-    - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
-    - [PostMessageRequest](#services-messenger-PostMessageRequest)
-    - [PostMessageResponse](#services-messenger-PostMessageResponse)
-    - [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest)
-    - [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse)
-  
-    - [MessengerService](#services-messenger-MessengerService)
-  
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
@@ -729,6 +675,60 @@
     - [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse)
   
     - [RectorService](#services-rector-RectorService)
+  
+- [services/calendar/calendar.proto](#services_calendar_calendar-proto)
+    - [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest)
+    - [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse)
+    - [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest)
+    - [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse)
+    - [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest)
+    - [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse)
+    - [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest)
+    - [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse)
+    - [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest)
+    - [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse)
+    - [GetCalendarRequest](#services-calendar-GetCalendarRequest)
+    - [GetCalendarResponse](#services-calendar-GetCalendarResponse)
+    - [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest)
+    - [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse)
+    - [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest)
+    - [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse)
+    - [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest)
+    - [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse)
+    - [ListCalendarsRequest](#services-calendar-ListCalendarsRequest)
+    - [ListCalendarsResponse](#services-calendar-ListCalendarsResponse)
+    - [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest)
+    - [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse)
+    - [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest)
+    - [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse)
+    - [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest)
+    - [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse)
+    - [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest)
+    - [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse)
+  
+    - [CalendarService](#services-calendar-CalendarService)
+  
+- [services/messenger/messenger.proto](#services_messenger_messenger-proto)
+    - [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest)
+    - [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse)
+    - [DeleteMessageRequest](#services-messenger-DeleteMessageRequest)
+    - [DeleteMessageResponse](#services-messenger-DeleteMessageResponse)
+    - [DeleteThreadRequest](#services-messenger-DeleteThreadRequest)
+    - [DeleteThreadResponse](#services-messenger-DeleteThreadResponse)
+    - [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest)
+    - [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse)
+    - [GetThreadRequest](#services-messenger-GetThreadRequest)
+    - [GetThreadResponse](#services-messenger-GetThreadResponse)
+    - [LeaveThreadRequest](#services-messenger-LeaveThreadRequest)
+    - [LeaveThreadResponse](#services-messenger-LeaveThreadResponse)
+    - [ListThreadsRequest](#services-messenger-ListThreadsRequest)
+    - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
+    - [PostMessageRequest](#services-messenger-PostMessageRequest)
+    - [PostMessageResponse](#services-messenger-PostMessageResponse)
+    - [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest)
+    - [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse)
+  
+    - [MessengerService](#services-messenger-MessengerService)
   
 - [services/stats/stats.proto](#services_stats_stats-proto)
     - [GetStatsRequest](#services-stats-GetStatsRequest)
@@ -839,281 +839,6 @@
 
 
  
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_calendar_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/calendar/access.proto
-
-
-
-<a name="resources-calendar-CalendarAccess"></a>
-
-### CalendarAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarJobAccess"></a>
-
-### CalendarJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarUserAccess"></a>
-
-### CalendarUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-calendar-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_SHARE | 3 |  |
-| ACCESS_LEVEL_EDIT | 4 |  |
-| ACCESS_LEVEL_MANAGE | 5 |  |
-
-
-
-<a name="resources-calendar-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_calendar_calendar-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/calendar/calendar.proto
-
-
-
-<a name="resources-calendar-Calendar"></a>
-
-### Calendar
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  | @sanitize: method=StripTags |
-| description | [string](#string) | optional | @sanitize: method=StripTags |
-| public | [bool](#bool) |  |  |
-| closed | [bool](#bool) |  |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| subscription | [CalendarSub](#resources-calendar-CalendarSub) | optional |  |
-| access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarEntry"></a>
-
-### CalendarEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
-| calendar | [Calendar](#resources-calendar-Calendar) | optional |  |
-| job | [string](#string) | optional |  |
-| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
-| closed | [bool](#bool) |  |  |
-| rsvp_open | [bool](#bool) | optional |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| recurring | [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring) | optional |  |
-| rsvp | [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarEntryRSVP"></a>
-
-### CalendarEntryRSVP
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry_id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| response | [RsvpResponses](#resources-calendar-RsvpResponses) |  |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarEntryRecurring"></a>
-
-### CalendarEntryRecurring
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| every | [string](#string) |  |  |
-| count | [int32](#int32) |  |  |
-| until | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarShort"></a>
-
-### CalendarShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| name | [string](#string) |  | @sanitize: method=StripTags |
-| description | [string](#string) | optional | @sanitize: method=StripTags |
-| public | [bool](#bool) |  |  |
-| closed | [bool](#bool) |  |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
-| subscription | [CalendarSub](#resources-calendar-CalendarSub) | optional |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarSub"></a>
-
-### CalendarSub
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| confirmed | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-calendar-RsvpResponses"></a>
-
-### RsvpResponses
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| RSVP_RESPONSES_UNSPECIFIED | 0 |  |
-| RSVP_RESPONSES_HIDDEN | 1 |  |
-| RSVP_RESPONSES_INVITED | 2 |  |
-| RSVP_RESPONSES_NO | 3 |  |
-| RSVP_RESPONSES_MAYBE | 4 |  |
-| RSVP_RESPONSES_YES | 5 |  |
-
 
  
 
@@ -1315,90 +1040,6 @@
 
 
 
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| enabled | [bool](#bool) |  |  |
-| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| timings | [Timings](#resources-centrum-Timings) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-Timings"></a>
-
-### Timings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_max_wait | [int64](#int64) |  |  |
-| require_unit | [bool](#bool) |  |  |
-| require_unit_reminder_seconds | [int64](#int64) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CENTRUM_MODE_UNSPECIFIED | 0 |  |
-| CENTRUM_MODE_MANUAL | 1 |  |
-| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
-| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
-| CENTRUM_MODE_SIMPLIFIED | 4 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_centrum_general-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1586,6 +1227,90 @@
 
 
 
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_status | [string](#string) | repeated |  |
+| dispatch_status | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| timings | [Timings](#resources-centrum-Timings) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_max_wait | [int64](#int64) |  |  |
+| require_unit | [bool](#bool) |  |  |
+| require_unit_reminder_seconds | [int64](#int64) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CENTRUM_MODE_UNSPECIFIED | 0 |  |
+| CENTRUM_MODE_MANUAL | 1 |  |
+| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
+| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
+| CENTRUM_MODE_SIMPLIFIED | 4 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_common_database_database-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1653,6 +1378,54 @@
 | ----- | ---- | ----- | ----------- |
 | column | [string](#string) |  |  |
 | direction | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_common_i18n-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/i18n.proto
+
+
+
+<a name="resources-common-TranslateItem"></a>
+
+### TranslateItem
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| parameters | [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-common-TranslateItem-ParametersEntry"></a>
+
+### TranslateItem.ParametersEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 
@@ -1837,54 +1610,6 @@
 
 
 
-<a name="resources_common_i18n-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/common/i18n.proto
-
-
-
-<a name="resources-common-TranslateItem"></a>
-
-### TranslateItem
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| parameters | [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry) | repeated |  |
-
-
-
-
-
-
-<a name="resources-common-TranslateItem-ParametersEntry"></a>
-
-### TranslateItem.ParametersEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| value | [string](#string) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_common_cron_cron-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2023,6 +1748,113 @@
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_documents_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/access.proto
+
+
+
+<a name="resources-documents-DocumentAccess"></a>
+
+### DocumentAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentJobAccess"></a>
+
+### DocumentJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| document_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentUserAccess"></a>
+
+### DocumentUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| document_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+
+
+
+
+
+ 
+
+
+<a name="resources-documents-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_COMMENT | 3 |  |
+| ACCESS_LEVEL_STATUS | 4 |  |
+| ACCESS_LEVEL_ACCESS | 5 |  |
+| ACCESS_LEVEL_EDIT | 6 |  |
+
+
+
+<a name="resources-documents-AccessLevelUpdateMode"></a>
+
+### AccessLevelUpdateMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
+| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
+| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+
 
  
 
@@ -2191,6 +2023,206 @@
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_documents_requests-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/requests.proto
+
+
+
+<a name="resources-documents-DocRequest"></a>
+
+### DocRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| document_id | [uint64](#uint64) |  |  |
+| request_type | [DocActivityType](#resources-documents-DocActivityType) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| creator_job_label | [string](#string) | optional |  |
+| reason | [string](#string) | optional |  |
+| data | [DocActivityData](#resources-documents-DocActivityData) |  |  |
+| accepted | [bool](#bool) | optional |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_documents_templates-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/templates.proto
+
+
+
+<a name="resources-documents-ObjectSpecs"></a>
+
+### ObjectSpecs
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| required | [bool](#bool) | optional |  |
+| min | [int32](#int32) | optional |  |
+| max | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-Template"></a>
+
+### Template
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| category | [Category](#resources-documents-Category) |  | @gotags: alias:&#34;category&#34; |
+| weight | [uint32](#uint32) |  |  |
+| title | [string](#string) |  | @sanitize |
+| description | [string](#string) |  | @sanitize |
+| content_title | [string](#string) |  | @gotags: alias:&#34;content_title&#34; |
+| content | [string](#string) |  | @gotags: alias:&#34;content&#34; |
+| state | [string](#string) |  | @gotags: alias:&#34;state&#34; |
+| schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
+| creator_job | [string](#string) |  |  |
+| creator_job_label | [string](#string) | optional |  |
+| job_access | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
+| content_access | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:&#34;access&#34; |
+
+
+
+
+
+
+<a name="resources-documents-TemplateData"></a>
+
+### TemplateData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| activeChar | [resources.users.User](#resources-users-User) |  |  |
+| documents | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
+| users | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+| vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateJobAccess"></a>
+
+### TemplateJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| template_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateRequirements"></a>
+
+### TemplateRequirements
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| documents | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| users | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| vehicles | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateSchema"></a>
+
+### TemplateSchema
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| requirements | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateShort"></a>
+
+### TemplateShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| category | [Category](#resources-documents-Category) |  | @gotags: alias:&#34;category&#34; |
+| weight | [uint32](#uint32) |  |  |
+| title | [string](#string) |  | @sanitize |
+| description | [string](#string) |  | @sanitize |
+| schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
+| creator_job | [string](#string) |  |  |
+| creator_job_label | [string](#string) | optional |  |
 
 
 
@@ -2375,48 +2407,6 @@
 
 
 
-<a name="resources_documents_requests-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/requests.proto
-
-
-
-<a name="resources-documents-DocRequest"></a>
-
-### DocRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| document_id | [uint64](#uint64) |  |  |
-| request_type | [DocActivityType](#resources-documents-DocActivityType) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| creator_job_label | [string](#string) | optional |  |
-| reason | [string](#string) | optional |  |
-| data | [DocActivityData](#resources-documents-DocActivityData) |  |  |
-| accepted | [bool](#bool) | optional |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_documents_category-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2438,271 +2428,6 @@
 | job | [string](#string) | optional |  |
 | color | [string](#string) | optional | @sanitize: method=StripTags |
 | icon | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_documents_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/access.proto
-
-
-
-<a name="resources-documents-DocumentAccess"></a>
-
-### DocumentAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentJobAccess"></a>
-
-### DocumentJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentUserAccess"></a>
-
-### DocumentUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
-
-
-
-
-
- 
-
-
-<a name="resources-documents-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_COMMENT | 3 |  |
-| ACCESS_LEVEL_STATUS | 4 |  |
-| ACCESS_LEVEL_ACCESS | 5 |  |
-| ACCESS_LEVEL_EDIT | 6 |  |
-
-
-
-<a name="resources-documents-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_documents_templates-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/templates.proto
-
-
-
-<a name="resources-documents-ObjectSpecs"></a>
-
-### ObjectSpecs
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| required | [bool](#bool) | optional |  |
-| min | [int32](#int32) | optional |  |
-| max | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-Template"></a>
-
-### Template
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| category | [Category](#resources-documents-Category) |  | @gotags: alias:&#34;category&#34; |
-| weight | [uint32](#uint32) |  |  |
-| title | [string](#string) |  | @sanitize |
-| description | [string](#string) |  | @sanitize |
-| content_title | [string](#string) |  | @gotags: alias:&#34;content_title&#34; |
-| content | [string](#string) |  | @gotags: alias:&#34;content&#34; |
-| state | [string](#string) |  | @gotags: alias:&#34;state&#34; |
-| schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
-| creator_job | [string](#string) |  |  |
-| creator_job_label | [string](#string) | optional |  |
-| job_access | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
-| content_access | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:&#34;access&#34; |
-
-
-
-
-
-
-<a name="resources-documents-TemplateData"></a>
-
-### TemplateData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| activeChar | [resources.users.User](#resources-users-User) |  |  |
-| documents | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
-| users | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-| vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateJobAccess"></a>
-
-### TemplateJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| template_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateRequirements"></a>
-
-### TemplateRequirements
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| documents | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| users | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| vehicles | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateSchema"></a>
-
-### TemplateSchema
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| requirements | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateShort"></a>
-
-### TemplateShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| category | [Category](#resources-documents-Category) |  | @gotags: alias:&#34;category&#34; |
-| weight | [uint32](#uint32) |  |  |
-| title | [string](#string) |  | @sanitize |
-| description | [string](#string) |  | @sanitize |
-| schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
-| creator_job | [string](#string) |  |  |
-| creator_job_label | [string](#string) | optional |  |
 
 
 
@@ -2762,6 +2487,64 @@
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_jobs_conduct-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/conduct.proto
+
+
+
+<a name="resources-jobs-ConductEntry"></a>
+
+### ConductEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| type | [ConductType](#resources-jobs-ConductType) |  |  |
+| message | [string](#string) |  | @sanitize |
+| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_user_id | [int32](#int32) |  |  |
+| target_user | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;target_user&#34; |
+| creator_id | [int32](#int32) |  |  |
+| creator | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;creator&#34; |
+
+
+
+
+
+ 
+
+
+<a name="resources-jobs-ConductType"></a>
+
+### ConductType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONDUCT_TYPE_UNSPECIFIED | 0 |  |
+| CONDUCT_TYPE_NEUTRAL | 1 |  |
+| CONDUCT_TYPE_POSITIVE | 2 |  |
+| CONDUCT_TYPE_NEGATIVE | 3 |  |
+| CONDUCT_TYPE_WARNING | 4 |  |
+| CONDUCT_TYPE_SUSPENSION | 5 |  |
+| CONDUCT_TYPE_NOTE | 6 |  |
+
 
  
 
@@ -2911,64 +2694,6 @@
 | JOBS_USER_ACTIVITY_TYPE_DEMOTED | 4 |  |
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 | JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_jobs_conduct-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/conduct.proto
-
-
-
-<a name="resources-jobs-ConductEntry"></a>
-
-### ConductEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| type | [ConductType](#resources-jobs-ConductType) |  |  |
-| message | [string](#string) |  | @sanitize |
-| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_user_id | [int32](#int32) |  |  |
-| target_user | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;target_user&#34; |
-| creator_id | [int32](#int32) |  |  |
-| creator | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;creator&#34; |
-
-
-
-
-
- 
-
-
-<a name="resources-jobs-ConductType"></a>
-
-### ConductType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CONDUCT_TYPE_UNSPECIFIED | 0 |  |
-| CONDUCT_TYPE_NEUTRAL | 1 |  |
-| CONDUCT_TYPE_POSITIVE | 2 |  |
-| CONDUCT_TYPE_NEGATIVE | 3 |  |
-| CONDUCT_TYPE_WARNING | 4 |  |
-| CONDUCT_TYPE_SUSPENSION | 5 |  |
-| CONDUCT_TYPE_NOTE | 6 |  |
 
 
  
@@ -3330,347 +3055,6 @@
 
 
 
-<a name="resources_messenger_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/events.proto
-
-
-
-<a name="resources-messenger-MessengerEvent"></a>
-
-### MessengerEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_update | [Thread](#resources-messenger-Thread) |  |  |
-| thread_delete | [uint64](#uint64) |  |  |
-| message_update | [Message](#resources-messenger-Message) |  |  |
-| message_delete | [uint64](#uint64) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_message-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/message.proto
-
-
-
-<a name="resources-messenger-Message"></a>
-
-### Message
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| thread_id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| message | [string](#string) |  | @sanitize: method=StripTags |
-| data | [MessageData](#resources-messenger-MessageData) | optional |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-
-
-
-
-
-
-<a name="resources-messenger-MessageData"></a>
-
-### MessageData
-TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/access.proto
-
-
-
-<a name="resources-messenger-ThreadAccess"></a>
-
-### ThreadAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [ThreadJobAccess](#resources-messenger-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [ThreadUserAccess](#resources-messenger-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadJobAccess"></a>
-
-### ThreadJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadUserAccess"></a>
-
-### ThreadUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-messenger-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_MESSAGE | 3 |  |
-| ACCESS_LEVEL_MANAGE | 4 |  |
-| ACCESS_LEVEL_ADMIN | 5 |  |
-
-
-
-<a name="resources-messenger-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_thread-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/thread.proto
-
-
-
-<a name="resources-messenger-Thread"></a>
-
-### Thread
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize |
-| archived | [bool](#bool) |  |  |
-| last_message | [Message](#resources-messenger-Message) | optional |  |
-| user_state | [ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
-| creator_job | [string](#string) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| access | [ThreadAccess](#resources-messenger-ThreadAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadUserState"></a>
-
-### ThreadUserState
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| unread | [bool](#bool) |  |  |
-| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| important | [bool](#bool) |  |  |
-| favorite | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_user-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/user.proto
-
-
-
-<a name="resources-messenger-UserStatus"></a>
-
-### UserStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| status | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_notifications_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/notifications/events.proto
-
-
-
-<a name="resources-notifications-JobEvent"></a>
-
-### JobEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-
-
-
-
-
-
-<a name="resources-notifications-SystemEvent"></a>
-
-### SystemEvent
-
-
-
-
-
-
-
-<a name="resources-notifications-UserEvent"></a>
-
-### UserEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| refresh_token | [bool](#bool) |  |  |
-| notification | [Notification](#resources-notifications-Notification) |  | Notifications |
-| messenger | [resources.messenger.MessengerEvent](#resources-messenger-MessengerEvent) |  | Messenger |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_notifications_notifications-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3781,6 +3165,64 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | NOTIFICATION_TYPE_INFO | 3 |  |
 | NOTIFICATION_TYPE_SUCCESS | 4 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_notifications_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/notifications/events.proto
+
+
+
+<a name="resources-notifications-JobEvent"></a>
+
+### JobEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+
+
+
+
+
+
+<a name="resources-notifications-SystemEvent"></a>
+
+### SystemEvent
+
+
+
+
+
+
+
+<a name="resources-notifications-UserEvent"></a>
+
+### UserEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| refresh_token | [bool](#bool) |  |  |
+| notification | [Notification](#resources-notifications-Notification) |  | Notifications |
+| messenger | [resources.messenger.MessengerEvent](#resources-messenger-MessengerEvent) |  | Messenger |
+
+
+
+
+
+ 
 
  
 
@@ -5076,56 +4518,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_users_jobs-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/jobs.proto
-
-
-
-<a name="resources-users-Job"></a>
-
-### Job
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;name&#34; |
-| label | [string](#string) |  |  |
-| grades | [JobGrade](#resources-users-JobGrade) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-JobGrade"></a>
-
-### JobGrade
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job_name | [string](#string) | optional |  |
-| grade | [int32](#int32) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_users_job_props-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5346,6 +4738,56 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
+<a name="resources_users_jobs-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/jobs.proto
+
+
+
+<a name="resources-users-Job"></a>
+
+### Job
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;name&#34; |
+| label | [string](#string) |  |  |
+| grades | [JobGrade](#resources-users-JobGrade) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-JobGrade"></a>
+
+### JobGrade
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_name | [string](#string) | optional |  |
+| grade | [int32](#int32) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_vehicles_vehicles-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5365,6 +4807,564 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | model | [string](#string) | optional |  |
 | type | [string](#string) |  |  |
 | owner | [resources.users.UserShort](#resources-users-UserShort) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_calendar_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/calendar/access.proto
+
+
+
+<a name="resources-calendar-CalendarAccess"></a>
+
+### CalendarAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarJobAccess"></a>
+
+### CalendarJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| calendar_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarUserAccess"></a>
+
+### CalendarUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| calendar_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-calendar-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_SHARE | 3 |  |
+| ACCESS_LEVEL_EDIT | 4 |  |
+| ACCESS_LEVEL_MANAGE | 5 |  |
+
+
+
+<a name="resources-calendar-AccessLevelUpdateMode"></a>
+
+### AccessLevelUpdateMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
+| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
+| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_calendar_calendar-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/calendar/calendar.proto
+
+
+
+<a name="resources-calendar-Calendar"></a>
+
+### Calendar
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  | @sanitize: method=StripTags |
+| description | [string](#string) | optional | @sanitize: method=StripTags |
+| public | [bool](#bool) |  |  |
+| closed | [bool](#bool) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| subscription | [CalendarSub](#resources-calendar-CalendarSub) | optional |  |
+| access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntry"></a>
+
+### CalendarEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| calendar_id | [uint64](#uint64) |  |  |
+| calendar | [Calendar](#resources-calendar-Calendar) | optional |  |
+| job | [string](#string) | optional |  |
+| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  | @sanitize: method=StripTags |
+| content | [string](#string) |  | @sanitize |
+| closed | [bool](#bool) |  |  |
+| rsvp_open | [bool](#bool) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| recurring | [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring) | optional |  |
+| rsvp | [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntryRSVP"></a>
+
+### CalendarEntryRSVP
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| response | [RsvpResponses](#resources-calendar-RsvpResponses) |  |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntryRecurring"></a>
+
+### CalendarEntryRecurring
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| every | [string](#string) |  |  |
+| count | [int32](#int32) |  |  |
+| until | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarShort"></a>
+
+### CalendarShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| name | [string](#string) |  | @sanitize: method=StripTags |
+| description | [string](#string) | optional | @sanitize: method=StripTags |
+| public | [bool](#bool) |  |  |
+| closed | [bool](#bool) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+| subscription | [CalendarSub](#resources-calendar-CalendarSub) | optional |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarSub"></a>
+
+### CalendarSub
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| confirmed | [bool](#bool) |  |  |
+| muted | [bool](#bool) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-calendar-RsvpResponses"></a>
+
+### RsvpResponses
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| RSVP_RESPONSES_UNSPECIFIED | 0 |  |
+| RSVP_RESPONSES_HIDDEN | 1 |  |
+| RSVP_RESPONSES_INVITED | 2 |  |
+| RSVP_RESPONSES_NO | 3 |  |
+| RSVP_RESPONSES_MAYBE | 4 |  |
+| RSVP_RESPONSES_YES | 5 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/access.proto
+
+
+
+<a name="resources-messenger-ThreadAccess"></a>
+
+### ThreadAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [ThreadJobAccess](#resources-messenger-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [ThreadUserAccess](#resources-messenger-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-messenger-ThreadJobAccess"></a>
+
+### ThreadJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| thread_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-messenger-ThreadUserAccess"></a>
+
+### ThreadUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| thread_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-messenger-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_MESSAGE | 3 |  |
+| ACCESS_LEVEL_MANAGE | 4 |  |
+| ACCESS_LEVEL_ADMIN | 5 |  |
+
+
+
+<a name="resources-messenger-AccessLevelUpdateMode"></a>
+
+### AccessLevelUpdateMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
+| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
+| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/events.proto
+
+
+
+<a name="resources-messenger-MessengerEvent"></a>
+
+### MessengerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_update | [Thread](#resources-messenger-Thread) |  |  |
+| thread_delete | [uint64](#uint64) |  |  |
+| message_update | [Message](#resources-messenger-Message) |  |  |
+| message_delete | [uint64](#uint64) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_message-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/message.proto
+
+
+
+<a name="resources-messenger-Message"></a>
+
+### Message
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| thread_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| message | [string](#string) |  | @sanitize: method=StripTags |
+| data | [MessageData](#resources-messenger-MessageData) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+
+
+
+
+
+
+<a name="resources-messenger-MessageData"></a>
+
+### MessageData
+TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_thread-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/thread.proto
+
+
+
+<a name="resources-messenger-Thread"></a>
+
+### Thread
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  | @sanitize |
+| archived | [bool](#bool) |  |  |
+| last_message | [Message](#resources-messenger-Message) | optional |  |
+| user_state | [ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
+| creator_job | [string](#string) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| access | [ThreadAccess](#resources-messenger-ThreadAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-messenger-ThreadUserState"></a>
+
+### ThreadUserState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| unread | [bool](#bool) |  |  |
+| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| important | [bool](#bool) |  |  |
+| favorite | [bool](#bool) |  |  |
+| muted | [bool](#bool) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_user-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/user.proto
+
+
+
+<a name="resources-messenger-UserStatus"></a>
+
+### UserStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| status | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -5764,466 +5764,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | GetAccountInfo | [GetAccountInfoRequest](#services-auth-GetAccountInfoRequest) | [GetAccountInfoResponse](#services-auth-GetAccountInfoResponse) |  |
 | DeleteOAuth2Connection | [DeleteOAuth2ConnectionRequest](#services-auth-DeleteOAuth2ConnectionRequest) | [DeleteOAuth2ConnectionResponse](#services-auth-DeleteOAuth2ConnectionResponse) |  |
 | SetSuperUserMode | [SetSuperUserModeRequest](#services-auth-SetSuperUserModeRequest) | [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse) |  |
-
- 
-
-
-
-<a name="services_calendar_calendar-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/calendar/calendar.proto
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarEntryRequest"></a>
-
-### CreateOrUpdateCalendarEntryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
-| user_ids | [int32](#int32) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarEntryResponse"></a>
-
-### CreateOrUpdateCalendarEntryResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarRequest"></a>
-
-### CreateOrUpdateCalendarRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-CreateOrUpdateCalendarResponse"></a>
-
-### CreateOrUpdateCalendarResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-DeleteCalendarEntryRequest"></a>
-
-### DeleteCalendarEntryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-DeleteCalendarEntryResponse"></a>
-
-### DeleteCalendarEntryResponse
-
-
-
-
-
-
-
-<a name="services-calendar-DeleteCalendarRequest"></a>
-
-### DeleteCalendarRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-DeleteCalendarResponse"></a>
-
-### DeleteCalendarResponse
-
-
-
-
-
-
-
-<a name="services-calendar-GetCalendarEntryRequest"></a>
-
-### GetCalendarEntryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-GetCalendarEntryResponse"></a>
-
-### GetCalendarEntryResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-GetCalendarRequest"></a>
-
-### GetCalendarRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-GetCalendarResponse"></a>
-
-### GetCalendarResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-GetUpcomingEntriesRequest"></a>
-
-### GetUpcomingEntriesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| seconds | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-GetUpcomingEntriesResponse"></a>
-
-### GetUpcomingEntriesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entries | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarEntriesRequest"></a>
-
-### ListCalendarEntriesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| year | [int32](#int32) |  |  |
-| month | [int32](#int32) |  |  |
-| calendar_ids | [uint64](#uint64) | repeated |  |
-| show_hidden | [bool](#bool) | optional |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarEntriesResponse"></a>
-
-### ListCalendarEntriesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entries | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarEntryRSVPRequest"></a>
-
-### ListCalendarEntryRSVPRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| entry_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarEntryRSVPResponse"></a>
-
-### ListCalendarEntryRSVPResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| entries | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarsRequest"></a>
-
-### ListCalendarsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| only_public | [bool](#bool) |  |  |
-| min_access_level | [resources.calendar.AccessLevel](#resources-calendar-AccessLevel) | optional |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="services-calendar-ListCalendarsResponse"></a>
-
-### ListCalendarsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| calendars | [resources.calendar.Calendar](#resources-calendar-Calendar) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-ListSubscriptionsRequest"></a>
-
-### ListSubscriptionsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-ListSubscriptionsResponse"></a>
-
-### ListSubscriptionsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| subs | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-RSVPCalendarEntryRequest"></a>
-
-### RSVPCalendarEntryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
-| subscribe | [bool](#bool) |  |  |
-| remove | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-calendar-RSVPCalendarEntryResponse"></a>
-
-### RSVPCalendarEntryResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
-
-
-
-
-
-
-<a name="services-calendar-ShareCalendarEntryRequest"></a>
-
-### ShareCalendarEntryRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry_id | [uint64](#uint64) |  |  |
-| user_ids | [int32](#int32) | repeated |  |
-
-
-
-
-
-
-<a name="services-calendar-ShareCalendarEntryResponse"></a>
-
-### ShareCalendarEntryResponse
-
-
-
-
-
-
-
-<a name="services-calendar-SubscribeToCalendarRequest"></a>
-
-### SubscribeToCalendarRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| sub | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) |  |  |
-| delete | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="services-calendar-SubscribeToCalendarResponse"></a>
-
-### SubscribeToCalendarResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| sub | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-calendar-CalendarService"></a>
-
-### CalendarService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListCalendars | [ListCalendarsRequest](#services-calendar-ListCalendarsRequest) | [ListCalendarsResponse](#services-calendar-ListCalendarsResponse) | @perm: Name=Any |
-| GetCalendar | [GetCalendarRequest](#services-calendar-GetCalendarRequest) | [GetCalendarResponse](#services-calendar-GetCalendarResponse) | @perm: Name=Any |
-| CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;, &#34;Public&#34;} |
-| DeleteCalendar | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
-| ListCalendarEntries | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
-| GetUpcomingEntries | [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse) | @perm: Name=Any |
-| GetCalendarEntry | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
-| CreateOrUpdateCalendarEntry | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm |
-| DeleteCalendarEntry | [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse) | @perm |
-| ShareCalendarEntry | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=CreateOrUpdateCalendarEntry |
-| ListCalendarEntryRSVP | [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse) | @perm: Name=Any |
-| RSVPCalendarEntry | [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse) | @perm: Name=Any |
-| ListSubscriptions | [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest) | [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse) | @perm: Name=Any |
-| SubscribeToCalendar | [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse) | @perm: Name=Any |
 
  
 
@@ -9215,294 +8755,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="services_messenger_messenger-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/messenger/messenger.proto
-
-
-
-<a name="services-messenger-CreateOrUpdateThreadRequest"></a>
-
-### CreateOrUpdateThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-CreateOrUpdateThreadResponse"></a>
-
-### CreateOrUpdateThreadResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteMessageRequest"></a>
-
-### DeleteMessageRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| message_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteMessageResponse"></a>
-
-### DeleteMessageResponse
-
-
-
-
-
-
-
-<a name="services-messenger-DeleteThreadRequest"></a>
-
-### DeleteThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteThreadResponse"></a>
-
-### DeleteThreadResponse
-
-
-
-
-
-
-
-<a name="services-messenger-GetThreadMessagesRequest"></a>
-
-### GetThreadMessagesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadMessagesResponse"></a>
-
-### GetThreadMessagesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| messages | [resources.messenger.Message](#resources-messenger-Message) | repeated |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadRequest"></a>
-
-### GetThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadResponse"></a>
-
-### GetThreadResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-LeaveThreadRequest"></a>
-
-### LeaveThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-LeaveThreadResponse"></a>
-
-### LeaveThreadResponse
-
-
-
-
-
-
-
-<a name="services-messenger-ListThreadsRequest"></a>
-
-### ListThreadsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="services-messenger-ListThreadsResponse"></a>
-
-### ListThreadsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| threads | [resources.messenger.Thread](#resources-messenger-Thread) | repeated |  |
-
-
-
-
-
-
-<a name="services-messenger-PostMessageRequest"></a>
-
-### PostMessageRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-PostMessageResponse"></a>
-
-### PostMessageResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-SetThreadUserStateRequest"></a>
-
-### SetThreadUserStateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| state | [resources.messenger.ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-SetThreadUserStateResponse"></a>
-
-### SetThreadUserStateResponse
-
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-messenger-MessengerService"></a>
-
-### MessengerService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListThreads | [ListThreadsRequest](#services-messenger-ListThreadsRequest) | [ListThreadsResponse](#services-messenger-ListThreadsResponse) | @perm |
-| GetThread | [GetThreadRequest](#services-messenger-GetThreadRequest) | [GetThreadResponse](#services-messenger-GetThreadResponse) | @perm: Name=ListThreads |
-| CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
-| DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
-| SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |
-| LeaveThread | [LeaveThreadRequest](#services-messenger-LeaveThreadRequest) | [LeaveThreadResponse](#services-messenger-LeaveThreadResponse) | @perm: Name=ListThreads |
-| GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
-| PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
-| DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |
-
- 
-
-
-
 <a name="services_notificator_notificator-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -10917,6 +10169,754 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ViewAuditLog | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
 | UpdateRoleLimits | [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest) | [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse) | @perm: Name=SuperUser |
 | DeleteFaction | [DeleteFactionRequest](#services-rector-DeleteFactionRequest) | [DeleteFactionResponse](#services-rector-DeleteFactionResponse) | @perm: Name=SuperUser |
+
+ 
+
+
+
+<a name="services_calendar_calendar-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/calendar/calendar.proto
+
+
+
+<a name="services-calendar-CreateOrUpdateCalendarEntryRequest"></a>
+
+### CreateOrUpdateCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-CreateOrUpdateCalendarEntryResponse"></a>
+
+### CreateOrUpdateCalendarEntryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-CreateOrUpdateCalendarRequest"></a>
+
+### CreateOrUpdateCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-CreateOrUpdateCalendarResponse"></a>
+
+### CreateOrUpdateCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-DeleteCalendarEntryRequest"></a>
+
+### DeleteCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-DeleteCalendarEntryResponse"></a>
+
+### DeleteCalendarEntryResponse
+
+
+
+
+
+
+
+<a name="services-calendar-DeleteCalendarRequest"></a>
+
+### DeleteCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-DeleteCalendarResponse"></a>
+
+### DeleteCalendarResponse
+
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarEntryRequest"></a>
+
+### GetCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarEntryResponse"></a>
+
+### GetCalendarEntryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarRequest"></a>
+
+### GetCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarResponse"></a>
+
+### GetCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetUpcomingEntriesRequest"></a>
+
+### GetUpcomingEntriesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| seconds | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetUpcomingEntriesResponse"></a>
+
+### GetUpcomingEntriesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entries | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarEntriesRequest"></a>
+
+### ListCalendarEntriesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| year | [int32](#int32) |  |  |
+| month | [int32](#int32) |  |  |
+| calendar_ids | [uint64](#uint64) | repeated |  |
+| show_hidden | [bool](#bool) | optional |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarEntriesResponse"></a>
+
+### ListCalendarEntriesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entries | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarEntryRSVPRequest"></a>
+
+### ListCalendarEntryRSVPRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| entry_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarEntryRSVPResponse"></a>
+
+### ListCalendarEntryRSVPResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| entries | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarsRequest"></a>
+
+### ListCalendarsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| only_public | [bool](#bool) |  |  |
+| min_access_level | [resources.calendar.AccessLevel](#resources-calendar-AccessLevel) | optional |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarsResponse"></a>
+
+### ListCalendarsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| calendars | [resources.calendar.Calendar](#resources-calendar-Calendar) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-ListSubscriptionsRequest"></a>
+
+### ListSubscriptionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-ListSubscriptionsResponse"></a>
+
+### ListSubscriptionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| subs | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-RSVPCalendarEntryRequest"></a>
+
+### RSVPCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
+| subscribe | [bool](#bool) |  |  |
+| remove | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-calendar-RSVPCalendarEntryResponse"></a>
+
+### RSVPCalendarEntryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
+
+
+
+
+
+
+<a name="services-calendar-ShareCalendarEntryRequest"></a>
+
+### ShareCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="services-calendar-ShareCalendarEntryResponse"></a>
+
+### ShareCalendarEntryResponse
+
+
+
+
+
+
+
+<a name="services-calendar-SubscribeToCalendarRequest"></a>
+
+### SubscribeToCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sub | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) |  |  |
+| delete | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-SubscribeToCalendarResponse"></a>
+
+### SubscribeToCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sub | [resources.calendar.CalendarSub](#resources-calendar-CalendarSub) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-calendar-CalendarService"></a>
+
+### CalendarService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListCalendars | [ListCalendarsRequest](#services-calendar-ListCalendarsRequest) | [ListCalendarsResponse](#services-calendar-ListCalendarsResponse) | @perm: Name=Any |
+| GetCalendar | [GetCalendarRequest](#services-calendar-GetCalendarRequest) | [GetCalendarResponse](#services-calendar-GetCalendarResponse) | @perm: Name=Any |
+| CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;, &#34;Public&#34;} |
+| DeleteCalendar | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
+| ListCalendarEntries | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
+| GetUpcomingEntries | [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse) | @perm: Name=Any |
+| GetCalendarEntry | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
+| CreateOrUpdateCalendarEntry | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm |
+| DeleteCalendarEntry | [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse) | @perm |
+| ShareCalendarEntry | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=CreateOrUpdateCalendarEntry |
+| ListCalendarEntryRSVP | [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse) | @perm: Name=Any |
+| RSVPCalendarEntry | [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse) | @perm: Name=Any |
+| ListSubscriptions | [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest) | [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse) | @perm: Name=Any |
+| SubscribeToCalendar | [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse) | @perm: Name=Any |
+
+ 
+
+
+
+<a name="services_messenger_messenger-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/messenger/messenger.proto
+
+
+
+<a name="services-messenger-CreateOrUpdateThreadRequest"></a>
+
+### CreateOrUpdateThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-CreateOrUpdateThreadResponse"></a>
+
+### CreateOrUpdateThreadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-DeleteMessageRequest"></a>
+
+### DeleteMessageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| message_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-DeleteMessageResponse"></a>
+
+### DeleteMessageResponse
+
+
+
+
+
+
+
+<a name="services-messenger-DeleteThreadRequest"></a>
+
+### DeleteThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-DeleteThreadResponse"></a>
+
+### DeleteThreadResponse
+
+
+
+
+
+
+
+<a name="services-messenger-GetThreadMessagesRequest"></a>
+
+### GetThreadMessagesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-GetThreadMessagesResponse"></a>
+
+### GetThreadMessagesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| messages | [resources.messenger.Message](#resources-messenger-Message) | repeated |  |
+
+
+
+
+
+
+<a name="services-messenger-GetThreadRequest"></a>
+
+### GetThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-GetThreadResponse"></a>
+
+### GetThreadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-LeaveThreadRequest"></a>
+
+### LeaveThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-LeaveThreadResponse"></a>
+
+### LeaveThreadResponse
+
+
+
+
+
+
+
+<a name="services-messenger-ListThreadsRequest"></a>
+
+### ListThreadsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="services-messenger-ListThreadsResponse"></a>
+
+### ListThreadsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| threads | [resources.messenger.Thread](#resources-messenger-Thread) | repeated |  |
+
+
+
+
+
+
+<a name="services-messenger-PostMessageRequest"></a>
+
+### PostMessageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-PostMessageResponse"></a>
+
+### PostMessageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-SetThreadUserStateRequest"></a>
+
+### SetThreadUserStateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [resources.messenger.ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-SetThreadUserStateResponse"></a>
+
+### SetThreadUserStateResponse
+
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-messenger-MessengerService"></a>
+
+### MessengerService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListThreads | [ListThreadsRequest](#services-messenger-ListThreadsRequest) | [ListThreadsResponse](#services-messenger-ListThreadsResponse) | @perm |
+| GetThread | [GetThreadRequest](#services-messenger-GetThreadRequest) | [GetThreadResponse](#services-messenger-GetThreadResponse) | @perm: Name=ListThreads |
+| CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
+| DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
+| SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |
+| LeaveThread | [LeaveThreadRequest](#services-messenger-LeaveThreadRequest) | [LeaveThreadResponse](#services-messenger-LeaveThreadResponse) | @perm: Name=ListThreads |
+| GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
+| PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
+| DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |
 
  
 
