@@ -6,7 +6,7 @@ import "resources/common/database/database.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/jobs.proto";
+import "resources/users/job_props.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/rector;rector";

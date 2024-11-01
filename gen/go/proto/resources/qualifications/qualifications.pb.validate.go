@@ -1242,6 +1242,21 @@ func (m *QualificationDiscordSettings) validate(all bool) error {
 
 	}
 
+	if m.RoleFormat != nil {
+
+		if utf8.RuneCountInString(m.GetRoleFormat()) > 64 {
+			err := QualificationDiscordSettingsValidationError{
+				field:  "RoleFormat",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return QualificationDiscordSettingsMultiError(errors)
 	}

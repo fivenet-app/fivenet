@@ -232,6 +232,10 @@ export interface QualificationDiscordSettings {
      * @generated from protobuf field: optional string role_name = 1;
      */
     roleName?: string;
+    /**
+     * @generated from protobuf field: optional string role_format = 2;
+     */
+    roleFormat?: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationExamSettings
@@ -896,7 +900,8 @@ export const QualificationRequirement = new QualificationRequirement$Type();
 class QualificationDiscordSettings$Type extends MessageType<QualificationDiscordSettings> {
     constructor() {
         super("resources.qualifications.QualificationDiscordSettings", [
-            { no: 1, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+            { no: 1, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "role_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationDiscordSettings>): QualificationDiscordSettings {
@@ -913,6 +918,9 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
                 case /* optional string role_name */ 1:
                     message.roleName = reader.string();
                     break;
+                case /* optional string role_format */ 2:
+                    message.roleFormat = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -928,6 +936,9 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
         /* optional string role_name = 1; */
         if (message.roleName !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.roleName);
+        /* optional string role_format = 2; */
+        if (message.roleFormat !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.roleFormat);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

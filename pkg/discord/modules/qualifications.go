@@ -33,6 +33,7 @@ type QualificationsSync struct {
 
 type qualificationsEntry struct {
 	ID                 uint64 `alias:"qualifications_entry.id"`
+	Abbreviation       string `alias:"qualifications_entry.abbreviation"`
 	QualificationTitle string `alias:"qualifications_entry.title"`
 
 	DiscordSettings *qualifications.QualificationDiscordSettings `alias:"qualifications_entry.discord_settings"`
@@ -65,6 +66,7 @@ func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.
 	stmt := tQualifications.
 		SELECT(
 			tQualifications.ID.AS("qualificationsentry.id"),
+			tQualifications.Abbreviation.AS("qualificationsentry.abbreviation"),
 			tQualifications.Title.AS("qualificationsentry.title"),
 			tQualifications.DiscordSettings.AS("qualificationsentry.discord_settings"),
 		).
@@ -105,12 +107,13 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 	logs := []discord.Embed{}
 	roles := types.Roles{}
 
-	errs := multierr.Combine()
+	syncSettings := g.settings.Load()
 
+	errs := multierr.Combine()
 	for _, entry := range qualifications {
-		if entry.DiscordSettings.RoleName == nil || *entry.DiscordSettings.RoleName == "" {
+		if entry.DiscordSettings.RoleName == nil || strings.TrimSpace(*entry.DiscordSettings.RoleName) == "" {
 			logs = append(logs, discord.Embed{
-				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord settings \"%s\" (ID: %d)", entry.QualificationTitle, entry.ID),
+				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord sync settings \"%s: %s\" (ID: %d)", entry.Abbreviation, entry.QualificationTitle, entry.ID),
 				Description: fmt.Sprintf("Qualification ID: %d", entry.ID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorWarn,
@@ -118,7 +121,17 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 			continue
 		}
 
-		entry.RoleName = strings.ReplaceAll(g.settings.Load().QualificationsRoleFormat, "%name%", *entry.DiscordSettings.RoleName)
+		roleName := strings.TrimSpace(*entry.DiscordSettings.RoleName)
+		if entry.DiscordSettings.RoleFormat != nil && strings.TrimSpace(*entry.DiscordSettings.RoleFormat) != "" {
+			entry.RoleName = strings.ReplaceAll(*entry.DiscordSettings.RoleFormat, "%abbr%", entry.Abbreviation)
+			entry.RoleName = strings.ReplaceAll(*entry.DiscordSettings.RoleFormat, "%name%", roleName)
+		}
+
+		// If role name is (still) empty, "fallback"
+		if entry.RoleName == "" {
+			entry.RoleName = strings.ReplaceAll(syncSettings.QualificationsRoleFormat, "%abbr%", entry.Abbreviation)
+			entry.RoleName = strings.ReplaceAll(syncSettings.QualificationsRoleFormat, "%name%", roleName)
+		}
 
 		roles = append(roles, &types.Role{
 			Name:   entry.RoleName,

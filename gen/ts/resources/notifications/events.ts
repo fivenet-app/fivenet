@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../users/jobs";
+import { JobProps } from "../users/job_props";
 import { MessengerEvent } from "../messenger/events";
 import { Notification } from "./notifications";
 // User Events

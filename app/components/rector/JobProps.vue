@@ -12,8 +12,8 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { DiscordSyncChange, JobProps } from '~~/gen/ts/resources/users/jobs';
-import { UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
+import type { DiscordSyncChange, JobProps } from '~~/gen/ts/resources/users/job_props';
+import { UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_props';
 import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t } = useI18n();
@@ -66,7 +66,7 @@ const schema = z.object({
         groupSyncSettings: z.object({
             ignoredRoleIds: z.string().max(64).array().max(20),
         }),
-        qualificationsRoleFormat: z.string(),
+        qualificationsRoleFormat: z.string().max(64),
     }),
     logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
 });

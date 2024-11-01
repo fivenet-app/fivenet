@@ -653,7 +653,7 @@
                     "dry_run": "Trockenlaufmodus",
                     "qualifications_role_format": {
                         "title": "Qualifizierungen-Rollen-Format",
-                        "description": "Nutze %name% für das Rollen-Namen-Format für Qualifizierungen."
+                        "description": "Format der Discord Rolle. Nutze %abbr% für die Abkürzung und %name% für den Rollen-Namen der Qualifizierungen."
                     }
                 },
                 "citizen_attributes": {

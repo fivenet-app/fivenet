@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { User } from "../../resources/users/users";
-import { JobProps } from "../../resources/users/jobs";
+import { JobProps } from "../../resources/users/job_props";
 import { Character } from "../../resources/accounts/accounts";
 import { OAuth2Account } from "../../resources/accounts/oauth2";
 import { OAuth2Provider } from "../../resources/accounts/oauth2";

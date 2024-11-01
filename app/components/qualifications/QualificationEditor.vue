@@ -63,6 +63,7 @@ const schema = z.object({
     discordSyncEnabled: z.boolean(),
     discordSettings: z.object({
         roleName: z.string().max(64).optional(),
+        roleFormat: z.string().max(64).optional(),
     }),
     examMode: z.nativeEnum(QualificationExamMode),
     examSettings: z.custom<QualificationExamSettings>(),
@@ -81,6 +82,7 @@ const state = reactive<Schema>({
     discordSyncEnabled: false,
     discordSettings: {
         roleName: '',
+        roleFormat: '',
     },
     examMode: QualificationExamMode.DISABLED,
     examSettings: {
@@ -132,6 +134,7 @@ async function getQualification(qualificationId: string): Promise<void> {
             state.discordSyncEnabled = qualification.discordSyncEnabled;
             state.discordSettings = qualification.discordSettings ?? {
                 roleName: '',
+                roleFormat: '',
             };
             state.examMode = qualification.examMode;
             if (qualification.examSettings) {
@@ -629,6 +632,32 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                                 name="discordSettings.roleName"
                                                 type="text"
                                                 :placeholder="$t('common.role')"
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormGroup>
+
+                                        <UFormGroup
+                                            name="discordSettings.roleFormat"
+                                            :label="
+                                                $t(
+                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                )
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.description',
+                                                )
+                                            "
+                                        >
+                                            <UInput
+                                                v-model="state.discordSettings.roleFormat"
+                                                name="discordSettings.roleFormat"
+                                                type="text"
+                                                :placeholder="
+                                                    $t(
+                                                        'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                    )
+                                                "
                                                 :disabled="!canDo.edit"
                                             />
                                         </UFormGroup>

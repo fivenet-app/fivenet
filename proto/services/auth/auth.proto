@@ -5,7 +5,7 @@ package services.auth;
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/jobs.proto";
+import "resources/users/job_props.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 

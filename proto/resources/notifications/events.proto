@@ -4,7 +4,7 @@ package resources.notifications;
 
 import "resources/notifications/notifications.proto";
 import "resources/messenger/events.proto";
-import "resources/users/jobs.proto";
+import "resources/users/job_props.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
 

@@ -41,6 +41,7 @@
 // source: resources/rector/config.proto
 // source: resources/stats/stats.proto
 // source: resources/timestamp/timestamp.proto
+// source: resources/users/job_props.proto
 // source: resources/users/jobs.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto

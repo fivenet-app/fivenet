@@ -19,7 +19,7 @@ import { PaginationRequest } from "../../resources/common/database/database";
 import { Permission } from "../../resources/permissions/permissions";
 import { RoleAttribute } from "../../resources/permissions/permissions";
 import { Role } from "../../resources/permissions/permissions";
-import { JobProps } from "../../resources/users/jobs";
+import { JobProps } from "../../resources/users/job_props";
 /**
  * @generated from protobuf message services.rector.GetJobPropsRequest
  */
