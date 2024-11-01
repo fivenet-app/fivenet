@@ -70,10 +70,16 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 		))
 	}
 
+	countColumn := jet.Expression(tQualiResults.QualificationID)
 	if req.UserId != nil {
 		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiResults.UserID.EQ(jet.Int32(*req.UserId)))
-	} else if req.QualificationId == nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+	} else {
+		if req.QualificationId == nil {
+			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+			countColumn = jet.DISTINCT(tQualiResults.QualificationID)
+		} else {
+			countColumn = jet.DISTINCT(tQualiResults.UserID)
+		}
 	}
 
 	if len(req.Status) > 0 {
@@ -87,7 +93,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 
 	countStmt := tQualiResults.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tQualiResults.QualificationID)).AS("datacount.totalcount"),
+			jet.COUNT(countColumn).AS("datacount.totalcount"),
 		).
 		FROM(
 			tQualiResults.
@@ -104,6 +110,8 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 				),
 		).
 		WHERE(condition)
+
+	fmt.Println(countStmt.DebugSql())
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

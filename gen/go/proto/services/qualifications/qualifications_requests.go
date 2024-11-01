@@ -71,10 +71,16 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		))
 	}
 
+	countColumn := jet.Expression(tQualiRequests.QualificationID)
 	if req.UserId != nil {
 		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(*req.UserId)))
-	} else if req.QualificationId == nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
+	} else {
+		if req.QualificationId == nil {
+			condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
+			countColumn = jet.DISTINCT(tQualiRequests.QualificationID)
+		} else {
+			countColumn = jet.DISTINCT(tQualiRequests.UserID)
+		}
 	}
 
 	if len(req.Status) > 0 {
@@ -90,7 +96,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 
 	countStmt := tQualiRequests.
 		SELECT(
-			jet.COUNT(tQualiRequests.QualificationID).AS("datacount.totalcount"),
+			jet.COUNT(countColumn).AS("datacount.totalcount"),
 		).
 		FROM(
 			tQualiRequests.
