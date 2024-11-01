@@ -95,8 +95,7 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 	}
 
 	countStmt := s.listQualificationsQuery(
-		condition, jet.ProjectionList{jet.COUNT(tQuali.ID).AS("datacount.totalcount")}, userInfo).
-		GROUP_BY(tQuali.ID)
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tQuali.ID)).AS("datacount.totalcount")}, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -119,6 +118,8 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 	if req.Sort != nil {
 		var column jet.Column
 		switch req.Sort.Column {
+		case "abbreviation":
+			column = tQuali.Abbreviation
 		case "id":
 			fallthrough
 		default:

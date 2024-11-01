@@ -147,7 +147,6 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			),
 		).
 		ORDER_BY(
-			tQuali.Weight.ASC(),
 			tQuali.Abbreviation.ASC(),
 			tQualiResults.ID.DESC(),
 		)
@@ -384,7 +383,10 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 		).
 		WHERE(condition).
 		GROUP_BY(tQuali.ID).
-		ORDER_BY(tQuali.ID.DESC(), tQJobAccess.MinimumGrade)
+		ORDER_BY(
+			tQuali.ID.DESC(),
+			tQJobAccess.MinimumGrade.DESC(),
+		)
 
 	var dest struct {
 		IDs []uint64 `alias:"qualification.id"`
