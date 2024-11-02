@@ -114,12 +114,15 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	localizer := c.l.I18n(string(cmd.Event.Locale))
 	resp := c.getBaseResponse()
 
-	if cmd.Event.Member == nil {
+	if cmd.Event.GuildID == discord.NullGuildID {
 		return nil
 	}
 
-	if cmd.Event.GuildID == discord.NullGuildID {
-		return nil
+	if cmd.Event.Member == nil {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.wrong_discord.desc"})
+		(*resp.Embeds)[0].Color = embeds.ColorInfo
+		return resp
 	}
 
 	job, ok := c.b.GetJobFromGuildID(cmd.Event.GuildID)
