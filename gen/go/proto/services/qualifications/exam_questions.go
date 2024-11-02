@@ -3,6 +3,7 @@ package qualifications
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
@@ -11,7 +12,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getExamQuestions(ctx context.Context, qualificationId uint64, withAnswers bool) (*qualifications.ExamQuestions, error) {
+func (s *Server) getExamQuestions(ctx context.Context, tx qrm.DB, qualificationId uint64, withAnswers bool) (*qualifications.ExamQuestions, error) {
 	columns := []jet.Projection{
 		tExamQuestions.QualificationID,
 		tExamQuestions.CreatedAt,
@@ -37,7 +38,7 @@ func (s *Server) getExamQuestions(ctx context.Context, qualificationId uint64, w
 		))
 
 	var dest qualifications.ExamQuestions
-	if err := stmt.QueryContext(ctx, s.db, &dest.Questions); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &dest.Questions); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -64,12 +65,12 @@ func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64)
 	return int32(count.TotalCount), nil
 }
 
-func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificiationId uint64, questions *qualifications.ExamQuestions) error {
+func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificationId uint64, questions *qualifications.ExamQuestions) error {
 	tExamQuestions := table.FivenetQualificationsExamQuestions
 	if len(questions.Questions) == 0 {
 		stmt := tExamQuestions.
 			DELETE().
-			WHERE(tExamQuestions.QualificationID.EQ(jet.Uint64(qualificiationId))).
+			WHERE(tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId))).
 			LIMIT(100)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -78,18 +79,13 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 
 		return nil
 	}
-
-	toCreate := []*qualifications.ExamQuestion{}
-	toUpdate := []*qualifications.ExamQuestion{}
-
-	for _, question := range questions.Questions {
-		question.QualificationId = qualificiationId
-		if question.Id > 0 {
-			toUpdate = append(toUpdate, question)
-		} else {
-			toCreate = append(toCreate, question)
-		}
+	current, err := s.getExamQuestions(ctx, tx, qualificationId, false)
+	if err != nil {
+		return err
 	}
+
+	toCreate, toUpdate, toDelete := s.compareExamQuestions(current.Questions, questions.Questions)
+	_ = toDelete
 
 	if len(toCreate) > 0 {
 		stmt := tExamQuestions.
@@ -104,7 +100,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 
 		for _, question := range toCreate {
 			stmt = stmt.VALUES(
-				question.QualificationId,
+				qualificationId,
 				question.Title,
 				question.Description,
 				question.Data,
@@ -137,7 +133,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				).
 				WHERE(jet.AND(
 					tExamQuestions.ID.EQ(jet.Uint64(question.Id)),
-					tExamQuestions.QualificationID.EQ(jet.Uint64(question.QualificationId)),
+					tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
 				))
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -147,6 +143,44 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 	}
 
 	return nil
+}
+
+func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion) (toCreate []*qualifications.ExamQuestion, toUpdate []*qualifications.ExamQuestion, toDelete []*qualifications.ExamQuestion) {
+	if current == nil || len(current) == 0 {
+		return in, toUpdate, toDelete
+	}
+
+	slices.SortFunc(current, func(a, b *qualifications.ExamQuestion) int {
+		return int(a.Id - b.Id)
+	})
+
+	if len(current) == 0 {
+		toCreate = in
+	} else {
+		foundTracker := []int{}
+		for _, cj := range current {
+			idx := slices.IndexFunc(in, func(a *qualifications.ExamQuestion) bool {
+				return cj.Id == a.Id
+			})
+			// No match in incoming questions, needs to be deleted
+			if idx == -1 {
+				toDelete = append(toDelete, cj)
+				continue
+			}
+
+			foundTracker = append(foundTracker, idx)
+			toUpdate = append(toUpdate, cj)
+		}
+
+		for i, uj := range in {
+			idx := slices.Index(foundTracker, i)
+			if idx == -1 {
+				toCreate = append(toCreate, uj)
+			}
+		}
+	}
+
+	return
 }
 
 type examResponses struct {

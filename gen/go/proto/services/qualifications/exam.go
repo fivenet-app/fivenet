@@ -160,7 +160,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 
 	var exam *qualifications.ExamQuestions
 	if examUser == nil || (examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration()) {
-		exam, err = s.getExamQuestions(ctx, req.QualificationId, false)
+		exam, err = s.getExamQuestions(ctx, s.db, req.QualificationId, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -324,7 +324,7 @@ func (s *Server) GetUserExam(ctx context.Context, req *GetUserExamRequest) (*Get
 
 	resp := &GetUserExamResponse{}
 
-	exam, err := s.getExamQuestions(ctx, req.QualificationId, true)
+	exam, err := s.getExamQuestions(ctx, s.db, req.QualificationId, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
