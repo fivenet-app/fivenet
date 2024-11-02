@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package services.wiki;
+
+import "resources/common/database/database.proto";
+import "resources/wiki/page.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki;wiki";
+
+message ListPagesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  string prefix = 3;
+}
+
+message ListPagesResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.wiki.Page pages = 2;
+}
+
+message GetPageRequest {
+  string id = 1;
+}
+
+message GetPageResponse {
+  resources.wiki.Page page = 1;
+}
+
+message CreateOrUpdatePageRequest {
+  resources.wiki.Page page = 1;
+}
+
+message CreateOrUpdatePageResponse {
+  resources.wiki.Page page = 1;
+}
+
+message DeletePageRequest {
+  string id = 1;
+}
+
+message DeletePageResponse {}
+
+message GetPageHistoryRequest {
+  string id = 1;
+}
+
+message GetPageHistoryResponse {}
+
+service WikiService {
+  // @perm
+  rpc ListPages(ListPagesRequest) returns (ListPagesResponse);
+  // @perm
+  rpc GetPage(GetPageRequest) returns (GetPageResponse);
+  // @perm
+  rpc CreateOrUpdatePage(CreateOrUpdatePageRequest) returns (CreateOrUpdatePageResponse);
+  // @perm
+  rpc DeletePage(DeletePageRequest) returns (DeletePageResponse);
+
+  // @perm
+  rpc GetPageHistory(GetPageHistoryRequest) returns (GetPageHistoryResponse);
+}

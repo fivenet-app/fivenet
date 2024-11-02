@@ -76,6 +76,13 @@ const items = [
         permission: 'CentrumService.TakeControl',
         icon: 'i-mdi-car-emergency',
     },
+    {
+        title: t('common.wiki'),
+        description: t('pages.overview.features.wiki'),
+        to: { name: 'wiki-path' },
+        permission: 'TODOService.TODOMethod',
+        icon: 'i-mdi-brain',
+    },
 ] as CardElements;
 </script>
 

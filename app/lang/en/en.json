@@ -15,7 +15,8 @@
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
                 "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
                 "calendar": "Public, private and job events all in this nice calendar.",
-                "messenger": "Chat messenger for quick communication."
+                "messenger": "Chat messenger for quick communication.",
+                "wiki": "Wiki for simple internal knowledge sharing."
             }
         },
         "documents": {
@@ -487,7 +488,8 @@
         "per_day": "Per Day",
         "view": "View",
         "answer_key": "Solution key",
-        "hint": "Hint"
+        "hint": "Hint",
+        "wiki": "Wiki"
     },
     "components": {
         "partials": {

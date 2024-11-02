@@ -154,6 +154,15 @@ const links = computed(() =>
             permission: 'CentrumService.TakeControl' as Perms,
         },
         {
+            label: t('common.wiki'),
+            icon: 'i-mdi-brain',
+            to: '/wiki',
+            tooltip: {
+                text: t('common.wiki'),
+            },
+            permission: 'TODOService.TODOMethod' as Perms,
+        },
+        {
             label: t('common.control_panel'),
             icon: 'i-mdi-cog-outline',
             to: '/rector',

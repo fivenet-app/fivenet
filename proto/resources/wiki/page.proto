@@ -1,0 +1,34 @@
+syntax = "proto3";
+
+package resources.wiki;
+
+import "resources/users/users.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/wiki/access.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wiki";
+
+enum ContentType {
+  CONTENT_TYPE_UNSPECIFIED = 0;
+  CONTENT_TYPE_HTML = 1;
+  CONTENT_TYPE_MARKDOWN = 2;
+}
+
+message Page {
+  uint64 id = 1;
+  string job = 2;
+  string path = 3;
+  ContentType content_type = 4;
+  PageMeta meta = 5;
+  string content = 6;
+  PageAccess access = 7;
+}
+
+message PageMeta {
+  string title = 1;
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp updated_at = 3;
+  repeated string tags = 4;
+  resources.users.UserShort author = 5;
+  string description = 6;
+}

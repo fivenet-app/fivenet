@@ -330,6 +330,18 @@
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
   
+- [resources/wiki/page.proto](#resources_wiki_page-proto)
+    - [Page](#resources-wiki-Page)
+    - [PageMeta](#resources-wiki-PageMeta)
+  
+    - [ContentType](#resources-wiki-ContentType)
+  
+- [resources/wiki/access.proto](#resources_wiki_access-proto)
+    - [PageAccess](#resources-wiki-PageAccess)
+    - [PageJobAccess](#resources-wiki-PageJobAccess)
+  
+    - [AccessLevel](#resources-wiki-AccessLevel)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -736,6 +748,20 @@
     - [GetStatsResponse.StatsEntry](#services-stats-GetStatsResponse-StatsEntry)
   
     - [StatsService](#services-stats-StatsService)
+  
+- [services/wiki/wiki.proto](#services_wiki_wiki-proto)
+    - [CreateOrUpdatePageRequest](#services-wiki-CreateOrUpdatePageRequest)
+    - [CreateOrUpdatePageResponse](#services-wiki-CreateOrUpdatePageResponse)
+    - [DeletePageRequest](#services-wiki-DeletePageRequest)
+    - [DeletePageResponse](#services-wiki-DeletePageResponse)
+    - [GetPageHistoryRequest](#services-wiki-GetPageHistoryRequest)
+    - [GetPageHistoryResponse](#services-wiki-GetPageHistoryResponse)
+    - [GetPageRequest](#services-wiki-GetPageRequest)
+    - [GetPageResponse](#services-wiki-GetPageResponse)
+    - [ListPagesRequest](#services-wiki-ListPagesRequest)
+    - [ListPagesResponse](#services-wiki-ListPagesResponse)
+  
+    - [WikiService](#services-wiki-WikiService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -5402,6 +5428,145 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_wiki_page-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/page.proto
+
+
+
+<a name="resources-wiki-Page"></a>
+
+### Page
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| path | [string](#string) |  |  |
+| content_type | [ContentType](#resources-wiki-ContentType) |  |  |
+| meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
+| content | [string](#string) |  |  |
+| access | [PageAccess](#resources-wiki-PageAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageMeta"></a>
+
+### PageMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| tags | [string](#string) | repeated |  |
+| author | [resources.users.UserShort](#resources-users-UserShort) |  |  |
+| description | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-wiki-ContentType"></a>
+
+### ContentType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONTENT_TYPE_UNSPECIFIED | 0 |  |
+| CONTENT_TYPE_HTML | 1 |  |
+| CONTENT_TYPE_MARKDOWN | 2 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_wiki_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/access.proto
+
+
+
+<a name="resources-wiki-PageAccess"></a>
+
+### PageAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [PageJobAccess](#resources-wiki-PageJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+
+
+
+
+
+
+<a name="resources-wiki-PageJobAccess"></a>
+
+### PageJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| page_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-wiki-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_ACCESS | 3 |  |
+| ACCESS_LEVEL_EDIT | 4 |  |
+| ACCESS_LEVEL_OWNER | 5 |  |
+
 
  
 
@@ -10984,6 +11149,179 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetStats | [GetStatsRequest](#services-stats-GetStatsRequest) | [GetStatsResponse](#services-stats-GetStatsResponse) |  |
+
+ 
+
+
+
+<a name="services_wiki_wiki-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/wiki/wiki.proto
+
+
+
+<a name="services-wiki-CreateOrUpdatePageRequest"></a>
+
+### CreateOrUpdatePageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-CreateOrUpdatePageResponse"></a>
+
+### CreateOrUpdatePageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-DeletePageRequest"></a>
+
+### DeletePageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-DeletePageResponse"></a>
+
+### DeletePageResponse
+
+
+
+
+
+
+
+<a name="services-wiki-GetPageHistoryRequest"></a>
+
+### GetPageHistoryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-GetPageHistoryResponse"></a>
+
+### GetPageHistoryResponse
+
+
+
+
+
+
+
+<a name="services-wiki-GetPageRequest"></a>
+
+### GetPageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-GetPageResponse"></a>
+
+### GetPageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-ListPagesRequest"></a>
+
+### ListPagesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| prefix | [string](#string) |  | Search params |
+
+
+
+
+
+
+<a name="services-wiki-ListPagesResponse"></a>
+
+### ListPagesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| pages | [resources.wiki.Page](#resources-wiki-Page) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-wiki-WikiService"></a>
+
+### WikiService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListPages | [ListPagesRequest](#services-wiki-ListPagesRequest) | [ListPagesResponse](#services-wiki-ListPagesResponse) | @perm |
+| GetPage | [GetPageRequest](#services-wiki-GetPageRequest) | [GetPageResponse](#services-wiki-GetPageResponse) | @perm |
+| CreateOrUpdatePage | [CreateOrUpdatePageRequest](#services-wiki-CreateOrUpdatePageRequest) | [CreateOrUpdatePageResponse](#services-wiki-CreateOrUpdatePageResponse) | @perm |
+| DeletePage | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |
+| GetPageHistory | [GetPageHistoryRequest](#services-wiki-GetPageHistoryRequest) | [GetPageHistoryResponse](#services-wiki-GetPageHistoryResponse) | @perm |
 
  
 

@@ -45,6 +45,8 @@
 // source: resources/users/jobs.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto
+// source: resources/wiki/access.proto
+// source: resources/wiki/page.proto
 // source: services/auth/auth.proto
 // source: services/calendar/calendar.proto
 // source: services/centrum/centrum.proto
@@ -64,6 +66,7 @@
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
 // source: services/stats/stats.proto
+// source: services/wiki/wiki.proto
 
 export const grpcServices = [
     'AuthService',
@@ -85,6 +88,7 @@ export const grpcServices = [
     'RectorLawsService',
     'RectorService',
     'StatsService',
+    'WikiService',
 ];
 
 export const grpcMethods = [
@@ -246,4 +250,9 @@ export const grpcMethods = [
 	'RectorService/UpdateRoleLimits',
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
+	'WikiService/ListPages',
+	'WikiService/GetPage',
+	'WikiService/CreateOrUpdatePage',
+	'WikiService/DeletePage',
+	'WikiService/GetPageHistory',
 ];

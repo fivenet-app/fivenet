@@ -15,7 +15,8 @@
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
-                "messenger": "Chat-Messenger für schnelle Konversationen mit Kollegen."
+                "messenger": "Chat-Messenger für schnelle Konversationen mit Kollegen.",
+                "wiki": "Ein Wiki für einfache interne Wissenteilung."
             }
         },
         "documents": {
@@ -487,7 +488,8 @@
         "per_day": "Pro Tag",
         "view": "Ansicht",
         "answer_key": "Antwortschlüssel",
-        "hint": "Hinweis"
+        "hint": "Hinweis",
+        "wiki": "Wiki"
     },
     "components": {
         "partials": {

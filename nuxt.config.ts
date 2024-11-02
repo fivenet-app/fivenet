@@ -21,6 +21,7 @@ export default defineNuxtConfig({
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',
         '@nuxt/eslint',
+        '@nuxt/content',
     ],
 
     future: {
