@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	// CommandsFactories["fivenet"] = NewFivenetCommand
+	CommandsFactories["fivenet"] = NewFivenetCommand
 }
 
 type FiveNetCommand struct {

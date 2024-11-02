@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	// CommandsFactories["help"] = NewHelpCommand
+	CommandsFactories["help"] = NewHelpCommand
 }
 
 var helpTopics = []string{

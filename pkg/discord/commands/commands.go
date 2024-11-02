@@ -64,6 +64,7 @@ func (c *Cmds) RegisterCommands(p CommandParams) error {
 	c.router.Use(Logger(c.logger.Named("discord_bot.commands")))
 	// Automatically defer handles if they're slow.
 	c.router.Use(cmdroute.Deferrable(c.discord, cmdroute.DeferOpts{}))
+
 	commands := []api.CreateCommandData{}
 	for _, fn := range CommandsFactories {
 		cmdData, err := fn(c.router, c.cfg, p)
