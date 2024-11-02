@@ -135,6 +135,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		cfg:      &p.Config.Discord,
 		appCfg:   p.AppConfig,
 		i18n:     p.I18n,
+		perms:    p.Perms,
 
 		cmds: cmds,
 
