@@ -122,6 +122,7 @@ const response = useVModel(props, 'modelValue', emits);
             <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
                 <URadioGroup
                     v-model="response.response.response.singleChoice.choice"
+                    :name="modelValue?.question.data!.data.singleChoice.choices.join(':')"
                     :options="modelValue?.question.data!.data.singleChoice?.choices"
                     :disabled="disabled"
                 />
@@ -160,6 +161,7 @@ const response = useVModel(props, 'modelValue', emits);
                     v-for="choice in modelValue?.question.data.data.multipleChoice.choices"
                     :key="choice"
                     v-model="response.response.response.multipleChoice.choices"
+                    name="data.data.multipleChoice.choices"
                     :label="choice"
                     :disabled="disabled"
                     :value="choice"

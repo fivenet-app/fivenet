@@ -251,7 +251,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		resp.Qualification.Access = qualiAccess.Access
 	}
 
-	if req.WithExam != nil && *req.WithExam {
+	if canGrade && req.WithExam != nil && *req.WithExam {
 		exam, err := s.getExamQuestions(ctx, s.db, req.QualificationId, canGrade)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

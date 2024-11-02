@@ -282,6 +282,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             exam: values.exam,
         },
     };
+
     access.value.forEach((entry) => {
         if (entry.values.accessRole === undefined) {
             return;

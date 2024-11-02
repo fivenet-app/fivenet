@@ -45,6 +45,11 @@ const schema = z.object({
             }),
         ]),
     }),
+    answer: z
+        .object({
+            answerKey: z.string().max(1024),
+        })
+        .optional(),
     points: z.coerce.number().min(0).max(99999),
 });
 

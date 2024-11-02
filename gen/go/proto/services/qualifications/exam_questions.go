@@ -85,7 +85,6 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 	}
 
 	toCreate, toUpdate, toDelete := s.compareExamQuestions(current.Questions, questions.Questions)
-	_ = toDelete
 
 	if len(toCreate) > 0 {
 		stmt := tExamQuestions.
@@ -114,32 +113,49 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 		}
 	}
 
-	if len(toUpdate) > 0 {
-		for _, question := range toUpdate {
-			stmt := tExamQuestions.
-				UPDATE(
-					tExamQuestions.Title,
-					tExamQuestions.Description,
-					tExamQuestions.Data,
-					tExamQuestions.Answer,
-					tExamQuestions.Points,
-				).
-				SET(
-					question.Title,
-					question.Description,
-					question.Data,
-					question.Answer,
-					question.Points,
-				).
-				WHERE(jet.AND(
-					tExamQuestions.ID.EQ(jet.Uint64(question.Id)),
-					tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
-				))
+	for _, question := range toUpdate {
+		stmt := tExamQuestions.
+			UPDATE(
+				tExamQuestions.Title,
+				tExamQuestions.Description,
+				tExamQuestions.Data,
+				tExamQuestions.Answer,
+				tExamQuestions.Points,
+			).
+			SET(
+				question.Title,
+				question.Description,
+				question.Data,
+				question.Answer,
+				question.Points,
+			).
+			WHERE(jet.AND(
+				tExamQuestions.ID.EQ(jet.Uint64(question.Id)),
+				tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+			))
 
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				return err
-			}
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
 		}
+	}
+
+	if len(toDelete) > 0 {
+		questionIds := []jet.Expression{}
+		for _, question := range toDelete {
+			questionIds = append(questionIds, jet.Uint64(question.Id))
+		}
+
+		stmt := tExamQuestions.
+			DELETE().
+			WHERE(jet.AND(
+				tExamQuestions.ID.IN(questionIds...),
+				tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+			))
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
+		}
+
 	}
 
 	return nil
@@ -169,13 +185,13 @@ func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion
 			}
 
 			foundTracker = append(foundTracker, idx)
-			toUpdate = append(toUpdate, cj)
+			toUpdate = append(toUpdate, in[idx])
 		}
 
-		for i, uj := range in {
+		for i, eq := range in {
 			idx := slices.Index(foundTracker, i)
 			if idx == -1 {
-				toCreate = append(toCreate, uj)
+				toCreate = append(toCreate, eq)
 			}
 		}
 	}
