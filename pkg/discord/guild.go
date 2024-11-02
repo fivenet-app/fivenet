@@ -81,7 +81,7 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guil
 	)
 
 	ms := []string{}
-	// ms = append(ms, "qualifications")
+	ms = append(ms, "qualifications")
 	if b.cfg.GroupSync.Enabled {
 		ms = append(ms, "groupsync")
 	}
