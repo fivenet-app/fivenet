@@ -49,9 +49,10 @@ func NewAbsentCommand(router *cmdroute.Router, cfg *config.Config, p CommandPara
 	lDE := p.L.I18n("de")
 
 	router.Add("absent", &AbsentCommand{
-		l:  p.L,
-		db: p.DB,
-		b:  p.BotState,
+		l:     p.L,
+		db:    p.DB,
+		b:     p.BotState,
+		perms: p.Perms,
 	})
 
 	return api.CreateCommandData{
