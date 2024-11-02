@@ -57,7 +57,7 @@
                     },
                     "no_perms": {
                         "title": "No permissions!",
-                        "desc": "You don't have enough permissions to submit an absence."
+                        "desc": "You don't have enough permissions to submit an absence (Code: {{.Code}})."
                     },
                     "invalid_date": {
                         "title": "Invalid date",
