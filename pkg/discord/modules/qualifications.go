@@ -125,7 +125,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 		roleName := strings.TrimSpace(*entry.DiscordSettings.RoleName)
 		if entry.DiscordSettings.RoleFormat != nil && strings.TrimSpace(*entry.DiscordSettings.RoleFormat) != "" {
 			rf := strings.TrimSpace(*entry.DiscordSettings.RoleFormat)
-			if strings.Contains(roleFormat, "%abbr%") || !strings.Contains(roleFormat, "%name%") {
+			if strings.Contains(roleFormat, "%abbr%") || strings.Contains(roleFormat, "%name%") {
 				roleFormat = rf
 			}
 		}
