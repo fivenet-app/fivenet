@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/lang"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -20,6 +21,7 @@ type CommandParams struct {
 	DB       *sql.DB
 	L        *lang.I18n
 	BotState types.BotState
+	Perms    perms.Permissions
 }
 
 type CommandFactory = func(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error)

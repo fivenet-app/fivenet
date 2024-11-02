@@ -55,6 +55,10 @@
                         "title": "Unable to find your char!",
                         "desc": "FiveNet Bot was unable to find a character that is connected with your Discord ID.\nMake sure to connect your Discord account with your FiveNet account and try again."
                     },
+                    "no_perms": {
+                        "title": "No permissions!",
+                        "desc": "You don't have enough permissions to submit an absence."
+                    },
                     "invalid_date": {
                         "title": "Invalid date",
                         "desc": "Please make sure that the date is in the correct format, and is not in the past."

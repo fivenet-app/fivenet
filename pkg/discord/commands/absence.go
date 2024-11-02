@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"database/sql"
+	"slices"
 	"strings"
 	"time"
 
@@ -12,10 +13,13 @@ import (
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	permsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/lang"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -34,9 +38,10 @@ func init() {
 }
 
 type AbsentCommand struct {
-	l  *lang.I18n
-	db *sql.DB
-	b  types.BotState
+	l     *lang.I18n
+	db    *sql.DB
+	b     types.BotState
+	perms perms.Permissions
 }
 
 func NewAbsentCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
@@ -134,6 +139,32 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	if charId <= 0 {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.desc"})
+		return resp
+	}
+
+	// For now just check if the user can set
+	userInfo := &userinfo.UserInfo{
+		UserId: charId,
+		Job:    job,
+	}
+	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm) {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.desc"})
+		return resp
+	}
+	typesAttr, err := c.perms.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
+	if err != nil {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.desc"})
+		return resp
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+	if !slices.Contains(types, "AbsenceDate") {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.desc"})
 		return resp
 	}
 

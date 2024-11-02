@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -76,6 +77,7 @@ type BotParams struct {
 	Config    *config.Config
 	AppConfig appconfig.IConfig
 	I18n      *lang.I18n
+	Perms     perms.Permissions
 }
 
 type Bot struct {
@@ -89,6 +91,7 @@ type Bot struct {
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
 	i18n     *lang.I18n
+	perms    perms.Permissions
 
 	cmds *commands.Cmds
 
@@ -249,6 +252,7 @@ func (b *Bot) start(ctx context.Context) error {
 			DB:       b.db,
 			L:        b.i18n,
 			BotState: b,
+			Perms:    b.perms,
 		}); err != nil {
 			return fmt.Errorf("failed to register commands. %w", err)
 		}

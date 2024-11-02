@@ -55,6 +55,10 @@
                         "title": "",
                         "desc": ""
                     },
+                    "no_perms": {
+                        "title": "Keine Berechtigung!",
+                        "desc": "Sie haben keine Berechtigung eine Abwesenheit einzutragen."
+                    },
                     "invalid_date": {
                         "title": "Falsches Datum!",
                         "desc": "Fehlerhaftes Datumsformat oder Datum in der Vergangenheit."
