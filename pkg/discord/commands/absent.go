@@ -3,7 +3,6 @@ package commands
 import (
 	"context"
 	"database/sql"
-	"slices"
 	"strings"
 	"time"
 
@@ -159,26 +158,6 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 				"Code": "perm",
 			},
 		})
-		return resp
-	}
-	typesAttr, err := c.perms.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
-	if err != nil {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.absent.results.no_perms.desc",
-			TemplateData: map[string]string{
-				"Code": "attr",
-			},
-		})
-		return resp
-	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
-	if !slices.Contains(types, "AbsenceDate") {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.desc"})
 		return resp
 	}
 
