@@ -1,6 +1,8 @@
 package types
 
-import "github.com/diamondburned/arikawa/v3/discord"
+import (
+	"github.com/diamondburned/arikawa/v3/discord"
+)
 
 type State struct {
 	GuildID discord.GuildID

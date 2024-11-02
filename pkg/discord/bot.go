@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
@@ -78,6 +79,8 @@ type BotParams struct {
 }
 
 type Bot struct {
+	types.BotState
+
 	ctx      context.Context
 	logger   *zap.Logger
 	tracer   trace.Tracer
@@ -108,7 +111,12 @@ func NewBot(p BotParams) (*Bot, error) {
 	state.AddIntents(gateway.IntentGuildPresences)
 	state.AddIntents(gateway.IntentGuildIntegrations)
 
-	cmds, err := commands.New(p.Logger, state, p.Config, p.I18n)
+	cmds, err := commands.New(commands.Params{
+		Logger: p.Logger,
+		S:      state,
+		Cfg:    p.Config,
+		I18n:   p.I18n,
+	})
 	if err != nil {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
 	}
@@ -237,7 +245,11 @@ func (b *Bot) start(ctx context.Context) error {
 	}
 
 	if b.cfg.Commands.Enabled {
-		if err := b.cmds.RegisterCommands(); err != nil {
+		if err := b.cmds.RegisterCommands(commands.CommandParams{
+			DB:       b.db,
+			L:        b.i18n,
+			BotState: b,
+		}); err != nil {
 			return fmt.Errorf("failed to register commands. %w", err)
 		}
 	}
@@ -420,4 +432,13 @@ func (b *Bot) stop() error {
 	}
 
 	return b.dc.Close()
+}
+
+func (b *Bot) GetJobFromGuildID(guildId discord.GuildID) (string, bool) {
+	guild, ok := b.activeGuilds.Load(guildId)
+	if !ok || guild == nil {
+		return "", false
+	}
+
+	return guild.job, true
 }

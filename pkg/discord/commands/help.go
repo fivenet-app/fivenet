@@ -16,7 +16,7 @@ import (
 )
 
 func init() {
-	CommandsFactories["help"] = NewHelpCommand
+	// CommandsFactories["help"] = NewHelpCommand
 }
 
 var helpTopics = []string{
@@ -30,9 +30,9 @@ type HelpCommand struct {
 	url string
 }
 
-func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error) {
-	lEN := l.I18n("en")
-	lDE := l.I18n("de")
+func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
+	lEN := p.L.I18n("en")
+	lDE := p.L.I18n("de")
 
 	cmd := api.CreateCommandData{
 		Type: discord.ChatInputCommand,
@@ -98,7 +98,7 @@ func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (
 	}
 
 	router.Add("help", &HelpCommand{
-		l:   l,
+		l:   p.L,
 		url: cfg.HTTP.PublicURL,
 	})
 

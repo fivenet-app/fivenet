@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/diamondburned/arikawa/v3/api"
@@ -9,13 +10,30 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/lang"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-type CommandFactory = func(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error)
+type CommandParams struct {
+	DB       *sql.DB
+	L        *lang.I18n
+	BotState types.BotState
+}
+
+type CommandFactory = func(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error)
 
 var CommandsFactories = map[string]CommandFactory{}
+
+type Params struct {
+	fx.In
+
+	Logger *zap.Logger
+	S      *state.State
+	Cfg    *config.Config
+	I18n   *lang.I18n
+}
 
 type Cmds struct {
 	logger *zap.Logger
@@ -26,28 +44,27 @@ type Cmds struct {
 	i18n    *lang.I18n
 }
 
-func New(logger *zap.Logger, s *state.State, cfg *config.Config, i18n *lang.I18n) (*Cmds, error) {
+func New(p Params) (*Cmds, error) {
 	c := &Cmds{
-		logger:  logger,
-		discord: s,
-		cfg:     cfg,
-		i18n:    i18n,
+		logger:  p.Logger,
+		discord: p.S,
+		cfg:     p.Cfg,
+		i18n:    p.I18n,
 	}
 
 	return c, nil
 }
 
-func (c *Cmds) RegisterCommands() error {
+func (c *Cmds) RegisterCommands(p CommandParams) error {
 	c.logger.Info("registering commands", zap.Int("count", len(CommandsFactories)))
 
 	c.router = cmdroute.NewRouter()
 	c.router.Use(Logger(c.logger.Named("discord_bot.commands")))
 	// Automatically defer handles if they're slow.
 	c.router.Use(cmdroute.Deferrable(c.discord, cmdroute.DeferOpts{}))
-
 	commands := []api.CreateCommandData{}
 	for _, fn := range CommandsFactories {
-		cmdData, err := fn(c.router, c.cfg, c.i18n)
+		cmdData, err := fn(c.router, c.cfg, p)
 		if err != nil {
 			return err
 		}

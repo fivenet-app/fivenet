@@ -12,7 +12,7 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 
 const sort = ref<TableSortable>({
     column: 'abbreviation',
-    direction: 'desc',
+    direction: 'asc',
 });
 
 const {

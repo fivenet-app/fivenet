@@ -121,17 +121,17 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 			continue
 		}
 
+		roleFormat := strings.TrimSpace(syncSettings.QualificationsRoleFormat)
 		roleName := strings.TrimSpace(*entry.DiscordSettings.RoleName)
 		if entry.DiscordSettings.RoleFormat != nil && strings.TrimSpace(*entry.DiscordSettings.RoleFormat) != "" {
-			entry.RoleName = strings.ReplaceAll(*entry.DiscordSettings.RoleFormat, "%abbr%", entry.Abbreviation)
-			entry.RoleName = strings.ReplaceAll(*entry.DiscordSettings.RoleFormat, "%name%", roleName)
+			rf := strings.TrimSpace(*entry.DiscordSettings.RoleFormat)
+			if strings.Contains(roleFormat, "%abbr%") || !strings.Contains(roleFormat, "%name%") {
+				roleFormat = rf
+			}
 		}
 
-		// If role name is (still) empty, "fallback"
-		if entry.RoleName == "" {
-			entry.RoleName = strings.ReplaceAll(syncSettings.QualificationsRoleFormat, "%abbr%", entry.Abbreviation)
-			entry.RoleName = strings.ReplaceAll(syncSettings.QualificationsRoleFormat, "%name%", roleName)
-		}
+		entry.RoleName = strings.ReplaceAll(roleFormat, "%abbr%", entry.Abbreviation)
+		entry.RoleName = strings.ReplaceAll(roleFormat, "%name%", roleName)
 
 		roles = append(roles, &types.Role{
 			Name:   entry.RoleName,

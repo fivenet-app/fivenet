@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	CommandsFactories["fivenet"] = NewFivenetCommand
+	// CommandsFactories["fivenet"] = NewFivenetCommand
 }
 
 type FiveNetCommand struct {
@@ -22,12 +22,12 @@ type FiveNetCommand struct {
 	url string
 }
 
-func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error) {
-	lEN := l.I18n("en")
-	lDE := l.I18n("de")
+func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
+	lEN := p.L.I18n("en")
+	lDE := p.L.I18n("de")
 
 	router.Add("fivenet", &FiveNetCommand{
-		l:   l,
+		l:   p.L,
 		url: cfg.HTTP.PublicURL,
 	})
 

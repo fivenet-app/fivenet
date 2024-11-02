@@ -27,7 +27,7 @@ func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*P
 	if err != nil {
 		return plan, logs, fmt.Errorf("failed to get guild members. %w", err)
 	}
-	fmt.Printf("discord state calculation received %d members in slice\n", len(members))
+	fmt.Printf("discord state calculation (job %d) received %d members in slice\n", s.GuildID, len(members))
 
 	for _, member := range members {
 		// Ignore bots and system users

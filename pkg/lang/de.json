@@ -28,6 +28,46 @@
                     "title": "FiveNet Account Registrierung",
                     "msg": "1. Tritt dem Gameserver bei.\n2. Wenn du im Spiel bist, benutze den Befehl `/fivenet`, um Ihren **Registrierungs-Token** abzurufen.\n3. Klicke auf den Registrierungs-Token und Ihr Browser sollte automatisch die FiveNet-Registrierungsseite öffnen.\n4. Dort füllen Sie das Registrierungsformular aus, geben einen Benutzernamen und ein Passwort an, und schon können Sie den \"Konto erstellen\"-Knopf nutzen.\n5. Sie sollten nun in der Lage sein, sich mit dem gewählten Benutzernamen und Passwort anzumelden.\n\n(Falls Ihr Browser die FiveNet-Registrierungsseite nicht automatisch öffnet, [hier]({{.URL}}/auth/registration/) gelangen Sie zur FiveNet-Registrierungsseite)"
                 }
+            },
+            "absent": {
+                "name": "abwesenheit",
+                "desc": "Abwesendmeldung im FiveNet erstellen.",
+                "options": {
+                    "start-date": {
+                        "name": "start-datum",
+                        "desc": "Beginn der Abwesehnheit in Form von `heute` oder `YYYY-MM-DD` Format (e.g., 2024-10-12)."
+                    },
+                    "days": {
+                        "name": "tage",
+                        "desc": "Abwesenheits Tage"
+                    },
+                    "reason": {
+                        "name": "grund",
+                        "desc": "Grund für Abwesenheit"
+                    }
+                },
+                "results": {
+                    "wrong_discord": {
+                        "title": "Discord keiner Fraktion angehörig!",
+                        "desc": "Dieser Discord ist nicht als Fraktionsdiscord registriert. Bitte kontaktieren sie die Leitung dieses Discord."
+                    },
+                    "no_user_found": {
+                        "title": "",
+                        "desc": ""
+                    },
+                    "invalid_date": {
+                        "title": "Falsches Datum!",
+                        "desc": "Fehlerhaftes Datumsformat oder Datum in der Vergangenheit."
+                    },
+                    "failed": {
+                        "title": "Fehler beim Eintragen der Abwesenheit",
+                        "desc": "Es ist ein Fehler beim Eintragen der Abwesenheit aufgetreten. Stellen sie sicher, dass alle Angaben korrekt sind."
+                    },
+                    "success": {
+                        "title": "Abwesenheit eingetragen",
+                        "desc": "Abwesenheit erfolgreich eingetragen.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    }
+                }
             }
         }
     }

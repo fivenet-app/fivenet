@@ -23,7 +23,9 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	cfg.HTTP.PublicURL = url
 
 	router := cmdroute.NewRouter()
-	_, err = NewFivenetCommand(router, cfg, l)
+	_, err = NewFivenetCommand(router, cfg, CommandParams{
+		L: l,
+	})
 	require.NoError(t, err)
 
 	interactionEvent := &discord.InteractionEvent{
