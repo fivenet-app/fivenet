@@ -153,11 +153,11 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 			if !found {
 				continue
 			}
-			index, err := strconv.Atoi(sGroup)
+			index, err := strconv.ParseUint(sGroup, 10, 64)
 			if err != nil {
 				return nil, logs, err
 			}
-			qualificationRoles[uint64(index)] = role
+			qualificationRoles[index] = role
 		}
 	}
 
@@ -194,6 +194,7 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 			).
 			WHERE(jet.AND(
 				tQualificationsResults.QualificationID.EQ(jet.Uint64(qualificationId)),
+				tQualificationsResults.DeletedAt.IS_NULL(),
 				tQualificationsResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 				tQualifications.Job.IN(jobs...),
 				tOauth2Accs.Provider.EQ(jet.String("discord")),
