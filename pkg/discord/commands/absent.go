@@ -147,10 +147,9 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 
 	// For now just check if the user can set
 	userInfo := &userinfo.UserInfo{
-		UserId:    userId,
-		Job:       job,
-		JobGrade:  jobGrade,
-		SuperUser: false,
+		UserId:   userId,
+		Job:      job,
+		JobGrade: jobGrade,
 	}
 	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm) {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
