@@ -133,13 +133,13 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		return resp
 	}
 
-	charId, err := c.getCharIDByJobAndDiscordID(ctx, job, cmd.Event.Member.User.ID)
+	userId, jobGrade, err := c.getUserIDByJobAndDiscordID(ctx, job, cmd.Event.Member.User.ID)
 	if err != nil {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.desc"})
 		return resp
 	}
-	if charId <= 0 {
+	if userId <= 0 || jobGrade < 0 {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_user_found.desc"})
 		return resp
@@ -147,8 +147,10 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 
 	// For now just check if the user can set
 	userInfo := &userinfo.UserInfo{
-		UserId: charId,
-		Job:    job,
+		UserId:    userId,
+		Job:       job,
+		JobGrade:  jobGrade,
+		SuperUser: false,
 	}
 	if !c.perms.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm) {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.no_perms.title"})
@@ -194,7 +196,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	reason := reasonOption.String()
 	reason += " (via Discord Bot)"
 
-	if err := c.createAbsenceForUser(ctx, charId, job, timestamp.New(startDate), timestamp.New(endDate), reason); err != nil {
+	if err := c.createAbsenceForUser(ctx, userId, job, timestamp.New(startDate), timestamp.New(endDate), reason); err != nil {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.desc"})
 		return resp
@@ -212,10 +214,11 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	return resp
 }
 
-func (c *AbsentCommand) getCharIDByJobAndDiscordID(ctx context.Context, job string, discordId discord.UserID) (int32, error) {
+func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job string, discordId discord.UserID) (int32, int32, error) {
 	stmt := tOauth2Accs.
 		SELECT(
 			tUsers.ID.AS("user_id"),
+			tUsers.JobGrade.AS("job_grade"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -229,18 +232,20 @@ func (c *AbsentCommand) getCharIDByJobAndDiscordID(ctx context.Context, job stri
 					)),
 		).
 		WHERE(jet.AND(
+			tOauth2Accs.Provider.EQ(jet.String("discord")),
 			tOauth2Accs.ExternalID.EQ(jet.String(discordId.String())),
 		)).
 		LIMIT(1)
 
 	var dest struct {
-		UserID int32 `alias:"user_id"`
+		UserID   int32 `alias:"user_id"`
+		JobGrade int32 `alias:"job_grade"`
 	}
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
-		return -1, err
+		return -1, -1, err
 	}
 
-	return dest.UserID, nil
+	return dest.UserID, dest.JobGrade, nil
 }
 
 func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin *timestamp.Timestamp, absenceEnd *timestamp.Timestamp, reason string) error {
