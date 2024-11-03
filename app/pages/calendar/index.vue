@@ -589,10 +589,9 @@ const isOpen = ref(false);
                     />
 
                     <div v-else class="grid grid-cols-1 gap-2">
-                        <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2">
+                        <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2 truncate">
                             <UCheckbox
                                 :model-value="activeCalendarIds.includes(calendar.id)"
-                                class="truncate"
                                 @change="calendarIdChange(calendar.id, $event)"
                             />
 
