@@ -367,19 +367,12 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	var onlyUpdateAccess bool
 	if !check && !userInfo.SuperUser {
-		onlyUpdateAccess, err = s.checkIfUserHasAccessToQuali(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
-		if err != nil {
-			return nil, errorsqualifications.ErrFailedQuery
-		}
-		if !onlyUpdateAccess {
-			return nil, errorsqualifications.ErrFailedQuery
-		}
+		return nil, errorsqualifications.ErrFailedQuery
 	}
 
 	quali, err := s.getQualification(ctx, req.Qualification.Id,
@@ -408,44 +401,42 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if !onlyUpdateAccess {
-		if req.Qualification.Description != nil {
-			*req.Qualification.Description = strings.TrimSuffix(*req.Qualification.Description, "<br>")
-		}
+	if req.Qualification.Description != nil {
+		*req.Qualification.Description = strings.TrimSuffix(*req.Qualification.Description, "<br>")
+	}
 
-		tQuali := table.FivenetQualifications
-		stmt := tQuali.
-			UPDATE(
-				tQuali.Weight,
-				tQuali.Closed,
-				tQuali.Abbreviation,
-				tQuali.Title,
-				tQuali.Description,
-				tQuali.Content,
-				tQuali.DiscordSyncEnabled,
-				tQuali.DiscordSettings,
-				tQuali.ExamMode,
-				tQuali.ExamSettings,
-			).
-			SET(
-				req.Qualification.Weight,
-				req.Qualification.Closed,
-				req.Qualification.Abbreviation,
-				req.Qualification.Title,
-				req.Qualification.Description,
-				req.Qualification.Content,
-				req.Qualification.DiscordSyncEnabled,
-				req.Qualification.DiscordSettings,
-				req.Qualification.ExamMode,
-				req.Qualification.ExamSettings,
-			).
-			WHERE(
-				tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
-			)
+	tQuali := table.FivenetQualifications
+	stmt := tQuali.
+		UPDATE(
+			tQuali.Weight,
+			tQuali.Closed,
+			tQuali.Abbreviation,
+			tQuali.Title,
+			tQuali.Description,
+			tQuali.Content,
+			tQuali.DiscordSyncEnabled,
+			tQuali.DiscordSettings,
+			tQuali.ExamMode,
+			tQuali.ExamSettings,
+		).
+		SET(
+			req.Qualification.Weight,
+			req.Qualification.Closed,
+			req.Qualification.Abbreviation,
+			req.Qualification.Title,
+			req.Qualification.Description,
+			req.Qualification.Content,
+			req.Qualification.DiscordSyncEnabled,
+			req.Qualification.DiscordSettings,
+			req.Qualification.ExamMode,
+			req.Qualification.ExamSettings,
+		).
+		WHERE(
+			tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
+		)
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	if err := s.handleQualificationAccessChanges(ctx, tx, qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Qualification.Id, req.Qualification.Access); err != nil {

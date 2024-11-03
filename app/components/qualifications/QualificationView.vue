@@ -89,7 +89,8 @@ const canDo = computed(() => ({
     request: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.REQUEST),
     take: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.TAKE),
     grade: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.GRADE),
-    edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
+    edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.MANAGE),
+    delete: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
 }));
 
 watchOnce(data, async () => {
@@ -229,7 +230,7 @@ const accordionItems = computed(() =>
                     </UButton>
 
                     <UButton
-                        v-if="can('QualificationsService.DeleteQualification').value && canDo.edit"
+                        v-if="can('QualificationsService.DeleteQualification').value && canDo.delete"
                         icon="i-mdi-trash-can"
                         color="red"
                         @click="
