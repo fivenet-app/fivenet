@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { Button } from '#ui/types';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { getGRPCWikiClient } from '~/composables/grpc';
@@ -38,7 +37,7 @@ async function getPage(path: string): Promise<Page | undefined> {
         const { response } = await call;
 
         if (response.page === undefined) {
-            throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true });
+            throw createError({ statusCode: 404, statusMessage: t('pages.notfound.page_not_found'), fatal: true });
         }
 
         return response.page;
@@ -47,25 +46,6 @@ async function getPage(path: string): Promise<Page | undefined> {
         throw e;
     }
 }
-
-const pageHeaderLinks = computed(() =>
-    [
-        can('WikiService.CreateOrUpdatePage').value
-            ? {
-                  label: t('common.edit'),
-                  color: 'white',
-                  icon: 'i-mdi-pencil',
-              }
-            : undefined,
-        can('WikiService.DeletePage').value
-            ? {
-                  label: t('common.delete'),
-                  color: 'red',
-                  icon: 'i-mdi-trash-can',
-              }
-            : undefined,
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
-);
 
 const parsedBody = computedAsync(async () => await parseMarkdown(page.value?.content ?? ''));
 
@@ -86,7 +66,7 @@ const surround = ref([]);
                 </template>
             </UDashboardNavbar>
 
-            <div class="flex flex-1 flex-col p-4">
+            <div class="flex flex-1 flex-col px-8 py-0">
                 <UPage>
                     <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
                     <DataErrorBlock
@@ -95,12 +75,16 @@ const surround = ref([]);
                         :retry="refresh"
                     />
 
-                    <UPageHeader
-                        v-else-if="page?.meta"
-                        :title="page.meta.title"
-                        :description="page.meta.description"
-                        :links="pageHeaderLinks as Button[]"
-                    />
+                    <UPageHeader v-else-if="page?.meta" :title="page.meta.title" :description="page.meta.description">
+                        <template #links>
+                            <UTooltip v-if="can('WikiService.CreateOrUpdatePage').value" :text="$t('common.edit')">
+                                <UButton color="white" icon="i-mdi-pencil" />
+                            </UTooltip>
+                            <UTooltip v-if="can('WikiService.DeletePage').value" :text="$t('common.delete')">
+                                <UButton color="red" icon="i-mdi-trash-can" />
+                            </UTooltip>
+                        </template>
+                    </UPageHeader>
 
                     <UPageBody prose>
                         <ContentRenderer v-if="parsedBody" :value="parsedBody" />

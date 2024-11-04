@@ -135,6 +135,7 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
+		ORDER_BY(tPageShort.Path.ASC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, resp.Pages); err != nil {
@@ -149,13 +150,11 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// TODO create access check functions as docstore has
-
 	condition := jet.AND(
 		tPage.Job.EQ(jet.String(userInfo.Job)),
-		tPageShort.DeletedAt.IS_NULL(),
+		tPage.DeletedAt.IS_NULL(),
 		jet.OR(
-			tPageShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tPage.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.AND(
 				tPJobAccess.Access.IS_NOT_NULL(),
 				tPJobAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
@@ -198,12 +197,12 @@ func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResp
 		FROM(
 			tPage.
 				LEFT_JOIN(tPJobAccess,
-					tPJobAccess.PageID.EQ(tPageShort.ID).
+					tPJobAccess.PageID.EQ(tPage.ID).
 						AND(tPJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tPJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(tCreator,
-					tPageShort.CreatorID.EQ(tCreator.ID),
+					tPage.CreatorID.EQ(tCreator.ID),
 				),
 		).
 		WHERE(condition).

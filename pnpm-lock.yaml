@@ -69,8 +69,8 @@ importers:
         specifier: 4.0.1-beta.13
         version: 4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.9))(dexie@4.0.9)
       emoji-blast:
-        specifier: 0.10.1
-        version: 0.10.1
+        specifier: 0.10.2
+        version: 0.10.2
       google-protobuf:
         specifier: 3.21.4
         version: 3.21.4
@@ -3158,8 +3158,8 @@ packages:
   elkjs@0.8.2:
     resolution: {integrity: sha512-L6uRgvZTH+4OF5NE/MBbzQx/WYpru1xCBE9respNj6qznEewGUIfhzmm7horWWxbNO2M0WckQypGctR8lH79xQ==}
 
-  emoji-blast@0.10.1:
-    resolution: {integrity: sha512-4e3vWOWhLdTEemJ+sP1mDJ5dvlwLSHrJsU9csqkJQNBw5JkGJjHVOLwIWnS3VuanzIgtSkpv0Sd7usReQyyPQw==}
+  emoji-blast@0.10.2:
+    resolution: {integrity: sha512-3VrqajirPj8QeQxQeMHUfD+03H64XTEVPGRjxP5rjDCVEC5NGF3FgutMpU5scIOhcuzG23Qvs32k0Pnj+hRzGA==}
     engines: {node: '>=18'}
 
   emoji-regex@8.0.0:
@@ -10292,7 +10292,7 @@ snapshots:
 
   elkjs@0.8.2: {}
 
-  emoji-blast@0.10.1: {}
+  emoji-blast@0.10.2: {}
 
   emoji-regex@8.0.0: {}
 

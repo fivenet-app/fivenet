@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.35.0
 	github.com/adhocore/gronx v1.19.3
-	github.com/alecthomas/kong v1.2.1
+	github.com/alecthomas/kong v1.3.0
 	github.com/bep/debounce v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.2
 	github.com/coder/websocket v1.8.12
@@ -22,7 +22,7 @@ require (
 	github.com/gin-contrib/static v1.1.2
 	github.com/gin-contrib/zap v1.1.4
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-jet/jet/v2 v2.11.1
+	github.com/go-jet/jet/v2 v2.12.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.18.1

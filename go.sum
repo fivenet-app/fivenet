@@ -89,10 +89,10 @@ github.com/XSAM/otelsql v0.35.0/go.mod h1:wO028mnLzmBpstK8XPsoeRLl/kgt417yjAwOGD
 github.com/adhocore/gronx v1.19.3 h1:BNl3pGgiKy12Tt1dNIhzEGL2l+KikeV6NN3A/B2AJLg=
 github.com/adhocore/gronx v1.19.3/go.mod h1:7oUY1WAU8rEJWmAxXR2DN0JaO4gi9khSgKjiRypqteg=
 github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5/go.mod h1:SkGFH1ia65gfNATL8TAiHDNxPzPdmEL5uirI2Uyuz6c=
-github.com/alecthomas/assert/v2 v2.10.0 h1:jjRCHsj6hBJhkmhznrCzoNpbA3zqy0fYiUcYZP/GkPY=
-github.com/alecthomas/assert/v2 v2.10.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
-github.com/alecthomas/kong v1.2.1 h1:E8jH4Tsgv6wCRX2nGrdPyHDUCSG83WH2qE4XLACD33Q=
-github.com/alecthomas/kong v1.2.1/go.mod h1:rKTSFhbdp3Ryefn8x5MOEprnRFQ7nlmMC01GKhehhBM=
+github.com/alecthomas/assert/v2 v2.11.0 h1:2Q9r3ki8+JYXvGsDyBXwH3LcJ+WK5D0gc5E8vS6K3D0=
+github.com/alecthomas/assert/v2 v2.11.0/go.mod h1:Bze95FyfUr7x34QZrjL+XP+0qgp/zg8yS+TtBj1WA3k=
+github.com/alecthomas/kong v1.3.0 h1:YJKuU6/TV2XOBtymafSeuzDvLAFR8cYMZiXVNLhAO6g=
+github.com/alecthomas/kong v1.3.0/go.mod h1:IDc8HyiouDdpdiEiY81iaEJM8rSIW6LzX8On4FCO0bE=
 github.com/alecthomas/repr v0.4.0 h1:GhI2A8MACjfegCPVq9f1FLvIBS+DrQ2KQBFZP1iFzXc=
 github.com/alecthomas/repr v0.4.0/go.mod h1:Fr0507jx4eOXV7AlPV6AVZLYrLIuIeSOWtW57eE/O/4=
 github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
@@ -287,8 +287,8 @@ github.com/go-gl/glfw/v3.3/glfw v0.0.0-20191125211704-12ad95a8df72/go.mod h1:tQ2
 github.com/go-gl/glfw/v3.3/glfw v0.0.0-20200222043503-6f7a984d4dc4/go.mod h1:tQ2UAYgL5IevRw8kRxooKSPJfGvJ9fJQFa0TUsXzTg8=
 github.com/go-ini/ini v1.67.0 h1:z6ZrTEZqSWOTyH2FlglNbNgARyHG8oLW9gMELqKr06A=
 github.com/go-ini/ini v1.67.0/go.mod h1:ByCAeIL28uOIIG0E3PJtZPDL8WnHpFKFOtgjp+3Ies8=
-github.com/go-jet/jet/v2 v2.11.1 h1:SEbh2lRUIiQweJpV0boWsQ4bV13x9p4h+RfajnL6vgM=
-github.com/go-jet/jet/v2 v2.11.1/go.mod h1:+DTofDkGp1c0vpooXWEZyNhyi0k0mL7N2W9tdP4YqfA=
+github.com/go-jet/jet/v2 v2.12.0 h1:z2JfvBAZgsfxlQz6NXBYdZTXc7ep3jhbszTLtETv1JE=
+github.com/go-jet/jet/v2 v2.12.0/go.mod h1:ufQVRQeI1mbcO5R8uCEVcVf3Foej9kReBdwDx7YMWUM=
 github.com/go-kit/kit v0.8.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-kit/kit v0.9.0/go.mod h1:xBxKIO96dXMWWy0MnWVtmwkA9/13aqxPnvrjFYMA2as=
 github.com/go-kit/kit v0.10.0/go.mod h1:xUsJbQ/Fp4kEt7AFgCuvyX4a71u8h9jB8tj/ORgOZ7o=
