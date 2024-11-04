@@ -158,7 +158,6 @@ export default defineNuxtConfig({
     },
 
     i18n: {
-        vueI18n: './i18n.config.ts',
         strategy: STRATEGIES.NO_PREFIX,
         detectBrowserLanguage: false,
         skipSettingLocaleOnNavigate: true,
@@ -181,7 +180,6 @@ export default defineNuxtConfig({
             },
         ],
         lazy: true,
-        langDir: './lang',
         defaultLocale: 'de',
         defaultDirection: 'ltr',
         baseUrl: '',
