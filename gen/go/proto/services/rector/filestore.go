@@ -29,15 +29,13 @@ func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFil
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.Pagination.Offset <= 0 {
-		defer s.aud.Log(&model.FivenetAuditLog{
-			Service: RectorFilestoreService_ServiceDesc.ServiceName,
-			Method:  "ViewAuditLog",
-			UserID:  userInfo.UserId,
-			UserJob: userInfo.Job,
-			State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
-		}, req)
-	}
+	defer s.aud.Log(&model.FivenetAuditLog{
+		Service: RectorFilestoreService_ServiceDesc.ServiceName,
+		Method:  "ListFiles",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
+	}, req)
 
 	filePath := ""
 	if req.Path != nil {

@@ -598,7 +598,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return
 		}
 
-		r.Props.MugShot.Data = []byte("MUGSHOT DATA REMOVED")
+		r.Props.MugShot.Data = []byte("MUGSHOT DATA OMITTED")
 	})
 
 	if req.Reason == "" {
@@ -978,7 +978,7 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 			return
 		}
 
-		r.Avatar.Data = []byte("AVATAR DATA REMOVED")
+		r.Avatar.Data = []byte("AVATAR DATA OMITTED")
 	})
 
 	avatarFile, err := s.getUserAvatar(ctx, userInfo.UserId)

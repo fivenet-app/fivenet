@@ -67,10 +67,12 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	logRequest := false
 
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
 	if req.LicensePlate != nil && *req.LicensePlate != "" {
+		logRequest = true
 		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(
 			strings.ReplaceAll(*req.LicensePlate, "%", "")+"%",
 		)))
@@ -79,12 +81,14 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	// Make sure the model column is available
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
 	if modelColumn != nil && req.Model != nil && *req.Model != "" {
+		logRequest = true
 		condition = jet.AND(condition, tVehicles.Model.LIKE(jet.String(
 			strings.ReplaceAll(*req.Model, "%", "")+"%",
 		)))
 	}
 
 	if req.UserId != nil && *req.UserId != 0 {
+		logRequest = true
 		condition = jet.AND(condition,
 			tUsers.Identifier.EQ(tVehicles.Owner),
 			tUsers.ID.EQ(jet.Int32(*req.UserId)),
@@ -92,8 +96,8 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(*req.UserId)))
 	}
 
-	if req.Pagination.Offset <= 0 {
-		s.aud.Log(&model.FivenetAuditLog{
+	if logRequest {
+		defer s.aud.Log(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
 			UserID:  userInfo.UserId,

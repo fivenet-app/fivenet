@@ -25,15 +25,13 @@ var (
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.Pagination.Offset <= 0 {
-		defer s.aud.Log(&model.FivenetAuditLog{
-			Service: RectorService_ServiceDesc.ServiceName,
-			Method:  "ViewAuditLog",
-			UserID:  userInfo.UserId,
-			UserJob: userInfo.Job,
-			State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
-		}, req)
-	}
+	defer s.aud.Log(&model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "ViewAuditLog",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
+	}, req)
 
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {

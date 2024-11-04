@@ -88,9 +88,11 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	logRequest := false
 
 	condition := jet.Bool(true)
 	if req.Search != nil && *req.Search != "" {
+		logRequest = true
 		condition = jet.BoolExp(
 			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
 				jet.RawArgs{"$search": *req.Search}),
@@ -107,6 +109,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		)
 	}
 	if len(req.CreatorIds) > 0 {
+		logRequest = true
 		ids := make([]jet.Expression, len(req.CreatorIds))
 		for i := 0; i < len(req.CreatorIds); i++ {
 			ids[i] = jet.Int32(req.CreatorIds[i])
@@ -140,6 +143,16 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		condition = condition.AND(
 			tDocumentShort.ID.IN(ids...),
 		)
+	}
+
+	if logRequest {
+		defer s.aud.Log(&model.FivenetAuditLog{
+			Service: DocStoreService_ServiceDesc.ServiceName,
+			Method:  "ListDocuments",
+			UserID:  userInfo.UserId,
+			UserJob: userInfo.Job,
+			State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
+		}, req)
 	}
 
 	countStmt := s.listDocumentsQuery(

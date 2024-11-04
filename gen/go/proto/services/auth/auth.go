@@ -726,7 +726,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 
-	s.aud.Log(&model.FivenetAuditLog{
+	defer s.aud.Log(&model.FivenetAuditLog{
 		Service: AuthService_ServiceDesc.ServiceName,
 		Method:  "ChooseCharacter",
 		UserID:  char.UserId,
