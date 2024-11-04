@@ -866,7 +866,7 @@
         },
         "hints": {
             "start_text": "Wussten Sie schon...?",
-            "click_me": "Klicke hier.",
+            "click_me": "Klicke hier",
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
