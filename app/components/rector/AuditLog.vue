@@ -286,53 +286,51 @@ const columns = [
         </template>
     </UDashboardToolbar>
 
-    <div class="relative overflow-x-auto">
-        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
 
-        <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs">
-            <template #actions-data="{ row }">
-                <UButton
-                    variant="link"
-                    icon="i-mdi-content-copy"
-                    :title="$t('components.clipboard.clipboard_button.add')"
-                    @click="addToClipboard(row)"
-                />
-            </template>
+    <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs">
+        <template #actions-data="{ row }">
+            <UButton
+                variant="link"
+                icon="i-mdi-content-copy"
+                :title="$t('components.clipboard.clipboard_button.add')"
+                @click="addToClipboard(row)"
+            />
+        </template>
 
-            <template #createdAt-data="{ row }">
-                <GenericTime :value="row.createdAt" type="long" />
-            </template>
+        <template #createdAt-data="{ row }">
+            <GenericTime :value="row.createdAt" type="long" />
+        </template>
 
-            <template #user-data="{ row }">
-                <CitizenInfoPopover :user="row.user" />
-            </template>
+        <template #user-data="{ row }">
+            <CitizenInfoPopover :user="row.user" />
+        </template>
 
-            <template #service-data="{ row }">
-                <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
-            </template>
+        <template #service-data="{ row }">
+            <span class="dark:text-white"> {{ row.service }}/{{ row.method }} </span>
+        </template>
 
-            <template #state-data="{ row }">
-                <UBadge :color="eventTypeToBadgeColor(row.state)">
-                    {{ $t(`enums.rector.AuditLog.EventType.${EventType[row.state]}`) }}
-                </UBadge>
-            </template>
+        <template #state-data="{ row }">
+            <UBadge :color="eventTypeToBadgeColor(row.state)">
+                {{ $t(`enums.rector.AuditLog.EventType.${EventType[row.state]}`) }}
+            </UBadge>
+        </template>
 
-            <template #expand="{ row }">
-                <div class="px-2 py-1">
-                    <span v-if="!row.data">{{ $t('common.na') }}</span>
-                    <span v-else>
-                        <VueJsonPretty
-                            :data="JSON.parse(row.data!) as JSONDataType"
-                            :show-icon="true"
-                            :show-length="true"
-                            :virtual="true"
-                            :height="240"
-                        />
-                    </span>
-                </div>
-            </template>
-        </UTable>
+        <template #expand="{ row }">
+            <div class="px-2 py-1">
+                <span v-if="!row.data">{{ $t('common.na') }}</span>
+                <span v-else>
+                    <VueJsonPretty
+                        :data="JSON.parse(row.data!) as JSONDataType"
+                        :show-icon="true"
+                        :show-length="true"
+                        :virtual="true"
+                        :height="240"
+                    />
+                </span>
+            </div>
+        </template>
+    </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-    </div>
+    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>
