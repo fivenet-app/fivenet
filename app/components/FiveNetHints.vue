@@ -43,11 +43,11 @@ const hints = shuffle([
                 <div class="mx-auto mb-2 flex items-center gap-1 text-base">
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }}</span>
 
-                    <div v-if="hint.keyboard || hint.to" class="flex-initial">
+                    <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">
                         <UKbd v-if="hint.keyboard" size="md">
                             {{ $t(`components.hints.${hint.id}.keyboard`) }}
                         </UKbd>
-                        <UButton v-else-if="hint.to" variant="soft" :to="hint.to">
+                        <UButton v-else-if="hint.to" :to="hint.to">
                             {{ $t('components.hints.click_me') }}
                         </UButton>
                     </div>
@@ -55,11 +55,11 @@ const hints = shuffle([
             </template>
 
             <template #prev="{ onClick, disabled }">
-                <UButton :disabled="disabled" @click="onClick">{{ $t('common.previous') }}</UButton>
+                <UButton :disabled="disabled" variant="outline" @click="onClick">{{ $t('common.previous') }}</UButton>
             </template>
 
             <template #next="{ onClick, disabled }">
-                <UButton :disabled="disabled" @click="onClick">{{ $t('common.next') }}</UButton>
+                <UButton :disabled="disabled" variant="outline" @click="onClick">{{ $t('common.next') }}</UButton>
             </template>
         </UCarousel>
     </UCard>

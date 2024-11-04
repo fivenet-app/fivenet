@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.wiki;
 
 import "resources/common/database/database.proto";
+import "resources/wiki/activity.proto";
 import "resources/wiki/page.proto";
 import "validate/validate.proto";
 
@@ -17,11 +18,12 @@ message ListPagesRequest {
 
 message ListPagesResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.wiki.Page pages = 2;
+  repeated resources.wiki.PageShort pages = 2;
 }
 
 message GetPageRequest {
-  string id = 1;
+  optional string path = 1;
+  optional uint64 id = 2 [jstype = JS_STRING];
 }
 
 message GetPageResponse {
@@ -37,16 +39,19 @@ message CreateOrUpdatePageResponse {
 }
 
 message DeletePageRequest {
-  string id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message DeletePageResponse {}
 
 message GetPageHistoryRequest {
-  string id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
-message GetPageHistoryResponse {}
+message GetPageHistoryResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.wiki.PageActivity activity = 2;
+}
 
 service WikiService {
   // @perm

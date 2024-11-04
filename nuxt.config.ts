@@ -142,7 +142,7 @@ export default defineNuxtConfig({
             proxy: {
                 '/api/icons': {
                     target: 'https://api.iconify.design',
-                    rewrite: (path) => path.replace(/^\/api\/icons/, ''),
+                    rewrite: (path: string) => path.replace(/^\/api\/icons/, ''),
                     changeOrigin: true,
                 },
                 '/api/grpc': {

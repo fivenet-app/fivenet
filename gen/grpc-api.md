@@ -330,17 +330,21 @@
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
   
-- [resources/wiki/page.proto](#resources_wiki_page-proto)
-    - [Page](#resources-wiki-Page)
-    - [PageMeta](#resources-wiki-PageMeta)
-  
-    - [ContentType](#resources-wiki-ContentType)
-  
 - [resources/wiki/access.proto](#resources_wiki_access-proto)
     - [PageAccess](#resources-wiki-PageAccess)
     - [PageJobAccess](#resources-wiki-PageJobAccess)
   
     - [AccessLevel](#resources-wiki-AccessLevel)
+  
+- [resources/wiki/page.proto](#resources_wiki_page-proto)
+    - [Page](#resources-wiki-Page)
+    - [PageMeta](#resources-wiki-PageMeta)
+    - [PageShort](#resources-wiki-PageShort)
+  
+    - [ContentType](#resources-wiki-ContentType)
+  
+- [resources/wiki/activity.proto](#resources_wiki_activity-proto)
+    - [PageActivity](#resources-wiki-PageActivity)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -5437,76 +5441,6 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
-<a name="resources_wiki_page-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/wiki/page.proto
-
-
-
-<a name="resources-wiki-Page"></a>
-
-### Page
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| path | [string](#string) |  |  |
-| content_type | [ContentType](#resources-wiki-ContentType) |  |  |
-| meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
-| content | [string](#string) |  |  |
-| access | [PageAccess](#resources-wiki-PageAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-wiki-PageMeta"></a>
-
-### PageMeta
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| title | [string](#string) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| tags | [string](#string) | repeated |  |
-| author | [resources.users.UserShort](#resources-users-UserShort) |  |  |
-| description | [string](#string) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-wiki-ContentType"></a>
-
-### ContentType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CONTENT_TYPE_UNSPECIFIED | 0 |  |
-| CONTENT_TYPE_HTML | 1 |  |
-| CONTENT_TYPE_MARKDOWN | 2 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_wiki_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5567,6 +5501,123 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ACCESS_LEVEL_EDIT | 4 |  |
 | ACCESS_LEVEL_OWNER | 5 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_wiki_page-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/page.proto
+
+
+
+<a name="resources-wiki-Page"></a>
+
+### Page
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| path | [string](#string) |  |  |
+| meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
+| content | [string](#string) |  |  |
+| access | [PageAccess](#resources-wiki-PageAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageMeta"></a>
+
+### PageMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| content_type | [ContentType](#resources-wiki-ContentType) |  |  |
+| tags | [string](#string) | repeated |  |
+| toc | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageShort"></a>
+
+### PageShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| path | [string](#string) |  |  |
+| meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-wiki-ContentType"></a>
+
+### ContentType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONTENT_TYPE_UNSPECIFIED | 0 |  |
+| CONTENT_TYPE_HTML | 1 |  |
+| CONTENT_TYPE_MARKDOWN | 2 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_wiki_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/activity.proto
+
+
+
+<a name="resources-wiki-PageActivity"></a>
+
+### PageActivity
+TODO
+
+
+
+
+
+ 
 
  
 
@@ -11199,7 +11250,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  |  |
+| id | [uint64](#uint64) |  |  |
 
 
 
@@ -11224,7 +11275,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  |  |
+| id | [uint64](#uint64) |  |  |
 
 
 
@@ -11235,6 +11286,12 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 ### GetPageHistoryResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| activity | [resources.wiki.PageActivity](#resources-wiki-PageActivity) | repeated |  |
 
 
 
@@ -11249,7 +11306,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [string](#string) |  |  |
+| path | [string](#string) | optional |  |
+| id | [uint64](#uint64) | optional |  |
 
 
 
@@ -11297,7 +11355,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| pages | [resources.wiki.Page](#resources-wiki-Page) | repeated |  |
+| pages | [resources.wiki.PageShort](#resources-wiki-PageShort) | repeated |  |
 
 
 

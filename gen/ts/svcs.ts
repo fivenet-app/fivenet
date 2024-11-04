@@ -46,6 +46,7 @@
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto
 // source: resources/wiki/access.proto
+// source: resources/wiki/activity.proto
 // source: resources/wiki/page.proto
 // source: services/auth/auth.proto
 // source: services/calendar/calendar.proto

@@ -15,20 +15,30 @@ enum ContentType {
 }
 
 message Page {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   string job = 2;
   string path = 3;
-  ContentType content_type = 4;
-  PageMeta meta = 5;
-  string content = 6;
-  PageAccess access = 7;
+  PageMeta meta = 4;
+  string content = 5;
+  PageAccess access = 6;
 }
 
 message PageMeta {
-  string title = 1;
-  resources.timestamp.Timestamp created_at = 2;
-  resources.timestamp.Timestamp updated_at = 3;
-  repeated string tags = 4;
-  resources.users.UserShort author = 5;
-  string description = 6;
+  resources.timestamp.Timestamp created_at = 1;
+  optional resources.timestamp.Timestamp updated_at = 2;
+  optional resources.timestamp.Timestamp deleted_at = 3;
+  string title = 4;
+  string description = 5;
+  optional int32 creator_id = 6;
+  optional resources.users.UserShort creator = 7;
+  ContentType content_type = 8;
+  repeated string tags = 9;
+  optional bool toc = 10;
+}
+
+message PageShort {
+  uint64 id = 1 [jstype = JS_STRING];
+  string job = 2;
+  string path = 3;
+  PageMeta meta = 4;
 }

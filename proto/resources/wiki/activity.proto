@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package resources.wiki;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wiki";
+
+message PageActivity {
+  // TODO
+}

@@ -16,7 +16,7 @@
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
                 "messenger": "Chat-Messenger für schnelle Konversationen mit Kollegen.",
-                "wiki": "Ein Wiki für einfache interne Wissenteilung."
+                "wiki": "Ein Lexikon für interne Informationen."
             }
         },
         "documents": {
@@ -489,7 +489,7 @@
         "view": "Ansicht",
         "answer_key": "Antwortschlüssel",
         "hint": "Hinweis",
-        "wiki": "Wiki"
+        "wiki": "Lexikon"
     },
     "components": {
         "partials": {

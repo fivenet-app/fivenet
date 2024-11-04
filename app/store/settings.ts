@@ -1,9 +1,10 @@
 import { defineStore } from 'pinia';
+import type { Locale } from 'vue-i18n';
 
 export interface SettingsState {
     updateAvailable: false | string;
     version: string;
-    locale: string | null;
+    locale: Locale | null;
 
     nuiEnabled: boolean;
     nuiResourceName: string | undefined;

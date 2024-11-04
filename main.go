@@ -26,6 +26,7 @@ import (
 	pbqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications"
 	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
 	pbstats "github.com/fivenet-app/fivenet/gen/go/proto/services/stats"
+	pbwiki "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki"
 
 	// Modules
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumbot"
@@ -215,6 +216,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbrector.NewServer),
 			grpc.AsService(pbstats.NewServer),
+			grpc.AsService(pbwiki.NewServer),
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),

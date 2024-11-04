@@ -22,6 +22,7 @@ import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestor
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 import { StatsServiceClient } from '~~/gen/ts/services/stats/stats.client';
+import { WikiServiceClient } from '~~/gen/ts/services/wiki/wiki.client';
 import { useGRPCWebsocketTransport } from './grpcws';
 
 const logger = useLogger('GRPC-WS');
@@ -269,4 +270,9 @@ export function getGRPCMessengerClient(): MessengerServiceClient {
 // Stats
 export function getGRPCStatsClient(): StatsServiceClient {
     return new StatsServiceClient(grpcWebTransport);
+}
+
+// Wiki
+export function getGRPCWikiClient(): WikiServiceClient {
+    return new WikiServiceClient(grpcWebsocketTransport);
 }

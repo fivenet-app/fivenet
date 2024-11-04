@@ -4,7 +4,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { locale, setLocale, locales } = useI18n();
+const { locale, locales } = useI18n();
 
 const { isOpen } = useModal();
 
@@ -21,7 +21,6 @@ onMounted(async () => {
             return;
         }
 
-        lang = lang as LocaleObject;
         languages.value.push({
             code: lang.code,
             name: lang.name!,
@@ -42,7 +41,6 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
     preventClose.value = true;
 
     userLocale.value = lang.language!;
-    await setLocale(lang.language!);
 
     notifications.add({
         title: { key: 'notifications.language_switched.title', parameters: {} },
