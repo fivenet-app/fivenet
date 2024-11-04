@@ -866,7 +866,7 @@
         },
         "hints": {
             "start_text": "Did you know...?",
-            "click_me": "Click here.",
+            "click_me": "Click here",
             "startpage": {
                 "content": "You can set the start page FiveNet opens up on in your Account information."
             },
