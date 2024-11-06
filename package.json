@@ -88,7 +88,7 @@
         "eslint-plugin-prettier": "5.2.1",
         "eslint-plugin-vue": "9.30.0",
         "nuxi": "3.15.0",
-        "nuxt": "3.14.0",
+        "nuxt": "3.14.159",
         "nuxt-typed-router": "3.7.0",
         "pinia-plugin-persistedstate": "4.1.2",
         "postcss": "8.4.47",
