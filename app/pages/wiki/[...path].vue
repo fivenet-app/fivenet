@@ -47,7 +47,7 @@ async function getPage(path: string): Promise<Page | undefined> {
     }
 }
 
-const parsedBody = computedAsync(async () => await parseMarkdown(page.value?.content ?? ''));
+const tocLinks = computed(() => []);
 
 const surround = ref([]);
 </script>
@@ -87,7 +87,8 @@ const surround = ref([]);
                     </UPageHeader>
 
                     <UPageBody prose>
-                        <ContentRenderer v-if="parsedBody" :value="parsedBody" />
+                        <!-- eslint-disable vue/no-v-html -->
+                        <div v-if="page" class="prose dark:prose-invert" v-html="page.content" />
 
                         <hr v-if="surround?.length" />
 
@@ -95,7 +96,7 @@ const surround = ref([]);
                     </UPageBody>
 
                     <template v-if="page?.meta?.toc === undefined || page?.meta?.toc !== false" #right>
-                        <UContentToc :title="$t('common.toc')" :links="parsedBody?.toc?.links"> </UContentToc>
+                        <UContentToc :title="$t('common.toc')" :links="tocLinks"> </UContentToc>
                     </template>
                 </UPage>
             </div>
