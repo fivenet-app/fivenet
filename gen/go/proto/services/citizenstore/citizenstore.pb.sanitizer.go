@@ -4,7 +4,7 @@
 package citizenstore
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
 func (m *SetUserPropsRequest) Sanitize() error {

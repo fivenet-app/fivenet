@@ -159,40 +159,25 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 	return dest, nil
 }
 
-func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, mode calendar.AccessLevelUpdateMode, calendarId uint64, access *calendar.CalendarAccess) error {
+func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, calendarId uint64, access *calendar.CalendarAccess) error {
 	// Get existing job and user accesses from database
 	current, err := s.getAccess(ctx, calendarId)
 	if err != nil {
 		return err
 	}
 
-	switch mode {
-	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
-		fallthrough
-	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
-		toCreate, toUpdate, toDelete := s.compareCalendarAccess(current, access)
+	toCreate, toUpdate, toDelete := s.compareCalendarAccess(current, access)
 
-		if err := s.createCalendarAccess(ctx, tx, calendarId, toCreate); err != nil {
-			return err
-		}
+	if err := s.createCalendarAccess(ctx, tx, calendarId, toCreate); err != nil {
+		return err
+	}
 
-		if err := s.updateCalendarAccess(ctx, tx, calendarId, toUpdate); err != nil {
-			return err
-		}
+	if err := s.updateCalendarAccess(ctx, tx, calendarId, toUpdate); err != nil {
+		return err
+	}
 
-		if err := s.deleteCalendarAccess(ctx, tx, calendarId, toDelete); err != nil {
-			return err
-		}
-
-	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
-		if err := s.deleteCalendarAccess(ctx, tx, calendarId, access); err != nil {
-			return err
-		}
-
-	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
-		if err := s.clearCalendarAccess(ctx, tx, calendarId); err != nil {
-			return err
-		}
+	if err := s.deleteCalendarAccess(ctx, tx, calendarId, toDelete); err != nil {
+		return err
 	}
 
 	return nil

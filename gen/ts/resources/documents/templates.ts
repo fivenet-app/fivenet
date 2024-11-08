@@ -231,11 +231,18 @@ export interface TemplateJobAccess {
     /**
      * @generated from protobuf field: optional string job_grade_label = 7;
      */
-    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string;
     /**
      * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
     access: AccessLevel;
+}
+/**
+ * Dummy - DO NOT USE!
+ *
+ * @generated from protobuf message resources.documents.TemplateUserAccess
+ */
+export interface TemplateUserAccess {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Template$Type extends MessageType<Template> {
@@ -840,3 +847,28 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
  * @generated MessageType for protobuf message resources.documents.TemplateJobAccess
  */
 export const TemplateJobAccess = new TemplateJobAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TemplateUserAccess$Type extends MessageType<TemplateUserAccess> {
+    constructor() {
+        super("resources.documents.TemplateUserAccess", []);
+    }
+    create(value?: PartialMessage<TemplateUserAccess>): TemplateUserAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<TemplateUserAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TemplateUserAccess): TemplateUserAccess {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: TemplateUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.TemplateUserAccess
+ */
+export const TemplateUserAccess = new TemplateUserAccess$Type();

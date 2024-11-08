@@ -144,7 +144,7 @@ function addToClipboard(): void {
     });
 }
 
-const contentRef = ref<HTMLDivElement | null>(null);
+const contentRef = useTemplateRef('contentRef');
 function disableCheckboxes(): void {
     if (contentRef.value === null) {
         return;

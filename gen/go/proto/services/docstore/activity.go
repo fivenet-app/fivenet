@@ -3,7 +3,6 @@ package docstore
 import (
 	"context"
 	"errors"
-	"regexp"
 	"strings"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -64,7 +63,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -157,32 +156,12 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	return resp, nil
 }
 
-var brFixer = regexp.MustCompile(`(?m)(<br>)+([ \n]*)(<br>)+`)
-
-func (s *Server) generateDiff(oldContent string, newContent string) (string, error) {
-	oldContent = brFixer.ReplaceAllString(oldContent, "<br>")
-	newContent = brFixer.ReplaceAllString(newContent, "<br>")
-	res, err := s.htmlDiff.HTMLdiff([]string{oldContent, newContent})
-	if err != nil {
-		// Fallback to the new content
-		return newContent, nil
-	}
-
-	out := res[0]
-	// If no "htmldiff" change markers are found, return empty string
-	if !strings.Contains(out, "htmldiff") {
-		return "", nil
-	}
-
-	return out, nil
-}
-
-// generateDocumentDiff Only generates diff if the old and new contents are not equal, using a simple "string comparison"
+// generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison"
 func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *documents.Document) (*documents.DocUpdated, error) {
 	diff := &documents.DocUpdated{}
 
 	if !strings.EqualFold(oldDoc.Title, newDoc.Title) {
-		titleDiff, err := s.generateDiff(oldDoc.Title, newDoc.Title)
+		titleDiff, err := s.htmlDiff.Diff(oldDoc.Title, newDoc.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -192,7 +171,7 @@ func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *docume
 	}
 
 	if !strings.EqualFold(oldDoc.Content, newDoc.Content) {
-		contentDiff, err := s.generateDiff(oldDoc.Content, newDoc.Content)
+		contentDiff, err := s.htmlDiff.Diff(oldDoc.Content, newDoc.Content)
 		if err != nil {
 			return nil, err
 		}
@@ -202,7 +181,7 @@ func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *docume
 	}
 
 	if !strings.EqualFold(oldDoc.State, newDoc.State) {
-		stateDiff, err := s.generateDiff(oldDoc.State, newDoc.State)
+		stateDiff, err := s.htmlDiff.Diff(oldDoc.State, newDoc.State)
 		if err != nil {
 			return nil, err
 		}

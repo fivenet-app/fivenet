@@ -15,7 +15,7 @@ const status = useDebounce(webSocket.status, 150);
 
 const notificationId = ref<string | undefined>();
 
-const overlay = ref<HTMLDivElement | null>(null);
+const overlay = useTemplateRef('overlay');
 
 async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: WebSocketStatus): Promise<void> {
     if (notificationId.value !== undefined && status === 'OPEN') {

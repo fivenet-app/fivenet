@@ -5,4 +5,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var ErrFailedQuery = status.Error(codes.Internal, "errors.WikiService.ErrFailedQuery")
+var (
+	ErrFailedQuery = status.Error(codes.Internal, "errors.WikiService.ErrFailedQuery")
+	ErrPageDenied  = status.Error(codes.Internal, "errors.WikiService.ErrPageDenied")
+)

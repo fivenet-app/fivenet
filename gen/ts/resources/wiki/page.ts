@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../filestore/file";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 import { PageAccess } from "./access";
@@ -20,25 +21,33 @@ export interface Page {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: string;
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string job = 2;
      */
     job: string;
     /**
-     * @generated from protobuf field: string path = 3;
+     * @generated from protobuf field: optional string job_label = 3;
      */
-    path: string;
+    jobLabel?: string;
     /**
-     * @generated from protobuf field: resources.wiki.PageMeta meta = 4;
+     * @generated from protobuf field: optional uint64 parent_id = 4 [jstype = JS_STRING];
+     */
+    parentId?: string;
+    /**
+     * @generated from protobuf field: resources.wiki.PageMeta meta = 5;
      */
     meta?: PageMeta;
     /**
-     * @generated from protobuf field: string content = 5;
+     * @sanitize
+     *
+     * @generated from protobuf field: string content = 6;
      */
     content: string;
     /**
-     * @generated from protobuf field: resources.wiki.PageAccess access = 6;
+     * @generated from protobuf field: resources.wiki.PageAccess access = 7;
      */
     access?: PageAccess;
 }
@@ -59,33 +68,47 @@ export interface PageMeta {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string title = 4;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string slug = 4;
+     */
+    slug?: string;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string title = 5;
      */
     title: string;
     /**
-     * @generated from protobuf field: string description = 5;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string description = 6;
      */
     description: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 6;
+     * @generated from protobuf field: optional int32 creator_id = 7;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 7;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
-    creator?: UserShort;
+    creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: resources.wiki.ContentType content_type = 8;
+     * @generated from protobuf field: resources.wiki.ContentType content_type = 9;
      */
     contentType: ContentType;
     /**
-     * @generated from protobuf field: repeated string tags = 9;
+     * @generated from protobuf field: repeated string tags = 10;
      */
     tags: string[];
     /**
-     * @generated from protobuf field: optional bool toc = 10;
+     * @generated from protobuf field: optional bool toc = 11;
      */
     toc?: boolean;
+    /**
+     * @generated from protobuf field: bool public = 12;
+     */
+    public: boolean;
 }
 /**
  * @generated from protobuf message resources.wiki.PageShort
@@ -94,19 +117,54 @@ export interface PageShort {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: string;
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: string job = 2;
      */
     job: string;
     /**
-     * @generated from protobuf field: string path = 3;
+     * @generated from protobuf field: optional string job_label = 3;
      */
-    path: string;
+    jobLabel?: string;
     /**
-     * @generated from protobuf field: resources.wiki.PageMeta meta = 4;
+     * @generated from protobuf field: optional uint64 parent_id = 4 [jstype = JS_STRING];
      */
-    meta?: PageMeta;
+    parentId?: string;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string slug = 5;
+     */
+    slug?: string;
+    /**
+     * @generated from protobuf field: string title = 6;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: string description = 7;
+     */
+    description: string;
+    /**
+     * @generated from protobuf field: repeated resources.wiki.PageShort children = 8;
+     */
+    children: PageShort[];
+    /**
+     * @generated from protobuf field: optional resources.wiki.PageRootInfo root_info = 9;
+     */
+    rootInfo?: PageRootInfo;
+    /**
+     * @generated from protobuf field: optional string path = 10;
+     */
+    path?: string; // Only used in frontend
+}
+/**
+ * @generated from protobuf message resources.wiki.PageRootInfo
+ */
+export interface PageRootInfo {
+    /**
+     * @generated from protobuf field: optional resources.filestore.File logo = 1;
+     */
+    logo?: File;
 }
 /**
  * @generated from protobuf enum resources.wiki.ContentType
@@ -130,18 +188,18 @@ class Page$Type extends MessageType<Page> {
     constructor() {
         super("resources.wiki.Page", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "meta", kind: "message", T: () => PageMeta },
-            { no: 5, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "access", kind: "message", T: () => PageAccess }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "validate.rules": { message: { required: true } } } },
+            { no: 6, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<Page>): Page {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.job = "";
-        message.path = "";
         message.content = "";
         if (value !== undefined)
             reflectionMergePartial<Page>(this, message, value);
@@ -158,16 +216,19 @@ class Page$Type extends MessageType<Page> {
                 case /* string job */ 2:
                     message.job = reader.string();
                     break;
-                case /* string path */ 3:
-                    message.path = reader.string();
+                case /* optional string job_label */ 3:
+                    message.jobLabel = reader.string();
                     break;
-                case /* resources.wiki.PageMeta meta */ 4:
+                case /* optional uint64 parent_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.parentId = reader.uint64().toString();
+                    break;
+                case /* resources.wiki.PageMeta meta */ 5:
                     message.meta = PageMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* string content */ 5:
+                case /* string content */ 6:
                     message.content = reader.string();
                     break;
-                case /* resources.wiki.PageAccess access */ 6:
+                case /* resources.wiki.PageAccess access */ 7:
                     message.access = PageAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -188,18 +249,21 @@ class Page$Type extends MessageType<Page> {
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* string path = 3; */
-        if (message.path !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.path);
-        /* resources.wiki.PageMeta meta = 4; */
+        /* optional string job_label = 3; */
+        if (message.jobLabel !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional uint64 parent_id = 4 [jstype = JS_STRING]; */
+        if (message.parentId !== undefined)
+            writer.tag(4, WireType.Varint).uint64(message.parentId);
+        /* resources.wiki.PageMeta meta = 5; */
         if (message.meta)
-            PageMeta.internalBinaryWrite(message.meta, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* string content = 5; */
+            PageMeta.internalBinaryWrite(message.meta, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string content = 6; */
         if (message.content !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.content);
-        /* resources.wiki.PageAccess access = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.content);
+        /* resources.wiki.PageAccess access = 7; */
         if (message.access)
-            PageAccess.internalBinaryWrite(message.access, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            PageAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -217,13 +281,15 @@ class PageMeta$Type extends MessageType<PageMeta> {
             { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "creator", kind: "message", T: () => UserShort },
-            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.wiki.ContentType", ContentType, "CONTENT_TYPE_"] },
-            { no: 9, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "100" } } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "creator", kind: "message", T: () => UserShort },
+            { no: 9, name: "content_type", kind: "enum", T: () => ["resources.wiki.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PageMeta>): PageMeta {
@@ -232,6 +298,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
         message.description = "";
         message.contentType = 0;
         message.tags = [];
+        message.public = false;
         if (value !== undefined)
             reflectionMergePartial<PageMeta>(this, message, value);
         return message;
@@ -250,26 +317,32 @@ class PageMeta$Type extends MessageType<PageMeta> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 3:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* string title */ 4:
+                case /* optional string slug */ 4:
+                    message.slug = reader.string();
+                    break;
+                case /* string title */ 5:
                     message.title = reader.string();
                     break;
-                case /* string description */ 5:
+                case /* string description */ 6:
                     message.description = reader.string();
                     break;
-                case /* optional int32 creator_id */ 6:
+                case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 7:
+                case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* resources.wiki.ContentType content_type */ 8:
+                case /* resources.wiki.ContentType content_type */ 9:
                     message.contentType = reader.int32();
                     break;
-                case /* repeated string tags */ 9:
+                case /* repeated string tags */ 10:
                     message.tags.push(reader.string());
                     break;
-                case /* optional bool toc */ 10:
+                case /* optional bool toc */ 11:
                     message.toc = reader.bool();
+                    break;
+                case /* bool public */ 12:
+                    message.public = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -292,27 +365,33 @@ class PageMeta$Type extends MessageType<PageMeta> {
         /* optional resources.timestamp.Timestamp deleted_at = 3; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* string title = 4; */
+        /* optional string slug = 4; */
+        if (message.slug !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.slug);
+        /* string title = 5; */
         if (message.title !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.title);
-        /* string description = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.title);
+        /* string description = 6; */
         if (message.description !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.description);
-        /* optional int32 creator_id = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.description);
+        /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
-            writer.tag(6, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 7; */
+            writer.tag(7, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.wiki.ContentType content_type = 8; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.wiki.ContentType content_type = 9; */
         if (message.contentType !== 0)
-            writer.tag(8, WireType.Varint).int32(message.contentType);
-        /* repeated string tags = 9; */
+            writer.tag(9, WireType.Varint).int32(message.contentType);
+        /* repeated string tags = 10; */
         for (let i = 0; i < message.tags.length; i++)
-            writer.tag(9, WireType.LengthDelimited).string(message.tags[i]);
-        /* optional bool toc = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.tags[i]);
+        /* optional bool toc = 11; */
         if (message.toc !== undefined)
-            writer.tag(10, WireType.Varint).bool(message.toc);
+            writer.tag(11, WireType.Varint).bool(message.toc);
+        /* bool public = 12; */
+        if (message.public !== false)
+            writer.tag(12, WireType.Varint).bool(message.public);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -328,16 +407,24 @@ class PageShort$Type extends MessageType<PageShort> {
     constructor() {
         super("resources.wiki.PageShort", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "meta", kind: "message", T: () => PageMeta }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "100" } } } },
+            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "children", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PageShort },
+            { no: 9, name: "root_info", kind: "message", T: () => PageRootInfo },
+            { no: 10, name: "path", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<PageShort>): PageShort {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.job = "";
-        message.path = "";
+        message.title = "";
+        message.description = "";
+        message.children = [];
         if (value !== undefined)
             reflectionMergePartial<PageShort>(this, message, value);
         return message;
@@ -353,11 +440,29 @@ class PageShort$Type extends MessageType<PageShort> {
                 case /* string job */ 2:
                     message.job = reader.string();
                     break;
-                case /* string path */ 3:
-                    message.path = reader.string();
+                case /* optional string job_label */ 3:
+                    message.jobLabel = reader.string();
                     break;
-                case /* resources.wiki.PageMeta meta */ 4:
-                    message.meta = PageMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
+                case /* optional uint64 parent_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.parentId = reader.uint64().toString();
+                    break;
+                case /* optional string slug */ 5:
+                    message.slug = reader.string();
+                    break;
+                case /* string title */ 6:
+                    message.title = reader.string();
+                    break;
+                case /* string description */ 7:
+                    message.description = reader.string();
+                    break;
+                case /* repeated resources.wiki.PageShort children */ 8:
+                    message.children.push(PageShort.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional resources.wiki.PageRootInfo root_info */ 9:
+                    message.rootInfo = PageRootInfo.internalBinaryRead(reader, reader.uint32(), options, message.rootInfo);
+                    break;
+                case /* optional string path */ 10:
+                    message.path = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -377,12 +482,30 @@ class PageShort$Type extends MessageType<PageShort> {
         /* string job = 2; */
         if (message.job !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.job);
-        /* string path = 3; */
-        if (message.path !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.path);
-        /* resources.wiki.PageMeta meta = 4; */
-        if (message.meta)
-            PageMeta.internalBinaryWrite(message.meta, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job_label = 3; */
+        if (message.jobLabel !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
+        /* optional uint64 parent_id = 4 [jstype = JS_STRING]; */
+        if (message.parentId !== undefined)
+            writer.tag(4, WireType.Varint).uint64(message.parentId);
+        /* optional string slug = 5; */
+        if (message.slug !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.slug);
+        /* string title = 6; */
+        if (message.title !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.title);
+        /* string description = 7; */
+        if (message.description !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.description);
+        /* repeated resources.wiki.PageShort children = 8; */
+        for (let i = 0; i < message.children.length; i++)
+            PageShort.internalBinaryWrite(message.children[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.wiki.PageRootInfo root_info = 9; */
+        if (message.rootInfo)
+            PageRootInfo.internalBinaryWrite(message.rootInfo, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional string path = 10; */
+        if (message.path !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.path);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -393,3 +516,49 @@ class PageShort$Type extends MessageType<PageShort> {
  * @generated MessageType for protobuf message resources.wiki.PageShort
  */
 export const PageShort = new PageShort$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PageRootInfo$Type extends MessageType<PageRootInfo> {
+    constructor() {
+        super("resources.wiki.PageRootInfo", [
+            { no: 1, name: "logo", kind: "message", T: () => File }
+        ]);
+    }
+    create(value?: PartialMessage<PageRootInfo>): PageRootInfo {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PageRootInfo>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageRootInfo): PageRootInfo {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.filestore.File logo */ 1:
+                    message.logo = File.internalBinaryRead(reader, reader.uint32(), options, message.logo);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: PageRootInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.filestore.File logo = 1; */
+        if (message.logo)
+            File.internalBinaryWrite(message.logo, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.wiki.PageRootInfo
+ */
+export const PageRootInfo = new PageRootInfo$Type();

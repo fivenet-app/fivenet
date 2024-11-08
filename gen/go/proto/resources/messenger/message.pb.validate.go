@@ -200,7 +200,18 @@ func (m *Message) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := MessageValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {

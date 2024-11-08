@@ -38,7 +38,7 @@ const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 
-const maxAccessEntries = 10;
+const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
     edit: can('QualificationsService.UpdateQualification').value,

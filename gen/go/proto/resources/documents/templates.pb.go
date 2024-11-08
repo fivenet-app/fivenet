@@ -549,7 +549,7 @@ type TemplateJobAccess struct {
 	Job           string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string              `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
-	JobGradeLabel *string              `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"job_grade_label"` // @gotags: alias:"job_grade_label"
+	JobGradeLabel *string              `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
 	Access        AccessLevel          `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty"`
 }
 
@@ -637,6 +637,43 @@ func (x *TemplateJobAccess) GetAccess() AccessLevel {
 		return x.Access
 	}
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
+}
+
+// Dummy - DO NOT USE!
+type TemplateUserAccess struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *TemplateUserAccess) Reset() {
+	*x = TemplateUserAccess{}
+	mi := &file_resources_documents_templates_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TemplateUserAccess) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TemplateUserAccess) ProtoMessage() {}
+
+func (x *TemplateUserAccess) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_documents_templates_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TemplateUserAccess.ProtoReflect.Descriptor instead.
+func (*TemplateUserAccess) Descriptor() ([]byte, []int) {
+	return file_resources_documents_templates_proto_rawDescGZIP(), []int{7}
 }
 
 var File_resources_documents_templates_proto protoreflect.FileDescriptor
@@ -821,13 +858,14 @@ var file_resources_documents_templates_proto_rawDesc = []byte{
 	0x02, 0x10, 0x01, 0x52, 0x06, 0x61, 0x63, 0x63, 0x65, 0x73, 0x73, 0x42, 0x0d, 0x0a, 0x0b, 0x5f,
 	0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x42, 0x0c, 0x0a, 0x0a, 0x5f, 0x6a,
 	0x6f, 0x62, 0x5f, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x42, 0x12, 0x0a, 0x10, 0x5f, 0x6a, 0x6f, 0x62,
-	0x5f, 0x67, 0x72, 0x61, 0x64, 0x65, 0x5f, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x42, 0x4b, 0x5a, 0x49,
-	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e,
-	0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67,
-	0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f,
-	0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x3b,
-	0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x5f, 0x67, 0x72, 0x61, 0x64, 0x65, 0x5f, 0x6c, 0x61, 0x62, 0x65, 0x6c, 0x22, 0x14, 0x0a, 0x12,
+	0x54, 0x65, 0x6d, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x41, 0x63, 0x63, 0x65,
+	0x73, 0x73, 0x42, 0x4b, 0x5a, 0x49, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d,
+	0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f, 0x66, 0x69, 0x76,
+	0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x6f, 0x63, 0x75,
+	0x6d, 0x65, 0x6e, 0x74, 0x73, 0x3b, 0x64, 0x6f, 0x63, 0x75, 0x6d, 0x65, 0x6e, 0x74, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -842,7 +880,7 @@ func file_resources_documents_templates_proto_rawDescGZIP() []byte {
 	return file_resources_documents_templates_proto_rawDescData
 }
 
-var file_resources_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_resources_documents_templates_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_resources_documents_templates_proto_goTypes = []any{
 	(*Template)(nil),             // 0: resources.documents.Template
 	(*TemplateShort)(nil),        // 1: resources.documents.TemplateShort
@@ -851,36 +889,37 @@ var file_resources_documents_templates_proto_goTypes = []any{
 	(*ObjectSpecs)(nil),          // 4: resources.documents.ObjectSpecs
 	(*TemplateData)(nil),         // 5: resources.documents.TemplateData
 	(*TemplateJobAccess)(nil),    // 6: resources.documents.TemplateJobAccess
-	(*timestamp.Timestamp)(nil),  // 7: resources.timestamp.Timestamp
-	(*Category)(nil),             // 8: resources.documents.Category
-	(*DocumentAccess)(nil),       // 9: resources.documents.DocumentAccess
-	(*users.User)(nil),           // 10: resources.users.User
-	(*DocumentShort)(nil),        // 11: resources.documents.DocumentShort
-	(*users.UserShort)(nil),      // 12: resources.users.UserShort
-	(*vehicles.Vehicle)(nil),     // 13: resources.vehicles.Vehicle
-	(AccessLevel)(0),             // 14: resources.documents.AccessLevel
+	(*TemplateUserAccess)(nil),   // 7: resources.documents.TemplateUserAccess
+	(*timestamp.Timestamp)(nil),  // 8: resources.timestamp.Timestamp
+	(*Category)(nil),             // 9: resources.documents.Category
+	(*DocumentAccess)(nil),       // 10: resources.documents.DocumentAccess
+	(*users.User)(nil),           // 11: resources.users.User
+	(*DocumentShort)(nil),        // 12: resources.documents.DocumentShort
+	(*users.UserShort)(nil),      // 13: resources.users.UserShort
+	(*vehicles.Vehicle)(nil),     // 14: resources.vehicles.Vehicle
+	(AccessLevel)(0),             // 15: resources.documents.AccessLevel
 }
 var file_resources_documents_templates_proto_depIdxs = []int32{
-	7,  // 0: resources.documents.Template.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 1: resources.documents.Template.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 2: resources.documents.Template.category:type_name -> resources.documents.Category
+	8,  // 0: resources.documents.Template.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 1: resources.documents.Template.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 2: resources.documents.Template.category:type_name -> resources.documents.Category
 	2,  // 3: resources.documents.Template.schema:type_name -> resources.documents.TemplateSchema
 	6,  // 4: resources.documents.Template.job_access:type_name -> resources.documents.TemplateJobAccess
-	9,  // 5: resources.documents.Template.content_access:type_name -> resources.documents.DocumentAccess
-	7,  // 6: resources.documents.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
-	7,  // 7: resources.documents.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
-	8,  // 8: resources.documents.TemplateShort.category:type_name -> resources.documents.Category
+	10, // 5: resources.documents.Template.content_access:type_name -> resources.documents.DocumentAccess
+	8,  // 6: resources.documents.TemplateShort.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 7: resources.documents.TemplateShort.updated_at:type_name -> resources.timestamp.Timestamp
+	9,  // 8: resources.documents.TemplateShort.category:type_name -> resources.documents.Category
 	2,  // 9: resources.documents.TemplateShort.schema:type_name -> resources.documents.TemplateSchema
 	3,  // 10: resources.documents.TemplateSchema.requirements:type_name -> resources.documents.TemplateRequirements
 	4,  // 11: resources.documents.TemplateRequirements.documents:type_name -> resources.documents.ObjectSpecs
 	4,  // 12: resources.documents.TemplateRequirements.users:type_name -> resources.documents.ObjectSpecs
 	4,  // 13: resources.documents.TemplateRequirements.vehicles:type_name -> resources.documents.ObjectSpecs
-	10, // 14: resources.documents.TemplateData.activeChar:type_name -> resources.users.User
-	11, // 15: resources.documents.TemplateData.documents:type_name -> resources.documents.DocumentShort
-	12, // 16: resources.documents.TemplateData.users:type_name -> resources.users.UserShort
-	13, // 17: resources.documents.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
-	7,  // 18: resources.documents.TemplateJobAccess.created_at:type_name -> resources.timestamp.Timestamp
-	14, // 19: resources.documents.TemplateJobAccess.access:type_name -> resources.documents.AccessLevel
+	11, // 14: resources.documents.TemplateData.activeChar:type_name -> resources.users.User
+	12, // 15: resources.documents.TemplateData.documents:type_name -> resources.documents.DocumentShort
+	13, // 16: resources.documents.TemplateData.users:type_name -> resources.users.UserShort
+	14, // 17: resources.documents.TemplateData.vehicles:type_name -> resources.vehicles.Vehicle
+	8,  // 18: resources.documents.TemplateJobAccess.created_at:type_name -> resources.timestamp.Timestamp
+	15, // 19: resources.documents.TemplateJobAccess.access:type_name -> resources.documents.AccessLevel
 	20, // [20:20] is the sub-list for method output_type
 	20, // [20:20] is the sub-list for method input_type
 	20, // [20:20] is the sub-list for extension type_name
@@ -907,7 +946,7 @@ func file_resources_documents_templates_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_documents_templates_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

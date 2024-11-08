@@ -19,11 +19,14 @@ type fivenetWikiPagesTable struct {
 	// Columns
 	ID          mysql.ColumnInteger
 	Job         mysql.ColumnString
-	Path        mysql.ColumnString
+	ParentID    mysql.ColumnInteger
 	ContentType mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp
 	DeletedAt   mysql.ColumnTimestamp
+	Toc         mysql.ColumnBool
+	Public      mysql.ColumnBool
+	Slug        mysql.ColumnString
 	Title       mysql.ColumnString
 	Description mysql.ColumnString
 	Content     mysql.ColumnString
@@ -71,18 +74,21 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		JobColumn         = mysql.StringColumn("job")
-		PathColumn        = mysql.StringColumn("path")
+		ParentIDColumn    = mysql.IntegerColumn("parent_id")
 		ContentTypeColumn = mysql.IntegerColumn("content_type")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
+		TocColumn         = mysql.BoolColumn("toc")
+		PublicColumn      = mysql.BoolColumn("public")
+		SlugColumn        = mysql.StringColumn("slug")
 		TitleColumn       = mysql.StringColumn("title")
 		DescriptionColumn = mysql.StringColumn("description")
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, JobColumn, PathColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{JobColumn, PathColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
 	)
 
 	return fivenetWikiPagesTable{
@@ -91,11 +97,14 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		//Columns
 		ID:          IDColumn,
 		Job:         JobColumn,
-		Path:        PathColumn,
+		ParentID:    ParentIDColumn,
 		ContentType: ContentTypeColumn,
 		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,
 		DeletedAt:   DeletedAtColumn,
+		Toc:         TocColumn,
+		Public:      PublicColumn,
+		Slug:        SlugColumn,
 		Title:       TitleColumn,
 		Description: DescriptionColumn,
 		Content:     ContentColumn,

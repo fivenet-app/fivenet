@@ -4,6 +4,7 @@
 package wiki
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki/perms"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 )
@@ -14,8 +15,14 @@ func init() {
 		// Service: WikiService
 		{
 			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceCreateOrUpdatePagePerm,
-			Attrs:    []perms.Attr{},
+			Name:     permkeys.WikiServiceCreatePagePerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.WikiServiceCreatePageFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Public"},
+				},
+			},
 		},
 		{
 			Category: permkeys.WikiServicePerm,
@@ -29,12 +36,17 @@ func init() {
 		},
 		{
 			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceGetPageHistoryPerm,
+			Name:     permkeys.WikiServiceGetPageActivityPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceListPagesPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.WikiServicePerm,
+			Name:     permkeys.WikiServiceUpdatePagePerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

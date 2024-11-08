@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
@@ -37,7 +38,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -154,7 +155,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -227,7 +228,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -347,7 +348,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		comment.CreatorJob = userInfo.Job
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
+	check, err := s.access.CanUserAccessTarget(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -364,7 +365,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, comment.CreatorJob, comment.Creator) {
 		return nil, errorsdocstore.ErrCommentDeleteDenied
 	}
 
@@ -449,7 +450,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			return err
 		}
 
-		check, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.access.CanUserAccessTarget(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return err
 		}
@@ -470,7 +471,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 			return err
 		}
 
-		check, err := s.checkIfUserHasAccessToDoc(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+		check, err := s.access.CanUserAccessTarget(ctx, doc.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return err
 		}

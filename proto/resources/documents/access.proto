@@ -8,13 +8,6 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
 
-enum AccessLevelUpdateMode {
-  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-}
-
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_BLOCKED = 1;
@@ -35,9 +28,9 @@ message DocumentJobAccess {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 document_id = 3 [jstype = JS_STRING];
   string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
   AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
   optional bool required = 9; // @gotags: alias:"required"
 }

@@ -66,8 +66,7 @@ message GetQualificationAccessResponse {
 
 message SetQualificationAccessRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  resources.qualifications.AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
-  resources.qualifications.QualificationAccess access = 3 [(validate.rules).message.required = true];
+  resources.qualifications.QualificationAccess access = 2 [(validate.rules).message.required = true];
 }
 
 message SetQualificationAccessResponse {}

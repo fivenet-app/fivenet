@@ -48,7 +48,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: optional string job_label = 5;
      */
-    jobLabel?: string; // @gotags: alias:"job_label"
+    jobLabel?: string;
     /**
      * @generated from protobuf field: int32 minimum_grade = 6;
      */
@@ -56,7 +56,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: optional string job_grade_label = 7;
      */
-    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string;
     /**
      * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
@@ -98,27 +98,6 @@ export interface DocumentUserAccess {
      * @generated from protobuf field: optional bool required = 7;
      */
     required?: boolean; // @gotags: alias:"required"
-}
-/**
- * @generated from protobuf enum resources.documents.AccessLevelUpdateMode
- */
-export enum AccessLevelUpdateMode {
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-     */
-    UPDATE = 1,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-     */
-    DELETE = 2,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-     */
-    CLEAR = 3
 }
 /**
  * @generated from protobuf enum resources.documents.AccessLevel

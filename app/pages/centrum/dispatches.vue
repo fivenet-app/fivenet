@@ -83,12 +83,10 @@ onBeforeUnmount(() => {
     showLocationMarker.value = false;
 });
 
-const input = ref<{ input: HTMLInputElement }>();
+const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => {
-        input.value?.input?.focus();
-    },
+    '/': () => input.value?.input?.focus(),
 });
 
 const mount = ref(false);

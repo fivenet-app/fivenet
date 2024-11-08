@@ -307,8 +307,7 @@ message GetDocumentAccessResponse {
 
 message SetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
-  resources.documents.AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
-  resources.documents.DocumentAccess access = 3 [(validate.rules).message.required = true];
+  resources.documents.DocumentAccess access = 2 [(validate.rules).message.required = true];
 }
 
 message SetDocumentAccessResponse {}

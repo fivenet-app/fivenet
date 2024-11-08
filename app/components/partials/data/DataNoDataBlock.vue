@@ -17,9 +17,11 @@ const props = withDefaults(
 );
 
 async function click() {
-    if (props.focus) {
-        props.focus();
+    if (!props.focus) {
+        return;
     }
+
+    props.focus();
 }
 </script>
 

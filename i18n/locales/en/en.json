@@ -489,7 +489,8 @@
         "view": "View",
         "answer_key": "Solution key",
         "hint": "Hint",
-        "wiki": "Wiki"
+        "wiki": "Wiki",
+        "parent_page": "Parent Page"
     },
     "components": {
         "partials": {
@@ -2499,6 +2500,16 @@
                 "MESSAGE": "Message",
                 "MANAGE": "Manage",
                 "ADMIN": "Admin"
+            }
+        },
+        "wiki": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "ACCESS": "Access",
+                "EDIT": "Edit",
+                "OWNER": "Owner"
             }
         }
     },

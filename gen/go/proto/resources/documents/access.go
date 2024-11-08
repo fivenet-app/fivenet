@@ -16,6 +16,12 @@ func (x *DocumentJobAccess) SetJobLabel(label string) {
 	x.JobLabel = &label
 }
 
+// pkg/access compatibility
+
+func (x *DocumentJobAccess) GetTargetId() uint64 {
+	return x.DocumentId
+}
+
 func (x *DocumentJobAccess) GetJobGrade() int32 {
 	return x.MinimumGrade
 }
@@ -26,6 +32,26 @@ func (x *DocumentJobAccess) SetJobGrade(grade int32) {
 
 func (x *DocumentJobAccess) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = &label
+}
+
+func (x *DocumentJobAccess) SetMinimumGrade(grade int32) {
+	x.MinimumGrade = grade
+}
+
+func (x *DocumentJobAccess) SetAccess(access AccessLevel) {
+	x.Access = access
+}
+
+func (x *DocumentUserAccess) GetTargetId() uint64 {
+	return x.DocumentId
+}
+
+func (x *DocumentUserAccess) SetUserId(id int32) {
+	x.UserId = id
+}
+
+func (x *DocumentUserAccess) SetAccess(access AccessLevel) {
+	x.Access = access
 }
 
 // Scan implements driver.Valuer for protobuf DocumentAccess.
@@ -47,10 +73,6 @@ func (x *DocumentAccess) Value() (driver.Value, error) {
 
 	out, err := protoutils.Marshal(x)
 	return string(out), err
-}
-
-func (x *DocumentAccess) IsEmpty() bool {
-	return len(x.Jobs) == 0 && len(x.Users) == 0
 }
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {

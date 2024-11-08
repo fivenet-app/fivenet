@@ -435,7 +435,7 @@ class MarkerMarker$Type extends MessageType<MarkerMarker> {
             { no: 2, name: "type", kind: "enum", T: () => ["resources.livemap.MarkerType", MarkerType, "MARKER_TYPE_"] },
             { no: 3, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "data", kind: "message", T: () => MarkerData },
-            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }

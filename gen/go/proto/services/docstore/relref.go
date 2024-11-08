@@ -34,7 +34,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -86,7 +86,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW, docIds...)
+	ids, err := s.access.CanUserAccessTargetIDs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -201,7 +201,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -239,7 +239,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	// Check if user has access to both documents
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT,
+	check, err := s.access.CanUserAccessTargets(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
@@ -315,7 +315,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
+	check, err := s.access.CanUserAccessTargets(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -359,7 +359,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Relation.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -483,7 +483,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, docID.ID, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -653,7 +653,7 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 	}
 
 	// Make sure target user has access to document
-	check, err := s.checkIfUserHasAccessToDoc(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, documentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return err
 	}

@@ -228,7 +228,7 @@
         "state": "Zustand",
         "reference": "Referenz | Referenzen",
         "relation": "Beziehung | Beziehungen",
-        "access": "Zugriff",
+        "access": "Zugriff | Zugriffe",
         "submit": "Absenden",
         "save": "Speichern",
         "remove": "Entfernen",
@@ -489,7 +489,8 @@
         "view": "Ansicht",
         "answer_key": "Antwortschlüssel",
         "hint": "Hinweis",
-        "wiki": "Lexikon"
+        "wiki": "Lexikon",
+        "parent_page": "Übergeordnete Seite"
     },
     "components": {
         "partials": {
@@ -2499,6 +2500,16 @@
                 "MESSAGE": "Schreiben",
                 "MANAGE": "Verwalten",
                 "ADMIN": "Admin"
+            }
+        },
+        "wiki": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "ACCESS": "Zugriffsmanagement",
+                "EDIT": "Editieren",
+                "OWNER": "Besitzer"
             }
         }
     },

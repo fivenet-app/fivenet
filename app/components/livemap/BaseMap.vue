@@ -35,7 +35,7 @@ function mapResize(): void {
     map.invalidateSize();
 }
 
-const mapContainer = ref<HTMLElement | null>(null);
+const mapContainer = useTemplateRef('mapContainer');
 const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 750 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 

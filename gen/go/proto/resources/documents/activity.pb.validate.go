@@ -133,7 +133,18 @@ func (m *DocActivity) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := DocActivityValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -899,3 +910,635 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DocAccessRequestedValidationError{}
+
+// Validate checks the field values on DocAccessUpdated with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DocAccessUpdated) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocAccessUpdated with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocAccessUpdatedMultiError, or nil if none found.
+func (m *DocAccessUpdated) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocAccessUpdated) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJobs()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocAccessUpdatedValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocAccessUpdatedValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocAccessUpdatedValidationError{
+				field:  "Jobs",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUsers()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DocAccessUpdatedValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DocAccessUpdatedValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DocAccessUpdatedValidationError{
+				field:  "Users",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return DocAccessUpdatedMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocAccessUpdatedMultiError is an error wrapping multiple validation errors
+// returned by DocAccessUpdated.ValidateAll() if the designated constraints
+// aren't met.
+type DocAccessUpdatedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocAccessUpdatedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocAccessUpdatedMultiError) AllErrors() []error { return m }
+
+// DocAccessUpdatedValidationError is the validation error returned by
+// DocAccessUpdated.Validate if the designated constraints aren't met.
+type DocAccessUpdatedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocAccessUpdatedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocAccessUpdatedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocAccessUpdatedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocAccessUpdatedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocAccessUpdatedValidationError) ErrorName() string { return "DocAccessUpdatedValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DocAccessUpdatedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocAccessUpdated.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocAccessUpdatedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocAccessUpdatedValidationError{}
+
+// Validate checks the field values on DocAccessJobsDiff with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DocAccessJobsDiff) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocAccessJobsDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocAccessJobsDiffMultiError, or nil if none found.
+func (m *DocAccessJobsDiff) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocAccessJobsDiff) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetToCreate()) > 20 {
+		err := DocAccessJobsDiffValidationError{
+			field:  "ToCreate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToCreate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToCreate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToUpdate()) > 20 {
+		err := DocAccessJobsDiffValidationError{
+			field:  "ToUpdate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToDelete()) > 20 {
+		err := DocAccessJobsDiffValidationError{
+			field:  "ToDelete",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToDelete() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToDelete[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DocAccessJobsDiffMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocAccessJobsDiffMultiError is an error wrapping multiple validation errors
+// returned by DocAccessJobsDiff.ValidateAll() if the designated constraints
+// aren't met.
+type DocAccessJobsDiffMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocAccessJobsDiffMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocAccessJobsDiffMultiError) AllErrors() []error { return m }
+
+// DocAccessJobsDiffValidationError is the validation error returned by
+// DocAccessJobsDiff.Validate if the designated constraints aren't met.
+type DocAccessJobsDiffValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocAccessJobsDiffValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocAccessJobsDiffValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocAccessJobsDiffValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocAccessJobsDiffValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocAccessJobsDiffValidationError) ErrorName() string {
+	return "DocAccessJobsDiffValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DocAccessJobsDiffValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocAccessJobsDiff.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocAccessJobsDiffValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocAccessJobsDiffValidationError{}
+
+// Validate checks the field values on DocAccessUsersDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DocAccessUsersDiff) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DocAccessUsersDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DocAccessUsersDiffMultiError, or nil if none found.
+func (m *DocAccessUsersDiff) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DocAccessUsersDiff) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetToCreate()) > 20 {
+		err := DocAccessUsersDiffValidationError{
+			field:  "ToCreate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToCreate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToCreate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToUpdate()) > 20 {
+		err := DocAccessUsersDiffValidationError{
+			field:  "ToUpdate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToDelete()) > 20 {
+		err := DocAccessUsersDiffValidationError{
+			field:  "ToDelete",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToDelete() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToDelete[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DocAccessUsersDiffMultiError(errors)
+	}
+
+	return nil
+}
+
+// DocAccessUsersDiffMultiError is an error wrapping multiple validation errors
+// returned by DocAccessUsersDiff.ValidateAll() if the designated constraints
+// aren't met.
+type DocAccessUsersDiffMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DocAccessUsersDiffMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DocAccessUsersDiffMultiError) AllErrors() []error { return m }
+
+// DocAccessUsersDiffValidationError is the validation error returned by
+// DocAccessUsersDiff.Validate if the designated constraints aren't met.
+type DocAccessUsersDiffValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DocAccessUsersDiffValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DocAccessUsersDiffValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DocAccessUsersDiffValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DocAccessUsersDiffValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DocAccessUsersDiffValidationError) ErrorName() string {
+	return "DocAccessUsersDiffValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DocAccessUsersDiffValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDocAccessUsersDiff.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DocAccessUsersDiffValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DocAccessUsersDiffValidationError{}

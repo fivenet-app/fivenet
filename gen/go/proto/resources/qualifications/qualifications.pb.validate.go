@@ -329,7 +329,18 @@ func (m *Qualification) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := QualificationValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -849,7 +860,18 @@ func (m *QualificationShort) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := QualificationShortValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -1932,7 +1954,16 @@ func (m *QualificationResult) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CreatorId
+	if m.GetCreatorId() <= 0 {
+		err := QualificationResultValidationError{
+			field:  "CreatorId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetCreator()).(type) {

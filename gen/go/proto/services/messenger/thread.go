@@ -348,7 +348,7 @@ func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateTh
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	accessToDelete, err := s.handleThreadAccessChanges(ctx, tx, messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Thread.Id, req.Thread.Access)
+	accessToDelete, err := s.handleThreadAccessChanges(ctx, tx, req.Thread.Id, req.Thread.Access)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
 	}

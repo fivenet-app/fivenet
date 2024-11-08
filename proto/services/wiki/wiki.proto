@@ -13,7 +13,8 @@ message ListPagesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  string prefix = 3;
+  optional string job = 3 [(validate.rules).string.max_len = 50];
+  optional bool root_only = 4;
 }
 
 message ListPagesResponse {
@@ -22,19 +23,26 @@ message ListPagesResponse {
 }
 
 message GetPageRequest {
-  optional string path = 1;
-  optional uint64 id = 2 [jstype = JS_STRING];
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message GetPageResponse {
   resources.wiki.Page page = 1;
 }
 
-message CreateOrUpdatePageRequest {
+message CreatePageRequest {
+  resources.wiki.Page page = 1 [(validate.rules).message.required = true];
+}
+
+message CreatePageResponse {
   resources.wiki.Page page = 1;
 }
 
-message CreateOrUpdatePageResponse {
+message UpdatePageRequest {
+  resources.wiki.Page page = 1 [(validate.rules).message.required = true];
+}
+
+message UpdatePageResponse {
   resources.wiki.Page page = 1;
 }
 
@@ -44,11 +52,11 @@ message DeletePageRequest {
 
 message DeletePageResponse {}
 
-message GetPageHistoryRequest {
+message GetPageActivityRequest {
   uint64 id = 1 [jstype = JS_STRING];
 }
 
-message GetPageHistoryResponse {
+message GetPageActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.wiki.PageActivity activity = 2;
 }
@@ -58,11 +66,13 @@ service WikiService {
   rpc ListPages(ListPagesRequest) returns (ListPagesResponse);
   // @perm
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
+  // @perm: Attrs=Fields/StringList:[]string{"Public"}
+  rpc CreatePage(CreatePageRequest) returns (CreatePageResponse);
   // @perm
-  rpc CreateOrUpdatePage(CreateOrUpdatePageRequest) returns (CreateOrUpdatePageResponse);
+  rpc UpdatePage(UpdatePageRequest) returns (UpdatePageResponse);
   // @perm
   rpc DeletePage(DeletePageRequest) returns (DeletePageResponse);
 
   // @perm
-  rpc GetPageHistory(GetPageHistoryRequest) returns (GetPageHistoryResponse);
+  rpc GetPageActivity(GetPageActivityRequest) returns (GetPageActivityResponse);
 }

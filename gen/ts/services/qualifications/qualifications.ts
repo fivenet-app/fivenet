@@ -20,7 +20,6 @@ import { QualificationResult } from "../../resources/qualifications/qualificatio
 import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
-import { AccessLevelUpdateMode } from "../../resources/qualifications/access";
 import { QualificationAccess } from "../../resources/qualifications/access";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -159,11 +158,7 @@ export interface SetQualificationAccessRequest {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: resources.qualifications.AccessLevelUpdateMode mode = 2;
-     */
-    mode: AccessLevelUpdateMode;
-    /**
-     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 3;
+     * @generated from protobuf field: resources.qualifications.QualificationAccess access = 2;
      */
     access?: QualificationAccess;
 }
@@ -1000,14 +995,12 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
     constructor() {
         super("services.qualifications.SetQualificationAccessRequest", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "mode", kind: "enum", T: () => ["resources.qualifications.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "access", kind: "message", T: () => QualificationAccess, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "access", kind: "message", T: () => QualificationAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<SetQualificationAccessRequest>): SetQualificationAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.qualificationId = "0";
-        message.mode = 0;
         if (value !== undefined)
             reflectionMergePartial<SetQualificationAccessRequest>(this, message, value);
         return message;
@@ -1020,10 +1013,7 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
                 case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* resources.qualifications.AccessLevelUpdateMode mode */ 2:
-                    message.mode = reader.int32();
-                    break;
-                case /* resources.qualifications.QualificationAccess access */ 3:
+                case /* resources.qualifications.QualificationAccess access */ 2:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -1041,12 +1031,9 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
         /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
-        /* resources.qualifications.AccessLevelUpdateMode mode = 2; */
-        if (message.mode !== 0)
-            writer.tag(2, WireType.Varint).int32(message.mode);
-        /* resources.qualifications.QualificationAccess access = 3; */
+        /* resources.qualifications.QualificationAccess access = 2; */
         if (message.access)
-            QualificationAccess.internalBinaryWrite(message.access, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            QualificationAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

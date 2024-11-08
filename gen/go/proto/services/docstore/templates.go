@@ -84,7 +84,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.templateAccess.CanUserAccessTarget(ctx, req.TemplateId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -99,7 +99,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	}
 
 	if req.Render == nil || !*req.Render {
-		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
+		resp.Template.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.TemplateId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
@@ -286,7 +286,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), userInfo.Job, req.Template.JobAccess); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
 		}
@@ -319,7 +319,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.templateAccess.CanUserAccessTarget(ctx, req.Template.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -382,7 +382,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, userInfo.Job, req.Template.JobAccess); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
 		}
@@ -420,7 +420,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.templateAccess.CanUserAccessTarget(ctx, req.Id, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}

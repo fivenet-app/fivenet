@@ -24,7 +24,7 @@ message Thread {
   optional resources.messenger.Message last_message = 7;
   ThreadUserState user_state = 8;
   string creator_job = 9;
-  optional int32 creator_id = 10;
+  optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   resources.messenger.ThreadAccess access = 12;
 }

@@ -7,3 +7,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;
 message PageActivity {
   // TODO
 }
+
+message PageActivityData {
+  // TODO
+}

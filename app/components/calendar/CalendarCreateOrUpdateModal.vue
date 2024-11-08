@@ -28,7 +28,7 @@ const completorStore = useCompletorStore();
 
 const notifications = useNotificatorStore();
 
-const maxAccessEntries = 10;
+const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
     privatecalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value,

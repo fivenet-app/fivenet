@@ -28,8 +28,7 @@ const data = computed(() =>
     }),
 );
 
-const cardRef = ref<HTMLElement | null>(null);
-
+const cardRef = useTemplateRef('cardRef');
 const { width } = useElementSize(cardRef);
 
 const x = (_: DataRecord, i: number) => i;

@@ -58,25 +58,11 @@ export interface QualificationJobAccess {
     access: AccessLevel;
 }
 /**
- * @generated from protobuf enum resources.qualifications.AccessLevelUpdateMode
+ * Dummy - DO NOT USE!
+ *
+ * @generated from protobuf message resources.qualifications.QualificationUserAccess
  */
-export enum AccessLevelUpdateMode {
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-     */
-    UPDATE = 1,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-     */
-    DELETE = 2,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-     */
-    CLEAR = 3
+export interface QualificationUserAccess {
 }
 /**
  * @generated from protobuf enum resources.qualifications.AccessLevel
@@ -262,3 +248,28 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
  * @generated MessageType for protobuf message resources.qualifications.QualificationJobAccess
  */
 export const QualificationJobAccess = new QualificationJobAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QualificationUserAccess$Type extends MessageType<QualificationUserAccess> {
+    constructor() {
+        super("resources.qualifications.QualificationUserAccess", []);
+    }
+    create(value?: PartialMessage<QualificationUserAccess>): QualificationUserAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<QualificationUserAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationUserAccess): QualificationUserAccess {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: QualificationUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.QualificationUserAccess
+ */
+export const QualificationUserAccess = new QualificationUserAccess$Type();

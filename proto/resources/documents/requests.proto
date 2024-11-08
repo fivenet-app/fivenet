@@ -15,7 +15,7 @@ message DocRequest {
   resources.timestamp.Timestamp updated_at = 3;
   uint64 document_id = 4 [jstype = JS_STRING];
   DocActivityType request_type = 5 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
-  optional int32 creator_id = 6;
+  optional int32 creator_id = 6 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 7; // @gotags: alias:"creator"
   string creator_job = 8 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 9 [(validate.rules).string.max_len = 50];

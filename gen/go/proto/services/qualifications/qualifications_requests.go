@@ -43,7 +43,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 
 	if req.QualificationId != nil {
-		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		check, err := s.access.CanUserAccessTarget(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -243,7 +243,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	canGrade, err := s.access.CanUserAccessTarget(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -314,7 +314,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		canRequest, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		canRequest, err := s.access.CanUserAccessTarget(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -485,7 +485,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return &DeleteQualificationReqResponse{}, nil
 	}
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

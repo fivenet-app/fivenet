@@ -10,9 +10,11 @@ import (
 const (
 	WikiServicePerm perms.Category = "WikiService"
 
-	WikiServiceCreateOrUpdatePagePerm perms.Name = "CreateOrUpdatePage"
-	WikiServiceDeletePagePerm         perms.Name = "DeletePage"
-	WikiServiceGetPagePerm            perms.Name = "GetPage"
-	WikiServiceGetPageHistoryPerm     perms.Name = "GetPageHistory"
-	WikiServiceListPagesPerm          perms.Name = "ListPages"
+	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
+	WikiServiceCreatePageFieldsPermField perms.Key  = "Fields"
+	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
+	WikiServiceGetPagePerm               perms.Name = "GetPage"
+	WikiServiceGetPageActivityPerm       perms.Name = "GetPageActivity"
+	WikiServiceListPagesPerm             perms.Name = "ListPages"
+	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"
 )

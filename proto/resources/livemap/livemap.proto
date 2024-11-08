@@ -58,7 +58,7 @@ message MarkerMarker {
   MarkerType type = 2; // @gotags: alias:"markerType"
   optional resources.timestamp.Timestamp expires_at = 3;
   MarkerData data = 4; // @gotags: alias:"markerData"
-  optional int32 creator_id = 5;
+  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 6;
 }
 

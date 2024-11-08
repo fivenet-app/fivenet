@@ -118,12 +118,10 @@ watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 125
 
 const categoriesLoading = ref(false);
 
-const input = ref<{ input: HTMLInputElement }>();
+const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => {
-        input.value?.input?.focus();
-    },
+    '/': () => input.value?.input?.focus(),
 });
 </script>
 

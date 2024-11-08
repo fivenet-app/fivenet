@@ -6,17 +6,18 @@ import (
 	"errors"
 	"strings"
 
-	htmldiff "github.com/documize/html-diff"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -29,6 +30,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -59,26 +61,128 @@ type Server struct {
 	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
 	notif    notifi.INotifi
+	htmlDiff *htmldiffer.Differ
 
-	htmlDiff *htmldiff.Config
+	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel]
+	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, documents.AccessLevel]
 }
 
-func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.UserAwareEnricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
+type Params struct {
+	fx.In
+
+	DB         *sql.DB
+	Perms      perms.Permissions
+	Cache      *mstlystcdata.Cache
+	Enricher   *mstlystcdata.UserAwareEnricher
+	Aud        audit.IAuditer
+	Ui         userinfo.UserInfoRetriever
+	Notif      notifi.INotifi
+	HTMLDiffer *htmldiffer.Differ
+}
+
+func NewServer(p Params) *Server {
 	return &Server{
-		db:       db,
-		ps:       ps,
-		cache:    cache,
-		enricher: enricher,
-		aud:      aud,
-		ui:       ui,
-		notif:    notif,
-		htmlDiff: &htmldiff.Config{
-			Granularity:  5,
-			InsertedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-success-600"}},
-			DeletedSpan:  []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-error-600"}},
-			ReplacedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-info-600"}},
-			CleanTags:    []string{""},
-		},
+		db:       p.DB,
+		ps:       p.Perms,
+		cache:    p.Cache,
+		enricher: p.Enricher,
+		aud:      p.Aud,
+		ui:       p.Ui,
+		notif:    p.Notif,
+		htmlDiff: p.HTMLDiffer,
+
+		access: access.NewGrouped(
+			p.DB,
+			table.FivenetDocuments,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocuments.ID,
+				DeletedAt:  table.FivenetDocuments.DeletedAt,
+				CreatorID:  table.FivenetDocuments.CreatorID,
+				CreatorJob: table.FivenetDocuments.CreatorJob,
+			},
+			access.NewJobs[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.AccessLevel](
+				table.FivenetDocumentsJobAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsJobAccess.ID,
+						CreatedAt: table.FivenetDocumentsJobAccess.CreatedAt,
+						TargetID:  table.FivenetDocumentsJobAccess.DocumentID,
+						Access:    table.FivenetDocumentsJobAccess.Access,
+					},
+					Job:          table.FivenetDocumentsJobAccess.Job,
+					MinimumGrade: table.FivenetDocumentsJobAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsJobAccess.AS("document_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsJobAccess.AS("document_job_access").ID,
+						CreatedAt: table.FivenetDocumentsJobAccess.AS("document_job_access").CreatedAt,
+						TargetID:  table.FivenetDocumentsJobAccess.AS("document_job_access").DocumentID,
+						Access:    table.FivenetDocumentsJobAccess.AS("document_job_access").Access,
+					},
+					Job:          table.FivenetDocumentsJobAccess.AS("document_job_access").Job,
+					MinimumGrade: table.FivenetDocumentsJobAccess.AS("document_job_access").MinimumGrade,
+				},
+			),
+			access.NewUsers[documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel](
+				table.FivenetDocumentsUserAccess,
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsUserAccess.ID,
+						CreatedAt: table.FivenetDocumentsUserAccess.CreatedAt,
+						TargetID:  table.FivenetDocumentsUserAccess.DocumentID,
+						Access:    table.FivenetDocumentsUserAccess.Access,
+					},
+					UserId: table.FivenetDocumentsUserAccess.UserID,
+				},
+				table.FivenetDocumentsUserAccess.AS("document_user_access"),
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsUserAccess.AS("document_user_access").ID,
+						CreatedAt: table.FivenetDocumentsUserAccess.AS("document_user_access").CreatedAt,
+						TargetID:  table.FivenetDocumentsUserAccess.AS("document_user_access").DocumentID,
+						Access:    table.FivenetDocumentsUserAccess.AS("document_user_access").Access,
+					},
+					UserId: table.FivenetDocumentsUserAccess.AS("document_user_access").UserID,
+				},
+			),
+		),
+
+		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, documents.AccessLevel](
+			p.DB,
+			table.FivenetDocumentsTemplates,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocumentsTemplates.ID,
+				DeletedAt:  table.FivenetDocumentsTemplates.DeletedAt,
+				CreatorID:  nil,
+				CreatorJob: table.FivenetDocumentsTemplates.CreatorJob,
+			},
+			access.NewJobs[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.AccessLevel](
+				table.FivenetDocumentsTemplatesJobAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsTemplatesJobAccess.ID,
+						CreatedAt: table.FivenetDocumentsTemplatesJobAccess.CreatedAt,
+						TargetID:  table.FivenetDocumentsTemplatesJobAccess.TemplateID,
+						Access:    table.FivenetDocumentsTemplatesJobAccess.Access,
+					},
+					Job:          table.FivenetDocumentsTemplatesJobAccess.Job,
+					MinimumGrade: table.FivenetDocumentsTemplatesJobAccess.MinimumGrade,
+				},
+				table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").ID,
+						CreatedAt: table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").CreatedAt,
+						TargetID:  table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").TemplateID,
+						Access:    table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").Access,
+					},
+					Job:          table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").Job,
+					MinimumGrade: table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").MinimumGrade,
+				},
+			),
+			nil,
+		),
 	}
 }
 
@@ -239,7 +343,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
@@ -388,7 +492,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Access.Jobs, req.Access.Users); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
 		}
@@ -421,13 +525,13 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
 	var onlyUpdateAccess bool
 	if !check && !userInfo.SuperUser {
-		onlyUpdateAccess, err = s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
+		onlyUpdateAccess, err = s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 		if err != nil {
 			return nil, errorsdocstore.ErrPermissionDenied
 		}
@@ -457,7 +561,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocUpdateDenied
 	}
 
@@ -535,7 +639,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		}
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, req.DocumentId, userInfo, req.Access, true); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
 		}
@@ -568,7 +672,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
@@ -592,7 +696,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocDeleteDenied
 	}
 
@@ -644,7 +748,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_STATUS)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
@@ -668,7 +772,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocToggleDenied
 	}
 
@@ -720,7 +824,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrNotFoundOrNoPerms)
 	}
@@ -752,7 +856,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, doc.CreatorJob, doc.Creator) {
 		return nil, errorsdocstore.ErrDocOwnerFailed
 	}
 

@@ -19,3 +19,29 @@ func (x *CalendarJobAccess) SetJobGrade(grade int32) {
 func (x *CalendarJobAccess) SetJobGradeLabel(label string) {
 	x.JobGradeLabel = &label
 }
+
+// pkg/access compatibility
+
+func (x *CalendarJobAccess) GetTargetId() uint64 {
+	return x.CalendarId
+}
+
+func (x *CalendarJobAccess) SetMinimumGrade(grade int32) {
+	x.MinimumGrade = grade
+}
+
+func (x *CalendarJobAccess) SetAccess(access AccessLevel) {
+	x.Access = access
+}
+
+func (x *CalendarUserAccess) GetTargetId() uint64 {
+	return x.CalendarId
+}
+
+func (x *CalendarUserAccess) SetUserId(id int32) {
+	x.UserId = id
+}
+
+func (x *CalendarUserAccess) SetAccess(access AccessLevel) {
+	x.Access = access
+}

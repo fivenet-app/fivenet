@@ -97,8 +97,6 @@ func (m *ListPagesRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Prefix
-
 	if m.Sort != nil {
 
 		if all {
@@ -130,6 +128,25 @@ func (m *ListPagesRequest) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 50 {
+			err := ListPagesRequestValidationError{
+				field:  "Job",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.RootOnly != nil {
+		// no validation rules for RootOnly
 	}
 
 	if len(errors) > 0 {
@@ -408,13 +425,7 @@ func (m *GetPageRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Path != nil {
-		// no validation rules for Path
-	}
-
-	if m.Id != nil {
-		// no validation rules for Id
-	}
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return GetPageRequestMultiError(errors)
@@ -623,22 +634,164 @@ var _ interface {
 	ErrorName() string
 } = GetPageResponseValidationError{}
 
-// Validate checks the field values on CreateOrUpdatePageRequest with the rules
+// Validate checks the field values on CreatePageRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CreatePageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreatePageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreatePageRequestMultiError, or nil if none found.
+func (m *CreatePageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreatePageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPage() == nil {
+		err := CreatePageRequestValidationError{
+			field:  "Page",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreatePageRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreatePageRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreatePageRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreatePageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreatePageRequestMultiError is an error wrapping multiple validation errors
+// returned by CreatePageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type CreatePageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreatePageRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreatePageRequestMultiError) AllErrors() []error { return m }
+
+// CreatePageRequestValidationError is the validation error returned by
+// CreatePageRequest.Validate if the designated constraints aren't met.
+type CreatePageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreatePageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreatePageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreatePageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreatePageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreatePageRequestValidationError) ErrorName() string {
+	return "CreatePageRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreatePageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreatePageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreatePageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreatePageRequestValidationError{}
+
+// Validate checks the field values on CreatePageResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateOrUpdatePageRequest) Validate() error {
+func (m *CreatePageResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrUpdatePageRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreatePageResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateOrUpdatePageRequestMultiError, or nil if none found.
-func (m *CreateOrUpdatePageRequest) ValidateAll() error {
+// CreatePageResponseMultiError, or nil if none found.
+func (m *CreatePageResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrUpdatePageRequest) validate(all bool) error {
+func (m *CreatePageResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -649,7 +802,7 @@ func (m *CreateOrUpdatePageRequest) validate(all bool) error {
 		switch v := interface{}(m.GetPage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdatePageRequestValidationError{
+				errors = append(errors, CreatePageResponseValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -657,7 +810,7 @@ func (m *CreateOrUpdatePageRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdatePageRequestValidationError{
+				errors = append(errors, CreatePageResponseValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -666,7 +819,7 @@ func (m *CreateOrUpdatePageRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateOrUpdatePageRequestValidationError{
+			return CreatePageResponseValidationError{
 				field:  "Page",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -675,19 +828,19 @@ func (m *CreateOrUpdatePageRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateOrUpdatePageRequestMultiError(errors)
+		return CreatePageResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrUpdatePageRequestMultiError is an error wrapping multiple validation
-// errors returned by CreateOrUpdatePageRequest.ValidateAll() if the
-// designated constraints aren't met.
-type CreateOrUpdatePageRequestMultiError []error
+// CreatePageResponseMultiError is an error wrapping multiple validation errors
+// returned by CreatePageResponse.ValidateAll() if the designated constraints
+// aren't met.
+type CreatePageResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrUpdatePageRequestMultiError) Error() string {
+func (m CreatePageResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -696,11 +849,11 @@ func (m CreateOrUpdatePageRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrUpdatePageRequestMultiError) AllErrors() []error { return m }
+func (m CreatePageResponseMultiError) AllErrors() []error { return m }
 
-// CreateOrUpdatePageRequestValidationError is the validation error returned by
-// CreateOrUpdatePageRequest.Validate if the designated constraints aren't met.
-type CreateOrUpdatePageRequestValidationError struct {
+// CreatePageResponseValidationError is the validation error returned by
+// CreatePageResponse.Validate if the designated constraints aren't met.
+type CreatePageResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -708,24 +861,24 @@ type CreateOrUpdatePageRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrUpdatePageRequestValidationError) Field() string { return e.field }
+func (e CreatePageResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrUpdatePageRequestValidationError) Reason() string { return e.reason }
+func (e CreatePageResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrUpdatePageRequestValidationError) Cause() error { return e.cause }
+func (e CreatePageResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrUpdatePageRequestValidationError) Key() bool { return e.key }
+func (e CreatePageResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrUpdatePageRequestValidationError) ErrorName() string {
-	return "CreateOrUpdatePageRequestValidationError"
+func (e CreatePageResponseValidationError) ErrorName() string {
+	return "CreatePageResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrUpdatePageRequestValidationError) Error() string {
+func (e CreatePageResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -737,14 +890,14 @@ func (e CreateOrUpdatePageRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrUpdatePageRequest.%s: %s%s",
+		"invalid %sCreatePageResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrUpdatePageRequestValidationError{}
+var _ error = CreatePageResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -752,24 +905,166 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrUpdatePageRequestValidationError{}
+} = CreatePageResponseValidationError{}
 
-// Validate checks the field values on CreateOrUpdatePageResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on UpdatePageRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UpdatePageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdatePageRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdatePageRequestMultiError, or nil if none found.
+func (m *UpdatePageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdatePageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPage() == nil {
+		err := UpdatePageRequestValidationError{
+			field:  "Page",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdatePageRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdatePageRequestValidationError{
+					field:  "Page",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdatePageRequestValidationError{
+				field:  "Page",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdatePageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdatePageRequestMultiError is an error wrapping multiple validation errors
+// returned by UpdatePageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type UpdatePageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdatePageRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdatePageRequestMultiError) AllErrors() []error { return m }
+
+// UpdatePageRequestValidationError is the validation error returned by
+// UpdatePageRequest.Validate if the designated constraints aren't met.
+type UpdatePageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdatePageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdatePageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdatePageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdatePageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdatePageRequestValidationError) ErrorName() string {
+	return "UpdatePageRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdatePageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdatePageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdatePageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdatePageRequestValidationError{}
+
+// Validate checks the field values on UpdatePageResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateOrUpdatePageResponse) Validate() error {
+func (m *UpdatePageResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrUpdatePageResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on UpdatePageResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateOrUpdatePageResponseMultiError, or nil if none found.
-func (m *CreateOrUpdatePageResponse) ValidateAll() error {
+// UpdatePageResponseMultiError, or nil if none found.
+func (m *UpdatePageResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrUpdatePageResponse) validate(all bool) error {
+func (m *UpdatePageResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -780,7 +1075,7 @@ func (m *CreateOrUpdatePageResponse) validate(all bool) error {
 		switch v := interface{}(m.GetPage()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdatePageResponseValidationError{
+				errors = append(errors, UpdatePageResponseValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -788,7 +1083,7 @@ func (m *CreateOrUpdatePageResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdatePageResponseValidationError{
+				errors = append(errors, UpdatePageResponseValidationError{
 					field:  "Page",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -797,7 +1092,7 @@ func (m *CreateOrUpdatePageResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPage()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateOrUpdatePageResponseValidationError{
+			return UpdatePageResponseValidationError{
 				field:  "Page",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -806,19 +1101,19 @@ func (m *CreateOrUpdatePageResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateOrUpdatePageResponseMultiError(errors)
+		return UpdatePageResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrUpdatePageResponseMultiError is an error wrapping multiple
-// validation errors returned by CreateOrUpdatePageResponse.ValidateAll() if
-// the designated constraints aren't met.
-type CreateOrUpdatePageResponseMultiError []error
+// UpdatePageResponseMultiError is an error wrapping multiple validation errors
+// returned by UpdatePageResponse.ValidateAll() if the designated constraints
+// aren't met.
+type UpdatePageResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrUpdatePageResponseMultiError) Error() string {
+func (m UpdatePageResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -827,11 +1122,11 @@ func (m CreateOrUpdatePageResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrUpdatePageResponseMultiError) AllErrors() []error { return m }
+func (m UpdatePageResponseMultiError) AllErrors() []error { return m }
 
-// CreateOrUpdatePageResponseValidationError is the validation error returned
-// by CreateOrUpdatePageResponse.Validate if the designated constraints aren't met.
-type CreateOrUpdatePageResponseValidationError struct {
+// UpdatePageResponseValidationError is the validation error returned by
+// UpdatePageResponse.Validate if the designated constraints aren't met.
+type UpdatePageResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -839,24 +1134,24 @@ type CreateOrUpdatePageResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrUpdatePageResponseValidationError) Field() string { return e.field }
+func (e UpdatePageResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrUpdatePageResponseValidationError) Reason() string { return e.reason }
+func (e UpdatePageResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrUpdatePageResponseValidationError) Cause() error { return e.cause }
+func (e UpdatePageResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrUpdatePageResponseValidationError) Key() bool { return e.key }
+func (e UpdatePageResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrUpdatePageResponseValidationError) ErrorName() string {
-	return "CreateOrUpdatePageResponseValidationError"
+func (e UpdatePageResponseValidationError) ErrorName() string {
+	return "UpdatePageResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrUpdatePageResponseValidationError) Error() string {
+func (e UpdatePageResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -868,14 +1163,14 @@ func (e CreateOrUpdatePageResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrUpdatePageResponse.%s: %s%s",
+		"invalid %sUpdatePageResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrUpdatePageResponseValidationError{}
+var _ error = UpdatePageResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -883,7 +1178,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrUpdatePageResponseValidationError{}
+} = UpdatePageResponseValidationError{}
 
 // Validate checks the field values on DeletePageRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1091,22 +1386,22 @@ var _ interface {
 	ErrorName() string
 } = DeletePageResponseValidationError{}
 
-// Validate checks the field values on GetPageHistoryRequest with the rules
+// Validate checks the field values on GetPageActivityRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetPageHistoryRequest) Validate() error {
+func (m *GetPageActivityRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetPageHistoryRequest with the rules
+// ValidateAll checks the field values on GetPageActivityRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetPageHistoryRequestMultiError, or nil if none found.
-func (m *GetPageHistoryRequest) ValidateAll() error {
+// GetPageActivityRequestMultiError, or nil if none found.
+func (m *GetPageActivityRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetPageHistoryRequest) validate(all bool) error {
+func (m *GetPageActivityRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1116,19 +1411,19 @@ func (m *GetPageHistoryRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return GetPageHistoryRequestMultiError(errors)
+		return GetPageActivityRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetPageHistoryRequestMultiError is an error wrapping multiple validation
-// errors returned by GetPageHistoryRequest.ValidateAll() if the designated
+// GetPageActivityRequestMultiError is an error wrapping multiple validation
+// errors returned by GetPageActivityRequest.ValidateAll() if the designated
 // constraints aren't met.
-type GetPageHistoryRequestMultiError []error
+type GetPageActivityRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetPageHistoryRequestMultiError) Error() string {
+func (m GetPageActivityRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1137,11 +1432,11 @@ func (m GetPageHistoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetPageHistoryRequestMultiError) AllErrors() []error { return m }
+func (m GetPageActivityRequestMultiError) AllErrors() []error { return m }
 
-// GetPageHistoryRequestValidationError is the validation error returned by
-// GetPageHistoryRequest.Validate if the designated constraints aren't met.
-type GetPageHistoryRequestValidationError struct {
+// GetPageActivityRequestValidationError is the validation error returned by
+// GetPageActivityRequest.Validate if the designated constraints aren't met.
+type GetPageActivityRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1149,24 +1444,24 @@ type GetPageHistoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetPageHistoryRequestValidationError) Field() string { return e.field }
+func (e GetPageActivityRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetPageHistoryRequestValidationError) Reason() string { return e.reason }
+func (e GetPageActivityRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetPageHistoryRequestValidationError) Cause() error { return e.cause }
+func (e GetPageActivityRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetPageHistoryRequestValidationError) Key() bool { return e.key }
+func (e GetPageActivityRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetPageHistoryRequestValidationError) ErrorName() string {
-	return "GetPageHistoryRequestValidationError"
+func (e GetPageActivityRequestValidationError) ErrorName() string {
+	return "GetPageActivityRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetPageHistoryRequestValidationError) Error() string {
+func (e GetPageActivityRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1178,14 +1473,14 @@ func (e GetPageHistoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetPageHistoryRequest.%s: %s%s",
+		"invalid %sGetPageActivityRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetPageHistoryRequestValidationError{}
+var _ error = GetPageActivityRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1193,24 +1488,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetPageHistoryRequestValidationError{}
+} = GetPageActivityRequestValidationError{}
 
-// Validate checks the field values on GetPageHistoryResponse with the rules
+// Validate checks the field values on GetPageActivityResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetPageHistoryResponse) Validate() error {
+func (m *GetPageActivityResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetPageHistoryResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetPageActivityResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetPageHistoryResponseMultiError, or nil if none found.
-func (m *GetPageHistoryResponse) ValidateAll() error {
+// GetPageActivityResponseMultiError, or nil if none found.
+func (m *GetPageActivityResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetPageHistoryResponse) validate(all bool) error {
+func (m *GetPageActivityResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1218,7 +1513,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 	var errors []error
 
 	if m.GetPagination() == nil {
-		err := GetPageHistoryResponseValidationError{
+		err := GetPageActivityResponseValidationError{
 			field:  "Pagination",
 			reason: "value is required",
 		}
@@ -1232,7 +1527,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 		switch v := interface{}(m.GetPagination()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetPageHistoryResponseValidationError{
+				errors = append(errors, GetPageActivityResponseValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1240,7 +1535,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GetPageHistoryResponseValidationError{
+				errors = append(errors, GetPageActivityResponseValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1249,7 +1544,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return GetPageHistoryResponseValidationError{
+			return GetPageActivityResponseValidationError{
 				field:  "Pagination",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1264,7 +1559,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetPageHistoryResponseValidationError{
+					errors = append(errors, GetPageActivityResponseValidationError{
 						field:  fmt.Sprintf("Activity[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1272,7 +1567,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, GetPageHistoryResponseValidationError{
+					errors = append(errors, GetPageActivityResponseValidationError{
 						field:  fmt.Sprintf("Activity[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1281,7 +1576,7 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return GetPageHistoryResponseValidationError{
+				return GetPageActivityResponseValidationError{
 					field:  fmt.Sprintf("Activity[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1292,19 +1587,19 @@ func (m *GetPageHistoryResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetPageHistoryResponseMultiError(errors)
+		return GetPageActivityResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetPageHistoryResponseMultiError is an error wrapping multiple validation
-// errors returned by GetPageHistoryResponse.ValidateAll() if the designated
+// GetPageActivityResponseMultiError is an error wrapping multiple validation
+// errors returned by GetPageActivityResponse.ValidateAll() if the designated
 // constraints aren't met.
-type GetPageHistoryResponseMultiError []error
+type GetPageActivityResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetPageHistoryResponseMultiError) Error() string {
+func (m GetPageActivityResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1313,11 +1608,11 @@ func (m GetPageHistoryResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetPageHistoryResponseMultiError) AllErrors() []error { return m }
+func (m GetPageActivityResponseMultiError) AllErrors() []error { return m }
 
-// GetPageHistoryResponseValidationError is the validation error returned by
-// GetPageHistoryResponse.Validate if the designated constraints aren't met.
-type GetPageHistoryResponseValidationError struct {
+// GetPageActivityResponseValidationError is the validation error returned by
+// GetPageActivityResponse.Validate if the designated constraints aren't met.
+type GetPageActivityResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1325,24 +1620,24 @@ type GetPageHistoryResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetPageHistoryResponseValidationError) Field() string { return e.field }
+func (e GetPageActivityResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetPageHistoryResponseValidationError) Reason() string { return e.reason }
+func (e GetPageActivityResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetPageHistoryResponseValidationError) Cause() error { return e.cause }
+func (e GetPageActivityResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetPageHistoryResponseValidationError) Key() bool { return e.key }
+func (e GetPageActivityResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetPageHistoryResponseValidationError) ErrorName() string {
-	return "GetPageHistoryResponseValidationError"
+func (e GetPageActivityResponseValidationError) ErrorName() string {
+	return "GetPageActivityResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetPageHistoryResponseValidationError) Error() string {
+func (e GetPageActivityResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1354,14 +1649,14 @@ func (e GetPageHistoryResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetPageHistoryResponse.%s: %s%s",
+		"invalid %sGetPageActivityResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetPageHistoryResponseValidationError{}
+var _ error = GetPageActivityResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1369,4 +1664,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetPageHistoryResponseValidationError{}
+} = GetPageActivityResponseValidationError{}

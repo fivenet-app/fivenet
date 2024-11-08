@@ -77,16 +77,11 @@
 - [resources/common/uuid.proto](#resources_common_uuid-proto)
     - [UUID](#resources-common-UUID)
   
-- [resources/documents/access.proto](#resources_documents_access-proto)
-    - [DocumentAccess](#resources-documents-DocumentAccess)
-    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
-    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
-  
-    - [AccessLevel](#resources-documents-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
-  
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
+    - [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
+    - [DocAccessUpdated](#resources-documents-DocAccessUpdated)
+    - [DocAccessUsersDiff](#resources-documents-DocAccessUsersDiff)
     - [DocActivity](#resources-documents-DocActivity)
     - [DocActivityData](#resources-documents-DocActivityData)
     - [DocOwnerChanged](#resources-documents-DocOwnerChanged)
@@ -108,6 +103,7 @@
     - [TemplateRequirements](#resources-documents-TemplateRequirements)
     - [TemplateSchema](#resources-documents-TemplateSchema)
     - [TemplateShort](#resources-documents-TemplateShort)
+    - [TemplateUserAccess](#resources-documents-TemplateUserAccess)
   
 - [resources/documents/documents.proto](#resources_documents_documents-proto)
     - [Document](#resources-documents-Document)
@@ -121,6 +117,13 @@
   
 - [resources/documents/category.proto](#resources_documents_category-proto)
     - [Category](#resources-documents-Category)
+  
+- [resources/documents/access.proto](#resources_documents_access-proto)
+    - [DocumentAccess](#resources-documents-DocumentAccess)
+    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
+    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
+  
+    - [AccessLevel](#resources-documents-AccessLevel)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -191,13 +194,6 @@
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
   
-- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
-    - [QualificationAccess](#resources-qualifications-QualificationAccess)
-    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
-  
-    - [AccessLevel](#resources-qualifications-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
-  
 - [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
     - [ExamQuestion](#resources-qualifications-ExamQuestion)
     - [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData)
@@ -230,6 +226,13 @@
     - [QualificationExamMode](#resources-qualifications-QualificationExamMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
+  
+- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
+    - [QualificationAccess](#resources-qualifications-QualificationAccess)
+    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+    - [QualificationUserAccess](#resources-qualifications-QualificationUserAccess)
+  
+    - [AccessLevel](#resources-qualifications-AccessLevel)
   
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
@@ -287,14 +290,6 @@
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
   
-- [resources/calendar/access.proto](#resources_calendar_access-proto)
-    - [CalendarAccess](#resources-calendar-CalendarAccess)
-    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
-    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
-  
-    - [AccessLevel](#resources-calendar-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-calendar-AccessLevelUpdateMode)
-  
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
@@ -305,13 +300,12 @@
   
     - [RsvpResponses](#resources-calendar-RsvpResponses)
   
-- [resources/messenger/access.proto](#resources_messenger_access-proto)
-    - [ThreadAccess](#resources-messenger-ThreadAccess)
-    - [ThreadJobAccess](#resources-messenger-ThreadJobAccess)
-    - [ThreadUserAccess](#resources-messenger-ThreadUserAccess)
+- [resources/calendar/access.proto](#resources_calendar_access-proto)
+    - [CalendarAccess](#resources-calendar-CalendarAccess)
+    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
+    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
   
-    - [AccessLevel](#resources-messenger-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-messenger-AccessLevelUpdateMode)
+    - [AccessLevel](#resources-calendar-AccessLevel)
   
 - [resources/messenger/events.proto](#resources_messenger_events-proto)
     - [MessengerEvent](#resources-messenger-MessengerEvent)
@@ -327,24 +321,34 @@
 - [resources/messenger/user.proto](#resources_messenger_user-proto)
     - [UserStatus](#resources-messenger-UserStatus)
   
+- [resources/messenger/access.proto](#resources_messenger_access-proto)
+    - [ThreadAccess](#resources-messenger-ThreadAccess)
+    - [ThreadJobAccess](#resources-messenger-ThreadJobAccess)
+    - [ThreadUserAccess](#resources-messenger-ThreadUserAccess)
+  
+    - [AccessLevel](#resources-messenger-AccessLevel)
+  
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
   
 - [resources/wiki/access.proto](#resources_wiki_access-proto)
     - [PageAccess](#resources-wiki-PageAccess)
     - [PageJobAccess](#resources-wiki-PageJobAccess)
+    - [PageUserAccess](#resources-wiki-PageUserAccess)
   
     - [AccessLevel](#resources-wiki-AccessLevel)
+  
+- [resources/wiki/activity.proto](#resources_wiki_activity-proto)
+    - [PageActivity](#resources-wiki-PageActivity)
+    - [PageActivityData](#resources-wiki-PageActivityData)
   
 - [resources/wiki/page.proto](#resources_wiki_page-proto)
     - [Page](#resources-wiki-Page)
     - [PageMeta](#resources-wiki-PageMeta)
+    - [PageRootInfo](#resources-wiki-PageRootInfo)
     - [PageShort](#resources-wiki-PageShort)
   
     - [ContentType](#resources-wiki-ContentType)
-  
-- [resources/wiki/activity.proto](#resources_wiki_activity-proto)
-    - [PageActivity](#resources-wiki-PageActivity)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -754,16 +758,18 @@
     - [StatsService](#services-stats-StatsService)
   
 - [services/wiki/wiki.proto](#services_wiki_wiki-proto)
-    - [CreateOrUpdatePageRequest](#services-wiki-CreateOrUpdatePageRequest)
-    - [CreateOrUpdatePageResponse](#services-wiki-CreateOrUpdatePageResponse)
+    - [CreatePageRequest](#services-wiki-CreatePageRequest)
+    - [CreatePageResponse](#services-wiki-CreatePageResponse)
     - [DeletePageRequest](#services-wiki-DeletePageRequest)
     - [DeletePageResponse](#services-wiki-DeletePageResponse)
-    - [GetPageHistoryRequest](#services-wiki-GetPageHistoryRequest)
-    - [GetPageHistoryResponse](#services-wiki-GetPageHistoryResponse)
+    - [GetPageActivityRequest](#services-wiki-GetPageActivityRequest)
+    - [GetPageActivityResponse](#services-wiki-GetPageActivityResponse)
     - [GetPageRequest](#services-wiki-GetPageRequest)
     - [GetPageResponse](#services-wiki-GetPageResponse)
     - [ListPagesRequest](#services-wiki-ListPagesRequest)
     - [ListPagesResponse](#services-wiki-ListPagesResponse)
+    - [UpdatePageRequest](#services-wiki-UpdatePageRequest)
+    - [UpdatePageResponse](#services-wiki-UpdatePageResponse)
   
     - [WikiService](#services-wiki-WikiService)
   
@@ -1787,117 +1793,27 @@
 
 
 
-<a name="resources_documents_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/access.proto
-
-
-
-<a name="resources-documents-DocumentAccess"></a>
-
-### DocumentAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentJobAccess"></a>
-
-### DocumentJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentUserAccess"></a>
-
-### DocumentUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
-
-
-
-
-
- 
-
-
-<a name="resources-documents-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_COMMENT | 3 |  |
-| ACCESS_LEVEL_STATUS | 4 |  |
-| ACCESS_LEVEL_ACCESS | 5 |  |
-| ACCESS_LEVEL_EDIT | 6 |  |
-
-
-
-<a name="resources-documents-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_documents_activity-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
 ## resources/documents/activity.proto
+
+
+
+<a name="resources-documents-DocAccessJobsDiff"></a>
+
+### DocAccessJobsDiff
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| to_create | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+| to_update | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+| to_delete | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+
+
+
 
 
 
@@ -1910,6 +1826,39 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | level | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocAccessUpdated"></a>
+
+### DocAccessUpdated
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff) |  |  |
+| users | [DocAccessUsersDiff](#resources-documents-DocAccessUsersDiff) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocAccessUsersDiff"></a>
+
+### DocAccessUsersDiff
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| to_create | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
+| to_update | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
+| to_delete | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
 
 
 
@@ -1950,7 +1899,7 @@
 | ----- | ---- | ----- | ----------- |
 | updated | [DocUpdated](#resources-documents-DocUpdated) |  |  |
 | owner_changed | [DocOwnerChanged](#resources-documents-DocOwnerChanged) |  |  |
-| access_updated | [DocumentAccess](#resources-documents-DocumentAccess) |  |  |
+| access_updated | [DocAccessUpdated](#resources-documents-DocAccessUpdated) |  |  |
 | access_requested | [DocAccessRequested](#resources-documents-DocAccessRequested) |  |  |
 
 
@@ -2195,7 +2144,7 @@
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| job_grade_label | [string](#string) | optional |  |
 | access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
 
 
@@ -2253,6 +2202,16 @@
 | schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
 | creator_job | [string](#string) |  |  |
 | creator_job_label | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateUserAccess"></a>
+
+### TemplateUserAccess
+Dummy - DO NOT USE!
 
 
 
@@ -2464,6 +2423,99 @@
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_documents_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/access.proto
+
+
+
+<a name="resources-documents-DocumentAccess"></a>
+
+### DocumentAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentJobAccess"></a>
+
+### DocumentJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| document_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentUserAccess"></a>
+
+### DocumentUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| document_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+
+
+
+
+
+ 
+
+
+<a name="resources-documents-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_COMMENT | 3 |  |
+| ACCESS_LEVEL_STATUS | 4 |  |
+| ACCESS_LEVEL_ACCESS | 5 |  |
+| ACCESS_LEVEL_EDIT | 6 |  |
+
 
  
 
@@ -3432,91 +3484,6 @@
 
 
 
-<a name="resources_qualifications_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/qualifications/access.proto
-
-
-
-<a name="resources-qualifications-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationJobAccess"></a>
-
-### QualificationJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-qualifications-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_REQUEST | 3 |  |
-| ACCESS_LEVEL_TAKE | 4 |  |
-| ACCESS_LEVEL_GRADE | 5 |  |
-| ACCESS_LEVEL_MANAGE | 6 |  |
-| ACCESS_LEVEL_EDIT | 7 |  |
-
-
-
-<a name="resources-qualifications-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_qualifications_exam-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4041,6 +4008,87 @@
 | RESULT_STATUS_PENDING | 1 |  |
 | RESULT_STATUS_FAILED | 2 |  |
 | RESULT_STATUS_SUCCESSFUL | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_qualifications_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/access.proto
+
+
+
+<a name="resources-qualifications-QualificationAccess"></a>
+
+### QualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationJobAccess"></a>
+
+### QualificationJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationUserAccess"></a>
+
+### QualificationUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ 
+
+
+<a name="resources-qualifications-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_REQUEST | 3 |  |
+| ACCESS_LEVEL_TAKE | 4 |  |
+| ACCESS_LEVEL_GRADE | 5 |  |
+| ACCESS_LEVEL_MANAGE | 6 |  |
+| ACCESS_LEVEL_EDIT | 7 |  |
 
 
  
@@ -4852,110 +4900,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_calendar_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/calendar/access.proto
-
-
-
-<a name="resources-calendar-CalendarAccess"></a>
-
-### CalendarAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarJobAccess"></a>
-
-### CalendarJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarUserAccess"></a>
-
-### CalendarUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-calendar-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_SHARE | 3 |  |
-| ACCESS_LEVEL_EDIT | 4 |  |
-| ACCESS_LEVEL_MANAGE | 5 |  |
-
-
-
-<a name="resources-calendar-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_calendar_calendar-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5127,32 +5071,32 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_messenger_access-proto"></a>
+<a name="resources_calendar_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/messenger/access.proto
+## resources/calendar/access.proto
 
 
 
-<a name="resources-messenger-ThreadAccess"></a>
+<a name="resources-calendar-CalendarAccess"></a>
 
-### ThreadAccess
+### CalendarAccess
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| jobs | [ThreadJobAccess](#resources-messenger-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [ThreadUserAccess](#resources-messenger-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+| jobs | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
 
 
 
 
 
 
-<a name="resources-messenger-ThreadJobAccess"></a>
+<a name="resources-calendar-CalendarJobAccess"></a>
 
-### ThreadJobAccess
+### CalendarJobAccess
 
 
 
@@ -5160,21 +5104,21 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
+| calendar_id | [uint64](#uint64) |  |  |
 | job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
 
 
 
 
 
 
-<a name="resources-messenger-ThreadUserAccess"></a>
+<a name="resources-calendar-CalendarUserAccess"></a>
 
-### ThreadUserAccess
+### CalendarUserAccess
 
 
 
@@ -5182,10 +5126,10 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
+| calendar_id | [uint64](#uint64) |  |  |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+| access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
 
 
 
@@ -5194,7 +5138,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
  
 
 
-<a name="resources-messenger-AccessLevel"></a>
+<a name="resources-calendar-AccessLevel"></a>
 
 ### AccessLevel
 
@@ -5204,23 +5148,9 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ACCESS_LEVEL_UNSPECIFIED | 0 |  |
 | ACCESS_LEVEL_BLOCKED | 1 |  |
 | ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_MESSAGE | 3 |  |
-| ACCESS_LEVEL_MANAGE | 4 |  |
-| ACCESS_LEVEL_ADMIN | 5 |  |
-
-
-
-<a name="resources-messenger-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+| ACCESS_LEVEL_SHARE | 3 |  |
+| ACCESS_LEVEL_EDIT | 4 |  |
+| ACCESS_LEVEL_MANAGE | 5 |  |
 
 
  
@@ -5410,6 +5340,96 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+<a name="resources_messenger_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/access.proto
+
+
+
+<a name="resources-messenger-ThreadAccess"></a>
+
+### ThreadAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [ThreadJobAccess](#resources-messenger-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [ThreadUserAccess](#resources-messenger-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-messenger-ThreadJobAccess"></a>
+
+### ThreadJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| thread_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-messenger-ThreadUserAccess"></a>
+
+### ThreadUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| thread_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-messenger-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_MESSAGE | 3 |  |
+| ACCESS_LEVEL_MANAGE | 4 |  |
+| ACCESS_LEVEL_ADMIN | 5 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_stats_stats-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5457,6 +5477,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | jobs | [PageJobAccess](#resources-wiki-PageJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [PageUserAccess](#resources-wiki-PageUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
 
 
 
@@ -5475,9 +5496,29 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | page_id | [uint64](#uint64) |  |  |
 | job | [string](#string) |  |  |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageUserAccess"></a>
+
+### PageUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| page_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
 
 
@@ -5510,6 +5551,42 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+<a name="resources_wiki_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/activity.proto
+
+
+
+<a name="resources-wiki-PageActivity"></a>
+
+### PageActivity
+TODO
+
+
+
+
+
+
+<a name="resources-wiki-PageActivityData"></a>
+
+### PageActivityData
+TODO
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_wiki_page-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5525,11 +5602,12 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| path | [string](#string) |  |  |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| job | [string](#string) |  | @sanitize: method=StripTags |
+| job_label | [string](#string) | optional |  |
+| parent_id | [uint64](#uint64) | optional |  |
 | meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
-| content | [string](#string) |  |  |
+| content | [string](#string) |  | @sanitize |
 | access | [PageAccess](#resources-wiki-PageAccess) |  |  |
 
 
@@ -5548,13 +5626,30 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  |  |
-| description | [string](#string) |  |  |
+| slug | [string](#string) | optional | @sanitize: method=StripTags |
+| title | [string](#string) |  | @sanitize |
+| description | [string](#string) |  | @sanitize: method=StripTags |
 | creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | content_type | [ContentType](#resources-wiki-ContentType) |  |  |
 | tags | [string](#string) | repeated |  |
 | toc | [bool](#bool) | optional |  |
+| public | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageRootInfo"></a>
+
+### PageRootInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| logo | [resources.filestore.File](#resources-filestore-File) | optional |  |
 
 
 
@@ -5569,10 +5664,16 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
 | job | [string](#string) |  |  |
-| path | [string](#string) |  |  |
-| meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
+| job_label | [string](#string) | optional |  |
+| parent_id | [uint64](#uint64) | optional |  |
+| slug | [string](#string) | optional | @sanitize: method=StripTags |
+| title | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| children | [PageShort](#resources-wiki-PageShort) | repeated |  |
+| root_info | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
+| path | [string](#string) | optional | Only used in frontend |
 
 
 
@@ -5592,32 +5693,6 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | CONTENT_TYPE_HTML | 1 |  |
 | CONTENT_TYPE_MARKDOWN | 2 |  |
 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_wiki_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/wiki/activity.proto
-
-
-
-<a name="resources-wiki-PageActivity"></a>
-
-### PageActivity
-TODO
-
-
-
-
-
- 
 
  
 
@@ -7973,7 +8048,6 @@ TODO
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | document_id | [uint64](#uint64) |  |  |
-| mode | [resources.documents.AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode) |  |  |
 | access | [resources.documents.DocumentAccess](#resources-documents-DocumentAccess) |  |  |
 
 
@@ -9503,7 +9577,6 @@ TODO
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | qualification_id | [uint64](#uint64) |  |  |
-| mode | [resources.qualifications.AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode) |  |  |
 | access | [resources.qualifications.QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
 
 
@@ -11212,9 +11285,9 @@ TODO
 
 
 
-<a name="services-wiki-CreateOrUpdatePageRequest"></a>
+<a name="services-wiki-CreatePageRequest"></a>
 
-### CreateOrUpdatePageRequest
+### CreatePageRequest
 
 
 
@@ -11227,9 +11300,9 @@ TODO
 
 
 
-<a name="services-wiki-CreateOrUpdatePageResponse"></a>
+<a name="services-wiki-CreatePageResponse"></a>
 
-### CreateOrUpdatePageResponse
+### CreatePageResponse
 
 
 
@@ -11267,9 +11340,9 @@ TODO
 
 
 
-<a name="services-wiki-GetPageHistoryRequest"></a>
+<a name="services-wiki-GetPageActivityRequest"></a>
 
-### GetPageHistoryRequest
+### GetPageActivityRequest
 
 
 
@@ -11282,9 +11355,9 @@ TODO
 
 
 
-<a name="services-wiki-GetPageHistoryResponse"></a>
+<a name="services-wiki-GetPageActivityResponse"></a>
 
-### GetPageHistoryResponse
+### GetPageActivityResponse
 
 
 
@@ -11306,8 +11379,7 @@ TODO
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| path | [string](#string) | optional |  |
-| id | [uint64](#uint64) | optional |  |
+| id | [uint64](#uint64) |  |  |
 
 
 
@@ -11339,7 +11411,8 @@ TODO
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| prefix | [string](#string) |  | Search params |
+| job | [string](#string) | optional | Search params |
+| root_only | [bool](#bool) | optional |  |
 
 
 
@@ -11361,6 +11434,36 @@ TODO
 
 
 
+
+<a name="services-wiki-UpdatePageRequest"></a>
+
+### UpdatePageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+
+
+
+
+
+
+<a name="services-wiki-UpdatePageResponse"></a>
+
+### UpdatePageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.wiki.Page](#resources-wiki-Page) |  |  |
+
+
+
+
+
  
 
  
@@ -11377,9 +11480,10 @@ TODO
 | ----------- | ------------ | ------------- | ------------|
 | ListPages | [ListPagesRequest](#services-wiki-ListPagesRequest) | [ListPagesResponse](#services-wiki-ListPagesResponse) | @perm |
 | GetPage | [GetPageRequest](#services-wiki-GetPageRequest) | [GetPageResponse](#services-wiki-GetPageResponse) | @perm |
-| CreateOrUpdatePage | [CreateOrUpdatePageRequest](#services-wiki-CreateOrUpdatePageRequest) | [CreateOrUpdatePageResponse](#services-wiki-CreateOrUpdatePageResponse) | @perm |
+| CreatePage | [CreatePageRequest](#services-wiki-CreatePageRequest) | [CreatePageResponse](#services-wiki-CreatePageResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Public&#34;} |
+| UpdatePage | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm |
 | DeletePage | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |
-| GetPageHistory | [GetPageHistoryRequest](#services-wiki-GetPageHistoryRequest) | [GetPageHistoryResponse](#services-wiki-GetPageHistoryResponse) | @perm |
+| GetPageActivity | [GetPageActivityRequest](#services-wiki-GetPageActivityRequest) | [GetPageActivityResponse](#services-wiki-GetPageActivityResponse) | @perm |
 
  
 

@@ -30,7 +30,7 @@ var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Count of data map entries.",
 }, []string{"bucket"})
 
-type Store[T any, U protoutils.ProtoMessage[T]] struct {
+type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	logger *zap.Logger
 	bucket string
 	kv     jetstream.KeyValue
@@ -47,19 +47,19 @@ type Store[T any, U protoutils.ProtoMessage[T]] struct {
 	onNotFound OnNotFoundFn[T, U]
 }
 
-type Option[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U])
+type Option[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U])
 
 type (
-	OnUpdateFn[T any, U protoutils.ProtoMessage[T]]   func(s *Store[T, U], value U) (U, error)
-	OnDeleteFn[T any, U protoutils.ProtoMessage[T]]   func(s *Store[T, U], entry jetstream.KeyValueEntry, value U) error
-	OnNotFoundFn[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U], ctx context.Context, key string) (U, error)
+	OnUpdateFn[T any, U protoutils.ProtoMessageWithMerge[T]]   func(s *Store[T, U], value U) (U, error)
+	OnDeleteFn[T any, U protoutils.ProtoMessageWithMerge[T]]   func(s *Store[T, U], entry jetstream.KeyValueEntry, value U) error
+	OnNotFoundFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], ctx context.Context, key string) (U, error)
 )
 
 func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
+func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
 		bucket: bucket,

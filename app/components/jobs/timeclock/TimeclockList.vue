@@ -268,7 +268,7 @@ const itemsAll = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const input = ref<{ input: HTMLInputElement }>();
+const input = useTemplateRef('input');
 </script>
 
 <template>

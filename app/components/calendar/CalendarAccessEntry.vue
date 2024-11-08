@@ -187,7 +187,7 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty>
-                        {{ $t('common.not_found', [$t('common.access', 1)]) }}
+                        {{ $t('common.not_found', [$t('common.type')]) }}
                     </template>
                 </USelectMenu>
             </ClientOnly>

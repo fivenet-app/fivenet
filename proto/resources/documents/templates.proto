@@ -83,6 +83,9 @@ message TemplateJobAccess {
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
   resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
 }
+
+// Dummy - DO NOT USE!
+message TemplateUserAccess {}

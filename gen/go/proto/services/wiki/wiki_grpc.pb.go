@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	WikiService_ListPages_FullMethodName          = "/services.wiki.WikiService/ListPages"
-	WikiService_GetPage_FullMethodName            = "/services.wiki.WikiService/GetPage"
-	WikiService_CreateOrUpdatePage_FullMethodName = "/services.wiki.WikiService/CreateOrUpdatePage"
-	WikiService_DeletePage_FullMethodName         = "/services.wiki.WikiService/DeletePage"
-	WikiService_GetPageHistory_FullMethodName     = "/services.wiki.WikiService/GetPageHistory"
+	WikiService_ListPages_FullMethodName       = "/services.wiki.WikiService/ListPages"
+	WikiService_GetPage_FullMethodName         = "/services.wiki.WikiService/GetPage"
+	WikiService_CreatePage_FullMethodName      = "/services.wiki.WikiService/CreatePage"
+	WikiService_UpdatePage_FullMethodName      = "/services.wiki.WikiService/UpdatePage"
+	WikiService_DeletePage_FullMethodName      = "/services.wiki.WikiService/DeletePage"
+	WikiService_GetPageActivity_FullMethodName = "/services.wiki.WikiService/GetPageActivity"
 )
 
 // WikiServiceClient is the client API for WikiService service.
@@ -34,12 +35,14 @@ type WikiServiceClient interface {
 	ListPages(ctx context.Context, in *ListPagesRequest, opts ...grpc.CallOption) (*ListPagesResponse, error)
 	// @perm
 	GetPage(ctx context.Context, in *GetPageRequest, opts ...grpc.CallOption) (*GetPageResponse, error)
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
 	// @perm
-	CreateOrUpdatePage(ctx context.Context, in *CreateOrUpdatePageRequest, opts ...grpc.CallOption) (*CreateOrUpdatePageResponse, error)
+	UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(ctx context.Context, in *DeletePageRequest, opts ...grpc.CallOption) (*DeletePageResponse, error)
 	// @perm
-	GetPageHistory(ctx context.Context, in *GetPageHistoryRequest, opts ...grpc.CallOption) (*GetPageHistoryResponse, error)
+	GetPageActivity(ctx context.Context, in *GetPageActivityRequest, opts ...grpc.CallOption) (*GetPageActivityResponse, error)
 }
 
 type wikiServiceClient struct {
@@ -68,9 +71,18 @@ func (c *wikiServiceClient) GetPage(ctx context.Context, in *GetPageRequest, opt
 	return out, nil
 }
 
-func (c *wikiServiceClient) CreateOrUpdatePage(ctx context.Context, in *CreateOrUpdatePageRequest, opts ...grpc.CallOption) (*CreateOrUpdatePageResponse, error) {
-	out := new(CreateOrUpdatePageResponse)
-	err := c.cc.Invoke(ctx, WikiService_CreateOrUpdatePage_FullMethodName, in, out, opts...)
+func (c *wikiServiceClient) CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error) {
+	out := new(CreatePageResponse)
+	err := c.cc.Invoke(ctx, WikiService_CreatePage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *wikiServiceClient) UpdatePage(ctx context.Context, in *UpdatePageRequest, opts ...grpc.CallOption) (*UpdatePageResponse, error) {
+	out := new(UpdatePageResponse)
+	err := c.cc.Invoke(ctx, WikiService_UpdatePage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -86,9 +98,9 @@ func (c *wikiServiceClient) DeletePage(ctx context.Context, in *DeletePageReques
 	return out, nil
 }
 
-func (c *wikiServiceClient) GetPageHistory(ctx context.Context, in *GetPageHistoryRequest, opts ...grpc.CallOption) (*GetPageHistoryResponse, error) {
-	out := new(GetPageHistoryResponse)
-	err := c.cc.Invoke(ctx, WikiService_GetPageHistory_FullMethodName, in, out, opts...)
+func (c *wikiServiceClient) GetPageActivity(ctx context.Context, in *GetPageActivityRequest, opts ...grpc.CallOption) (*GetPageActivityResponse, error) {
+	out := new(GetPageActivityResponse)
+	err := c.cc.Invoke(ctx, WikiService_GetPageActivity_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -103,12 +115,14 @@ type WikiServiceServer interface {
 	ListPages(context.Context, *ListPagesRequest) (*ListPagesResponse, error)
 	// @perm
 	GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error)
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
+	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)
 	// @perm
-	CreateOrUpdatePage(context.Context, *CreateOrUpdatePageRequest) (*CreateOrUpdatePageResponse, error)
+	UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error)
 	// @perm
 	DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error)
 	// @perm
-	GetPageHistory(context.Context, *GetPageHistoryRequest) (*GetPageHistoryResponse, error)
+	GetPageActivity(context.Context, *GetPageActivityRequest) (*GetPageActivityResponse, error)
 	mustEmbedUnimplementedWikiServiceServer()
 }
 
@@ -122,14 +136,17 @@ func (UnimplementedWikiServiceServer) ListPages(context.Context, *ListPagesReque
 func (UnimplementedWikiServiceServer) GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPage not implemented")
 }
-func (UnimplementedWikiServiceServer) CreateOrUpdatePage(context.Context, *CreateOrUpdatePageRequest) (*CreateOrUpdatePageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdatePage not implemented")
+func (UnimplementedWikiServiceServer) CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePage not implemented")
+}
+func (UnimplementedWikiServiceServer) UpdatePage(context.Context, *UpdatePageRequest) (*UpdatePageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePage not implemented")
 }
 func (UnimplementedWikiServiceServer) DeletePage(context.Context, *DeletePageRequest) (*DeletePageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePage not implemented")
 }
-func (UnimplementedWikiServiceServer) GetPageHistory(context.Context, *GetPageHistoryRequest) (*GetPageHistoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPageHistory not implemented")
+func (UnimplementedWikiServiceServer) GetPageActivity(context.Context, *GetPageActivityRequest) (*GetPageActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPageActivity not implemented")
 }
 func (UnimplementedWikiServiceServer) mustEmbedUnimplementedWikiServiceServer() {}
 
@@ -180,20 +197,38 @@ func _WikiService_GetPage_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WikiService_CreateOrUpdatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdatePageRequest)
+func _WikiService_CreatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WikiServiceServer).CreateOrUpdatePage(ctx, in)
+		return srv.(WikiServiceServer).CreatePage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: WikiService_CreateOrUpdatePage_FullMethodName,
+		FullMethod: WikiService_CreatePage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WikiServiceServer).CreateOrUpdatePage(ctx, req.(*CreateOrUpdatePageRequest))
+		return srv.(WikiServiceServer).CreatePage(ctx, req.(*CreatePageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _WikiService_UpdatePage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WikiServiceServer).UpdatePage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: WikiService_UpdatePage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WikiServiceServer).UpdatePage(ctx, req.(*UpdatePageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -216,20 +251,20 @@ func _WikiService_DeletePage_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _WikiService_GetPageHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPageHistoryRequest)
+func _WikiService_GetPageActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPageActivityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(WikiServiceServer).GetPageHistory(ctx, in)
+		return srv.(WikiServiceServer).GetPageActivity(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: WikiService_GetPageHistory_FullMethodName,
+		FullMethod: WikiService_GetPageActivity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(WikiServiceServer).GetPageHistory(ctx, req.(*GetPageHistoryRequest))
+		return srv.(WikiServiceServer).GetPageActivity(ctx, req.(*GetPageActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -250,16 +285,20 @@ var WikiService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _WikiService_GetPage_Handler,
 		},
 		{
-			MethodName: "CreateOrUpdatePage",
-			Handler:    _WikiService_CreateOrUpdatePage_Handler,
+			MethodName: "CreatePage",
+			Handler:    _WikiService_CreatePage_Handler,
+		},
+		{
+			MethodName: "UpdatePage",
+			Handler:    _WikiService_UpdatePage_Handler,
 		},
 		{
 			MethodName: "DeletePage",
 			Handler:    _WikiService_DeletePage_Handler,
 		},
 		{
-			MethodName: "GetPageHistory",
-			Handler:    _WikiService_GetPageHistory_Handler,
+			MethodName: "GetPageActivity",
+			Handler:    _WikiService_GetPageActivity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -166,12 +166,10 @@ const columns = [
         : undefined,
 ].filter((c) => c !== undefined) as { key: string; label: string; class?: string; rowClass?: string; sortable?: boolean }[];
 
-const input = ref<{ input: HTMLInputElement }>();
+const input = useTemplateRef('input');
 
 defineShortcuts({
-    '/': () => {
-        input.value?.input?.focus();
-    },
+    '/': () => input.value?.input?.focus(),
 });
 </script>
 

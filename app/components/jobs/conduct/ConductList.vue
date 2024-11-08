@@ -178,14 +178,6 @@ const columns = [
         sortable: false,
     },
 ];
-
-const input = ref<{ input: HTMLInputElement }>();
-
-defineShortcuts({
-    '/': () => {
-        input.value?.input?.focus();
-    },
-});
 </script>
 
 <template>
@@ -226,9 +218,6 @@ defineShortcuts({
                                 </template>
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                </template>
-                                <template #trailing>
-                                    <UKbd value="/" />
                                 </template>
                             </USelectMenu>
                         </ClientOnly>

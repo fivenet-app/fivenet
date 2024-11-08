@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications/errors"
 	permsqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications/perms"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
@@ -44,6 +45,8 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	notif    notifi.INotifi
+
+	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel]
 }
 
 type Params struct {
@@ -69,6 +72,42 @@ func NewServer(p Params) *Server {
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
 		notif:    p.Notif,
+
+		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel](
+			p.DB,
+			table.FivenetQualifications,
+			&access.TargetTableColumns{
+				ID:         table.FivenetQualifications.ID,
+				DeletedAt:  table.FivenetQualifications.DeletedAt,
+				CreatorID:  table.FivenetQualifications.CreatorID,
+				CreatorJob: table.FivenetQualifications.CreatorJob,
+			},
+			access.NewJobs[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.AccessLevel](
+				table.FivenetQualificationsJobAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetQualificationsJobAccess.ID,
+						CreatedAt: table.FivenetQualificationsJobAccess.CreatedAt,
+						TargetID:  table.FivenetQualificationsJobAccess.QualificationID,
+						Access:    table.FivenetQualificationsJobAccess.Access,
+					},
+					Job:          table.FivenetQualificationsJobAccess.Job,
+					MinimumGrade: table.FivenetQualificationsJobAccess.MinimumGrade,
+				},
+				table.FivenetQualificationsJobAccess.AS("qualification_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetQualificationsJobAccess.AS("qualification_job_access").ID,
+						CreatedAt: table.FivenetQualificationsJobAccess.AS("qualification_job_access").CreatedAt,
+						TargetID:  table.FivenetQualificationsJobAccess.AS("qualification_job_access").QualificationID,
+						Access:    table.FivenetQualificationsJobAccess.AS("qualification_job_access").Access,
+					},
+					Job:          table.FivenetQualificationsJobAccess.AS("qualification_job_access").Job,
+					MinimumGrade: table.FivenetQualificationsJobAccess.AS("qualification_job_access").MinimumGrade,
+				},
+			),
+			nil,
+		),
 	}
 
 	return s
@@ -171,7 +210,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -191,7 +230,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		canContent = request.Status != nil && *request.Status >= qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
 	}
 
-	canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	canGrade, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -200,7 +239,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	}
 
 	// Allow content if the qualification has the exam mode enabled and the user has the access to take the qualification
-	canTake, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_TAKE)
+	canTake, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_TAKE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -327,8 +366,10 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.handleQualificationAccessChanges(ctx, tx, qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Qualification.Access); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	if req.Qualification.Access != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Qualification.Access.Jobs, nil); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	if err := s.handleQualificationRequirementsChanges(ctx, tx, uint64(lastId), req.Qualification.Requirements); err != nil {
@@ -367,7 +408,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Qualification.Id, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -391,7 +432,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
@@ -439,8 +480,10 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.handleQualificationAccessChanges(ctx, tx, qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Qualification.Id, req.Qualification.Access); err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	if req.Qualification.Access != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Qualification.Id, req.Qualification.Access.Jobs, nil); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Requirements); err != nil {
@@ -479,7 +522,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -504,7 +547,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !s.checkIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
+	if !access.CheckIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 

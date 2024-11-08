@@ -40,7 +40,7 @@ const notifications = useNotificatorStore();
 
 const route = useRoute();
 
-const maxAccessEntries = 10;
+const { maxAccessEntries } = useAppConfig();
 
 const canEdit = ref(false);
 

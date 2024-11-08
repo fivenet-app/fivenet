@@ -39,7 +39,7 @@ message DocActivity {
   resources.timestamp.Timestamp created_at = 2;
   uint64 document_id = 3 [jstype = JS_STRING];
   DocActivityType activity_type = 4;
-  optional int32 creator_id = 5;
+  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
   string creator_job = 7 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
@@ -51,7 +51,7 @@ message DocActivityData {
   oneof data {
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
-    resources.documents.DocumentAccess access_updated = 4;
+    DocAccessUpdated access_updated = 4;
     DocAccessRequested access_requested = 5;
   }
 }
@@ -69,4 +69,21 @@ message DocOwnerChanged {
 
 message DocAccessRequested {
   resources.documents.AccessLevel level = 1 [(validate.rules).enum.defined_only = true];
+}
+
+message DocAccessUpdated {
+  DocAccessJobsDiff jobs = 1;
+  DocAccessUsersDiff users = 2;
+}
+
+message DocAccessJobsDiff {
+  repeated DocumentJobAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentJobAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentJobAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+}
+
+message DocAccessUsersDiff {
+  repeated DocumentUserAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentUserAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
+  repeated DocumentUserAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
 }

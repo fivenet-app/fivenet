@@ -33,6 +33,7 @@ export default defineAppConfig({
         },
         notification: 3500,
     },
+    maxAccessEntries: 10,
 
     // Nuxt UI app config
     ui: {

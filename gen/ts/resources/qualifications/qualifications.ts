@@ -456,7 +456,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
             { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "750000" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
@@ -666,7 +666,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 16, name: "requirements", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequirement },
@@ -1141,7 +1141,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 8, name: "status", kind: "enum", T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "score", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
             { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);

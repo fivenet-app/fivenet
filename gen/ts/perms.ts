@@ -153,8 +153,9 @@ export type Perms =
 	| 'RectorService.SetJobProps'
 	| 'RectorService.UpdateRolePerms'
 	| 'RectorService.ViewAuditLog'
-	| 'WikiService.CreateOrUpdatePage'
+	| 'WikiService.CreatePage'
 	| 'WikiService.DeletePage'
 	| 'WikiService.GetPage'
-	| 'WikiService.GetPageHistory'
-	| 'WikiService.ListPages';
+	| 'WikiService.GetPageActivity'
+	| 'WikiService.ListPages'
+	| 'WikiService.UpdatePage';

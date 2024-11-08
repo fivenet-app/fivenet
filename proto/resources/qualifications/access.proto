@@ -7,13 +7,6 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications;qualifications";
 
-enum AccessLevelUpdateMode {
-  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-}
-
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_BLOCKED = 1;
@@ -39,3 +32,6 @@ message QualificationJobAccess {
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
   AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
 }
+
+// Dummy - DO NOT USE!
+message QualificationUserAccess {}

@@ -255,7 +255,18 @@ func (m *Calendar) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := CalendarValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -1078,7 +1089,18 @@ func (m *CalendarEntry) validate(all bool) error {
 	}
 
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := CalendarEntryValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {

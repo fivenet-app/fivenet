@@ -2,7 +2,6 @@ package docstore
 
 import (
 	context "context"
-	"errors"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
@@ -270,122 +269,6 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			tDocument.CreatedAt.DESC(),
 			tDocument.UpdatedAt.DESC(),
 		)
-}
-
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, access documents.AccessLevel) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentId)
-	return len(out) > 0, err
-}
-
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.AccessLevel, documentIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentIds...)
-	return len(out) == len(documentIds), err
-}
-
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.AccessLevel, documentIds ...uint64) ([]uint64, error) {
-	if len(documentIds) == 0 {
-		return documentIds, nil
-	}
-
-	// Allow superusers access to any docs
-	if userInfo.SuperUser {
-		return documentIds, nil
-	}
-
-	ids := make([]jet.Expression, len(documentIds))
-	for i := 0; i < len(documentIds); i++ {
-		ids[i] = jet.Uint64(documentIds[i])
-	}
-
-	stmt := tDocument.
-		SELECT(
-			tDocument.ID,
-		).
-		FROM(
-			tDocument.
-				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-				).
-				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-				),
-		).
-		WHERE(jet.AND(
-			tDocument.ID.IN(ids...),
-			tDocument.DeletedAt.IS_NULL(),
-			jet.OR(
-				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
-				jet.AND(
-					tDUserAccess.Access.IS_NOT_NULL(),
-					tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-				jet.AND(
-					tDUserAccess.Access.IS_NULL(),
-					tDJobAccess.Access.IS_NOT_NULL(),
-					tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-			),
-		)).
-		GROUP_BY(tDocument.ID).
-		ORDER_BY(tDocument.ID.DESC(), tDJobAccess.MinimumGrade)
-
-	var dest struct {
-		IDs []uint64 `alias:"document.id"`
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest.IDs); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return dest.IDs, nil
-}
-
-func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creatorJob string, creator *users.UserShort) bool {
-	if userInfo.SuperUser {
-		return true
-	}
-
-	// If the document creator job is not equal to the creator's current job, normal access checks need to be applied
-	// and not the rank attributes checks
-	if creatorJob != userInfo.Job {
-		return true
-	}
-
-	// If the creator is nil, treat it like a normal doc access check
-	if creator == nil {
-		return true
-	}
-
-	// If no levels set, assume "Own" as a safe default
-	if len(levels) == 0 {
-		return creator.UserId == userInfo.UserId
-	}
-
-	if slices.Contains(levels, "Any") {
-		return true
-	}
-	if slices.Contains(levels, "Lower_Rank") {
-		if creator.JobGrade < userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Same_Rank") {
-		if creator.JobGrade <= userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Own") {
-		if creator.UserId == userInfo.UserId {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId uint64, userInfo *userinfo.UserInfo, newOwner *users.UserShort) error {

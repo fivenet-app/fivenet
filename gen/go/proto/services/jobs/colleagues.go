@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
@@ -232,9 +233,9 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var access perms.StringList
+	var colleagueAccess perms.StringList
 	if accessAttr != nil {
-		access = accessAttr.([]string)
+		colleagueAccess = accessAttr.([]string)
 	}
 
 	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId, nil)
@@ -244,7 +245,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 
 	infoOnly := req.InfoOnly != nil && *req.InfoOnly
 
-	check := s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
+	check := access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -386,9 +387,9 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var access perms.StringList
+	var colleagueAccess perms.StringList
 	if accessAttr != nil {
-		access = accessAttr.([]string)
+		colleagueAccess = accessAttr.([]string)
 	}
 
 	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId, nil)
@@ -396,7 +397,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
+	if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -571,48 +572,6 @@ func (s *Server) addJobsUserActivity(ctx context.Context, tx qrm.DB, activity *j
 	return nil
 }
 
-func (s *Server) checkIfHasAccessToColleague(levels []string, userInfo *userinfo.UserInfo, target *users.UserShort) bool {
-	if userInfo.SuperUser {
-		return true
-	}
-
-	// Not the same job, can't do anything
-	if userInfo.Job != target.Job {
-		return false
-	}
-
-	// If the creator is nil, treat it like a normal doc access check
-	if target == nil {
-		return true
-	}
-
-	// If no levels set, assume "Own" as a safe default
-	if len(levels) == 0 {
-		return target.UserId == userInfo.UserId
-	}
-
-	if slices.Contains(levels, "Any") {
-		return true
-	}
-	if slices.Contains(levels, "Lower_Rank") {
-		if target.JobGrade < userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Same_Rank") {
-		if target.JobGrade <= userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Own") {
-		if target.UserId == userInfo.UserId {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserActivityTable, usersTable *table.UsersTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {
 	condition := jet.Bool(true)
 	if userInfo.SuperUser {
@@ -650,9 +609,9 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var access perms.StringList
+	var colleagueAccess perms.StringList
 	if accessAttr != nil {
-		access = accessAttr.([]string)
+		colleagueAccess = accessAttr.([]string)
 	}
 
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
@@ -676,7 +635,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
-		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, access, userInfo))
+		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, colleagueAccess, userInfo))
 
 		if len(req.UserIds) >= 2 {
 			// More than 2 user ids
@@ -695,7 +654,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 
-		if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
+		if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
 			UserId:   targetUser.UserId,
 			Job:      targetUser.Job,
 			JobGrade: targetUser.JobGrade,

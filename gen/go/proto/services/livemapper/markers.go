@@ -3,13 +3,12 @@ package livemapper
 import (
 	"context"
 	"errors"
-	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	permslivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper/perms"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -31,46 +30,6 @@ var (
 	tUsers   = table.Users.AS("usershort")
 	tMarkers = table.FivenetCentrumMarkers.AS("markermarker")
 )
-
-func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.MarkerMarker, userInfo *userinfo.UserInfo) bool {
-	if userInfo.SuperUser {
-		return true
-	}
-
-	if marker.Info.Job != userInfo.Job {
-		return false
-	}
-
-	creator := marker.Creator
-	if creator == nil {
-		return true
-	}
-
-	if len(levels) == 0 {
-		return creator.UserId == userInfo.UserId
-	}
-
-	if slices.Contains(levels, "Any") {
-		return true
-	}
-	if slices.Contains(levels, "Lower_Rank") {
-		if creator.JobGrade < userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Same_Rank") {
-		if creator.JobGrade <= userInfo.JobGrade {
-			return true
-		}
-	}
-	if slices.Contains(levels, "Own") {
-		if creator.UserId == userInfo.UserId {
-			return true
-		}
-	}
-
-	return false
-}
 
 func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error) {
 	if req.Marker != nil && req.Marker.Info != nil && req.Marker.Info.Id < 1 {
@@ -149,7 +108,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 			return nil, errswrap.NewError(err, ErrMarkerFailed)
 		}
 
-		if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
+		if !access.CheckIfHasAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
 			return nil, ErrMarkerDenied
 		}
 
@@ -238,7 +197,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		return &DeleteMarkerResponse{}, nil
 	}
 
-	if !s.checkIfHasAccessToMarker(fields, marker, userInfo) {
+	if !access.CheckIfHasAccess(fields, userInfo, marker.Creator.Job, marker.Creator) {
 		return nil, ErrMarkerDenied
 	}
 

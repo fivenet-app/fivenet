@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = qualifications.AccessLevelUpdateMode(0)
+	_ = qualifications.RequestStatus(0)
 )
 
 // Validate checks the field values on ListQualificationsRequest with the rules
@@ -1594,17 +1594,6 @@ func (m *SetQualificationAccessRequest) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for QualificationId
-
-	if _, ok := qualifications.AccessLevelUpdateMode_name[int32(m.GetMode())]; !ok {
-		err := SetQualificationAccessRequestValidationError{
-			field:  "Mode",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
 
 	if m.GetAccess() == nil {
 		err := SetQualificationAccessRequestValidationError{

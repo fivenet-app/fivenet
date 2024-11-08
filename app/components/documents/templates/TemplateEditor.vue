@@ -32,7 +32,7 @@ const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 
-const maxAccessEntries = 10;
+const { maxAccessEntries } = useAppConfig();
 
 const schema = z.object({
     weight: z.number().min(0).max(999_999),

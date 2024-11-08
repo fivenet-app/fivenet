@@ -20,7 +20,7 @@ message Message {
     max_len: 2048
   }];
   optional MessageData data = 7;
-  optional int32 creator_id = 8;
+  optional int32 creator_id = 8 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 

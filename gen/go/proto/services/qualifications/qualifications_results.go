@@ -39,7 +39,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
 	if req.QualificationId != nil {
-		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		check, err := s.access.CanUserAccessTarget(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -239,7 +239,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -485,7 +485,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 		return &DeleteQualificationResultResponse{}, nil
 	}
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

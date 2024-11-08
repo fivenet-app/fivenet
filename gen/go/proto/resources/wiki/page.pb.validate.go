@@ -58,9 +58,27 @@ func (m *Page) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := PageValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Path
+	if m.GetMeta() == nil {
+		err := PageValidationError{
+			field:  "Meta",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetMeta()).(type) {
@@ -93,6 +111,17 @@ func (m *Page) validate(all bool) error {
 
 	// no validation rules for Content
 
+	if m.GetAccess() == nil {
+		err := PageValidationError{
+			field:  "Access",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetAccess()).(type) {
 		case interface{ ValidateAll() error }:
@@ -120,6 +149,25 @@ func (m *Page) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := PageValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.ParentId != nil {
+		// no validation rules for ParentId
 	}
 
 	if len(errors) > 0 {
@@ -250,11 +298,40 @@ func (m *PageMeta) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Title
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
+		err := PageMetaValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Description
+	if utf8.RuneCountInString(m.GetDescription()) > 128 {
+		err := PageMetaValidationError{
+			field:  "Description",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for ContentType
+	if _, ok := ContentType_name[int32(m.GetContentType())]; !ok {
+		err := PageMetaValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Public
 
 	if m.UpdatedAt != nil {
 
@@ -322,8 +399,34 @@ func (m *PageMeta) validate(all bool) error {
 
 	}
 
+	if m.Slug != nil {
+
+		if utf8.RuneCountInString(m.GetSlug()) > 100 {
+			err := PageMetaValidationError{
+				field:  "Slug",
+				reason: "value length must be at most 100 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.CreatorId != nil {
-		// no validation rules for CreatorId
+
+		if m.GetCreatorId() <= 0 {
+			err := PageMetaValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -464,37 +567,124 @@ func (m *PageShort) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 50 {
+		err := PageShortValidationError{
+			field:  "Job",
+			reason: "value length must be at most 50 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Path
+	// no validation rules for Title
 
-	if all {
-		switch v := interface{}(m.GetMeta()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PageShortValidationError{
-					field:  "Meta",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	// no validation rules for Description
+
+	for idx, item := range m.GetChildren() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageShortValidationError{
+						field:  fmt.Sprintf("Children[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageShortValidationError{
+						field:  fmt.Sprintf("Children[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, PageShortValidationError{
-					field:  "Meta",
+				return PageShortValidationError{
+					field:  fmt.Sprintf("Children[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetMeta()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return PageShortValidationError{
-				field:  "Meta",
-				reason: "embedded message failed validation",
-				cause:  err,
+
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := PageShortValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.ParentId != nil {
+		// no validation rules for ParentId
+	}
+
+	if m.Slug != nil {
+
+		if utf8.RuneCountInString(m.GetSlug()) > 100 {
+			err := PageShortValidationError{
+				field:  "Slug",
+				reason: "value length must be at most 100 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.RootInfo != nil {
+
+		if all {
+			switch v := interface{}(m.GetRootInfo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageShortValidationError{
+						field:  "RootInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageShortValidationError{
+						field:  "RootInfo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetRootInfo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageShortValidationError{
+					field:  "RootInfo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
 		}
+
+	}
+
+	if m.Path != nil {
+		// no validation rules for Path
 	}
 
 	if len(errors) > 0 {
@@ -573,3 +763,135 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PageShortValidationError{}
+
+// Validate checks the field values on PageRootInfo with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PageRootInfo) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageRootInfo with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageRootInfoMultiError, or
+// nil if none found.
+func (m *PageRootInfo) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageRootInfo) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Logo != nil {
+
+		if all {
+			switch v := interface{}(m.GetLogo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageRootInfoValidationError{
+						field:  "Logo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageRootInfoValidationError{
+						field:  "Logo",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLogo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageRootInfoValidationError{
+					field:  "Logo",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PageRootInfoMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageRootInfoMultiError is an error wrapping multiple validation errors
+// returned by PageRootInfo.ValidateAll() if the designated constraints aren't met.
+type PageRootInfoMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageRootInfoMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageRootInfoMultiError) AllErrors() []error { return m }
+
+// PageRootInfoValidationError is the validation error returned by
+// PageRootInfo.Validate if the designated constraints aren't met.
+type PageRootInfoValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageRootInfoValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageRootInfoValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageRootInfoValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageRootInfoValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageRootInfoValidationError) ErrorName() string { return "PageRootInfoValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PageRootInfoValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageRootInfo.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageRootInfoValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageRootInfoValidationError{}

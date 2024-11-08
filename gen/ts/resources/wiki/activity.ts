@@ -16,6 +16,13 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface PageActivity {
 }
+/**
+ * TODO
+ *
+ * @generated from protobuf message resources.wiki.PageActivityData
+ */
+export interface PageActivityData {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class PageActivity$Type extends MessageType<PageActivity> {
     constructor() {
@@ -41,3 +48,28 @@ class PageActivity$Type extends MessageType<PageActivity> {
  * @generated MessageType for protobuf message resources.wiki.PageActivity
  */
 export const PageActivity = new PageActivity$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class PageActivityData$Type extends MessageType<PageActivityData> {
+    constructor() {
+        super("resources.wiki.PageActivityData", []);
+    }
+    create(value?: PartialMessage<PageActivityData>): PageActivityData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<PageActivityData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageActivityData): PageActivityData {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: PageActivityData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.wiki.PageActivityData
+ */
+export const PageActivityData = new PageActivityData$Type();

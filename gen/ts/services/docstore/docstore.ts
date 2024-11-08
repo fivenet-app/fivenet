@@ -13,7 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category";
 import { DocRelation } from "../../resources/documents/documents";
-import { AccessLevelUpdateMode } from "../../resources/documents/access";
 import { DocActivityData } from "../../resources/documents/activity";
 import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
@@ -731,11 +730,7 @@ export interface SetDocumentAccessRequest {
      */
     documentId: string;
     /**
-     * @generated from protobuf field: resources.documents.AccessLevelUpdateMode mode = 2;
-     */
-    mode: AccessLevelUpdateMode;
-    /**
-     * @generated from protobuf field: resources.documents.DocumentAccess access = 3;
+     * @generated from protobuf field: resources.documents.DocumentAccess access = 2;
      */
     access?: DocumentAccess;
 }
@@ -3698,14 +3693,12 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
     constructor() {
         super("services.docstore.SetDocumentAccessRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "mode", kind: "enum", T: () => ["resources.documents.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<SetDocumentAccessRequest>): SetDocumentAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = "0";
-        message.mode = 0;
         if (value !== undefined)
             reflectionMergePartial<SetDocumentAccessRequest>(this, message, value);
         return message;
@@ -3718,10 +3711,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
                 case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
                     message.documentId = reader.uint64().toString();
                     break;
-                case /* resources.documents.AccessLevelUpdateMode mode */ 2:
-                    message.mode = reader.int32();
-                    break;
-                case /* resources.documents.DocumentAccess access */ 3:
+                case /* resources.documents.DocumentAccess access */ 2:
                     message.access = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -3739,12 +3729,9 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
         /* uint64 document_id = 1 [jstype = JS_STRING]; */
         if (message.documentId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.documentId);
-        /* resources.documents.AccessLevelUpdateMode mode = 2; */
-        if (message.mode !== 0)
-            writer.tag(2, WireType.Varint).int32(message.mode);
-        /* resources.documents.DocumentAccess access = 3; */
+        /* resources.documents.DocumentAccess access = 2; */
         if (message.access)
-            DocumentAccess.internalBinaryWrite(message.access, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            DocumentAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

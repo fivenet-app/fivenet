@@ -4,7 +4,7 @@
 package livemap
 
 import (
-	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
 func (m *IconMarker) Sanitize() error {

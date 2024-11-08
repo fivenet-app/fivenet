@@ -3,6 +3,8 @@ package calendar
 import (
 	"database/sql"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
@@ -42,6 +44,8 @@ type Server struct {
 	appCfg   appconfig.IConfig
 	notif    notifi.INotifi
 	js       *events.JSWrapper
+
+	access *access.Grouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel]
 }
 
 type Params struct {
@@ -67,6 +71,62 @@ func NewServer(p Params) *Server {
 		appCfg:   p.AppConfig,
 		notif:    p.Notif,
 		js:       p.JS,
+		access: access.NewGrouped(
+			p.DB,
+			table.FivenetDocuments,
+			&access.TargetTableColumns{
+				ID:         table.FivenetDocuments.ID,
+				DeletedAt:  table.FivenetDocuments.DeletedAt,
+				CreatorID:  table.FivenetDocuments.CreatorID,
+				CreatorJob: table.FivenetDocuments.CreatorJob,
+			},
+			access.NewJobs[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.AccessLevel](
+				table.FivenetCalendarJobAccess,
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetCalendarJobAccess.ID,
+						CreatedAt: table.FivenetCalendarJobAccess.CreatedAt,
+						TargetID:  table.FivenetCalendarJobAccess.CalendarID,
+						Access:    table.FivenetCalendarJobAccess.Access,
+					},
+					Job:          table.FivenetCalendarJobAccess.Job,
+					MinimumGrade: table.FivenetCalendarJobAccess.MinimumGrade,
+				},
+				table.FivenetCalendarJobAccess.AS("calendar_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetCalendarJobAccess.AS("calendar_job_access").ID,
+						CreatedAt: table.FivenetCalendarJobAccess.AS("calendar_job_access").CreatedAt,
+						TargetID:  table.FivenetCalendarJobAccess.AS("calendar_job_access").CalendarID,
+						Access:    table.FivenetCalendarJobAccess.AS("calendar_job_access").Access,
+					},
+					Job:          table.FivenetCalendarJobAccess.AS("calendar_job_access").Job,
+					MinimumGrade: table.FivenetCalendarJobAccess.AS("calendar_job_access").MinimumGrade,
+				},
+			),
+			access.NewUsers[calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel](
+				table.FivenetCalendarUserAccess,
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetCalendarUserAccess.ID,
+						CreatedAt: table.FivenetCalendarUserAccess.CreatedAt,
+						TargetID:  table.FivenetCalendarUserAccess.CalendarID,
+						Access:    table.FivenetCalendarUserAccess.Access,
+					},
+					UserId: table.FivenetCalendarUserAccess.UserID,
+				},
+				table.FivenetCalendarUserAccess.AS("calendar_user_access"),
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetCalendarUserAccess.AS("calendar_user_access").ID,
+						CreatedAt: table.FivenetCalendarUserAccess.AS("calendar_user_access").CreatedAt,
+						TargetID:  table.FivenetCalendarUserAccess.AS("calendar_user_access").CalendarID,
+						Access:    table.FivenetCalendarUserAccess.AS("calendar_user_access").Access,
+					},
+					UserId: table.FivenetCalendarUserAccess.AS("calendar_user_access").UserID,
+				},
+			),
+		),
 	}
 }
 

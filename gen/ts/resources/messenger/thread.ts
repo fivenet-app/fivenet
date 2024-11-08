@@ -115,7 +115,7 @@ class Thread$Type extends MessageType<Thread> {
             { no: 7, name: "last_message", kind: "message", T: () => Message },
             { no: 8, name: "user_state", kind: "message", T: () => ThreadUserState },
             { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
             { no: 12, name: "access", kind: "message", T: () => ThreadAccess }
         ]);

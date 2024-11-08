@@ -10,8 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DocumentUserAccess } from "./access";
+import { DocumentJobAccess } from "./access";
 import { AccessLevel } from "./access";
-import { DocumentAccess } from "./access";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -81,9 +82,9 @@ export interface DocActivityData {
     } | {
         oneofKind: "accessUpdated";
         /**
-         * @generated from protobuf field: resources.documents.DocumentAccess access_updated = 4;
+         * @generated from protobuf field: resources.documents.DocAccessUpdated access_updated = 4;
          */
-        accessUpdated: DocumentAccess;
+        accessUpdated: DocAccessUpdated;
     } | {
         oneofKind: "accessRequested";
         /**
@@ -132,6 +133,53 @@ export interface DocAccessRequested {
      * @generated from protobuf field: resources.documents.AccessLevel level = 1;
      */
     level: AccessLevel;
+}
+/**
+ * @generated from protobuf message resources.documents.DocAccessUpdated
+ */
+export interface DocAccessUpdated {
+    /**
+     * @generated from protobuf field: resources.documents.DocAccessJobsDiff jobs = 1;
+     */
+    jobs?: DocAccessJobsDiff;
+    /**
+     * @generated from protobuf field: resources.documents.DocAccessUsersDiff users = 2;
+     */
+    users?: DocAccessUsersDiff;
+}
+/**
+ * @generated from protobuf message resources.documents.DocAccessJobsDiff
+ */
+export interface DocAccessJobsDiff {
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentJobAccess to_create = 1;
+     */
+    toCreate: DocumentJobAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentJobAccess to_update = 2;
+     */
+    toUpdate: DocumentJobAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentJobAccess to_delete = 3;
+     */
+    toDelete: DocumentJobAccess[];
+}
+/**
+ * @generated from protobuf message resources.documents.DocAccessUsersDiff
+ */
+export interface DocAccessUsersDiff {
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentUserAccess to_create = 1;
+     */
+    toCreate: DocumentUserAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentUserAccess to_update = 2;
+     */
+    toUpdate: DocumentUserAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentUserAccess to_delete = 3;
+     */
+    toDelete: DocumentUserAccess[];
 }
 /**
  * @generated from protobuf enum resources.documents.DocActivityType
@@ -228,7 +276,7 @@ class DocActivity$Type extends MessageType<DocActivity> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"] },
-            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort },
             { no: 7, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 8, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
@@ -339,7 +387,7 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
         super("resources.documents.DocActivityData", [
             { no: 1, name: "updated", kind: "message", oneof: "data", T: () => DocUpdated },
             { no: 2, name: "owner_changed", kind: "message", oneof: "data", T: () => DocOwnerChanged },
-            { no: 4, name: "access_updated", kind: "message", oneof: "data", T: () => DocumentAccess },
+            { no: 4, name: "access_updated", kind: "message", oneof: "data", T: () => DocAccessUpdated },
             { no: 5, name: "access_requested", kind: "message", oneof: "data", T: () => DocAccessRequested }
         ]);
     }
@@ -367,10 +415,10 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
                         ownerChanged: DocOwnerChanged.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).ownerChanged)
                     };
                     break;
-                case /* resources.documents.DocumentAccess access_updated */ 4:
+                case /* resources.documents.DocAccessUpdated access_updated */ 4:
                     message.data = {
                         oneofKind: "accessUpdated",
-                        accessUpdated: DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accessUpdated)
+                        accessUpdated: DocAccessUpdated.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).accessUpdated)
                     };
                     break;
                 case /* resources.documents.DocAccessRequested access_requested */ 5:
@@ -397,9 +445,9 @@ class DocActivityData$Type extends MessageType<DocActivityData> {
         /* resources.documents.DocOwnerChanged owner_changed = 2; */
         if (message.data.oneofKind === "ownerChanged")
             DocOwnerChanged.internalBinaryWrite(message.data.ownerChanged, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentAccess access_updated = 4; */
+        /* resources.documents.DocAccessUpdated access_updated = 4; */
         if (message.data.oneofKind === "accessUpdated")
-            DocumentAccess.internalBinaryWrite(message.data.accessUpdated, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            DocAccessUpdated.internalBinaryWrite(message.data.accessUpdated, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.documents.DocAccessRequested access_requested = 5; */
         if (message.data.oneofKind === "accessRequested")
             DocAccessRequested.internalBinaryWrite(message.data.accessRequested, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -574,3 +622,182 @@ class DocAccessRequested$Type extends MessageType<DocAccessRequested> {
  * @generated MessageType for protobuf message resources.documents.DocAccessRequested
  */
 export const DocAccessRequested = new DocAccessRequested$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocAccessUpdated$Type extends MessageType<DocAccessUpdated> {
+    constructor() {
+        super("resources.documents.DocAccessUpdated", [
+            { no: 1, name: "jobs", kind: "message", T: () => DocAccessJobsDiff },
+            { no: 2, name: "users", kind: "message", T: () => DocAccessUsersDiff }
+        ]);
+    }
+    create(value?: PartialMessage<DocAccessUpdated>): DocAccessUpdated {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DocAccessUpdated>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocAccessUpdated): DocAccessUpdated {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.documents.DocAccessJobsDiff jobs */ 1:
+                    message.jobs = DocAccessJobsDiff.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
+                    break;
+                case /* resources.documents.DocAccessUsersDiff users */ 2:
+                    message.users = DocAccessUsersDiff.internalBinaryRead(reader, reader.uint32(), options, message.users);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocAccessUpdated, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.documents.DocAccessJobsDiff jobs = 1; */
+        if (message.jobs)
+            DocAccessJobsDiff.internalBinaryWrite(message.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocAccessUsersDiff users = 2; */
+        if (message.users)
+            DocAccessUsersDiff.internalBinaryWrite(message.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocAccessUpdated
+ */
+export const DocAccessUpdated = new DocAccessUpdated$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocAccessJobsDiff$Type extends MessageType<DocAccessJobsDiff> {
+    constructor() {
+        super("resources.documents.DocAccessJobsDiff", [
+            { no: 1, name: "to_create", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DocAccessJobsDiff>): DocAccessJobsDiff {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.toCreate = [];
+        message.toUpdate = [];
+        message.toDelete = [];
+        if (value !== undefined)
+            reflectionMergePartial<DocAccessJobsDiff>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocAccessJobsDiff): DocAccessJobsDiff {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.DocumentJobAccess to_create */ 1:
+                    message.toCreate.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.documents.DocumentJobAccess to_update */ 2:
+                    message.toUpdate.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.documents.DocumentJobAccess to_delete */ 3:
+                    message.toDelete.push(DocumentJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocAccessJobsDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.DocumentJobAccess to_create = 1; */
+        for (let i = 0; i < message.toCreate.length; i++)
+            DocumentJobAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.DocumentJobAccess to_update = 2; */
+        for (let i = 0; i < message.toUpdate.length; i++)
+            DocumentJobAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.DocumentJobAccess to_delete = 3; */
+        for (let i = 0; i < message.toDelete.length; i++)
+            DocumentJobAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocAccessJobsDiff
+ */
+export const DocAccessJobsDiff = new DocAccessJobsDiff$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DocAccessUsersDiff$Type extends MessageType<DocAccessUsersDiff> {
+    constructor() {
+        super("resources.documents.DocAccessUsersDiff", [
+            { no: 1, name: "to_create", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "to_update", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "to_delete", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DocAccessUsersDiff>): DocAccessUsersDiff {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.toCreate = [];
+        message.toUpdate = [];
+        message.toDelete = [];
+        if (value !== undefined)
+            reflectionMergePartial<DocAccessUsersDiff>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DocAccessUsersDiff): DocAccessUsersDiff {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.DocumentUserAccess to_create */ 1:
+                    message.toCreate.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.documents.DocumentUserAccess to_update */ 2:
+                    message.toUpdate.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.documents.DocumentUserAccess to_delete */ 3:
+                    message.toDelete.push(DocumentUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DocAccessUsersDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.DocumentUserAccess to_create = 1; */
+        for (let i = 0; i < message.toCreate.length; i++)
+            DocumentUserAccess.internalBinaryWrite(message.toCreate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.DocumentUserAccess to_update = 2; */
+        for (let i = 0; i < message.toUpdate.length; i++)
+            DocumentUserAccess.internalBinaryWrite(message.toUpdate[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.DocumentUserAccess to_delete = 3; */
+        for (let i = 0; i < message.toDelete.length; i++)
+            DocumentUserAccess.internalBinaryWrite(message.toDelete[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.DocAccessUsersDiff
+ */
+export const DocAccessUsersDiff = new DocAccessUsersDiff$Type();

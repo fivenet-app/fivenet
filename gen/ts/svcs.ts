@@ -253,7 +253,8 @@ export const grpcMethods = [
 	'StatsService/GetStats',
 	'WikiService/ListPages',
 	'WikiService/GetPage',
-	'WikiService/CreateOrUpdatePage',
+	'WikiService/CreatePage',
+	'WikiService/UpdatePage',
 	'WikiService/DeletePage',
-	'WikiService/GetPageHistory',
+	'WikiService/GetPageActivity',
 ];

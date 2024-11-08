@@ -79,7 +79,7 @@ const items = [
     {
         title: t('common.wiki'),
         description: t('pages.overview.features.wiki'),
-        to: { name: 'wiki-path' },
+        to: { name: 'wiki' },
         permission: 'TODOService.TODOMethod',
         icon: 'i-mdi-brain',
     },

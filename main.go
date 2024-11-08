@@ -42,7 +42,8 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
+	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
@@ -168,6 +169,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
+		htmldiffer.Module,
 		lang.Module,
 		centrummanager.HousekeeperModule,
 		centrummanager.Module,

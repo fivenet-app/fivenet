@@ -32,9 +32,13 @@ export interface ListPagesRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: string prefix = 3;
+     * @generated from protobuf field: optional string job = 3;
      */
-    prefix: string;
+    job?: string;
+    /**
+     * @generated from protobuf field: optional bool root_only = 4;
+     */
+    rootOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.wiki.ListPagesResponse
@@ -54,13 +58,9 @@ export interface ListPagesResponse {
  */
 export interface GetPageRequest {
     /**
-     * @generated from protobuf field: optional string path = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    path?: string;
-    /**
-     * @generated from protobuf field: optional uint64 id = 2 [jstype = JS_STRING];
-     */
-    id?: string;
+    id: string;
 }
 /**
  * @generated from protobuf message services.wiki.GetPageResponse
@@ -72,18 +72,36 @@ export interface GetPageResponse {
     page?: Page;
 }
 /**
- * @generated from protobuf message services.wiki.CreateOrUpdatePageRequest
+ * @generated from protobuf message services.wiki.CreatePageRequest
  */
-export interface CreateOrUpdatePageRequest {
+export interface CreatePageRequest {
     /**
      * @generated from protobuf field: resources.wiki.Page page = 1;
      */
     page?: Page;
 }
 /**
- * @generated from protobuf message services.wiki.CreateOrUpdatePageResponse
+ * @generated from protobuf message services.wiki.CreatePageResponse
  */
-export interface CreateOrUpdatePageResponse {
+export interface CreatePageResponse {
+    /**
+     * @generated from protobuf field: resources.wiki.Page page = 1;
+     */
+    page?: Page;
+}
+/**
+ * @generated from protobuf message services.wiki.UpdatePageRequest
+ */
+export interface UpdatePageRequest {
+    /**
+     * @generated from protobuf field: resources.wiki.Page page = 1;
+     */
+    page?: Page;
+}
+/**
+ * @generated from protobuf message services.wiki.UpdatePageResponse
+ */
+export interface UpdatePageResponse {
     /**
      * @generated from protobuf field: resources.wiki.Page page = 1;
      */
@@ -104,18 +122,18 @@ export interface DeletePageRequest {
 export interface DeletePageResponse {
 }
 /**
- * @generated from protobuf message services.wiki.GetPageHistoryRequest
+ * @generated from protobuf message services.wiki.GetPageActivityRequest
  */
-export interface GetPageHistoryRequest {
+export interface GetPageActivityRequest {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
     id: string;
 }
 /**
- * @generated from protobuf message services.wiki.GetPageHistoryResponse
+ * @generated from protobuf message services.wiki.GetPageActivityResponse
  */
-export interface GetPageHistoryResponse {
+export interface GetPageActivityResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
      */
@@ -131,12 +149,12 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
         super("services.wiki.ListPagesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "prefix", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "root_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListPagesRequest>): ListPagesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.prefix = "";
         if (value !== undefined)
             reflectionMergePartial<ListPagesRequest>(this, message, value);
         return message;
@@ -152,8 +170,11 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* string prefix */ 3:
-                    message.prefix = reader.string();
+                case /* optional string job */ 3:
+                    message.job = reader.string();
+                    break;
+                case /* optional bool root_only */ 4:
+                    message.rootOnly = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -173,9 +194,12 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* string prefix = 3; */
-        if (message.prefix !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.prefix);
+        /* optional string job = 3; */
+        if (message.job !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.job);
+        /* optional bool root_only = 4; */
+        if (message.rootOnly !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.rootOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -244,12 +268,12 @@ export const ListPagesResponse = new ListPagesResponse$Type();
 class GetPageRequest$Type extends MessageType<GetPageRequest> {
     constructor() {
         super("services.wiki.GetPageRequest", [
-            { no: 1, name: "path", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<GetPageRequest>): GetPageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
         if (value !== undefined)
             reflectionMergePartial<GetPageRequest>(this, message, value);
         return message;
@@ -259,10 +283,7 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string path */ 1:
-                    message.path = reader.string();
-                    break;
-                case /* optional uint64 id = 2 [jstype = JS_STRING];*/ 2:
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
                     message.id = reader.uint64().toString();
                     break;
                 default:
@@ -277,12 +298,9 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         return message;
     }
     internalBinaryWrite(message: GetPageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string path = 1; */
-        if (message.path !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.path);
-        /* optional uint64 id = 2 [jstype = JS_STRING]; */
-        if (message.id !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.id);
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -340,19 +358,19 @@ class GetPageResponse$Type extends MessageType<GetPageResponse> {
  */
 export const GetPageResponse = new GetPageResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdatePageRequest$Type extends MessageType<CreateOrUpdatePageRequest> {
+class CreatePageRequest$Type extends MessageType<CreatePageRequest> {
     constructor() {
-        super("services.wiki.CreateOrUpdatePageRequest", [
-            { no: 1, name: "page", kind: "message", T: () => Page }
+        super("services.wiki.CreatePageRequest", [
+            { no: 1, name: "page", kind: "message", T: () => Page, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<CreateOrUpdatePageRequest>): CreateOrUpdatePageRequest {
+    create(value?: PartialMessage<CreatePageRequest>): CreatePageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdatePageRequest>(this, message, value);
+            reflectionMergePartial<CreatePageRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdatePageRequest): CreateOrUpdatePageRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreatePageRequest): CreatePageRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -371,7 +389,7 @@ class CreateOrUpdatePageRequest$Type extends MessageType<CreateOrUpdatePageReque
         }
         return message;
     }
-    internalBinaryWrite(message: CreateOrUpdatePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CreatePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.wiki.Page page = 1; */
         if (message.page)
             Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -382,23 +400,23 @@ class CreateOrUpdatePageRequest$Type extends MessageType<CreateOrUpdatePageReque
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.CreateOrUpdatePageRequest
+ * @generated MessageType for protobuf message services.wiki.CreatePageRequest
  */
-export const CreateOrUpdatePageRequest = new CreateOrUpdatePageRequest$Type();
+export const CreatePageRequest = new CreatePageRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdatePageResponse$Type extends MessageType<CreateOrUpdatePageResponse> {
+class CreatePageResponse$Type extends MessageType<CreatePageResponse> {
     constructor() {
-        super("services.wiki.CreateOrUpdatePageResponse", [
+        super("services.wiki.CreatePageResponse", [
             { no: 1, name: "page", kind: "message", T: () => Page }
         ]);
     }
-    create(value?: PartialMessage<CreateOrUpdatePageResponse>): CreateOrUpdatePageResponse {
+    create(value?: PartialMessage<CreatePageResponse>): CreatePageResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdatePageResponse>(this, message, value);
+            reflectionMergePartial<CreatePageResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdatePageResponse): CreateOrUpdatePageResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreatePageResponse): CreatePageResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -417,7 +435,7 @@ class CreateOrUpdatePageResponse$Type extends MessageType<CreateOrUpdatePageResp
         }
         return message;
     }
-    internalBinaryWrite(message: CreateOrUpdatePageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CreatePageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.wiki.Page page = 1; */
         if (message.page)
             Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -428,9 +446,101 @@ class CreateOrUpdatePageResponse$Type extends MessageType<CreateOrUpdatePageResp
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.CreateOrUpdatePageResponse
+ * @generated MessageType for protobuf message services.wiki.CreatePageResponse
  */
-export const CreateOrUpdatePageResponse = new CreateOrUpdatePageResponse$Type();
+export const CreatePageResponse = new CreatePageResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdatePageRequest$Type extends MessageType<UpdatePageRequest> {
+    constructor() {
+        super("services.wiki.UpdatePageRequest", [
+            { no: 1, name: "page", kind: "message", T: () => Page, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<UpdatePageRequest>): UpdatePageRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdatePageRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdatePageRequest): UpdatePageRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.wiki.Page page */ 1:
+                    message.page = Page.internalBinaryRead(reader, reader.uint32(), options, message.page);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdatePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.wiki.Page page = 1; */
+        if (message.page)
+            Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.wiki.UpdatePageRequest
+ */
+export const UpdatePageRequest = new UpdatePageRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdatePageResponse$Type extends MessageType<UpdatePageResponse> {
+    constructor() {
+        super("services.wiki.UpdatePageResponse", [
+            { no: 1, name: "page", kind: "message", T: () => Page }
+        ]);
+    }
+    create(value?: PartialMessage<UpdatePageResponse>): UpdatePageResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<UpdatePageResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdatePageResponse): UpdatePageResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.wiki.Page page */ 1:
+                    message.page = Page.internalBinaryRead(reader, reader.uint32(), options, message.page);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UpdatePageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.wiki.Page page = 1; */
+        if (message.page)
+            Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.wiki.UpdatePageResponse
+ */
+export const UpdatePageResponse = new UpdatePageResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeletePageRequest$Type extends MessageType<DeletePageRequest> {
     constructor() {
@@ -504,20 +614,20 @@ class DeletePageResponse$Type extends MessageType<DeletePageResponse> {
  */
 export const DeletePageResponse = new DeletePageResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetPageHistoryRequest$Type extends MessageType<GetPageHistoryRequest> {
+class GetPageActivityRequest$Type extends MessageType<GetPageActivityRequest> {
     constructor() {
-        super("services.wiki.GetPageHistoryRequest", [
+        super("services.wiki.GetPageActivityRequest", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
-    create(value?: PartialMessage<GetPageHistoryRequest>): GetPageHistoryRequest {
+    create(value?: PartialMessage<GetPageActivityRequest>): GetPageActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         if (value !== undefined)
-            reflectionMergePartial<GetPageHistoryRequest>(this, message, value);
+            reflectionMergePartial<GetPageActivityRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageHistoryRequest): GetPageHistoryRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageActivityRequest): GetPageActivityRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -536,7 +646,7 @@ class GetPageHistoryRequest$Type extends MessageType<GetPageHistoryRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: GetPageHistoryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GetPageActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -547,25 +657,25 @@ class GetPageHistoryRequest$Type extends MessageType<GetPageHistoryRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.GetPageHistoryRequest
+ * @generated MessageType for protobuf message services.wiki.GetPageActivityRequest
  */
-export const GetPageHistoryRequest = new GetPageHistoryRequest$Type();
+export const GetPageActivityRequest = new GetPageActivityRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetPageHistoryResponse$Type extends MessageType<GetPageHistoryResponse> {
+class GetPageActivityResponse$Type extends MessageType<GetPageActivityResponse> {
     constructor() {
-        super("services.wiki.GetPageHistoryResponse", [
+        super("services.wiki.GetPageActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PageActivity }
         ]);
     }
-    create(value?: PartialMessage<GetPageHistoryResponse>): GetPageHistoryResponse {
+    create(value?: PartialMessage<GetPageActivityResponse>): GetPageActivityResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.activity = [];
         if (value !== undefined)
-            reflectionMergePartial<GetPageHistoryResponse>(this, message, value);
+            reflectionMergePartial<GetPageActivityResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageHistoryResponse): GetPageHistoryResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageActivityResponse): GetPageActivityResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -587,7 +697,7 @@ class GetPageHistoryResponse$Type extends MessageType<GetPageHistoryResponse> {
         }
         return message;
     }
-    internalBinaryWrite(message: GetPageHistoryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: GetPageActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -601,16 +711,17 @@ class GetPageHistoryResponse$Type extends MessageType<GetPageHistoryResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.GetPageHistoryResponse
+ * @generated MessageType for protobuf message services.wiki.GetPageActivityResponse
  */
-export const GetPageHistoryResponse = new GetPageHistoryResponse$Type();
+export const GetPageActivityResponse = new GetPageActivityResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.wiki.WikiService
  */
 export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "ListPages", options: {}, I: ListPagesRequest, O: ListPagesResponse },
     { name: "GetPage", options: {}, I: GetPageRequest, O: GetPageResponse },
-    { name: "CreateOrUpdatePage", options: {}, I: CreateOrUpdatePageRequest, O: CreateOrUpdatePageResponse },
+    { name: "CreatePage", options: {}, I: CreatePageRequest, O: CreatePageResponse },
+    { name: "UpdatePage", options: {}, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: {}, I: DeletePageRequest, O: DeletePageResponse },
-    { name: "GetPageHistory", options: {}, I: GetPageHistoryRequest, O: GetPageHistoryResponse }
+    { name: "GetPageActivity", options: {}, I: GetPageActivityRequest, O: GetPageActivityResponse }
 ]);

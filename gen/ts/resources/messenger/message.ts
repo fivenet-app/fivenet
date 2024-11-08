@@ -73,7 +73,7 @@ class Message$Type extends MessageType<Message> {
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
             { no: 7, name: "data", kind: "message", T: () => MessageData },
-            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 9, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }

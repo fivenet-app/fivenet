@@ -13,7 +13,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Cache[T any, U protoutils.ProtoMessage[T]] struct {
+type Cache[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	logger *zap.Logger
 
 	ap   atomic.Pointer[U]
@@ -23,7 +23,7 @@ type Cache[T any, U protoutils.ProtoMessage[T]] struct {
 	key string
 }
 
-func New[T any, U protoutils.ProtoMessage[T]](logger *zap.Logger, kv jetstream.KeyValue, prefix string) (*Cache[T, U], error) {
+func New[T any, U protoutils.ProtoMessageWithMerge[T]](logger *zap.Logger, kv jetstream.KeyValue, prefix string) (*Cache[T, U], error) {
 	c := &Cache[T, U]{
 		logger: logger.Named("cache").With(zap.String("prefix", prefix)),
 

@@ -2,9 +2,11 @@ syntax = "proto3";
 
 package resources.wiki;
 
+import "resources/filestore/file.proto";
 import "resources/users/users.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/wiki/access.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wiki";
 
@@ -15,30 +17,52 @@ enum ContentType {
 }
 
 message Page {
-  uint64 id = 1 [jstype = JS_STRING];
-  string job = 2;
-  string path = 3;
-  PageMeta meta = 4;
-  string content = 5;
-  PageAccess access = 6;
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  // @sanitize: method=StripTags
+  string job = 2 [(validate.rules).string.max_len = 50];
+  optional string job_label = 3 [(validate.rules).string.max_len = 50];
+  optional uint64 parent_id = 4 [jstype = JS_STRING];
+  PageMeta meta = 5 [(validate.rules).message.required = true];
+  // @sanitize
+  string content = 6;
+  PageAccess access = 7 [(validate.rules).message.required = true];
 }
 
 message PageMeta {
   resources.timestamp.Timestamp created_at = 1;
   optional resources.timestamp.Timestamp updated_at = 2;
   optional resources.timestamp.Timestamp deleted_at = 3;
-  string title = 4;
-  string description = 5;
-  optional int32 creator_id = 6;
-  optional resources.users.UserShort creator = 7;
-  ContentType content_type = 8;
-  repeated string tags = 9;
-  optional bool toc = 10;
+  // @sanitize: method=StripTags
+  optional string slug = 4 [(validate.rules).string.max_len = 100];
+  // @sanitize
+  string title = 5 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize: method=StripTags
+  string description = 6 [(validate.rules).string.max_len = 128];
+  optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
+  ContentType content_type = 9 [(validate.rules).enum.defined_only = true];
+  repeated string tags = 10;
+  optional bool toc = 11;
+  bool public = 12;
 }
 
 message PageShort {
-  uint64 id = 1 [jstype = JS_STRING];
-  string job = 2;
-  string path = 3;
-  PageMeta meta = 4;
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  string job = 2 [(validate.rules).string.max_len = 50];
+  optional string job_label = 3 [(validate.rules).string.max_len = 50];
+  optional uint64 parent_id = 4 [jstype = JS_STRING];
+  // @sanitize: method=StripTags
+  optional string slug = 5 [(validate.rules).string.max_len = 100];
+  string title = 6;
+  string description = 7;
+  repeated PageShort children = 8;
+  optional PageRootInfo root_info = 9;
+  optional string path = 10; // Only used in frontend
+}
+
+message PageRootInfo {
+  optional resources.filestore.File logo = 1;
 }
