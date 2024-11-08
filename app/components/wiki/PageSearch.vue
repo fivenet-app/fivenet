@@ -41,7 +41,7 @@ const groups = [
         v-bind="$attrs"
         :icon="appConfig.ui.icons.search"
         color="gray"
-        class="w-full min-w-40 sm:min-w-64"
+        class="w-full min-w-10 sm:min-w-64"
         :label="$t('common.search_field')"
         truncate
         aria-label="Search"
@@ -49,18 +49,18 @@ const groups = [
     />
 
     <ClientOnly>
-        <UModal v-model="isOpen" :ui="{ width: 'w-full sm:max-w-5xl' }">
-            <UCommandPalette
-                :groups="groups"
-                :empty-state="{
-                    icon: 'i-mdi-brain',
-                    label: $t('commandpalette.empty.title'),
-                    queryLabel: $t('commandpalette.empty.title'),
-                }"
-                :placeholder="`${$t('common.search_field')}`"
-                :autoselect="false"
-                :fuse="{ resultLimit: 6, fuseOptions: { threshold: 0.1 } }"
-            />
-        </UModal>
+        <UDashboardSearch
+            v-model="isOpen"
+            hide-color-mode
+            :groups="groups"
+            :empty-state="{
+                icon: 'i-mdi-brain',
+                label: $t('commandpalette.empty.title'),
+                queryLabel: $t('commandpalette.empty.title'),
+            }"
+            :placeholder="`${$t('common.search_field')}`"
+            :autoselect="false"
+            :fuse="{ resultLimit: 6, fuseOptions: { threshold: 0.1 } }"
+        />
     </ClientOnly>
 </template>
