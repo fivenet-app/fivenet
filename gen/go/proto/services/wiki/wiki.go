@@ -149,6 +149,11 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	groupBys := []jet.GroupByClause{tPageShort.ID}
+	if req.RootOnly != nil && *req.RootOnly {
+		groupBys = []jet.GroupByClause{tPageShort.Job}
+	}
+
 	condition := jet.Bool(true)
 	if req.Search != nil && *req.Search != "" {
 		*req.Search = strings.TrimRight(*req.Search, "*") + "*"
@@ -189,9 +194,6 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 			*req.Job = userInfo.Job
 		}
 		condition = condition.AND(tPageShort.Job.EQ(jet.String(*req.Job)))
-	}
-	if req.RootOnly != nil && *req.RootOnly {
-		condition = condition.AND(tPageShort.ParentID.IS_NULL())
 	}
 
 	countStmt := tPageShort.
@@ -264,7 +266,7 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(tPageShort.ParentID.ASC().NULLS_FIRST(), tPageShort.Title.ASC()).
-		GROUP_BY(tPageShort.ID).
+		GROUP_BY(groupBys...).
 		LIMIT(limit)
 
 	pages := []*wiki.PageShort{}
@@ -278,9 +280,8 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		s.enricher.EnrichJobName(pages[i])
 	}
 
-	if req.Search == nil {
-		navItemMapping := mapPagesToNavItems(pages)
-		for _, page := range navItemMapping {
+	if req.Search == nil && (req.RootOnly == nil || !*req.RootOnly) {
+		for _, page := range mapPagesToNavItems(pages) {
 			resp.Pages = append(resp.Pages, page)
 		}
 	} else {

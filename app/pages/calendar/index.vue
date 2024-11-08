@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonColor } from '#ui/types';
 import { useRouteQuery } from '@vueuse/router';
-import { addDays, isFuture, isPast, isSameDay, isToday } from 'date-fns';
+import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
@@ -148,18 +148,16 @@ const transformedCalendarEntries = computedAsync(async () =>
                               d(endTime, 'time')
                             : undefined,
                 },
-                dates: [
-                    {
-                        start: startTime,
-                        end: endTime,
-                        repeat: entry.recurring
-                            ? {
-                                  every: [entry.recurring.count, entry.recurring.every],
-                                  until: addDays(toDate(entry.recurring?.until), 31),
-                              }
-                            : undefined,
-                    },
-                ] as DateRangeSource[],
+                dates: {
+                    start: startTime,
+                    end: endTime,
+                    repeat: entry.recurring
+                        ? {
+                              every: [entry.recurring.count, entry.recurring.every],
+                              until: entry.recurring?.until ? toDate(entry.recurring?.until) : undefined,
+                          }
+                        : undefined,
+                } as DateRangeSource,
             };
         })
         .sort((a, b) => a.key.localeCompare(b.key) + b.customData.id.localeCompare(a.customData.id)),

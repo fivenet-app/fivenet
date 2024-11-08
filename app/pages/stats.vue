@@ -42,22 +42,26 @@ const defaultStats: Stats = {
     },
 };
 
-const state = useState('stats', () => ({ stats: defaultStats, fetchedAt: undefined as undefined | Date }));
+type StatsState = { stats: Stats; fetchedAt?: number };
+const state = useState<StatsState>('stats', () => ({ stats: defaultStats, fetchedAt: undefined }));
 
 const { data: stats, pending: loading } = useLazyAsyncData('stats', () => getStats(), {
+    transform: (input): StatsState => ({
+        stats: input,
+        fetchedAt: new Date().getTime(),
+    }),
     getCachedData() {
         if (!state.value.fetchedAt) {
-            return;
+            return undefined;
         }
 
         const expireDate = new Date(state.value.fetchedAt);
         expireDate.setTime(expireDate.getTime() + 60 * 1000);
-
         if (expireDate.getTime() < Date.now()) {
-            return;
+            return undefined;
         }
 
-        return state.value.stats;
+        return state.value;
     },
 });
 
@@ -72,11 +76,6 @@ async function getStats(): Promise<Stats> {
                 stats[key] = { ...response.stats[key], ...defaultStats[key] };
             }
         }
-
-        state.value = {
-            stats: stats,
-            fetchedAt: new Date(),
-        };
         return stats;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -122,16 +121,16 @@ onBeforeMount(async () => {
                     <ULandingSection>
                         <UPageGrid>
                             <ULandingCard
-                                v-for="(stat, key) in stats"
+                                v-for="(stat, key) in stats?.stats"
                                 :key="key"
                                 :title="$t(`pages.stats.stats.${key}`)"
-                                :icon="stat.icon"
+                                :icon="stat?.icon"
                             >
                                 <template #description>
                                     <p
                                         class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                                     >
-                                        <USkeleton v-if="loading || stat.value === undefined" class="h-8 w-[175px]" />
+                                        <USkeleton v-if="loading || stat?.value === undefined" class="h-8 w-[175px]" />
                                         <ClientOnly v-else>
                                             <CountUp
                                                 :start-val="0"
