@@ -246,7 +246,7 @@ const accordionItems = computed(() =>
                                                 ({{ entry.jobGradeLabel }})</span
                                             >
                                             -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            {{ $t(`enums.wiki.AccessLevel.${AccessLevel[entry.access]}`) }}
                                         </span>
                                     </UBadge>
                                 </div>
@@ -263,7 +263,7 @@ const accordionItems = computed(() =>
                                         <span :title="`${$t('common.id')} ${entry.userId}`">
                                             {{ entry.user?.firstname }}
                                             {{ entry.user?.lastname }} -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            {{ $t(`enums.wiki.AccessLevel.${AccessLevel[entry.access]}`) }}
                                         </span>
                                     </UBadge>
                                 </div>
