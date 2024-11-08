@@ -35,7 +35,7 @@ async function listPages(): Promise<PageShort[]> {
             pagination: {
                 offset: 0,
             },
-            job: page.value?.job ?? activeChar.value?.job ?? '',
+            job: useRoute('wiki-job-id-slug').params.job ?? activeChar.value?.job ?? '',
             rootOnly: false,
         });
         const { response } = await call;
@@ -90,13 +90,13 @@ const editing = ref(false);
             >
                 <template #left>
                     <DataErrorBlock v-if="pagesError" :retry="pagesRefresh" />
-                    <template v-else>
+                    <ClientOnly v-else>
                         <PagesList :pages="pages ?? []" />
 
                         <UTooltip :text="$t('common.refresh')">
                             <UButton class="-ml-2 mt-1" variant="link" icon="i-mdi-refresh" @click="pagesRefresh" />
                         </UTooltip>
-                    </template>
+                    </ClientOnly>
                 </template>
             </PageView>
             <PageEditor v-else v-model="page" :pages="pages ?? []" @close="editing = !editing" />

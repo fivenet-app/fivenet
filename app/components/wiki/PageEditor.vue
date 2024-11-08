@@ -50,7 +50,7 @@ const page = computed({
                               pageId: '0',
                               job: activeChar.value?.job ?? '',
                               minimumGrade: 1,
-                              access: AccessLevel.OWNER,
+                              access: AccessLevel.VIEW,
                           },
                       ],
                       users: [],
@@ -79,10 +79,6 @@ const schema = z.object({
         toc: z.boolean(),
     }),
     content: z.string().min(20).max(1750000),
-    access: z.object({
-        jobs: z.object({}).array().max(10),
-        users: z.object({}).array().max(10),
-    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -96,32 +92,9 @@ const state = reactive<Schema>({
         toc: page.value?.meta?.toc ?? true,
     },
     content: page.value?.content ?? '',
-    access: {
-        jobs: [],
-        users: [],
-    },
 });
 
 const createPage = computed(() => page.value.id === '0');
-
-function setFromProps(): void {
-    state.parentId =
-        page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
-            ? undefined
-            : (page.value?.parentId ?? (props.pages.length === 0 ? undefined : (props.pages.at(0)?.id ?? undefined)));
-
-    state.meta.title = page.value.meta?.title ?? '';
-    state.meta.description = page.value.meta?.description ?? '';
-    state.meta.public = page.value.meta?.public ?? false;
-    state.meta.toc = page.value.meta?.toc ?? true;
-    state.content = page.value.content;
-    state.access = page.value.access ?? {
-        jobs: [],
-        users: [],
-    };
-}
-
-setFromProps();
 
 const access = ref(
     new Map<
@@ -135,10 +108,44 @@ const access = ref(
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
-            required?: boolean;
         }
     >(),
 );
+
+function setFromProps(): void {
+    state.parentId =
+        page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
+            ? undefined
+            : (page.value?.parentId ?? (props.pages.length === 0 ? undefined : (props.pages.at(0)?.id ?? undefined)));
+
+    state.meta.title = page.value.meta?.title ?? '';
+    state.meta.description = page.value.meta?.description ?? '';
+    state.meta.public = page.value.meta?.public ?? false;
+    state.meta.toc = page.value.meta?.toc ?? true;
+    state.content = page.value.content;
+
+    page.value?.access?.users.forEach((user) => {
+        access.value.set(user.id, {
+            id: user.id,
+            type: 0,
+            values: { userId: user.userId, accessRole: user.access },
+        });
+    });
+
+    page.value?.access?.jobs.forEach((job) => {
+        access.value.set(job.id, {
+            id: job.id,
+            type: 1,
+            values: {
+                job: job.job,
+                accessRole: job.access,
+                minimumGrade: job.minimumGrade,
+            },
+        });
+    });
+}
+
+setFromProps();
 
 const accessTypes = [
     { id: 0, name: t('common.citizen', 2) },

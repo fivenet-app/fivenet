@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import PageSearch from '~/components/wiki/PageSearch.vue';
 import { getGRPCWikiClient } from '~/composables/grpc';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
@@ -57,7 +58,13 @@ watch(pages, async () => {
             grow
         >
             <UDashboardNavbar :title="$t('common.wiki')">
+                <template #center>
+                    <PageSearch />
+                </template>
+
                 <template #right>
+                    <PageSearch class="!flex lg:!hidden" />
+
                     <UButton v-if="can('WikiService.CreatePage')" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                         {{ $t('common.page') }}
                     </UButton>

@@ -15,6 +15,8 @@ message ListPagesRequest {
   // Search params
   optional string job = 3 [(validate.rules).string.max_len = 50];
   optional bool root_only = 4;
+
+  optional string search = 5 [(validate.rules).string.max_len = 50];
 }
 
 message ListPagesResponse {

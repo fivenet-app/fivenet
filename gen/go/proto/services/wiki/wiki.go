@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"slices"
+	"strings"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -148,7 +149,23 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	condition := jet.AND(
+	condition := jet.Bool(true)
+	if req.Search != nil && *req.Search != "" {
+		*req.Search = strings.TrimRight(*req.Search, "*") + "*"
+
+		condition = jet.OR(
+			jet.BoolExp(
+				jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
+					jet.RawArgs{"$search": *req.Search}),
+			),
+			jet.BoolExp(
+				jet.Raw("MATCH(`content`) AGAINST ($search IN BOOLEAN MODE)",
+					jet.RawArgs{"$search": *req.Search}),
+			),
+		)
+	}
+
+	condition = condition.AND(jet.AND(
 		tPageShort.DeletedAt.IS_NULL(),
 		jet.OR(
 			tPageShort.Public.IS_TRUE(),
@@ -165,9 +182,12 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 				),
 			),
 		),
-	)
+	))
 
-	if req.Job != nil && *req.Job != "" {
+	if req.Job != nil {
+		if *req.Job == "" {
+			*req.Job = userInfo.Job
+		}
 		condition = condition.AND(tPageShort.Job.EQ(jet.String(*req.Job)))
 	}
 	if req.RootOnly != nil && *req.RootOnly {
@@ -243,7 +263,8 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(tPageShort.Title.ASC()).
+		ORDER_BY(tPageShort.ParentID.ASC().NULLS_FIRST(), tPageShort.Title.ASC()).
+		GROUP_BY(tPageShort.ID).
 		LIMIT(limit)
 
 	pages := []*wiki.PageShort{}
@@ -253,10 +274,17 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		}
 	}
 
-	navItemMapping := mapPagesToNavItems(pages)
-	for _, page := range navItemMapping {
-		s.enricher.EnrichJobName(page)
-		resp.Pages = append(resp.Pages, page)
+	for i := range pages {
+		s.enricher.EnrichJobName(pages[i])
+	}
+
+	if req.Search == nil {
+		navItemMapping := mapPagesToNavItems(pages)
+		for _, page := range navItemMapping {
+			resp.Pages = append(resp.Pages, page)
+		}
+	} else {
+		resp.Pages = pages
 	}
 
 	return resp, nil

@@ -11,6 +11,7 @@ import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import PageActivityList from './PageActivityList.vue';
+import PageSearch from './PageSearch.vue';
 
 const props = defineProps<{
     page: Page | undefined;
@@ -41,7 +42,9 @@ const breadcrumbs = computed(() => [
     ...[
         !props.page ? { label: t('pages.notfound.page_not_found') } : undefined,
         props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
-        props.page?.meta ? { label: props.page.meta.title } : undefined,
+        props.page?.meta
+            ? { label: props.page.meta.title, to: `/wiki/${props.page.job}/${props.page.id}/${props.page.meta.slug}` }
+            : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 ]);
 
@@ -125,6 +128,10 @@ const accordionItems = computed(() =>
 
 <template>
     <UDashboardNavbar :title="`${page?.jobLabel ? page?.jobLabel + ': ' : ''}${$t('common.wiki')}`">
+        <template #center>
+            <PageSearch />
+        </template>
+
         <template #right>
             <UButton v-if="can('WikiService.CreatePage')" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                 {{ $t('common.page') }}
@@ -273,6 +280,8 @@ const accordionItems = computed(() =>
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
+                <PageSearch class="!flex lg:!hidden" />
+
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>
         </UPage>

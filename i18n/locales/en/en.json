@@ -2510,6 +2510,14 @@
                 "ACCESS": "Access",
                 "EDIT": "Edit",
                 "OWNER": "Owner"
+            },
+            "PageActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "CREATED": "Page Created",
+                "UPDATED": "Page updated",
+                "ACCESS_UPDATED": "Page Access updated",
+                "OWNER_CHANGED": "Page Owner changed",
+                "DELETED": "Page deleted"
             }
         }
     },

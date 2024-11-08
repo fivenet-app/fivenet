@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_wiki_pages` (
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_wiki_pages_id_job` (`id`, `job`),
   KEY `idx_fivenet_wiki_pages_parent_id` (`parent_id`),
+  FULLTEXT KEY `idx_fivenet_wiki_pages_title` (`title`),
+  FULLTEXT KEY `idx_fivenet_wiki_pages_content` (`content`),
   KEY `idx_fivenet_wiki_pages_creator_id` (`creator_id`),
   CONSTRAINT `fk_fivenet_wiki_pages_parent_id` FOREIGN KEY (`parent_id`) REFERENCES `fivenet_wiki_pages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_wiki_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE

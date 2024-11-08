@@ -39,6 +39,10 @@ export interface ListPagesRequest {
      * @generated from protobuf field: optional bool root_only = 4;
      */
     rootOnly?: boolean;
+    /**
+     * @generated from protobuf field: optional string search = 5;
+     */
+    search?: string;
 }
 /**
  * @generated from protobuf message services.wiki.ListPagesResponse
@@ -154,7 +158,8 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 4, name: "root_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "root_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<ListPagesRequest>): ListPagesRequest {
@@ -180,6 +185,9 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
                 case /* optional bool root_only */ 4:
                     message.rootOnly = reader.bool();
                     break;
+                case /* optional string search */ 5:
+                    message.search = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -204,6 +212,9 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
         /* optional bool root_only = 4; */
         if (message.rootOnly !== undefined)
             writer.tag(4, WireType.Varint).bool(message.rootOnly);
+        /* optional string search = 5; */
+        if (message.search !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.search);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -190,7 +190,7 @@ onMounted(async () => {
                 response.access.users.forEach((user) => {
                     const id = accessId.toString();
                     access.value.set(id, {
-                        id,
+                        id: id,
                         type: 0,
                         values: { userId: user.userId, accessRole: user.access },
                     });
@@ -200,7 +200,7 @@ onMounted(async () => {
                 response.access.jobs.forEach((job) => {
                     const id = accessId.toString();
                     access.value.set(id, {
-                        id,
+                        id: id,
                         type: 1,
                         values: {
                             job: job.job,

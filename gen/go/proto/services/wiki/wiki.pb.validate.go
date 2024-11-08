@@ -149,6 +149,21 @@ func (m *ListPagesRequest) validate(all bool) error {
 		// no validation rules for RootOnly
 	}
 
+	if m.Search != nil {
+
+		if utf8.RuneCountInString(m.GetSearch()) > 50 {
+			err := ListPagesRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListPagesRequestMultiError(errors)
 	}

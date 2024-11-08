@@ -33,7 +33,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
                         <span class="font-bold">
-                            {{ $t(`enums.docstore.PageActivityType.${PageActivityType[entry.activityType]}`) }}
+                            {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
                         </span>
                     </h3>
                     <p class="text-sm text-gray-400">
@@ -57,7 +57,7 @@ function spoilerNeeded(activityType: PageActivityType): boolean {
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
                                 <span class="font-bold">
-                                    {{ $t(`enums.docstore.PageActivityType.${PageActivityType[entry.activityType]}`) }}
+                                    {{ $t(`enums.wiki.PageActivityType.${PageActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon

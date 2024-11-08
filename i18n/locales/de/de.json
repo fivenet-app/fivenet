@@ -2510,6 +2510,14 @@
                 "ACCESS": "Zugriffsmanagement",
                 "EDIT": "Editieren",
                 "OWNER": "Besitzer"
+            },
+            "PageActivityType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "CREATED": "Seite erstellt",
+                "UPDATED": "Seite aktualisiert",
+                "ACCESS_UPDATED": "Seiten-Zugriff aktualisiert",
+                "OWNER_CHANGED": "Seiten-Besitzer geändert",
+                "DELETED": "Seite gelöscht"
             }
         }
     },

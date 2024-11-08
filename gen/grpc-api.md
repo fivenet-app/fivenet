@@ -11523,6 +11523,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | job | [string](#string) | optional | Search params |
 | root_only | [bool](#bool) | optional |  |
+| search | [string](#string) | optional |  |
 
 
 
