@@ -176,6 +176,11 @@ const columns = [
 
 const table = useTemplateRef<typeof Table>('table');
 
+const expand = ref({
+    openedRows: [],
+    row: {},
+});
+
 const editing = ref(props.startInEdit);
 </script>
 
@@ -243,6 +248,7 @@ const editing = ref(props.startInEdit);
         </template>
 
         <UTable
+            v-model:expand="expand"
             ref="table"
             :columns="columns"
             :rows="laws"

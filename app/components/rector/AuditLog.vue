@@ -169,6 +169,11 @@ const columns = [
         sortable: true,
     },
 ];
+
+const expand = ref({
+    openedRows: [],
+    row: {},
+});
 </script>
 
 <template>
@@ -288,7 +293,7 @@ const columns = [
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
 
-    <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs">
+    <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs" v-model:expand="expand">
         <template #actions-data="{ row }">
             <UButton
                 variant="link"
