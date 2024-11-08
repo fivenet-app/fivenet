@@ -4,7 +4,7 @@ import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 function mapNavItemToNavItem(p: PageShort): NavItem {
     return {
-        title: p.jobLabel === undefined ? p.title : `${p.jobLabel}: ${p.title}`,
+        title: p.parentId === undefined && p.jobLabel !== undefined ? `${p.jobLabel}: ${p.title}` : p.title,
         _path: `/wiki/${p.job}/${p.id}/${p.slug ?? ''}`,
         children: p.children.map((p) => mapNavItemToNavItem(p)),
     } as NavItem;

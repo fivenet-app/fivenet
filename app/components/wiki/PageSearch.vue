@@ -26,6 +26,7 @@ const groups = [
                     id: page.id,
                     label: page.title,
                     suffix: `${page.description} ${page.jobLabel}`,
+                    to: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
                 }));
             } catch (e) {
                 handleGRPCError(e as RpcError);
