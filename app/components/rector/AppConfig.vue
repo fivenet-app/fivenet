@@ -10,6 +10,8 @@ import { toDuration } from '~/utils/duration';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/rector/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
+import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t } = useI18n();
 
@@ -361,19 +363,43 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <div class="flex flex-col gap-1">
                                         <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
                                             <UFormGroup :name="`perms.default.${idx}.category`" class="flex-1">
-                                                <UInput
-                                                    v-model="state.perms.default[idx]!.category"
-                                                    type="text"
-                                                    :placeholder="$t('common.category')"
-                                                />
+                                                <ClientOnly>
+                                                    <USelectMenu
+                                                        v-model="state.perms.default[idx]!.category"
+                                                        searchable
+                                                        :placeholder="$t('common.service')"
+                                                        :options="grpcServices"
+                                                    >
+                                                        <template #option-empty="{ query: search }">
+                                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                        </template>
+                                                        <template #empty>
+                                                            {{ $t('common.not_found', [$t('common.service')]) }}
+                                                        </template>
+                                                    </USelectMenu>
+                                                </ClientOnly>
                                             </UFormGroup>
 
                                             <UFormGroup :name="`perms.default.${idx}.name`" class="flex-1">
-                                                <UInput
+                                                <USelectMenu
                                                     v-model="state.perms.default[idx]!.name"
-                                                    type="text"
-                                                    :placeholder="$t('common.name')"
-                                                />
+                                                    searchable
+                                                    :placeholder="$t('common.method')"
+                                                    :options="
+                                                        grpcMethods
+                                                            .filter((m) =>
+                                                                m.startsWith(state.perms.default[idx]!.category + '/'),
+                                                            )
+                                                            .map((m) => m.split('/').at(1) ?? m)
+                                                    "
+                                                >
+                                                    <template #option-empty="{ query: search }">
+                                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                    </template>
+                                                    <template #empty>
+                                                        {{ $t('common.not_found', [$t('common.method')]) }}
+                                                    </template>
+                                                </USelectMenu>
                                             </UFormGroup>
 
                                             <UButton
