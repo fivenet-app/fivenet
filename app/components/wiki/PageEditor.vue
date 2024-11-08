@@ -102,6 +102,8 @@ const state = reactive<Schema>({
     },
 });
 
+const createPage = computed(() => page.value.id === '0');
+
 function setFromProps(): void {
     state.parentId =
         page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
@@ -265,10 +267,9 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
         }
     });
 
-    const create = !page.value.id;
     try {
         let responsePage: Page | undefined = undefined;
-        if (create) {
+        if (createPage.value) {
             const call = getGRPCWikiClient().createPage({
                 page: req,
             });
@@ -292,7 +293,7 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
             page.value = responsePage;
         }
 
-        if (create) {
+        if (createPage.value) {
             navigateTo({
                 name: 'wiki-job-id-slug',
                 params: {
@@ -346,7 +347,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('common.wiki')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-left" @click="$emit('close')">
+                <UButton
+                    color="black"
+                    icon="i-mdi-arrow-left"
+                    @click="createPage ? navigateTo({ name: 'wiki' }) : $emit('close')"
+                >
                     {{ $t('common.back') }}
                 </UButton>
 

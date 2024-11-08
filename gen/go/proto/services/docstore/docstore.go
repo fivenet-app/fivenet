@@ -640,10 +640,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if err := s.handleDocumentAccessChange(ctx, tx, req.DocumentId, userInfo, req.Access, true); err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
-		}
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		return nil, err
 	}
 
 	// Commit the transaction

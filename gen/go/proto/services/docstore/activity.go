@@ -24,40 +24,6 @@ const (
 
 var tDocActivity = table.FivenetDocumentsActivity
 
-func (s *Server) addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
-	stmt := tDocActivity.
-		INSERT(
-			tDocActivity.DocumentID,
-			tDocActivity.ActivityType,
-			tDocActivity.CreatorID,
-			tDocActivity.CreatorJob,
-			tDocActivity.Reason,
-			tDocActivity.Data,
-		).
-		VALUES(
-			activitiy.DocumentId,
-			activitiy.ActivityType,
-			activitiy.CreatorId,
-			activitiy.CreatorJob,
-			activitiy.Reason,
-			activitiy.Data,
-		)
-
-	res, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return 0, err
-		}
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	return uint64(lastId), nil
-}
-
 func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActivityRequest) (*ListDocumentActivityResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))
 
@@ -156,12 +122,46 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	return resp, nil
 }
 
+func (s *Server) addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
+	stmt := tDocActivity.
+		INSERT(
+			tDocActivity.DocumentID,
+			tDocActivity.ActivityType,
+			tDocActivity.CreatorID,
+			tDocActivity.CreatorJob,
+			tDocActivity.Reason,
+			tDocActivity.Data,
+		).
+		VALUES(
+			activitiy.DocumentId,
+			activitiy.ActivityType,
+			activitiy.CreatorId,
+			activitiy.CreatorJob,
+			activitiy.Reason,
+			activitiy.Data,
+		)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return 0, err
+		}
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(lastId), nil
+}
+
 // generateDocumentDiff Generates diff if the old and new contents are not equal, using a simple "string comparison"
-func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *documents.Document) (*documents.DocUpdated, error) {
+func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Document) (*documents.DocUpdated, error) {
 	diff := &documents.DocUpdated{}
 
-	if !strings.EqualFold(oldDoc.Title, newDoc.Title) {
-		titleDiff, err := s.htmlDiff.Diff(oldDoc.Title, newDoc.Title)
+	if !strings.EqualFold(old.Title, new.Title) {
+		titleDiff, err := s.htmlDiff.Diff(old.Title, new.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -170,8 +170,8 @@ func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *docume
 		}
 	}
 
-	if !strings.EqualFold(oldDoc.Content, newDoc.Content) {
-		contentDiff, err := s.htmlDiff.Diff(oldDoc.Content, newDoc.Content)
+	if !strings.EqualFold(old.Content, new.Content) {
+		contentDiff, err := s.htmlDiff.Diff(old.Content, new.Content)
 		if err != nil {
 			return nil, err
 		}
@@ -180,8 +180,8 @@ func (s *Server) generateDocumentDiff(oldDoc *documents.Document, newDoc *docume
 		}
 	}
 
-	if !strings.EqualFold(oldDoc.State, newDoc.State) {
-		stateDiff, err := s.htmlDiff.Diff(oldDoc.State, newDoc.State)
+	if !strings.EqualFold(old.State, new.State) {
+		stateDiff, err := s.htmlDiff.Diff(old.State, new.State)
 		if err != nil {
 			return nil, err
 		}

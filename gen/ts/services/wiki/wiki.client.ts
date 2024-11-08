@@ -4,8 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { WikiService } from "./wiki";
-import type { GetPageActivityResponse } from "./wiki";
-import type { GetPageActivityRequest } from "./wiki";
+import type { ListPageActivityResponse } from "./wiki";
+import type { ListPageActivityRequest } from "./wiki";
 import type { DeletePageResponse } from "./wiki";
 import type { DeletePageRequest } from "./wiki";
 import type { UpdatePageResponse } from "./wiki";
@@ -56,9 +56,9 @@ export interface IWikiServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: GetPageActivity(services.wiki.GetPageActivityRequest) returns (services.wiki.GetPageActivityResponse);
+     * @generated from protobuf rpc: ListPageActivity(services.wiki.ListPageActivityRequest) returns (services.wiki.ListPageActivityResponse);
      */
-    getPageActivity(input: GetPageActivityRequest, options?: RpcOptions): UnaryCall<GetPageActivityRequest, GetPageActivityResponse>;
+    listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse>;
 }
 /**
  * @generated from protobuf service services.wiki.WikiService
@@ -117,10 +117,10 @@ export class WikiServiceClient implements IWikiServiceClient, ServiceInfo {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: GetPageActivity(services.wiki.GetPageActivityRequest) returns (services.wiki.GetPageActivityResponse);
+     * @generated from protobuf rpc: ListPageActivity(services.wiki.ListPageActivityRequest) returns (services.wiki.ListPageActivityResponse);
      */
-    getPageActivity(input: GetPageActivityRequest, options?: RpcOptions): UnaryCall<GetPageActivityRequest, GetPageActivityResponse> {
+    listPageActivity(input: ListPageActivityRequest, options?: RpcOptions): UnaryCall<ListPageActivityRequest, ListPageActivityResponse> {
         const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetPageActivityRequest, GetPageActivityResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListPageActivityRequest, ListPageActivityResponse>("unary", this._transport, method, opt, input);
     }
 }

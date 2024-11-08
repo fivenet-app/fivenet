@@ -57,6 +57,159 @@ func (m *PageActivity) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PageActivityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PageActivityValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PageActivityValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for PageId
+
+	// no validation rules for ActivityType
+
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := PageActivityValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PageActivityValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PageActivityValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PageActivityValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.CreatorId != nil {
+
+		if m.GetCreatorId() <= 0 {
+			err := PageActivityValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageActivityValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageActivityValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageActivityValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorJobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJobLabel()) > 50 {
+			err := PageActivityValidationError{
+				field:  "CreatorJobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := PageActivityValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PageActivityMultiError(errors)
 	}
@@ -156,6 +309,93 @@ func (m *PageActivityData) validate(all bool) error {
 
 	var errors []error
 
+	switch v := m.Data.(type) {
+	case *PageActivityData_Updated:
+		if v == nil {
+			err := PageActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageActivityDataValidationError{
+						field:  "Updated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageActivityDataValidationError{
+						field:  "Updated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageActivityDataValidationError{
+					field:  "Updated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *PageActivityData_AccessUpdated:
+		if v == nil {
+			err := PageActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetAccessUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageActivityDataValidationError{
+						field:  "AccessUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageActivityDataValidationError{
+						field:  "AccessUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAccessUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageActivityDataValidationError{
+					field:  "AccessUpdated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
 	if len(errors) > 0 {
 		return PageActivityDataMultiError(errors)
 	}
@@ -233,3 +473,748 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PageActivityDataValidationError{}
+
+// Validate checks the field values on PageUpdated with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PageUpdated) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageUpdated with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageUpdatedMultiError, or
+// nil if none found.
+func (m *PageUpdated) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageUpdated) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.TitleDiff != nil {
+		// no validation rules for TitleDiff
+	}
+
+	if m.DescriptionDiff != nil {
+		// no validation rules for DescriptionDiff
+	}
+
+	if m.ContentDiff != nil {
+		// no validation rules for ContentDiff
+	}
+
+	if len(errors) > 0 {
+		return PageUpdatedMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageUpdatedMultiError is an error wrapping multiple validation errors
+// returned by PageUpdated.ValidateAll() if the designated constraints aren't met.
+type PageUpdatedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageUpdatedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageUpdatedMultiError) AllErrors() []error { return m }
+
+// PageUpdatedValidationError is the validation error returned by
+// PageUpdated.Validate if the designated constraints aren't met.
+type PageUpdatedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageUpdatedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageUpdatedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageUpdatedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageUpdatedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageUpdatedValidationError) ErrorName() string { return "PageUpdatedValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PageUpdatedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageUpdated.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageUpdatedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageUpdatedValidationError{}
+
+// Validate checks the field values on PageAccessUpdated with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *PageAccessUpdated) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageAccessUpdated with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PageAccessUpdatedMultiError, or nil if none found.
+func (m *PageAccessUpdated) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageAccessUpdated) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJobs()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PageAccessUpdatedValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PageAccessUpdatedValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PageAccessUpdatedValidationError{
+				field:  "Jobs",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUsers()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PageAccessUpdatedValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PageAccessUpdatedValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PageAccessUpdatedValidationError{
+				field:  "Users",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return PageAccessUpdatedMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageAccessUpdatedMultiError is an error wrapping multiple validation errors
+// returned by PageAccessUpdated.ValidateAll() if the designated constraints
+// aren't met.
+type PageAccessUpdatedMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageAccessUpdatedMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageAccessUpdatedMultiError) AllErrors() []error { return m }
+
+// PageAccessUpdatedValidationError is the validation error returned by
+// PageAccessUpdated.Validate if the designated constraints aren't met.
+type PageAccessUpdatedValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageAccessUpdatedValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageAccessUpdatedValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageAccessUpdatedValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageAccessUpdatedValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageAccessUpdatedValidationError) ErrorName() string {
+	return "PageAccessUpdatedValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PageAccessUpdatedValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageAccessUpdated.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageAccessUpdatedValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageAccessUpdatedValidationError{}
+
+// Validate checks the field values on PageAccessJobsDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PageAccessJobsDiff) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageAccessJobsDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PageAccessJobsDiffMultiError, or nil if none found.
+func (m *PageAccessJobsDiff) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageAccessJobsDiff) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetToCreate()) > 20 {
+		err := PageAccessJobsDiffValidationError{
+			field:  "ToCreate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToCreate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToCreate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToUpdate()) > 20 {
+		err := PageAccessJobsDiffValidationError{
+			field:  "ToUpdate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToDelete()) > 20 {
+		err := PageAccessJobsDiffValidationError{
+			field:  "ToDelete",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToDelete() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessJobsDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessJobsDiffValidationError{
+					field:  fmt.Sprintf("ToDelete[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PageAccessJobsDiffMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageAccessJobsDiffMultiError is an error wrapping multiple validation errors
+// returned by PageAccessJobsDiff.ValidateAll() if the designated constraints
+// aren't met.
+type PageAccessJobsDiffMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageAccessJobsDiffMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageAccessJobsDiffMultiError) AllErrors() []error { return m }
+
+// PageAccessJobsDiffValidationError is the validation error returned by
+// PageAccessJobsDiff.Validate if the designated constraints aren't met.
+type PageAccessJobsDiffValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageAccessJobsDiffValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageAccessJobsDiffValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageAccessJobsDiffValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageAccessJobsDiffValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageAccessJobsDiffValidationError) ErrorName() string {
+	return "PageAccessJobsDiffValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PageAccessJobsDiffValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageAccessJobsDiff.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageAccessJobsDiffValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageAccessJobsDiffValidationError{}
+
+// Validate checks the field values on PageAccessUsersDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *PageAccessUsersDiff) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on PageAccessUsersDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// PageAccessUsersDiffMultiError, or nil if none found.
+func (m *PageAccessUsersDiff) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *PageAccessUsersDiff) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetToCreate()) > 20 {
+		err := PageAccessUsersDiffValidationError{
+			field:  "ToCreate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToCreate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToCreate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToCreate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToUpdate()) > 20 {
+		err := PageAccessUsersDiffValidationError{
+			field:  "ToUpdate",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToUpdate() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToUpdate[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToUpdate[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(m.GetToDelete()) > 20 {
+		err := PageAccessUsersDiffValidationError{
+			field:  "ToDelete",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetToDelete() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageAccessUsersDiffValidationError{
+						field:  fmt.Sprintf("ToDelete[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageAccessUsersDiffValidationError{
+					field:  fmt.Sprintf("ToDelete[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return PageAccessUsersDiffMultiError(errors)
+	}
+
+	return nil
+}
+
+// PageAccessUsersDiffMultiError is an error wrapping multiple validation
+// errors returned by PageAccessUsersDiff.ValidateAll() if the designated
+// constraints aren't met.
+type PageAccessUsersDiffMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PageAccessUsersDiffMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PageAccessUsersDiffMultiError) AllErrors() []error { return m }
+
+// PageAccessUsersDiffValidationError is the validation error returned by
+// PageAccessUsersDiff.Validate if the designated constraints aren't met.
+type PageAccessUsersDiffValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PageAccessUsersDiffValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PageAccessUsersDiffValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PageAccessUsersDiffValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PageAccessUsersDiffValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PageAccessUsersDiffValidationError) ErrorName() string {
+	return "PageAccessUsersDiffValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e PageAccessUsersDiffValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPageAccessUsersDiff.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PageAccessUsersDiffValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PageAccessUsersDiffValidationError{}

@@ -2,12 +2,62 @@ syntax = "proto3";
 
 package resources.wiki;
 
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "resources/wiki/access.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wiki";
 
+enum PageActivityType {
+  PAGE_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  // Base
+  PAGE_ACTIVITY_TYPE_CREATED = 1;
+  PAGE_ACTIVITY_TYPE_UPDATED = 2;
+  PAGE_ACTIVITY_TYPE_ACCESS_UPDATED = 3;
+  PAGE_ACTIVITY_TYPE_OWNER_CHANGED = 4;
+  PAGE_ACTIVITY_TYPE_DELETED = 5;
+}
+
 message PageActivity {
-  // TODO
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  uint64 page_id = 3 [jstype = JS_STRING];
+  PageActivityType activity_type = 4;
+  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 6; // @gotags: alias:"creator"
+  string creator_job = 7 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 8 [(validate.rules).string.max_len = 50];
+  optional string reason = 9 [(validate.rules).string.max_len = 255];
+  PageActivityData data = 10;
 }
 
 message PageActivityData {
-  // TODO
+  oneof data {
+    PageUpdated updated = 1;
+    PageAccessUpdated access_updated = 2;
+  }
+}
+
+message PageUpdated {
+  optional string title_diff = 1;
+  optional string description_diff = 2;
+  optional string content_diff = 3;
+}
+
+message PageAccessUpdated {
+  PageAccessJobsDiff jobs = 1;
+  PageAccessUsersDiff users = 2;
+}
+
+message PageAccessJobsDiff {
+  repeated PageJobAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
+  repeated PageJobAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
+  repeated PageJobAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
+}
+
+message PageAccessUsersDiff {
+  repeated PageUserAccess to_create = 1 [(validate.rules).repeated.max_items = 20];
+  repeated PageUserAccess to_update = 2 [(validate.rules).repeated.max_items = 20];
+  repeated PageUserAccess to_delete = 3 [(validate.rules).repeated.max_items = 20];
 }

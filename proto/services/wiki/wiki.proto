@@ -52,11 +52,12 @@ message DeletePageRequest {
 
 message DeletePageResponse {}
 
-message GetPageActivityRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+message ListPageActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 page_id = 2 [jstype = JS_STRING];
 }
 
-message GetPageActivityResponse {
+message ListPageActivityResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.wiki.PageActivity activity = 2;
 }
@@ -74,5 +75,5 @@ service WikiService {
   rpc DeletePage(DeletePageRequest) returns (DeletePageResponse);
 
   // @perm
-  rpc GetPageActivity(GetPageActivityRequest) returns (GetPageActivityResponse);
+  rpc ListPageActivity(ListPageActivityRequest) returns (ListPageActivityResponse);
 }

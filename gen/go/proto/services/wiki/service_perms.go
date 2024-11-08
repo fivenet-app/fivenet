@@ -36,7 +36,7 @@ func init() {
 		},
 		{
 			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceGetPageActivityPerm,
+			Name:     permkeys.WikiServiceListPageActivityPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

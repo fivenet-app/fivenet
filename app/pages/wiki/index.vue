@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getGRPCWikiClient } from '~/composables/grpc';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
@@ -64,7 +65,13 @@ watch(pages, async () => {
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <UPageGrid>
+                <DataNoDataBlock
+                    v-if="!pages || pages.length === 0"
+                    icon="i-mdi-file-search"
+                    :message="$t('common.not_found', [$t('common.wiki', 2)])"
+                />
+
+                <UPageGrid v-else>
                     <UPageCard
                         v-for="p in pages"
                         :key="p.id"

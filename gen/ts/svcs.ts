@@ -256,5 +256,5 @@ export const grpcMethods = [
 	'WikiService/CreatePage',
 	'WikiService/UpdatePage',
 	'WikiService/DeletePage',
-	'WikiService/GetPageActivity',
+	'WikiService/ListPageActivity',
 ];

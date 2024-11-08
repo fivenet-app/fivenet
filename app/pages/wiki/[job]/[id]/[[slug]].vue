@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '#build/typed-router';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import PageEditor from '~/components/wiki/PageEditor.vue';
+import PagesList from '~/components/wiki/PagesList.vue';
 import PageView from '~/components/wiki/PageView.vue';
 import { getGRPCWikiClient } from '~/composables/grpc';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -25,7 +27,7 @@ const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
 
-const { data: pages } = useLazyAsyncData(`wiki-pages`, () => listPages());
+const { data: pages, error: pagesError, refresh: pagesRefresh } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
@@ -85,7 +87,18 @@ const editing = ref(false);
                 :page="page"
                 :pages="pages ?? []"
                 @edit="editing = !editing"
-            />
+            >
+                <template #left>
+                    <DataErrorBlock v-if="pagesError" :retry="pagesRefresh" />
+                    <template v-else>
+                        <PagesList :pages="pages ?? []" />
+
+                        <UTooltip :text="$t('common.refresh')">
+                            <UButton class="-ml-2 mt-1" variant="link" icon="i-mdi-refresh" @click="pagesRefresh" />
+                        </UTooltip>
+                    </template>
+                </template>
+            </PageView>
             <PageEditor v-else v-model="page" :pages="pages ?? []" @close="editing = !editing" />
         </UDashboardPanel>
     </UDashboardPage>

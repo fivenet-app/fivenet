@@ -156,6 +156,6 @@ export type Perms =
 	| 'WikiService.CreatePage'
 	| 'WikiService.DeletePage'
 	| 'WikiService.GetPage'
-	| 'WikiService.GetPageActivity'
+	| 'WikiService.ListPageActivity'
 	| 'WikiService.ListPages'
 	| 'WikiService.UpdatePage';

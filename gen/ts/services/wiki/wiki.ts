@@ -122,18 +122,22 @@ export interface DeletePageRequest {
 export interface DeletePageResponse {
 }
 /**
- * @generated from protobuf message services.wiki.GetPageActivityRequest
+ * @generated from protobuf message services.wiki.ListPageActivityRequest
  */
-export interface GetPageActivityRequest {
+export interface ListPageActivityRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
-    id: string;
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 page_id = 2 [jstype = JS_STRING];
+     */
+    pageId: string;
 }
 /**
- * @generated from protobuf message services.wiki.GetPageActivityResponse
+ * @generated from protobuf message services.wiki.ListPageActivityResponse
  */
-export interface GetPageActivityResponse {
+export interface ListPageActivityResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
      */
@@ -614,26 +618,30 @@ class DeletePageResponse$Type extends MessageType<DeletePageResponse> {
  */
 export const DeletePageResponse = new DeletePageResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetPageActivityRequest$Type extends MessageType<GetPageActivityRequest> {
+class ListPageActivityRequest$Type extends MessageType<ListPageActivityRequest> {
     constructor() {
-        super("services.wiki.GetPageActivityRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        super("services.wiki.ListPageActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
-    create(value?: PartialMessage<GetPageActivityRequest>): GetPageActivityRequest {
+    create(value?: PartialMessage<ListPageActivityRequest>): ListPageActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.pageId = "0";
         if (value !== undefined)
-            reflectionMergePartial<GetPageActivityRequest>(this, message, value);
+            reflectionMergePartial<ListPageActivityRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageActivityRequest): GetPageActivityRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListPageActivityRequest): ListPageActivityRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* uint64 page_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.pageId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -646,10 +654,13 @@ class GetPageActivityRequest$Type extends MessageType<GetPageActivityRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: GetPageActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
+    internalBinaryWrite(message: ListPageActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 page_id = 2 [jstype = JS_STRING]; */
+        if (message.pageId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.pageId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -657,25 +668,25 @@ class GetPageActivityRequest$Type extends MessageType<GetPageActivityRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.GetPageActivityRequest
+ * @generated MessageType for protobuf message services.wiki.ListPageActivityRequest
  */
-export const GetPageActivityRequest = new GetPageActivityRequest$Type();
+export const ListPageActivityRequest = new ListPageActivityRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetPageActivityResponse$Type extends MessageType<GetPageActivityResponse> {
+class ListPageActivityResponse$Type extends MessageType<ListPageActivityResponse> {
     constructor() {
-        super("services.wiki.GetPageActivityResponse", [
+        super("services.wiki.ListPageActivityResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PageActivity }
         ]);
     }
-    create(value?: PartialMessage<GetPageActivityResponse>): GetPageActivityResponse {
+    create(value?: PartialMessage<ListPageActivityResponse>): ListPageActivityResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.activity = [];
         if (value !== undefined)
-            reflectionMergePartial<GetPageActivityResponse>(this, message, value);
+            reflectionMergePartial<ListPageActivityResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageActivityResponse): GetPageActivityResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListPageActivityResponse): ListPageActivityResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -697,7 +708,7 @@ class GetPageActivityResponse$Type extends MessageType<GetPageActivityResponse> 
         }
         return message;
     }
-    internalBinaryWrite(message: GetPageActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListPageActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -711,9 +722,9 @@ class GetPageActivityResponse$Type extends MessageType<GetPageActivityResponse> 
     }
 }
 /**
- * @generated MessageType for protobuf message services.wiki.GetPageActivityResponse
+ * @generated MessageType for protobuf message services.wiki.ListPageActivityResponse
  */
-export const GetPageActivityResponse = new GetPageActivityResponse$Type();
+export const ListPageActivityResponse = new ListPageActivityResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.wiki.WikiService
  */
@@ -723,5 +734,5 @@ export const WikiService = new ServiceType("services.wiki.WikiService", [
     { name: "CreatePage", options: {}, I: CreatePageRequest, O: CreatePageResponse },
     { name: "UpdatePage", options: {}, I: UpdatePageRequest, O: UpdatePageResponse },
     { name: "DeletePage", options: {}, I: DeletePageRequest, O: DeletePageResponse },
-    { name: "GetPageActivity", options: {}, I: GetPageActivityRequest, O: GetPageActivityResponse }
+    { name: "ListPageActivity", options: {}, I: ListPageActivityRequest, O: ListPageActivityResponse }
 ]);

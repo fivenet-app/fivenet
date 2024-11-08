@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -472,6 +473,7 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 			FROM(tPage).
 			WHERE(jet.AND(
 				tPage.Job.EQ(jet.String(userInfo.Job)),
+				tPage.DeletedAt.IS_NULL(),
 			))
 
 		var count database.DataCount
@@ -482,6 +484,14 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 		}
 
 		if count.TotalCount > 0 {
+			return nil, errorswiki.ErrPageDenied
+		}
+	} else {
+		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+		if !parentCheck {
 			return nil, errorswiki.ErrPageDenied
 		}
 	}
@@ -497,14 +507,6 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 	}
 	if !slices.Contains(fields, "Public") {
 		req.Page.Meta.Public = false
-	}
-
-	parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	if !parentCheck {
-		return nil, errorswiki.ErrPageDenied
 	}
 
 	tPage := table.FivenetWikiPages
@@ -547,10 +549,17 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 	}
 	req.Page.Id = uint64(lastId)
 
-	// TODO Create corresponding activity events
-
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Page.Id, req.Page.Access.Jobs, req.Page.Access.Users); err != nil {
+	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+		PageId:       uint64(lastId),
+		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+	}); err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if err := s.handlePageAccessChange(ctx, tx, req.Page.Id, userInfo, req.Page.Access, false); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction
@@ -598,6 +607,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 			FROM(tPage).
 			WHERE(jet.AND(
 				tPage.Job.EQ(jet.String(userInfo.Job)),
+				tPage.DeletedAt.IS_NULL(),
 			))
 
 		var ids struct {
@@ -632,6 +642,11 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		return nil, errorswiki.ErrPageDenied
 	}
 
+	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
 	stmt := tPage.
 		UPDATE(
 			tPage.ParentID,
@@ -663,10 +678,33 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
-	// TODO create corresponding activity events
-
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Page.Id, req.Page.Access.Jobs, req.Page.Access.Users); err != nil {
+	diff, err := s.generatePageDiff(page, &wiki.Page{
+		Meta: &wiki.PageMeta{
+			Title:       req.Page.Meta.Title,
+			Description: req.Page.Meta.Description,
+		},
+		Content: req.Page.Content,
+	})
+	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+		PageId:       req.Page.Id,
+		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_UPDATED,
+		CreatorId:    &userInfo.UserId,
+		CreatorJob:   userInfo.Job,
+		Data: &wiki.PageActivityData{
+			Data: &wiki.PageActivityData_Updated{
+				Updated: diff,
+			},
+		},
+	}); err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if err := s.handlePageAccessChange(ctx, tx, req.Page.Id, userInfo, req.Page.Access, true); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction
@@ -676,7 +714,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
+	page, err = s.getPage(ctx, req.Page.Id, true, true, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
@@ -684,6 +722,45 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	return &UpdatePageResponse{
 		Page: page,
 	}, nil
+}
+
+func (s *Server) handlePageAccessChange(ctx context.Context, tx qrm.DB, pageId uint64, userInfo *userinfo.UserInfo, access *wiki.PageAccess, addActivity bool) error {
+	changes, err := s.access.HandleAccessChanges(ctx, tx, pageId, access.Jobs, access.Users)
+	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+		return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if addActivity && !changes.IsEmpty() {
+		if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
+			PageId:       pageId,
+			ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_ACCESS_UPDATED,
+			CreatorId:    &userInfo.UserId,
+			CreatorJob:   userInfo.Job,
+			Data: &wiki.PageActivityData{
+				Data: &wiki.PageActivityData_AccessUpdated{
+					AccessUpdated: &wiki.PageAccessUpdated{
+						Jobs: &wiki.PageAccessJobsDiff{
+							ToCreate: changes.Jobs.ToCreate,
+							ToUpdate: changes.Jobs.ToUpdate,
+							ToDelete: changes.Jobs.ToDelete,
+						},
+						Users: &wiki.PageAccessUsersDiff{
+							ToCreate: changes.Users.ToCreate,
+							ToUpdate: changes.Users.ToUpdate,
+							ToDelete: changes.Users.ToDelete,
+						},
+					},
+				},
+			},
+		}); err != nil {
+			return errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) DeletePage(ctx context.Context, req *DeletePageRequest) (*DeletePageResponse, error) {

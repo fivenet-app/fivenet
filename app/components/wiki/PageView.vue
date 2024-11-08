@@ -10,7 +10,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import PagesList from './PagesList.vue';
+import PageActivityList from './PageActivityList.vue';
 
 const props = defineProps<{
     page: Page | undefined;
@@ -113,7 +113,14 @@ watchOnce(tocLinks, async () => {
     handleHashChange(route.hash);
 });
 
-const accordionItems = computed(() => [{ slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' }]);
+const accordionItems = computed(() =>
+    [
+        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
+        can('WikiService.ListPageActivity').value
+            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 </script>
 
 <template>
@@ -128,7 +135,7 @@ const accordionItems = computed(() => [{ slot: 'access', label: t('common.access
     <div class="flex flex-1 flex-col px-8 py-2 pt-4">
         <UPage>
             <template #left>
-                <PagesList :pages="pages" />
+                <slot name="left" />
             </template>
 
             <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
@@ -254,6 +261,12 @@ const accordionItems = computed(() => [{ slot: 'access', label: t('common.access
                                     </UBadge>
                                 </div>
                             </div>
+                        </UContainer>
+                    </template>
+
+                    <template v-if="can('WikiService.ListPageActivity').value" #activity>
+                        <UContainer>
+                            <PageActivityList :page-id="page.id" />
                         </UContainer>
                     </template>
                 </UAccordion>
