@@ -1,5 +1,7 @@
 <script lang="ts" setup>
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
 import { getGRPCWikiClient } from '~/composables/grpc';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -14,7 +16,7 @@ definePageMeta({
 
 const { can } = useAuth();
 
-const { data: pages } = useLazyAsyncData(`wiki-pages`, () => listPages());
+const { data: pages, pending: loading, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
@@ -72,10 +74,13 @@ watch(pages, async () => {
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
+                <DataErrorBlock v-else-if="error" :retry="refresh" />
                 <DataNoDataBlock
-                    v-if="!pages || pages.length === 0"
+                    v-else-if="!pages || pages.length === 0"
                     icon="i-mdi-file-search"
                     :message="$t('common.not_found', [$t('common.wiki', 2)])"
+                    :retry="refresh"
                 />
 
                 <UPageGrid v-else>
