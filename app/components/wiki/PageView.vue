@@ -36,7 +36,7 @@ const notifications = useNotificatorStore();
 const breadcrumbs = computed(() => [
     {
         label: t('common.wiki'),
-        icon: 'i-mdi-brain',
+        icon: 'i-mdi-home',
         to: '/wiki',
     },
     ...[
