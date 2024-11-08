@@ -71,7 +71,7 @@ const canDo = computed(() => ({
 }));
 
 const schema = z.object({
-    parentId: z.string(),
+    parentId: z.string().optional(),
     meta: z.object({
         title: z.string().min(3).max(255),
         description: z.string().max(255),
@@ -88,7 +88,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    parentId: page.value?.parentId ?? (props.pages.length === 0 ? '0' : (props.pages.at(0)?.id ?? '-1')),
+    parentId: undefined,
     meta: {
         title: page.value?.meta?.title ?? '',
         description: page.value?.meta?.description ?? '',
@@ -101,6 +101,25 @@ const state = reactive<Schema>({
         users: [],
     },
 });
+
+function setFromProps(): void {
+    state.parentId =
+        page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
+            ? undefined
+            : (page.value?.parentId ?? (props.pages.length === 0 ? undefined : (props.pages.at(0)?.id ?? undefined)));
+
+    state.meta.title = page.value.meta?.title ?? '';
+    state.meta.description = page.value.meta?.description ?? '';
+    state.meta.public = page.value.meta?.public ?? false;
+    state.meta.toc = page.value.meta?.toc ?? true;
+    state.content = page.value.content;
+    state.access = page.value.access ?? {
+        jobs: [],
+        users: [],
+    };
+}
+
+setFromProps();
 
 const access = ref(
     new Map<
@@ -246,9 +265,10 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
         }
     });
 
+    const create = !page.value.id;
     try {
         let responsePage: Page | undefined = undefined;
-        if (!page.value.id) {
+        if (create) {
             const call = getGRPCWikiClient().createPage({
                 page: req,
             });
@@ -268,7 +288,11 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        if (!page.value.id) {
+        if (responsePage) {
+            page.value = responsePage;
+        }
+
+        if (create) {
             navigateTo({
                 name: 'wiki-job-id-slug',
                 params: {
@@ -340,7 +364,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
         <div class="flex flex-1 flex-col px-8 py-2 pt-4">
             <UPage>
                 <div class="flex flex-col gap-2">
-                    <UFormGroup name="meta.parentId" :label="$t('common.parent_page')" class="w-full">
+                    <UFormGroup
+                        v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
+                        name="meta.parentId"
+                        :label="$t('common.parent_page')"
+                        class="w-full"
+                    >
                         <ClientOnly>
                             <USelectMenu v-model="state.parentId" value-attribute="id" searchable-lazy :options="parentPages">
                                 <template #label>

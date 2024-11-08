@@ -32,21 +32,18 @@ const modal = useModal();
 
 const notifications = useNotificatorStore();
 
-const breadcrumbs = computed(() => {
-    console.log(props.page?.id, props.page?.parentId, props.pages?.at(0)?.id);
-    return [
-        {
-            label: t('common.wiki'),
-            icon: 'i-mdi-brain',
-            to: '/wiki',
-        },
-        ...[
-            !props.page ? { label: t('pages.notfound.page_not_found') } : undefined,
-            props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
-            props.page?.meta ? { label: props.page.meta.title } : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])),
-    ];
-});
+const breadcrumbs = computed(() => [
+    {
+        label: t('common.wiki'),
+        icon: 'i-mdi-brain',
+        to: '/wiki',
+    },
+    ...[
+        !props.page ? { label: t('pages.notfound.page_not_found') } : undefined,
+        props.page && props.page?.id !== props.pages?.at(0)?.id ? { label: '...' } : undefined,
+        props.page?.meta ? { label: props.page.meta.title } : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+]);
 
 async function deletePage(id: string): Promise<void> {
     try {

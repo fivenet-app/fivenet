@@ -591,33 +591,35 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	defer tx.Rollback()
 
 	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
-		countStmt := tPage.
+		stmt := tPage.
 			SELECT(
-				jet.COUNT(tPage.ID).AS("datacount.totalcount"),
+				tPage.ID.AS("id"),
 			).
 			FROM(tPage).
 			WHERE(jet.AND(
 				tPage.Job.EQ(jet.String(userInfo.Job)),
 			))
 
-		var count database.DataCount
-		if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		var ids struct {
+			ID uint64 `alias:"id"`
+		}
+		if err := stmt.QueryContext(ctx, s.db, &ids); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
 				return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 			}
 		}
 
-		if count.TotalCount > 0 {
+		if ids.ID != req.Page.Id {
 			return nil, errorswiki.ErrPageDenied
 		}
-	}
-
-	parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	if !parentCheck {
-		return nil, errorswiki.ErrPageDenied
+	} else {
+		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+		if !parentCheck {
+			return nil, errorswiki.ErrPageDenied
+		}
 	}
 
 	tPage := table.FivenetWikiPages
