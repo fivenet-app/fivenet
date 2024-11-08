@@ -49,7 +49,7 @@ const groups = [
     />
 
     <ClientOnly>
-        <UModal v-model="isOpen">
+        <UModal v-model="isOpen" :ui="{ width: 'w-full sm:max-w-5xl' }">
             <UCommandPalette
                 :groups="groups"
                 :empty-state="{
