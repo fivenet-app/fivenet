@@ -252,7 +252,11 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		data.Date = req.Date.End
 		for i := 0; i < len(data.Entries); i++ {
 			if data.Entries[i].User != nil {
-				jobInfoFn(data.Entries[i].User)
+				if data.Entries[i].User.Job != userInfo.Job {
+					jobInfoFn(data.Entries[i].User)
+				} else {
+					s.enricher.EnrichJobInfo(data.Entries[i].User)
+				}
 			}
 			data.Sum += data.Entries[i].SpentTime
 		}
@@ -309,7 +313,11 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 		for i := 0; i < len(data.Entries); i++ {
 			if data.Entries[i].User != nil {
-				jobInfoFn(data.Entries[i].User)
+				if data.Entries[i].User.Job != userInfo.Job {
+					jobInfoFn(data.Entries[i].User)
+				} else {
+					s.enricher.EnrichJobInfo(data.Entries[i].User)
+				}
 			}
 			data.Sum += data.Entries[i].SpentTime
 		}
