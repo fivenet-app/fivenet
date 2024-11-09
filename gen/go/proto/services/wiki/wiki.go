@@ -516,6 +516,15 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
+		p, err := s.getPage(ctx, *req.Page.ParentId, false, false, nil)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+
+		if p.Job != userInfo.Job {
+			return nil, errorswiki.ErrPageDenied
+		}
+
 		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -652,6 +661,15 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
+		p, err := s.getPage(ctx, *req.Page.ParentId, false, false, nil)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+		}
+
+		if p.Job != userInfo.Job {
+			return nil, errorswiki.ErrPageDenied
+		}
+
 		parentCheck, err := s.access.CanUserAccessTarget(ctx, *req.Page.ParentId, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
