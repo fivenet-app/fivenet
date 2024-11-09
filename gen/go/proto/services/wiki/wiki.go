@@ -170,24 +170,26 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		)
 	}
 
-	condition = condition.AND(jet.AND(
-		tPageShort.DeletedAt.IS_NULL(),
-		jet.OR(
-			tPageShort.Public.IS_TRUE(),
-			tPageShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+	if !userInfo.SuperUser {
+		condition = condition.AND(jet.AND(
+			tPageShort.DeletedAt.IS_NULL(),
 			jet.OR(
-				jet.AND(
-					tPUserAccess.Access.IS_NOT_NULL(),
-					tPUserAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-				),
-				jet.AND(
-					tPUserAccess.Access.IS_NULL(),
-					tPJobAccess.Access.IS_NOT_NULL(),
-					tPJobAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+				tPageShort.Public.IS_TRUE(),
+				tPageShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				jet.OR(
+					jet.AND(
+						tPUserAccess.Access.IS_NOT_NULL(),
+						tPUserAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					),
+					jet.AND(
+						tPUserAccess.Access.IS_NULL(),
+						tPJobAccess.Access.IS_NOT_NULL(),
+						tPJobAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					),
 				),
 			),
-		),
-	))
+		))
+	}
 
 	if req.Job != nil {
 		if *req.Job == "" {
