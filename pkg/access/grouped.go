@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
@@ -148,9 +149,6 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx co
 			g.Users.columns.Access.IS_NOT_NULL(),
 			g.Users.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
 		}
-		if g.Jobs != nil {
-			condition = append(condition, g.Jobs.columns.Access.IS_NULL())
-		}
 		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))
 	}
 
@@ -166,6 +164,8 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx co
 		)).
 		GROUP_BY(g.targetTableColumns.ID).
 		ORDER_BY(orderBys...)
+
+	fmt.Println(stmt.DebugSql())
 
 	var dest struct {
 		IDs []uint64 `alias:"id"`
