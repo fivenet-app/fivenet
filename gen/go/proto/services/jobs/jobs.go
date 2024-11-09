@@ -83,13 +83,7 @@ func NewServer(p Params) *Server {
 			return err
 		}
 
-		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
-			Name:     "jobs.timeclock_handling",
-			Schedule: "@everysecond", // Every second
-		}); err != nil {
-			return err
-		}
-
+		p.Cron.UnregisterCronjob(ctx, "jobs.timeclock_handling")
 		p.Cron.UnregisterCronjob(ctx, "jobs-timeclock-handling")
 
 		return nil
