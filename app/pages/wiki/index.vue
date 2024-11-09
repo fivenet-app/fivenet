@@ -66,8 +66,6 @@ watch(pages, async () => {
                 </template>
 
                 <template #right>
-                    <PageSearch class="!flex lg:!hidden" />
-
                     <UButton v-if="can('WikiService.CreatePage')" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                         {{ $t('common.page') }}
                     </UButton>
@@ -75,6 +73,8 @@ watch(pages, async () => {
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
+                <PageSearch class="mb-2 !flex lg:!hidden" />
+
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock v-else-if="error" :retry="refresh" />
                 <DataNoDataBlock
