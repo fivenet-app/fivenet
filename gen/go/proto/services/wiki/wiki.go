@@ -80,7 +80,12 @@ func NewServer(p Params) *Server {
 		access: access.NewGrouped(
 			p.DB,
 			table.FivenetWikiPages,
-			&access.TargetTableColumns{},
+			&access.TargetTableColumns{
+				ID:         table.FivenetWikiPages.ID,
+				DeletedAt:  table.FivenetWikiPages.DeletedAt,
+				CreatorID:  table.FivenetWikiPages.CreatorID,
+				CreatorJob: table.FivenetWikiPages.Job,
+			},
 			access.NewJobs[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.AccessLevel](
 				table.FivenetWikiPageJobAccess,
 				&access.JobAccessColumns{
@@ -411,6 +416,7 @@ func (s *Server) getPageAccess(ctx context.Context, userInfo *userinfo.UserInfo,
 
 func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, withAccess bool, userInfo *userinfo.UserInfo) (*wiki.Page, error) {
 	columns := []jet.Projection{
+		tPage.ID,
 		tPage.Job,
 		tPage.ParentID,
 		tPage.CreatedAt.AS("page_meta.created_at"),
@@ -427,6 +433,8 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 		tCreator.Lastname,
 		tCreator.Dateofbirth,
 		tPage.ContentType.AS("page_meta.content_Type"),
+		tPage.Toc.AS("page_meta.toc"),
+		tPage.Public.AS("page_meta.public"),
 	}
 	if withContent {
 		columns = append(columns,
@@ -676,8 +684,9 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
+		// Reset parent id to current one
 		if !parentCheck {
-			return nil, errorswiki.ErrPageDenied
+			*req.Page.ParentId = *p.ParentId
 		}
 	}
 

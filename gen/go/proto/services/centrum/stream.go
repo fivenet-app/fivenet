@@ -124,14 +124,14 @@ func (s *Server) stream(srv CentrumService_StreamServer, job string, userId int3
 
 	// Watch for events from message queue
 	for {
-		resp := &StreamResponse{}
-
 		select {
 		case <-srv.Context().Done():
 			return nil
 
 		case msg := <-stream:
-			resp.Change = msg.Change
+			resp := &StreamResponse{
+				Change: msg.Change,
+			}
 			if err := srv.Send(resp); err != nil {
 				return err
 			}

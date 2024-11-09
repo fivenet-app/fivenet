@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { RoutesNamedLocations, TypedRouteFromName } from '@typed-router';
+import type { TypedRouteFromName } from '@typed-router';
 import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -29,7 +29,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { attr, can } = useAuth();
 
 const route = useRoute('jobs-colleagues-id-info');
 
@@ -70,38 +70,41 @@ function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp
     colleague.value.colleague.props.absenceEnd = value.absenceEnd;
 }
 
-const links = [
-    {
-        label: t('common.info'),
-        to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? '0' } },
-        icon: 'i-mdi-information-slab-circle',
-        permission: 'JobsService.GetColleague' as Perms,
-    },
-    {
-        label: t('common.activity'),
-        to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? '0' } },
-        icon: 'i-mdi-pulse',
-        permission: 'JobsService.ListColleagueActivity' as Perms,
-    },
-    {
-        label: t('common.timeclock'),
-        to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? '0' } },
-        icon: 'i-mdi-timeline-clock',
-        permission: 'JobsTimeclockService.ListTimeclock' as Perms,
-    },
-    {
-        label: t('pages.qualifications.title'),
-        to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? '0' } },
-        icon: 'i-mdi-school',
-        permission: 'QualificationsService.ListQualifications' as Perms,
-    },
-    {
-        label: t('pages.jobs.conduct.title'),
-        to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? '0' } },
-        icon: 'i-mdi-list-status',
-        permission: 'JobsConductService.ListConductEntries' as Perms,
-    },
-].filter((tab) => can(tab.permission).value) as { label: string; to: RoutesNamedLocations; icon: string; permission: Perms }[];
+const links = computed(() =>
+    [
+        {
+            label: t('common.info'),
+            to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? '0' } },
+            icon: 'i-mdi-information-slab-circle',
+            permission: 'JobsService.GetColleague' as Perms,
+        },
+        {
+            label: t('common.activity'),
+            to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? '0' } },
+            icon: 'i-mdi-pulse',
+            permission: 'JobsService.ListColleagueActivity' as Perms,
+        },
+        {
+            label: t('common.timeclock'),
+            to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? '0' } },
+            icon: 'i-mdi-timeline-clock',
+            permission: 'JobsTimeclockService.ListTimeclock' as Perms,
+            check: attr('JobsTimeclockService.ListTimeclock', 'Fields', 'Public').value,
+        },
+        {
+            label: t('pages.qualifications.title'),
+            to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? '0' } },
+            icon: 'i-mdi-school',
+            permission: 'QualificationsService.ListQualifications' as Perms,
+        },
+        {
+            label: t('pages.jobs.conduct.title'),
+            to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? '0' } },
+            icon: 'i-mdi-list-status',
+            permission: 'JobsConductService.ListConductEntries' as Perms,
+        },
+    ].filter((tab) => can(tab.permission).value && tab.check),
+);
 </script>
 
 <template>
