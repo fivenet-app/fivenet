@@ -493,6 +493,11 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 		}
 	}
 
+	if req.Page.Meta.Toc == nil {
+		toc := true
+		req.Page.Meta.Toc = &toc
+	}
+
 	// Field Permission Check
 	fieldsAttr, err := s.perms.Attr(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
 	if err != nil {
