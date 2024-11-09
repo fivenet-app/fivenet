@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { File } from "../filestore/file";
 import { Timestamp } from "../timestamp/timestamp";
 // Exam / Questions
 
@@ -81,6 +82,12 @@ export interface ExamQuestionData {
          */
         separator: ExamQuestionSeparator;
     } | {
+        oneofKind: "image";
+        /**
+         * @generated from protobuf field: resources.qualifications.ExamQuestionImage image = 6;
+         */
+        image: ExamQuestionImage;
+    } | {
         oneofKind: "yesno";
         /**
          * @generated from protobuf field: resources.qualifications.ExamQuestionYesNo yesno = 2;
@@ -112,6 +119,19 @@ export interface ExamQuestionData {
  * @generated from protobuf message resources.qualifications.ExamQuestionSeparator
  */
 export interface ExamQuestionSeparator {
+}
+/**
+ * @generated from protobuf message resources.qualifications.ExamQuestionImage
+ */
+export interface ExamQuestionImage {
+    /**
+     * @generated from protobuf field: resources.filestore.File image = 1;
+     */
+    image?: File;
+    /**
+     * @generated from protobuf field: optional string alt = 2;
+     */
+    alt?: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.ExamQuestionYesNo
@@ -476,6 +496,7 @@ class ExamQuestionData$Type extends MessageType<ExamQuestionData> {
     constructor() {
         super("resources.qualifications.ExamQuestionData", [
             { no: 1, name: "separator", kind: "message", oneof: "data", T: () => ExamQuestionSeparator },
+            { no: 6, name: "image", kind: "message", oneof: "data", T: () => ExamQuestionImage },
             { no: 2, name: "yesno", kind: "message", oneof: "data", T: () => ExamQuestionYesNo },
             { no: 3, name: "free_text", kind: "message", oneof: "data", T: () => ExamQuestionText },
             { no: 4, name: "single_choice", kind: "message", oneof: "data", T: () => ExamQuestionSingleChoice },
@@ -498,6 +519,12 @@ class ExamQuestionData$Type extends MessageType<ExamQuestionData> {
                     message.data = {
                         oneofKind: "separator",
                         separator: ExamQuestionSeparator.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).separator)
+                    };
+                    break;
+                case /* resources.qualifications.ExamQuestionImage image */ 6:
+                    message.data = {
+                        oneofKind: "image",
+                        image: ExamQuestionImage.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).image)
                     };
                     break;
                 case /* resources.qualifications.ExamQuestionYesNo yesno */ 2:
@@ -539,6 +566,9 @@ class ExamQuestionData$Type extends MessageType<ExamQuestionData> {
         /* resources.qualifications.ExamQuestionSeparator separator = 1; */
         if (message.data.oneofKind === "separator")
             ExamQuestionSeparator.internalBinaryWrite(message.data.separator, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamQuestionImage image = 6; */
+        if (message.data.oneofKind === "image")
+            ExamQuestionImage.internalBinaryWrite(message.data.image, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* resources.qualifications.ExamQuestionYesNo yesno = 2; */
         if (message.data.oneofKind === "yesno")
             ExamQuestionYesNo.internalBinaryWrite(message.data.yesno, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
@@ -586,6 +616,59 @@ class ExamQuestionSeparator$Type extends MessageType<ExamQuestionSeparator> {
  * @generated MessageType for protobuf message resources.qualifications.ExamQuestionSeparator
  */
 export const ExamQuestionSeparator = new ExamQuestionSeparator$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExamQuestionImage$Type extends MessageType<ExamQuestionImage> {
+    constructor() {
+        super("resources.qualifications.ExamQuestionImage", [
+            { no: 1, name: "image", kind: "message", T: () => File },
+            { no: 2, name: "alt", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExamQuestionImage>): ExamQuestionImage {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ExamQuestionImage>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamQuestionImage): ExamQuestionImage {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.filestore.File image */ 1:
+                    message.image = File.internalBinaryRead(reader, reader.uint32(), options, message.image);
+                    break;
+                case /* optional string alt */ 2:
+                    message.alt = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExamQuestionImage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.filestore.File image = 1; */
+        if (message.image)
+            File.internalBinaryWrite(message.image, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional string alt = 2; */
+        if (message.alt !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.alt);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.ExamQuestionImage
+ */
+export const ExamQuestionImage = new ExamQuestionImage$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ExamQuestionYesNo$Type extends MessageType<ExamQuestionYesNo> {
     constructor() {
@@ -819,7 +902,7 @@ class ExamUser$Type extends MessageType<ExamUser> {
     constructor() {
         super("resources.qualifications.ExamUser", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "ends_at", kind: "message", T: () => Timestamp },
@@ -902,7 +985,7 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.ExamResponses", [
             { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "responses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamResponse, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
@@ -965,7 +1048,7 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
     constructor() {
         super("resources.qualifications.ExamResponse", [
             { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "question", kind: "message", T: () => ExamQuestion },
             { no: 4, name: "response", kind: "message", T: () => ExamResponseData }
         ]);

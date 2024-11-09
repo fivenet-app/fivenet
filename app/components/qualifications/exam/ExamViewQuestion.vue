@@ -30,6 +30,20 @@ const response = useVModel(props, 'modelValue', emits);
             <p>{{ modelValue?.question.description }}</p>
         </div>
 
+        <div v-else-if="modelValue?.question!.data?.data.oneofKind === 'image'">
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+
+            <div class="flex flex-1 justify-between gap-2">
+                <p>{{ modelValue?.question.description }}</p>
+                <p v-if="modelValue?.question.points">{{ $t('common.point', modelValue?.question.points) }}</p>
+            </div>
+
+            <img
+                :src="modelValue?.question!.data?.data.image?.image?.url"
+                :alt="modelValue?.question!.data?.data.image?.alt ?? $t('common.image')"
+            />
+        </div>
+
         <div
             v-else-if="
                 modelValue?.question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'

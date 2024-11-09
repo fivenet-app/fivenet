@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -45,6 +46,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	notif    notifi.INotifi
+	st       storage.IStorage
 
 	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel]
 }
@@ -61,6 +63,7 @@ type Params struct {
 	Audit             audit.IAuditer
 	Config            *config.Config
 	Notif             notifi.INotifi
+	Storage           storage.IStorage
 }
 
 func NewServer(p Params) *Server {
@@ -72,6 +75,7 @@ func NewServer(p Params) *Server {
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
 		notif:    p.Notif,
+		st:       p.Storage,
 
 		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel](
 			p.DB,

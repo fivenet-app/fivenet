@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.qualifications;
 
+import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -33,6 +34,7 @@ message ExamQuestion {
 message ExamQuestionData {
   oneof data {
     ExamQuestionSeparator separator = 1;
+    ExamQuestionImage image = 6;
     ExamQuestionYesNo yesno  = 2;
     ExamQuestionText free_text = 3;
     ExamQuestionSingleChoice single_choice = 4;
@@ -41,6 +43,11 @@ message ExamQuestionData {
 }
 
 message ExamQuestionSeparator {}
+
+message ExamQuestionImage {
+  resources.filestore.File image = 1;
+  optional string alt = 2 [(validate.rules).string.max_len = 128];
+}
 
 message ExamQuestionYesNo {}
 
@@ -66,7 +73,7 @@ message ExamQuestionAnswerData {
 
 message ExamUser {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  int32 user_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
   optional resources.timestamp.Timestamp ends_at = 5;
@@ -75,13 +82,13 @@ message ExamUser {
 
 message ExamResponses {
   uint64 qualification_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  int32 user_id = 2;
   repeated ExamResponse responses = 3 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
   uint64 question_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  int32 user_id = 2;
 
   ExamQuestion question = 3;
   ExamResponseData response = 4;

@@ -30,6 +30,8 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { activeChar } = useAuth();
+
 const completorStore = useCompletorStore();
 
 const notifications = useNotificatorStore();
@@ -70,8 +72,8 @@ async function createOrUpdateQualificationResult(
                 status: values.status,
                 score: values.score,
                 summary: values.summary,
-                creatorId: 0,
-                creatorJob: '',
+                creatorId: activeChar.value!.userId,
+                creatorJob: activeChar.value!.job,
             },
         });
         const { response } = await call;

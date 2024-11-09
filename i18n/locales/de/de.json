@@ -962,7 +962,8 @@
                     "yesno": "Ja/Nein",
                     "freeText": "Freitext",
                     "singleChoice": "Einfachauswahl",
-                    "multipleChoice": "Mehrfachauswahl"
+                    "multipleChoice": "Mehrfachauswahl",
+                    "image": "Bild"
                 }
             },
             "result_modal": {

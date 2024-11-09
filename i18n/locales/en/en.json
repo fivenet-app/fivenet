@@ -962,7 +962,8 @@
                     "yesno": "Yes/No",
                     "freeText": "Free Text",
                     "singleChoice": "Single Choice",
-                    "multipleChoice": "Multiple Choice"
+                    "multipleChoice": "Multiple Choice",
+                    "image": "Image"
                 }
             },
             "result_modal": {

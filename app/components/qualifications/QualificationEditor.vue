@@ -209,8 +209,8 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             title: values.title,
             description: values.description,
             content: values.content,
-            creatorId: 0,
-            creatorJob: '',
+            creatorId: activeChar.value!.userId,
+            creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
             access: {
                 jobs: [],
@@ -269,8 +269,8 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             title: values.title,
             description: values.description,
             content: values.content,
-            creatorId: 0,
-            creatorJob: '',
+            creatorId: activeChar.value!.userId,
+            creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
             access: {
                 jobs: [],

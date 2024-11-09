@@ -39,6 +39,8 @@ const (
 	JobLogos  FilePrefix = "joblogos"
 	MugShots  FilePrefix = "mugshots"
 	JobAssets FilePrefix = "jobassets"
+
+	QualificationExamAssets FilePrefix = "qualifications_exam"
 )
 
 // Scan implements driver.Valuer for protobuf DocumentAccess.

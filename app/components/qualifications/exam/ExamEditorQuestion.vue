@@ -14,6 +14,10 @@ const emits = defineEmits<{
 
 const question = useVModel(props, 'modelValue', emits);
 
+const appConfig = useAppConfig();
+
+const imageSchema = zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images);
+
 const schema = z.object({
     id: z.string(),
     title: z.string().min(3).max(512),
@@ -23,6 +27,16 @@ const schema = z.object({
             z.object({
                 oneofKind: z.literal('separator'),
                 separator: z.object({}),
+            }),
+            z.object({
+                oneofKind: z.literal('image'),
+                image: z.object({
+                    alt: z.string().max(128).optional(),
+                    image: z.object({
+                        url: z.string().optional(),
+                        data: z.any(),
+                    }),
+                }),
             }),
             z.object({
                 oneofKind: z.literal('yesno'),
@@ -63,10 +77,34 @@ watch(question, () => {
                 answerKey: '',
             },
         };
+    } else {
+        if (question.value.data?.data.oneofKind === 'image') {
+            imageUrl.value = question.value.data?.data.image.image?.url;
+        }
     }
 });
 
-const questionTypes = ['separator', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
+const imageUrl = ref<string | undefined>();
+if (question.value?.data?.data.oneofKind === 'image') {
+    imageUrl.value = question.value.data?.data.image.image?.url;
+}
+
+async function handleImage(files: FileList): Promise<void> {
+    if (question.value!.data!.data.oneofKind !== 'image') {
+        return;
+    }
+
+    if (!files || files.length === 0 || !files[0]) {
+        return;
+    }
+
+    question.value!.data!.data.image.image = { data: new Uint8Array(await files[0].arrayBuffer()) };
+    console.log(question.value!.data!.data.image);
+
+    imageUrl.value = URL.createObjectURL(files[0]);
+}
+
+const questionTypes = ['separator', 'image', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
 
 function changeQuestionType(qt: string): void {
     if (question.value === undefined) {
@@ -74,6 +112,15 @@ function changeQuestionType(qt: string): void {
     }
 
     switch (qt) {
+        case 'image':
+            question.value.data = {
+                data: {
+                    oneofKind: 'image',
+                    image: {},
+                },
+            };
+            break;
+
         case 'yesno':
             question.value.data = {
                 data: {
@@ -178,6 +225,24 @@ function changeQuestionType(qt: string): void {
                     </UDivider>
 
                     <p class="mb-2">{{ question.description }}</p>
+                </template>
+
+                <template v-else-if="question.data!.data.oneofKind === 'image'">
+                    <div class="flex flex-col gap-2">
+                        <p v-if="isNUIAvailable()" class="text-sm">
+                            {{ $t('system.not_supported_on_tablet.title') }}
+                        </p>
+                        <template v-else>
+                            <UInput
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                                :placeholder="$t('common.image')"
+                                @change="handleImage($event)"
+                            />
+                        </template>
+
+                        <img v-if="imageUrl" :src="imageUrl" />
+                    </div>
                 </template>
 
                 <template v-else-if="question.data!.data.oneofKind === 'yesno'">
@@ -304,7 +369,10 @@ function changeQuestionType(qt: string): void {
                     </div>
                 </template>
 
-                <div v-if="question.data!.data.oneofKind !== 'separator'" class="mt-2 flex flex-row gap-2">
+                <div
+                    v-if="question.data!.data.oneofKind !== 'separator' && question.data!.data.oneofKind !== 'image'"
+                    class="mt-2 flex flex-row gap-2"
+                >
                     <UFormGroup name="answer.answerKey" :label="$t('common.answer_key')" class="flex-1">
                         <UTextarea v-model="question.answer!.answerKey" :placeholder="$t('common.answer_key')" />
                     </UFormGroup>

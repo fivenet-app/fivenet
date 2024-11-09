@@ -527,6 +527,47 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 		}
 
+	case *ExamQuestionData_Image:
+		if v == nil {
+			err := ExamQuestionDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetImage()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamQuestionDataValidationError{
+						field:  "Image",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamQuestionDataValidationError{
+						field:  "Image",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetImage()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamQuestionDataValidationError{
+					field:  "Image",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *ExamQuestionData_Yesno:
 		if v == nil {
 			err := ExamQuestionDataValidationError{
@@ -874,6 +915,152 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ExamQuestionSeparatorValidationError{}
+
+// Validate checks the field values on ExamQuestionImage with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ExamQuestionImage) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExamQuestionImage with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExamQuestionImageMultiError, or nil if none found.
+func (m *ExamQuestionImage) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExamQuestionImage) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetImage()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ExamQuestionImageValidationError{
+					field:  "Image",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ExamQuestionImageValidationError{
+					field:  "Image",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetImage()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ExamQuestionImageValidationError{
+				field:  "Image",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.Alt != nil {
+
+		if utf8.RuneCountInString(m.GetAlt()) > 128 {
+			err := ExamQuestionImageValidationError{
+				field:  "Alt",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ExamQuestionImageMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExamQuestionImageMultiError is an error wrapping multiple validation errors
+// returned by ExamQuestionImage.ValidateAll() if the designated constraints
+// aren't met.
+type ExamQuestionImageMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExamQuestionImageMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExamQuestionImageMultiError) AllErrors() []error { return m }
+
+// ExamQuestionImageValidationError is the validation error returned by
+// ExamQuestionImage.Validate if the designated constraints aren't met.
+type ExamQuestionImageValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExamQuestionImageValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExamQuestionImageValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExamQuestionImageValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExamQuestionImageValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExamQuestionImageValidationError) ErrorName() string {
+	return "ExamQuestionImageValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExamQuestionImageValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExamQuestionImage.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExamQuestionImageValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExamQuestionImageValidationError{}
 
 // Validate checks the field values on ExamQuestionYesNo with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1459,16 +1646,7 @@ func (m *ExamUser) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	if m.GetUserId() < 0 {
-		err := ExamUserValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for UserId
 
 	if m.CreatedAt != nil {
 
@@ -1703,16 +1881,7 @@ func (m *ExamResponses) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
-	if m.GetUserId() < 0 {
-		err := ExamResponsesValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for UserId
 
 	if len(m.GetResponses()) > 50 {
 		err := ExamResponsesValidationError{
@@ -1861,16 +2030,7 @@ func (m *ExamResponse) validate(all bool) error {
 
 	// no validation rules for QuestionId
 
-	if m.GetUserId() < 0 {
-		err := ExamResponseValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for UserId
 
 	if all {
 		switch v := interface{}(m.GetQuestion()).(type) {

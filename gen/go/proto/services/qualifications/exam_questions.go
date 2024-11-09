@@ -6,7 +6,10 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
+	errorsqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications/errors"
+	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -86,7 +89,34 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 
 	toCreate, toUpdate, toDelete := s.compareExamQuestions(current.Questions, questions.Questions)
 
-	if len(toCreate) > 0 {
+	for _, question := range toCreate {
+		if question.Data == nil {
+			continue
+		}
+
+		switch data := question.Data.Data.(type) {
+		case *qualifications.ExamQuestionData_Image:
+			if data.Image.Image == nil || data.Image.Image.Url == nil {
+				continue
+			}
+
+			if len(data.Image.Image.Data) == 0 {
+				continue
+			}
+
+			if !data.Image.Image.IsImage() {
+				return errorsqualifications.ErrFailedQuery
+			}
+
+			if err := data.Image.Image.Optimize(ctx); err != nil {
+				return err
+			}
+
+			if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
+				return err
+			}
+		}
+
 		stmt := tExamQuestions.
 			INSERT(
 				tExamQuestions.QualificationID,
@@ -95,10 +125,8 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				tExamQuestions.Data,
 				tExamQuestions.Answer,
 				tExamQuestions.Points,
-			)
-
-		for _, question := range toCreate {
-			stmt = stmt.VALUES(
+			).
+			VALUES(
 				qualificationId,
 				question.Title,
 				question.Description,
@@ -106,7 +134,6 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 				question.Answer,
 				question.Points,
 			)
-		}
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
@@ -114,6 +141,31 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 	}
 
 	for _, question := range toUpdate {
+		if question.Data != nil {
+			switch data := question.Data.Data.(type) {
+			case *qualifications.ExamQuestionData_Image:
+				if data.Image.Image == nil {
+					continue
+				}
+
+				if len(data.Image.Image.Data) == 0 {
+					continue
+				}
+
+				if !data.Image.Image.IsImage() {
+					return errorsqualifications.ErrFailedQuery
+				}
+
+				if err := data.Image.Image.Optimize(ctx); err != nil {
+					return err
+				}
+
+				if err := data.Image.Image.Upload(ctx, s.st, filestore.QualificationExamAssets, storage.FileNameSplitter(data.Image.Image.GetHash())); err != nil {
+					return err
+				}
+			}
+		}
+
 		stmt := tExamQuestions.
 			UPDATE(
 				tExamQuestions.Title,
@@ -156,6 +208,22 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 			return err
 		}
 
+		for _, question := range toDelete {
+			if question.Data == nil {
+				continue
+			}
+
+			switch data := question.Data.Data.(type) {
+			case *qualifications.ExamQuestionData_Image:
+				if data.Image.Image == nil || data.Image.Image.Url == nil {
+					continue
+				}
+
+				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*data.Image.Image.Url)); err != nil {
+					return err
+				}
+			}
+		}
 	}
 
 	return nil
