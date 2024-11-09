@@ -12,6 +12,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
+    permission: 'WikiService.ListPages',
 });
 
 const { can } = useAuth();

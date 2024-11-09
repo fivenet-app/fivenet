@@ -13,6 +13,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
+    permission: 'WikiService.GetPage',
     validate: async (route) => {
         route = route as TypedRouteFromName<'wiki-job-id-slug'>;
         // Check if the id is made up of digits

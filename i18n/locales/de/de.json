@@ -2138,7 +2138,13 @@
             },
             "CreatePage": {
                 "key": "Seiten erstellen",
-                "description": "Lexikon Seiten erstellen können."
+                "description": "Lexikon Seiten erstellen können.",
+                "attrs": {
+                    "Public": "Öffentliche Seiten, die jeder aufrufen kann"
+                },
+                "attrs_types": {
+                    "Fields": "Zugriff auf spezielle Freigaben von Seiten"
+                }
             },
             "UpdatePage": {
                 "key": "Seiten aktualisieren",

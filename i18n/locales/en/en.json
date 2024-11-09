@@ -2138,7 +2138,13 @@
             },
             "CreatePage": {
                 "key": "Create Pages",
-                "description": "Create pages in wiki."
+                "description": "Create pages in wiki.",
+                "attrs": {
+                    "Public": "Public pages for anyone to view"
+                },
+                "attrs_types": {
+                    "Fields": "Access to creating pages with specific access"
+                }
             },
             "UpdatePage": {
                 "key": "Update Pages",

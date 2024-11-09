@@ -2,6 +2,15 @@
 import PageEditor from '~/components/wiki/PageEditor.vue';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
+useHead({
+    title: 'common.wiki',
+});
+definePageMeta({
+    title: 'common.wiki',
+    requiresAuth: true,
+    permission: ['WikiService.CreatePage', 'WikiService.UpdatePage'],
+});
+
 const { activeChar } = useAuth();
 
 const { data: pages } = useLazyAsyncData(`wiki-pages`, () => listPages());

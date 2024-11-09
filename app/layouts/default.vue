@@ -160,7 +160,7 @@ const links = computed(() =>
             tooltip: {
                 text: t('common.wiki'),
             },
-            permission: 'TODOService.TODOMethod' as Perms,
+            permission: 'WikiService.ListPages' as Perms,
         },
         {
             label: t('common.control_panel'),

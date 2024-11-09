@@ -80,7 +80,7 @@ const items = [
         title: t('common.wiki'),
         description: t('pages.overview.features.wiki'),
         to: { name: 'wiki' },
-        permission: 'TODOService.TODOMethod',
+        permission: 'WikiService.ListPages',
         icon: 'i-mdi-brain',
     },
 ] as CardElements;
