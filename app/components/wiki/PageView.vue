@@ -10,6 +10,7 @@ import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import GenericTime from '../partials/elements/GenericTime.vue';
 import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
 
@@ -182,12 +183,7 @@ const accordionItems = computed(() =>
             </template>
 
             <template v-else>
-                <UPageHeader
-                    v-if="page?.meta"
-                    :title="page.meta.title"
-                    :description="page.meta.description"
-                    :ui="{ wrapper: 'py-4' }"
-                >
+                <UPageHeader v-if="page?.meta" :title="page.meta.title" :ui="{ wrapper: 'py-4' }">
                     <template #links>
                         <UTooltip :text="$t('common.refresh')">
                             <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
@@ -208,6 +204,36 @@ const accordionItems = computed(() =>
                                 "
                             />
                         </UTooltip>
+                    </template>
+
+                    <template v-if="page.meta.updatedAt || page.meta.deletedAt" #description>
+                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                            <UBadge v-if="page.meta.createdAt" color="black" class="inline-flex gap-1" size="md">
+                                <UIcon name="i-mdi-calendar" class="size-5" />
+                                <span>
+                                    {{ $t('common.created') }}
+                                    <GenericTime :value="page.meta.createdAt" type="long" />
+                                </span>
+                            </UBadge>
+
+                            <UBadge v-if="page.meta.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                                <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                                <span>
+                                    {{ $t('common.updated') }}
+                                    <GenericTime :value="page.meta.updatedAt" type="long" />
+                                </span>
+                            </UBadge>
+
+                            <UBadge v-if="page.meta.deletedAt" color="amber" class="inline-flex gap-1" size="md">
+                                <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                                <span>
+                                    {{ $t('common.deleted') }}
+                                    <GenericTime :value="page.meta.deletedAt" type="long" />
+                                </span>
+                            </UBadge>
+                        </div>
+
+                        <p>{{ page.meta.description }}</p>
                     </template>
                 </UPageHeader>
 
