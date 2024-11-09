@@ -310,68 +310,24 @@ func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResp
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	condition := jet.AND(
-		tPage.ID.EQ(jet.Uint64(req.Id)),
-		tPage.DeletedAt.IS_NULL(),
-		jet.OR(
-			tPage.Public.IS_TRUE(),
-			tPage.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-			jet.AND(
-				tPJobAccess.Access.IS_NOT_NULL(),
-				tPJobAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-			),
-		),
-	)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Id, userInfo, wiki.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorswiki.ErrPageDenied
+	}
 
-	stmt := tPage.
-		SELECT(
-			tPage.ID,
-			tPage.Job,
-			tPage.ParentID,
-			tPage.CreatedAt.AS("page_meta.created_at"),
-			tPage.UpdatedAt.AS("page_meta.updated_at"),
-			tPage.DeletedAt.AS("page_meta.deleted_at"),
-			tPage.Slug.AS("page_meta.slug"),
-			tPage.Title.AS("page_meta.title"),
-			tPage.Description.AS("page_meta.description"),
-			tPage.CreatorID.AS("page_meta.creator_id"),
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tPage.ContentType.AS("page_meta.content_Type"),
-			tPage.Content,
-			tPage.Data,
-		).
-		FROM(
-			tPage.
-				LEFT_JOIN(tPJobAccess,
-					tPJobAccess.PageID.EQ(tPage.ID).
-						AND(tPJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tPJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-				).
-				LEFT_JOIN(tCreator,
-					tPage.CreatorID.EQ(tCreator.ID),
-				),
-		).
-		WHERE(condition).
-		LIMIT(1)
+	page, err := s.getPage(ctx, req.Id, true, true, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
 
 	resp := &GetPageResponse{
-		Page: &wiki.Page{},
+		Page: page,
 	}
 
-	if err := stmt.QueryContext(ctx, s.db, resp.Page); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-		}
-	}
-
-	if resp.Page.Id <= 0 {
-		resp.Page = nil
-	} else {
+	if resp.Page != nil {
 		s.enricher.EnrichJobName(resp.Page)
 
 		access, err := s.getPageAccess(ctx, userInfo, req.Id)
@@ -496,14 +452,6 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
 		countStmt := tPage.
 			SELECT(
@@ -556,6 +504,14 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 	if !slices.Contains(fields, "Public") {
 		req.Page.Meta.Public = false
 	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	tPage := table.FivenetWikiPages
 	stmt := tPage.
@@ -639,14 +595,6 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	if req.Page.ParentId == nil || *req.Page.ParentId <= 0 {
 		stmt := tPage.
 			SELECT(
@@ -704,6 +652,14 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	stmt := tPage.
 		UPDATE(

@@ -95,7 +95,6 @@ export type Perms =
 	| 'CompletorService.CompleteCitizenAttributes'
 	| 'CompletorService.CompleteCitizens'
 	| 'CompletorService.CompleteDocumentCategories'
-	| 'CompletorService.CompleteJobs'
 	| 'DMVService.ListVehicles'
 	| 'DocStoreService.AddDocumentReference'
 	| 'DocStoreService.AddDocumentRelation'

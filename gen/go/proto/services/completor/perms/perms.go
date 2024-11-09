@@ -15,5 +15,4 @@ const (
 	CompletorServiceCompleteCitizensPerm                    perms.Name = "CompleteCitizens"
 	CompletorServiceCompleteDocumentCategoriesPerm          perms.Name = "CompleteDocumentCategories"
 	CompletorServiceCompleteDocumentCategoriesJobsPermField perms.Key  = "Jobs"
-	CompletorServiceCompleteJobsPerm                        perms.Name = "CompleteJobs"
 )

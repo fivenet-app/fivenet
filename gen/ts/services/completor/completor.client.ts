@@ -28,7 +28,7 @@ export interface ICompletorServiceClient {
      */
     completeCitizens(input: CompleteCitizensRequest, options?: RpcOptions): UnaryCall<CompleteCitizensRequest, CompleteCitizensRespoonse>;
     /**
-     * @perm
+     * @perm: Name=Any
      *
      * @generated from protobuf rpc: CompleteJobs(services.completor.CompleteJobsRequest) returns (services.completor.CompleteJobsResponse);
      */
@@ -71,7 +71,7 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
         return stackIntercept<CompleteCitizensRequest, CompleteCitizensRespoonse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=Any
      *
      * @generated from protobuf rpc: CompleteJobs(services.completor.CompleteJobsRequest) returns (services.completor.CompleteJobsResponse);
      */

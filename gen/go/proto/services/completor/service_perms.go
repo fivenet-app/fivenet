@@ -12,6 +12,7 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: CompletorService
+	"CompletorService/CompleteJobs": "Any",
 	"CompletorService/ListLawBooks": "Any",
 }
 
@@ -47,11 +48,6 @@ func init() {
 					Type: permissions.JobListAttributeType,
 				},
 			},
-		},
-		{
-			Category: permkeys.CompletorServicePerm,
-			Name:     permkeys.CompletorServiceCompleteJobsPerm,
-			Attrs:    []perms.Attr{},
 		},
 	})
 }

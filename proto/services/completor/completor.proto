@@ -56,7 +56,7 @@ message CompleteCitizenAttributesResponse {
 service CompletorService {
   // @perm
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensRespoonse);
-  // @perm
+  // @perm: Name=Any
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse);
   // @perm: Attrs=Jobs/JobList
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse);

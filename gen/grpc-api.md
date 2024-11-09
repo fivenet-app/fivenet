@@ -7224,7 +7224,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | CompleteCitizens | [CompleteCitizensRequest](#services-completor-CompleteCitizensRequest) | [CompleteCitizensRespoonse](#services-completor-CompleteCitizensRespoonse) | @perm |
-| CompleteJobs | [CompleteJobsRequest](#services-completor-CompleteJobsRequest) | [CompleteJobsResponse](#services-completor-CompleteJobsResponse) | @perm |
+| CompleteJobs | [CompleteJobsRequest](#services-completor-CompleteJobsRequest) | [CompleteJobsResponse](#services-completor-CompleteJobsResponse) | @perm: Name=Any |
 | CompleteDocumentCategories | [CompleteDocumentCategoriesRequest](#services-completor-CompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#services-completor-CompleteDocumentCategoriesResponse) | @perm: Attrs=Jobs/JobList |
 | ListLawBooks | [ListLawBooksRequest](#services-completor-ListLawBooksRequest) | [ListLawBooksResponse](#services-completor-ListLawBooksResponse) | @perm: Name=Any |
 | CompleteCitizenAttributes | [CompleteCitizenAttributesRequest](#services-completor-CompleteCitizenAttributesRequest) | [CompleteCitizenAttributesResponse](#services-completor-CompleteCitizenAttributesResponse) | @perm: Attrs=Jobs/JobList |

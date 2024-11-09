@@ -32,7 +32,7 @@ const (
 type CompletorServiceClient interface {
 	// @perm
 	CompleteCitizens(ctx context.Context, in *CompleteCitizensRequest, opts ...grpc.CallOption) (*CompleteCitizensRespoonse, error)
-	// @perm
+	// @perm: Name=Any
 	CompleteJobs(ctx context.Context, in *CompleteJobsRequest, opts ...grpc.CallOption) (*CompleteJobsResponse, error)
 	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(ctx context.Context, in *CompleteDocumentCategoriesRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoriesResponse, error)
@@ -101,7 +101,7 @@ func (c *completorServiceClient) CompleteCitizenAttributes(ctx context.Context, 
 type CompletorServiceServer interface {
 	// @perm
 	CompleteCitizens(context.Context, *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error)
-	// @perm
+	// @perm: Name=Any
 	CompleteJobs(context.Context, *CompleteJobsRequest) (*CompleteJobsResponse, error)
 	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(context.Context, *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error)
