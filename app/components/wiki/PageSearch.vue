@@ -42,7 +42,7 @@ const groups = [
         v-bind="$attrs"
         :icon="appConfig.ui.icons.search"
         color="gray"
-        class="w-full min-w-10 sm:min-w-64"
+        class="w-full"
         :label="$t('common.search_field')"
         truncate
         aria-label="Search"
