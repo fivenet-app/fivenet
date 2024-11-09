@@ -103,7 +103,7 @@ const links = computed(() =>
             icon: 'i-mdi-list-status',
             permission: 'JobsConductService.ListConductEntries' as Perms,
         },
-    ].filter((tab) => can(tab.permission).value && tab.check),
+    ].filter((tab) => can(tab.permission).value && (tab.check === undefined || tab.check === true)),
 );
 </script>
 
