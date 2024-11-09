@@ -2125,6 +2125,33 @@
                 "key": "Post messages",
                 "description": "Allow users to post messages to threads they have access to."
             }
+        },
+        "WikiService": {
+            "category": "Wiki",
+            "ListPages": {
+                "key": "List Pages",
+                "description": "List wiki pages. Should always be given."
+            },
+            "GetPage": {
+                "key": "View Pages",
+                "description": "Should always be given."
+            },
+            "CreatePage": {
+                "key": "Create Pages",
+                "description": "Create pages in wiki."
+            },
+            "UpdatePage": {
+                "key": "Update Pages",
+                "description": "Update pages in wiki."
+            },
+            "DeletePage": {
+                "key": "Delete Pages",
+                "description": "Deleting wiki pages (requires Owner access)."
+            },
+            "ListPageActivity": {
+                "key": "View Page history",
+                "description": "Viewing page history."
+            }
         }
     },
     "errors": {

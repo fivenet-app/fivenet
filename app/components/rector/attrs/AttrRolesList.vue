@@ -175,7 +175,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </div>
                     </div>
                 </div>
-                <div class="ml-2 flex w-full basis-2/3">
+                <div class="ml-2 w-full basis-2/3">
                     <template v-if="selectedRole">
                         <AttrView
                             :role-id="selectedRole.id"

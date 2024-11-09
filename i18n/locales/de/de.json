@@ -2125,6 +2125,33 @@
                 "key": "Nachrichten schreiben",
                 "description": "Erlauben das User Nachrichten schreiben können zu Konversationen auf die Sie Zugriff haben."
             }
+        },
+        "WikiService": {
+            "category": "Lexikon",
+            "ListPages": {
+                "key": "Seiten anzeigen",
+                "description": "Sollte immer gegeben werden."
+            },
+            "GetPage": {
+                "key": "Seiten aufrufen",
+                "description": "Sollte immer gegeben werden."
+            },
+            "CreatePage": {
+                "key": "Seiten erstellen",
+                "description": "Lexikon Seiten erstellen können."
+            },
+            "UpdatePage": {
+                "key": "Seiten aktualisieren",
+                "description": "Lexikon Seiten aktualisieren können."
+            },
+            "DeletePage": {
+                "key": "Seiten löschen",
+                "description": "Lexikon Seiten löschen können (Erfordert Besitzer Rechte)."
+            },
+            "ListPageActivity": {
+                "key": "Seiten Aktivität anzeigen",
+                "description": "Historische Aktivität von Seiten anzeigen lassen."
+            }
         }
     },
     "errors": {
