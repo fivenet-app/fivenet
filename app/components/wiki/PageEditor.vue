@@ -116,7 +116,12 @@ function setFromProps(): void {
     state.parentId =
         page.value?.meta?.createdAt !== undefined && page.value?.parentId === undefined
             ? undefined
-            : (page.value?.parentId ?? (props.pages.length === 0 ? undefined : (props.pages.at(0)?.id ?? undefined)));
+            : (page.value?.parentId ??
+              (props.pages.length === 0
+                  ? undefined
+                  : props.pages.at(0)?.job !== undefined && props.pages.at(0)?.job === activeChar.value?.job
+                    ? props.pages.at(0)?.id
+                    : undefined));
 
     state.meta.title = page.value.meta?.title ?? '';
     state.meta.description = page.value.meta?.description ?? '';

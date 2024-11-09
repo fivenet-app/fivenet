@@ -27,6 +27,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/gosimple/slug"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
@@ -475,6 +477,8 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.parent_id", int64(*req.Page.ParentId)))
+
 		p, err := s.getPage(ctx, *req.Page.ParentId, false, false, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -590,6 +594,8 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 }
 
 func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*UpdatePageResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Page.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -784,6 +790,8 @@ func (s *Server) handlePageAccessChange(ctx context.Context, tx qrm.DB, pageId u
 }
 
 func (s *Server) DeletePage(ctx context.Context, req *DeletePageRequest) (*DeletePageResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
