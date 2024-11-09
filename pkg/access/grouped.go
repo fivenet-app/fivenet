@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
@@ -164,8 +163,6 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx co
 		)).
 		GROUP_BY(g.targetTableColumns.ID).
 		ORDER_BY(orderBys...)
-
-	fmt.Println(stmt.DebugSql())
 
 	var dest struct {
 		IDs []uint64 `alias:"id"`
