@@ -15,7 +15,7 @@ definePageMeta({
     permission: 'WikiService.ListPages',
 });
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const { data: pages, pending: loading, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
@@ -29,7 +29,13 @@ async function listPages(): Promise<PageShort[]> {
         });
         const { response } = await call;
 
-        return response.pages;
+        const pages = response.pages.sort((a, b) => a.job.localeCompare(b.job));
+        if (pages.length > 0) {
+            const ownPageIdx = pages.findIndex((p) => p.job === activeChar.value?.job);
+            pages.unshift(pages.splice(ownPageIdx, 1)[0]!);
+        }
+
+        return pages;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
