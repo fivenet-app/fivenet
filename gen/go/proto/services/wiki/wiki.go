@@ -314,13 +314,14 @@ func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResp
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
-	if !check {
-		return nil, errorswiki.ErrPageDenied
-	}
 
 	page, err := s.getPage(ctx, req.Id, true, true, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	if !check && !page.Meta.Public {
+		return nil, errorswiki.ErrPageDenied
 	}
 
 	resp := &GetPageResponse{
