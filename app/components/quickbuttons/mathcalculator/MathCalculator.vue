@@ -36,7 +36,7 @@ function doDelete() {
     }
 
     if (currentCalculate.value !== '0') {
-        currentCalculate.value = currentCalculate.value.toString().slice(0, -1);
+        currentCalculate.value = currentCalculate.value.slice(0, -1);
     }
     if (currentCalculate.value === '') {
         currentCalculate.value = '0';
@@ -76,6 +76,7 @@ function inputValue(val: string) {
             currentCalculate.value += maskedIn(val);
         }
     }
+
     nextTick(function () {
         scrollRight();
     });
@@ -89,7 +90,6 @@ function scrollRight() {
 }
 
 function scrollDown() {
-    console.log('TEST');
     if (resultElement.value?.scrollTop === undefined) {
         return;
     }
@@ -118,15 +118,19 @@ function calculate() {
 }
 
 function counted() {
-    const rep = currentCalculate.value.replace('x', '*').replace(',', '.');
+    const rep = currentCalculate.value
+        .replace('x', '*')
+        .replace(',', '.')
+        .replace(/[*+-/]0/, '');
     const lastCalculate = currentCalculate.value;
-    const currentCalt = eval(rep).toString();
+    let currentCalt = '';
+    currentCalt = eval(rep).toString();
     addHistroy(lastCalculate, currentCalt.replace('.', ','));
     currentCalculate.value = currentCalt.replace('.', ',');
 }
 
 function maskedIn(val: string) {
-    return val.toString().replace('*', 'x');
+    return val.replace('*', 'x');
 }
 
 function lastIsOperand() {
@@ -155,6 +159,28 @@ function addHistroy(operation: string, result: string) {
 function deleteHistory() {
     histroryOperation.value = [];
 }
+
+const digitKeys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', ','];
+const operatorKeys = ['/', '*', '+', '-'];
+const resultKeys = ['=', 'Enter'];
+const eraseKeys = ['Backspace', 'Delete'];
+const clearKeys = ['Escape'];
+
+onKeyStroke([...digitKeys, ...operatorKeys, ...resultKeys, ...clearKeys, ...eraseKeys], (e) => {
+    const key = e.key === ',' ? '.' : e.key;
+
+    if (digitKeys.includes(key)) {
+        inputValue(key);
+    } else if (operatorKeys.includes(key)) {
+        inputValue(key);
+    } else if (resultKeys.includes(key)) {
+        calculate();
+    } else if (eraseKeys.includes(key)) {
+        doDelete();
+    } else if (clearKeys.includes(key)) {
+        allClear();
+    }
+});
 </script>
 
 <template>
@@ -173,7 +199,7 @@ function deleteHistory() {
                 <div ref="resultElement" class="space-y-3 overflow-y-auto p-1.5">
                     <div v-for="(history, idx) in histroryOperation" :key="idx" class="-space-y-1">
                         <p class="text-lg font-light">{{ history.operation }}</p>
-                        <p class="text-2xl font-medium">&#x3D; {{ history.result }}</p>
+                        <p class="text-2xl font-medium">&#x3D; {{ $n(parseInt(history.result)) }}</p>
                     </div>
                 </div>
 
