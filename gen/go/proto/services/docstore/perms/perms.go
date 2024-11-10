@@ -26,7 +26,6 @@ const (
 	DocStoreServiceDeleteDocumentAccessPermField      perms.Key  = "Access"
 	DocStoreServiceDeleteDocumentReqPerm              perms.Name = "DeleteDocumentReq"
 	DocStoreServiceDeleteTemplatePerm                 perms.Name = "DeleteTemplate"
-	DocStoreServiceGetDocumentPerm                    perms.Name = "GetDocument"
 	DocStoreServiceListCategoriesPerm                 perms.Name = "ListCategories"
 	DocStoreServiceListDocumentActivityPerm           perms.Name = "ListDocumentActivity"
 	DocStoreServiceListDocumentReqsPerm               perms.Name = "ListDocumentReqs"

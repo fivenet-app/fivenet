@@ -156,13 +156,13 @@ export interface IDocStoreServiceClient {
      */
     changeDocumentOwner(input: ChangeDocumentOwnerRequest, options?: RpcOptions): UnaryCall<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse>;
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentReferences(services.docstore.GetDocumentReferencesRequest) returns (services.docstore.GetDocumentReferencesResponse);
      */
     getDocumentReferences(input: GetDocumentReferencesRequest, options?: RpcOptions): UnaryCall<GetDocumentReferencesRequest, GetDocumentReferencesResponse>;
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentRelations(services.docstore.GetDocumentRelationsRequest) returns (services.docstore.GetDocumentRelationsResponse);
      */
@@ -192,7 +192,7 @@ export interface IDocStoreServiceClient {
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>;
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetComments(services.docstore.GetCommentsRequest) returns (services.docstore.GetCommentsResponse);
      */
@@ -216,7 +216,7 @@ export interface IDocStoreServiceClient {
      */
     deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse>;
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentAccess(services.docstore.GetDocumentAccessRequest) returns (services.docstore.GetDocumentAccessResponse);
      */
@@ -418,7 +418,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<ChangeDocumentOwnerRequest, ChangeDocumentOwnerResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentReferences(services.docstore.GetDocumentReferencesRequest) returns (services.docstore.GetDocumentReferencesResponse);
      */
@@ -427,7 +427,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<GetDocumentReferencesRequest, GetDocumentReferencesResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentRelations(services.docstore.GetDocumentRelationsRequest) returns (services.docstore.GetDocumentRelationsResponse);
      */
@@ -472,7 +472,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetComments(services.docstore.GetCommentsRequest) returns (services.docstore.GetCommentsResponse);
      */
@@ -508,7 +508,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<DeleteCommentRequest, DeleteCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=GetDocument
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocumentAccess(services.docstore.GetDocumentAccessRequest) returns (services.docstore.GetDocumentAccessResponse);
      */

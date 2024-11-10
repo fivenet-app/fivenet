@@ -85,9 +85,9 @@ type DocStoreServiceClient interface {
 	ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(ctx context.Context, in *ChangeDocumentOwnerRequest, opts ...grpc.CallOption) (*ChangeDocumentOwnerResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentRelations(ctx context.Context, in *GetDocumentRelationsRequest, opts ...grpc.CallOption) (*GetDocumentRelationsResponse, error)
 	// @perm
 	AddDocumentReference(ctx context.Context, in *AddDocumentReferenceRequest, opts ...grpc.CallOption) (*AddDocumentReferenceResponse, error)
@@ -97,7 +97,7 @@ type DocStoreServiceClient interface {
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
 	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	// @perm
 	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
@@ -105,7 +105,7 @@ type DocStoreServiceClient interface {
 	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @perm: Name=CreateDocument
 	SetDocumentAccess(ctx context.Context, in *SetDocumentAccessRequest, opts ...grpc.CallOption) (*SetDocumentAccessResponse, error)
@@ -495,9 +495,9 @@ type DocStoreServiceServer interface {
 	ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	ChangeDocumentOwner(context.Context, *ChangeDocumentOwnerRequest) (*ChangeDocumentOwnerResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentRelations(context.Context, *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error)
 	// @perm
 	AddDocumentReference(context.Context, *AddDocumentReferenceRequest) (*AddDocumentReferenceResponse, error)
@@ -507,7 +507,7 @@ type DocStoreServiceServer interface {
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
 	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	// @perm
 	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
@@ -515,7 +515,7 @@ type DocStoreServiceServer interface {
 	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
-	// @perm: Name=GetDocument
+	// @perm: Name=ListDocuments
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @perm: Name=CreateDocument
 	SetDocumentAccess(context.Context, *SetDocumentAccessRequest) (*SetDocumentAccessResponse, error)
