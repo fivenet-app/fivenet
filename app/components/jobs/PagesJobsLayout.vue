@@ -53,7 +53,9 @@ const links = [
                 <UHorizontalNavigation :links="links" />
             </UDashboardToolbar>
 
-            <slot />
+            <UDashboardPanelContent class="p-0">
+                <slot />
+            </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

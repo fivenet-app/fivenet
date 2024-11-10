@@ -91,7 +91,7 @@ const selectedTab = computed({
             />
             <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
-            <template v-else>
+            <UDashboardPanelContent v-else class="p-0">
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #accountInfo>
                         <UDashboardPanelContent>
@@ -170,7 +170,7 @@ const selectedTab = computed({
                         <DebugInfo />
                     </template>
                 </UTabs>
-            </template>
+            </UDashboardPanelContent>
         </template>
     </div>
 </template>

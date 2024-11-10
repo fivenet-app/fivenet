@@ -378,7 +378,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </template>
         </UDashboardNavbar>
 
-        <div class="flex flex-1 flex-col px-8 py-2 pt-4">
+        <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
             <UPage>
                 <div class="flex flex-col gap-2">
                     <UFormGroup

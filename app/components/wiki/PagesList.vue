@@ -18,5 +18,5 @@ const navItems = computed(() => props.pages.map((p) => mapNavItemToNavItem(p)) ?
 </script>
 
 <template>
-    <UNavigationTree :links="mapContentNavigation(navItems)" />
+    <UNavigationTree class="mt-2 sm:mt-0" :links="mapContentNavigation(navItems)" />
 </template>

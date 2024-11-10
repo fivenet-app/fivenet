@@ -180,62 +180,64 @@ watchDebounced(query, async () => refresh(), {
         </UForm>
     </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
-        :retry="refresh"
-        class="flex-1"
-    />
-    <DataNoDataBlock
-        v-else-if="data?.activity.length === 0"
-        icon="i-mdi-pulse"
-        :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
-        class="flex-1"
-    />
+    <div class="relative flex-1 overflow-x-auto">
+        <DataErrorBlock
+            v-if="error"
+            :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
+            :retry="refresh"
+            class="w-full"
+        />
+        <DataNoDataBlock
+            v-else-if="data?.activity.length === 0"
+            icon="i-mdi-pulse"
+            :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
+            class="w-full"
+        />
 
-    <div v-else-if="loading || data?.activity" class="relative flex-1 overflow-x-auto">
-        <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-            <template v-if="loading">
-                <li v-for="idx in 10" :key="idx" class="px-2 py-4">
-                    <div class="flex space-x-3">
-                        <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                            <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
-                        </div>
-
-                        <div class="flex-1 space-y-1">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-sm font-medium">
-                                    <USkeleton class="h-5 w-[350px]" />
-                                </h3>
-
-                                <p>
-                                    <USkeleton class="h-5 w-[175px]" />
-                                </p>
+        <div v-else-if="loading || data?.activity">
+            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <template v-if="loading">
+                    <li v-for="idx in 10" :key="idx" class="px-2 py-4">
+                        <div class="flex space-x-3">
+                            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                                <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
                             </div>
 
-                            <div class="flex items-center justify-between">
-                                <p class="flex flex-col gap-1 text-sm">
-                                    <USkeleton class="h-8 w-[200px]" />
-                                </p>
-                                <p class="inline-flex items-center gap-1 text-sm">
-                                    <USkeleton class="h-5 w-[175px]" />
-                                </p>
+                            <div class="flex-1 space-y-1">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-sm font-medium">
+                                        <USkeleton class="h-5 w-[350px]" />
+                                    </h3>
+
+                                    <p>
+                                        <USkeleton class="h-5 w-[175px]" />
+                                    </p>
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <p class="flex flex-col gap-1 text-sm">
+                                        <USkeleton class="h-8 w-[200px]" />
+                                    </p>
+                                    <p class="inline-flex items-center gap-1 text-sm">
+                                        <USkeleton class="h-5 w-[175px]" />
+                                    </p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </li>
-            </template>
+                    </li>
+                </template>
 
-            <template v-else>
-                <li
-                    v-for="activity in data?.activity"
-                    :key="activity.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
-                >
-                    <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-                </li>
-            </template>
-        </ul>
+                <template v-else>
+                    <li
+                        v-for="activity in data?.activity"
+                        :key="activity.id"
+                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+                    >
+                        <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+                    </li>
+                </template>
+            </ul>
+        </div>
     </div>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />

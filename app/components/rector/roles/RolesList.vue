@@ -104,7 +104,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <div class="py-2">
+    <div class="relative overflow-x-auto">
         <div class="px-1 sm:px-2">
             <div class="flex flex-col lg:flex-row">
                 <div class="mt-2 flow-root basis-1/3">
@@ -191,7 +191,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </div>
                 </div>
 
-                <div class="mt-0 mt-4 w-full basis-2/3 md:ml-2">
+                <div class="mt-0 mt-4 w-full basis-2/3 lg:ml-2">
                     <RoleView
                         v-if="selectedRole"
                         :role-id="selectedRole.id"

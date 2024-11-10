@@ -369,27 +369,38 @@ const clipboardLink = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
+const { isDashboardSidebarSlideoverOpen } = useUIState();
+
 const quickAccessButtons = computed(() =>
     [
         jobProps.value?.quickButtons?.penaltyCalculator || isSuperuser.value
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => modal.open(PenaltyCalculatorModal),
+                  click: () => {
+                      isDashboardSidebarSlideoverOpen.value = false;
+                      modal.open(PenaltyCalculatorModal);
+                  },
               }
             : undefined,
         jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
-                  click: () => modal.open(BodyCheckupModal, {}),
+                  click: () => {
+                      isDashboardSidebarSlideoverOpen.value = false;
+                      modal.open(BodyCheckupModal, {});
+                  },
               }
             : undefined,
         jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => modal.open(MathCalculatorModal, {}),
+                  click: () => {
+                      isDashboardSidebarSlideoverOpen.value = false;
+                      modal.open(MathCalculatorModal, {});
+                  },
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),

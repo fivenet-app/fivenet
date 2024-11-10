@@ -741,85 +741,87 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </template>
         </UDashboardToolbar>
 
-        <DocumentRelationManager
-            v-model="relationManagerData"
-            :open="openRelationManager"
-            :document-id="documentId"
-            @close="openRelationManager = false"
-        />
-        <DocumentReferenceManager
-            v-model="referenceManagerData"
-            :open="openReferenceManager"
-            :document-id="documentId"
-            @close="openReferenceManager = false"
-        />
+        <UDashboardPanelContent class="p-0">
+            <DocumentRelationManager
+                v-model="relationManagerData"
+                :open="openRelationManager"
+                :document-id="documentId"
+                @close="openRelationManager = false"
+            />
+            <DocumentReferenceManager
+                v-model="referenceManagerData"
+                :open="openReferenceManager"
+                :document-id="documentId"
+                @close="openReferenceManager = false"
+            />
 
-        <template v-if="canDo.edit">
-            <UFormGroup name="content">
-                <ClientOnly>
-                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
-                </ClientOnly>
-            </UFormGroup>
+            <template v-if="canDo.edit">
+                <UFormGroup name="content">
+                    <ClientOnly>
+                        <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                    </ClientOnly>
+                </UFormGroup>
 
-            <template v-if="saving">
-                <div class="flex animate-pulse justify-center">
-                    <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
-                    <span>{{ $t('common.save', 2) }}...</span>
-                </div>
+                <template v-if="saving">
+                    <div class="flex animate-pulse justify-center">
+                        <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
+                        <span>{{ $t('common.save', 2) }}...</span>
+                    </div>
+                </template>
             </template>
-        </template>
 
-        <div class="mt-2 flex flex-col gap-2 px-2">
-            <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
-                <UButton
-                    v-if="canDo.relations"
-                    class="flex-1"
-                    block
-                    :disabled="!canEdit || !canDo.edit"
-                    icon="i-mdi-account-multiple"
-                    @click="openRelationManager = true"
-                >
-                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                </UButton>
-                <UButton
-                    v-if="canDo.references"
-                    class="flex-1"
-                    block
-                    :disabled="!canEdit || !canDo.edit"
-                    icon="i-mdi-file-document"
-                    @click="openReferenceManager = true"
-                >
-                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                </UButton>
-            </UButtonGroup>
+            <div class="mt-2 flex flex-col gap-2 px-2">
+                <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
+                    <UButton
+                        v-if="canDo.relations"
+                        class="flex-1"
+                        block
+                        :disabled="!canEdit || !canDo.edit"
+                        icon="i-mdi-account-multiple"
+                        @click="openRelationManager = true"
+                    >
+                        {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                    </UButton>
+                    <UButton
+                        v-if="canDo.references"
+                        class="flex-1"
+                        block
+                        :disabled="!canEdit || !canDo.edit"
+                        icon="i-mdi-file-document"
+                        @click="openReferenceManager = true"
+                    >
+                        {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                    </UButton>
+                </UButtonGroup>
 
-            <div>
-                <h2 class="text- text-gray-900 dark:text-white">
-                    {{ $t('common.access') }}
-                </h2>
+                <div>
+                    <h2 class="text- text-gray-900 dark:text-white">
+                        {{ $t('common.access') }}
+                    </h2>
 
-                <DocumentAccessEntry
-                    v-for="entry in access.values()"
-                    :key="entry.id"
-                    :init="entry"
-                    :access-types="accessTypes"
-                    :read-only="!canDo.access || entry.required === true"
-                    :jobs="jobs"
-                    @type-change="updateAccessEntryType($event)"
-                    @name-change="updateAccessEntryName($event)"
-                    @rank-change="updateAccessEntryRank($event)"
-                    @access-change="updateAccessEntryAccess($event)"
-                    @delete-request="removeAccessEntry($event)"
-                />
+                    <DocumentAccessEntry
+                        v-for="entry in access.values()"
+                        :key="entry.id"
+                        :init="entry"
+                        :access-types="accessTypes"
+                        :read-only="!canDo.access || entry.required === true"
+                        :jobs="jobs"
+                        @type-change="updateAccessEntryType($event)"
+                        @name-change="updateAccessEntryName($event)"
+                        @rank-change="updateAccessEntryRank($event)"
+                        @access-change="updateAccessEntryAccess($event)"
+                        @delete-request="removeAccessEntry($event)"
+                    />
 
-                <UButton
-                    :disabled="!canEdit || !canDo.access"
-                    :ui="{ rounded: 'rounded-full' }"
-                    icon="i-mdi-plus"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addAccessEntry()"
-                />
+                    <UButton
+                        :disabled="!canEdit || !canDo.access"
+                        :ui="{ rounded: 'rounded-full' }"
+                        icon="i-mdi-plus"
+                        :title="$t('components.documents.document_editor.add_permission')"
+                        @click="addAccessEntry()"
+                    />
+                </div>
             </div>
-        </div>
+        </UDashboardPanelContent>
     </UForm>
 </template>

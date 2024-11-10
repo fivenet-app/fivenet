@@ -245,249 +245,257 @@ const accordionItems = computed(() =>
             </template>
         </UDashboardToolbar>
 
-        <UCard>
-            <template #header>
-                <div class="mb-4">
-                    <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                        {{ qualification.abbreviation }}: {{ qualification.title }}
-                    </h1>
+        <UDashboardPanelContent class="p-0">
+            <UCard>
+                <template #header>
+                    <div class="mb-4">
+                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                            {{ qualification.abbreviation }}: {{ qualification.title }}
+                        </h1>
 
-                    <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
-                        {{ qualification.description }}
-                    </p>
-                </div>
-
-                <div class="mb-2 flex gap-2">
-                    <OpenClosedBadge :closed="qualification.closed" />
-                    <UBadge class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-test-tube" class="size-5" />
-                        <span>
-                            {{ $t('common.exam', 1) }}:
-                            {{
-                                $t(
-                                    `enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`,
-                                )
-                            }}
-                        </span>
-                    </UBadge>
-
-                    <UBadge
-                        v-if="qualification.result?.status"
-                        :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
-                        class="inline-flex gap-1"
-                        size="md"
-                    >
-                        <UIcon name="i-mdi-list-status" class="size-5" />
-                        <span>
-                            {{ $t('common.result') }}:
-                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
-                        </span>
-                    </UBadge>
-                    <UBadge
-                        v-else-if="qualification.request?.status"
-                        :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
-                        class="inline-flex gap-1"
-                        size="md"
-                    >
-                        <UIcon name="i-mdi-mail" class="size-5" />
-                        <span>
-                            {{ $t('common.request') }}:
-                            {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`) }}
-                        </span>
-                    </UBadge>
-                </div>
-
-                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-account" class="size-5" />
-                        <span class="inline-flex items-center gap-1">
-                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                            <CitizenInfoPopover :user="qualification?.creator" />
-                        </span>
-                    </UBadge>
-
-                    <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar" class="size-5" />
-
-                        <span>
-                            {{ $t('common.created_at') }}
-                            <GenericTime :value="qualification?.createdAt" type="long" />
-                        </span>
-                    </UBadge>
-
-                    <UBadge v-if="qualification?.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-edit" class="size-5" />
-                        <span>
-                            {{ $t('common.updated_at') }}
-                            <GenericTime :value="qualification?.updatedAt" type="long" />
-                        </span>
-                    </UBadge>
-
-                    <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-remove" class="size-5" />
-                        <span>
-                            {{ $t('common.deleted') }}
-                            <GenericTime :value="qualification?.deletedAt" type="long" />
-                        </span>
-                    </UBadge>
-                </div>
-
-                <div v-if="qualification.requirements && qualification.requirements.length > 0" class="mt-2 w-full">
-                    <h3>{{ $t('common.requirements', 2) }}:</h3>
-
-                    <div class="flex flex-row flex-wrap gap-1 pb-2">
-                        <ULink
-                            v-for="requirement in qualification.requirements"
-                            :key="requirement.id"
-                            :to="{
-                                name: 'qualifications-id',
-                                params: { id: requirement.targetQualificationId },
-                            }"
-                        >
-                            <UBadge
-                                :color="
-                                    requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
-                                        ? 'green'
-                                        : 'red'
-                                "
-                            >
-                                <span>
-                                    {{ requirement.targetQualification?.abbreviation }}:
-                                    {{ requirement.targetQualification?.title }}
-                                </span>
-                            </UBadge>
-                        </ULink>
+                        <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
+                            {{ qualification.description }}
+                        </p>
                     </div>
-                </div>
-            </template>
 
-            <div>
-                <UTabs v-model="selectedTab" :items="items" class="w-full">
-                    <template #info>
-                        <h2 class="sr-only">
-                            {{ $t('common.content') }}
-                        </h2>
+                    <div class="mb-2 flex gap-2">
+                        <OpenClosedBadge :closed="qualification.closed" />
+                        <UBadge class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-test-tube" class="size-5" />
+                            <span>
+                                {{ $t('common.exam', 1) }}:
+                                {{
+                                    $t(
+                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`,
+                                    )
+                                }}
+                            </span>
+                        </UBadge>
 
-                        <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                            <!-- eslint-disable vue/no-v-html -->
-                            <div
-                                v-if="qualification.content"
-                                class="prose dark:prose-invert min-w-full px-4 py-2"
-                                v-html="qualification.content"
-                            ></div>
-                            <p v-else>
-                                {{ $t('components.qualifications.content_unavailable') }}
-                            </p>
+                        <UBadge
+                            v-if="qualification.result?.status"
+                            :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
+                            class="inline-flex gap-1"
+                            size="md"
+                        >
+                            <UIcon name="i-mdi-list-status" class="size-5" />
+                            <span>
+                                {{ $t('common.result') }}:
+                                {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
+                            </span>
+                        </UBadge>
+                        <UBadge
+                            v-else-if="qualification.request?.status"
+                            :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
+                            class="inline-flex gap-1"
+                            size="md"
+                        >
+                            <UIcon name="i-mdi-mail" class="size-5" />
+                            <span>
+                                {{ $t('common.request') }}:
+                                {{
+                                    $t(
+                                        `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
+                                    )
+                                }}
+                            </span>
+                        </UBadge>
+                    </div>
+
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-account" class="size-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="qualification?.creator" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar" class="size-5" />
+
+                            <span>
+                                {{ $t('common.created_at') }}
+                                <GenericTime :value="qualification?.createdAt" type="long" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="qualification?.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                            <span>
+                                {{ $t('common.updated_at') }}
+                                <GenericTime :value="qualification?.updatedAt" type="long" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                            <span>
+                                {{ $t('common.deleted') }}
+                                <GenericTime :value="qualification?.deletedAt" type="long" />
+                            </span>
+                        </UBadge>
+                    </div>
+
+                    <div v-if="qualification.requirements && qualification.requirements.length > 0" class="mt-2 w-full">
+                        <h3>{{ $t('common.requirements', 2) }}:</h3>
+
+                        <div class="flex flex-row flex-wrap gap-1 pb-2">
+                            <ULink
+                                v-for="requirement in qualification.requirements"
+                                :key="requirement.id"
+                                :to="{
+                                    name: 'qualifications-id',
+                                    params: { id: requirement.targetQualificationId },
+                                }"
+                            >
+                                <UBadge
+                                    :color="
+                                        requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
+                                            ? 'green'
+                                            : 'red'
+                                    "
+                                >
+                                    <span>
+                                        {{ requirement.targetQualification?.abbreviation }}:
+                                        {{ requirement.targetQualification?.title }}
+                                    </span>
+                                </UBadge>
+                            </ULink>
                         </div>
-                    </template>
+                    </div>
+                </template>
 
-                    <template v-if="canDo.grade" #tutor>
-                        <QualificationTutorView :qualification="qualification" />
-                    </template>
-                </UTabs>
-            </div>
+                <div>
+                    <UTabs v-model="selectedTab" :items="items" class="w-full">
+                        <template #info>
+                            <h2 class="sr-only">
+                                {{ $t('common.content') }}
+                            </h2>
 
-            <template #footer>
-                <UAccordion :items="accordionItems" multiple :unmount="true">
-                    <template v-if="qualification.result" #result>
-                        <UContainer>
-                            <div class="flex flex-col gap-1">
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                    <span :class="resultStatusToTextColor(qualification.result?.status ?? 0)">
-                                        {{
-                                            $t(
-                                                `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                            )
-                                        }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.summary') }}:</span>
-                                    {{ qualification.result?.summary }}
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.score') }}:</span>
-                                    {{ $t('common.point', qualification.result?.score ?? 0) }}
-                                </div>
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
-                                    <CitizenInfoPopover :user="qualification.result?.creator" />
-                                </div>
+                            <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                                <!-- eslint-disable vue/no-v-html -->
+                                <div
+                                    v-if="qualification.content"
+                                    class="prose dark:prose-invert min-w-full px-4 py-2"
+                                    v-html="qualification.content"
+                                ></div>
+                                <p v-else>
+                                    {{ $t('components.qualifications.content_unavailable') }}
+                                </p>
                             </div>
-                        </UContainer>
-                    </template>
+                        </template>
 
-                    <template v-if="qualification.request" #request>
-                        <UContainer>
-                            <div class="flex flex-col gap-1">
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                    <span :class="requestStatusToTextColor(qualification.request?.status ?? 0)">
-                                        {{
-                                            $t(
-                                                `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
-                                            )
-                                        }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.request') }} {{ $t('common.message') }}:</span>
-                                    {{ qualification.request?.userComment }}
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.comment') }}:</span>
-                                    {{ qualification.request?.approverComment ?? $t('common.na') }}
-                                </div>
-                                <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
-                                    <span class="inline-flex gap-1">
-                                        <GenericTime :value="qualification.request?.approvedAt" />
-                                    </span>
-                                </div>
-                                <div v-if="qualification.request.approver" class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
-                                    <CitizenInfoPopover :user="qualification.request?.approver" />
-                                </div>
-                            </div>
-                        </UContainer>
-                    </template>
+                        <template v-if="canDo.grade" #tutor>
+                            <QualificationTutorView :qualification="qualification" />
+                        </template>
+                    </UTabs>
+                </div>
 
-                    <template #access>
-                        <UContainer>
-                            <DataNoDataBlock
-                                v-if="!qualification.access || qualification.access?.jobs.length === 0"
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
-                            <div v-else class="mx-4 flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in qualification.access?.jobs"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ entry.jobLabel
-                                            }}<span
-                                                v-if="entry.minimumGrade > 0"
-                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                            >
-                                                ({{ entry.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
+                <template #footer>
+                    <UAccordion :items="accordionItems" multiple :unmount="true">
+                        <template v-if="qualification.result" #result>
+                            <UContainer>
+                                <div class="flex flex-col gap-1">
+                                    <div class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                        <span :class="resultStatusToTextColor(qualification.result?.status ?? 0)">
+                                            {{
+                                                $t(
+                                                    `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                                )
+                                            }}
                                         </span>
-                                    </UBadge>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                        {{ qualification.result?.summary }}
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold">{{ $t('common.score') }}:</span>
+                                        {{ $t('common.point', qualification.result?.score ?? 0) }}
+                                    </div>
+                                    <div class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                        <CitizenInfoPopover :user="qualification.result?.creator" />
+                                    </div>
                                 </div>
-                            </div>
-                        </UContainer>
-                    </template>
-                </UAccordion>
-            </template>
-        </UCard>
+                            </UContainer>
+                        </template>
+
+                        <template v-if="qualification.request" #request>
+                            <UContainer>
+                                <div class="flex flex-col gap-1">
+                                    <div class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                                        <span :class="requestStatusToTextColor(qualification.request?.status ?? 0)">
+                                            {{
+                                                $t(
+                                                    `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
+                                                )
+                                            }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold"
+                                            >{{ $t('common.request') }} {{ $t('common.message') }}:</span
+                                        >
+                                        {{ qualification.request?.userComment }}
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold">{{ $t('common.comment') }}:</span>
+                                        {{ qualification.request?.approverComment ?? $t('common.na') }}
+                                    </div>
+                                    <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
+                                        <span class="inline-flex gap-1">
+                                            <GenericTime :value="qualification.request?.approvedAt" />
+                                        </span>
+                                    </div>
+                                    <div v-if="qualification.request.approver" class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
+                                        <CitizenInfoPopover :user="qualification.request?.approver" />
+                                    </div>
+                                </div>
+                            </UContainer>
+                        </template>
+
+                        <template #access>
+                            <UContainer>
+                                <DataNoDataBlock
+                                    v-if="!qualification.access || qualification.access?.jobs.length === 0"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                />
+                                <div v-else class="mx-4 flex flex-col gap-2">
+                                    <div class="flex flex-row flex-wrap gap-1">
+                                        <UBadge
+                                            v-for="entry in qualification.access?.jobs"
+                                            :key="entry.id"
+                                            color="black"
+                                            class="inline-flex gap-1"
+                                            size="md"
+                                        >
+                                            <span class="size-2 rounded-full bg-info-500" />
+                                            <span>
+                                                {{ entry.jobLabel
+                                                }}<span
+                                                    v-if="entry.minimumGrade > 0"
+                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                                >
+                                                    ({{ entry.jobGradeLabel }})</span
+                                                >
+                                                -
+                                                {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </UBadge>
+                                    </div>
+                                </div>
+                            </UContainer>
+                        </template>
+                    </UAccordion>
+                </template>
+            </UCard>
+        </UDashboardPanelContent>
     </template>
 </template>

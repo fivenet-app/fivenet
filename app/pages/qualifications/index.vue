@@ -66,22 +66,24 @@ const selectedTab = computed({
                 </template>
             </UDashboardNavbar>
 
-            <UTabs v-model="selectedTab" :items="items" :unmount="true" :ui="{ list: { rounded: '' } }">
-                <template #yours>
-                    <UContainer>
-                        <div class="flex flex-col gap-2">
-                            <QualificationsResultsList />
+            <UDashboardPanelContent class="p-0">
+                <UTabs v-model="selectedTab" :items="items" :unmount="true" :ui="{ list: { rounded: '' } }">
+                    <template #yours>
+                        <UContainer>
+                            <div class="flex flex-col gap-2">
+                                <QualificationsResultsList />
 
-                            <QualificationsRequestsList />
-                        </div>
-                    </UContainer>
-                </template>
-                <template #all>
-                    <UContainer>
-                        <QualificationsList />
-                    </UContainer>
-                </template>
-            </UTabs>
+                                <QualificationsRequestsList />
+                            </div>
+                        </UContainer>
+                    </template>
+                    <template #all>
+                        <UContainer>
+                            <QualificationsList />
+                        </UContainer>
+                    </template>
+                </UTabs>
+            </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

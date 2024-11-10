@@ -140,7 +140,7 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <div class="flex flex-1 flex-col px-8 py-2 pt-4">
+    <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
         <UPage>
             <template #left>
                 <slot name="left" />
@@ -306,7 +306,7 @@ const accordionItems = computed(() =>
             </template>
 
             <template v-if="page?.meta?.toc === undefined || page?.meta?.toc === true" #right>
-                <PageSearch class="!flex lg:!hidden" />
+                <PageSearch class="mb-2 !flex lg:!hidden" />
 
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>

@@ -3,15 +3,37 @@ import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import MathCalculator from '~/components/quickbuttons/mathcalculator/MathCalculator.vue';
 
 const { isOpen } = useModal();
+
+const position = ref<'top' | 'middle' | 'bottom'>('middle');
+
+const containerPosition = computed(() => {
+    switch (position.value) {
+        case 'top':
+            return 'sm:items-start justify-end';
+        case 'bottom':
+            return 'sm:items-end justify-end';
+        default:
+            return 'sm:items-center justify-end';
+    }
+});
 </script>
 
 <template>
     <GenericModal
         :open="isOpen"
         :title="$t('components.mathcalculator.title')"
-        :ui="{ width: 'w-full sm:max-w-md' }"
+        :ui="{ width: 'w-full sm:max-w-md', container: containerPosition }"
+        :overlay="false"
         @close="isOpen = false"
     >
-        <MathCalculator />
+        <div class="flex gap-2">
+            <MathCalculator class="flex-1" />
+
+            <UButtonGroup class="my-auto flex-initial" orientation="vertical">
+                <UButton icon="i-mdi-arrow-up-bold" @click="position = 'top'" />
+                <UButton color="black" icon="i-mdi-format-vertical-align-center" @click="position = 'middle'" />
+                <UButton icon="i-mdi-arrow-down-bold" @click="position = 'bottom'" />
+            </UButtonGroup>
+        </div>
     </GenericModal>
 </template>

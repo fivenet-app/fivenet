@@ -397,7 +397,7 @@ defineShortcuts({
             </template>
         </UDashboardToolbar>
 
-        <UCard>
+        <UCard class="relative overflow-x-auto">
             <template #header>
                 <div class="mb-4">
                     <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">

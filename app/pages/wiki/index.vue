@@ -78,9 +78,13 @@ watch(pages, async () => {
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardPanelContent>
-                <PageSearch class="mb-2 !flex lg:!hidden" />
+            <UDashboardToolbar class="!flex lg:!hidden">
+                <template #default>
+                    <PageSearch />
+                </template>
+            </UDashboardToolbar>
 
+            <UDashboardPanelContent>
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock v-else-if="error" :retry="refresh" />
                 <DataNoDataBlock
