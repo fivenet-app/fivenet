@@ -138,7 +138,7 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 			})
 			if idx == -1 {
 				r := user.Roles.Sum[idx]
-				if (user.Job == "" || user.Job == r.Job) && r.KeepIfJobDifferent {
+				if user.Job != r.Job && r.KeepIfJobDifferent {
 					continue
 				}
 
