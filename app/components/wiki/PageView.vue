@@ -105,6 +105,8 @@ const handleHashChange = (hash: string) => {
         if (targetElement) {
             targetElement.scrollIntoView({
                 behavior: 'smooth',
+                block: 'start',
+                inline: 'start',
             }); // Smooth scroll to the element
         }
     }

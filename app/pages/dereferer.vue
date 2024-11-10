@@ -5,7 +5,7 @@ useHeadSafe({
 });
 definePageMeta({
     title: 'pages.dereferer.title',
-    layout: 'blank',
+    layout: 'landing',
     requiresAuth: false,
     redirectIfAuthed: false,
     showCookieOptions: true,
@@ -25,14 +25,14 @@ if (!route.query || !route.query.target) {
         } else {
             await navigateTo(url, { external: true });
         }
-    }, 3250);
+    }, 5000);
 }
 
 const target = route.query.target as string;
 </script>
 
 <template>
-    <div class="flex h-dscreen flex-col">
+    <div class="flex h-screen flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="flex w-full flex-1 items-center justify-center">
@@ -52,14 +52,19 @@ const target = route.query.target as string;
                 </div>
 
                 <template #footer>
-                    <UButton
-                        :label="$t('pages.dereferer.goto')"
-                        trailing-icon="i-mdi-link-variant"
-                        size="lg"
-                        :to="target"
-                        :external="true"
-                        rel="noreferrer"
-                    />
+                    <div class="inline-flex flex-col gap-2">
+                        <UButton
+                            :label="$t('pages.dereferer.goto')"
+                            trailing-icon="i-mdi-link-variant"
+                            size="lg"
+                            :to="isNUIAvailable ? undefined : target"
+                            :external="true"
+                            rel="noreferrer"
+                            @click="isNUIAvailable ? openURLInWindow(target) : undefined"
+                        />
+
+                        <UButton color="red" icon="i-mdi-arrow-back" :label="$t('common.back')" @click="router.back()" />
+                    </div>
                 </template>
             </UCard>
         </div>

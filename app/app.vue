@@ -73,6 +73,29 @@ const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
 };
 
+function clickListener(event: MouseEvent): void {
+    if (!event.target) {
+        return;
+    }
+
+    const element = event.target as HTMLElement;
+    if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
+        return;
+    }
+    const href = element.getAttribute('href');
+    if (href?.startsWith('/')) {
+        return;
+    }
+
+    event.preventDefault();
+    navigateTo({
+        name: 'dereferer',
+        query: {
+            target: href,
+        },
+    });
+}
+
 onMounted(async () => {
     if (!import.meta.client) {
         return;
@@ -83,6 +106,7 @@ onMounted(async () => {
         window.addEventListener('message', onNUIMessage);
     }
 
+    window.addEventListener('click', clickListener);
     window.addEventListener('focusin', onFocusHandler, true);
     window.addEventListener('focusout', onFocusHandler, true);
 });
@@ -97,6 +121,7 @@ onBeforeUnmount(async () => {
         window.removeEventListener('message', onNUIMessage);
     }
 
+    window.removeEventListener('click', clickListener);
     window.removeEventListener('focusin', onFocusHandler);
     window.removeEventListener('focusout', onFocusHandler);
 });
