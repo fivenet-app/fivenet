@@ -246,14 +246,17 @@ const editing = ref(props.startInEdit);
                 </UFormGroup>
             </UForm>
         </template>
-
         <UTable
-            v-model:expand="expand"
             ref="table"
+            v-model:expand="expand"
             :columns="columns"
             :rows="laws"
             :expand-button="{ icon: 'i-mdi-pencil', color: 'primary' }"
             :ui="{ wrapper: '' }"
+            :empty-state="{
+                icon: 'i-mdi-gavel',
+                label: $t('common.not_found', [$t('common.law', 2)]),
+            }"
         >
             <template #expand="{ row: law, index }">
                 <LawEntry

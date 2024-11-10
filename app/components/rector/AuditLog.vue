@@ -293,7 +293,17 @@ const expand = ref({
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
 
-    <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs" v-model:expand="expand">
+    <UTable
+        v-else
+        v-model:expand="expand"
+        :loading="loading"
+        :columns="columns"
+        :rows="data?.logs"
+        :empty-state="{
+            icon: 'i-mdi-math-log',
+            label: $t('common.not_found', [$t('common.entry', 2)]),
+        }"
+    >
         <template #actions-data="{ row }">
             <UButton
                 variant="link"

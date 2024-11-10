@@ -237,7 +237,14 @@ const columns = [
                         <UAccordion multiple :items="filteredLawBooks">
                             <template #item="{ item: lawBook }">
                                 <div class="max-w-full">
-                                    <UTable :columns="columns" :rows="lawBook.book.laws">
+                                    <UTable
+                                        :columns="columns"
+                                        :rows="lawBook.book.laws"
+                                        :empty-state="{
+                                            icon: 'i-mdi-gavel',
+                                            label: $t('common.not_found', [$t('common.law', 2)]),
+                                        }"
+                                    >
                                         <template #name-data="{ row: law }">
                                             <div class="inline-flex items-center gap-2">
                                                 <span class="whitespace-pre-line text-gray-900 dark:text-white">

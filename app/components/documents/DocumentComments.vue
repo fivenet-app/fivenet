@@ -123,8 +123,6 @@ const isVisible = useElementVisibility(commentsEl);
 
 watchOnce(isVisible, async () => refresh());
 
-const commentInput = useTemplateRef('commentInput');
-
 watch(offset, async () => refresh());
 
 const canSubmit = ref(true);
@@ -143,7 +141,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                             <UFormGroup name="comment">
                                 <UTextarea
-                                    ref="commentInput"
                                     v-model="state.comment"
                                     :rows="3"
                                     :placeholder="$t('components.documents.document_comments.add_comment')"
@@ -172,7 +169,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-else-if="!data?.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 icon="i-mdi-comment-text-multiple"
-                :focus="() => commentInput?.textarea?.focus()"
             />
 
             <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">

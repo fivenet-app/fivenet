@@ -157,10 +157,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 :title="$t('common.unable_to_load', [$t('common.job', 2)])"
                                 :retry="refresh"
                             />
-                            <UTable v-else :columns="columns" :rows="sortedRoles" :loading="loading">
+                            <UTable
+                                v-else
+                                :columns="columns"
+                                :rows="sortedRoles"
+                                :loading="loading"
+                                :empty-state="{
+                                    icon: 'i-mdi-account-group',
+                                    label: $t('common.not_found', [$t('common.role', 2)]),
+                                }"
+                            >
                                 <template #job-data="{ row: role }">
                                     <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
                                 </template>
+
                                 <template #actions-data="{ row: role }">
                                     <div class="text-right">
                                         <UButton
@@ -175,16 +185,15 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </div>
                     </div>
                 </div>
-                <div class="ml-2 w-full basis-2/3">
-                    <template v-if="selectedRole">
-                        <AttrView
-                            :role-id="selectedRole.id"
-                            @deleted="
-                                selectedRole = undefined;
-                                refresh();
-                            "
-                        />
-                    </template>
+                <div class="mt-0 mt-4 w-full basis-2/3 md:ml-2">
+                    <AttrView
+                        v-if="selectedRole"
+                        :role-id="selectedRole.id"
+                        @deleted="
+                            selectedRole = undefined;
+                            refresh();
+                        "
+                    />
                     <template v-else>
                         <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
                     </template>
