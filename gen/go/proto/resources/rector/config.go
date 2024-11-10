@@ -31,16 +31,8 @@ func (x *AppConfig) Default() {
 					Name:     "ChooseCharacter",
 				},
 				{
-					Category: "CompletorService",
-					Name:     "CompleteJobs",
-				},
-				{
 					Category: "DocStoreService",
 					Name:     "ListDocuments",
-				},
-				{
-					Category: "DocStoreService",
-					Name:     "PostComment",
 				},
 				{
 					Category: "DocStoreService",

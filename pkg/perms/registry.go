@@ -99,18 +99,18 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 		return err
 	}
 
-	addPerms := make([]AddPerm, len(defaultPerms))
-	for i, perm := range defaultPerms {
+	addPerms := []AddPerm{}
+	for _, perm := range defaultPerms {
 		permId, ok := p.permsGuardToIDMap.Load(perm)
 		if !ok {
 			p.logger.Warn("default perm not found, skipping", zap.String("guard", perm))
 			continue
 		}
 
-		addPerms[i] = AddPerm{
+		addPerms = append(addPerms, AddPerm{
 			Id:  permId,
 			Val: true,
-		}
+		})
 	}
 
 	currentPerms, err := p.GetRolePermissions(ctx, role.ID)
