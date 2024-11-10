@@ -76,25 +76,29 @@ export interface Document {
      */
     creatorJob: string;
     /**
+     * @generated from protobuf field: optional string creator_job_label = 14;
+     */
+    creatorJobLabel?: string;
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string state = 14;
+     * @generated from protobuf field: string state = 15;
      */
     state: string;
     /**
-     * @generated from protobuf field: bool closed = 15;
+     * @generated from protobuf field: bool closed = 16;
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 16;
+     * @generated from protobuf field: bool public = 17;
      */
     public: boolean;
     /**
-     * @generated from protobuf field: optional uint64 template_id = 17 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 template_id = 18 [jstype = JS_STRING];
      */
     templateId?: string;
     /**
-     * @generated from protobuf field: bool pinned = 18;
+     * @generated from protobuf field: bool pinned = 19;
      */
     pinned: boolean;
 }
@@ -155,17 +159,21 @@ export interface DocumentShort {
      */
     creatorJob: string; // @gotags: alias:"creator_job"
     /**
+     * @generated from protobuf field: optional string creator_job_label = 13;
+     */
+    creatorJobLabel?: string;
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string state = 13;
+     * @generated from protobuf field: string state = 14;
      */
     state: string; // @gotags: alias:"state"
     /**
-     * @generated from protobuf field: bool closed = 14;
+     * @generated from protobuf field: bool closed = 15;
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: bool public = 15;
+     * @generated from protobuf field: bool public = 16;
      */
     public: boolean;
 }
@@ -331,11 +339,12 @@ class Document$Type extends MessageType<Document> {
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
             { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 18, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 14, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 15, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 17, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 18, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 19, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -397,19 +406,22 @@ class Document$Type extends MessageType<Document> {
                 case /* string creator_job */ 13:
                     message.creatorJob = reader.string();
                     break;
-                case /* string state */ 14:
+                case /* optional string creator_job_label */ 14:
+                    message.creatorJobLabel = reader.string();
+                    break;
+                case /* string state */ 15:
                     message.state = reader.string();
                     break;
-                case /* bool closed */ 15:
+                case /* bool closed */ 16:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 16:
+                case /* bool public */ 17:
                     message.public = reader.bool();
                     break;
-                case /* optional uint64 template_id = 17 [jstype = JS_STRING];*/ 17:
+                case /* optional uint64 template_id = 18 [jstype = JS_STRING];*/ 18:
                     message.templateId = reader.uint64().toString();
                     break;
-                case /* bool pinned */ 18:
+                case /* bool pinned */ 19:
                     message.pinned = reader.bool();
                     break;
                 default:
@@ -463,21 +475,24 @@ class Document$Type extends MessageType<Document> {
         /* string creator_job = 13; */
         if (message.creatorJob !== "")
             writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
-        /* string state = 14; */
+        /* optional string creator_job_label = 14; */
+        if (message.creatorJobLabel !== undefined)
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* string state = 15; */
         if (message.state !== "")
-            writer.tag(14, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 15; */
+            writer.tag(15, WireType.LengthDelimited).string(message.state);
+        /* bool closed = 16; */
         if (message.closed !== false)
-            writer.tag(15, WireType.Varint).bool(message.closed);
-        /* bool public = 16; */
+            writer.tag(16, WireType.Varint).bool(message.closed);
+        /* bool public = 17; */
         if (message.public !== false)
-            writer.tag(16, WireType.Varint).bool(message.public);
-        /* optional uint64 template_id = 17 [jstype = JS_STRING]; */
+            writer.tag(17, WireType.Varint).bool(message.public);
+        /* optional uint64 template_id = 18 [jstype = JS_STRING]; */
         if (message.templateId !== undefined)
-            writer.tag(17, WireType.Varint).uint64(message.templateId);
-        /* bool pinned = 18; */
+            writer.tag(18, WireType.Varint).uint64(message.templateId);
+        /* bool pinned = 19; */
         if (message.pinned !== false)
-            writer.tag(18, WireType.Varint).bool(message.pinned);
+            writer.tag(19, WireType.Varint).bool(message.pinned);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -504,9 +519,10 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
             { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 13, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 14, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 15, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 13, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DocumentShort>): DocumentShort {
@@ -564,13 +580,16 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* string creator_job */ 12:
                     message.creatorJob = reader.string();
                     break;
-                case /* string state */ 13:
+                case /* optional string creator_job_label */ 13:
+                    message.creatorJobLabel = reader.string();
+                    break;
+                case /* string state */ 14:
                     message.state = reader.string();
                     break;
-                case /* bool closed */ 14:
+                case /* bool closed */ 15:
                     message.closed = reader.bool();
                     break;
-                case /* bool public */ 15:
+                case /* bool public */ 16:
                     message.public = reader.bool();
                     break;
                 default:
@@ -621,15 +640,18 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* string creator_job = 12; */
         if (message.creatorJob !== "")
             writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
-        /* string state = 13; */
+        /* optional string creator_job_label = 13; */
+        if (message.creatorJobLabel !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* string state = 14; */
         if (message.state !== "")
-            writer.tag(13, WireType.LengthDelimited).string(message.state);
-        /* bool closed = 14; */
+            writer.tag(14, WireType.LengthDelimited).string(message.state);
+        /* bool closed = 15; */
         if (message.closed !== false)
-            writer.tag(14, WireType.Varint).bool(message.closed);
-        /* bool public = 15; */
+            writer.tag(15, WireType.Varint).bool(message.closed);
+        /* bool public = 16; */
         if (message.public !== false)
-            writer.tag(15, WireType.Varint).bool(message.public);
+            writer.tag(16, WireType.Varint).bool(message.public);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -1662,27 +1662,23 @@
         "DocStoreService": {
             "category": "Documents",
             "AddDocumentReference": {
-                "key": "AddDocumentReference",
+                "key": "Add Document References",
                 "description": "Add/ Remove document references."
             },
             "AddDocumentRelation": {
-                "key": "AddDocumentRelation",
+                "key": "Add Document Relations",
                 "description": "Add/ Remove citizen relation."
             },
             "CreateDocument": {
-                "key": "CreateDocument",
+                "key": "Create Documents",
                 "description": "Create new documents."
             },
             "ListDocuments": {
-                "key": "ListDocuments",
-                "description": "List and search documents."
-            },
-            "GetDocument": {
-                "key": "GetDocument",
-                "description": "View accessible documents."
+                "key": "List and view Documents",
+                "description": "List, search and view documents."
             },
             "ListUserDocuments": {
-                "key": "ListUserDocuments",
+                "key": "List User Documents",
                 "description": "View the documents linked to a citizen."
             },
             "ListTemplates": {
@@ -1690,7 +1686,7 @@
                 "description": "List available document templates."
             },
             "UpdateDocument": {
-                "key": "UpdateDocument",
+                "key": "Update Documents",
                 "description": "Edit/ Update an existing document.",
                 "attrs": {
                     "Own": "Own",
@@ -2129,11 +2125,7 @@
         "WikiService": {
             "category": "Wiki",
             "ListPages": {
-                "key": "List Pages",
-                "description": "List wiki pages. Should always be given."
-            },
-            "GetPage": {
-                "key": "View Pages",
+                "key": "List and view Pages",
                 "description": "Should always be given."
             },
             "CreatePage": {

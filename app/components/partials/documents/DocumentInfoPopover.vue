@@ -97,7 +97,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('DocStoreService.GetDocument').value"
+                        v-if="can('DocStoreService.ListDocuments').value"
                         variant="link"
                         icon="i-mdi-eye"
                         :to="{ name: 'documents-id', params: { id: documentId ?? document?.id ?? 0 } }"

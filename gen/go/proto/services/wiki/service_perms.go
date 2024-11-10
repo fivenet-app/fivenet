@@ -9,6 +9,16 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 )
 
+var PermsRemap = map[string]string{
+
+	// Service: WikiService
+	"WikiService/GetPage": "WikiService/ListPages",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
+
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 
@@ -27,11 +37,6 @@ func init() {
 		{
 			Category: permkeys.WikiServicePerm,
 			Name:     permkeys.WikiServiceDeletePagePerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.WikiServicePerm,
-			Name:     permkeys.WikiServiceGetPagePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

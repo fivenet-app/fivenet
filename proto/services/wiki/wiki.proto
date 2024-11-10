@@ -67,7 +67,7 @@ message ListPageActivityResponse {
 service WikiService {
   // @perm
   rpc ListPages(ListPagesRequest) returns (ListPagesResponse);
-  // @perm
+  // @perm: Name=ListPages
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
   // @perm: Attrs=Fields/StringList:[]string{"Public"}
   rpc CreatePage(CreatePageRequest) returns (CreatePageResponse);

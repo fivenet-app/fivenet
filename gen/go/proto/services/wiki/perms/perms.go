@@ -13,7 +13,6 @@ const (
 	WikiServiceCreatePagePerm            perms.Name = "CreatePage"
 	WikiServiceCreatePageFieldsPermField perms.Key  = "Fields"
 	WikiServiceDeletePagePerm            perms.Name = "DeletePage"
-	WikiServiceGetPagePerm               perms.Name = "GetPage"
 	WikiServiceListPageActivityPerm      perms.Name = "ListPageActivity"
 	WikiServiceListPagesPerm             perms.Name = "ListPages"
 	WikiServiceUpdatePagePerm            perms.Name = "UpdatePage"

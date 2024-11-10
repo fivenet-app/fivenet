@@ -14,6 +14,7 @@ var PermsRemap = map[string]string{
 	// Service: DocStoreService
 	"DocStoreService/EditComment":             "DocStoreService/PostComment",
 	"DocStoreService/GetComments":             "DocStoreService/GetDocument",
+	"DocStoreService/GetDocument":             "DocStoreService/ListDocuments",
 	"DocStoreService/GetDocumentAccess":       "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
 	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",

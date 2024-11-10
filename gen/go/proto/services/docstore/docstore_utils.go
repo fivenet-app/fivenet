@@ -23,7 +23,10 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 				tDocumentShort.DeletedAt.IS_NULL(),
 				jet.OR(
 					tDocumentShort.Public.IS_TRUE(),
-					tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					jet.AND(
+						tDocumentShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tDocumentShort.CreatorJob.EQ(jet.String(userInfo.Job)),
+					),
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),

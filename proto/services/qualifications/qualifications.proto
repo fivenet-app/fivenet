@@ -177,7 +177,7 @@ message GetUserExamResponse {
 service QualificationsService {
   // @perm
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
-  // @perm
+  // @perm: Name=ListQualifications
   rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
   // @perm
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
@@ -186,25 +186,25 @@ service QualificationsService {
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc DeleteQualification(DeleteQualificationRequest) returns (DeleteQualificationResponse);
 
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc ListQualificationRequests(ListQualificationRequestsRequest) returns (ListQualificationRequestsResponse);
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc CreateOrUpdateQualificationRequest(CreateOrUpdateQualificationRequestRequest) returns (CreateOrUpdateQualificationRequestResponse);
   // @perm
   rpc DeleteQualificationReq(DeleteQualificationReqRequest) returns (DeleteQualificationReqResponse);
 
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc ListQualificationsResults(ListQualificationsResultsRequest) returns (ListQualificationsResultsResponse);
   // @perm
   rpc CreateOrUpdateQualificationResult(CreateOrUpdateQualificationResultRequest) returns (CreateOrUpdateQualificationResultResponse);
   // @perm
   rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
 
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse);
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
-  // @perm: Name=GetQualification
+  // @perm: Name=ListQualifications
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
   // @perm: Name=CreateOrUpdateQualificationResult
   rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);

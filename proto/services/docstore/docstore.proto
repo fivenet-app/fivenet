@@ -386,7 +386,7 @@ service DocStoreService {
 
   // @perm
   rpc ListDocuments(ListDocumentsRequest) returns (ListDocumentsResponse);
-  // @perm
+  // @perm: Name=ListDocuments
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @perm
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);

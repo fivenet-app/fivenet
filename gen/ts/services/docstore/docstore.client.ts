@@ -120,7 +120,7 @@ export interface IDocStoreServiceClient {
      */
     listDocuments(input: ListDocumentsRequest, options?: RpcOptions): UnaryCall<ListDocumentsRequest, ListDocumentsResponse>;
     /**
-     * @perm
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocument(services.docstore.GetDocumentRequest) returns (services.docstore.GetDocumentResponse);
      */
@@ -364,7 +364,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<ListDocumentsRequest, ListDocumentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListDocuments
      *
      * @generated from protobuf rpc: GetDocument(services.docstore.GetDocumentRequest) returns (services.docstore.GetDocumentResponse);
      */

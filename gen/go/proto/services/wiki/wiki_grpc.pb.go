@@ -33,7 +33,7 @@ const (
 type WikiServiceClient interface {
 	// @perm
 	ListPages(ctx context.Context, in *ListPagesRequest, opts ...grpc.CallOption) (*ListPagesResponse, error)
-	// @perm
+	// @perm: Name=ListPages
 	GetPage(ctx context.Context, in *GetPageRequest, opts ...grpc.CallOption) (*GetPageResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreatePage(ctx context.Context, in *CreatePageRequest, opts ...grpc.CallOption) (*CreatePageResponse, error)
@@ -113,7 +113,7 @@ func (c *wikiServiceClient) ListPageActivity(ctx context.Context, in *ListPageAc
 type WikiServiceServer interface {
 	// @perm
 	ListPages(context.Context, *ListPagesRequest) (*ListPagesResponse, error)
-	// @perm
+	// @perm: Name=ListPages
 	GetPage(context.Context, *GetPageRequest) (*GetPageResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreatePage(context.Context, *CreatePageRequest) (*CreatePageResponse, error)

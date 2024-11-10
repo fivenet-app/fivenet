@@ -40,11 +40,19 @@ func (x *AppConfig) Default() {
 				},
 				{
 					Category: "DocStoreService",
-					Name:     "GetDocument",
+					Name:     "PostComment",
 				},
 				{
 					Category: "DocStoreService",
 					Name:     "PostComment",
+				},
+				{
+					Category: "QualificationsService",
+					Name:     "ListQualifications",
+				},
+				{
+					Category: "WikiService",
+					Name:     "ListPages",
 				},
 			},
 		}

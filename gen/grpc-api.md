@@ -2264,6 +2264,7 @@ Dummy - DO NOT USE!
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
+| creator_job_label | [string](#string) | optional |  |
 | state | [string](#string) |  | @sanitize |
 | closed | [bool](#bool) |  |  |
 | public | [bool](#bool) |  |  |
@@ -2341,6 +2342,7 @@ Dummy - DO NOT USE!
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  | @gotags: alias:&#34;creator_job&#34; |
+| creator_job_label | [string](#string) | optional |  |
 | state | [string](#string) |  | @sanitize
 
 @gotags: alias:&#34;state&#34; |
@@ -8402,7 +8404,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | UpdateTemplate | [UpdateTemplateRequest](#services-docstore-UpdateTemplateRequest) | [UpdateTemplateResponse](#services-docstore-UpdateTemplateResponse) | @perm: Name=CreateTemplate |
 | DeleteTemplate | [DeleteTemplateRequest](#services-docstore-DeleteTemplateRequest) | [DeleteTemplateResponse](#services-docstore-DeleteTemplateResponse) | @perm |
 | ListDocuments | [ListDocumentsRequest](#services-docstore-ListDocumentsRequest) | [ListDocumentsResponse](#services-docstore-ListDocumentsResponse) | @perm |
-| GetDocument | [GetDocumentRequest](#services-docstore-GetDocumentRequest) | [GetDocumentResponse](#services-docstore-GetDocumentResponse) | @perm |
+| GetDocument | [GetDocumentRequest](#services-docstore-GetDocumentRequest) | [GetDocumentResponse](#services-docstore-GetDocumentResponse) | @perm: Name=ListDocuments |
 | CreateDocument | [CreateDocumentRequest](#services-docstore-CreateDocumentRequest) | [CreateDocumentResponse](#services-docstore-CreateDocumentResponse) | @perm |
 | UpdateDocument | [UpdateDocumentRequest](#services-docstore-UpdateDocumentRequest) | [UpdateDocumentResponse](#services-docstore-UpdateDocumentResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
 | DeleteDocument | [DeleteDocumentRequest](#services-docstore-DeleteDocumentRequest) | [DeleteDocumentResponse](#services-docstore-DeleteDocumentResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
@@ -9828,19 +9830,19 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListQualifications | [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest) | [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse) | @perm |
-| GetQualification | [GetQualificationRequest](#services-qualifications-GetQualificationRequest) | [GetQualificationResponse](#services-qualifications-GetQualificationResponse) | @perm |
+| GetQualification | [GetQualificationRequest](#services-qualifications-GetQualificationRequest) | [GetQualificationResponse](#services-qualifications-GetQualificationResponse) | @perm: Name=ListQualifications |
 | CreateQualification | [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest) | [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse) | @perm |
 | UpdateQualification | [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest) | [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
 | DeleteQualification | [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest) | [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
-| ListQualificationRequests | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=GetQualification |
-| CreateOrUpdateQualificationRequest | [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse) | @perm: Name=GetQualification |
+| ListQualificationRequests | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=ListQualifications |
+| CreateOrUpdateQualificationRequest | [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse) | @perm: Name=ListQualifications |
 | DeleteQualificationReq | [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse) | @perm |
-| ListQualificationsResults | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=GetQualification |
+| ListQualificationsResults | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=ListQualifications |
 | CreateOrUpdateQualificationResult | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
 | DeleteQualificationResult | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
-| GetExamInfo | [GetExamInfoRequest](#services-qualifications-GetExamInfoRequest) | [GetExamInfoResponse](#services-qualifications-GetExamInfoResponse) | @perm: Name=GetQualification |
-| TakeExam | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=GetQualification |
-| SubmitExam | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=GetQualification |
+| GetExamInfo | [GetExamInfoRequest](#services-qualifications-GetExamInfoRequest) | [GetExamInfoResponse](#services-qualifications-GetExamInfoResponse) | @perm: Name=ListQualifications |
+| TakeExam | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=ListQualifications |
+| SubmitExam | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=ListQualifications |
 | GetUserExam | [GetUserExamRequest](#services-qualifications-GetUserExamRequest) | [GetUserExamResponse](#services-qualifications-GetUserExamResponse) | @perm: Name=CreateOrUpdateQualificationResult |
 
  
@@ -11608,7 +11610,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListPages | [ListPagesRequest](#services-wiki-ListPagesRequest) | [ListPagesResponse](#services-wiki-ListPagesResponse) | @perm |
-| GetPage | [GetPageRequest](#services-wiki-GetPageRequest) | [GetPageResponse](#services-wiki-GetPageResponse) | @perm |
+| GetPage | [GetPageRequest](#services-wiki-GetPageRequest) | [GetPageResponse](#services-wiki-GetPageResponse) | @perm: Name=ListPages |
 | CreatePage | [CreatePageRequest](#services-wiki-CreatePageRequest) | [CreatePageResponse](#services-wiki-CreatePageResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Public&#34;} |
 | UpdatePage | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm |
 | DeletePage | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |

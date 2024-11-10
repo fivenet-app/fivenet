@@ -40,12 +40,13 @@ message Document {
   optional int32 creator_id = 11 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
   string creator_job = 13 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 14 [(validate.rules).string.max_len = 50];
   // @sanitize
-  string state = 14 [(validate.rules).string.max_len = 32];
-  bool closed = 15;
-  bool public = 16;
-  optional uint64 template_id = 17 [jstype = JS_STRING];
-  bool pinned = 18;
+  string state = 15 [(validate.rules).string.max_len = 32];
+  bool closed = 16;
+  bool public = 17;
+  optional uint64 template_id = 18 [jstype = JS_STRING];
+  bool pinned = 19;
 }
 
 message DocumentShort {
@@ -66,10 +67,11 @@ message DocumentShort {
   optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   string creator_job = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"creator_job"
+  optional string creator_job_label = 13 [(validate.rules).string.max_len = 50];
   // @sanitize
-  string state = 13 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
-  bool closed = 14;
-  bool public = 15;
+  string state = 14 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
+  bool closed = 15;
+  bool public = 16;
 }
 
 enum DocReference {

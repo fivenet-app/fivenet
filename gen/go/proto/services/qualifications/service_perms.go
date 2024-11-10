@@ -12,13 +12,14 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: QualificationsService
-	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/GetQualification",
-	"QualificationsService/GetExamInfo":                        "QualificationsService/GetQualification",
+	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/ListQualifications",
+	"QualificationsService/GetExamInfo":                        "QualificationsService/ListQualifications",
+	"QualificationsService/GetQualification":                   "QualificationsService/ListQualifications",
 	"QualificationsService/GetUserExam":                        "QualificationsService/CreateOrUpdateQualificationResult",
-	"QualificationsService/ListQualificationRequests":          "QualificationsService/GetQualification",
-	"QualificationsService/ListQualificationsResults":          "QualificationsService/GetQualification",
-	"QualificationsService/SubmitExam":                         "QualificationsService/GetQualification",
-	"QualificationsService/TakeExam":                           "QualificationsService/GetQualification",
+	"QualificationsService/ListQualificationRequests":          "QualificationsService/ListQualifications",
+	"QualificationsService/ListQualificationsResults":          "QualificationsService/ListQualifications",
+	"QualificationsService/SubmitExam":                         "QualificationsService/ListQualifications",
+	"QualificationsService/TakeExam":                           "QualificationsService/ListQualifications",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -58,11 +59,6 @@ func init() {
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceDeleteQualificationResultPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.QualificationsServicePerm,
-			Name:     permkeys.QualificationsServiceGetQualificationPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

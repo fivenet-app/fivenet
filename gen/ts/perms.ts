@@ -108,7 +108,6 @@ export type Perms =
 	| 'DocStoreService.DeleteDocument'
 	| 'DocStoreService.DeleteDocumentReq'
 	| 'DocStoreService.DeleteTemplate'
-	| 'DocStoreService.GetDocument'
 	| 'DocStoreService.ListCategories'
 	| 'DocStoreService.ListDocumentActivity'
 	| 'DocStoreService.ListDocumentReqs'
@@ -142,7 +141,6 @@ export type Perms =
 	| 'QualificationsService.DeleteQualification'
 	| 'QualificationsService.DeleteQualificationReq'
 	| 'QualificationsService.DeleteQualificationResult'
-	| 'QualificationsService.GetQualification'
 	| 'QualificationsService.ListQualifications'
 	| 'QualificationsService.UpdateQualification'
 	| 'RectorService.CreateRole'
@@ -154,7 +152,6 @@ export type Perms =
 	| 'RectorService.ViewAuditLog'
 	| 'WikiService.CreatePage'
 	| 'WikiService.DeletePage'
-	| 'WikiService.GetPage'
 	| 'WikiService.ListPageActivity'
 	| 'WikiService.ListPages'
 	| 'WikiService.UpdatePage';

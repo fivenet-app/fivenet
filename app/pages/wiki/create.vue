@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,
-    permission: ['WikiService.CreatePage', 'WikiService.UpdatePage'],
+    permission: ['WikiService.CreatePage'],
 });
 
 const { activeChar } = useAuth();

@@ -322,6 +322,10 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		if resp.Documents[i].Creator != nil {
 			jobInfoFn(resp.Documents[i].Creator)
 		}
+
+		if job := s.enricher.GetJobByName(resp.Documents[i].CreatorJob); job != nil {
+			resp.Documents[i].CreatorJobLabel = &job.Label
+		}
 	}
 
 	resp.Pagination.Update(len(resp.Documents))

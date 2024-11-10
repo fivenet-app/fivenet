@@ -1674,12 +1674,8 @@
                 "description": "Ein neues Dokument erstellen."
             },
             "ListDocuments": {
-                "key": "Dokumente suchen und auflisten",
-                "description": "Dokumente auflisten/ suchen."
-            },
-            "GetDocument": {
-                "key": "Dokumente Anzeigen können",
-                "description": "Ein Dokument anzeigen."
+                "key": "Dokumente auflisten, suchen und anzeigen",
+                "description": "Dokumente auflisten/ suchen, und anzeigen."
             },
             "ListUserDocuments": {
                 "key": "Bürger-Dokumente Sehen",
@@ -2129,11 +2125,7 @@
         "WikiService": {
             "category": "Lexikon",
             "ListPages": {
-                "key": "Seiten anzeigen",
-                "description": "Sollte immer gegeben werden."
-            },
-            "GetPage": {
-                "key": "Seiten aufrufen",
+                "key": "Seiten auflisten und anzeigen",
                 "description": "Sollte immer gegeben werden."
             },
             "CreatePage": {

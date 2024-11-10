@@ -326,6 +326,21 @@ func (m *Document) validate(all bool) error {
 
 	}
 
+	if m.CreatorJobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJobLabel()) > 50 {
+			err := DocumentValidationError{
+				field:  "CreatorJobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.TemplateId != nil {
 		// no validation rules for TemplateId
 	}
@@ -666,6 +681,21 @@ func (m *DocumentShort) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.CreatorJobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetCreatorJobLabel()) > 50 {
+			err := DocumentShortValidationError{
+				field:  "CreatorJobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

@@ -73,7 +73,7 @@ type DocStoreServiceClient interface {
 	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
 	// @perm
 	ListDocuments(ctx context.Context, in *ListDocumentsRequest, opts ...grpc.CallOption) (*ListDocumentsResponse, error)
-	// @perm
+	// @perm: Name=ListDocuments
 	GetDocument(ctx context.Context, in *GetDocumentRequest, opts ...grpc.CallOption) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(ctx context.Context, in *CreateDocumentRequest, opts ...grpc.CallOption) (*CreateDocumentResponse, error)
@@ -483,7 +483,7 @@ type DocStoreServiceServer interface {
 	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
 	// @perm
 	ListDocuments(context.Context, *ListDocumentsRequest) (*ListDocumentsResponse, error)
-	// @perm
+	// @perm: Name=ListDocuments
 	GetDocument(context.Context, *GetDocumentRequest) (*GetDocumentResponse, error)
 	// @perm
 	CreateDocument(context.Context, *CreateDocumentRequest) (*CreateDocumentResponse, error)

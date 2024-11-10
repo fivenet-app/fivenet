@@ -103,7 +103,8 @@ func (p *Perms) SetDefaultRolePerms(ctx context.Context, defaultPerms []string) 
 	for i, perm := range defaultPerms {
 		permId, ok := p.permsGuardToIDMap.Load(perm)
 		if !ok {
-			return fmt.Errorf("permission by guard %s not found", perm)
+			p.logger.Warn("default perm not found, skipping", zap.String("guard", perm))
+			continue
 		}
 
 		addPerms[i] = AddPerm{

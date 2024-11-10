@@ -77,7 +77,7 @@ defineProps<{
 
                     <div class="flex flex-1 flex-row items-center justify-center gap-1.5">
                         <UIcon name="i-mdi-briefcase" class="size-5 shrink-0" />
-                        {{ document.creator?.jobLabel }}
+                        {{ document.creatorJobLabel }}
                     </div>
 
                     <div class="flex flex-1 flex-initial flex-row items-center justify-end gap-1.5">
