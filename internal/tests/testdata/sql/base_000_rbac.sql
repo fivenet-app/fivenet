@@ -53,7 +53,6 @@ INSERT INTO `fivenet_permissions` (`id`, `created_at`, `category`, `name`, `guar
 (20,'2023-03-31 15:35:22.387','DocStoreService','CreateDocument','docstoreservice-createdocument'),
 (21,'2023-03-31 15:35:22.414','DocStoreService','DeleteComment','docstoreservice-deletecomment'),
 (22,'2023-03-31 15:35:22.440','DocStoreService','ListDocuments','docstoreservice-listdocuments'),
-(23,'2023-03-31 15:35:22.471','DocStoreService','GetDocument','docstoreservice-getdocument'),
 (24,'2023-03-31 15:35:22.498','DocStoreService','GetDocumentAccess','docstoreservice-getdocumentaccess'),
 (26,'2023-03-31 15:35:22.554','DocStoreService','ListUserDocuments','docstoreservice-listuserdocuments'),
 (27,'2023-03-31 15:35:22.577','DocStoreService','ListTemplates','docstoreservice-listtemplates'),

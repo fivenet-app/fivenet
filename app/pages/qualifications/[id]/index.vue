@@ -8,7 +8,7 @@ useHead({
 definePageMeta({
     title: 'pages.qualifications.single.title',
     requiresAuth: true,
-    permission: 'QualificationsService.GetQualification',
+    permission: 'QualificationsService.ListQualifications',
     validate: async (route) => {
         route = route as TypedRouteFromName<'qualifications-id'>;
         // Check if the id is made up of digits
