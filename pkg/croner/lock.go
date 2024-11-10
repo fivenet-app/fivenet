@@ -93,14 +93,12 @@ func (cr *Cron) lockLoop() {
 				})
 				if err != nil {
 					cr.logger.Error("error marshalling owner lock state", zap.Error(err))
-					cancel()
-					continue
+					return
 				}
 
 				if _, err := cr.ownerKv.Put(ctx, "owner", out); err != nil {
 					cr.logger.Error("failed to update owner lock state in kv", zap.Error(err))
-					cancel()
-					continue
+					return
 				}
 			}
 		}()
