@@ -54,13 +54,13 @@ message PageShort {
   string job = 2 [(validate.rules).string.max_len = 50];
   optional string job_label = 3 [(validate.rules).string.max_len = 50];
   optional uint64 parent_id = 4 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp deleted_at = 5;
   // @sanitize: method=StripTags
-  optional string slug = 5 [(validate.rules).string.max_len = 100];
-  string title = 6;
-  string description = 7;
-  repeated PageShort children = 8;
-  optional PageRootInfo root_info = 9;
-  optional string path = 10; // Only used in frontend
+  optional string slug = 6 [(validate.rules).string.max_len = 100];
+  string title = 7;
+  string description = 8;
+  repeated PageShort children = 9;
+  optional PageRootInfo root_info = 10;
 }
 
 message PageRootInfo {

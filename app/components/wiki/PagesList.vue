@@ -7,6 +7,7 @@ function mapNavItemToNavItem(p: PageShort): NavItem {
         title: p.title,
         _path: `/wiki/${p.job}/${p.id}/${p.slug ?? ''}`,
         children: p.children.map((p) => mapNavItemToNavItem(p)),
+        icon: p.deletedAt !== undefined ? 'i-mdi-trash-can' : undefined,
     };
 }
 

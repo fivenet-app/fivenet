@@ -5659,12 +5659,12 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | parent_id | [uint64](#uint64) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | slug | [string](#string) | optional | @sanitize: method=StripTags |
 | title | [string](#string) |  |  |
 | description | [string](#string) |  |  |
 | children | [PageShort](#resources-wiki-PageShort) | repeated |  |
 | root_info | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
-| path | [string](#string) | optional | Only used in frontend |
 
 
 

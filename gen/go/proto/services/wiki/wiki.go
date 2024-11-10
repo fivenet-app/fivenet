@@ -251,6 +251,9 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 			tJobProps.LogoURL.AS("page_root_info.logo"),
 		)
 	}
+	if userInfo.SuperUser {
+		columns = append(columns, tPageShort.DeletedAt)
+	}
 
 	stmt := tPageShort.
 		SELECT(
