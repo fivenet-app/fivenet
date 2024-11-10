@@ -83,7 +83,7 @@ function clickListener(event: MouseEvent): void {
         return;
     }
     const href = element.getAttribute('href');
-    if (href?.startsWith('/')) {
+    if (href?.startsWith('/') || href?.startsWith('#')) {
         return;
     }
 
