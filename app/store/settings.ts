@@ -34,6 +34,7 @@ export interface SettingsState {
         reminderTimes: number[];
     };
     streamerMode: boolean;
+    calculatorPosition: 'top' | 'middle' | 'bottom';
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -72,6 +73,7 @@ export const useSettingsStore = defineStore('settings', {
                 reminderTimes: [0, 900],
             },
             streamerMode: false,
+            calculatorPosition: 'middle',
         }) as SettingsState,
     persist: {
         omit: ['updateAvailable'],

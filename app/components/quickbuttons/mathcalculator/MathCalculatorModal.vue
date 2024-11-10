@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import MathCalculator from '~/components/quickbuttons/mathcalculator/MathCalculator.vue';
+import { useSettingsStore } from '~/store/settings';
 
 const { isOpen } = useModal();
 
-const position = ref<'top' | 'middle' | 'bottom'>('middle');
+const settingsStore = useSettingsStore();
+const { calculatorPosition: position } = storeToRefs(settingsStore);
 
 const containerPosition = computed(() => {
     switch (position.value) {
