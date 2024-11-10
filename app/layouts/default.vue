@@ -5,13 +5,14 @@ import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
+import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
 import { messengerDB } from '~/store/messenger';
 import type { Perms } from '~~/gen/ts/perms';
 
-const { can, activeChar, jobProps } = useAuth();
+const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
 const { t } = useI18n();
 
@@ -370,18 +371,25 @@ const clipboardLink = computed(() =>
 
 const quickAccessButtons = computed(() =>
     [
-        jobProps.value?.quickButtons?.penaltyCalculator
+        jobProps.value?.quickButtons?.penaltyCalculator || isSuperuser.value
             ? {
                   label: t('components.penaltycalculator.title'),
-                  icon: 'i-mdi-calculator',
+                  icon: 'i-mdi-gavel',
                   click: () => modal.open(PenaltyCalculatorModal),
               }
             : undefined,
-        jobProps.value?.quickButtons?.bodyCheckup
+        jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
                   click: () => modal.open(BodyCheckupModal, {}),
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
+            ? {
+                  label: t('components.mathcalculator.title'),
+                  icon: 'i-mdi-calculator',
+                  click: () => modal.open(MathCalculatorModal, {}),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),

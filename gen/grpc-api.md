@@ -4777,6 +4777,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | penalty_calculator | [bool](#bool) |  |  |
 | body_checkup | [bool](#bool) |  |  |
+| math_calculator | [bool](#bool) |  |  |
 
 
 

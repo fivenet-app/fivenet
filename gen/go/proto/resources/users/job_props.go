@@ -37,6 +37,7 @@ func (x *JobProps) Default(job string) {
 		x.QuickButtons = &QuickButtons{
 			BodyCheckup:       false,
 			PenaltyCalculator: false,
+			MathCalculator:    false,
 		}
 	}
 

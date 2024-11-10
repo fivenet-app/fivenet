@@ -81,6 +81,10 @@ export interface QuickButtons {
      * @generated from protobuf field: bool body_checkup = 2;
      */
     bodyCheckup: boolean;
+    /**
+     * @generated from protobuf field: bool math_calculator = 3;
+     */
+    mathCalculator: boolean;
 }
 /**
  * @generated from protobuf message resources.users.DiscordSyncSettings
@@ -386,13 +390,15 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
     constructor() {
         super("resources.users.QuickButtons", [
             { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "body_checkup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "body_checkup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "math_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<QuickButtons>): QuickButtons {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.penaltyCalculator = false;
         message.bodyCheckup = false;
+        message.mathCalculator = false;
         if (value !== undefined)
             reflectionMergePartial<QuickButtons>(this, message, value);
         return message;
@@ -407,6 +413,9 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
                     break;
                 case /* bool body_checkup */ 2:
                     message.bodyCheckup = reader.bool();
+                    break;
+                case /* bool math_calculator */ 3:
+                    message.mathCalculator = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -426,6 +435,9 @@ class QuickButtons$Type extends MessageType<QuickButtons> {
         /* bool body_checkup = 2; */
         if (message.bodyCheckup !== false)
             writer.tag(2, WireType.Varint).bool(message.bodyCheckup);
+        /* bool math_calculator = 3; */
+        if (message.mathCalculator !== false)
+            writer.tag(3, WireType.Varint).bool(message.mathCalculator);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

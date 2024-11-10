@@ -29,6 +29,7 @@ message JobProps {
 message QuickButtons {
   bool penalty_calculator = 1;
   bool body_checkup = 2;
+  bool math_calculator = 3;
 }
 
 message DiscordSyncSettings {

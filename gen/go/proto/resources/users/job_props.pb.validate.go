@@ -442,6 +442,8 @@ func (m *QuickButtons) validate(all bool) error {
 
 	// no validation rules for BodyCheckup
 
+	// no validation rules for MathCalculator
+
 	if len(errors) > 0 {
 		return QuickButtonsMultiError(errors)
 	}

@@ -1178,6 +1178,9 @@
                     "title": "Konversation aktualisieren"
                 }
             }
+        },
+        "mathcalculator": {
+            "title": "Taschenrechner"
         }
     },
     "notifications": {

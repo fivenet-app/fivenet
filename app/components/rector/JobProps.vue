@@ -32,6 +32,7 @@ const schema = z.object({
     quickButtons: z.object({
         penaltyCalculator: z.boolean(),
         bodyCheckup: z.boolean(),
+        mathCalculator: z.boolean(),
     }),
     radioFrequency: z.string().max(24),
     discordGuildId: z.string().max(48),
@@ -78,6 +79,7 @@ const state = reactive<Schema>({
     quickButtons: {
         penaltyCalculator: false,
         bodyCheckup: false,
+        mathCalculator: false,
     },
     radioFrequency: '',
     discordGuildId: '',
@@ -335,11 +337,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 }}</span>
                                             </div>
                                         </div>
+
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-2">
                                                 <UToggle v-model="state.quickButtons.bodyCheckup" />
                                                 <span class="text-sm font-medium">{{
                                                     $t('components.bodycheckup.title')
+                                                }}</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-2">
+                                                <UToggle v-model="state.quickButtons.mathCalculator" />
+                                                <span class="text-sm font-medium">{{
+                                                    $t('components.mathcalculator.title')
                                                 }}</span>
                                             </div>
                                         </div>

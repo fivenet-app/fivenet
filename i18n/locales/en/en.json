@@ -1178,6 +1178,9 @@
                     "title": "Update Messenger Thread"
                 }
             }
+        },
+        "mathcalculator": {
+            "title": "Taschenrechner"
         }
     },
     "notifications": {
