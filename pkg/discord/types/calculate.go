@@ -132,11 +132,10 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 		if idx := slices.IndexFunc(s.Roles, func(r *Role) bool {
 			return r.ID == role
 		}); idx > -1 {
-			idx := slices.IndexFunc(user.Roles.Sum, func(r *Role) bool {
+			if !slices.ContainsFunc(user.Roles.Sum, func(r *Role) bool {
 				return r.ID == role
-			})
-			if idx == -1 {
-				r := user.Roles.Sum[idx]
+			}) {
+				r := s.Roles[idx]
 				if user.Job != r.Job && r.KeepIfJobDifferent {
 					continue
 				}
