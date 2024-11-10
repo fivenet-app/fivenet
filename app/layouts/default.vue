@@ -385,7 +385,7 @@ const quickAccessButtons = computed(() =>
                   click: () => modal.open(BodyCheckupModal, {}),
               }
             : undefined,
-        jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
+        jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
