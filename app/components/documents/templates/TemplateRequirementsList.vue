@@ -10,7 +10,7 @@ defineProps<{
 
 <template>
     <span v-if="specs.required || (specs.min && specs.min > 0 && specs.max && specs.max > 0)">
-        <span v-if="specs.required"> {{ $t('common.require', 2) }}{{ ' ' }} </span>
+        <span v-if="specs.required" class="font-bold"> {{ $t('common.require', 2) }}{{ ' ' }} </span>
         <span v-if="specs.min && specs.min > 0"> {{ $t('common.min') }}{{ ' ' }} </span>
         <span v-if="specs.max === specs.min"> {{ specs.max }} {{ name }} </span>
         <span v-else>

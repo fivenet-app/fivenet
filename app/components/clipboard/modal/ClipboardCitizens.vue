@@ -107,7 +107,10 @@ watch(props, async (newVal) => {
 </script>
 
 <template>
-    <h3 class="py-1 font-medium">{{ $t('common.citizen', 2) }}</h3>
+    <h3 class="flex items-center justify-between text-lg font-medium">
+        <span>{{ $t('common.citizen', 2) }}</span>
+        <slot name="header" />
+    </h3>
 
     <DataNoDataBlock
         v-if="users?.length === 0"

@@ -28,7 +28,7 @@ const actions = computed(() =>
     props.actions.length > 0
         ? props.actions
         : [
-              props.focus ? { label: t('common.search'), color: 'gray' } : undefined,
+              props.focus ? { label: t('common.search'), icon: 'i-mdi-search', click: () => props.focus!() } : undefined,
               props.retry ? { label: t('common.refresh'), icon: 'i-mdi-refresh', click: () => props.retry!() } : undefined,
           ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
@@ -46,7 +46,7 @@ async function click() {
     <UAlert
         variant="outline"
         :icon="icon"
-        class="my-2 block w-full p-4"
+        class="my-2"
         :title="title"
         :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
         :actions="actions"

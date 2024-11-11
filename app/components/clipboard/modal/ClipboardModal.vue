@@ -22,9 +22,11 @@ const clipboardStore = useClipboardStore();
                 </div>
             </template>
 
-            <div>
+            <div class="mx-auto">
                 <ClipboardCitizens @close="isOpen = false" />
+
                 <ClipboardVehicles @close="isOpen = false" />
+
                 <ClipboardDocuments @close="isOpen = false" />
             </div>
 

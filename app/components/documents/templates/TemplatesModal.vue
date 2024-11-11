@@ -45,10 +45,6 @@ watch(reqStatus.value, () => {
 });
 
 function closeDialog(): void {
-    template.value = undefined;
-    steps.value.selectTemplate = true;
-    steps.value.selectClipboard = false;
-
     isOpen.value = false;
 }
 
@@ -140,8 +136,8 @@ async function clipboardDialog(): Promise<void> {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.document', 1) }}
                         {{ $t('common.template', 2) }}
+                        <template v-if="template">- {{ template.title }} </template>
                     </h3>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="closeDialog()" />
@@ -157,52 +153,66 @@ async function clipboardDialog(): Promise<void> {
                     <TemplatesList @selected="templateSelected($event)" />
                 </div>
             </template>
-            <template v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
-                <div class="text-center">
-                    <h3 class="text-base font-semibold leading-6">
-                        {{ $t('common.template', 1) }}:
-                        {{ template.title }}
-                    </h3>
-                    <div>
-                        <div v-if="reqs.users">
-                            <p>
-                                <TemplateRequirementsList :name="$t('common.citizen', 2)" :specs="reqs.users!" />
-                            </p>
+            <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
+                <div>
+                    <div v-if="reqs.users">
+                        <ClipboardCitizens
+                            v-model:submit="submit"
+                            :specs="reqs.users!"
+                            @statisfied="(v: boolean) => (reqStatus.users = v)"
+                            @close="closeDialog()"
+                        >
+                            <template #header>
+                                <span class="text-sm">
+                                    <TemplateRequirementsList
+                                        :name="$t('common.citizen', 2)"
+                                        :plural="$t('common.citizen', 2)"
+                                        :specs="reqs.users!"
+                                    />
+                                </span>
+                            </template>
+                        </ClipboardCitizens>
+                    </div>
 
-                            <ClipboardCitizens
-                                v-model:submit="submit"
-                                :specs="reqs.users!"
-                                @statisfied="(v: boolean) => (reqStatus.users = v)"
-                                @close="closeDialog()"
-                            />
-                        </div>
-                        <div v-if="reqs.vehicles">
-                            <p>
-                                <TemplateRequirementsList :name="$t('common.vehicle', 2)" :specs="reqs.vehicles!" />
-                            </p>
+                    <div v-if="reqs.vehicles">
+                        <ClipboardVehicles
+                            v-model:submit="submit"
+                            :specs="reqs.vehicles!"
+                            @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
+                            @close="closeDialog()"
+                        >
+                            <template #header>
+                                <span class="text-sm">
+                                    <TemplateRequirementsList
+                                        :name="$t('common.vehicle', 2)"
+                                        :plural="$t('common.vehicle', 2)"
+                                        :specs="reqs.vehicles!"
+                                    />
+                                </span>
+                            </template>
+                        </ClipboardVehicles>
+                    </div>
 
-                            <ClipboardVehicles
-                                v-model:submit="submit"
-                                :specs="reqs.vehicles!"
-                                @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
-                                @close="closeDialog()"
-                            />
-                        </div>
-                        <div v-if="reqs.documents">
-                            <p>
-                                <TemplateRequirementsList :name="$t('common.document', 2)" :specs="reqs.documents!" />
-                            </p>
-
-                            <ClipboardDocuments
-                                v-model:submit="submit"
-                                :specs="reqs.documents!"
-                                @statisfied="(v: boolean) => (reqStatus.documents = v)"
-                                @close="closeDialog()"
-                            />
-                        </div>
+                    <div v-if="reqs.documents">
+                        <ClipboardDocuments
+                            v-model:submit="submit"
+                            :specs="reqs.documents!"
+                            @statisfied="(v: boolean) => (reqStatus.documents = v)"
+                            @close="closeDialog()"
+                        >
+                            <template #header>
+                                <span class="text-sm">
+                                    <TemplateRequirementsList
+                                        :name="$t('common.document', 2)"
+                                        :plural="$t('common.document', 2)"
+                                        :specs="reqs.documents!"
+                                    />
+                                </span>
+                            </template>
+                        </ClipboardDocuments>
                     </div>
                 </div>
-            </template>
+            </div>
 
             <template #footer>
                 <UButtonGroup
@@ -212,6 +222,7 @@ async function clipboardDialog(): Promise<void> {
                     <UButton color="black" block class="flex-1" @click="goBackDialog">
                         {{ $t('common.go_back') }}
                     </UButton>
+
                     <UButton block class="flex-1" :disabled="!readyToCreate" @click="clipboardDialog()">
                         {{ $t('common.create') }}
                     </UButton>

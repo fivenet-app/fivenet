@@ -107,7 +107,10 @@ watch(props, (newVal) => {
 </script>
 
 <template>
-    <h3 class="pb-1 pt-2 font-medium">{{ $t('common.vehicle', 2) }}</h3>
+    <h3 class="flex items-center justify-between text-lg font-medium">
+        <span>{{ $t('common.vehicle', 2) }}</span>
+        <slot name="header" />
+    </h3>
 
     <DataNoDataBlock
         v-if="vehicles?.length === 0"

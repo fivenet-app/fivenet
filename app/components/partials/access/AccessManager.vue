@@ -195,8 +195,6 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        {{ access.length }}
-
         <UButton
             v-if="!disabled"
             :ui="{ rounded: 'rounded-full' }"
