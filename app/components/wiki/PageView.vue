@@ -2,6 +2,7 @@
 import type { TocLink } from '@nuxt/content';
 import { emojiBlast } from 'emoji-blast';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import slug from '~/utils/slugify';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
@@ -34,6 +35,9 @@ const { activeChar, can } = useAuth();
 const modal = useModal();
 
 const notifications = useNotificatorStore();
+
+const settings = useSettingsStore();
+const { isNUIAvailable } = storeToRefs(settings);
 
 const breadcrumbs = computed(() => [
     {
@@ -94,6 +98,8 @@ function walk(nodes: ChildNode[]) {
     return headers;
 }
 
+const pageContainerRef = useTemplateRef('pageContainerRef');
+
 const route = useRoute();
 watch(
     () => route.hash,
@@ -102,16 +108,21 @@ watch(
 
 const handleHashChange = (hash: string) => {
     if (hash) {
-        console.log('PAGE VIEW');
         try {
             const targetElement = document.querySelector(hash); // Find element with id
 
             if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start',
-                    inline: 'start',
-                }); // Smooth scroll to the element
+                if (isNUIAvailable.value) {
+                    pageContainerRef.value?.scrollTo({
+                        top: targetElement.scrollTop,
+                    });
+                } else {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'start',
+                    }); // Smooth scroll to the element
+                }
             }
         } catch (e) {
             console.warn('Query Selector exception', e);
@@ -149,7 +160,7 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
+    <div ref="pageContainerRef" class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
         <UPage>
             <template #left>
                 <slot name="left" />
