@@ -112,7 +112,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="pb-24">
+        <UDashboardPanelContent>
             <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>

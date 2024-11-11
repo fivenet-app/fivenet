@@ -629,7 +629,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm
+        :schema="schema"
+        :state="state"
+        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @submit="onSubmitThrottle"
+    >
         <UDashboardNavbar :title="$t('pages.documents.edit.title')">
             <template #right>
                 <UButton
@@ -658,90 +663,91 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </template>
         </UDashboardNavbar>
 
-        <UDashboardToolbar>
-            <template #default>
-                <div class="flex w-full flex-col gap-2">
-                    <UFormGroup name="title" :label="$t('common.title')" required>
-                        <UInput
-                            v-model="state.title"
-                            type="text"
-                            size="xl"
-                            :placeholder="$t('common.title')"
-                            :disabled="!canEdit || !canDo.edit"
-                        />
-                    </UFormGroup>
-
-                    <div class="flex flex-row gap-2">
-                        <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
-                            <ClientOnly>
-                                <UInputMenu
-                                    v-model="state.category"
-                                    option-attribute="name"
-                                    :search-attributes="['name']"
-                                    block
-                                    nullable
-                                    :search="
-                                        async (search: string) => {
-                                            try {
-                                                categoriesLoading = true;
-                                                const categories = await completorStore.completeDocumentCategories(search);
-                                                categoriesLoading = false;
-                                                return categories;
-                                            } catch (e) {
-                                                handleGRPCError(e as RpcError);
-                                                throw e;
-                                            } finally {
-                                                categoriesLoading = false;
-                                            }
-                                        }
-                                    "
-                                    search-lazy
-                                    :search-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
-                            </ClientOnly>
-                        </UFormGroup>
-
-                        <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+        <UDashboardPanelContent class="p-0">
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex w-full flex-col gap-2">
+                        <UFormGroup name="title" :label="$t('common.title')" required>
                             <UInput
-                                v-model="state.state"
+                                v-model="state.title"
                                 type="text"
-                                :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                                size="xl"
+                                :placeholder="$t('common.title')"
                                 :disabled="!canEdit || !canDo.edit"
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.closed"
-                                    :disabled="!canEdit || !canDo.edit"
-                                    :options="[
-                                        { label: $t('common.open', 2), closed: false },
-                                        { label: $t('common.close', 2), closed: true },
-                                    ]"
-                                    value-attribute="closed"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormGroup>
-                    </div>
-                </div>
-            </template>
-        </UDashboardToolbar>
+                        <div class="flex flex-row gap-2">
+                            <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                                <ClientOnly>
+                                    <UInputMenu
+                                        v-model="state.category"
+                                        option-attribute="name"
+                                        :search-attributes="['name']"
+                                        block
+                                        nullable
+                                        :search="
+                                            async (search: string) => {
+                                                try {
+                                                    categoriesLoading = true;
+                                                    const categories = await completorStore.completeDocumentCategories(search);
+                                                    categoriesLoading = false;
+                                                    return categories;
+                                                } catch (e) {
+                                                    handleGRPCError(e as RpcError);
+                                                    throw e;
+                                                } finally {
+                                                    categoriesLoading = false;
+                                                }
+                                            }
+                                        "
+                                        search-lazy
+                                        :search-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.category', 2)]) }}
+                                        </template>
+                                    </UInputMenu>
+                                </ClientOnly>
+                            </UFormGroup>
 
-        <UDashboardPanelContent class="p-0">
+                            <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+                                <UInput
+                                    v-model="state.state"
+                                    type="text"
+                                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                                    :disabled="!canEdit || !canDo.edit"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.closed"
+                                        :disabled="!canEdit || !canDo.edit"
+                                        :options="[
+                                            { label: $t('common.open', 2), closed: false },
+                                            { label: $t('common.close', 2), closed: true },
+                                        ]"
+                                        value-attribute="closed"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+                        </div>
+                    </div>
+                </template>
+            </UDashboardToolbar>
             <DocumentRelationManager
                 v-model="relationManagerData"
                 :open="openRelationManager"

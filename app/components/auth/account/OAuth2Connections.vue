@@ -17,7 +17,7 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 </script>
 
 <template>
-    <UDashboardPanelContent class="pb-24">
+    <UDashboardPanelContent>
         <UDashboardSection
             :title="$t('components.auth.OAuth2Connections.title')"
             :description="$t('components.auth.OAuth2Connections.subtitle')"

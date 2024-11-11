@@ -119,7 +119,6 @@ watch(props, (newVal) => {
                 $emit('close');
             }
         "
-        padding="p-2"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>

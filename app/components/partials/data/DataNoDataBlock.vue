@@ -7,7 +7,6 @@ const props = withDefaults(
         message?: string;
         icon?: string;
         type?: string;
-        padding?: string;
         actions?: AlertAction[];
         focus?: () => void | Promise<void>;
         retry?: () => Promise<unknown>;
@@ -17,7 +16,6 @@ const props = withDefaults(
         message: undefined,
         icon: 'i-mdi-magnify',
         type: undefined,
-        padding: 'p-4',
         actions: () => [],
         focus: undefined,
         retry: undefined,
@@ -48,8 +46,7 @@ async function click() {
     <UAlert
         variant="outline"
         :icon="icon"
-        class="block w-full"
-        :class="padding"
+        class="my-2 block w-full p-4"
         :title="title"
         :description="message ?? $t('common.not_found', [type ?? $t('common.data')])"
         :actions="actions"

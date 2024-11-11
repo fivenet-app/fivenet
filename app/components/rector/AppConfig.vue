@@ -276,7 +276,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="pb-24">
+        <UDashboardPanelContent>
             <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>
@@ -314,7 +314,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template v-else>
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }" :unmount="false">
                     <template #auth>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('components.rector.app_config.auth.title')"
                                 :description="$t('components.rector.app_config.auth.description')"
@@ -349,7 +349,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #perms>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('components.rector.app_config.perms.title')"
                                 :description="$t('components.rector.app_config.perms.description')"
@@ -423,7 +423,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #website>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('components.rector.app_config.website.title')"
                                 :description="$t('components.rector.app_config.website.description')"
@@ -475,7 +475,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #jobInfo>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('components.rector.app_config.job_info.title')"
                                 :description="$t('components.rector.app_config.job_info.description')"
@@ -577,7 +577,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #userTracker>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('components.rector.app_config.user_tracker.title')"
                                 :description="$t('components.rector.app_config.user_tracker.description')"
@@ -659,7 +659,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #discord>
-                        <UDashboardPanelContent class="pb-24">
+                        <UDashboardPanelContent>
                             <UDashboardSection
                                 :title="$t('common.discord')"
                                 :description="$t('components.rector.app_config.discord.description')"

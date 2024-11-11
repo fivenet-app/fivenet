@@ -65,7 +65,7 @@ const version = APP_VERSION;
 </script>
 
 <template>
-    <UDashboardPanelContent class="pb-24">
+    <UDashboardPanelContent>
         <UDashboardSection :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
             <UFormGroup
                 name="version"

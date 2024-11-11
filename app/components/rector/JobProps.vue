@@ -252,7 +252,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <UDashboardPanelContent class="pb-24">
+        <UDashboardPanelContent>
             <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>
@@ -290,7 +290,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
                         </div>
 
-                        <UDashboardPanelContent v-else class="pb-24">
+                        <UDashboardPanelContent v-else>
                             <UDashboardSection
                                 :title="$t('components.rector.job_props.job_properties')"
                                 :description="$t('components.rector.job_props.your_job_properties')"
@@ -400,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
                         </div>
 
-                        <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings" class="pb-24">
+                        <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings">
                             <UDashboardSection
                                 :title="$t('components.rector.job_props.discord_sync_settings.title')"
                                 :description="$t('components.rector.job_props.discord_sync_settings.subtitle')"

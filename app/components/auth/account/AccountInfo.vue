@@ -75,7 +75,7 @@ const selectedTab = computed({
 <template>
     <div>
         <template v-if="streamerMode">
-            <UDashboardPanelContent class="pb-24">
+            <UDashboardPanelContent>
                 <StreamerModeAlert />
             </UDashboardPanelContent>
         </template>
@@ -105,7 +105,7 @@ const selectedTab = computed({
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="inline-flex w-full justify-between gap-1">
+                                    <div class="inline-flex w-full justify-between gap-2">
                                         <span class="truncate">
                                             {{ account.account?.username }}
                                         </span>
@@ -122,7 +122,7 @@ const selectedTab = computed({
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="inline-flex w-full justify-between gap-1">
+                                    <div class="inline-flex w-full justify-between gap-2">
                                         <span class="truncate">
                                             {{ account.account?.license }}
                                         </span>

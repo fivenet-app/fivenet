@@ -40,7 +40,7 @@ const hints = shuffle([
 
         <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows>
             <template #default="{ item: hint }">
-                <div class="mx-auto mb-2 flex items-center gap-1 text-base">
+                <div class="mx-auto mb-2 flex items-center gap-2 text-base">
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }}</span>
 
                     <div v-if="hint.keyboard || hint.to" class="flex-initial shrink-0">

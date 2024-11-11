@@ -176,7 +176,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <template v-else>
             <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                 <template #settings>
-                    <UDashboardPanelContent class="pb-24">
+                    <UDashboardPanelContent>
                         <UDashboardSection
                             :title="$t('components.centrum.settings.title')"
                             :description="$t('components.centrum.settings.description')"
