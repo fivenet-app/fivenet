@@ -149,6 +149,13 @@ function setFromPropsJobs(): void {
     access.value?.push(
         ...jobsAccess.value
             .filter((a) => !access.value.find((ja) => ja.id === a.id))
+            .map((a) => {
+                if (a.id === '0') {
+                    a.id = lastId.value.toString();
+                    lastId.value--;
+                }
+                return a;
+            })
             .map((a) => ({ ...a, type: 'job' }) as MixedAccessEntry),
     );
 }
@@ -157,6 +164,13 @@ function setFromPropsUsers(): void {
     access.value?.push(
         ...usersAccess.value
             .filter((a) => !access.value.find((ua) => ua.id === a.id))
+            .map((a) => {
+                if (a.id === '0') {
+                    a.id = lastId.value.toString();
+                    lastId.value--;
+                }
+                return a;
+            })
             .map((a) => ({ ...a, type: 'user' }) as MixedAccessEntry),
     );
 }

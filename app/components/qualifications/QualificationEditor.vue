@@ -216,8 +216,6 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
         },
     };
 
-    console.log(req);
-
     try {
         const call = getGRPCQualificationsClient().updateQualification(req);
 

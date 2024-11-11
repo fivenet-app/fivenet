@@ -322,8 +322,6 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         access: values.access,
     };
 
-    console.log(values.access);
-
     try {
         const call = getGRPCDocStoreClient().updateDocument(req);
         const { response } = await call;

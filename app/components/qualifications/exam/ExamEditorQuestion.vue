@@ -99,7 +99,6 @@ async function handleImage(files: FileList): Promise<void> {
     }
 
     question.value!.data!.data.image.image = { data: new Uint8Array(await files[0].arrayBuffer()) };
-    console.log(question.value!.data!.data.image);
 
     imageUrl.value = URL.createObjectURL(files[0]);
 }
