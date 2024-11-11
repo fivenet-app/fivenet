@@ -256,7 +256,9 @@ const categoriesLoading = ref(false);
 
                 <UButtonGroup class="inline-flex">
                     <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                        {{ templateId ? $t('common.save') : $t('common.create') }}
+                        <span class="hidden truncate sm:block">
+                            {{ templateId ? $t('common.save') : $t('common.create') }}
+                        </span>
                     </UButton>
                 </UButtonGroup>
             </template>

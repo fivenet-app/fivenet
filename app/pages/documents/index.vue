@@ -53,33 +53,36 @@ const isOpen = ref(false);
                             v-if="can('CompletorService.CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
+                            truncate
                         >
-                            {{ $t('common.category', 2) }}
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.category', 2) }}
+                            </span>
                         </UButton>
 
                         <UButton
                             v-if="can('DocStoreService.ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
+                            truncate
                         >
-                            {{ $t('common.template', 2) }}
+                            <span class="hidden truncate sm:block">
+                                {{ $t('common.template', 2) }}
+                            </span>
                         </UButton>
                     </UButtonGroup>
 
-                    <UButton
-                        :label="$t('common.pinned')"
-                        trailing-icon="i-mdi-pin"
-                        color="gray"
-                        class="2xl:hidden"
-                        @click="isOpen = true"
-                    />
+                    <UButton trailing-icon="i-mdi-pin" color="gray" class="2xl:hidden" truncate @click="isOpen = true">
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.pinned') }}
+                        </span>
+                    </UButton>
 
-                    <UButton
-                        :label="$t('common.create')"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
-                        @click="modal.open(TemplatesModal, {})"
-                    />
+                    <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplatesModal, {})">
+                        <span class="hidden truncate sm:block">
+                            {{ $t('common.create') }}
+                        </span>
+                    </UButton>
                 </template>
             </UDashboardNavbar>
 

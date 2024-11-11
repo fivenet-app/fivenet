@@ -65,6 +65,10 @@ export default defineNuxtConfig({
         ],
     },
 
+    uiPro: {
+        routerOptions: false,
+    },
+
     icon: {
         collections: ['simple-icons', 'mdi', 'flagpack'],
         provider: 'iconify',

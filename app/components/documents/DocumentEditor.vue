@@ -435,12 +435,14 @@ logger.info(
                         :disabled="!canEdit || !canSubmit"
                         :loading="!canSubmit"
                     >
-                        <template v-if="!documentId">
-                            {{ $t('common.create') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('common.save') }}
-                        </template>
+                        <span class="hidden truncate sm:block">
+                            <template v-if="!documentId">
+                                {{ $t('common.create') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('common.save') }}
+                            </template>
+                        </span>
                     </UButton>
                 </UButtonGroup>
             </template>

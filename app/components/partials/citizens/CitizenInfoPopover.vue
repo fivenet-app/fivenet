@@ -167,8 +167,8 @@ watchOnce(opened, async () => {
                         </UButton>
                     </div>
 
-                    <div class="flex flex-col gap-1">
-                        <p v-if="user.jobLabel" class="text-sm font-normal">
+                    <div class="flex flex-col gap-1 text-sm font-normal">
+                        <p v-if="user.jobLabel">
                             <span class="font-semibold">{{ $t('common.job') }}:</span>
                             {{ user.jobLabel }}
                             <span v-if="(user.jobGrade ?? 0) > 0 && user.job !== game.unemployedJobName">

@@ -225,12 +225,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </UButton>
 
                 <UButton type="submit" class="ml-2" trailing-icon="i-mdi-content-save">
-                    <template v-if="!page.id">
-                        {{ $t('common.create') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('common.save') }}
-                    </template>
+                    <span class="hidden truncate sm:block">
+                        <template v-if="!page.id">
+                            {{ $t('common.create') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('common.save') }}
+                        </template>
+                    </span>
                 </UButton>
             </template>
         </UDashboardNavbar>

@@ -56,11 +56,15 @@ watchDebounced(
 <template>
     <div class="@container">
         <div
-            class="@sm:flex-row flex flex-col-reverse justify-between gap-1 px-3 py-3.5 sm:items-center"
+            class="@md:flex-row flex justify-between gap-1 px-3 py-3.5 md:items-center"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
-            <div class="@sm:flex-row inline-flex flex-col items-center gap-2">
-                <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm">
+            <div class="flex flex-col items-center gap-2">
+                <I18nT
+                    keypath="components.partials.table_pagination.page_count"
+                    tag="p"
+                    class="hidden truncate text-sm md:block"
+                >
                     <template #current>
                         <span class="text-neutral font-medium">
                             {{ page }}
@@ -82,22 +86,22 @@ watchDebounced(
                         </span>
                     </template>
                 </I18nT>
-
-                <UButton
-                    v-if="refresh"
-                    variant="link"
-                    icon="i-mdi-refresh"
-                    :title="$t('common.refresh')"
-                    :disabled="loading || loadingState"
-                    :loading="loading || loadingState"
-                    class="p-px"
-                    @click="refresh()"
-                >
-                    <span class="hidden sm:block">
-                        {{ $t('common.refresh') }}
-                    </span>
-                </UButton>
             </div>
+
+            <UButton
+                v-if="refresh"
+                variant="link"
+                icon="i-mdi-refresh"
+                :title="$t('common.refresh')"
+                :disabled="loading || loadingState"
+                :loading="loading || loadingState"
+                class="p-px"
+                @click="refresh()"
+            >
+                <span class="@md:block hidden">
+                    {{ $t('common.refresh') }}
+                </span>
+            </UButton>
 
             <UPagination
                 v-model="page"

@@ -144,6 +144,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                     state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit
                                                 "
                                                 :loading="!canSubmit"
+                                                icon="i-mdi-plus"
                                                 @click="onSubmitThrottle"
                                             >
                                                 {{ $t('common.create') }}
@@ -154,6 +155,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </div>
                         </div>
                     </template>
+
                     <div class="-my-2 mx-0 overflow-x-auto">
                         <div class="inline-block min-w-full px-1 py-2 align-middle">
                             <DataErrorBlock

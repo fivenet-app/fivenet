@@ -180,7 +180,6 @@ watch(props, () => setFromProps());
 
             <UFormGroup name="minimumGrade" class="flex-1">
                 <ClientOnly>
-                    {{ entry.minimumGrade }}
                     <USelectMenu
                         v-model="entry.minimumGrade"
                         :disabled="disabled || !entry.job"
@@ -205,7 +204,6 @@ watch(props, () => setFromProps());
 
         <UFormGroup name="access" class="w-60 flex-initial">
             <ClientOnly>
-                {{ entry.access }}
                 <USelectMenu
                     v-model="entry.access"
                     :disabled="disabled"

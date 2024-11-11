@@ -315,12 +315,14 @@ const selectedTab = computed({
                     :disabled="!canDo.edit || !canSubmit"
                     :loading="!canSubmit"
                 >
-                    <template v-if="!qualificationId">
-                        {{ $t('common.create') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('common.save') }}
-                    </template>
+                    <span class="hidden truncate sm:block">
+                        <template v-if="!qualificationId">
+                            {{ $t('common.create') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('common.save') }}
+                        </template>
+                    </span>
                 </UButton>
             </template>
         </UDashboardNavbar>

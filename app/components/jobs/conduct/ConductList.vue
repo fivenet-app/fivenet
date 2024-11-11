@@ -270,6 +270,9 @@ const columns = [
                     <UFormGroup
                         v-if="can('JobsConductService.CreateConductEntry').value"
                         :label="$t('common.create')"
+                        trailing-icon="i-mdi-plus"
+                        color="gray"
+                        truncate
                         class="flex-initial"
                     >
                         <UButton

@@ -53,7 +53,7 @@ function click(): void {
 
 <template>
     <UButton
-        :ui="{ round: 'rounded-md' }"
+        :ui="{ round: 'rounded-md', base: '' }"
         :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
         :variant="variant"
         :padded="padded"
@@ -61,6 +61,8 @@ function click(): void {
         class="break-keep"
         @click="click"
     >
-        <template v-if="prefix">{{ prefix }}-</template>{{ id }}
+        <span class="hidden sm:block">
+            <template v-if="prefix">{{ prefix }}-</template>{{ id }}
+        </span>
     </UButton>
 </template>

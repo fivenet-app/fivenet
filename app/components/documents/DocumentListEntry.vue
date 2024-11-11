@@ -23,9 +23,9 @@ defineProps<{
                 params: { id: document.id },
             }"
         >
-            <div class="m-2">
+            <div class="m-2 flex flex-col gap-1">
                 <div class="flex flex-row justify-between gap-2">
-                    <div class="flex flex-row items-center">
+                    <div class="flex items-center">
                         <IDCopyBadge
                             :id="document.id"
                             prefix="DOC"
@@ -36,14 +36,14 @@ defineProps<{
                     </div>
 
                     <UBadge v-if="document.state" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-note-check" class="size-5" />
+                        <UIcon name="i-mdi-note-check" class="size-4" />
                         <span>
                             {{ document.state }}
                         </span>
                     </UBadge>
 
                     <div v-if="document.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold">
-                        <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
+                        <UIcon name="i-mdi-trash-can" class="size-4 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
 
@@ -52,40 +52,48 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex max-w-full shrink flex-row gap-2">
-                    <div class="flex items-center gap-1">
-                        <DocumentCategoryBadge :category="document.category" />
+                <div class="flex max-w-full shrink flex-col gap-2">
+                    <div class="flex flex-col gap-1 md:flex-row">
+                        <div>
+                            <DocumentCategoryBadge :category="document.category" />
+                        </div>
 
-                        <h2 class="my-2 mr-2 line-clamp-1 flex-1 break-all text-xl font-medium hover:line-clamp-3">
+                        <h2
+                            class="line-clamp-2 flex-1 break-all text-lg font-medium hover:line-clamp-3 sm:text-xl md:line-clamp-1"
+                        >
                             {{ document.title }}
                         </h2>
                     </div>
+                </div>
 
-                    <div v-if="document.updatedAt" class="flex flex-1 flex-row items-center justify-end gap-1.5">
-                        <UIcon name="i-mdi-update" class="size-5 shrink-0" />
-                        <p class="text-nowrap">
-                            {{ $t('common.updated') }}
+                <div class="flex gap-2">
+                    <div class="flex flex-1 items-center justify-start gap-1.5">
+                        <UIcon name="i-mdi-calendar" class="size-4 shrink-0" />
+                        <p class="inline-flex gap-1 text-nowrap">
+                            <span class="hidden truncate md:block">
+                                {{ $t('common.created_at') }}
+                            </span>
+                            <GenericTime :value="document.createdAt" />
+                        </p>
+                    </div>
+
+                    <div v-if="document.updatedAt" class="flex flex-1 items-center justify-end gap-1.5">
+                        <p class="inline-flex gap-1 truncate">
+                            <span class="hidden md:block">
+                                {{ $t('common.updated') }}
+                            </span>
                             <GenericTime :value="document.updatedAt" :ago="true" />
                         </p>
+                        <UIcon name="i-mdi-update" class="size-4 shrink-0" />
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2">
-                    <div class="flex flex-1 flex-row items-center justify-start">
-                        <CitizenInfoPopover :user="document.creator" />
-                    </div>
+                <div class="flex gap-2">
+                    <CitizenInfoPopover :user="document.creator" />
 
-                    <div class="flex flex-1 flex-row items-center justify-center gap-1.5">
-                        <UIcon name="i-mdi-briefcase" class="size-5 shrink-0" />
-                        {{ document.creatorJobLabel }}
-                    </div>
-
-                    <div class="flex flex-1 flex-initial flex-row items-center justify-end gap-1.5">
-                        <UIcon name="i-mdi-calendar" class="size-5 shrink-0" />
-                        <p>
-                            {{ $t('common.created_at') }}
-                            <GenericTime :value="document.createdAt" />
-                        </p>
+                    <div class="flex flex-1 flex-row items-center justify-end gap-1.5">
+                        <span>{{ document.creatorJobLabel }}</span>
+                        <UIcon name="i-mdi-briefcase" class="size-4 shrink-0" />
                     </div>
                 </div>
             </div>
