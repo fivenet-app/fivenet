@@ -490,7 +490,8 @@
         "answer_key": "Solution key",
         "hint": "Hint",
         "wiki": "Wiki",
-        "parent_page": "Parent Page"
+        "parent_page": "Parent Page",
+        "corrected": "Corrected"
     },
     "components": {
         "partials": {

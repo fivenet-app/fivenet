@@ -490,7 +490,8 @@
         "answer_key": "Antwortschlüssel",
         "hint": "Hinweis",
         "wiki": "Lexikon | Lexika",
-        "parent_page": "Übergeordnete Seite"
+        "parent_page": "Übergeordnete Seite",
+        "corrected": "Korrigiert"
     },
     "components": {
         "partials": {
