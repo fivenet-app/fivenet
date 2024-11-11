@@ -7,5 +7,5 @@ import (
 
 var (
 	ErrFailedQuery = status.Error(codes.Internal, "errors.WikiService.ErrFailedQuery")
-	ErrPageDenied  = status.Error(codes.Internal, "errors.WikiService.ErrPageDenied")
+	ErrPageDenied  = status.Error(codes.InvalidArgument, "errors.WikiService.ErrPageDenied")
 )

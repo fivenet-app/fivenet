@@ -42,13 +42,13 @@ defineProps<{
                         </span>
                     </UBadge>
 
-                    <div class="flex flex-row items-center gap-1">
-                        <OpenClosedBadge :closed="document.closed" />
-                    </div>
-
                     <div v-if="document.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold">
                         <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
                         {{ $t('common.deleted') }}
+                    </div>
+
+                    <div class="flex flex-row items-center gap-1">
+                        <OpenClosedBadge :closed="document.closed" />
                     </div>
                 </div>
 

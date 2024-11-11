@@ -76,29 +76,8 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(ctxCancel context.Context, logg
 		if err != nil {
 			logger.Error("error during jetstream consume, trying to restart...", zap.Error(err))
 
-			sleep := InitialRestartBackoffTime
-			var restartErr error
-			for try := 0; try < MaxRestartRetries; try++ {
-				ctxTimeout, cancel := context.WithTimeout(ctxCancel, 10*time.Second)
-				defer cancel()
-
-				// Pass in a timeout context and the outer "passed in" context
-				if restartErr = restartFn(ctxTimeout, ctxCancel); restartErr != nil {
-					logger.Error(fmt.Sprintf("failed to restart jetstream consume, try %d of %d ...", try+1, MaxRestartRetries), zap.Error(restartErr))
-
-					if try < MaxRestartRetries {
-						time.Sleep(sleep)
-						sleep *= 2
-					}
-					continue
-				} else {
-					logger.Info(fmt.Sprintf("successfully restarted jetstream consume (try %d of %d)", try+1, MaxRestartRetries))
-					break
-				}
-			}
-
-			if restartErr != nil {
-				logger.Error(fmt.Sprintf("failed to restart jetstream consume after %d tries, attempting app shutdown", MaxRestartRetries), zap.Error(restartErr))
+			if restartErr := j.consumeErrHandlerWithRestart(ctxCancel, logger, restartFn); restartErr != nil {
+				logger.Error(fmt.Sprintf("failed to restart jetstream consumer after %d tries, attempting app shutdown", MaxRestartRetries), zap.Error(restartErr))
 
 				if err := j.shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 					logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
@@ -106,6 +85,36 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(ctxCancel context.Context, logg
 			}
 		}
 	})
+}
+
+func (j *JSWrapper) consumeErrHandlerWithRestart(ctxCancel context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) error {
+	var err error
+	sleep := InitialRestartBackoffTime
+	for try := 0; try < MaxRestartRetries; try++ {
+		if func() bool {
+			ctxTimeout, cancel := context.WithTimeout(ctxCancel, 10*time.Second)
+			defer cancel()
+
+			// Pass in a timeout context and the outer "passed in" context
+			if err = restartFn(ctxTimeout, ctxCancel); err != nil {
+				logger.Error(fmt.Sprintf("failed to restart jetstream consume, try %d of %d ...", try+1, MaxRestartRetries), zap.Error(err))
+
+				if try < MaxRestartRetries {
+					time.Sleep(sleep)
+					sleep *= 2
+				}
+			} else {
+				logger.Info(fmt.Sprintf("successfully restarted jetstream consume (try %d of %d)", try+1, MaxRestartRetries))
+				return true
+			}
+
+			return false
+		}() {
+			break
+		}
+	}
+
+	return err
 }
 
 func (j *JSWrapper) PublishProto(ctx context.Context, subject string, msg proto.Message, opts ...jetstream.PublishOpt) (*jetstream.PubAck, error) {

@@ -28,7 +28,7 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const modal = useModal();
 
@@ -191,11 +191,23 @@ const accordionItems = computed(() =>
                             <UButton variant="link" icon="i-mdi-refresh" @click="refresh()" />
                         </UTooltip>
 
-                        <UTooltip v-if="can('WikiService.CreatePage').value" :text="$t('common.edit')">
+                        <UTooltip
+                            v-if="
+                                can('WikiService.CreatePage').value &&
+                                checkAccess(activeChar!, page.access, page.meta.creator, AccessLevel.EDIT)
+                            "
+                            :text="$t('common.edit')"
+                        >
                             <UButton color="white" icon="i-mdi-pencil" @click="$emit('edit')" />
                         </UTooltip>
 
-                        <UTooltip v-if="can('WikiService.DeletePage').value" :text="$t('common.delete')">
+                        <UTooltip
+                            v-if="
+                                can('WikiService.DeletePage').value &&
+                                checkAccess(activeChar!, page.access, page.meta.creator, AccessLevel.OWNER)
+                            "
+                            :text="$t('common.delete')"
+                        >
                             <UButton
                                 color="red"
                                 icon="i-mdi-trash-can"

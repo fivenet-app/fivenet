@@ -230,7 +230,7 @@ export const useNotificatorStore = defineStore('notifications', {
             if (req.all === true || req.ids.length >= this.notificationsCount) {
                 this.notificationsCount = 0;
             } else {
-                this.notificationsCount = this.notificationsCount - req.ids.length;
+                this.notificationsCount -= req.ids.length;
             }
         },
     },

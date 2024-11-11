@@ -24,7 +24,10 @@ const containerPosition = computed(() => {
     <GenericModal
         :open="isOpen"
         :title="$t('components.mathcalculator.title')"
-        :ui="{ width: 'w-full sm:max-w-md', container: containerPosition }"
+        :ui="{
+            container: containerPosition,
+            width: 'w-full sm:max-w-md',
+        }"
         :overlay="false"
         @close="isOpen = false"
     >
