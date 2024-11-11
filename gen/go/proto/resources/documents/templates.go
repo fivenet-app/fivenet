@@ -46,10 +46,6 @@ func (x *TemplateShort) SetJobLabel(label string) {
 
 // pkg/access compatibility
 
-func (x *TemplateJobAccess) GetTargetId() uint64 {
-	return x.TemplateId
-}
-
 func (x *TemplateJobAccess) SetMinimumGrade(grade int32) {
 	x.MinimumGrade = grade
 }

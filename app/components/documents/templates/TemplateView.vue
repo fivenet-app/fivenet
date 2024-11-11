@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import type { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -69,103 +69,11 @@ async function deleteTemplate(id: string): Promise<void> {
     }
 }
 
-const templateAccessTypes = [{ id: 1, name: t('common.job', 2) }];
-const contentAccessTypes = [
-    { id: 0, name: t('common.citizen', 2) },
-    { id: 1, name: t('common.job', 2) },
+const templateAccessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const contentAccessTypes: AccessType[] = [
+    { type: 'user', name: t('common.citizen', 2) },
+    { type: 'job', name: t('common.job', 2) },
 ];
-
-const templateAccess = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-        }
-    >(),
-);
-
-const contentAccess = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                userId?: number;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-            required?: boolean;
-        }
-    >(),
-);
-
-watch(template, () => {
-    if (!template.value) {
-        return;
-    }
-
-    const tplAccess = template.value.jobAccess;
-    if (tplAccess) {
-        let accessId = 0;
-
-        tplAccess.forEach((job) => {
-            const id = accessId.toString();
-            templateAccess.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: job.job,
-                    accessRole: job.access,
-                    minimumGrade: job.minimumGrade,
-                },
-            });
-            accessId++;
-        });
-    }
-
-    const docAccess = template.value.contentAccess;
-    if (docAccess) {
-        let accessId = 0;
-
-        docAccess.users.forEach((access) => {
-            const id = accessId.toString();
-            contentAccess.value.set(id, {
-                id,
-                type: 0,
-                values: { userId: access.userId, accessRole: access.access },
-                required: access.required,
-            });
-            accessId++;
-        });
-
-        docAccess.jobs.forEach((access) => {
-            const id = accessId.toString();
-            contentAccess.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: access.job,
-                    accessRole: access.access,
-                    minimumGrade: access.minimumGrade,
-                },
-                required: access.required,
-            });
-            accessId++;
-        });
-    }
-});
-
-const completorStore = useCompletorStore();
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -235,6 +143,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </p>
                 </div>
             </div>
+
             <div class="mb-6 mt-4 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="my-2">
@@ -245,21 +154,26 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             <UInput type="text" name="weight" disabled :value="template.weight" />
                         </div>
                     </div>
+
                     <div v-if="template.jobAccess" class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.template', 2) }} {{ $t('common.access') }}
                         </h3>
                         <div class="my-2">
-                            <DocumentAccessEntry
-                                v-for="entry in templateAccess.values()"
-                                :key="entry.id"
-                                :init="entry"
+                            <AccessManager
+                                v-model:jobs="template.jobAccess"
+                                :target-id="templateId ?? '0'"
+                                :access-roles="
+                                    enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                                        (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                    )
+                                "
                                 :access-types="templateAccessTypes"
-                                :read-only="true"
-                                :jobs="jobs"
+                                :disabled="true"
                             />
                         </div>
                     </div>
+
                     <div class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.content') }} {{ $t('common.title') }}
@@ -274,6 +188,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             />
                         </div>
                     </div>
+
                     <div v-if="template.state">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.content') }} {{ $t('common.state') }}
@@ -288,6 +203,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             />
                         </div>
                     </div>
+
                     <div v-if="template.category">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.category') }}
@@ -299,6 +215,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             </p>
                         </div>
                     </div>
+
                     <div class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.content') }}
@@ -313,6 +230,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             />
                         </div>
                     </div>
+
                     <div v-if="reqs">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.schema') }}
@@ -333,19 +251,19 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             </ul>
                         </div>
                     </div>
+
                     <div v-if="template.contentAccess" class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.access') }}
                         </h3>
                         <div class="my-2">
-                            <DocumentAccessEntry
-                                v-for="entry in contentAccess.values()"
-                                :key="entry.id"
-                                :init="entry"
+                            <AccessManager
+                                v-model:jobs="template.contentAccess.jobs"
+                                :target-id="templateId ?? '0'"
                                 :access-types="contentAccessTypes"
-                                :read-only="true"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                :disabled="true"
                                 :show-required="true"
-                                :jobs="jobs"
                             />
                         </div>
                     </div>

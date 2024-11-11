@@ -356,9 +356,9 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			}
 
 			if err := s.access.Users.CreateEntry(ctx, tx, request.DocumentId, &documents.DocumentUserAccess{
-				UserId:     *request.CreatorId,
-				DocumentId: request.DocumentId,
-				Access:     request.Data.GetAccessRequested().Level,
+				UserId:   *request.CreatorId,
+				TargetId: request.DocumentId,
+				Access:   request.Data.GetAccessRequested().Level,
 			}); err != nil {
 				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 			}

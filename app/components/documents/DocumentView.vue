@@ -23,6 +23,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
+import AccessBadges from '../partials/access/AccessBadges.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 
 const props = defineProps<{
@@ -496,47 +497,7 @@ defineShortcuts({
                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                             />
 
-                            <div v-else class="flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in access?.jobs"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ entry.jobLabel
-                                            }}<span
-                                                v-if="entry.minimumGrade > 0"
-                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                            >
-                                                ({{ entry.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in access?.users"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-amber-500" />
-                                        <span :title="`${$t('common.id')} ${entry.userId}`">
-                                            {{ entry.user?.firstname }}
-                                            {{ entry.user?.lastname }} -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-                            </div>
+                            <AccessBadges v-else :access-level="AccessLevel" :jobs="access.jobs" :users="access.users" />
                         </UContainer>
                     </template>
 

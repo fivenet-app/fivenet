@@ -25,7 +25,7 @@ message ThreadAccess {
 message ThreadJobAccess {
   uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 thread_id = 3 [jstype = JS_STRING];
+  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
@@ -36,7 +36,7 @@ message ThreadJobAccess {
 message ThreadUserAccess {
   uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 thread_id = 3 [jstype = JS_STRING];
+  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
   int32 user_id = 4 [(validate.rules).int32.gte = 0];
   optional resources.users.UserShort user = 5;
   AccessLevel access = 6 [(validate.rules).enum.defined_only = true];

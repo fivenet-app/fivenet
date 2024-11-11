@@ -22,20 +22,12 @@ func (x *PageJobAccess) SetJobGradeLabel(label string) {
 
 // pkg/access compatibility
 
-func (x *PageJobAccess) GetTargetId() uint64 {
-	return x.PageId
-}
-
 func (x *PageJobAccess) SetMinimumGrade(grade int32) {
 	x.MinimumGrade = grade
 }
 
 func (x *PageJobAccess) SetAccess(access AccessLevel) {
 	x.Access = access
-}
-
-func (x *PageUserAccess) GetTargetId() uint64 {
-	return x.PageId
 }
 
 func (x *PageUserAccess) SetAccess(access AccessLevel) {}

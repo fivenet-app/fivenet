@@ -6,6 +6,7 @@ import slug from '~/utils/slugify';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
+import AccessBadges from '../partials/access/AccessBadges.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
@@ -245,6 +246,13 @@ const accordionItems = computed(() =>
                                     <GenericTime :value="page.meta.deletedAt" type="long" />
                                 </span>
                             </UBadge>
+
+                            <UBadge v-if="page.meta.public" color="black" class="inline-flex gap-1" size="md">
+                                <UIcon name="i-mdi-earth" class="size-5" />
+                                <span>
+                                    {{ $t('common.public') }}
+                                </span>
+                            </UBadge>
                         </div>
 
                         <p>{{ page.meta.description }}</p>
@@ -267,47 +275,12 @@ const accordionItems = computed(() =>
                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                             />
 
-                            <div v-else class="flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in page.access?.jobs"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ entry.jobLabel
-                                            }}<span
-                                                v-if="entry.minimumGrade > 0"
-                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                            >
-                                                ({{ entry.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.wiki.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in page.access?.users"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-amber-500" />
-                                        <span :title="`${$t('common.id')} ${entry.userId}`">
-                                            {{ entry.user?.firstname }}
-                                            {{ entry.user?.lastname }} -
-                                            {{ $t(`enums.wiki.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-                            </div>
+                            <AccessBadges
+                                v-else
+                                :access-level="AccessLevel"
+                                :jobs="page?.access.jobs"
+                                :users="page?.access.users"
+                            />
                         </UContainer>
                     </template>
 

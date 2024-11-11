@@ -2147,7 +2147,7 @@
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  | @gotags: alias:&#34;id&#34; |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| template_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;template_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -2474,7 +2474,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;document_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -2497,7 +2497,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;document_id&#34; |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-documents-AccessLevel) |  |  |
@@ -4076,7 +4076,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;qualification_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -5131,7 +5131,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;calendar_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -5153,7 +5153,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| calendar_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;calendar_id&#34; |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
@@ -5400,7 +5400,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -5422,7 +5422,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| thread_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
@@ -5521,7 +5521,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| page_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;page_id&#34; |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | minimum_grade | [int32](#int32) |  |  |
@@ -5543,7 +5543,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| page_id | [uint64](#uint64) |  |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;page_id&#34; |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-wiki-AccessLevel) |  |  |

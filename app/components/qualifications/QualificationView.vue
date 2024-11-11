@@ -21,6 +21,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import AccessBadges from '../partials/access/AccessBadges.vue';
 import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{
@@ -467,30 +468,7 @@ const accordionItems = computed(() =>
                                     icon="i-mdi-file-search"
                                     :message="$t('common.not_found', [$t('common.access', 2)])"
                                 />
-                                <div v-else class="mx-4 flex flex-col gap-2">
-                                    <div class="flex flex-row flex-wrap gap-1">
-                                        <UBadge
-                                            v-for="entry in qualification.access?.jobs"
-                                            :key="entry.id"
-                                            color="black"
-                                            class="inline-flex gap-1"
-                                            size="md"
-                                        >
-                                            <span class="size-2 rounded-full bg-info-500" />
-                                            <span>
-                                                {{ entry.jobLabel
-                                                }}<span
-                                                    v-if="entry.minimumGrade > 0"
-                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                >
-                                                    ({{ entry.jobGradeLabel }})</span
-                                                >
-                                                -
-                                                {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                            </span>
-                                        </UBadge>
-                                    </div>
-                                </div>
+                                <AccessBadges v-else :access-level="AccessLevel" :jobs="qualification?.access.jobs" />
                             </UContainer>
                         </template>
                     </UAccordion>

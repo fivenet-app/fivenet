@@ -33,9 +33,9 @@ export interface QualificationJobAccess {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
      */
-    qualificationId: string;
+    targetId: string; // @gotags: alias:"qualification_id"
     /**
      * @generated from protobuf field: string job = 5;
      */
@@ -154,7 +154,7 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
         super("resources.qualifications.QualificationJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
@@ -165,7 +165,7 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
     create(value?: PartialMessage<QualificationJobAccess>): QualificationJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
-        message.qualificationId = "0";
+        message.targetId = "0";
         message.job = "";
         message.minimumGrade = 0;
         message.access = 0;
@@ -184,8 +184,8 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.targetId = reader.uint64().toString();
                     break;
                 case /* string job */ 5:
                     message.job = reader.string();
@@ -220,9 +220,9 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
+        /* uint64 target_id = 4 [jstype = JS_STRING]; */
+        if (message.targetId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.targetId);
         /* string job = 5; */
         if (message.job !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.job);

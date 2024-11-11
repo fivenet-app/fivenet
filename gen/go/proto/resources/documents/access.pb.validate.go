@@ -249,7 +249,7 @@ func (m *DocumentJobAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for DocumentId
+	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := DocumentJobAccessValidationError{
@@ -455,7 +455,7 @@ func (m *DocumentUserAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for DocumentId
+	// no validation rules for TargetId
 
 	if m.GetUserId() <= 0 {
 		err := DocumentUserAccessValidationError{

@@ -9,7 +9,7 @@ const props = withDefaults(
         jobs?: JobsT[];
         users?: UsersT[];
         accessTypes?: AccessType[];
-        accessRoles?: AccessLevelEnum[];
+        accessRoles: AccessLevelEnum[];
         defaultAccess?: number;
         disabled?: boolean;
         showRequired?: boolean;
@@ -18,7 +18,6 @@ const props = withDefaults(
         jobs: () => [],
         users: () => [],
         accessTypes: undefined,
-        accessRoles: () => [],
         defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW
         disabled: false,
         showRequired: false,
@@ -26,13 +25,14 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'update:jobs', jobs: JobsT): void;
-    (e: 'update:users', jobs: UsersT): void;
+    (e: 'update:jobs', jobs: JobsT[]): void;
+    (e: 'update:users', users: UsersT[]): void;
 }>();
 
 const { t } = useI18n();
 
-const { jobs: jobsAccess, users: usersAccess } = useVModels(props, emits);
+const jobsAccess = useVModel(props, 'jobs', emits);
+const usersAccess = useVModel(props, 'users', emits);
 
 const defaultAccessTypes = [
     { type: 'user', name: t('common.citizen', 2) },
@@ -47,25 +47,34 @@ if (props.accessTypes === undefined) {
 }
 
 const access = ref<MixedAccessEntry[]>([]);
+
 watchArray(
     access,
     (newList, _, added, removed) => {
         added.forEach((e) => {
             if (e.type === 'user') {
-                usersAccess.value.push({
-                    id: e.id,
-                    userId: e.userId,
-                    access: e.access,
-                    required: e.required,
-                } as UsersT);
+                const uaIdx = usersAccess.value.findIndex((ua) => ua.id === e.id);
+                if (uaIdx === -1) {
+                    usersAccess.value.push({
+                        id: e.id,
+                        targetId: props.targetId,
+                        userId: e.userId,
+                        access: e.access,
+                        required: e.required,
+                    } as UsersT);
+                }
             } else if (e.type === 'job') {
-                jobsAccess.value.push({
-                    id: e.id,
-                    job: e.job,
-                    minimumGrade: e.minimumGrade,
-                    access: e.access,
-                    required: e.required,
-                } as JobsT);
+                const jaIdx = jobsAccess.value.findIndex((ua) => ua.id === e.id);
+                if (jaIdx === -1) {
+                    jobsAccess.value.push({
+                        id: e.id,
+                        targetId: props.targetId,
+                        job: e.job,
+                        minimumGrade: e.minimumGrade,
+                        access: e.access,
+                        required: e.required,
+                    } as JobsT);
+                }
             }
         });
 
@@ -86,12 +95,12 @@ watchArray(
         newList.forEach((e) => {
             const uaIdx = usersAccess.value.findIndex((ua) => ua.id === e.id);
             const jaIdx = jobsAccess.value.findIndex((ua) => ua.id === e.id);
-
             if (jaIdx > -1 && e.type === 'user') {
                 jobsAccess.value.splice(jaIdx, 1);
 
                 usersAccess.value.push({
                     id: e.id,
+                    targetId: props.targetId,
                     access: e.access,
                     userId: e.userId,
                     required: e.required,
@@ -102,6 +111,7 @@ watchArray(
 
                 jobsAccess.value.push({
                     id: e.id,
+                    targetId: props.targetId,
                     access: e.access,
                     job: e.job,
                     minimumGrade: e.minimumGrade,
@@ -118,16 +128,15 @@ watchArray(
                 usersAccess.value[uaIdx].userId = e.userId;
                 usersAccess.value[uaIdx].access = e.access;
                 usersAccess.value[uaIdx].required = e.required;
-            } else if (jaIdx > -1 && jobsAccess.value[uaIdx]) {
+            } else if (jaIdx > -1 && jobsAccess.value[jaIdx]) {
                 if (uaIdx > -1) {
                     usersAccess.value.splice(uaIdx, 1);
                 }
 
-                jobsAccess.value[uaIdx].job = e.job;
-                jobsAccess.value[uaIdx].minimumGrade = e.minimumGrade;
-                jobsAccess.value[uaIdx].userId = undefined;
-                jobsAccess.value[uaIdx].access = e.access;
-                jobsAccess.value[uaIdx].required = e.required;
+                jobsAccess.value[jaIdx].job = e.job;
+                jobsAccess.value[jaIdx].minimumGrade = e.minimumGrade;
+                jobsAccess.value[jaIdx].access = e.access;
+                jobsAccess.value[jaIdx].required = e.required;
             }
         });
     },
@@ -136,8 +145,26 @@ watchArray(
     },
 );
 
-watchOnce(jobsAccess, () => access.value?.push(...jobsAccess.value.map((a) => ({ ...a, type: 'job' }) as MixedAccessEntry)));
-watchOnce(usersAccess, () => access.value?.push(...usersAccess.value.map((a) => ({ ...a, type: 'user' }) as MixedAccessEntry)));
+function setFromPropsJobs(): void {
+    access.value?.push(
+        ...jobsAccess.value
+            .filter((a) => !access.value.find((ja) => ja.id === a.id))
+            .map((a) => ({ ...a, type: 'job' }) as MixedAccessEntry),
+    );
+}
+
+function setFromPropsUsers(): void {
+    access.value?.push(
+        ...usersAccess.value
+            .filter((a) => !access.value.find((ua) => ua.id === a.id))
+            .map((a) => ({ ...a, type: 'user' }) as MixedAccessEntry),
+    );
+}
+
+watch(jobsAccess, setFromPropsJobs);
+setFromPropsJobs();
+watch(usersAccess, setFromPropsUsers);
+setFromPropsUsers();
 
 const lastId = ref(0);
 function addEntry(): void {
@@ -168,7 +195,10 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
+        {{ access.length }}
+
         <UButton
+            v-if="!disabled"
             :ui="{ rounded: 'rounded-full' }"
             icon="i-mdi-plus"
             :title="$t('components.documents.document_editor.add_permission')"

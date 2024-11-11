@@ -2,26 +2,24 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DocEditor from '~/components/partials/DocEditor.vue';
-import QualificationAccessEntry from '~/components/qualifications/QualificationAccessEntry.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
-import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
+import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import type {
-    Qualification,
     QualificationExamSettings,
     QualificationRequirement,
     QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
     CreateQualificationResponse,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
+import AccessManager from '../partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums, type AccessType } from '../partials/access/helpers';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{
@@ -30,13 +28,9 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { game } = useAppConfig();
-
 const { can, activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
-
-const completorStore = useCompletorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
@@ -68,6 +62,9 @@ const schema = z.object({
     examMode: z.nativeEnum(QualificationExamMode),
     examSettings: z.custom<QualificationExamSettings>(),
     exam: z.custom<ExamQuestions>(),
+    access: z.object({
+        jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -94,23 +91,10 @@ const state = reactive<Schema>({
     exam: {
         questions: [],
     },
+    access: {
+        jobs: [],
+    },
 });
-
-const access = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-        }
-    >(),
-);
-const qualiAccess = ref<QualificationAccess>();
 const qualiRequirements = ref<QualificationRequirement[]>([]);
 
 async function getQualification(qualificationId: string): Promise<void> {
@@ -122,8 +106,6 @@ async function getQualification(qualificationId: string): Promise<void> {
         const { response } = await call;
 
         const qualification = response.qualification;
-        qualiAccess.value = response.qualification?.access;
-
         if (qualification) {
             state.abbreviation = qualification.abbreviation;
             state.title = qualification.title;
@@ -150,26 +132,11 @@ async function getQualification(qualificationId: string): Promise<void> {
                 });
                 state.exam = qualification.exam;
             }
+            if (qualification.access) {
+                state.access = qualification.access;
+            }
 
             qualiRequirements.value = qualification.requirements;
-        }
-
-        if (response.qualification?.access) {
-            let accessId = 0;
-
-            response.qualification?.access.jobs.forEach((job) => {
-                const id = accessId.toString();
-                access.value.set(id, {
-                    id,
-                    type: 0,
-                    values: {
-                        job: job.job,
-                        accessRole: job.access,
-                        minimumGrade: job.minimumGrade,
-                    },
-                });
-                accessId++;
-            });
         }
 
         loading.value = false;
@@ -184,17 +151,6 @@ async function getQualification(qualificationId: string): Promise<void> {
 onMounted(async () => {
     if (props.qualificationId) {
         await getQualification(props.qualificationId);
-    } else {
-        const accessId = 0;
-        access.value.set(accessId.toString(), {
-            id: accessId.toString(),
-            type: 0,
-            values: {
-                job: activeChar.value?.job,
-                minimumGrade: game.startJobGrade,
-                accessRole: AccessLevel.EDIT,
-            },
-        });
     }
 });
 
@@ -212,35 +168,14 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
-            access: {
-                jobs: [],
-            } as QualificationAccess,
             discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: values.examSettings,
             exam: values.exam,
+            access: values.access,
         },
     };
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            req.qualification.access.jobs.push({
-                id: '0',
-                qualificationId: '0',
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
 
     try {
         const call = getGRPCQualificationsClient().createQualification(req);
@@ -272,36 +207,16 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
-            access: {
-                jobs: [],
-            } as QualificationAccess,
             discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: values.examSettings,
             exam: values.exam,
+            access: values.access,
         },
     };
 
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            req.qualification.access.jobs.push({
-                id: '0',
-                qualificationId: props.qualificationId!,
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
+    console.log(req);
 
     try {
         const call = getGRPCQualificationsClient().updateQualification(req);
@@ -336,73 +251,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     });
 }, 1000);
 
-function addAccessEntry(): void {
-    if (access.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: {
-                key: 'notifications.max_access_entry.content',
-                parameters: { max: maxAccessEntries.toString() },
-            },
-            type: NotificationType.ERROR,
-        });
-        return;
-    }
-
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1') + 1 : 0;
-    access.value.set(id.toString(), {
-        id: id.toString(),
-        type: 0,
-        values: {},
-    });
-}
-
-function removeAccessEntry(event: { id: string }): void {
-    access.value.delete(event.id);
-}
-
-function updateAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryName(event: { id: string; job?: Job; req?: Qualification }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-    }
-
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    access.value.set(event.id, accessEntry);
-}
+const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
     if (!qualification || !qualiRequirements.value[idx]) {
@@ -443,8 +292,6 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -571,31 +418,18 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                     {{ $t('common.access') }}
                                 </h2>
 
-                                <QualificationAccessEntry
-                                    v-for="entry in access.values()"
-                                    :key="entry.id"
-                                    :init="entry"
-                                    :read-only="!canDo.access"
-                                    :jobs="jobs"
-                                    @type-change="updateAccessEntryType($event)"
-                                    @name-change="updateAccessEntryName($event)"
-                                    @rank-change="updateAccessEntryRank($event)"
-                                    @access-change="updateAccessEntryAccess($event)"
-                                    @delete-request="removeAccessEntry($event)"
-                                />
-
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :title="$t('components.documents.document_editor.add_permission')"
-                                    :disabled="!canDo.edit || !canDo.access"
-                                    icon="i-mdi-plus"
-                                    @click="addAccessEntry()"
+                                <AccessManager
+                                    v-model:jobs="state.access.jobs"
+                                    :target-id="qualificationId ?? '0'"
+                                    :disabled="!canDo.access"
+                                    :access-types="accessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
                                 />
                             </div>
 
                             <div>
                                 <h2 class="text- text-gray-900 dark:text-white">
-                                    {{ $t('common.requirements') }}
+                                    {{ $t('common.requirements', 2) }}
                                 </h2>
 
                                 <QualificationRequirementEntry
@@ -697,6 +531,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                                     }}
                                                 </span>
                                             </template>
+
                                             <template #option="{ option }">
                                                 <span class="truncate">
                                                     {{
@@ -706,9 +541,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                                     }}
                                                 </span>
                                             </template>
+
                                             <template #option-empty="{ query: search }">
                                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                             </template>
+
                                             <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                                         </USelectMenu>
                                     </ClientOnly>

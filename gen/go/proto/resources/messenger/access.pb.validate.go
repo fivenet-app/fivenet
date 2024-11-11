@@ -248,7 +248,7 @@ func (m *ThreadJobAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for ThreadId
+	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := ThreadJobAccessValidationError{
@@ -448,7 +448,7 @@ func (m *ThreadUserAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for ThreadId
+	// no validation rules for TargetId
 
 	if m.GetUserId() < 0 {
 		err := ThreadUserAccessValidationError{

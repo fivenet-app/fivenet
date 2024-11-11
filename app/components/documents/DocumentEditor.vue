@@ -24,8 +24,6 @@ const props = defineProps<{
     documentId?: string;
 }>();
 
-const { t } = useI18n();
-
 const { can, activeChar } = useAuth();
 
 const { game } = useAppConfig();
@@ -111,12 +109,11 @@ onMounted(async () => {
             state.state = template.state;
             state.content = template.content;
             state.category = template.category;
-
             if (template?.contentAccess) {
-                if (activeChar.value !== null) {
-                    docCreator.value = activeChar.value;
-                }
                 state.access = template.contentAccess;
+            }
+            if (activeChar.value !== null) {
+                docCreator.value = activeChar.value;
             }
         } catch (e) {
             handleGRPCError(e as RpcError);
@@ -164,7 +161,7 @@ onMounted(async () => {
 
         state.access.jobs.push({
             id: '0',
-            documentId: props.documentId ?? '0',
+            targetId: props.documentId ?? '0',
             job: activeChar.value!.job,
             minimumGrade: game.startJobGrade,
             access: AccessLevel.EDIT,
@@ -183,6 +180,7 @@ onMounted(async () => {
             reference: DocReference.SOLVES,
         });
     });
+
     clipboardStore.activeStack.users.forEach((user, i) => {
         const id = i.toString();
         relationManagerData.value.set(id, {
@@ -323,6 +321,8 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         categoryId: values.category?.id,
         access: values.access,
     };
+
+    console.log(values.access);
 
     try {
         const call = getGRPCDocStoreClient().updateDocument(req);
@@ -552,7 +552,7 @@ logger.info(
                         <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
                     </ClientOnly>
 
-                    <template v-if="true || saving">
+                    <template v-if="saving">
                         <div class="absolute inset-x-0 bottom-0.5 flex justify-center gap-2 text-xs text-gray-900">
                             <UIcon name="i-mdi-content-save" class="h-auto w-4 animate-spin" />
                             <span>{{ $t('common.save', 2) }}...</span>

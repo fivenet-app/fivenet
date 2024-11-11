@@ -249,7 +249,7 @@ func (m *CalendarJobAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for CalendarId
+	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := CalendarJobAccessValidationError{
@@ -451,7 +451,7 @@ func (m *CalendarUserAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for CalendarId
+	// no validation rules for TargetId
 
 	if m.GetUserId() < 0 {
 		err := CalendarUserAccessValidationError{

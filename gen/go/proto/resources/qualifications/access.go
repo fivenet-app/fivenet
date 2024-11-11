@@ -2,10 +2,6 @@ package qualifications
 
 // pkg/access compatibility
 
-func (x *QualificationJobAccess) GetTargetId() uint64 {
-	return x.QualificationId
-}
-
 func (x *QualificationJobAccess) SetMinimumGrade(grade int32) {
 	x.MinimumGrade = grade
 }

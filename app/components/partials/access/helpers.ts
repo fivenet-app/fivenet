@@ -1,19 +1,24 @@
 import { listEnumValues } from '@protobuf-ts/runtime';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export type JobAccessEntry = {
     id: string;
-    userId?: number;
+    targetId: string;
     job?: string;
     minimumGrade?: number;
     access: number;
     required?: boolean;
+    jobLabel?: string;
+    jobGradeLabel?: string;
 };
 
 export type UserAccessEntry = {
     id: string;
+    targetId: string;
     userId?: number;
     access: number;
     required?: boolean;
+    user?: UserShort;
 };
 
 export type AccessEntryType = 'user' | 'job';

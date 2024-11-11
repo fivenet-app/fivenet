@@ -18,10 +18,6 @@ func (x *DocumentJobAccess) SetJobLabel(label string) {
 
 // pkg/access compatibility
 
-func (x *DocumentJobAccess) GetTargetId() uint64 {
-	return x.DocumentId
-}
-
 func (x *DocumentJobAccess) GetJobGrade() int32 {
 	return x.MinimumGrade
 }
@@ -40,10 +36,6 @@ func (x *DocumentJobAccess) SetMinimumGrade(grade int32) {
 
 func (x *DocumentJobAccess) SetAccess(access AccessLevel) {
 	x.Access = access
-}
-
-func (x *DocumentUserAccess) GetTargetId() uint64 {
-	return x.DocumentId
 }
 
 func (x *DocumentUserAccess) SetUserId(id int32) {

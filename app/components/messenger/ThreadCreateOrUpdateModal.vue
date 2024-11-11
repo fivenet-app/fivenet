@@ -83,7 +83,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     users:
                         data.users.map((u) => ({
                             id: u.id ?? '0',
-                            threadId: props.thread?.id ?? '0',
+                            targetId: props.thread?.id ?? '0',
                             access: u.access,
                             userId: u.user!.userId,
                         })) ?? [],

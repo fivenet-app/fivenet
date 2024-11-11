@@ -2,19 +2,19 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
-import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import DocEditor from '~/components/partials/DocEditor.vue';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
@@ -35,13 +35,18 @@ const completorStore = useCompletorStore();
 const { maxAccessEntries } = useAppConfig();
 
 const schema = z.object({
-    weight: z.number().min(0).max(999_999),
+    weight: z.coerce.number().min(0).max(999_999),
     title: z.string().min(3).max(255),
     description: z.string().min(3).max(255),
     contentTitle: z.string().min(3).max(2048),
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(2048), z.string().length(0)]),
     category: z.custom<Category>().optional(),
+    jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries),
+    contentAccess: z.object({
+        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
+        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -54,6 +59,11 @@ const state = reactive<Schema>({
     content: '',
     contentState: '',
     category: undefined,
+    jobAccess: [],
+    contentAccess: {
+        jobs: [],
+        users: [],
+    },
 });
 
 const canSubmit = ref(true);
@@ -81,184 +91,12 @@ const schemaEditor = ref<SchemaEditorValue>({
         max: 0,
     },
 });
-const access = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-        }
-    >(),
-);
 
-const accessTypes = [{ id: 1, name: t('common.job', 2) }];
-
-function addDocumentAccessEntry(): void {
-    if (access.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
-            type: NotificationType.ERROR,
-        });
-        return;
-    }
-
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0') + 1 : 0;
-    access.value.set(id.toString(), {
-        id: id.toString(),
-        type: 1,
-        values: {},
-    });
-}
-
-function removeDocumentAccessEntry(event: { id: string }): void {
-    access.value.delete(event.id);
-}
-
-function updateDocumentAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateDocumentAccessEntryName(event: { id: string; job?: Job }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-
-        access.value.set(event.id, accessEntry);
-    }
-}
-
-function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    access.value.set(event.id, accessEntry);
-}
-
-const contentAccess = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                userId?: number;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-            required?: boolean;
-        }
-    >(),
-);
-
-const contentAccessTypes = [
-    { id: 0, name: t('common.citizen', 2) },
-    { id: 1, name: t('common.job', 2) },
+const accessTypes: AccessType[] = [{ type: 'job', name: t('common.job', 2) }];
+const contentAccessTypes: AccessType[] = [
+    { type: 'user', name: t('common.citizen', 2) },
+    { type: 'job', name: t('common.job', 2) },
 ];
-
-function addContentDocumentAccessEntry(): void {
-    if (contentAccess.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
-            type: NotificationType.ERROR,
-        });
-        return;
-    }
-
-    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0') + 1 : 0;
-    contentAccess.value.set(id.toString(), {
-        id: id.toString(),
-        type: 1,
-        values: {},
-        required: false,
-    });
-}
-
-function removeContentDocumentAccessEntry(event: { id: string }): void {
-    contentAccess.value.delete(event.id);
-}
-
-function updateContentDocumentAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    contentAccess.value.set(event.id, accessEntry);
-}
-
-function updateContentDocumentAccessEntryName(event: { id: string; job?: Job }): void {
-    const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-        contentAccess.value.set(event.id, accessEntry);
-    }
-}
-
-function updateContentDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    contentAccess.value.set(event.id, accessEntry);
-}
-
-function updateContentDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    contentAccess.value.set(event.id, accessEntry);
-}
-
-function updateContentDocumentAccessEntryRequired(event: { id: string; required?: boolean }): void {
-    const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.required = event.required;
-    contentAccess.value.set(event.id, accessEntry);
-}
 
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     const o: ObjectSpecs = {
@@ -276,68 +114,6 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
         vehicles: createObjectSpec(schemaEditor.value.vehicles),
     };
 
-    const jobAccesses: TemplateJobAccess[] = [];
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            jobAccesses.push({
-                id: '0',
-                templateId: templateId ?? '0',
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
-
-    const reqAccess: DocumentAccess = {
-        jobs: [],
-        users: [],
-    };
-    contentAccess.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.userId) {
-                return;
-            }
-
-            reqAccess.users.push({
-                id: '0',
-                documentId: '0',
-                userId: entry.values.userId,
-                access: entry.values.accessRole,
-                required: entry.required,
-            });
-        } else if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            reqAccess.jobs.push({
-                id: '0',
-                documentId: '0',
-                job: entry.values.job!,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-                required: entry.required,
-            });
-        }
-    });
-
-    if (typeof values.weight === 'string') {
-        values.weight = parseInt(values.weight as string);
-    }
-
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
             id: templateId ?? '0',
@@ -350,8 +126,8 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             schema: {
                 requirements: tRequirements,
             },
-            contentAccess: reqAccess,
-            jobAccess: jobAccesses,
+            contentAccess: values.contentAccess,
+            jobAccess: values.jobAccess,
             category: state.category,
             creatorJob: '',
         },
@@ -411,56 +187,11 @@ function setValuesFromTemplate(tpl: Template): void {
     state.content = tpl.content;
     state.contentState = tpl.state;
     state.category = tpl.category;
-
-    const tplAccess = tpl.jobAccess;
-    if (tplAccess !== undefined) {
-        let accessId = 0;
-
-        tplAccess.forEach((job) => {
-            const id = accessId.toString();
-            access.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: job.job,
-                    minimumGrade: job.minimumGrade,
-                    accessRole: job.access,
-                },
-            });
-            accessId++;
-        });
-    }
-
-    const ctAccess = tpl.contentAccess;
-    if (ctAccess !== undefined) {
-        let accessId = 0;
-
-        ctAccess.users.forEach((access) => {
-            const id = accessId.toString();
-            contentAccess.value.set(id, {
-                id,
-                type: 0,
-                values: { userId: access.userId, accessRole: access.access },
-                required: access.required,
-            });
-            accessId++;
-        });
-
-        ctAccess.jobs.forEach((access) => {
-            const id = accessId.toString();
-            contentAccess.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: access.job,
-                    accessRole: access.access,
-                    minimumGrade: access.minimumGrade,
-                },
-                required: access.required,
-            });
-            accessId++;
-        });
-    }
+    state.contentAccess = tpl.contentAccess ?? {
+        jobs: [],
+        users: [],
+    };
+    state.jobAccess = tpl.jobAccess;
 
     schemaEditor.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
     schemaEditor.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
@@ -496,14 +227,12 @@ onMounted(async () => {
     } else {
         state.weight = 0;
 
-        access.value.set('0', {
+        state.jobAccess.push({
             id: '0',
-            type: 1,
-            values: {
-                job: activeChar.value?.job,
-                minimumGrade: game.startJobGrade,
-                accessRole: AccessLevel.VIEW,
-            },
+            targetId: props.templateId ?? '0',
+            job: activeChar.value!.job,
+            minimumGrade: game.startJobGrade,
+            access: AccessLevel.VIEW,
         });
     }
 
@@ -511,8 +240,6 @@ onMounted(async () => {
 });
 
 const categoriesLoading = ref(false);
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -560,25 +287,15 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             <div class="my-2">
                 <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
 
-                <DocumentAccessEntry
-                    v-for="entry in access.values()"
-                    :key="entry.id"
-                    :init="entry"
+                <AccessManager
+                    v-model:jobs="state.jobAccess"
+                    :target-id="templateId ?? '0'"
                     :access-types="accessTypes"
-                    :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                    :jobs="jobs"
-                    @type-change="updateDocumentAccessEntryType($event)"
-                    @name-change="updateDocumentAccessEntryName($event)"
-                    @rank-change="updateDocumentAccessEntryRank($event)"
-                    @access-change="updateDocumentAccessEntryAccess($event)"
-                    @delete-request="removeDocumentAccessEntry($event)"
-                />
-
-                <UButton
-                    icon="i-mdi-plus"
-                    :ui="{ rounded: 'rounded-full' }"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addDocumentAccessEntry()"
+                    :access-roles="
+                        enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                        )
+                    "
                 />
             </div>
 
@@ -649,26 +366,14 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             <div class="my-2">
                 <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
 
-                <DocumentAccessEntry
-                    v-for="entry in contentAccess.values()"
-                    :key="entry.id"
-                    :init="entry"
+                <AccessManager
+                    v-model:jobs="state.contentAccess.jobs"
+                    v-model:users="state.contentAccess.users"
+                    :target-id="templateId ?? '0'"
                     :access-types="contentAccessTypes"
+                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                    :disabled="true"
                     :show-required="true"
-                    :jobs="jobs"
-                    @type-change="updateContentDocumentAccessEntryType($event)"
-                    @name-change="updateContentDocumentAccessEntryName($event)"
-                    @rank-change="updateContentDocumentAccessEntryRank($event)"
-                    @access-change="updateContentDocumentAccessEntryAccess($event)"
-                    @delete-request="removeContentDocumentAccessEntry($event)"
-                    @required-change="updateContentDocumentAccessEntryRequired($event)"
-                />
-
-                <UButton
-                    icon="i-mdi-plus"
-                    :ui="{ rounded: 'rounded-full' }"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addContentDocumentAccessEntry()"
                 />
             </div>
         </UContainer>

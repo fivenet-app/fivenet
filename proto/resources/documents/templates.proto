@@ -79,7 +79,7 @@ message TemplateData {
 message TemplateJobAccess {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 template_id = 3 [jstype = JS_STRING];
+  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"template_id"
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];

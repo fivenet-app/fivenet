@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
@@ -218,11 +217,13 @@ watch(props, () => setFromProps());
                     :searchable-placeholder="$t('common.search_field')"
                 >
                     <template #label>
-                        {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                        {{ accessRoles.find((a) => a.value === entry.access)?.label ?? $t('common.na') }}
                     </template>
+
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
+
                     <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>

@@ -195,7 +195,7 @@ func (m *QualificationJobAccess) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for QualificationId
+	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := QualificationJobAccessValidationError{

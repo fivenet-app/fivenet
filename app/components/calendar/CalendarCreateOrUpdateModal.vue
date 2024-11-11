@@ -7,12 +7,11 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import ColorPickerTW from '../partials/ColorPickerTW.vue';
+import AccessManager from '../partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = defineProps<{
     calendarId?: string;
@@ -42,7 +41,10 @@ const schema = z.object({
     public: z.boolean(),
     closed: z.boolean(),
     color: z.string().max(12),
-    access: z.custom<CalendarAccess>().optional(),
+    access: z.object({
+        jobs: z.custom<CalendarJobAccess>().array().max(maxAccessEntries),
+        users: z.custom<CalendarUserAccess>().array().max(maxAccessEntries),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -54,6 +56,10 @@ const state = reactive<Schema>({
     public: false,
     closed: false,
     color: 'primary',
+    access: {
+        jobs: [],
+        users: [],
+    },
 });
 
 const {
@@ -70,41 +76,6 @@ const {
 );
 
 async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
-    const reqAccess: CalendarAccess = {
-        jobs: [],
-        users: [],
-    };
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.userId) {
-                return;
-            }
-
-            reqAccess.users.push({
-                id: '0',
-                calendarId: data.value?.calendar?.id ?? '0',
-                userId: entry.values.userId,
-                access: entry.values.accessRole,
-            });
-        } else if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            reqAccess.jobs.push({
-                id: '0',
-                calendarId: data.value?.calendar?.id ?? '0',
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
-
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: data.value?.calendar?.id ?? '0',
@@ -114,7 +85,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCal
             closed: values.closed,
             color: values.color,
             creatorJob: '',
-            access: reqAccess,
+            access: values.access,
         });
 
         isOpen.value = false;
@@ -138,129 +109,13 @@ function setFromProps(): void {
     state.public = calendar.public;
     state.closed = calendar.closed;
     state.color = calendar.color ?? 'primary';
-
     if (calendar.access) {
-        access.value.clear();
-
-        let accessId = 0;
-        calendar.access?.users.forEach((user) => {
-            const id = accessId.toString();
-            access.value.set(id, {
-                id,
-                type: 0,
-                values: { userId: user.userId, accessRole: user.access },
-            });
-            accessId++;
-        });
-
-        calendar.access?.jobs.forEach((job) => {
-            const id = accessId.toString();
-            access.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: job.job,
-                    accessRole: job.access,
-                    minimumGrade: job.minimumGrade,
-                },
-            });
-            accessId++;
-        });
+        state.access = calendar.access;
     }
 }
 
 watch(data, () => setFromProps());
 watch(props, async () => refresh());
-
-const access = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                userId?: number;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-        }
-    >(),
-);
-
-function addAccessEntry(): void {
-    if (access.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: {
-                key: 'notifications.max_access_entry.content',
-                parameters: { max: maxAccessEntries.toString() },
-            },
-            type: NotificationType.ERROR,
-        });
-        return;
-    }
-
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
-    access.value.set(id.toString(), {
-        id: id.toString(),
-        type: 1,
-        values: {},
-    });
-}
-
-function removeAccessEntry(event: { id: string }): void {
-    access.value.delete(event.id);
-}
-
-function updateAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-        accessEntry.values.userId = undefined;
-    } else if (event.char) {
-        accessEntry.values.job = undefined;
-        accessEntry.values.userId = event.char.userId;
-    }
-
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    access.value.set(event.id, accessEntry);
-}
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -333,23 +188,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
-                            <CalendarAccessEntry
-                                v-for="entry in access.values()"
-                                :key="entry.id"
-                                :init="entry"
-                                :jobs="jobs"
-                                @type-change="updateAccessEntryType($event)"
-                                @name-change="updateAccessEntryName($event)"
-                                @rank-change="updateAccessEntryRank($event)"
-                                @access-change="updateAccessEntryAccess($event)"
-                                @delete-request="removeAccessEntry($event)"
-                            />
-
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-plus"
-                                :title="$t('components.documents.document_editor.add_permission')"
-                                @click="addAccessEntry()"
+                            <AccessManager
+                                v-model:jobs="state.access.jobs"
+                                :target-id="calendarId ?? '0'"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
                             />
                         </UFormGroup>
                     </template>
