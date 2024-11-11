@@ -234,11 +234,6 @@ export const useNotificatorStore = defineStore('notifications', {
             }
         },
     },
-    getters: {
-        getNotificationsCount(): number {
-            return this.notificationsCount;
-        },
-    },
 });
 
 if (import.meta.hot) {

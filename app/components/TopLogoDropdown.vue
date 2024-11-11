@@ -5,7 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 const { isNotificationsSlideoverOpen } = useDashboard();
 
 const notificatorStore = useNotificatorStore();
-const { getNotificationsCount } = storeToRefs(notificatorStore);
+const { notificationsCount } = storeToRefs(notificatorStore);
 
 const newNotification = ref(false);
 
@@ -14,13 +14,13 @@ const { start } = useTimeoutFn(() => (newNotification.value = false), 1000, {
 });
 
 const currentCount = ref(0);
-watch(getNotificationsCount, () => {
-    if (getNotificationsCount.value > currentCount.value) {
+watch(notificationsCount, () => {
+    if (notificationsCount.value > currentCount.value) {
         newNotification.value = true;
         start();
     }
 
-    currentCount.value = getNotificationsCount.value;
+    currentCount.value = notificationsCount.value;
 });
 </script>
 
@@ -35,10 +35,10 @@ watch(getNotificationsCount, () => {
 
     <UTooltip text="Notifications" :shortcuts="['B']">
         <UChip
-            :show="getNotificationsCount > 0"
+            :show="notificationsCount > 0"
             color="red"
             inset
-            :text="getNotificationsCount <= 9 ? getNotificationsCount : '9+'"
+            :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"
         >
             <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
