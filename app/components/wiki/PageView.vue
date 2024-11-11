@@ -79,20 +79,20 @@ function walk(nodes: ChildNode[]) {
     nodes.forEach((n, idx) => {
         const node = n as HTMLElement;
 
-        const sub = Array.from(node.childNodes);
-        if (sub.length) {
-            walk(sub);
-        }
-
         if (/h[1-6]/i.test(node.tagName)) {
             if (node.id === '') {
-                node.id = slug(node.textContent?.substring(0, 64) ?? `${node.tagName}-${idx}`);
+                node.id = 'h' + slug(node.textContent?.substring(0, 64) ?? `${node.tagName}-${idx}`);
             }
             headers.push({
                 id: node.id,
                 depth: parseInt(node.tagName.replace('H', '')),
                 text: node.innerText,
             });
+        }
+
+        const sub = Array.from(node.childNodes);
+        if (sub.length) {
+            headers.push(...walk(sub));
         }
     });
     return headers;
