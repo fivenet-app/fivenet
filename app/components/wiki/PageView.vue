@@ -102,13 +102,19 @@ watch(
 
 const handleHashChange = (hash: string) => {
     if (hash) {
-        const targetElement = document.querySelector(hash); // Find element with id
-        if (targetElement) {
-            targetElement.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start',
-                inline: 'start',
-            }); // Smooth scroll to the element
+        console.log('PAGE VIEW');
+        try {
+            const targetElement = document.querySelector(hash); // Find element with id
+
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start',
+                }); // Smooth scroll to the element
+            }
+        } catch (e) {
+            console.warn('Query Selector exception', e);
         }
     }
 };

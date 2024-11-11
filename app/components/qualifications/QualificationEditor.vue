@@ -52,7 +52,7 @@ const schema = z.object({
     abbreviation: z.string().min(3).max(20),
     title: z.string().min(3).max(255),
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
-    content: z.string().min(20).max(750000),
+    content: z.string().min(3).max(750000),
     closed: z.boolean(),
     discordSyncEnabled: z.boolean(),
     discordSettings: z.object({

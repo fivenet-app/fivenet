@@ -73,7 +73,7 @@ const schema = z.object({
         public: z.boolean(),
         toc: z.boolean(),
     }),
-    content: z.string().min(20).max(1750000),
+    content: z.string().min(3).max(1750000),
     access: z.object({
         jobs: z.custom<PageJobAccess>().array().max(maxAccessEntries),
         users: z.custom<PageUserAccess>().array().max(maxAccessEntries),

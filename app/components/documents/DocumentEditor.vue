@@ -45,7 +45,7 @@ const canEdit = ref(false);
 const schema = z.object({
     title: z.string().min(3).max(255),
     state: z.union([z.string().length(0), z.string().min(3).max(32)]),
-    content: z.string().min(20).max(1750000),
+    content: z.string().min(3).max(1750000),
     public: z.boolean(),
     closed: z.boolean(),
     category: z.custom<Category>().optional(),

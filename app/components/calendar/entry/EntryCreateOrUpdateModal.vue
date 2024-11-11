@@ -33,7 +33,7 @@ const schema = z.object({
     title: z.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
-    content: z.string().min(20).max(1000000),
+    content: z.string().min(3).max(1000000),
     closed: z.boolean(),
     rsvpOpen: z.boolean(),
     users: z.custom<UserShort>().array().max(20),
