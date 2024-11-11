@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
@@ -10,15 +9,16 @@ import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
-import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocContentType, DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import AccessManager from '../partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = defineProps<{
     documentId?: string;
@@ -38,9 +38,9 @@ const documentStore = useDocumentEditorStore();
 
 const notifications = useNotificatorStore();
 
-const route = useRoute();
-
 const { maxAccessEntries } = useAppConfig();
+
+const route = useRoute();
 
 const canEdit = ref(false);
 
@@ -51,6 +51,10 @@ const schema = z.object({
     public: z.boolean(),
     closed: z.boolean(),
     category: z.custom<Category>().optional(),
+    access: z.object({
+        jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
+        users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -62,25 +66,12 @@ const state = reactive<Schema>({
     public: false,
     closed: false,
     category: undefined,
+    access: {
+        jobs: [],
+        users: [],
+    },
 });
 
-const access = ref(
-    new Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                userId?: number;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-            required?: boolean;
-        }
-    >(),
-);
-const docAccess = ref<DocumentAccess>();
 const docCreator = ref<UserShort | undefined>();
 
 const openRelationManager = ref<boolean>(false);
@@ -125,33 +116,7 @@ onMounted(async () => {
                 if (activeChar.value !== null) {
                     docCreator.value = activeChar.value;
                 }
-                const docAccess = template.contentAccess!;
-                let accessId = 0;
-                docAccess.users.forEach((user) => {
-                    const id = accessId.toString();
-                    access.value.set(id, {
-                        id,
-                        type: 0,
-                        values: { userId: user.userId, accessRole: user.access },
-                        required: user.required,
-                    });
-                    accessId++;
-                });
-
-                docAccess.jobs.forEach((job) => {
-                    const id = accessId.toString();
-                    access.value.set(id, {
-                        id,
-                        type: 1,
-                        values: {
-                            job: job.job,
-                            accessRole: job.access,
-                            minimumGrade: job.minimumGrade,
-                        },
-                        required: job.required,
-                    });
-                    accessId++;
-                });
+                state.access = template.contentAccess;
             }
         } catch (e) {
             handleGRPCError(e as RpcError);
@@ -168,7 +133,6 @@ onMounted(async () => {
             const { response } = await call;
 
             const document = response.document;
-            docAccess.value = response.access;
             docCreator.value = document?.creator;
             if (document) {
                 state.title = document.title;
@@ -177,39 +141,12 @@ onMounted(async () => {
                 state.category = document.category;
                 state.closed = document.closed;
                 state.public = document.public;
+                state.access = response.access!;
 
                 const refs = await getGRPCDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
                 const rels = await getGRPCDocStoreClient().getDocumentRelations(req);
                 currentRelations.value = rels.response.relations;
-            }
-
-            if (response.access) {
-                let accessId = 0;
-
-                response.access.users.forEach((user) => {
-                    const id = accessId.toString();
-                    access.value.set(id, {
-                        id: id,
-                        type: 0,
-                        values: { userId: user.userId, accessRole: user.access },
-                    });
-                    accessId++;
-                });
-
-                response.access.jobs.forEach((job) => {
-                    const id = accessId.toString();
-                    access.value.set(id, {
-                        id: id,
-                        type: 1,
-                        values: {
-                            job: job.job,
-                            accessRole: job.access,
-                            minimumGrade: job.minimumGrade,
-                        },
-                    });
-                    accessId++;
-                });
             }
         } catch (e) {
             handleGRPCError(e as RpcError);
@@ -225,15 +162,12 @@ onMounted(async () => {
         state.category = documentStore.$state.category;
         state.closed = documentStore.$state.closed;
 
-        const accessId = 0;
-        access.value.set(accessId.toString(), {
-            id: accessId.toString(),
-            type: 1,
-            values: {
-                job: activeChar.value?.job,
-                minimumGrade: game.startJobGrade,
-                accessRole: AccessLevel.EDIT,
-            },
+        state.access.jobs.push({
+            id: '0',
+            documentId: props.documentId ?? '0',
+            job: activeChar.value!.job,
+            minimumGrade: game.startJobGrade,
+            access: AccessLevel.EDIT,
         });
     }
 
@@ -316,83 +250,6 @@ watchDebounced(
     },
 );
 
-const accessTypes = [
-    { id: 0, name: t('common.citizen', 2) },
-    { id: 1, name: t('common.job', 2) },
-];
-
-function addAccessEntry(): void {
-    if (access.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: {
-                key: 'notifications.max_access_entry.content',
-                parameters: { max: maxAccessEntries.toString() },
-            },
-            type: NotificationType.ERROR,
-        });
-        return;
-    }
-
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
-    access.value.set(id.toString(), {
-        id: id.toString(),
-        type: 1,
-        values: {},
-    });
-}
-
-function removeAccessEntry(event: { id: string }): void {
-    access.value.delete(event.id);
-}
-
-function updateAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-        accessEntry.values.userId = undefined;
-    } else if (event.char) {
-        accessEntry.values.job = undefined;
-        accessEntry.values.userId = event.char.userId;
-    }
-
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    access.value.set(event.id, accessEntry);
-}
-
 async function createDocument(values: Schema): Promise<void> {
     // Prepare request
     const req: CreateDocumentRequest = {
@@ -404,43 +261,8 @@ async function createDocument(values: Schema): Promise<void> {
         public: values.public,
         templateId: templateId.value,
         categoryId: values.category?.id,
+        access: values.access,
     };
-
-    const reqAccess: DocumentAccess = {
-        jobs: [],
-        users: [],
-    };
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.userId) {
-                return;
-            }
-
-            reqAccess.users.push({
-                id: '0',
-                documentId: '0',
-                userId: entry.values.userId,
-                access: entry.values.accessRole,
-            });
-        } else if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            reqAccess.jobs.push({
-                id: '0',
-                documentId: '0',
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
-    req.access = reqAccess;
 
     // Try to submit to server
     try {
@@ -499,43 +321,8 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         state: values.state,
         public: values.public,
         categoryId: values.category?.id,
+        access: values.access,
     };
-
-    const reqAccess: DocumentAccess = {
-        jobs: [],
-        users: [],
-    };
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.userId) {
-                return;
-            }
-
-            reqAccess.users.push({
-                id: '0',
-                documentId: id,
-                userId: entry.values.userId,
-                access: entry.values.accessRole,
-            });
-        } else if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            reqAccess.jobs.push({
-                id: '0',
-                documentId: id,
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
-    req.access = reqAccess;
 
     try {
         const call = getGRPCDocStoreClient().updateDocument(req);
@@ -605,11 +392,11 @@ const canDo = computed(() => ({
     edit:
         props.documentId === undefined
             ? true
-            : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
+            : checkDocAccess(state.access, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
     access:
         props.documentId === undefined
             ? true
-            : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
+            : checkDocAccess(state.access, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference').value,
     relations: can('DocStoreService.AddDocumentRelation').value,
 }));
@@ -624,8 +411,6 @@ logger.info(
     'Relations',
     canDo.value.relations,
 );
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -762,18 +547,18 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             />
 
             <template v-if="canDo.edit">
-                <UFormGroup name="content">
+                <UFormGroup name="content" class="relative">
                     <ClientOnly>
                         <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
                     </ClientOnly>
-                </UFormGroup>
 
-                <template v-if="saving">
-                    <div class="flex animate-pulse justify-center">
-                        <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
-                        <span>{{ $t('common.save', 2) }}...</span>
-                    </div>
-                </template>
+                    <template v-if="true || saving">
+                        <div class="absolute inset-x-0 bottom-0.5 flex justify-center gap-2 text-xs text-gray-900">
+                            <UIcon name="i-mdi-content-save" class="h-auto w-4 animate-spin" />
+                            <span>{{ $t('common.save', 2) }}...</span>
+                        </div>
+                    </template>
+                </UFormGroup>
             </template>
 
             <div class="mt-2 flex flex-col gap-2 px-2">
@@ -805,26 +590,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         {{ $t('common.access') }}
                     </h2>
 
-                    <DocumentAccessEntry
-                        v-for="entry in access.values()"
-                        :key="entry.id"
-                        :init="entry"
-                        :access-types="accessTypes"
-                        :read-only="!canDo.access || entry.required === true"
-                        :jobs="jobs"
-                        @type-change="updateAccessEntryType($event)"
-                        @name-change="updateAccessEntryName($event)"
-                        @rank-change="updateAccessEntryRank($event)"
-                        @access-change="updateAccessEntryAccess($event)"
-                        @delete-request="removeAccessEntry($event)"
-                    />
-
-                    <UButton
+                    <AccessManager
+                        v-model:jobs="state.access.jobs"
+                        v-model:users="state.access.users"
+                        :target-id="documentId ?? '0'"
+                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
                         :disabled="!canEdit || !canDo.access"
-                        :ui="{ rounded: 'rounded-full' }"
-                        icon="i-mdi-plus"
-                        :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addAccessEntry()"
                     />
                 </div>
             </div>
