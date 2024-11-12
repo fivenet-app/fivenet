@@ -70,6 +70,10 @@
                     "success": {
                         "title": "Successfully submitted your Absence",
                         "desc": "Your absence has been submitted successfully.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    },
+                    "already_absent": {
+                        "title": "An Absence already been subbmited!",
+                        "desc": "You already have an absence for the same dates.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
                     }
                 }
             }

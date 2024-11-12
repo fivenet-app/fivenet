@@ -3,6 +3,7 @@ package commands
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strings"
 	"time"
 
@@ -22,6 +23,7 @@ import (
 	timeutils "github.com/fivenet-app/fivenet/pkg/utils/time"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
@@ -188,7 +190,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		}
 		startDate = parsed
 
-		if !(startDate.After(now) || now.Equal(startDate)) {
+		if !(now.Equal(startDate) || startDate.After(now)) {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
 			return resp
@@ -210,10 +212,11 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	endDate := startDate.AddDate(0, 0, int(days))
 
 	reasonOption := cmd.Data.Options.Find("reason")
-	reason := reasonOption.String()
+	reason := strings.TrimSpace(reasonOption.String())
 	reason += " (via Discord Bot)"
 
-	if err := c.createAbsenceForUser(ctx, userId, job, timestamp.New(startDate), timestamp.New(endDate), reason); err != nil {
+	check, err := c.createAbsenceForUser(ctx, userId, job, startDate, endDate, reason)
+	if err != nil {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "discord.commands.absent.results.failed.title",
 		})
@@ -226,15 +229,28 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		return resp
 	}
 
-	(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.success.title"})
-	(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
-		MessageID: "discord.commands.absent.results.success.desc",
-		TemplateData: map[string]string{
-			"AbsenceBegin": startDate.Format(absentDateFormat),
-			"AbsenceEnd":   endDate.Format(absentDateFormat),
-		},
-	})
-	(*resp.Embeds)[0].Color = embeds.ColorSuccess
+	if !check {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.success.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.absent.results.success.desc",
+			TemplateData: map[string]string{
+				"AbsenceBegin": startDate.Format(absentDateFormat),
+				"AbsenceEnd":   endDate.Format(absentDateFormat),
+			},
+		})
+		(*resp.Embeds)[0].Color = embeds.ColorSuccess
+	} else {
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.already_absent.title"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.absent.results.already_absent.desc",
+			TemplateData: map[string]string{
+				"AbsenceBegin": startDate.Format(absentDateFormat),
+				"AbsenceEnd":   endDate.Format(absentDateFormat),
+			},
+		})
+		(*resp.Embeds)[0].Color = embeds.ColorInfo
+	}
+
 	return resp
 }
 
@@ -272,11 +288,41 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job stri
 	return dest.UserID, dest.JobGrade, nil
 }
 
-func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin *timestamp.Timestamp, absenceEnd *timestamp.Timestamp, reason string) error {
+func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin time.Time, absenceEnd time.Time, reason string) (bool, error) {
+	// TODO check if user has already been set absent
+	checkStmt := tJobsUserProps.
+		SELECT(
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
+		).
+		FROM(tJobsUserProps).
+		WHERE(jet.AND(
+			tJobsUserProps.UserID.EQ(jet.Int32(charId)),
+			tJobsUserProps.Job.EQ(jet.String(job)),
+		)).
+		LIMIT(1)
+
+	props := jobs.JobsUserProps{}
+	if err := checkStmt.QueryContext(ctx, c.db, &props); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	if props.AbsenceBegin != nil && props.AbsenceEnd != nil {
+		begin := props.AbsenceBegin.AsTime()
+		end := props.AbsenceEnd.AsTime()
+
+		// Check if current absence is equal to requested one
+		if begin.Equal(absenceBegin) && end.Equal(absenceEnd) {
+			return true, nil
+		}
+	}
+
 	// Begin transaction
 	tx, err := c.db.BeginTx(ctx, nil)
 	if err != nil {
-		return err
+		return false, err
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -303,7 +349,7 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 		)
 
 	if _, err := stmt.ExecContext(ctx, c.db); err != nil {
-		return err
+		return false, err
 	}
 
 	activityStmt := tJobsUserActivity.
@@ -324,21 +370,21 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 			&jobs.JobsUserActivityData{
 				Data: &jobs.JobsUserActivityData_AbsenceDate{
 					AbsenceDate: &jobs.ColleagueAbsenceDate{
-						AbsenceBegin: absenceBegin,
-						AbsenceEnd:   absenceEnd,
+						AbsenceBegin: timestamp.New(absenceBegin),
+						AbsenceEnd:   timestamp.New(absenceEnd),
 					},
 				},
 			},
 		)
 
 	if _, err := activityStmt.ExecContext(ctx, tx); err != nil {
-		return err
+		return false, err
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return err
+		return false, err
 	}
 
-	return nil
+	return false, nil
 }

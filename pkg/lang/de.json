@@ -70,6 +70,10 @@
                     "success": {
                         "title": "Abwesenheit eingetragen",
                         "desc": "Abwesenheit erfolgreich eingetragen.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
+                    },
+                    "already_absent": {
+                        "title": "Abwesenheit bereits eingetragen",
+                        "desc": "Eine Abwesenheit für den gleichen Zeitraum ist bereits hinterlegt.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
                     }
                 }
             }
