@@ -68,7 +68,9 @@ defineShortcuts({
             <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
             <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
             <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
+            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
         </div>
+
         <template v-else>
             <div v-for="(thread, index) in threads" :key="index" :ref="(el) => threadRefs.set(thread.id, el as Element)">
                 <div

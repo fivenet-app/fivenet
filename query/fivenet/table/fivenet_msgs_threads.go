@@ -22,7 +22,6 @@ type fivenetMsgsThreadsTable struct {
 	UpdatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp
 	Title      mysql.ColumnString
-	Archived   mysql.ColumnBool
 	CreatorJob mysql.ColumnString
 	CreatorID  mysql.ColumnInteger
 
@@ -70,11 +69,10 @@ func newFivenetMsgsThreadsTableImpl(schemaName, tableName, alias string) fivenet
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
 		TitleColumn      = mysql.StringColumn("title")
-		ArchivedColumn   = mysql.BoolColumn("archived")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ArchivedColumn, CreatorJobColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ArchivedColumn, CreatorJobColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorJobColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorJobColumn, CreatorIDColumn}
 	)
 
 	return fivenetMsgsThreadsTable{
@@ -86,7 +84,6 @@ func newFivenetMsgsThreadsTableImpl(schemaName, tableName, alias string) fivenet
 		UpdatedAt:  UpdatedAtColumn,
 		DeletedAt:  DeletedAtColumn,
 		Title:      TitleColumn,
-		Archived:   ArchivedColumn,
 		CreatorJob: CreatorJobColumn,
 		CreatorID:  CreatorIDColumn,
 

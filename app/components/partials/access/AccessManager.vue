@@ -152,7 +152,7 @@ function setFromPropsJobs(): void {
             .map((a) => {
                 if (a.id === '0') {
                     a.id = lastId.value.toString();
-                    lastId.value--;
+                    lastId.value++;
                 }
                 return a;
             })
@@ -167,7 +167,7 @@ function setFromPropsUsers(): void {
             .map((a) => {
                 if (a.id === '0') {
                     a.id = lastId.value.toString();
-                    lastId.value--;
+                    lastId.value++;
                 }
                 return a;
             })
@@ -187,7 +187,7 @@ function addEntry(): void {
         type: aTypes.value[aTypes.value.length - 1]?.type ?? 'job',
         access: props.defaultAccess,
     });
-    lastId.value--;
+    lastId.value++;
 }
 
 const completorStore = useCompletorStore();

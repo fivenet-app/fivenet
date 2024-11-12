@@ -104,3 +104,21 @@ func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, i
 
 	return nil
 }
+
+func (a *Users[U, T, AccessLevel]) DeleteEntryWithCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression, targetId uint64) error {
+	stmt := a.table.
+		DELETE().
+		WHERE(jet.AND(
+			condition,
+			a.columns.TargetID.EQ(jet.Uint64(targetId)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
+	}
+
+	return nil
+}

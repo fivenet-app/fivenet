@@ -33,7 +33,7 @@ type Message struct {
 	CreatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp `protobuf:"bytes,5,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	// @sanitize: method=StripTags
+	// @sanitize
 	Message   string           `protobuf:"bytes,6,opt,name=message,proto3" json:"message,omitempty"`
 	Data      *MessageData     `protobuf:"bytes,7,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	CreatorId *int32           `protobuf:"varint,8,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`

@@ -357,6 +357,10 @@
   
     - [AccessLevel](#resources-mailer-AccessLevel)
   
+- [resources/mailer/settings.proto](#resources_mailer_settings-proto)
+    - [BlockedUser](#resources-mailer-BlockedUser)
+    - [UserSettings](#resources-mailer-UserSettings)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -759,8 +763,8 @@
     - [WikiService](#services-wiki-WikiService)
   
 - [services/mailer/mailer.proto](#services_mailer_mailer-proto)
-    - [CreateOrUpdateThreadRequest](#services-mailer-CreateOrUpdateThreadRequest)
-    - [CreateOrUpdateThreadResponse](#services-mailer-CreateOrUpdateThreadResponse)
+    - [CreateThreadRequest](#services-mailer-CreateThreadRequest)
+    - [CreateThreadResponse](#services-mailer-CreateThreadResponse)
     - [DeleteMessageRequest](#services-mailer-DeleteMessageRequest)
     - [DeleteMessageResponse](#services-mailer-DeleteMessageResponse)
     - [DeleteThreadRequest](#services-mailer-DeleteThreadRequest)
@@ -769,6 +773,8 @@
     - [GetThreadMessagesResponse](#services-mailer-GetThreadMessagesResponse)
     - [GetThreadRequest](#services-mailer-GetThreadRequest)
     - [GetThreadResponse](#services-mailer-GetThreadResponse)
+    - [GetUserSettingsRequest](#services-mailer-GetUserSettingsRequest)
+    - [GetUserSettingsResponse](#services-mailer-GetUserSettingsResponse)
     - [LeaveThreadRequest](#services-mailer-LeaveThreadRequest)
     - [LeaveThreadResponse](#services-mailer-LeaveThreadResponse)
     - [ListThreadsRequest](#services-mailer-ListThreadsRequest)
@@ -777,6 +783,8 @@
     - [PostMessageResponse](#services-mailer-PostMessageResponse)
     - [SetThreadUserStateRequest](#services-mailer-SetThreadUserStateRequest)
     - [SetThreadUserStateResponse](#services-mailer-SetThreadUserStateResponse)
+    - [SetUserSettingsRequest](#services-mailer-SetUserSettingsRequest)
+    - [SetUserSettingsResponse](#services-mailer-SetUserSettingsResponse)
   
     - [MailerService](#services-mailer-MailerService)
   
@@ -5617,7 +5625,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| message | [string](#string) |  | @sanitize: method=StripTags |
+| message | [string](#string) |  | @sanitize |
 | data | [MessageData](#resources-mailer-MessageData) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
@@ -5665,8 +5673,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize |
-| archived | [bool](#bool) |  |  |
+| title | [string](#string) |  | @sanitize: method=StripTags |
 | last_message | [Message](#resources-mailer-Message) | optional |  |
 | user_state | [ThreadUserState](#resources-mailer-ThreadUserState) |  |  |
 | creator_job | [string](#string) |  |  |
@@ -5694,6 +5701,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | important | [bool](#bool) |  |  |
 | favorite | [bool](#bool) |  |  |
 | muted | [bool](#bool) |  |  |
+| archived | [bool](#bool) |  |  |
 
 
 
@@ -5771,18 +5779,6 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
-
-
 
 
 
@@ -5817,12 +5813,57 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_MESSAGE | 3 |  |
-| ACCESS_LEVEL_MANAGE | 4 |  |
-| ACCESS_LEVEL_ADMIN | 5 |  |
+| ACCESS_LEVEL_BLOCKED | 1 | UNUSED |
+| ACCESS_LEVEL_PARTICIPANT | 2 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/settings.proto
+
+
+
+<a name="resources-mailer-BlockedUser"></a>
+
+### BlockedUser
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-mailer-UserSettings"></a>
+
+### UserSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| blocked_users | [BlockedUser](#resources-mailer-BlockedUser) | repeated |  |
+
+
+
+
+
+ 
 
  
 
@@ -11340,24 +11381,25 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
-<a name="services-mailer-CreateOrUpdateThreadRequest"></a>
+<a name="services-mailer-CreateThreadRequest"></a>
 
-### CreateOrUpdateThreadRequest
+### CreateThreadRequest
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
+| message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
 
 
 
 
 
 
-<a name="services-mailer-CreateOrUpdateThreadResponse"></a>
+<a name="services-mailer-CreateThreadResponse"></a>
 
-### CreateOrUpdateThreadResponse
+### CreateThreadResponse
 
 
 
@@ -11482,6 +11524,31 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+<a name="services-mailer-GetUserSettingsRequest"></a>
+
+### GetUserSettingsRequest
+
+
+
+
+
+
+
+<a name="services-mailer-GetUserSettingsResponse"></a>
+
+### GetUserSettingsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [resources.mailer.UserSettings](#resources-mailer-UserSettings) |  |  |
+
+
+
+
+
+
 <a name="services-mailer-LeaveThreadRequest"></a>
 
 ### LeaveThreadRequest
@@ -11593,6 +11660,36 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+
+<a name="services-mailer-SetUserSettingsRequest"></a>
+
+### SetUserSettingsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [resources.mailer.UserSettings](#resources-mailer-UserSettings) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-SetUserSettingsResponse"></a>
+
+### SetUserSettingsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| settings | [resources.mailer.UserSettings](#resources-mailer-UserSettings) |  |  |
+
+
+
+
+
  
 
  
@@ -11609,10 +11706,12 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----------- | ------------ | ------------- | ------------|
 | ListThreads | [ListThreadsRequest](#services-mailer-ListThreadsRequest) | [ListThreadsResponse](#services-mailer-ListThreadsResponse) | @perm |
 | GetThread | [GetThreadRequest](#services-mailer-GetThreadRequest) | [GetThreadResponse](#services-mailer-GetThreadResponse) | @perm: Name=ListThreads |
-| CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-mailer-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-mailer-CreateOrUpdateThreadResponse) | @perm |
+| CreateThread | [CreateThreadRequest](#services-mailer-CreateThreadRequest) | [CreateThreadResponse](#services-mailer-CreateThreadResponse) | @perm |
 | DeleteThread | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm |
 | SetThreadUserState | [SetThreadUserStateRequest](#services-mailer-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-mailer-SetThreadUserStateResponse) | @perm: Name=ListThreads |
 | LeaveThread | [LeaveThreadRequest](#services-mailer-LeaveThreadRequest) | [LeaveThreadResponse](#services-mailer-LeaveThreadResponse) | @perm: Name=ListThreads |
+| GetUserSettings | [GetUserSettingsRequest](#services-mailer-GetUserSettingsRequest) | [GetUserSettingsResponse](#services-mailer-GetUserSettingsResponse) | @perm: Name=ListThreads |
+| SetUserSettings | [SetUserSettingsRequest](#services-mailer-SetUserSettingsRequest) | [SetUserSettingsResponse](#services-mailer-SetUserSettingsResponse) | @perm: Name=ListThreads |
 | GetThreadMessages | [GetThreadMessagesRequest](#services-mailer-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-mailer-GetThreadMessagesResponse) | @perm: Name=ListThreads |
 | PostMessage | [PostMessageRequest](#services-mailer-PostMessageRequest) | [PostMessageResponse](#services-mailer-PostMessageResponse) | @perm |
 | DeleteMessage | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=SuperUser |

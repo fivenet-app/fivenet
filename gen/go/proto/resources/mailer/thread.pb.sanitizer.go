@@ -9,7 +9,7 @@ import (
 
 func (m *Thread) Sanitize() error {
 
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	return nil
 }

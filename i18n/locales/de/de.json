@@ -15,7 +15,7 @@
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
-                "mailer": "Chat-Messenger für schnelle Konversationen mit Kollegen.",
+                "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen.",
                 "wiki": "Ein Lexikon für einfache Informationsteilung."
             }
         },
@@ -468,7 +468,7 @@
         "unread": "Ungelesen",
         "archive": "Archiv",
         "paste": "Einfügen",
-        "mailer": "E-Mail",
+        "mail": "E-Mail",
         "diff": "Unterschiede",
         "exam": "Prüfung | Prüfungen",
         "question": "Frage | Fragen",
@@ -1168,15 +1168,15 @@
             "mute_thread": "Stummschalten",
             "reply": "Antworten",
             "send": "Absenden",
-            "create_thread": "Konversation erstellen",
-            "prev_thread": "Vorherige Konversation",
-            "next_thread": "Nächste Konversation",
+            "create_thread": "E-Mail verfassen",
+            "prev_thread": "Vorherige E-Mail",
+            "next_thread": "Nächste E-Mail",
             "ThreadCreateOrUpdateModal": {
                 "create": {
-                    "title": "Neue Konversation erstellen"
+                    "title": "Neue E-Mail verfassen"
                 },
                 "update": {
-                    "title": "Konversation aktualisieren"
+                    "title": "E-Mail-Thread aktualisieren"
                 }
             }
         },
@@ -2108,22 +2108,22 @@
             }
         },
         "MailerService": {
-            "category": "Konversationen",
-            "CreateOrUpdateThread": {
-                "key": "Erstellen und Aktualisieren",
-                "description": "Aktualisieren von Konversationen benötigt Verwaltung oder höher Zugriff auf die Konversation."
+            "category": "E-Mail",
+            "CreateThread": {
+                "key": "Erstellen und Aktualisieren von E-Mails",
+                "description": "Aktualisieren von E-Mails benötigt Verwaltung oder höher Zugriff auf den E-Mail Thread."
             },
             "DeleteThread": {
-                "key": "Konversationen löschen",
+                "key": "E-Mails löschen",
                 "description": "Benötigt Admin Zugriff auf die Konversation."
             },
             "ListThreads": {
-                "key": "Konversationen auflisten/sehen",
-                "description": "Minimum Berechtigung um die Konversationen sehen zu können."
+                "key": "E-Mails auflisten/sehen",
+                "description": "Minimum Berechtigung um E-Mails sehen zu können."
             },
             "PostMessage": {
                 "key": "Nachrichten schreiben",
-                "description": "Erlauben das User Nachrichten schreiben können zu Konversationen auf die Sie Zugriff haben."
+                "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
             }
         },
         "WikiService": {

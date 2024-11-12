@@ -29,6 +29,7 @@
 // source: resources/mailer/access.proto
 // source: resources/mailer/events.proto
 // source: resources/mailer/message.proto
+// source: resources/mailer/settings.proto
 // source: resources/mailer/thread.proto
 // source: resources/mailer/user.proto
 // source: resources/notifications/events.proto
@@ -132,7 +133,7 @@ export type Perms =
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
-	| 'MailerService.CreateOrUpdateThread'
+	| 'MailerService.CreateThread'
 	| 'MailerService.DeleteThread'
 	| 'MailerService.ListThreads'
 	| 'MailerService.PostMessage'

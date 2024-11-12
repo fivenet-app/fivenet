@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resources.mailer;
+
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
+
+message UserSettings {
+  int32 user_id = 1 [(validate.rules).int32.gte = 0];
+  repeated BlockedUser blocked_users = 2 [(validate.rules).repeated.max_items = 25];
+}
+
+message BlockedUser {
+  int32 user_id = 1;
+  optional resources.users.UserShort user = 2;
+}

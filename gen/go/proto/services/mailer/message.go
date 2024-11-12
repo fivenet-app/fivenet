@@ -23,7 +23,7 @@ func (s *Server) GetThreadMessages(ctx context.Context, req *GetThreadMessagesRe
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToThread(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -145,7 +145,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToThread(ctx, req.Message.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MESSAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Message.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -155,31 +155,25 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		}
 	}
 
-	tMessages := table.FivenetMsgsMessages
-	stmt := tMessages.
-		INSERT(
-			tMessages.ThreadID,
-			tMessages.Message,
-			tMessages.Data,
-			tMessages.CreatorID,
-		).
-		VALUES(
-			req.Message.ThreadId,
-			req.Message.Message,
-			req.Message.Data,
-			userInfo.UserId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
-	lastId, err := res.LastInsertId()
+	req.Message.CreatorId = &userInfo.UserId
+	lastId, err := s.createMessage(ctx, tx, req.Message)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	req.Message.Id = uint64(lastId)
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
 
 	message, err := s.getMessage(ctx, req.Message.Id, userInfo)
 	if err != nil {
@@ -188,7 +182,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	thread, err := s.getThread(ctx, message.ThreadId, userInfo, true)
+	thread, err := s.getThread(ctx, req.Message.ThreadId, userInfo, true)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
@@ -218,6 +212,35 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	}, nil
 }
 
+func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Message) (uint64, error) {
+	tMessages := table.FivenetMsgsMessages
+	stmt := tMessages.
+		INSERT(
+			tMessages.ThreadID,
+			tMessages.Message,
+			tMessages.Data,
+			tMessages.CreatorID,
+		).
+		VALUES(
+			msg.ThreadId,
+			msg.Message,
+			msg.Data,
+			msg.CreatorId,
+		)
+
+	res, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	return uint64(lastId), nil
+}
+
 func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (*DeleteMessageResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.message.id", int64(req.MessageId)))
 
@@ -232,7 +255,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToThread(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_ADMIN)
+	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

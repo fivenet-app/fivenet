@@ -12,11 +12,13 @@ const props = withDefaults(
         disabled?: boolean;
         splitScreen?: boolean;
         minHeight?: number;
+        editor?: (typeof JoditEditor)['$props'];
     }>(),
     {
         disabled: false,
         splitScreen: false,
         minHeight: 475,
+        editor: undefined,
     },
 );
 
@@ -182,7 +184,14 @@ watch(props, () => {
 
 <template>
     <div class="documentEditor mx-auto max-w-screen-xl">
-        <JoditEditor ref="editorRef" v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
+        <JoditEditor
+            ref="editorRef"
+            v-bind="editor"
+            v-model="content"
+            :config="config"
+            :plugins="plugins"
+            :extra-buttons="extraButtons"
+        />
     </div>
 </template>
 

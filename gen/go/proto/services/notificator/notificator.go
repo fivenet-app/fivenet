@@ -27,7 +27,7 @@ import (
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var (
@@ -337,7 +337,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			switch topic {
 			case notifi.UserTopic:
 				var dest notifications.UserEvent
-				if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
+				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
@@ -345,6 +345,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				case *notifications.UserEvent_Notification:
 					notsCount++
 				}
+
 				resp := &StreamResponse{
 					NotificationCount: notsCount,
 					Data: &StreamResponse_UserEvent{
@@ -358,7 +359,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 
 			case notifi.JobTopic:
 				var dest notifications.JobEvent
-				if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
+				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 

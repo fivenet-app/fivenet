@@ -98,8 +98,6 @@ func (m *Thread) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Archived
-
 	if all {
 		switch v := interface{}(m.GetUserState()).(type) {
 		case interface{ ValidateAll() error }:
@@ -426,6 +424,8 @@ func (m *ThreadUserState) validate(all bool) error {
 	// no validation rules for Favorite
 
 	// no validation rules for Muted
+
+	// no validation rules for Archived
 
 	if m.LastRead != nil {
 

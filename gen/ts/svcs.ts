@@ -29,6 +29,7 @@
 // source: resources/mailer/access.proto
 // source: resources/mailer/events.proto
 // source: resources/mailer/message.proto
+// source: resources/mailer/settings.proto
 // source: resources/mailer/thread.proto
 // source: resources/mailer/user.proto
 // source: resources/notifications/events.proto
@@ -205,10 +206,12 @@ export const grpcMethods = [
 	'LivemapperService/DeleteMarker',
 	'MailerService/ListThreads',
 	'MailerService/GetThread',
-	'MailerService/CreateOrUpdateThread',
+	'MailerService/CreateThread',
 	'MailerService/DeleteThread',
 	'MailerService/SetThreadUserState',
 	'MailerService/LeaveThread',
+	'MailerService/GetUserSettings',
+	'MailerService/SetUserSettings',
 	'MailerService/GetThreadMessages',
 	'MailerService/PostMessage',
 	'MailerService/DeleteMessage',

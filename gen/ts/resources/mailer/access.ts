@@ -29,38 +29,6 @@ export interface ThreadAccess {
  * @generated from protobuf message resources.mailer.ThreadJobAccess
  */
 export interface ThreadJobAccess {
-    /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
-     */
-    id: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 target_id = 3 [jstype = JS_STRING];
-     */
-    targetId: string; // @gotags: alias:"thread_id"
-    /**
-     * @generated from protobuf field: string job = 4;
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: optional string job_label = 5;
-     */
-    jobLabel?: string;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 6;
-     */
-    minimumGrade: number;
-    /**
-     * @generated from protobuf field: optional string job_grade_label = 7;
-     */
-    jobGradeLabel?: string;
-    /**
-     * @generated from protobuf field: resources.mailer.AccessLevel access = 8;
-     */
-    access: AccessLevel;
 }
 /**
  * @generated from protobuf message resources.mailer.ThreadUserAccess
@@ -100,25 +68,15 @@ export enum AccessLevel {
      */
     UNSPECIFIED = 0,
     /**
+     * UNUSED
+     *
      * @generated from protobuf enum value: ACCESS_LEVEL_BLOCKED = 1;
      */
     BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_PARTICIPANT = 2;
      */
-    VIEW = 2,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_MESSAGE = 3;
-     */
-    MESSAGE = 3,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 4;
-     */
-    MANAGE = 4,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_ADMIN = 5;
-     */
-    ADMIN = 5
+    PARTICIPANT = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ThreadAccess$Type extends MessageType<ThreadAccess> {
@@ -178,93 +136,18 @@ export const ThreadAccess = new ThreadAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ThreadJobAccess$Type extends MessageType<ThreadJobAccess> {
     constructor() {
-        super("resources.mailer.ThreadJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 8, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
-        ]);
+        super("resources.mailer.ThreadJobAccess", []);
     }
     create(value?: PartialMessage<ThreadJobAccess>): ThreadJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
-        message.job = "";
-        message.minimumGrade = 0;
-        message.access = 0;
         if (value !== undefined)
             reflectionMergePartial<ThreadJobAccess>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadJobAccess): ThreadJobAccess {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 2:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* uint64 target_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.targetId = reader.uint64().toString();
-                    break;
-                case /* string job */ 4:
-                    message.job = reader.string();
-                    break;
-                case /* optional string job_label */ 5:
-                    message.jobLabel = reader.string();
-                    break;
-                case /* int32 minimum_grade */ 6:
-                    message.minimumGrade = reader.int32();
-                    break;
-                case /* optional string job_grade_label */ 7:
-                    message.jobGradeLabel = reader.string();
-                    break;
-                case /* resources.mailer.AccessLevel access */ 8:
-                    message.access = reader.int32();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
+        return target ?? this.create();
     }
     internalBinaryWrite(message: ThreadJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        /* optional resources.timestamp.Timestamp created_at = 2; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
-            writer.tag(3, WireType.Varint).uint64(message.targetId);
-        /* string job = 4; */
-        if (message.job !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 5; */
-        if (message.jobLabel !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 6; */
-        if (message.minimumGrade !== 0)
-            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 7; */
-        if (message.jobGradeLabel !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.mailer.AccessLevel access = 8; */
-        if (message.access !== 0)
-            writer.tag(8, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

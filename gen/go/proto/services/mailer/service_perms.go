@@ -14,8 +14,10 @@ var PermsRemap = map[string]string{
 	"MailerService/DeleteMessage":      "SuperUser",
 	"MailerService/GetThread":          "MailerService/ListThreads",
 	"MailerService/GetThreadMessages":  "MailerService/ListThreads",
+	"MailerService/GetUserSettings":    "MailerService/ListThreads",
 	"MailerService/LeaveThread":        "MailerService/ListThreads",
 	"MailerService/SetThreadUserState": "MailerService/ListThreads",
+	"MailerService/SetUserSettings":    "MailerService/ListThreads",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -28,7 +30,7 @@ func init() {
 		// Service: MailerService
 		{
 			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceCreateOrUpdateThreadPerm,
+			Name:     permkeys.MailerServiceCreateThreadPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

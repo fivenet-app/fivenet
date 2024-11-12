@@ -37,7 +37,7 @@ export interface Message {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
+     * @sanitize
      *
      * @generated from protobuf field: string message = 6;
      */

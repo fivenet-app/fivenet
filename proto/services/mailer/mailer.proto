@@ -4,6 +4,7 @@ package services.mailer;
 
 import "resources/common/database/database.proto";
 import "resources/mailer/message.proto";
+import "resources/mailer/settings.proto";
 import "resources/mailer/thread.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -28,11 +29,12 @@ message GetThreadResponse {
   resources.mailer.Thread thread = 1;
 }
 
-message CreateOrUpdateThreadRequest {
+message CreateThreadRequest {
   resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
+  resources.mailer.Message message = 2 [(validate.rules).message.required = true];
 }
 
-message CreateOrUpdateThreadResponse {
+message CreateThreadResponse {
   resources.mailer.Thread thread = 1;
 }
 
@@ -53,6 +55,20 @@ message LeaveThreadRequest {
 }
 
 message LeaveThreadResponse {}
+
+message GetUserSettingsRequest {}
+
+message GetUserSettingsResponse {
+  resources.mailer.UserSettings settings = 1;
+}
+
+message SetUserSettingsRequest {
+  resources.mailer.UserSettings settings = 1 [(validate.rules).message.required = true];
+}
+
+message SetUserSettingsResponse {
+  resources.mailer.UserSettings settings = 1;
+}
 
 // Messages
 
@@ -86,13 +102,18 @@ service MailerService {
   // @perm: Name=ListThreads
   rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
   // @perm
-  rpc CreateOrUpdateThread(CreateOrUpdateThreadRequest) returns (CreateOrUpdateThreadResponse);
+  rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
   // @perm
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
   // @perm: Name=ListThreads
   rpc SetThreadUserState(SetThreadUserStateRequest) returns (SetThreadUserStateResponse);
   // @perm: Name=ListThreads
   rpc LeaveThread(LeaveThreadRequest) returns (LeaveThreadResponse);
+
+  // @perm: Name=ListThreads
+  rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse);
+  // @perm: Name=ListThreads
+  rpc SetUserSettings(SetUserSettingsRequest) returns (SetUserSettingsResponse);
 
   // @perm: Name=ListThreads
   rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);

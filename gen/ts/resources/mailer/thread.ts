@@ -35,37 +35,33 @@ export interface Thread {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize
+     * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string title = 5;
      */
     title: string;
     /**
-     * @generated from protobuf field: bool archived = 6;
-     */
-    archived: boolean;
-    /**
-     * @generated from protobuf field: optional resources.mailer.Message last_message = 7;
+     * @generated from protobuf field: optional resources.mailer.Message last_message = 6;
      */
     lastMessage?: Message;
     /**
-     * @generated from protobuf field: resources.mailer.ThreadUserState user_state = 8;
+     * @generated from protobuf field: resources.mailer.ThreadUserState user_state = 7;
      */
     userState?: ThreadUserState;
     /**
-     * @generated from protobuf field: string creator_job = 9;
+     * @generated from protobuf field: string creator_job = 8;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
+     * @generated from protobuf field: optional int32 creator_id = 9;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: resources.mailer.ThreadAccess access = 12;
+     * @generated from protobuf field: resources.mailer.ThreadAccess access = 11;
      */
     access?: ThreadAccess;
 }
@@ -101,6 +97,10 @@ export interface ThreadUserState {
      * @generated from protobuf field: bool muted = 7;
      */
     muted: boolean;
+    /**
+     * @generated from protobuf field: bool archived = 8;
+     */
+    archived: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Thread$Type extends MessageType<Thread> {
@@ -111,20 +111,18 @@ class Thread$Type extends MessageType<Thread> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 6, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "last_message", kind: "message", T: () => Message },
-            { no: 8, name: "user_state", kind: "message", T: () => ThreadUserState },
-            { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "access", kind: "message", T: () => ThreadAccess }
+            { no: 6, name: "last_message", kind: "message", T: () => Message },
+            { no: 7, name: "user_state", kind: "message", T: () => ThreadUserState },
+            { no: 8, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 10, name: "creator", kind: "message", T: () => UserShort },
+            { no: 11, name: "access", kind: "message", T: () => ThreadAccess }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.title = "";
-        message.archived = false;
         message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
@@ -150,25 +148,22 @@ class Thread$Type extends MessageType<Thread> {
                 case /* string title */ 5:
                     message.title = reader.string();
                     break;
-                case /* bool archived */ 6:
-                    message.archived = reader.bool();
-                    break;
-                case /* optional resources.mailer.Message last_message */ 7:
+                case /* optional resources.mailer.Message last_message */ 6:
                     message.lastMessage = Message.internalBinaryRead(reader, reader.uint32(), options, message.lastMessage);
                     break;
-                case /* resources.mailer.ThreadUserState user_state */ 8:
+                case /* resources.mailer.ThreadUserState user_state */ 7:
                     message.userState = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.userState);
                     break;
-                case /* string creator_job */ 9:
+                case /* string creator_job */ 8:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional int32 creator_id */ 10:
+                case /* optional int32 creator_id */ 9:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 11:
+                case /* optional resources.users.UserShort creator */ 10:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* resources.mailer.ThreadAccess access */ 12:
+                case /* resources.mailer.ThreadAccess access */ 11:
                     message.access = ThreadAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -198,27 +193,24 @@ class Thread$Type extends MessageType<Thread> {
         /* string title = 5; */
         if (message.title !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.title);
-        /* bool archived = 6; */
-        if (message.archived !== false)
-            writer.tag(6, WireType.Varint).bool(message.archived);
-        /* optional resources.mailer.Message last_message = 7; */
+        /* optional resources.mailer.Message last_message = 6; */
         if (message.lastMessage)
-            Message.internalBinaryWrite(message.lastMessage, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.ThreadUserState user_state = 8; */
+            Message.internalBinaryWrite(message.lastMessage, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.ThreadUserState user_state = 7; */
         if (message.userState)
-            ThreadUserState.internalBinaryWrite(message.userState, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 9; */
+            ThreadUserState.internalBinaryWrite(message.userState, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 8; */
         if (message.creatorJob !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional int32 creator_id = 10; */
+            writer.tag(8, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 9; */
         if (message.creatorId !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 11; */
+            writer.tag(9, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 10; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.ThreadAccess access = 12; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.ThreadAccess access = 11; */
         if (message.access)
-            ThreadAccess.internalBinaryWrite(message.access, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            ThreadAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -239,7 +231,8 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
             { no: 4, name: "last_read", kind: "message", T: () => Timestamp },
             { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ThreadUserState>): ThreadUserState {
@@ -250,6 +243,7 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         message.important = false;
         message.favorite = false;
         message.muted = false;
+        message.archived = false;
         if (value !== undefined)
             reflectionMergePartial<ThreadUserState>(this, message, value);
         return message;
@@ -279,6 +273,9 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
                     break;
                 case /* bool muted */ 7:
                     message.muted = reader.bool();
+                    break;
+                case /* bool archived */ 8:
+                    message.archived = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -313,6 +310,9 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         /* bool muted = 7; */
         if (message.muted !== false)
             writer.tag(7, WireType.Varint).bool(message.muted);
+        /* bool archived = 8; */
+        if (message.archived !== false)
+            writer.tag(8, WireType.Varint).bool(message.archived);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -50,7 +50,7 @@ const categories = computed(() => [
         title: t('commandpalette.categories.navigation'),
         items: [
             { shortcuts: ['G', 'H'], name: t('common.goto_item', [t('common.overview')]) },
-            { shortcuts: ['G', 'I'], name: t('common.goto_item', [t('common.mailer')]) },
+            { shortcuts: ['G', 'I'], name: t('common.goto_item', [t('common.mail')]) },
             { shortcuts: ['G', 'C'], name: t('common.goto_item', [t('common.citizen', 2)]) },
             { shortcuts: ['G', 'V'], name: t('common.goto_item', [t('common.vehicle', 2)]) },
             { shortcuts: ['G', 'D'], name: t('common.goto_item', [t('common.document', 2)]) },
@@ -63,7 +63,7 @@ const categories = computed(() => [
         ],
     },
     {
-        title: t('common.mailer'),
+        title: t('common.mail'),
         items: [
             { shortcuts: ['↑'], name: t('components.mailer.prev_thread') },
             { shortcuts: ['↓'], name: t('components.mailer.next_thread') },

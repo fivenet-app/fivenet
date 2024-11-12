@@ -10,11 +10,8 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
-  ACCESS_LEVEL_BLOCKED = 1;
-  ACCESS_LEVEL_VIEW = 2;
-  ACCESS_LEVEL_MESSAGE = 3;
-  ACCESS_LEVEL_MANAGE = 4;
-  ACCESS_LEVEL_ADMIN = 5;
+  ACCESS_LEVEL_BLOCKED = 1; // UNUSED
+  ACCESS_LEVEL_PARTICIPANT = 2;
 }
 
 message ThreadAccess {
@@ -22,16 +19,7 @@ message ThreadAccess {
   repeated ThreadUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
 }
 
-message ThreadJobAccess {
-  uint64 id = 1 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
-  string job = 4 [(validate.rules).string.max_len = 20];
-  optional string job_label = 5 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
-  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
-  AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
-}
+message ThreadJobAccess {}
 
 message ThreadUserAccess {
   uint64 id = 1 [jstype = JS_STRING];

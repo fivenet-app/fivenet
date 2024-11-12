@@ -7,7 +7,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
-import type { Message } from '~~/gen/ts/resources/mailer/message';
+import DocEditor from '../partials/DocEditor.vue';
 import { canAccessThread } from './helpers';
 
 const props = withDefaults(
@@ -70,22 +70,6 @@ const messages = useDexieLiveQueryWithDeps(
     },
 );
 
-const groupedMessages = computed(() => {
-    return [...messages.value.messages]
-        .sort((a, b) => toDate(a.createdAt).getTime() - toDate(b.createdAt).getTime())
-        .reduce((acc: { [key: string]: Message[] }, msg) => {
-            const k = toDate(msg.createdAt).toDateString();
-
-            acc[k] = acc[k] || [];
-            if (acc[k]!.length > 0 && acc[k]![acc[k]!.length - 1]?.creatorId === msg.creatorId) {
-                msg.creator = undefined;
-            }
-            acc[k]?.push(msg);
-
-            return acc;
-        }, {});
-});
-
 const messageRef = ref<Element | undefined>();
 watchDebounced(messages, () => messageRef.value?.scrollIntoView({ behavior: 'smooth' }), {
     debounce: 100,
@@ -112,6 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UDashboardPanelContent>
         <USkeleton v-if="!thread && loading" class="h-12 w-full" />
+
         <div v-else-if="thread" class="flex w-full">
             <div class="flex w-full flex-col gap-2">
                 <div class="flex flex-1 items-center justify-between gap-1">
@@ -178,16 +163,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <template v-for="(msgs, key) in groupedMessages" :key="key">
-                    <UDivider class="text-xs">
-                        <GenericTime :value="msgs[0]?.createdAt" :type="'date'" />
-                    </UDivider>
-
+                <template v-for="message in messages.messages" :key="message.id">
                     <div
-                        v-for="message in msgs"
-                        :key="message.id"
-                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white p-0.5 px-2 hover:bg-base-800 dark:border-gray-900"
+                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 hover:bg-base-800 dark:border-gray-900"
                     >
+                        <UDivider class="text-xs">
+                            <GenericTime :value="message.createdAt" :type="'date'" />
+                        </UDivider>
+
                         <div v-if="message.creator" class="flex justify-between text-xs">
                             <CitizenInfoPopover :user="message.creator" show-avatar-in-name />
 
@@ -195,7 +178,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <div class="flex justify-between text-xs">
-                            <p
+                            <!-- eslint-disable vue/no-v-html -->
+                            <div
                                 :ref="
                                     (el) => {
                                         if (messages.messages.length) {
@@ -203,12 +187,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         }
                                     }
                                 "
-                                class="prose dark:prose-invert"
-                            >
-                                {{ message.message }}
-                            </p>
-
-                            <GenericTime :value="message.createdAt" type="time" />
+                                class="prose dark:prose-invert min-w-full px-4 py-2"
+                                v-html="message.message"
+                            ></div>
                         </div>
                     </div>
                 </template>
@@ -218,30 +199,28 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UDivider class="my-2" />
 
         <UForm
-            v-if="thread && canAccessThread(thread.access, thread.creator, AccessLevel.MESSAGE)"
+            v-if="thread && canAccessThread(thread.access, thread.creator, AccessLevel.PARTICIPANT)"
             :schema="schema"
             :state="state"
+            class="flex flex-col gap-2"
             @submit="onSubmitThrottle"
         >
+            <!-- TODO add recipients field -->
+
             <UFormGroup name="message">
-                <UTextarea
-                    v-model="state.message"
-                    name="message"
-                    color="gray"
-                    required
-                    size="xl"
-                    :rows="4"
-                    :placeholder="$t('components.mailer.reply')"
-                >
-                    <UButton
-                        type="submit"
-                        color="black"
-                        :label="$t('components.mailer.send')"
-                        icon="i-mdi-paper-airplane"
-                        class="absolute bottom-2.5 right-3.5"
-                    />
-                </UTextarea>
+                <ClientOnly>
+                    <DocEditor v-model="state.message" :disabled="!canSubmit" />
+                </ClientOnly>
             </UFormGroup>
+
+            <UButton
+                type="submit"
+                :disabled="!canSubmit"
+                block
+                class="flex-1"
+                :label="$t('components.mailer.send')"
+                trailing-icon="i-mdi-paper-airplane"
+            />
         </UForm>
     </UDashboardPanelContent>
 </template>

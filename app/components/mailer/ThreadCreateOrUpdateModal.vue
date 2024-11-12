@@ -4,231 +4,171 @@ import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
-import type { Thread } from '~~/gen/ts/resources/mailer/thread';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-
-const props = defineProps<{
-    thread?: Thread;
-}>();
+import DocEditor from '../partials/DocEditor.vue';
 
 const { isOpen } = useModal();
 
-const completorStore = useCompletorStore();
-
 const mailerStore = useMailerStore();
+const { draft: state } = storeToRefs(mailerStore);
+
+const completorStore = useCompletorStore();
 
 const schema = z.object({
     title: z.string().min(3).max(255),
-    archived: z.boolean(),
-    users: z
-        .object({
-            id: z.string().optional(),
-            user: z.custom<UserShort>().optional(),
-            access: z.nativeEnum(AccessLevel),
-        })
-        .array()
-        .min(1)
-        .max(10),
+    content: z.string().min(1).max(2048),
+    users: z.custom<UserShort>().array().min(1).max(25),
 });
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({
-    title: '',
-    archived: false,
-    users: [
-        {
-            access: AccessLevel.MESSAGE,
-        },
-    ],
-});
-
 const usersLoading = ref(false);
 
-const accessLevels = ref<{ mode: AccessLevel; selected?: boolean }[]>([
-    { mode: AccessLevel.VIEW },
-    { mode: AccessLevel.MESSAGE },
-    { mode: AccessLevel.MANAGE },
-    { mode: AccessLevel.ADMIN },
-]);
+async function createThread(values: Schema): Promise<void> {
+    await mailerStore.createThread({
+        thread: {
+            id: '0',
+            title: values.title,
+            creatorJob: '',
+            access: {
+                jobs: [],
+                users: values.users.map((u) => ({
+                    id: '0',
+                    targetId: '0',
+                    userId: u.userId,
+                    access: AccessLevel.PARTICIPANT,
+                })),
+            },
+        },
 
-watch(props, () => setFromProps());
-setFromProps();
+        message: {
+            id: '0',
+            threadId: '0',
+            message: values.content,
+        },
+    });
 
-function setFromProps(): void {
-    if (!props.thread) {
-        return;
-    }
-
-    state.title = props.thread.title;
-    state.archived = props.thread.archived;
-    state.users = props.thread.access?.users.map((u) => ({ access: u.access, user: u.user })) ?? [];
+    isOpen.value = false;
 }
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-
-    const data = event.data;
-
-    await mailerStore
-        .createOrUpdateThread({
-            thread: {
-                id: props.thread?.id ?? '0',
-                title: data.title,
-                archived: data.archived,
-                creatorJob: '',
-                access: {
-                    jobs: [],
-                    users:
-                        data.users.map((u) => ({
-                            id: u.id ?? '0',
-                            targetId: props.thread?.id ?? '0',
-                            access: u.access,
-                            userId: u.user!.userId,
-                        })) ?? [],
-                },
-            },
-        })
-        .then(() => (isOpen.value = false))
-        .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await createThread(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+    <UModal fullscreen>
+        <UForm :schema="schema" :state="state" class="flex flex-1 flex-col" @submit="onSubmitThrottle">
+            <UCard
+                :ui="{
+                    ring: '',
+                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                    base: 'flex flex-1 flex-col',
+                    body: { base: 'flex flex-1 flex-col' },
+                }"
+            >
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{
-                                thread
-                                    ? $t('components.mailer.ThreadCreateOrUpdateModal.update.title')
-                                    : $t('components.mailer.ThreadCreateOrUpdateModal.create.title')
-                            }}
+                            {{ $t('components.mailer.create_thread') }}
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
-                <div>
-                    <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
-                        <UInput v-model="state.title" type="text" name="title" />
-                    </UFormGroup>
-
-                    <UFormGroup name="users" class="flex-1" required>
-                        <div class="flex flex-col gap-1">
-                            <div v-for="(_, idx) in state.users" :key="idx" class="flex flex-1 items-center gap-1">
-                                <div class="flex flex-1 items-center gap-2">
-                                    <UFormGroup
-                                        :name="`users.${idx}.user`"
-                                        :label="idx === 0 ? $t('common.user') : undefined"
-                                        class="flex-1"
-                                        required
-                                    >
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.users[idx]!.user"
-                                                :placeholder="$t('common.user')"
-                                                block
-                                                trailing
-                                                by="userId"
-                                                :searchable="
-                                                    async (query: string): Promise<UserShort[]> => {
-                                                        usersLoading = true;
-                                                        const users = await completorStore.completeCitizens({
-                                                            search: query,
-                                                        });
-                                                        usersLoading = false;
-                                                        return users;
-                                                    }
-                                                "
-                                                searchable-lazy
-                                                :searchable-placeholder="$t('common.search_field')"
-                                                :search-attributes="['firstname', 'lastname']"
-                                            >
-                                                <template #label>
-                                                    <template v-if="state.users[idx]!.user">
-                                                        {{ usersToLabel([state.users[idx]!.user!]) }}
-                                                    </template>
-                                                </template>
-                                                <template #option="{ option: user }">
-                                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                                </template>
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
-                                                <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormGroup>
-
-                                    <UFormGroup
-                                        :name="`users.${idx}.access`"
-                                        :label="idx === 0 ? $t('common.access') : undefined"
-                                        class="flex-1"
-                                        required
-                                    >
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.users[idx]!.access"
-                                                :options="accessLevels"
-                                                value-attribute="mode"
-                                                :searchable-placeholder="$t('common.search_field')"
-                                            >
-                                                <template #label>
-                                                    <span class="truncate">{{
-                                                        $t(
-                                                            `enums.mailer.AccessLevel.${AccessLevel[state.users[idx]!.access ?? 0]}`,
-                                                        )
-                                                    }}</span>
-                                                </template>
-                                                <template #option="{ option }">
-                                                    <span class="truncate">{{
-                                                        $t(`enums.mailer.AccessLevel.${AccessLevel[option.mode ?? 0]}`)
-                                                    }}</span>
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormGroup>
-                                </div>
-
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    icon="i-mdi-close"
-                                    :disabled="!canSubmit || state.users.length <= 1"
-                                    @click="state.users.splice(idx, 1)"
+                <div class="flex w-full">
+                    <div class="flex w-full flex-col gap-2">
+                        <div class="flex flex-1 items-center justify-between gap-1">
+                            <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
+                                <UInput
+                                    v-model="state.title"
+                                    type="text"
+                                    size="xl"
+                                    class="font-semibold text-gray-900 dark:text-white"
+                                    :disabled="!canSubmit"
                                 />
-                            </div>
+                            </UFormGroup>
                         </div>
 
-                        <UButton
-                            :ui="{ rounded: 'rounded-full' }"
-                            icon="i-mdi-plus"
-                            :disabled="!canSubmit || state.users.length >= 10"
-                            :class="state.users.length ? 'mt-2' : ''"
-                            @click="
-                                state.users.push({
-                                    access: AccessLevel.MESSAGE,
-                                })
-                            "
-                        />
-                    </UFormGroup>
+                        <div class="min-w-0">
+                            <UFormGroup name="users" class="flex-1" :label="$t('common.recipient', 2)">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.users"
+                                        :placeholder="$t('common.recipient')"
+                                        block
+                                        multiple
+                                        trailing
+                                        :searchable="
+                                            async (query: string): Promise<UserShort[]> => {
+                                                usersLoading = true;
+                                                const users = await completorStore.completeCitizens({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return users;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        :disabled="!canSubmit"
+                                    >
+                                        <template #label>
+                                            {{
+                                                state.users.length > 0
+                                                    ? $t('common.recipients', state.users.length)
+                                                    : $t('common.none_selected', [$t('common.recipient', 2)])
+                                            }}
+                                        </template>
+
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+                        </div>
+                    </div>
                 </div>
+
+                <UDivider class="my-2" />
+
+                <UFormGroup
+                    :label="$t('common.message', 1)"
+                    name="content"
+                    :ui="{ wrapper: 'flex flex-1 flex-col', container: 'flex flex-1 flex-col' }"
+                >
+                    <ClientOnly>
+                        <DocEditor v-model="state.content" class="h-full w-full flex-1" :disabled="!canSubmit" />
+                    </ClientOnly>
+                </UFormGroup>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton block class="flex-1" color="black" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ thread ? $t('common.update') : $t('common.create') }}
-                        </UButton>
+                        <UButton
+                            type="submit"
+                            :disabled="!canSubmit"
+                            block
+                            class="flex-1"
+                            :label="$t('components.mailer.send')"
+                            trailing-icon="i-mdi-paper-airplane"
+                        />
                     </UButtonGroup>
                 </template>
             </UCard>

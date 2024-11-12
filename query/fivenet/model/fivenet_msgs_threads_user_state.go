@@ -19,4 +19,5 @@ type FivenetMsgsThreadsUserState struct {
 	Important *bool      `json:"important"`
 	Favorite  *bool      `json:"favorite"`
 	Muted     *bool      `json:"muted"`
+	Archived  *bool      `json:"archived"`
 }

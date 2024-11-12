@@ -38,12 +38,12 @@ const links = computed(() =>
             },
         },
         {
-            label: t('common.mailer'),
-            icon: unreadThreadCount.value === 0 ? 'i-mdi-inbox' : 'i-mdi-inbox-full',
+            label: t('common.mail'),
+            icon: 'i-mdi-inbox-full-outline',
             to: '/mail',
             badge: unreadThreadCount.value > 0 ? unreadThreadCount.value.toString() : undefined,
             tooltip: {
-                text: t('common.mailer'),
+                text: t('common.mail'),
                 shortcuts: ['G', 'I'],
             },
             permission: 'MailerService.ListThreads' as Perms,

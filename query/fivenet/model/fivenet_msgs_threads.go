@@ -17,7 +17,6 @@ type FivenetMsgsThreads struct {
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DeletedAt  *time.Time `json:"deleted_at"`
 	Title      string     `json:"title"`
-	Archived   *bool      `json:"archived"`
 	CreatorJob string     `json:"creator_job"`
 	CreatorID  *int32     `json:"creator_id"`
 }

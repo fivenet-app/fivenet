@@ -7,7 +7,7 @@
 
 package model
 
-type FivenetWikiPagesHierarchy struct {
-	Ancestor   int32 `sql:"primary_key" json:"ancestor"`
-	Descendant int32 `sql:"primary_key" json:"descendant"`
+type FivenetMsgsSettingsBlocks struct {
+	SourceID int32 `sql:"primary_key" json:"source_id"`
+	UserID   int32 `sql:"primary_key" json:"user_id"`
 }

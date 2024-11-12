@@ -9,7 +9,7 @@ import (
 
 func (m *Message) Sanitize() error {
 
-	m.Message = htmlsanitizer.StripTags(m.Message)
+	m.Message = htmlsanitizer.Sanitize(m.Message)
 
 	return nil
 }

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import MailerList from '~/components/mailer/MailerList.vue';
+import MailerSettingsModal from '~/components/mailer/MailerSettingsModal.vue';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import { canAccessThread } from '~/components/mailer/helpers';
@@ -8,10 +9,10 @@ import { mailerDB, useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
 useHead({
-    title: 'common.mailer',
+    title: 'common.mail',
 });
 definePageMeta({
-    title: 'common.mailer',
+    title: 'common.mail',
     requiresAuth: true,
     permission: 'MailerService.ListThreads',
 });
@@ -32,56 +33,46 @@ const tabItems = [
     {
         label: t('common.unread'),
     },
+    {
+        label: t('common.archive'),
+    },
 ];
 const selectedTab = ref(0);
 
 const dropdownItems = computed(() =>
     [
         [
-            can('MailerService.CreateOrUpdateThread').value &&
-            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.MANAGE)
-                ? {
-                      label: t('common.edit'),
-                      icon: 'i-mdi-pencil-outline',
-                      click: () => {
-                          if (!selectedThread.value) {
-                              return;
-                          }
+            {
+                label: selectedThread.value?.userState?.archived ? t('common.unarchive') : t('common.archive'),
+                icon: 'i-mdi-archive',
+                click: () =>
+                    modal.open(ConfirmModal, {
+                        confirm: async () =>
+                            selectedThread.value &&
+                            mailerStore.setThreadUserState({ threadId: selectedThread.value!.id, archived: true }),
+                    }),
+            },
+            {
+                label: t('common.leave'),
+                icon: 'i-mdi-door',
+                click: () =>
+                    modal.open(ConfirmModal, {
+                        confirm: async () => selectedThread.value && mailerStore.leaveThread(selectedThread.value!.id),
+                    }),
+            },
+        ],
 
-                          modal.open(ThreadCreateOrUpdateModal, {
-                              thread: selectedThread.value,
-                          });
-                      },
-                  }
-                : {
-                      label: t('common.leave'),
-                      icon: 'i-mdi-pencil-outline',
-                      click: () => {
-                          if (!selectedThread.value) {
-                              return;
-                          }
-
-                          modal.open(ConfirmModal, {
-                              confirm: async () => mailerStore.leaveThread(selectedThread.value!.id),
-                          });
-                      },
-                  },
-        ].flatMap((item) => (item !== undefined ? [item] : [])),
         [
             can('MailerService.DeleteThread').value &&
-            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.ADMIN)
+            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.PARTICIPANT)
                 ? {
                       label: t('common.delete'),
                       icon: 'i-mdi-trash-can-outline',
-                      click: async () => {
-                          if (!selectedThread.value) {
-                              return;
-                          }
-
+                      click: async () =>
                           modal.open(ConfirmModal, {
-                              confirm: async () => mailerStore.deleteThread({ threadId: selectedThread.value!.id }),
-                          });
-                      },
+                              confirm: async () =>
+                                  selectedThread.value && mailerStore.deleteThread({ threadId: selectedThread.value!.id }),
+                          }),
                   }
                 : undefined,
         ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -108,17 +99,19 @@ const threads = useDexieLiveQuery(() => mailerDB.threads.toArray().then((threads
 // Filter mails based on the selected tab
 const filteredThreads = computed(() => {
     if (selectedTab.value === 1) {
-        return threads.value.threads.filter((thread) => !!thread.userState?.lastRead);
+        return threads.value.threads.filter((thread) => !thread.userState?.archived && !!thread.userState?.lastRead);
+    } else if (selectedTab.value === 2) {
+        return threads.value.threads.filter((thread) => !!thread.userState?.archived);
     }
 
-    return threads.value.threads;
+    return threads.value.threads.filter((thread) => !thread.userState?.archived);
 });
 
 const threadUserState = computed(() => selectedThread.value?.userState);
 
 const isMailerPanelOpen = computed({
     get() {
-        return !!selectedThread.value;
+        return !!selectedThread.value || editing.value;
     },
     set(value: boolean) {
         if (!value) {
@@ -153,12 +146,14 @@ onMounted(async () => {
 
     selectedThread.value = await mailerStore.getThread(route.query.thread as string);
 });
+
+const editing = ref(false);
 </script>
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel id="mailerthreadlist" :width="425" :resizable="{ min: 300, max: 500 }">
-            <UDashboardNavbar :title="$t('common.mailer')" :badge="filteredThreads.length">
+        <UDashboardPanel id="mailerthreadlist" :width="450" :resizable="{ min: 325, max: 550 }">
+            <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
                     <UTabs
                         v-model="selectedTab"
@@ -173,17 +168,19 @@ onMounted(async () => {
             </div>
 
             <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+                <template #left>
+                    <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(MailerSettingsModal, {})" />
+                </template>
+
                 <template #right>
-                    <UButtonGroup class="inline-flex">
-                        <UButton
-                            v-if="can('MailerService.CreateOrUpdateThread').value"
-                            color="gray"
-                            trailing-icon="i-mdi-plus"
-                            @click="() => modal.open(ThreadCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('components.mailer.create_thread') }}
-                        </UButton>
-                    </UButtonGroup>
+                    <UButton
+                        v-if="can('MailerService.CreateThread').value"
+                        color="gray"
+                        trailing-icon="i-mdi-plus"
+                        @click="modal.open(ThreadCreateOrUpdateModal, {})"
+                    >
+                        {{ $t('components.mailer.create_thread') }}
+                    </UButton>
                 </template>
             </UDashboardToolbar>
         </UDashboardPanel>
@@ -270,8 +267,13 @@ onMounted(async () => {
 
                 <MailerThread :thread-id="selectedThread.id" />
             </template>
-            <div v-else class="hidden flex-1 items-center justify-center lg:flex">
-                <UIcon name="i-mdi-conversation" class="h-32 w-32 text-gray-400 dark:text-gray-500" />
+
+            <div
+                v-else
+                class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+            >
+                <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
             </div>
         </UDashboardPanel>
     </UDashboardPage>

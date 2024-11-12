@@ -15,11 +15,11 @@ const { t } = useI18n();
 
 const items = [
     {
-        title: t('common.mailer'),
+        title: t('common.mail'),
         description: t('pages.overview.features.mailer'),
         to: { name: 'mail' },
         permission: 'MailerService.ListThreads',
-        icon: 'i-mdi-conversation-outline',
+        icon: 'i-mdi-inbox-full-outline',
     },
     {
         title: `${t('common.citizen', 2)} ${t('common.search')}`,

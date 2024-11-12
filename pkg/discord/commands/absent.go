@@ -66,19 +66,28 @@ func NewAbsentCommand(router *cmdroute.Router, cfg *config.Config, p CommandPara
 			},
 			Options: discord.CommandOptions{
 				&discord.StringOption{
-					OptionName:  lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+					OptionNameLocalizations: discord.StringLocales{
+						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+					},
 					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.desc"}),
 					Required:    true,
 				},
 				&discord.IntegerOption{
-					OptionName:  lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+					OptionNameLocalizations: discord.StringLocales{
+						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+					},
 					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.desc"}),
 					Required:    true,
 					Min:         option.NewInt(1),
 					Max:         option.NewInt(31),
 				},
 				&discord.StringOption{
-					OptionName:  lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+					OptionNameLocalizations: discord.StringLocales{
+						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+					},
 					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.desc"}),
 					Required:    true,
 					MinLength:   option.NewInt(3),
@@ -175,7 +184,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		}
 		startDate = parsed
 
-		if time.Now().Sub(startDate) < 23*time.Hour {
+		if startDate.Sub(time.Now()) < 23*time.Hour {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
 			return resp

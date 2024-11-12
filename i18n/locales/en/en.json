@@ -15,7 +15,7 @@
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
                 "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
                 "calendar": "Public, private and job events all in this nice calendar.",
-                "mailer": "Chat mailer for quick communication.",
+                "mailer": "E-Mail for quick and simple communication with citizens and colleagues.",
                 "wiki": "Wiki for simple knowledge sharing."
             }
         },
@@ -468,7 +468,7 @@
         "unread": "Unread",
         "archive": "Archive",
         "paste": "Paste",
-        "mailer": "E-Mail",
+        "mail": "E-Mail",
         "diff": "Diff",
         "exam": "Exam | Exams",
         "question": "Question | Questions",
@@ -491,7 +491,15 @@
         "hint": "Hint",
         "wiki": "Wiki",
         "parent_page": "Parent Page",
-        "corrected": "Corrected"
+        "corrected": "Corrected",
+        "citizens": "No Citizens | {n} Citizen | {n} Citizens",
+        "vehicles": "No Vehicles | {n} Vehicle | {n}Vehicles",
+        "documents": "No Documents| {n} Document | {n} Documents",
+        "blocklist": "Blocklist",
+        "blocked": "Blocked",
+        "recipient": "Recipient | Recipients",
+        "recipients": "No Recipient | {n} Recipient | {n} Recipients",
+        "unarchive": "Unarchive"
     },
     "components": {
         "partials": {
@@ -1168,15 +1176,15 @@
             "mute_thread": "Mute thread",
             "reply": "Reply",
             "send": "Send",
-            "create_thread": "Create Thread",
+            "create_thread": "Compose E-Mail",
             "prev_thread": "Previous thread",
             "next_thread": "Next thread",
             "ThreadCreateOrUpdateModal": {
                 "create": {
-                    "title": "Create Messenger Thread"
+                    "title": "Compose E-Mail"
                 },
                 "update": {
-                    "title": "Update Messenger Thread"
+                    "title": "Update E-Mail Thread"
                 }
             }
         },
@@ -2108,22 +2116,22 @@
             }
         },
         "MailerService": {
-            "category": "Mailer",
-            "CreateOrUpdateThread": {
-                "key": "Create or update threads",
-                "description": "Updating threads requires manage or higher access to a thread."
+            "category": "E-Mail",
+            "CreateThread": {
+                "key": "Create or update E-Mails",
+                "description": "Updating E-Mail threads requires manage or higher access to a E-Mail thread."
             },
             "DeleteThread": {
-                "key": "Delete threads",
-                "description": "Requires admin access to the thread."
+                "key": "Delete E-Mail threads",
+                "description": "Requires admin access to the E-Mail thread."
             },
             "ListThreads": {
-                "key": "List threads",
-                "description": "Minimum permission to see the mailer."
+                "key": "List E-Mail threads",
+                "description": "Minimum permission to see E-Mails."
             },
             "PostMessage": {
-                "key": "Post messages",
-                "description": "Allow users to post messages to threads they have access to."
+                "key": "Post responses",
+                "description": "Allow users to post responses to E-Mails they have access to."
             }
         },
         "WikiService": {

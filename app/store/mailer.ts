@@ -1,27 +1,48 @@
 import Dexie, { type Table } from 'dexie';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
 import type { Message } from '~~/gen/ts/resources/mailer/message';
+import type { UserSettings } from '~~/gen/ts/resources/mailer/settings';
 import type { Thread, ThreadUserState } from '~~/gen/ts/resources/mailer/thread';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
-    CreateOrUpdateThreadRequest,
-    CreateOrUpdateThreadResponse,
+    CreateThreadRequest,
+    CreateThreadResponse,
     DeleteThreadRequest,
     DeleteThreadResponse,
+    GetUserSettingsRequest,
+    GetUserSettingsResponse,
     LeaveThreadResponse,
     PostMessageRequest,
     PostMessageResponse,
+    SetUserSettingsRequest,
+    SetUserSettingsResponse,
 } from '~~/gen/ts/services/mailer/mailer';
 
 const logger = useLogger('💬 Mailer');
 
 export interface MailerState {
+    draft: {
+        title: string;
+        content: string;
+        users: UserShort[];
+    };
     selectedThread: Thread | undefined;
+    settings: UserSettings;
 }
 
 export const useMailerStore = defineStore('mailer', {
     state: () =>
         ({
+            draft: {
+                title: '',
+                content: '',
+                users: [],
+            },
             selectedThread: undefined,
+            settings: {
+                userId: 0,
+                blockedUsers: [],
+            },
         }) as MailerState,
     persist: false,
     actions: {
@@ -59,14 +80,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Thread
-        async getThread(threadId: string, local?: boolean): Promise<Thread | undefined> {
-            if (local) {
-                const thread = await mailerDB.threads.get(threadId);
-                if (thread) {
-                    return thread;
-                }
-            }
-
+        async getThread(threadId: string): Promise<Thread | undefined> {
             const { activeChar } = useAuth();
 
             try {
@@ -84,6 +98,7 @@ export const useMailerStore = defineStore('mailer', {
                             favorite: false,
                             important: false,
                             muted: false,
+                            archived: false,
                         };
                     }
 
@@ -94,14 +109,14 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response.thread;
             } catch (e) {
-                handleGRPCError(e);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
 
-        async createOrUpdateThread(req: CreateOrUpdateThreadRequest): Promise<CreateOrUpdateThreadResponse> {
+        async createThread(req: CreateThreadRequest): Promise<CreateThreadResponse> {
             try {
-                const call = getGRPCMailerClient().createOrUpdateThread(req);
+                const call = getGRPCMailerClient().createThread(req);
                 const { response } = await call;
 
                 if (response.thread) {
@@ -110,7 +125,7 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                handleGRPCError(e);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -124,7 +139,7 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                handleGRPCError(e);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -140,7 +155,7 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                handleGRPCError(e);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -168,6 +183,7 @@ export const useMailerStore = defineStore('mailer', {
                     important: false,
                     favorite: false,
                     muted: false,
+                    archived: false,
                 };
             } else {
                 if (state.lastRead !== undefined && thread.userState.lastRead?.timestamp !== state.lastRead.timestamp) {
@@ -189,6 +205,10 @@ export const useMailerStore = defineStore('mailer', {
                 if (state.muted !== undefined && thread.userState.muted !== state.muted) {
                     update = true;
                     thread.userState.muted = state.muted;
+                }
+                if (state.archived !== undefined && thread.userState.archived !== state.archived) {
+                    update = true;
+                    thread.userState.archived = state.archived;
                 }
             }
 
@@ -215,7 +235,39 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                handleGRPCError(e);
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+
+        // User Settings
+        async getUserSettings(req: GetUserSettingsRequest): Promise<GetUserSettingsResponse> {
+            try {
+                const call = getGRPCMailerClient().getUserSettings(req);
+                const { response } = await call;
+
+                if (response.settings) {
+                    this.settings = response.settings;
+                }
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+        async setUserSettings(req: SetUserSettingsRequest): Promise<SetUserSettingsResponse> {
+            try {
+                const call = getGRPCMailerClient().setUserSettings(req);
+                const { response } = await call;
+
+                if (response.settings) {
+                    this.settings = response.settings;
+                }
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
