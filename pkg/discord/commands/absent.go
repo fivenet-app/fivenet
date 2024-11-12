@@ -186,7 +186,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		startDate = parsed
 
 		now := timeutils.TruncateToDay(time.Now())
-		if !startDate.After(now) {
+		if !(startDate.After(now) || now.Equal(startDate)) {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
 			return resp
@@ -195,7 +195,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 
 	daysOptions := cmd.Data.Options.Find("days")
 	days, err := daysOptions.IntValue()
-	if err != nil {
+	if err != nil || days <= 0 {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.desc"})
 		return resp
