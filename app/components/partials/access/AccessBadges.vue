@@ -23,7 +23,7 @@ defineProps<{
                         ({{ entry.jobGradeLabel }})</span
                     >
                     -
-                    {{ $t(`enums.docstore.AccessLevel.${accessLevel[entry.access]}`) }}
+                    {{ $t(`${i18nKey}.AccessLevel.${accessLevel[entry.access]}`) }}
                 </span>
             </UBadge>
         </div>
