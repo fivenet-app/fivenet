@@ -65,7 +65,7 @@
                     },
                     "failed": {
                         "title": "Fehler beim Eintragen der Abwesenheit",
-                        "desc": "Es ist ein Fehler beim Eintragen der Abwesenheit aufgetreten. Stellen sie sicher, dass alle Angaben korrekt sind."
+                        "desc": "Es ist ein Fehler beim Eintragen der Abwesenheit aufgetreten. Stellen sie sicher, dass alle Angaben korrekt sind (Grund: {{.Code}}."
                     },
                     "success": {
                         "title": "Abwesenheit eingetragen",

@@ -65,7 +65,7 @@
                     },
                     "failed": {
                         "title": "Error creating your Absence",
-                        "desc": "Failed to create your absence entry. Make sure that all input fields are correctly filled out."
+                        "desc": "Failed to create your absence entry. Make sure that all input fields are filled out correctly (Reason: {{.Code}}."
                     },
                     "success": {
                         "title": "Successfully submitted your Absence",

@@ -197,7 +197,12 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	days, err := daysOptions.IntValue()
 	if err != nil || days <= 0 {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.desc"})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.absent.results.failed.desc",
+			TemplateData: map[string]string{
+				"Code": "Days wrong",
+			},
+		})
 		return resp
 	}
 	endDate := time.Now().AddDate(0, 0, int(days))
@@ -207,8 +212,15 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	reason += " (via Discord Bot)"
 
 	if err := c.createAbsenceForUser(ctx, userId, job, timestamp.New(startDate), timestamp.New(endDate), reason); err != nil {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.failed.desc"})
+		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.absent.results.failed.title",
+		})
+		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.absent.results.failed.desc",
+			TemplateData: map[string]string{
+				"Code": "Internal Error",
+			},
+		})
 		return resp
 	}
 
