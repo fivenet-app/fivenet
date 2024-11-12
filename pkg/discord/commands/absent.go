@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	timeutils "github.com/fivenet-app/fivenet/pkg/utils/time"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -184,7 +185,8 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		}
 		startDate = parsed
 
-		if startDate.Sub(time.Now()) < 23*time.Hour {
+		now := timeutils.TruncateToDay(time.Now())
+		if !startDate.After(now) {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
 			return resp
