@@ -5,6 +5,7 @@ defineProps<{
     accessLevel: Zod.EnumLike;
     jobs?: JobsT[];
     users?: UsersT[];
+    i18nKey: string;
 }>();
 </script>
 
@@ -33,7 +34,7 @@ defineProps<{
                 <span :title="`${$t('common.id')} ${entry.userId}`">
                     {{ entry.user?.firstname }}
                     {{ entry.user?.lastname }} -
-                    {{ $t(`enums.docstore.AccessLevel.${accessLevel[entry.access]}`) }}
+                    {{ $t(`${i18nKey}.AccessLevel.${accessLevel[entry.access]}`) }}
                 </span>
             </UBadge>
         </div>

@@ -497,7 +497,13 @@ defineShortcuts({
                                 :message="$t('common.not_found', [$t('common.access', 2)])"
                             />
 
-                            <AccessBadges v-else :access-level="AccessLevel" :jobs="access.jobs" :users="access.users" />
+                            <AccessBadges
+                                v-else
+                                :access-level="AccessLevel"
+                                :jobs="access.jobs"
+                                :users="access.users"
+                                i18n-key="enums.docstore"
+                            />
                         </UContainer>
                     </template>
 

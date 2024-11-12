@@ -468,7 +468,12 @@ const accordionItems = computed(() =>
                                     icon="i-mdi-file-search"
                                     :message="$t('common.not_found', [$t('common.access', 2)])"
                                 />
-                                <AccessBadges v-else :access-level="AccessLevel" :jobs="qualification?.access.jobs" />
+                                <AccessBadges
+                                    v-else
+                                    :access-level="AccessLevel"
+                                    :jobs="qualification?.access.jobs"
+                                    i18n-key="enums.qualifications"
+                                />
                             </UContainer>
                         </template>
                     </UAccordion>

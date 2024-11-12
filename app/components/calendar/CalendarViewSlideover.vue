@@ -141,6 +141,7 @@ const calendar = computed(() => data.value?.calendar);
                                 :access-level="AccessLevel"
                                 :jobs="calendar?.access.jobs"
                                 :users="calendar?.access.users"
+                                i18n-key="enums.calendar"
                             />
                         </UContainer>
                     </template>

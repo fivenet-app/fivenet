@@ -297,6 +297,7 @@ const accordionItems = computed(() =>
                                 :access-level="AccessLevel"
                                 :jobs="page?.access.jobs"
                                 :users="page?.access.users"
+                                i18n-key="enums.wiki"
                             />
                         </UContainer>
                     </template>
