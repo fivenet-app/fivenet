@@ -37,6 +37,8 @@ func init() {
 	CommandsFactories["absent"] = NewAbsentCommand
 }
 
+const absentDateFormat = "2006-01-02"
+
 type AbsentCommand struct {
 	l     *lang.I18n
 	db    *sql.DB
@@ -173,11 +175,12 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 
 	startDateOption := cmd.Data.Options.Find("start-date")
+	now := timeutils.TruncateToDay(time.Now())
 	startDate := time.Now()
 
 	startDateValue := strings.ToLower(startDateOption.String())
 	if startDateValue != "today" {
-		parsed, err := time.Parse("2006-01-02", startDateValue)
+		parsed, err := time.Parse(absentDateFormat, startDateValue)
 		if err != nil {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
@@ -185,7 +188,6 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		}
 		startDate = parsed
 
-		now := timeutils.TruncateToDay(time.Now())
 		if !(startDate.After(now) || now.Equal(startDate)) {
 			(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.title"})
 			(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.results.invalid_date.desc"})
@@ -205,7 +207,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 		})
 		return resp
 	}
-	endDate := time.Now().AddDate(0, 0, int(days))
+	endDate := startDate.AddDate(0, 0, int(days))
 
 	reasonOption := cmd.Data.Options.Find("reason")
 	reason := reasonOption.String()
@@ -228,8 +230,8 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{
 		MessageID: "discord.commands.absent.results.success.desc",
 		TemplateData: map[string]string{
-			"AbsenceBegin": startDate.Format("2006-01-02"),
-			"AbsenceEnd":   endDate.Format("2006-01-02"),
+			"AbsenceBegin": startDate.Format(absentDateFormat),
+			"AbsenceEnd":   endDate.Format(absentDateFormat),
 		},
 	})
 	(*resp.Embeds)[0].Color = embeds.ColorSuccess
