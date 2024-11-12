@@ -308,27 +308,6 @@
   
     - [AccessLevel](#resources-calendar-AccessLevel)
   
-- [resources/messenger/events.proto](#resources_messenger_events-proto)
-    - [MessengerEvent](#resources-messenger-MessengerEvent)
-  
-- [resources/messenger/message.proto](#resources_messenger_message-proto)
-    - [Message](#resources-messenger-Message)
-    - [MessageData](#resources-messenger-MessageData)
-  
-- [resources/messenger/thread.proto](#resources_messenger_thread-proto)
-    - [Thread](#resources-messenger-Thread)
-    - [ThreadUserState](#resources-messenger-ThreadUserState)
-  
-- [resources/messenger/user.proto](#resources_messenger_user-proto)
-    - [UserStatus](#resources-messenger-UserStatus)
-  
-- [resources/messenger/access.proto](#resources_messenger_access-proto)
-    - [ThreadAccess](#resources-messenger-ThreadAccess)
-    - [ThreadJobAccess](#resources-messenger-ThreadJobAccess)
-    - [ThreadUserAccess](#resources-messenger-ThreadUserAccess)
-  
-    - [AccessLevel](#resources-messenger-AccessLevel)
-  
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
   
@@ -356,6 +335,27 @@
     - [PageUpdated](#resources-wiki-PageUpdated)
   
     - [PageActivityType](#resources-wiki-PageActivityType)
+  
+- [resources/mailer/events.proto](#resources_mailer_events-proto)
+    - [MailerEvent](#resources-mailer-MailerEvent)
+  
+- [resources/mailer/message.proto](#resources_mailer_message-proto)
+    - [Message](#resources-mailer-Message)
+    - [MessageData](#resources-mailer-MessageData)
+  
+- [resources/mailer/thread.proto](#resources_mailer_thread-proto)
+    - [Thread](#resources-mailer-Thread)
+    - [ThreadUserState](#resources-mailer-ThreadUserState)
+  
+- [resources/mailer/user.proto](#resources_mailer_user-proto)
+    - [UserStatus](#resources-mailer-UserStatus)
+  
+- [resources/mailer/access.proto](#resources_mailer_access-proto)
+    - [ThreadAccess](#resources-mailer-ThreadAccess)
+    - [ThreadJobAccess](#resources-mailer-ThreadJobAccess)
+    - [ThreadUserAccess](#resources-mailer-ThreadUserAccess)
+  
+    - [AccessLevel](#resources-mailer-AccessLevel)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -735,28 +735,6 @@
   
     - [CalendarService](#services-calendar-CalendarService)
   
-- [services/messenger/messenger.proto](#services_messenger_messenger-proto)
-    - [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest)
-    - [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse)
-    - [DeleteMessageRequest](#services-messenger-DeleteMessageRequest)
-    - [DeleteMessageResponse](#services-messenger-DeleteMessageResponse)
-    - [DeleteThreadRequest](#services-messenger-DeleteThreadRequest)
-    - [DeleteThreadResponse](#services-messenger-DeleteThreadResponse)
-    - [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest)
-    - [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse)
-    - [GetThreadRequest](#services-messenger-GetThreadRequest)
-    - [GetThreadResponse](#services-messenger-GetThreadResponse)
-    - [LeaveThreadRequest](#services-messenger-LeaveThreadRequest)
-    - [LeaveThreadResponse](#services-messenger-LeaveThreadResponse)
-    - [ListThreadsRequest](#services-messenger-ListThreadsRequest)
-    - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
-    - [PostMessageRequest](#services-messenger-PostMessageRequest)
-    - [PostMessageResponse](#services-messenger-PostMessageResponse)
-    - [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest)
-    - [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse)
-  
-    - [MessengerService](#services-messenger-MessengerService)
-  
 - [services/stats/stats.proto](#services_stats_stats-proto)
     - [GetStatsRequest](#services-stats-GetStatsRequest)
     - [GetStatsResponse](#services-stats-GetStatsResponse)
@@ -779,6 +757,28 @@
     - [UpdatePageResponse](#services-wiki-UpdatePageResponse)
   
     - [WikiService](#services-wiki-WikiService)
+  
+- [services/mailer/mailer.proto](#services_mailer_mailer-proto)
+    - [CreateOrUpdateThreadRequest](#services-mailer-CreateOrUpdateThreadRequest)
+    - [CreateOrUpdateThreadResponse](#services-mailer-CreateOrUpdateThreadResponse)
+    - [DeleteMessageRequest](#services-mailer-DeleteMessageRequest)
+    - [DeleteMessageResponse](#services-mailer-DeleteMessageResponse)
+    - [DeleteThreadRequest](#services-mailer-DeleteThreadRequest)
+    - [DeleteThreadResponse](#services-mailer-DeleteThreadResponse)
+    - [GetThreadMessagesRequest](#services-mailer-GetThreadMessagesRequest)
+    - [GetThreadMessagesResponse](#services-mailer-GetThreadMessagesResponse)
+    - [GetThreadRequest](#services-mailer-GetThreadRequest)
+    - [GetThreadResponse](#services-mailer-GetThreadResponse)
+    - [LeaveThreadRequest](#services-mailer-LeaveThreadRequest)
+    - [LeaveThreadResponse](#services-mailer-LeaveThreadResponse)
+    - [ListThreadsRequest](#services-mailer-ListThreadsRequest)
+    - [ListThreadsResponse](#services-mailer-ListThreadsResponse)
+    - [PostMessageRequest](#services-mailer-PostMessageRequest)
+    - [PostMessageResponse](#services-mailer-PostMessageResponse)
+    - [SetThreadUserStateRequest](#services-mailer-SetThreadUserStateRequest)
+    - [SetThreadUserStateResponse](#services-mailer-SetThreadUserStateResponse)
+  
+    - [MailerService](#services-mailer-MailerService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -3307,7 +3307,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | refresh_token | [bool](#bool) |  |  |
 | notification | [Notification](#resources-notifications-Notification) |  | Notifications |
-| messenger | [resources.messenger.MessengerEvent](#resources-messenger-MessengerEvent) |  | Messenger |
+| mailer | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  | Mailer |
 
 
 
@@ -5188,275 +5188,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_messenger_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/events.proto
-
-
-
-<a name="resources-messenger-MessengerEvent"></a>
-
-### MessengerEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_update | [Thread](#resources-messenger-Thread) |  |  |
-| thread_delete | [uint64](#uint64) |  |  |
-| message_update | [Message](#resources-messenger-Message) |  |  |
-| message_delete | [uint64](#uint64) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_message-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/message.proto
-
-
-
-<a name="resources-messenger-Message"></a>
-
-### Message
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| thread_id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| message | [string](#string) |  | @sanitize: method=StripTags |
-| data | [MessageData](#resources-messenger-MessageData) | optional |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-
-
-
-
-
-
-<a name="resources-messenger-MessageData"></a>
-
-### MessageData
-TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_thread-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/thread.proto
-
-
-
-<a name="resources-messenger-Thread"></a>
-
-### Thread
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize |
-| archived | [bool](#bool) |  |  |
-| last_message | [Message](#resources-messenger-Message) | optional |  |
-| user_state | [ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
-| creator_job | [string](#string) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| access | [ThreadAccess](#resources-messenger-ThreadAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadUserState"></a>
-
-### ThreadUserState
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| unread | [bool](#bool) |  |  |
-| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| important | [bool](#bool) |  |  |
-| favorite | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_user-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/user.proto
-
-
-
-<a name="resources-messenger-UserStatus"></a>
-
-### UserStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| status | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_messenger_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/messenger/access.proto
-
-
-
-<a name="resources-messenger-ThreadAccess"></a>
-
-### ThreadAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [ThreadJobAccess](#resources-messenger-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [ThreadUserAccess](#resources-messenger-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadJobAccess"></a>
-
-### ThreadJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-messenger-ThreadUserAccess"></a>
-
-### ThreadUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-messenger-AccessLevel) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-messenger-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_MESSAGE | 3 |  |
-| ACCESS_LEVEL_MANAGE | 4 |  |
-| ACCESS_LEVEL_ADMIN | 5 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_stats_stats-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5822,6 +5553,275 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | PAGE_ACTIVITY_TYPE_ACCESS_UPDATED | 3 |  |
 | PAGE_ACTIVITY_TYPE_OWNER_CHANGED | 4 |  |
 | PAGE_ACTIVITY_TYPE_DELETED | 5 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/events.proto
+
+
+
+<a name="resources-mailer-MailerEvent"></a>
+
+### MailerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_update | [Thread](#resources-mailer-Thread) |  |  |
+| thread_delete | [uint64](#uint64) |  |  |
+| message_update | [Message](#resources-mailer-Message) |  |  |
+| message_delete | [uint64](#uint64) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_message-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/message.proto
+
+
+
+<a name="resources-mailer-Message"></a>
+
+### Message
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| thread_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| message | [string](#string) |  | @sanitize: method=StripTags |
+| data | [MessageData](#resources-mailer-MessageData) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+
+
+
+
+
+
+<a name="resources-mailer-MessageData"></a>
+
+### MessageData
+TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_thread-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/thread.proto
+
+
+
+<a name="resources-mailer-Thread"></a>
+
+### Thread
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  | @sanitize |
+| archived | [bool](#bool) |  |  |
+| last_message | [Message](#resources-mailer-Message) | optional |  |
+| user_state | [ThreadUserState](#resources-mailer-ThreadUserState) |  |  |
+| creator_job | [string](#string) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| access | [ThreadAccess](#resources-mailer-ThreadAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-mailer-ThreadUserState"></a>
+
+### ThreadUserState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| unread | [bool](#bool) |  |  |
+| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| important | [bool](#bool) |  |  |
+| favorite | [bool](#bool) |  |  |
+| muted | [bool](#bool) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_user-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/user.proto
+
+
+
+<a name="resources-mailer-UserStatus"></a>
+
+### UserStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| status | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/access.proto
+
+
+
+<a name="resources-mailer-ThreadAccess"></a>
+
+### ThreadAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [ThreadJobAccess](#resources-mailer-ThreadJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [ThreadUserAccess](#resources-mailer-ThreadUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-mailer-ThreadJobAccess"></a>
+
+### ThreadJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-mailer-ThreadUserAccess"></a>
+
+### ThreadUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-mailer-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_MESSAGE | 3 |  |
+| ACCESS_LEVEL_MANAGE | 4 |  |
+| ACCESS_LEVEL_ADMIN | 5 |  |
 
 
  
@@ -11053,294 +11053,6 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
-<a name="services_messenger_messenger-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/messenger/messenger.proto
-
-
-
-<a name="services-messenger-CreateOrUpdateThreadRequest"></a>
-
-### CreateOrUpdateThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-CreateOrUpdateThreadResponse"></a>
-
-### CreateOrUpdateThreadResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteMessageRequest"></a>
-
-### DeleteMessageRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| message_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteMessageResponse"></a>
-
-### DeleteMessageResponse
-
-
-
-
-
-
-
-<a name="services-messenger-DeleteThreadRequest"></a>
-
-### DeleteThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-DeleteThreadResponse"></a>
-
-### DeleteThreadResponse
-
-
-
-
-
-
-
-<a name="services-messenger-GetThreadMessagesRequest"></a>
-
-### GetThreadMessagesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadMessagesResponse"></a>
-
-### GetThreadMessagesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| messages | [resources.messenger.Message](#resources-messenger-Message) | repeated |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadRequest"></a>
-
-### GetThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-GetThreadResponse"></a>
-
-### GetThreadResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-LeaveThreadRequest"></a>
-
-### LeaveThreadRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-LeaveThreadResponse"></a>
-
-### LeaveThreadResponse
-
-
-
-
-
-
-
-<a name="services-messenger-ListThreadsRequest"></a>
-
-### ListThreadsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="services-messenger-ListThreadsResponse"></a>
-
-### ListThreadsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| threads | [resources.messenger.Thread](#resources-messenger-Thread) | repeated |  |
-
-
-
-
-
-
-<a name="services-messenger-PostMessageRequest"></a>
-
-### PostMessageRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-PostMessageResponse"></a>
-
-### PostMessageResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| message | [resources.messenger.Message](#resources-messenger-Message) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-SetThreadUserStateRequest"></a>
-
-### SetThreadUserStateRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| state | [resources.messenger.ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
-
-
-
-
-
-
-<a name="services-messenger-SetThreadUserStateResponse"></a>
-
-### SetThreadUserStateResponse
-
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-messenger-MessengerService"></a>
-
-### MessengerService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListThreads | [ListThreadsRequest](#services-messenger-ListThreadsRequest) | [ListThreadsResponse](#services-messenger-ListThreadsResponse) | @perm |
-| GetThread | [GetThreadRequest](#services-messenger-GetThreadRequest) | [GetThreadResponse](#services-messenger-GetThreadResponse) | @perm: Name=ListThreads |
-| CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
-| DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
-| SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |
-| LeaveThread | [LeaveThreadRequest](#services-messenger-LeaveThreadRequest) | [LeaveThreadResponse](#services-messenger-LeaveThreadResponse) | @perm: Name=ListThreads |
-| GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
-| PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
-| DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |
-
- 
-
-
-
 <a name="services_stats_stats-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -11616,6 +11328,294 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | UpdatePage | [UpdatePageRequest](#services-wiki-UpdatePageRequest) | [UpdatePageResponse](#services-wiki-UpdatePageResponse) | @perm |
 | DeletePage | [DeletePageRequest](#services-wiki-DeletePageRequest) | [DeletePageResponse](#services-wiki-DeletePageResponse) | @perm |
 | ListPageActivity | [ListPageActivityRequest](#services-wiki-ListPageActivityRequest) | [ListPageActivityResponse](#services-wiki-ListPageActivityResponse) | @perm |
+
+ 
+
+
+
+<a name="services_mailer_mailer-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/mailer/mailer.proto
+
+
+
+<a name="services-mailer-CreateOrUpdateThreadRequest"></a>
+
+### CreateOrUpdateThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-CreateOrUpdateThreadResponse"></a>
+
+### CreateOrUpdateThreadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-DeleteMessageRequest"></a>
+
+### DeleteMessageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| message_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-DeleteMessageResponse"></a>
+
+### DeleteMessageResponse
+
+
+
+
+
+
+
+<a name="services-mailer-DeleteThreadRequest"></a>
+
+### DeleteThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-DeleteThreadResponse"></a>
+
+### DeleteThreadResponse
+
+
+
+
+
+
+
+<a name="services-mailer-GetThreadMessagesRequest"></a>
+
+### GetThreadMessagesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-GetThreadMessagesResponse"></a>
+
+### GetThreadMessagesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| messages | [resources.mailer.Message](#resources-mailer-Message) | repeated |  |
+
+
+
+
+
+
+<a name="services-mailer-GetThreadRequest"></a>
+
+### GetThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-GetThreadResponse"></a>
+
+### GetThreadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-LeaveThreadRequest"></a>
+
+### LeaveThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-LeaveThreadResponse"></a>
+
+### LeaveThreadResponse
+
+
+
+
+
+
+
+<a name="services-mailer-ListThreadsRequest"></a>
+
+### ListThreadsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="services-mailer-ListThreadsResponse"></a>
+
+### ListThreadsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| threads | [resources.mailer.Thread](#resources-mailer-Thread) | repeated |  |
+
+
+
+
+
+
+<a name="services-mailer-PostMessageRequest"></a>
+
+### PostMessageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-PostMessageResponse"></a>
+
+### PostMessageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-SetThreadUserStateRequest"></a>
+
+### SetThreadUserStateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [resources.mailer.ThreadUserState](#resources-mailer-ThreadUserState) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-SetThreadUserStateResponse"></a>
+
+### SetThreadUserStateResponse
+
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-mailer-MailerService"></a>
+
+### MailerService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListThreads | [ListThreadsRequest](#services-mailer-ListThreadsRequest) | [ListThreadsResponse](#services-mailer-ListThreadsResponse) | @perm |
+| GetThread | [GetThreadRequest](#services-mailer-GetThreadRequest) | [GetThreadResponse](#services-mailer-GetThreadResponse) | @perm: Name=ListThreads |
+| CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-mailer-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-mailer-CreateOrUpdateThreadResponse) | @perm |
+| DeleteThread | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm |
+| SetThreadUserState | [SetThreadUserStateRequest](#services-mailer-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-mailer-SetThreadUserStateResponse) | @perm: Name=ListThreads |
+| LeaveThread | [LeaveThreadRequest](#services-mailer-LeaveThreadRequest) | [LeaveThreadResponse](#services-mailer-LeaveThreadResponse) | @perm: Name=ListThreads |
+| GetThreadMessages | [GetThreadMessagesRequest](#services-mailer-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-mailer-GetThreadMessagesResponse) | @perm: Name=ListThreads |
+| PostMessage | [PostMessageRequest](#services-mailer-PostMessageRequest) | [PostMessageResponse](#services-mailer-PostMessageResponse) | @perm |
+| DeleteMessage | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=SuperUser |
 
  
 

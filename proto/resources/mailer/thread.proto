@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package resources.mailer;
+
+import "resources/mailer/access.proto";
+import "resources/mailer/message.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
+
+message Thread {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  // @sanitize
+  string title = 5 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 255
+  }];
+  bool archived = 6;
+  optional resources.mailer.Message last_message = 7;
+  ThreadUserState user_state = 8;
+  string creator_job = 9;
+  optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  resources.mailer.ThreadAccess access = 12;
+}
+
+message ThreadUserState {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2 [(validate.rules).int32.gte = 0];
+  bool unread = 3;
+  optional resources.timestamp.Timestamp last_read = 4;
+  bool important = 5;
+  bool favorite = 6;
+  bool muted = 7;
+}

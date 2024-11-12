@@ -9,7 +9,7 @@ import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCa
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
-import { messengerDB } from '~/store/messenger';
+import { mailerDB } from '~/store/mailer';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { can, activeChar, jobProps, isSuperuser } = useAuth();
@@ -22,7 +22,7 @@ const modal = useModal();
 
 const { website } = useAppConfig();
 
-const unreadThreadCount = useDexieLiveQuery(() => messengerDB.threads.filter((t) => !!t.userState?.unread).count(), {
+const unreadThreadCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.userState?.unread).count(), {
     initialValue: 0,
 });
 
@@ -38,15 +38,15 @@ const links = computed(() =>
             },
         },
         {
-            label: t('common.messenger'),
-            icon: 'i-mdi-conversation-outline',
-            to: '/messenger',
+            label: t('common.mailer'),
+            icon: unreadThreadCount.value === 0 ? 'i-mdi-inbox' : 'i-mdi-inbox-full',
+            to: '/mail',
             badge: unreadThreadCount.value > 0 ? unreadThreadCount.value.toString() : undefined,
             tooltip: {
-                text: t('common.messenger'),
+                text: t('common.mailer'),
                 shortcuts: ['G', 'I'],
             },
-            permission: 'MessengerService.ListThreads' as Perms,
+            permission: 'MailerService.ListThreads' as Perms,
         },
         {
             label: t('common.citizen'),

@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package services.mailer;
+
+import "resources/common/database/database.proto";
+import "resources/mailer/message.proto";
+import "resources/mailer/thread.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer;mailer";
+
+message ListThreadsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.timestamp.Timestamp after = 2;
+}
+
+message ListThreadsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.mailer.Thread threads = 2;
+}
+
+message GetThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message GetThreadResponse {
+  resources.mailer.Thread thread = 1;
+}
+
+message CreateOrUpdateThreadRequest {
+  resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateThreadResponse {
+  resources.mailer.Thread thread = 1;
+}
+
+message DeleteThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message DeleteThreadResponse {}
+
+message SetThreadUserStateRequest {
+  resources.mailer.ThreadUserState state = 1 [(validate.rules).message.required = true];
+}
+
+message SetThreadUserStateResponse {}
+
+message LeaveThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message LeaveThreadResponse {}
+
+// Messages
+
+message GetThreadMessagesRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp after = 2;
+}
+
+message GetThreadMessagesResponse {
+  repeated resources.mailer.Message messages = 1;
+}
+
+message PostMessageRequest {
+  resources.mailer.Message message = 1 [(validate.rules).message.required = true];
+}
+
+message PostMessageResponse {
+  resources.mailer.Message message = 1;
+}
+
+message DeleteMessageRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  uint64 message_id = 2 [jstype = JS_STRING];
+}
+
+message DeleteMessageResponse {}
+
+service MailerService {
+  // @perm
+  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
+  // @perm: Name=ListThreads
+  rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
+  // @perm
+  rpc CreateOrUpdateThread(CreateOrUpdateThreadRequest) returns (CreateOrUpdateThreadResponse);
+  // @perm
+  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
+  // @perm: Name=ListThreads
+  rpc SetThreadUserState(SetThreadUserStateRequest) returns (SetThreadUserStateResponse);
+  // @perm: Name=ListThreads
+  rpc LeaveThread(LeaveThreadRequest) returns (LeaveThreadResponse);
+
+  // @perm: Name=ListThreads
+  rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);
+  // @perm
+  rpc PostMessage(PostMessageRequest) returns (PostMessageResponse);
+  // @perm: Name=SuperUser
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+}

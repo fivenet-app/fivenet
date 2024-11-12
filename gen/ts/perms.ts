@@ -26,11 +26,11 @@
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
-// source: resources/messenger/access.proto
-// source: resources/messenger/events.proto
-// source: resources/messenger/message.proto
-// source: resources/messenger/thread.proto
-// source: resources/messenger/user.proto
+// source: resources/mailer/access.proto
+// source: resources/mailer/events.proto
+// source: resources/mailer/message.proto
+// source: resources/mailer/thread.proto
+// source: resources/mailer/user.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
@@ -59,7 +59,7 @@
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemapper/livemap.proto
-// source: services/messenger/messenger.proto
+// source: services/mailer/mailer.proto
 // source: services/notificator/notificator.proto
 // source: services/qualifications/qualifications.proto
 // source: services/rector/config.proto
@@ -132,10 +132,10 @@ export type Perms =
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
-	| 'MessengerService.CreateOrUpdateThread'
-	| 'MessengerService.DeleteThread'
-	| 'MessengerService.ListThreads'
-	| 'MessengerService.PostMessage'
+	| 'MailerService.CreateOrUpdateThread'
+	| 'MailerService.DeleteThread'
+	| 'MailerService.ListThreads'
+	| 'MailerService.PostMessage'
 	| 'QualificationsService.CreateOrUpdateQualificationResult'
 	| 'QualificationsService.CreateQualification'
 	| 'QualificationsService.DeleteQualification'

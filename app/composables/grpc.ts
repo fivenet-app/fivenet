@@ -14,7 +14,7 @@ import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
-import { MessengerServiceClient } from '~~/gen/ts/services/messenger/messenger.client';
+import { MailerServiceClient } from '~~/gen/ts/services/mailer/mailer.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { QualificationsServiceClient } from '~~/gen/ts/services/qualifications/qualifications.client';
 import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.client';
@@ -262,9 +262,9 @@ export function getGRPCCalendarClient(): CalendarServiceClient {
     return new CalendarServiceClient(grpcWebsocketTransport);
 }
 
-// Messenger
-export function getGRPCMessengerClient(): MessengerServiceClient {
-    return new MessengerServiceClient(grpcWebsocketTransport);
+// Mailer
+export function getGRPCMailerClient(): MailerServiceClient {
+    return new MailerServiceClient(grpcWebsocketTransport);
 }
 
 // Stats

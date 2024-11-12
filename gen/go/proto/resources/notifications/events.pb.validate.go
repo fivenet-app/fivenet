@@ -111,7 +111,7 @@ func (m *UserEvent) validate(all bool) error {
 			}
 		}
 
-	case *UserEvent_Messenger:
+	case *UserEvent_Mailer:
 		if v == nil {
 			err := UserEventValidationError{
 				field:  "Data",
@@ -124,11 +124,11 @@ func (m *UserEvent) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetMessenger()).(type) {
+			switch v := interface{}(m.GetMailer()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserEventValidationError{
-						field:  "Messenger",
+						field:  "Mailer",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -136,16 +136,16 @@ func (m *UserEvent) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserEventValidationError{
-						field:  "Messenger",
+						field:  "Mailer",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetMessenger()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetMailer()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserEventValidationError{
-					field:  "Messenger",
+					field:  "Mailer",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

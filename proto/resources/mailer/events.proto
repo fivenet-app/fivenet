@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package resources.mailer;
+
+import "resources/mailer/message.proto";
+import "resources/mailer/thread.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
+
+message MailerEvent {
+  oneof data {
+    Thread thread_update = 1;
+    uint64 thread_delete = 2 [jstype = JS_STRING];
+    Message message_update = 3;
+    uint64 message_delete = 4 [jstype = JS_STRING];
+  }
+}

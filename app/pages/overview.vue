@@ -15,10 +15,10 @@ const { t } = useI18n();
 
 const items = [
     {
-        title: t('common.messenger'),
-        description: t('pages.overview.features.messenger'),
-        to: { name: 'messenger' },
-        permission: 'MessengerService.ListThreads',
+        title: t('common.mailer'),
+        description: t('pages.overview.features.mailer'),
+        to: { name: 'mail' },
+        permission: 'MailerService.ListThreads',
         icon: 'i-mdi-conversation-outline',
     },
     {

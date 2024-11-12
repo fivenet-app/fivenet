@@ -6,7 +6,7 @@ import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';
-import { useMessengerStore } from './messenger';
+import { useMailerStore } from './mailer';
 
 const logger = useLogger('📣 Notificator');
 
@@ -141,9 +141,9 @@ export const useNotificatorStore = defineStore('notifications', {
 
                                 this.add(not);
                                 continue;
-                            } else if (resp.data.userEvent.data.oneofKind === 'messenger') {
-                                if (can('MessengerService.ListThreads').value) {
-                                    useMessengerStore().handleEvent(resp.data.userEvent.data.messenger);
+                            } else if (resp.data.userEvent.data.oneofKind === 'mailer') {
+                                if (can('MailerService.ListThreads').value) {
+                                    useMailerStore().handleEvent(resp.data.userEvent.data.mailer);
                                 }
                             }
                         } else if (resp.data.oneofKind === 'jobEvent') {

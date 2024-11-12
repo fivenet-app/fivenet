@@ -15,7 +15,7 @@
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
-                "messenger": "Chat-Messenger für schnelle Konversationen mit Kollegen.",
+                "mailer": "Chat-Messenger für schnelle Konversationen mit Kollegen.",
                 "wiki": "Ein Lexikon für einfache Informationsteilung."
             }
         },
@@ -468,7 +468,7 @@
         "unread": "Ungelesen",
         "archive": "Archiv",
         "paste": "Einfügen",
-        "messenger": "Konversationen",
+        "mailer": "E-Mail",
         "diff": "Unterschiede",
         "exam": "Prüfung | Prüfungen",
         "question": "Frage | Fragen",
@@ -1161,7 +1161,7 @@
                 "title": "Kalender Eintrag teilen"
             }
         },
-        "messenger": {
+        "mailer": {
             "mark_unread": "Als ungelesen markieren",
             "mark_important": "Als wichtig markieren",
             "star_thread": "Favorisieren",
@@ -2107,7 +2107,7 @@
                 "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
             }
         },
-        "MessengerService": {
+        "MailerService": {
             "category": "Konversationen",
             "CreateOrUpdateThread": {
                 "key": "Erstellen und Aktualisieren",
@@ -2522,7 +2522,7 @@
                 "CALENDAR": "Kalender"
             }
         },
-        "messenger": {
+        "mailer": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
