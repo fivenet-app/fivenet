@@ -15,8 +15,8 @@
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
-                "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen.",
-                "wiki": "Ein Lexikon für einfache Informationsteilung."
+                "wiki": "Ein Lexikon für einfache Informationsteilung.",
+                "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen."
             }
         },
         "documents": {
@@ -468,7 +468,6 @@
         "unread": "Ungelesen",
         "archive": "Archiv",
         "paste": "Einfügen",
-        "mail": "E-Mail",
         "diff": "Unterschiede",
         "exam": "Prüfung | Prüfungen",
         "question": "Frage | Fragen",
@@ -492,7 +491,17 @@
         "wiki": "Lexikon | Lexika",
         "parent_page": "Übergeordnete Seite",
         "corrected": "Korrigiert",
-        "categories": "Keine Kategorie | {n} Kategorie | {n} Kategorien"
+        "mail": "E-Mail",
+        "citizens": "Keine Bürger | {n} Bürger",
+        "vehicles": "Keine Fahrzeuge | {n} Fahrzeug | {n} Fahrzeuge",
+        "documents": "Keine Dokumente | {n} Dokument | {n} Dokumente",
+        "blocklist": "Sperrliste",
+        "blocked": "Blockiert",
+        "recipient": "Empfänger",
+        "recipients": "Keine Empfänger | {n} Empfänger",
+        "unarchive": "Entarchivieren",
+        "categories": "Keine Kategorie | {n} Kategorie | {n} Kategorien",
+        "sort_by": "Sortierung"
     },
     "components": {
         "partials": {
@@ -1162,6 +1171,9 @@
                 "title": "Kalender Eintrag teilen"
             }
         },
+        "mathcalculator": {
+            "title": "Taschenrechner"
+        },
         "mailer": {
             "mark_unread": "Als ungelesen markieren",
             "mark_important": "Als wichtig markieren",
@@ -1180,9 +1192,6 @@
                     "title": "E-Mail-Thread aktualisieren"
                 }
             }
-        },
-        "mathcalculator": {
-            "title": "Taschenrechner"
         }
     },
     "notifications": {
@@ -2108,25 +2117,6 @@
                 "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
             }
         },
-        "MailerService": {
-            "category": "E-Mail",
-            "CreateThread": {
-                "key": "Erstellen und Aktualisieren von E-Mails",
-                "description": "Aktualisieren von E-Mails benötigt Verwaltung oder höher Zugriff auf den E-Mail Thread."
-            },
-            "DeleteThread": {
-                "key": "E-Mails löschen",
-                "description": "Benötigt Admin Zugriff auf die Konversation."
-            },
-            "ListThreads": {
-                "key": "E-Mails auflisten/sehen",
-                "description": "Minimum Berechtigung um E-Mails sehen zu können."
-            },
-            "PostMessage": {
-                "key": "Nachrichten schreiben",
-                "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
-            }
-        },
         "WikiService": {
             "category": "Lexikon",
             "ListPages": {
@@ -2154,6 +2144,25 @@
             "ListPageActivity": {
                 "key": "Seiten Aktivität anzeigen",
                 "description": "Historische Aktivität von Seiten anzeigen lassen."
+            }
+        },
+        "MailerService": {
+            "category": "E-Mail",
+            "DeleteThread": {
+                "key": "E-Mails löschen",
+                "description": "Benötigt Admin Zugriff auf die Konversation."
+            },
+            "ListThreads": {
+                "key": "E-Mails auflisten/sehen",
+                "description": "Minimum Berechtigung um E-Mails sehen zu können."
+            },
+            "PostMessage": {
+                "key": "Nachrichten schreiben",
+                "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
+            },
+            "CreateThread": {
+                "key": "Erstellen und aktualisieren von E-Mails",
+                "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte im E-Mail Thread."
             }
         }
     },
@@ -2523,16 +2532,6 @@
                 "CALENDAR": "Kalender"
             }
         },
-        "mailer": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unbestimmt",
-                "BLOCKED": "Blockiert",
-                "VIEW": "Ansehen",
-                "MESSAGE": "Schreiben",
-                "MANAGE": "Verwalten",
-                "ADMIN": "Admin"
-            }
-        },
         "wiki": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
@@ -2549,6 +2548,16 @@
                 "ACCESS_UPDATED": "Seiten-Zugriff aktualisiert",
                 "OWNER_CHANGED": "Seiten-Besitzer geändert",
                 "DELETED": "Seite gelöscht"
+            }
+        },
+        "mailer": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "MESSAGE": "Schreiben",
+                "MANAGE": "Verwalten",
+                "ADMIN": "Admin"
             }
         }
     },
