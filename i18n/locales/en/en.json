@@ -15,8 +15,8 @@
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
                 "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
                 "calendar": "Public, private and job events all in this nice calendar.",
-                "mailer": "E-Mail for quick and simple communication with citizens and colleagues.",
-                "wiki": "Wiki for simple knowledge sharing."
+                "wiki": "Wiki for simple knowledge sharing.",
+                "mailer": "E-Mail for quick and simple communication with citizens and colleagues."
             }
         },
         "documents": {
@@ -468,7 +468,6 @@
         "unread": "Unread",
         "archive": "Archive",
         "paste": "Paste",
-        "mail": "E-Mail",
         "diff": "Diff",
         "exam": "Exam | Exams",
         "question": "Question | Questions",
@@ -492,6 +491,7 @@
         "wiki": "Wiki",
         "parent_page": "Parent Page",
         "corrected": "Corrected",
+        "mail": "E-Mail",
         "citizens": "No Citizens | {n} Citizen | {n} Citizens",
         "vehicles": "No Vehicles | {n} Vehicle | {n}Vehicles",
         "documents": "No Documents| {n} Document | {n} Documents",
@@ -1171,6 +1171,9 @@
                 "title": "Share Calendar Entry"
             }
         },
+        "mathcalculator": {
+            "title": "Taschenrechner"
+        },
         "mailer": {
             "mark_unread": "Mark as unread",
             "mark_important": "Mark as important",
@@ -1189,9 +1192,6 @@
                     "title": "Update E-Mail Thread"
                 }
             }
-        },
-        "mathcalculator": {
-            "title": "Taschenrechner"
         }
     },
     "notifications": {
@@ -2117,25 +2117,6 @@
                 "description": "Delete entries from calendars (requires manage access.)"
             }
         },
-        "MailerService": {
-            "category": "E-Mail",
-            "CreateThread": {
-                "key": "Create or update E-Mails",
-                "description": "Updating E-Mail threads requires manage or higher access to a E-Mail thread."
-            },
-            "DeleteThread": {
-                "key": "Delete E-Mail threads",
-                "description": "Requires admin access to the E-Mail thread."
-            },
-            "ListThreads": {
-                "key": "List E-Mail threads",
-                "description": "Minimum permission to see E-Mails."
-            },
-            "PostMessage": {
-                "key": "Post responses",
-                "description": "Allow users to post responses to E-Mails they have access to."
-            }
-        },
         "WikiService": {
             "category": "Wiki",
             "ListPages": {
@@ -2163,6 +2144,25 @@
             "ListPageActivity": {
                 "key": "View Page history",
                 "description": "Viewing page history."
+            }
+        },
+        "MailerService": {
+            "category": "E-Mail",
+            "DeleteThread": {
+                "key": "Delete E-Mail threads",
+                "description": "Requires admin access to the E-Mail thread."
+            },
+            "ListThreads": {
+                "key": "List E-Mail threads",
+                "description": "Minimum permission to see E-Mails."
+            },
+            "PostMessage": {
+                "key": "Post responses",
+                "description": "Allow users to post responses to E-Mails they have access to."
+            },
+            "CreateThread": {
+                "key": "Create or update E-Mails",
+                "description": "Updating E-Mail threads requires manage or higher access to a E-Mail thread."
             }
         }
     },
@@ -2532,16 +2532,6 @@
                 "CALENDAR": "Calendar"
             }
         },
-        "mailer": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "MESSAGE": "Message",
-                "MANAGE": "Manage",
-                "ADMIN": "Admin"
-            }
-        },
         "wiki": {
             "AccessLevel": {
                 "UNSPECIFIED": "Unspecified",
@@ -2558,6 +2548,16 @@
                 "ACCESS_UPDATED": "Page Access updated",
                 "OWNER_CHANGED": "Page Owner changed",
                 "DELETED": "Page deleted"
+            }
+        },
+        "mailer": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "MESSAGE": "Message",
+                "MANAGE": "Manage",
+                "ADMIN": "Admin"
             }
         }
     },
