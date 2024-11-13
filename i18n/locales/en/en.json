@@ -499,7 +499,9 @@
         "blocked": "Blocked",
         "recipient": "Recipient | Recipients",
         "recipients": "No Recipient | {n} Recipient | {n} Recipients",
-        "unarchive": "Unarchive"
+        "unarchive": "Unarchive",
+        "categories": "No Categories | {n} Category | {n} Categories",
+        "sort_by": "Sort by"
     },
     "components": {
         "partials": {

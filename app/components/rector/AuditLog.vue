@@ -6,7 +6,6 @@ import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -17,6 +16,7 @@ import { EventType } from '~~/gen/ts/resources/rector/audit';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import DateRangePickerPopoverClient from '../partials/DateRangePickerPopover.client.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();
@@ -25,8 +25,12 @@ const completorStore = useCompletorStore();
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(5),
-    from: z.date().optional(),
-    to: z.date().optional(),
+    date: z
+        .object({
+            start: z.date(),
+            end: z.date(),
+        })
+        .optional(),
     services: z.string().max(64).array().max(10),
     methods: z.string().max(64).array().max(10),
     search: z.string().max(128),
@@ -57,7 +61,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `rector-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.from}-${query.to}-${query.methods}-${query.services}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
+    `rector-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.date?.start}-${query.date?.end}-${query.methods}-${query.services}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
     () => viewAuditLog(),
     {
         watch: [sort],
@@ -77,11 +81,9 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
 
     req.userIds = query.users.map((v) => v.userId);
 
-    if (query.from) {
-        req.from = toTimestamp(query.from!);
-    }
-    if (query.to) {
-        req.to = toTimestamp(query.to!);
+    if (query.date) {
+        req.from = toTimestamp(query.date.start);
+        req.to = toTimestamp(query.date.end);
     }
 
     if (query.search !== '') {
@@ -181,19 +183,18 @@ const expand = ref({
         <template #default>
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`" class="flex-1">
-                        <DatePickerPopoverClient
-                            v-model="query.from"
-                            :popover="{ popper: { placement: 'bottom-start' } }"
-                            :date-picker="{ clearable: true, disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`" class="flex-1">
-                        <DatePickerPopoverClient
-                            v-model="query.to"
-                            :popover="{ popper: { placement: 'bottom-start' } }"
-                            :date-picker="{ clearable: true, disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
+                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                        <DateRangePickerPopoverClient
+                            v-model="query.date"
+                            mode="date"
+                            class="flex-1"
+                            :popover="{ class: 'flex-1' }"
+                            :date-picker="{
+                                mode: 'dateTime',
+                                disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                is24Hr: true,
+                                clearable: true,
+                            }"
                         />
                     </UFormGroup>
 

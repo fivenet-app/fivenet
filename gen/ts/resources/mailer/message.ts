@@ -56,11 +56,20 @@ export interface Message {
     creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
- * TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
- *
  * @generated from protobuf message resources.mailer.MessageData
  */
 export interface MessageData {
+    /**
+     * @generated from protobuf field: repeated resources.mailer.MessageDataEntry entry = 1;
+     */
+    entry: MessageDataEntry[];
+}
+/**
+ * TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
+ *
+ * @generated from protobuf message resources.mailer.MessageDataEntry
+ */
+export interface MessageDataEntry {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Message$Type extends MessageType<Message> {
@@ -71,7 +80,7 @@ class Message$Type extends MessageType<Message> {
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
+            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "8192" } } } },
             { no: 7, name: "data", kind: "message", T: () => MessageData },
             { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 9, name: "creator", kind: "message", T: () => UserShort }
@@ -170,18 +179,40 @@ export const Message = new Message$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MessageData$Type extends MessageType<MessageData> {
     constructor() {
-        super("resources.mailer.MessageData", []);
+        super("resources.mailer.MessageData", [
+            { no: 1, name: "entry", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MessageDataEntry, options: { "validate.rules": { repeated: { maxItems: "3" } } } }
+        ]);
     }
     create(value?: PartialMessage<MessageData>): MessageData {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.entry = [];
         if (value !== undefined)
             reflectionMergePartial<MessageData>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageData): MessageData {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.mailer.MessageDataEntry entry */ 1:
+                    message.entry.push(MessageDataEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: MessageData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.mailer.MessageDataEntry entry = 1; */
+        for (let i = 0; i < message.entry.length; i++)
+            MessageDataEntry.internalBinaryWrite(message.entry[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -192,3 +223,28 @@ class MessageData$Type extends MessageType<MessageData> {
  * @generated MessageType for protobuf message resources.mailer.MessageData
  */
 export const MessageData = new MessageData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MessageDataEntry$Type extends MessageType<MessageDataEntry> {
+    constructor() {
+        super("resources.mailer.MessageDataEntry", []);
+    }
+    create(value?: PartialMessage<MessageDataEntry>): MessageDataEntry {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<MessageDataEntry>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageDataEntry): MessageDataEntry {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: MessageDataEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.MessageDataEntry
+ */
+export const MessageDataEntry = new MessageDataEntry$Type();

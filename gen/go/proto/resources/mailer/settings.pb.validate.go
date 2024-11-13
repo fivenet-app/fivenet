@@ -113,6 +113,17 @@ func (m *UserSettings) validate(all bool) error {
 
 	}
 
+	if l := utf8.RuneCountInString(m.GetSignature()); l < 3 || l > 2048 {
+		err := UserSettingsValidationError{
+			field:  "Signature",
+			reason: "value length must be between 3 and 2048 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return UserSettingsMultiError(errors)
 	}

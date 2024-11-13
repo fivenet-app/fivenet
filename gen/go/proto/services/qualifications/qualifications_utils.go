@@ -223,6 +223,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
+			tQualiResults.CreatorID,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.Status,
 		}
@@ -315,6 +316,7 @@ func (s *Server) getQualificationRequirements(ctx context.Context, qualification
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
+			tQualiResults.CreatorID,
 		).
 		FROM(tQReqs.
 			INNER_JOIN(tQuali,

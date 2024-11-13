@@ -49,6 +49,7 @@ const open = ref(false);
                 color="black"
                 block
                 icon="i-mdi-calendar-month"
+                truncate
                 :label="
                     modelValue
                         ? `${format(modelValue.start, dateFormat)} - ${format(modelValue.end, dateFormat)}`
@@ -95,6 +96,7 @@ const open = ref(false);
                 variant="outline"
                 color="black"
                 block
+                truncate
                 icon="i-mdi-calendar-month"
                 :label="
                     modelValue

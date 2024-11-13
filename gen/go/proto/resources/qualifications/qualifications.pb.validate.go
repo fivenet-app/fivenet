@@ -1746,7 +1746,18 @@ func (m *QualificationRequest) validate(all bool) error {
 	}
 
 	if m.ApproverId != nil {
-		// no validation rules for ApproverId
+
+		if m.GetApproverId() <= 0 {
+			err := QualificationRequestValidationError{
+				field:  "ApproverId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Approver != nil {

@@ -1009,7 +1009,7 @@ class QualificationRequest$Type extends MessageType<QualificationRequest> {
             { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
             { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 12, name: "approver", kind: "message", T: () => UserShort },
             { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);

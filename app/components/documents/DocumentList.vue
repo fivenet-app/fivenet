@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { watchDebounced } from '@vueuse/shared';
+import { addDays } from 'date-fns';
 import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
@@ -14,6 +14,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
+import DateRangePickerPopoverClient from '../partials/DateRangePickerPopover.client.vue';
 import SortButton from '../partials/SortButton.vue';
 
 const { t } = useI18n();
@@ -33,17 +34,23 @@ const schema = z.object({
     documentIds: z.string().max(16).optional(),
     title: z.string().max(64),
     creators: z.custom<UserShort>().array().max(5),
-    from: z.date().optional(),
-    to: z.date().optional(),
+    date: z
+        .object({
+            start: z.date(),
+            end: z.date(),
+        })
+        .optional(),
     closed: z.boolean().optional(),
-    category: z.custom<Category>().optional(),
+    categories: z.custom<Category>().array().max(3),
 });
 
 type Schema = z.output<typeof schema>;
 
 const query = ref<Schema>({
     title: '',
+    date: undefined,
     creators: [],
+    categories: [],
 });
 
 const usersLoading = ref(false);
@@ -72,30 +79,23 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         },
         sort: sort.value,
         search: query.value.title ?? '',
-        categoryIds: [],
-        creatorIds: [],
+        categoryIds: query.value.categories.map((c) => c.id),
+        creatorIds: query.value.creators.map((c) => c.userId),
         documentIds: [],
     };
-    if (query.value.category) {
-        req.categoryIds.push(query.value.category.id);
-    }
-    if (query.value.creators) {
-        query.value.creators.forEach((c) => req.creatorIds.push(c.userId));
-    }
+
     if (query.value.documentIds) {
         const id = query.value.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
         if (id.length > 0) {
             req.documentIds.push(id);
         }
     }
-    if (query.value.from) {
+    if (query.value.date) {
         req.from = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.from!),
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.date.start),
         };
-    }
-    if (query.value.to) {
         req.to = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.to!),
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.date.end),
         };
     }
     if (query.value.closed !== undefined) {
@@ -171,14 +171,14 @@ defineShortcuts({
 
                             <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
                                 <ClientOnly>
-                                    <UInputMenu
-                                        v-model="query.category"
-                                        nullable
+                                    <USelectMenu
+                                        v-model="query.categories"
+                                        multiple
                                         option-attribute="name"
                                         :search-attributes="['name']"
                                         block
                                         by="name"
-                                        :search="
+                                        :searchable="
                                             async (search: string) => {
                                                 try {
                                                     categoriesLoading = true;
@@ -193,24 +193,48 @@ defineShortcuts({
                                                 }
                                             }
                                         "
-                                        search-lazy
-                                        :search-placeholder="$t('common.category', 1)"
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.category', 1)"
                                     >
+                                        <template #label>
+                                            <div v-if="query.categories.length > 0" class="inline-flex gap-1">
+                                                <template v-for="category in query.categories" :key="category.id">
+                                                    <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
+                                                        <component
+                                                            :is="
+                                                                markerIcons.find((item) => item.name === category?.icon) ??
+                                                                markerFallbackIcon
+                                                            "
+                                                            v-if="category.icon"
+                                                            class="size-5"
+                                                        />
+                                                        <span class="truncate">{{ category.name }}</span>
+                                                    </span>
+                                                </template>
+                                            </div>
+                                            <span v-else> &nbsp; </span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                                <component
+                                                    :is="
+                                                        markerIcons.find((item) => item.name === option.icon) ??
+                                                        markerFallbackIcon
+                                                    "
+                                                    v-if="option.icon"
+                                                    class="size-5"
+                                                />
+                                                <span class="truncate">{{ option.name }}</span>
+                                            </span>
+                                        </template>
+
                                         <template #option-empty="{ query: search }">
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
+
                                         <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                        <template #option="{ option }">
-                                            <component
-                                                :is="
-                                                    markerIcons.find((item) => item.name === option.icon) ?? markerFallbackIcon
-                                                "
-                                                v-if="option.icon"
-                                                class="size-5"
-                                            />
-                                            <span class="truncate">{{ option.name }}</span>
-                                        </template>
-                                    </UInputMenu>
+                                    </USelectMenu>
                                 </ClientOnly>
                             </UFormGroup>
 
@@ -304,23 +328,22 @@ defineShortcuts({
                                 </ClientOnly>
                             </UFormGroup>
 
-                            <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
-                                <DatePickerPopoverClient
-                                    v-model="query.from"
-                                    :popover="{ popper: { placement: 'bottom-start' } }"
-                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                            <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                                <DateRangePickerPopoverClient
+                                    v-model="query.date"
+                                    mode="date"
+                                    class="flex-1"
+                                    :popover="{ class: 'flex-1' }"
+                                    :date-picker="{
+                                        mode: 'dateTime',
+                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                        is24Hr: true,
+                                        clearable: true,
+                                    }"
                                 />
                             </UFormGroup>
 
-                            <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
-                                <DatePickerPopoverClient
-                                    v-model="query.to"
-                                    :popover="{ popper: { placement: 'bottom-start' } }"
-                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup label="&nbsp;" class="flex-1 grow-0 basis-40">
+                            <UFormGroup :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
                                 <SortButton
                                     v-model="sort"
                                     :fields="[

@@ -491,7 +491,8 @@
         "hint": "Hinweis",
         "wiki": "Lexikon | Lexika",
         "parent_page": "Übergeordnete Seite",
-        "corrected": "Korrigiert"
+        "corrected": "Korrigiert",
+        "categories": "Keine Kategorie | {n} Kategorie | {n} Kategorien"
     },
     "components": {
         "partials": {

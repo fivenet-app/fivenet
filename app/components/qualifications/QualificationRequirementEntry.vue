@@ -50,21 +50,31 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
     <div class="my-2 flex flex-row items-center">
         <UFormGroup name="selectedQualification" class="flex-1">
             <ClientOnly>
-                <UInputMenu
+                <USelectMenu
                     v-model="selectedQualification"
                     option-attribute="title"
-                    :search-attributes="['title']"
+                    :search-attributes="['title', 'abbreviation']"
                     block
-                    :search="(query: string) => listQualifications(query)"
-                    search-lazy
-                    :search-placeholder="$t('common.search_field')"
+                    searchable-lazy
+                    :searchable="(query: string) => listQualifications(query)"
+                    :searchable-placeholder="$t('common.search_field')"
                     :loading="qualificationsLoading"
                 >
+                    <template #label>
+                        <span v-if="selectedQualification" class="truncate">
+                            {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                        </span>
+                    </template>
+
+                    <template #option="{ option: quali }">
+                        <span class="truncate"> {{ quali.abbreviation }}: {{ quali.title }} </span>
+                    </template>
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                </UInputMenu>
+
+                    <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
+                </USelectMenu>
             </ClientOnly>
         </UFormGroup>
 

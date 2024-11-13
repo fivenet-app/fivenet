@@ -124,7 +124,7 @@ message QualificationRequest {
   optional resources.timestamp.Timestamp approved_at = 9;
   // @sanitize: method=StripTags
   optional string approver_comment = 10 [(validate.rules).string = {max_len: 512}];
-  optional int32 approver_id = 11;
+  optional int32 approver_id = 11 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort approver = 12; // @gotags: alias:"approver"
   optional string approver_job = 13;
 }

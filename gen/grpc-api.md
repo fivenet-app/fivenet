@@ -342,6 +342,7 @@
 - [resources/mailer/message.proto](#resources_mailer_message-proto)
     - [Message](#resources-mailer-Message)
     - [MessageData](#resources-mailer-MessageData)
+    - [MessageDataEntry](#resources-mailer-MessageDataEntry)
   
 - [resources/mailer/thread.proto](#resources_mailer_thread-proto)
     - [Thread](#resources-mailer-Thread)
@@ -5638,6 +5639,21 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 <a name="resources-mailer-MessageData"></a>
 
 ### MessageData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [MessageDataEntry](#resources-mailer-MessageDataEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-mailer-MessageDataEntry"></a>
+
+### MessageDataEntry
 TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
 
 
@@ -5858,6 +5874,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  |  |
 | blocked_users | [BlockedUser](#resources-mailer-BlockedUser) | repeated |  |
+| signature | [string](#string) |  | @sanitize |
 
 
 

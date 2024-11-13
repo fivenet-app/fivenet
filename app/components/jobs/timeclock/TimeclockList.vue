@@ -286,7 +286,7 @@ const input = useTemplateRef('input');
             <template #default>
                 <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
                     <div class="flex flex-1 justify-between gap-2">
-                        <UFormGroup name="end" :label="$t('common.time_range')" class="flex-1">
+                        <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
                             <DateRangePickerPopoverClient
                                 v-model="query.date"
                                 mode="date"

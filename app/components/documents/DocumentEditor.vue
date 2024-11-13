@@ -17,12 +17,15 @@ import { DocContentType, DocReference, DocRelation } from '~~/gen/ts/resources/d
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = defineProps<{
     documentId?: string;
 }>();
+
+const { t } = useI18n();
 
 const { can, activeChar } = useAuth();
 
@@ -82,6 +85,10 @@ const referenceManagerData = ref(new Map<string, DocumentReference>());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
+const emptyCategory: Category = {
+    id: '0',
+    name: t('common.categories', 0),
+};
 const templateId = ref<undefined | string>();
 
 onMounted(async () => {
@@ -108,7 +115,7 @@ onMounted(async () => {
             state.title = template.contentTitle;
             state.state = template.state;
             state.content = template.content;
-            state.category = template.category;
+            state.category = template.category ?? emptyCategory;
             if (template?.contentAccess) {
                 state.access = template.contentAccess;
             }
@@ -135,7 +142,7 @@ onMounted(async () => {
                 state.title = document.title;
                 state.state = document.state;
                 state.content = document.content;
-                state.category = document.category;
+                state.category = document.category ?? emptyCategory;
                 state.closed = document.closed;
                 state.public = document.public;
                 state.access = response.access!;
@@ -258,7 +265,7 @@ async function createDocument(values: Schema): Promise<void> {
         state: values.state,
         public: values.public,
         templateId: templateId.value,
-        categoryId: values.category?.id,
+        categoryId: values.category?.id !== '0' ? values.category?.id : undefined,
         access: values.access,
     };
 
@@ -318,7 +325,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         closed: values.closed,
         state: values.state,
         public: values.public,
-        categoryId: values.category?.id,
+        categoryId: values.category?.id !== '0' ? values.category?.id : undefined,
         access: values.access,
     };
 
@@ -465,18 +472,19 @@ logger.info(
                         <div class="flex flex-row gap-2">
                             <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
                                 <ClientOnly>
-                                    <UInputMenu
+                                    <USelectMenu
                                         v-model="state.category"
                                         option-attribute="name"
                                         :search-attributes="['name']"
                                         block
                                         nullable
-                                        :search="
+                                        :searchable="
                                             async (search: string) => {
                                                 try {
                                                     categoriesLoading = true;
                                                     const categories = await completorStore.completeDocumentCategories(search);
                                                     categoriesLoading = false;
+                                                    categories.unshift(emptyCategory);
                                                     return categories;
                                                 } catch (e) {
                                                     handleGRPCError(e as RpcError);
@@ -486,16 +494,50 @@ logger.info(
                                                 }
                                             }
                                         "
-                                        search-lazy
-                                        :search-placeholder="$t('common.search_field')"
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
                                     >
+                                        <template #label>
+                                            <span
+                                                v-if="state.category"
+                                                class="inline-flex gap-1"
+                                                :class="`bg-${state.category.color}-500`"
+                                            >
+                                                <component
+                                                    :is="
+                                                        markerIcons.find((item) => item.name === state.category?.icon) ??
+                                                        markerFallbackIcon
+                                                    "
+                                                    v-if="state.category.icon"
+                                                    class="size-5"
+                                                />
+                                                <span class="truncate">{{ state.category.name }}</span>
+                                            </span>
+                                            <span v-else> &nbsp; </span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                                <component
+                                                    :is="
+                                                        markerIcons.find((item) => item.name === option.icon) ??
+                                                        markerFallbackIcon
+                                                    "
+                                                    v-if="option.icon"
+                                                    class="size-5"
+                                                />
+                                                <span class="truncate">{{ option.name }}</span>
+                                            </span>
+                                        </template>
+
                                         <template #option-empty="{ query: search }">
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
+
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.category', 2)]) }}
                                         </template>
-                                    </UInputMenu>
+                                    </USelectMenu>
                                 </ClientOnly>
                             </UFormGroup>
 
