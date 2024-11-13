@@ -91,6 +91,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
+			tQualiResults.CreatorID,
 		}
 
 		if userInfo.SuperUser {

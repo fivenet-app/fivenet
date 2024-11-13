@@ -63,7 +63,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
             entry: {
                 id: id ?? '0',
                 job: '',
-                creatorId: activeChar.value?.userId ?? 1,
+                creatorId: activeChar.value?.userId ?? 0,
                 type: values.type,
                 message: values.message,
                 targetUserId: values.targetUser.userId,
