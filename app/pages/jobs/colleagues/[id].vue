@@ -89,7 +89,7 @@ const links = computed(() =>
             to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? '0' } },
             icon: 'i-mdi-timeline-clock',
             permission: 'JobsTimeclockService.ListTimeclock' as Perms,
-            check: attr('JobsTimeclockService.ListTimeclock', 'Fields', 'Public').value,
+            check: attr('JobsTimeclockService.ListTimeclock', 'Access', 'All').value,
         },
         {
             label: t('pages.qualifications.title'),
