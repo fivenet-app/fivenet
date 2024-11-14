@@ -11,13 +11,10 @@ import (
 	"time"
 )
 
-type FivenetMsgsMessages struct {
+type FivenetMailerThreadsUserAccess struct {
 	ID        uint64     `sql:"primary_key" json:"id"`
-	ThreadID  uint64     `json:"thread_id"`
 	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	Message   string     `json:"message"`
-	Data      *string    `json:"data"`
-	CreatorID int32      `json:"creator_id"`
+	AddressID uint64     `json:"address_id"`
+	UserID    int32      `json:"user_id"`
+	Access    int16      `json:"access"`
 }

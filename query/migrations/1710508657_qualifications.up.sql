@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_job_access` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `qualification_id` bigint(20) unsigned NOT NULL,
   `job` varchar(40) NOT NULL,
-  `minimum_grade` int(11) NOT NULL DEFAULT 1,
+  `minimum_grade` int(11) NOT NULL DEFAULT 0,
   `access` smallint(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_qualifications_job_access` (`qualification_id`, `job`, `minimum_grade`),

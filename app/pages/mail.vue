@@ -155,24 +155,6 @@ const editing = ref(false);
         <UDashboardPanel id="mailerthreadlist" :width="450" :resizable="{ min: 325, max: 550 }">
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
-                    <UTabs
-                        v-model="selectedTab"
-                        :items="tabItems"
-                        :ui="{ wrapper: '', list: { height: 'h-9', tab: { height: 'h-7', size: 'text-[13px]' } } }"
-                    />
-                </template>
-            </UDashboardNavbar>
-
-            <div class="relative flex-1 overflow-x-auto">
-                <MailerList v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
-            </div>
-
-            <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                <template #left>
-                    <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(MailerSettingsModal, {})" />
-                </template>
-
-                <template #right>
                     <UButton
                         v-if="can('MailerService.CreateThread').value"
                         color="gray"
@@ -181,6 +163,26 @@ const editing = ref(false);
                     >
                         {{ $t('components.mailer.create_thread') }}
                     </UButton>
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardToolbar
+                :ui="{ wrapper: 'p-0 gap-x-0 min-h-[36px]', container: 'gap-x-0 justify-stretch items-stretch h-full' }"
+            >
+                <UTabs
+                    v-model="selectedTab"
+                    :items="tabItems"
+                    :ui="{ wrapper: 'w-full h-full space-y-0', list: { rounded: '' } }"
+                />
+            </UDashboardToolbar>
+
+            <div class="relative flex-1 overflow-x-auto">
+                <MailerList v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
+            </div>
+
+            <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+                <template #left>
+                    <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(MailerSettingsModal, {})" />
                 </template>
             </UDashboardToolbar>
         </UDashboardPanel>

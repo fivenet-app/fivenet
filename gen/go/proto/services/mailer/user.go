@@ -16,7 +16,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tSettingsBlocks = table.FivenetMsgsSettingsBlocks
+var tSettingsBlocks = table.FivenetMailerSettingsBlocked
 
 func (s *Server) SetThreadUserState(ctx context.Context, req *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
