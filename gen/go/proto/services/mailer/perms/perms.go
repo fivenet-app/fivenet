@@ -11,7 +11,6 @@ const (
 	MailerServicePerm perms.Category = "MailerService"
 
 	MailerServiceCreateThreadPerm perms.Name = "CreateThread"
-	MailerServiceDeleteThreadPerm perms.Name = "DeleteThread"
-	MailerServiceListThreadsPerm  perms.Name = "ListThreads"
-	MailerServicePostMessagePerm  perms.Name = "PostMessage"
+	MailerServiceDeleteEmailPerm  perms.Name = "DeleteEmail"
+	MailerServiceListEmailsPerm   perms.Name = "ListEmails"
 )

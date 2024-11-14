@@ -12,13 +12,14 @@ import (
 )
 
 type FivenetMailerMessages struct {
-	ID        uint64     `sql:"primary_key" json:"id"`
-	ThreadID  *uint64    `json:"thread_id"`
-	SenderID  uint64     `json:"sender_id"`
-	CreatedAt *time.Time `json:"created_at"`
-	UpdatedAt *time.Time `json:"updated_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	Title     string     `json:"title"`
-	Content   string     `json:"content"`
-	Data      *string    `json:"data"`
+	ID            uint64     `sql:"primary_key" json:"id"`
+	ThreadID      *uint64    `json:"thread_id"`
+	SenderEmailID *uint64    `json:"sender_email_id"`
+	SenderUserID  *int32     `json:"sender_user_id"`
+	CreatedAt     *time.Time `json:"created_at"`
+	UpdatedAt     *time.Time `json:"updated_at"`
+	DeletedAt     *time.Time `json:"deleted_at"`
+	Title         string     `json:"title"`
+	Content       string     `json:"content"`
+	Data          *string    `json:"data"`
 }

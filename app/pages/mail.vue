@@ -3,10 +3,9 @@ import MailerList from '~/components/mailer/MailerList.vue';
 import MailerSettingsModal from '~/components/mailer/MailerSettingsModal.vue';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
-import { canAccessThread } from '~/components/mailer/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import type { Email } from '~~/gen/ts/resources/mailer/email';
 
 useHead({
     title: 'common.mail',
@@ -49,7 +48,7 @@ const dropdownItems = computed(() =>
                     modal.open(ConfirmModal, {
                         confirm: async () =>
                             selectedThread.value &&
-                            mailerStore.setThreadUserState({ threadId: selectedThread.value!.id, archived: true }),
+                            mailerStore.setThreadState({ threadId: selectedThread.value!.id, archived: true }),
                     }),
             },
             {
@@ -63,8 +62,7 @@ const dropdownItems = computed(() =>
         ],
 
         [
-            can('MailerService.DeleteThread').value &&
-            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.PARTICIPANT)
+            can('MailerService.DeleteEmail').value
                 ? {
                       label: t('common.delete'),
                       icon: 'i-mdi-trash-can-outline',
@@ -79,18 +77,36 @@ const dropdownItems = computed(() =>
     ].flatMap((items) => (items.length > 0 ? [items] : [])),
 );
 
-onBeforeMount(async () => {
+const personalEmail: Email = {
+    id: '0',
+    domain: 'fivenet.app',
+    label: t('common.personal_email'),
+    internal: false,
+};
+const selectedEmail = ref<Email | undefined>(personalEmail);
+
+const { data: emails } = useLazyAsyncData('emails', async () => {
+    const emails = await mailerStore.listEmails();
+    emails.unshift(personalEmail);
+    return emails;
+});
+
+watch(selectedEmail, async () => loadThreads);
+
+async function loadThreads(): Promise<void> {
     const count = await mailerDB.threads.count();
+
     const call = getGRPCMailerClient().listThreads({
         pagination: {
             offset: 0,
         },
+        emailIds: emails.value && emails.value[0]?.id !== undefined ? [emails.value[0].id] : [],
         after: count > 0 ? undefined : toTimestamp(),
     });
     const { response } = await call;
 
     mailerDB.threads.bulkPut(response.threads);
-});
+}
 
 const threads = useDexieLiveQuery(() => mailerDB.threads.toArray().then((threads) => ({ threads, loaded: true })), {
     initialValue: { threads: [], loaded: false },
@@ -139,7 +155,10 @@ watch(selectedThread, () => {
         router.replace({ query: { thread: selectedThread.value.id }, hash: '#' });
     }
 });
+
 onMounted(async () => {
+    loadThreads();
+
     if (!route.query.thread) {
         return;
     }
@@ -167,8 +186,26 @@ const editing = ref(false);
             </UDashboardNavbar>
 
             <UDashboardToolbar
-                :ui="{ wrapper: 'p-0 gap-x-0 min-h-[36px]', container: 'gap-x-0 justify-stretch items-stretch h-full' }"
+                :ui="{ wrapper: 'p-0 gap-x-0', container: 'gap-x-0 justify-stretch items-stretch h-full flex flex-1 flex-col' }"
             >
+                <div class="bg-gray-100 p-1 dark:bg-gray-800">
+                    <USelectMenu
+                        v-model="selectedEmail"
+                        :options="emails"
+                        :placeholder="$t('common.mail')"
+                        :searchable-placeholder="$t('common.search_field')"
+                        :search-attributes="['label']"
+                        trailing
+                        by="id"
+                    >
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+
+                        <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
+                    </USelectMenu>
+                </div>
+
                 <UTabs
                     v-model="selectedTab"
                     :items="tabItems"
@@ -204,7 +241,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadUserState({
+                                        (selectedThread!.userState = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             unread: !threadUserState?.unread,
                                         }))
@@ -219,7 +256,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadUserState({
+                                        (selectedThread!.userState = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             important: !threadUserState?.important,
                                         }))
@@ -236,7 +273,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadUserState({
+                                        (selectedThread!.userState = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             favorite: !threadUserState?.favorite,
                                         }))
@@ -251,7 +288,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadUserState({
+                                        (selectedThread!.userState = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             muted: !threadUserState?.muted,
                                         }))

@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -10,22 +11,44 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
-  ACCESS_LEVEL_BLOCKED = 1; // UNUSED
-  ACCESS_LEVEL_PARTICIPANT = 2;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_VIEW = 2;
+  ACCESS_LEVEL_READ = 3;
+  ACCESS_LEVEL_WRITE = 4;
+  ACCESS_LEVEL_MANAGE = 5;
 }
 
-message ThreadAccess {
-  repeated ThreadJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated ThreadUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
+message Access {
+  repeated JobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
+  repeated UserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
+  repeated QualificationAccess qualifications = 3 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"qualification_access"
 }
 
-message ThreadJobAccess {}
+message JobAccess {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 target_id = 4 [jstype = JS_STRING]; // @gotags: alias:"email_id"
+  string job = 5 [(validate.rules).string.max_len = 20];
+  optional string job_label = 6 [(validate.rules).string.max_len = 50];
+  int32 minimum_grade = 7 [(validate.rules).int32.gte = 0];
+  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
+  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
+}
 
-message ThreadUserAccess {
+message UserAccess {
   uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
   int32 user_id = 4 [(validate.rules).int32.gte = 0];
   optional resources.users.UserShort user = 5;
+  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+}
+
+message QualificationAccess {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
+  uint64 qualification_id = 4 [jstype = JS_STRING];
+  optional resources.qualifications.QualificationShort qualification = 5;
   AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
 }

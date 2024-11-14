@@ -22,25 +22,27 @@ export interface MailerEvent {
     data: {
         oneofKind: "threadUpdate";
         /**
-         * @generated from protobuf field: resources.mailer.Thread thread_update = 1;
+         * TODO
+         *
+         * @generated from protobuf field: resources.mailer.Thread thread_update = 3;
          */
         threadUpdate: Thread;
     } | {
         oneofKind: "threadDelete";
         /**
-         * @generated from protobuf field: uint64 thread_delete = 2 [jstype = JS_STRING];
+         * @generated from protobuf field: uint64 thread_delete = 4 [jstype = JS_STRING];
          */
         threadDelete: string;
     } | {
         oneofKind: "messageUpdate";
         /**
-         * @generated from protobuf field: resources.mailer.Message message_update = 3;
+         * @generated from protobuf field: resources.mailer.Message message_update = 5;
          */
         messageUpdate: Message;
     } | {
         oneofKind: "messageDelete";
         /**
-         * @generated from protobuf field: uint64 message_delete = 4 [jstype = JS_STRING];
+         * @generated from protobuf field: uint64 message_delete = 6 [jstype = JS_STRING];
          */
         messageDelete: string;
     } | {
@@ -51,10 +53,10 @@ export interface MailerEvent {
 class MailerEvent$Type extends MessageType<MailerEvent> {
     constructor() {
         super("resources.mailer.MailerEvent", [
-            { no: 1, name: "thread_update", kind: "message", oneof: "data", T: () => Thread },
-            { no: 2, name: "thread_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "message_update", kind: "message", oneof: "data", T: () => Message },
-            { no: 4, name: "message_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ }
+            { no: 3, name: "thread_update", kind: "message", oneof: "data", T: () => Thread },
+            { no: 4, name: "thread_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "message_update", kind: "message", oneof: "data", T: () => Message },
+            { no: 6, name: "message_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<MailerEvent>): MailerEvent {
@@ -69,25 +71,25 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.Thread thread_update */ 1:
+                case /* resources.mailer.Thread thread_update */ 3:
                     message.data = {
                         oneofKind: "threadUpdate",
                         threadUpdate: Thread.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).threadUpdate)
                     };
                     break;
-                case /* uint64 thread_delete = 2 [jstype = JS_STRING];*/ 2:
+                case /* uint64 thread_delete = 4 [jstype = JS_STRING];*/ 4:
                     message.data = {
                         oneofKind: "threadDelete",
                         threadDelete: reader.uint64().toString()
                     };
                     break;
-                case /* resources.mailer.Message message_update */ 3:
+                case /* resources.mailer.Message message_update */ 5:
                     message.data = {
                         oneofKind: "messageUpdate",
                         messageUpdate: Message.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).messageUpdate)
                     };
                     break;
-                case /* uint64 message_delete = 4 [jstype = JS_STRING];*/ 4:
+                case /* uint64 message_delete = 6 [jstype = JS_STRING];*/ 6:
                     message.data = {
                         oneofKind: "messageDelete",
                         messageDelete: reader.uint64().toString()
@@ -105,18 +107,18 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
         return message;
     }
     internalBinaryWrite(message: MailerEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.Thread thread_update = 1; */
+        /* resources.mailer.Thread thread_update = 3; */
         if (message.data.oneofKind === "threadUpdate")
-            Thread.internalBinaryWrite(message.data.threadUpdate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 thread_delete = 2 [jstype = JS_STRING]; */
+            Thread.internalBinaryWrite(message.data.threadUpdate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 thread_delete = 4 [jstype = JS_STRING]; */
         if (message.data.oneofKind === "threadDelete")
-            writer.tag(2, WireType.Varint).uint64(message.data.threadDelete);
-        /* resources.mailer.Message message_update = 3; */
+            writer.tag(4, WireType.Varint).uint64(message.data.threadDelete);
+        /* resources.mailer.Message message_update = 5; */
         if (message.data.oneofKind === "messageUpdate")
-            Message.internalBinaryWrite(message.data.messageUpdate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 message_delete = 4 [jstype = JS_STRING]; */
+            Message.internalBinaryWrite(message.data.messageUpdate, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 message_delete = 6 [jstype = JS_STRING]; */
         if (message.data.oneofKind === "messageDelete")
-            writer.tag(4, WireType.Varint).uint64(message.data.messageDelete);
+            writer.tag(6, WireType.Varint).uint64(message.data.messageDelete);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

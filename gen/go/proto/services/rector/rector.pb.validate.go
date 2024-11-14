@@ -2634,10 +2634,10 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 
 	if m.Search != nil {
 
-		if utf8.RuneCountInString(m.GetSearch()) > 128 {
+		if utf8.RuneCountInString(m.GetSearch()) > 64 {
 			err := ViewAuditLogRequestValidationError{
 				field:  "Search",
-				reason: "value length must be at most 128 runes",
+				reason: "value length must be at most 64 runes",
 			}
 			if !all {
 				return err

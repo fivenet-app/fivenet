@@ -1211,7 +1211,7 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
             { no: 5, name: "to", kind: "message", T: () => Timestamp },
             { no: 6, name: "services", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
             { no: 7, name: "methods", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { maxLen: "64" } } } } } },
-            { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {

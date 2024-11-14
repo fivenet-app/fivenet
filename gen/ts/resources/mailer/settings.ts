@@ -23,12 +23,6 @@ export interface UserSettings {
      * @generated from protobuf field: repeated resources.mailer.BlockedUser blocked_users = 2;
      */
     blockedUsers: BlockedUser[];
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string signature = 3;
-     */
-    signature: string;
 }
 /**
  * @generated from protobuf message resources.mailer.BlockedUser
@@ -48,15 +42,13 @@ class UserSettings$Type extends MessageType<UserSettings> {
     constructor() {
         super("resources.mailer.UserSettings", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 2, name: "blocked_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BlockedUser, options: { "validate.rules": { repeated: { maxItems: "25" } } } },
-            { no: 3, name: "signature", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } }
+            { no: 2, name: "blocked_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => BlockedUser, options: { "validate.rules": { repeated: { maxItems: "25" } } } }
         ]);
     }
     create(value?: PartialMessage<UserSettings>): UserSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
         message.blockedUsers = [];
-        message.signature = "";
         if (value !== undefined)
             reflectionMergePartial<UserSettings>(this, message, value);
         return message;
@@ -71,9 +63,6 @@ class UserSettings$Type extends MessageType<UserSettings> {
                     break;
                 case /* repeated resources.mailer.BlockedUser blocked_users */ 2:
                     message.blockedUsers.push(BlockedUser.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* string signature */ 3:
-                    message.signature = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -93,9 +82,6 @@ class UserSettings$Type extends MessageType<UserSettings> {
         /* repeated resources.mailer.BlockedUser blocked_users = 2; */
         for (let i = 0; i < message.blockedUsers.length; i++)
             BlockedUser.internalBinaryWrite(message.blockedUsers[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* string signature = 3; */
-        if (message.signature !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.signature);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

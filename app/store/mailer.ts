@@ -1,8 +1,9 @@
 import Dexie, { type Table } from 'dexie';
+import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
 import type { Message } from '~~/gen/ts/resources/mailer/message';
 import type { UserSettings } from '~~/gen/ts/resources/mailer/settings';
-import type { Thread, ThreadUserState } from '~~/gen/ts/resources/mailer/thread';
+import type { Thread, ThreadStateUser } from '~~/gen/ts/resources/mailer/thread';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateThreadRequest,
@@ -63,7 +64,7 @@ export const useMailerStore = defineStore('mailer', {
                     }
 
                     if (this.selectedThread?.id !== event.data.messageUpdate.threadId) {
-                        await this.setThreadUserState(
+                        await this.setThreadState(
                             {
                                 threadId: event.data.messageUpdate.threadId,
                                 unread: true,
@@ -76,6 +77,19 @@ export const useMailerStore = defineStore('mailer', {
                 await mailerDB.messages.delete(event.data.messageDelete);
             } else {
                 logger.debug('Unknown MailerEvent received:', event.data.oneofKind);
+            }
+        },
+
+        // Emails
+        async listEmails(): Promise<Email[]> {
+            try {
+                const call = getGRPCMailerClient().listEmails({});
+                const { response } = await call;
+
+                return response.emails;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
             }
         },
 
@@ -161,11 +175,11 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Thread User State
-        async getThreadUserState(threadId: string): Promise<ThreadUserState | undefined> {
+        async getThreadUserState(threadId: string): Promise<ThreadStateUser | undefined> {
             return (await mailerDB.threads.get(threadId))?.userState;
         },
 
-        async setThreadUserState(state: Partial<ThreadUserState>, local?: boolean): Promise<ThreadUserState | undefined> {
+        async setThreadState(state: Partial<ThreadStateUser>, local?: boolean): Promise<ThreadStateUser | undefined> {
             const thread = await mailerDB.threads.get(state!.threadId);
             if (!thread) {
                 return;
@@ -216,7 +230,12 @@ export const useMailerStore = defineStore('mailer', {
                 mailerDB.threads.update(thread.id, thread);
 
                 if (!local) {
-                    await getGRPCMailerClient().setThreadUserState({ state: thread.userState });
+                    await getGRPCMailerClient().setThreadState({
+                        state: {
+                            oneofKind: 'user',
+                            user: thread.userState,
+                        },
+                    });
                 }
             }
 

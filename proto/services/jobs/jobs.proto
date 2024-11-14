@@ -14,7 +14,7 @@ message ListColleaguesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  string search = 3 [(validate.rules).string.max_len = 50];
+  string search = 3 [(validate.rules).string.max_len = 64];
   optional int32 user_id = 4 [(validate.rules).int32.gte = 0];
   optional bool absent = 5;
 }

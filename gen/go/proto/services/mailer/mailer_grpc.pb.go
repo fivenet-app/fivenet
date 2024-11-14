@@ -19,17 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	MailerService_ListThreads_FullMethodName        = "/services.mailer.MailerService/ListThreads"
-	MailerService_GetThread_FullMethodName          = "/services.mailer.MailerService/GetThread"
-	MailerService_CreateThread_FullMethodName       = "/services.mailer.MailerService/CreateThread"
-	MailerService_DeleteThread_FullMethodName       = "/services.mailer.MailerService/DeleteThread"
-	MailerService_SetThreadUserState_FullMethodName = "/services.mailer.MailerService/SetThreadUserState"
-	MailerService_LeaveThread_FullMethodName        = "/services.mailer.MailerService/LeaveThread"
-	MailerService_GetUserSettings_FullMethodName    = "/services.mailer.MailerService/GetUserSettings"
-	MailerService_SetUserSettings_FullMethodName    = "/services.mailer.MailerService/SetUserSettings"
-	MailerService_GetThreadMessages_FullMethodName  = "/services.mailer.MailerService/GetThreadMessages"
-	MailerService_PostMessage_FullMethodName        = "/services.mailer.MailerService/PostMessage"
-	MailerService_DeleteMessage_FullMethodName      = "/services.mailer.MailerService/DeleteMessage"
+	MailerService_ListEmails_FullMethodName             = "/services.mailer.MailerService/ListEmails"
+	MailerService_GetEmail_FullMethodName               = "/services.mailer.MailerService/GetEmail"
+	MailerService_CreateOrUpdateEmail_FullMethodName    = "/services.mailer.MailerService/CreateOrUpdateEmail"
+	MailerService_DeleteEmail_FullMethodName            = "/services.mailer.MailerService/DeleteEmail"
+	MailerService_ListTemplates_FullMethodName          = "/services.mailer.MailerService/ListTemplates"
+	MailerService_GetTemplate_FullMethodName            = "/services.mailer.MailerService/GetTemplate"
+	MailerService_CreateOrUpdateTemplate_FullMethodName = "/services.mailer.MailerService/CreateOrUpdateTemplate"
+	MailerService_DeleteTemplate_FullMethodName         = "/services.mailer.MailerService/DeleteTemplate"
+	MailerService_ListThreads_FullMethodName            = "/services.mailer.MailerService/ListThreads"
+	MailerService_GetThread_FullMethodName              = "/services.mailer.MailerService/GetThread"
+	MailerService_CreateThread_FullMethodName           = "/services.mailer.MailerService/CreateThread"
+	MailerService_DeleteThread_FullMethodName           = "/services.mailer.MailerService/DeleteThread"
+	MailerService_SetThreadState_FullMethodName         = "/services.mailer.MailerService/SetThreadState"
+	MailerService_LeaveThread_FullMethodName            = "/services.mailer.MailerService/LeaveThread"
+	MailerService_ListThreadMessages_FullMethodName     = "/services.mailer.MailerService/ListThreadMessages"
+	MailerService_PostMessage_FullMethodName            = "/services.mailer.MailerService/PostMessage"
+	MailerService_DeleteMessage_FullMethodName          = "/services.mailer.MailerService/DeleteMessage"
+	MailerService_GetUserSettings_FullMethodName        = "/services.mailer.MailerService/GetUserSettings"
+	MailerService_SetUserSettings_FullMethodName        = "/services.mailer.MailerService/SetUserSettings"
 )
 
 // MailerServiceClient is the client API for MailerService service.
@@ -37,27 +45,43 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MailerServiceClient interface {
 	// @perm
+	ListEmails(ctx context.Context, in *ListEmailsRequest, opts ...grpc.CallOption) (*ListEmailsResponse, error)
+	// @perm: Name=ListEmails
+	GetEmail(ctx context.Context, in *GetEmailRequest, opts ...grpc.CallOption) (*GetEmailResponse, error)
+	// @perm: Name=ListEmails
+	CreateOrUpdateEmail(ctx context.Context, in *CreateOrUpdateEmailRequest, opts ...grpc.CallOption) (*CreateOrUpdateEmailResponse, error)
+	// @perm
+	DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error)
+	// @perm: Name=ListEmails
+	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
+	// @perm: Name=ListEmails
+	GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error)
+	// @perm: Name=ListEmails
+	CreateOrUpdateTemplate(ctx context.Context, in *CreateOrUpdateTemplateRequest, opts ...grpc.CallOption) (*CreateOrUpdateTemplateResponse, error)
+	// @perm: Name=ListEmails
+	DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error)
+	// @perm: Name=ListEmails
 	ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error)
-	// @perm: Name=ListThreads
+	// @perm: Name=ListEmails
 	GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error)
 	// @perm
 	CreateThread(ctx context.Context, in *CreateThreadRequest, opts ...grpc.CallOption) (*CreateThreadResponse, error)
-	// @perm
+	// @perm: Name=SuperUser
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
-	// @perm: Name=ListThreads
-	SetThreadUserState(ctx context.Context, in *SetThreadUserStateRequest, opts ...grpc.CallOption) (*SetThreadUserStateResponse, error)
-	// @perm: Name=ListThreads
+	// @perm: Name=ListEmails
+	SetThreadState(ctx context.Context, in *SetThreadStateRequest, opts ...grpc.CallOption) (*SetThreadStateResponse, error)
+	// @perm: Name=ListEmails
 	LeaveThread(ctx context.Context, in *LeaveThreadRequest, opts ...grpc.CallOption) (*LeaveThreadResponse, error)
-	// @perm: Name=ListThreads
-	GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error)
-	// @perm: Name=ListThreads
-	SetUserSettings(ctx context.Context, in *SetUserSettingsRequest, opts ...grpc.CallOption) (*SetUserSettingsResponse, error)
-	// @perm: Name=ListThreads
-	GetThreadMessages(ctx context.Context, in *GetThreadMessagesRequest, opts ...grpc.CallOption) (*GetThreadMessagesResponse, error)
-	// @perm
+	// @perm: Name=ListEmails
+	ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error)
+	// @perm: Name=ListEmails
 	PostMessage(ctx context.Context, in *PostMessageRequest, opts ...grpc.CallOption) (*PostMessageResponse, error)
 	// @perm: Name=SuperUser
 	DeleteMessage(ctx context.Context, in *DeleteMessageRequest, opts ...grpc.CallOption) (*DeleteMessageResponse, error)
+	// @perm: Name=ListEmails
+	GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error)
+	// @perm: Name=ListEmails
+	SetUserSettings(ctx context.Context, in *SetUserSettingsRequest, opts ...grpc.CallOption) (*SetUserSettingsResponse, error)
 }
 
 type mailerServiceClient struct {
@@ -66,6 +90,78 @@ type mailerServiceClient struct {
 
 func NewMailerServiceClient(cc grpc.ClientConnInterface) MailerServiceClient {
 	return &mailerServiceClient{cc}
+}
+
+func (c *mailerServiceClient) ListEmails(ctx context.Context, in *ListEmailsRequest, opts ...grpc.CallOption) (*ListEmailsResponse, error) {
+	out := new(ListEmailsResponse)
+	err := c.cc.Invoke(ctx, MailerService_ListEmails_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) GetEmail(ctx context.Context, in *GetEmailRequest, opts ...grpc.CallOption) (*GetEmailResponse, error) {
+	out := new(GetEmailResponse)
+	err := c.cc.Invoke(ctx, MailerService_GetEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) CreateOrUpdateEmail(ctx context.Context, in *CreateOrUpdateEmailRequest, opts ...grpc.CallOption) (*CreateOrUpdateEmailResponse, error) {
+	out := new(CreateOrUpdateEmailResponse)
+	err := c.cc.Invoke(ctx, MailerService_CreateOrUpdateEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error) {
+	out := new(DeleteEmailResponse)
+	err := c.cc.Invoke(ctx, MailerService_DeleteEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error) {
+	out := new(ListTemplatesResponse)
+	err := c.cc.Invoke(ctx, MailerService_ListTemplates_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) GetTemplate(ctx context.Context, in *GetTemplateRequest, opts ...grpc.CallOption) (*GetTemplateResponse, error) {
+	out := new(GetTemplateResponse)
+	err := c.cc.Invoke(ctx, MailerService_GetTemplate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) CreateOrUpdateTemplate(ctx context.Context, in *CreateOrUpdateTemplateRequest, opts ...grpc.CallOption) (*CreateOrUpdateTemplateResponse, error) {
+	out := new(CreateOrUpdateTemplateResponse)
+	err := c.cc.Invoke(ctx, MailerService_CreateOrUpdateTemplate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) DeleteTemplate(ctx context.Context, in *DeleteTemplateRequest, opts ...grpc.CallOption) (*DeleteTemplateResponse, error) {
+	out := new(DeleteTemplateResponse)
+	err := c.cc.Invoke(ctx, MailerService_DeleteTemplate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *mailerServiceClient) ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error) {
@@ -104,9 +200,9 @@ func (c *mailerServiceClient) DeleteThread(ctx context.Context, in *DeleteThread
 	return out, nil
 }
 
-func (c *mailerServiceClient) SetThreadUserState(ctx context.Context, in *SetThreadUserStateRequest, opts ...grpc.CallOption) (*SetThreadUserStateResponse, error) {
-	out := new(SetThreadUserStateResponse)
-	err := c.cc.Invoke(ctx, MailerService_SetThreadUserState_FullMethodName, in, out, opts...)
+func (c *mailerServiceClient) SetThreadState(ctx context.Context, in *SetThreadStateRequest, opts ...grpc.CallOption) (*SetThreadStateResponse, error) {
+	out := new(SetThreadStateResponse)
+	err := c.cc.Invoke(ctx, MailerService_SetThreadState_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -122,27 +218,9 @@ func (c *mailerServiceClient) LeaveThread(ctx context.Context, in *LeaveThreadRe
 	return out, nil
 }
 
-func (c *mailerServiceClient) GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error) {
-	out := new(GetUserSettingsResponse)
-	err := c.cc.Invoke(ctx, MailerService_GetUserSettings_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mailerServiceClient) SetUserSettings(ctx context.Context, in *SetUserSettingsRequest, opts ...grpc.CallOption) (*SetUserSettingsResponse, error) {
-	out := new(SetUserSettingsResponse)
-	err := c.cc.Invoke(ctx, MailerService_SetUserSettings_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mailerServiceClient) GetThreadMessages(ctx context.Context, in *GetThreadMessagesRequest, opts ...grpc.CallOption) (*GetThreadMessagesResponse, error) {
-	out := new(GetThreadMessagesResponse)
-	err := c.cc.Invoke(ctx, MailerService_GetThreadMessages_FullMethodName, in, out, opts...)
+func (c *mailerServiceClient) ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error) {
+	out := new(ListThreadMessagesResponse)
+	err := c.cc.Invoke(ctx, MailerService_ListThreadMessages_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,32 +245,66 @@ func (c *mailerServiceClient) DeleteMessage(ctx context.Context, in *DeleteMessa
 	return out, nil
 }
 
+func (c *mailerServiceClient) GetUserSettings(ctx context.Context, in *GetUserSettingsRequest, opts ...grpc.CallOption) (*GetUserSettingsResponse, error) {
+	out := new(GetUserSettingsResponse)
+	err := c.cc.Invoke(ctx, MailerService_GetUserSettings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) SetUserSettings(ctx context.Context, in *SetUserSettingsRequest, opts ...grpc.CallOption) (*SetUserSettingsResponse, error) {
+	out := new(SetUserSettingsResponse)
+	err := c.cc.Invoke(ctx, MailerService_SetUserSettings_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MailerServiceServer is the server API for MailerService service.
 // All implementations must embed UnimplementedMailerServiceServer
 // for forward compatibility
 type MailerServiceServer interface {
 	// @perm
+	ListEmails(context.Context, *ListEmailsRequest) (*ListEmailsResponse, error)
+	// @perm: Name=ListEmails
+	GetEmail(context.Context, *GetEmailRequest) (*GetEmailResponse, error)
+	// @perm: Name=ListEmails
+	CreateOrUpdateEmail(context.Context, *CreateOrUpdateEmailRequest) (*CreateOrUpdateEmailResponse, error)
+	// @perm
+	DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error)
+	// @perm: Name=ListEmails
+	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
+	// @perm: Name=ListEmails
+	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
+	// @perm: Name=ListEmails
+	CreateOrUpdateTemplate(context.Context, *CreateOrUpdateTemplateRequest) (*CreateOrUpdateTemplateResponse, error)
+	// @perm: Name=ListEmails
+	DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error)
+	// @perm: Name=ListEmails
 	ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error)
-	// @perm: Name=ListThreads
+	// @perm: Name=ListEmails
 	GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error)
 	// @perm
 	CreateThread(context.Context, *CreateThreadRequest) (*CreateThreadResponse, error)
-	// @perm
+	// @perm: Name=SuperUser
 	DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error)
-	// @perm: Name=ListThreads
-	SetThreadUserState(context.Context, *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error)
-	// @perm: Name=ListThreads
+	// @perm: Name=ListEmails
+	SetThreadState(context.Context, *SetThreadStateRequest) (*SetThreadStateResponse, error)
+	// @perm: Name=ListEmails
 	LeaveThread(context.Context, *LeaveThreadRequest) (*LeaveThreadResponse, error)
-	// @perm: Name=ListThreads
-	GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error)
-	// @perm: Name=ListThreads
-	SetUserSettings(context.Context, *SetUserSettingsRequest) (*SetUserSettingsResponse, error)
-	// @perm: Name=ListThreads
-	GetThreadMessages(context.Context, *GetThreadMessagesRequest) (*GetThreadMessagesResponse, error)
-	// @perm
+	// @perm: Name=ListEmails
+	ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error)
+	// @perm: Name=ListEmails
 	PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error)
 	// @perm: Name=SuperUser
 	DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error)
+	// @perm: Name=ListEmails
+	GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error)
+	// @perm: Name=ListEmails
+	SetUserSettings(context.Context, *SetUserSettingsRequest) (*SetUserSettingsResponse, error)
 	mustEmbedUnimplementedMailerServiceServer()
 }
 
@@ -200,6 +312,30 @@ type MailerServiceServer interface {
 type UnimplementedMailerServiceServer struct {
 }
 
+func (UnimplementedMailerServiceServer) ListEmails(context.Context, *ListEmailsRequest) (*ListEmailsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListEmails not implemented")
+}
+func (UnimplementedMailerServiceServer) GetEmail(context.Context, *GetEmailRequest) (*GetEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmail not implemented")
+}
+func (UnimplementedMailerServiceServer) CreateOrUpdateEmail(context.Context, *CreateOrUpdateEmailRequest) (*CreateOrUpdateEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateEmail not implemented")
+}
+func (UnimplementedMailerServiceServer) DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmail not implemented")
+}
+func (UnimplementedMailerServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
+}
+func (UnimplementedMailerServiceServer) GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetTemplate not implemented")
+}
+func (UnimplementedMailerServiceServer) CreateOrUpdateTemplate(context.Context, *CreateOrUpdateTemplateRequest) (*CreateOrUpdateTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateTemplate not implemented")
+}
+func (UnimplementedMailerServiceServer) DeleteTemplate(context.Context, *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteTemplate not implemented")
+}
 func (UnimplementedMailerServiceServer) ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListThreads not implemented")
 }
@@ -212,26 +348,26 @@ func (UnimplementedMailerServiceServer) CreateThread(context.Context, *CreateThr
 func (UnimplementedMailerServiceServer) DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteThread not implemented")
 }
-func (UnimplementedMailerServiceServer) SetThreadUserState(context.Context, *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetThreadUserState not implemented")
+func (UnimplementedMailerServiceServer) SetThreadState(context.Context, *SetThreadStateRequest) (*SetThreadStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetThreadState not implemented")
 }
 func (UnimplementedMailerServiceServer) LeaveThread(context.Context, *LeaveThreadRequest) (*LeaveThreadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method LeaveThread not implemented")
 }
-func (UnimplementedMailerServiceServer) GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserSettings not implemented")
-}
-func (UnimplementedMailerServiceServer) SetUserSettings(context.Context, *SetUserSettingsRequest) (*SetUserSettingsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetUserSettings not implemented")
-}
-func (UnimplementedMailerServiceServer) GetThreadMessages(context.Context, *GetThreadMessagesRequest) (*GetThreadMessagesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetThreadMessages not implemented")
+func (UnimplementedMailerServiceServer) ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListThreadMessages not implemented")
 }
 func (UnimplementedMailerServiceServer) PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method PostMessage not implemented")
 }
 func (UnimplementedMailerServiceServer) DeleteMessage(context.Context, *DeleteMessageRequest) (*DeleteMessageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteMessage not implemented")
+}
+func (UnimplementedMailerServiceServer) GetUserSettings(context.Context, *GetUserSettingsRequest) (*GetUserSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserSettings not implemented")
+}
+func (UnimplementedMailerServiceServer) SetUserSettings(context.Context, *SetUserSettingsRequest) (*SetUserSettingsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetUserSettings not implemented")
 }
 func (UnimplementedMailerServiceServer) mustEmbedUnimplementedMailerServiceServer() {}
 
@@ -244,6 +380,150 @@ type UnsafeMailerServiceServer interface {
 
 func RegisterMailerServiceServer(s grpc.ServiceRegistrar, srv MailerServiceServer) {
 	s.RegisterService(&MailerService_ServiceDesc, srv)
+}
+
+func _MailerService_ListEmails_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListEmailsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).ListEmails(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_ListEmails_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).ListEmails(ctx, req.(*ListEmailsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_GetEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).GetEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_GetEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).GetEmail(ctx, req.(*GetEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_CreateOrUpdateEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).CreateOrUpdateEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_CreateOrUpdateEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).CreateOrUpdateEmail(ctx, req.(*CreateOrUpdateEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_DeleteEmail_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteEmailRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).DeleteEmail(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_DeleteEmail_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).DeleteEmail(ctx, req.(*DeleteEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_ListTemplates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTemplatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).ListTemplates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_ListTemplates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).ListTemplates(ctx, req.(*ListTemplatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_GetTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).GetTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_GetTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).GetTemplate(ctx, req.(*GetTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_CreateOrUpdateTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).CreateOrUpdateTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_CreateOrUpdateTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).CreateOrUpdateTemplate(ctx, req.(*CreateOrUpdateTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_DeleteTemplate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTemplateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).DeleteTemplate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_DeleteTemplate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).DeleteTemplate(ctx, req.(*DeleteTemplateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _MailerService_ListThreads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -318,20 +598,20 @@ func _MailerService_DeleteThread_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MailerService_SetThreadUserState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetThreadUserStateRequest)
+func _MailerService_SetThreadState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetThreadStateRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MailerServiceServer).SetThreadUserState(ctx, in)
+		return srv.(MailerServiceServer).SetThreadState(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MailerService_SetThreadUserState_FullMethodName,
+		FullMethod: MailerService_SetThreadState_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MailerServiceServer).SetThreadUserState(ctx, req.(*SetThreadUserStateRequest))
+		return srv.(MailerServiceServer).SetThreadState(ctx, req.(*SetThreadStateRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -354,56 +634,20 @@ func _MailerService_LeaveThread_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MailerService_GetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserSettingsRequest)
+func _MailerService_ListThreadMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListThreadMessagesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(MailerServiceServer).GetUserSettings(ctx, in)
+		return srv.(MailerServiceServer).ListThreadMessages(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: MailerService_GetUserSettings_FullMethodName,
+		FullMethod: MailerService_ListThreadMessages_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MailerServiceServer).GetUserSettings(ctx, req.(*GetUserSettingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MailerService_SetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SetUserSettingsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MailerServiceServer).SetUserSettings(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MailerService_SetUserSettings_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MailerServiceServer).SetUserSettings(ctx, req.(*SetUserSettingsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MailerService_GetThreadMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetThreadMessagesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MailerServiceServer).GetThreadMessages(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: MailerService_GetThreadMessages_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MailerServiceServer).GetThreadMessages(ctx, req.(*GetThreadMessagesRequest))
+		return srv.(MailerServiceServer).ListThreadMessages(ctx, req.(*ListThreadMessagesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -444,6 +688,42 @@ func _MailerService_DeleteMessage_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MailerService_GetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).GetUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_GetUserSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).GetUserSettings(ctx, req.(*GetUserSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_SetUserSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetUserSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).SetUserSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_SetUserSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).SetUserSettings(ctx, req.(*SetUserSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MailerService_ServiceDesc is the grpc.ServiceDesc for MailerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -451,6 +731,38 @@ var MailerService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.mailer.MailerService",
 	HandlerType: (*MailerServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListEmails",
+			Handler:    _MailerService_ListEmails_Handler,
+		},
+		{
+			MethodName: "GetEmail",
+			Handler:    _MailerService_GetEmail_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateEmail",
+			Handler:    _MailerService_CreateOrUpdateEmail_Handler,
+		},
+		{
+			MethodName: "DeleteEmail",
+			Handler:    _MailerService_DeleteEmail_Handler,
+		},
+		{
+			MethodName: "ListTemplates",
+			Handler:    _MailerService_ListTemplates_Handler,
+		},
+		{
+			MethodName: "GetTemplate",
+			Handler:    _MailerService_GetTemplate_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateTemplate",
+			Handler:    _MailerService_CreateOrUpdateTemplate_Handler,
+		},
+		{
+			MethodName: "DeleteTemplate",
+			Handler:    _MailerService_DeleteTemplate_Handler,
+		},
 		{
 			MethodName: "ListThreads",
 			Handler:    _MailerService_ListThreads_Handler,
@@ -468,24 +780,16 @@ var MailerService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MailerService_DeleteThread_Handler,
 		},
 		{
-			MethodName: "SetThreadUserState",
-			Handler:    _MailerService_SetThreadUserState_Handler,
+			MethodName: "SetThreadState",
+			Handler:    _MailerService_SetThreadState_Handler,
 		},
 		{
 			MethodName: "LeaveThread",
 			Handler:    _MailerService_LeaveThread_Handler,
 		},
 		{
-			MethodName: "GetUserSettings",
-			Handler:    _MailerService_GetUserSettings_Handler,
-		},
-		{
-			MethodName: "SetUserSettings",
-			Handler:    _MailerService_SetUserSettings_Handler,
-		},
-		{
-			MethodName: "GetThreadMessages",
-			Handler:    _MailerService_GetThreadMessages_Handler,
+			MethodName: "ListThreadMessages",
+			Handler:    _MailerService_ListThreadMessages_Handler,
 		},
 		{
 			MethodName: "PostMessage",
@@ -494,6 +798,14 @@ var MailerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteMessage",
 			Handler:    _MailerService_DeleteMessage_Handler,
+		},
+		{
+			MethodName: "GetUserSettings",
+			Handler:    _MailerService_GetUserSettings_Handler,
+		},
+		{
+			MethodName: "SetUserSettings",
+			Handler:    _MailerService_SetUserSettings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

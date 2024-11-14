@@ -18,7 +18,7 @@ const groups = [
                         offset: 0,
                     },
                     rootOnly: false,
-                    search: q.trim(),
+                    search: q.trim().substring(0, 64),
                 });
                 const { response } = await call;
 

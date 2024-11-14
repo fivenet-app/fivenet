@@ -27,11 +27,12 @@
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
 // source: resources/mailer/access.proto
+// source: resources/mailer/email.proto
 // source: resources/mailer/events.proto
 // source: resources/mailer/message.proto
 // source: resources/mailer/settings.proto
+// source: resources/mailer/template.proto
 // source: resources/mailer/thread.proto
-// source: resources/mailer/user.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
@@ -134,9 +135,8 @@ export type Perms =
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
 	| 'MailerService.CreateThread'
-	| 'MailerService.DeleteThread'
-	| 'MailerService.ListThreads'
-	| 'MailerService.PostMessage'
+	| 'MailerService.DeleteEmail'
+	| 'MailerService.ListEmails'
 	| 'QualificationsService.CreateOrUpdateQualificationResult'
 	| 'QualificationsService.CreateQualification'
 	| 'QualificationsService.DeleteQualification'

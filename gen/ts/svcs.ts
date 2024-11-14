@@ -27,11 +27,12 @@
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
 // source: resources/mailer/access.proto
+// source: resources/mailer/email.proto
 // source: resources/mailer/events.proto
 // source: resources/mailer/message.proto
 // source: resources/mailer/settings.proto
+// source: resources/mailer/template.proto
 // source: resources/mailer/thread.proto
-// source: resources/mailer/user.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
@@ -204,17 +205,25 @@ export const grpcMethods = [
 	'LivemapperService/Stream',
 	'LivemapperService/CreateOrUpdateMarker',
 	'LivemapperService/DeleteMarker',
+	'MailerService/ListEmails',
+	'MailerService/GetEmail',
+	'MailerService/CreateOrUpdateEmail',
+	'MailerService/DeleteEmail',
+	'MailerService/ListTemplates',
+	'MailerService/GetTemplate',
+	'MailerService/CreateOrUpdateTemplate',
+	'MailerService/DeleteTemplate',
 	'MailerService/ListThreads',
 	'MailerService/GetThread',
 	'MailerService/CreateThread',
 	'MailerService/DeleteThread',
-	'MailerService/SetThreadUserState',
+	'MailerService/SetThreadState',
 	'MailerService/LeaveThread',
-	'MailerService/GetUserSettings',
-	'MailerService/SetUserSettings',
-	'MailerService/GetThreadMessages',
+	'MailerService/ListThreadMessages',
 	'MailerService/PostMessage',
 	'MailerService/DeleteMessage',
+	'MailerService/GetUserSettings',
+	'MailerService/SetUserSettings',
 	'NotificatorService/GetNotifications',
 	'NotificatorService/MarkNotifications',
 	'NotificatorService/Stream',

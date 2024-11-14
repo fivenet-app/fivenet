@@ -11,13 +11,9 @@ import (
 	"time"
 )
 
-type FivenetMailerAddresses struct {
+type FivenetMailerThreadsRecipientsEmails struct {
 	ID        uint64     `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
-	DeletedAt *time.Time `json:"deleted_at"`
-	Domain    string     `json:"domain"`
-	Email     string     `json:"email"`
-	Signature *string    `json:"signature"`
-	Job       *string    `json:"job"`
-	UserID    *int32     `json:"user_id"`
+	ThreadID  uint64     `json:"thread_id"`
+	EmailID   uint64     `json:"email_id"`
 }

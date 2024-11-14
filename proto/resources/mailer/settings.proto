@@ -10,11 +10,6 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 message UserSettings {
   int32 user_id = 1 [(validate.rules).int32.gte = 0];
   repeated BlockedUser blocked_users = 2 [(validate.rules).repeated.max_items = 25];
-  // @sanitize
-  string signature = 3 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 2048
-  }];
 }
 
 message BlockedUser {

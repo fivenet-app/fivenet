@@ -57,10 +57,10 @@ func (m *CompleteCitizensRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetSearch()) > 50 {
+	if utf8.RuneCountInString(m.GetSearch()) > 64 {
 		err := CompleteCitizensRequestValidationError{
 			field:  "Search",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
@@ -331,10 +331,10 @@ func (m *CompleteJobsRequest) validate(all bool) error {
 
 	if m.Search != nil {
 
-		if utf8.RuneCountInString(m.GetSearch()) > 50 {
+		if utf8.RuneCountInString(m.GetSearch()) > 64 {
 			err := CompleteJobsRequestValidationError{
 				field:  "Search",
-				reason: "value length must be at most 50 runes",
+				reason: "value length must be at most 64 runes",
 			}
 			if !all {
 				return err
@@ -591,10 +591,10 @@ func (m *CompleteDocumentCategoriesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetSearch()) > 128 {
+	if utf8.RuneCountInString(m.GetSearch()) > 64 {
 		err := CompleteDocumentCategoriesRequestValidationError{
 			field:  "Search",
-			reason: "value length must be at most 128 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
@@ -1084,10 +1084,10 @@ func (m *CompleteCitizenAttributesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetSearch()) > 32 {
+	if utf8.RuneCountInString(m.GetSearch()) > 64 {
 		err := CompleteCitizenAttributesRequestValidationError{
 			field:  "Search",
-			reason: "value length must be at most 32 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err

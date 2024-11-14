@@ -151,10 +151,10 @@ func (m *ListPagesRequest) validate(all bool) error {
 
 	if m.Search != nil {
 
-		if utf8.RuneCountInString(m.GetSearch()) > 50 {
+		if utf8.RuneCountInString(m.GetSearch()) > 64 {
 			err := ListPagesRequestValidationError{
 				field:  "Search",
-				reason: "value length must be at most 50 runes",
+				reason: "value length must be at most 64 runes",
 			}
 			if !all {
 				return err

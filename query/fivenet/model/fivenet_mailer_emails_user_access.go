@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-type FivenetMailerAddressesUserAccess struct {
+type FivenetMailerEmailsUserAccess struct {
 	ID        uint64     `sql:"primary_key" json:"id"`
 	CreatedAt *time.Time `json:"created_at"`
-	AddressID uint64     `json:"address_id"`
+	EmailID   uint64     `json:"email_id"`
 	UserID    int32      `json:"user_id"`
 	Access    int16      `json:"access"`
 }

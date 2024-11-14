@@ -1,19 +1,89 @@
+
 syntax = "proto3";
 
 package services.mailer;
 
 import "resources/common/database/database.proto";
+import "resources/mailer/email.proto";
 import "resources/mailer/message.proto";
 import "resources/mailer/settings.proto";
+import "resources/mailer/template.proto";
 import "resources/mailer/thread.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer;mailer";
 
+// Emails
+
+message ListEmailsRequest {}
+
+message ListEmailsResponse {
+  repeated resources.mailer.Email emails = 1;
+}
+
+message GetEmailRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message GetEmailResponse {
+  resources.mailer.Email email = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateEmailRequest {
+  resources.mailer.Email email = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateEmailResponse {
+  resources.mailer.Email email = 1;
+}
+
+message DeleteEmailRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message DeleteEmailResponse {}
+
+// Templates
+
+message ListTemplatesRequest {
+  uint64 email_id = 1 [jstype = JS_STRING];
+}
+
+message ListTemplatesResponse {
+  repeated resources.mailer.Template templates = 1;
+}
+
+message GetTemplateRequest {
+  uint64 email_id = 1 [jstype = JS_STRING];
+  uint64 template_id = 2 [jstype = JS_STRING];
+}
+
+message GetTemplateResponse {
+  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateTemplateRequest {
+  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateTemplateResponse {
+  resources.mailer.Template template = 1 [(validate.rules).message.required = true];
+}
+
+message DeleteTemplateRequest {
+  uint64 id = 1 [jstype = JS_STRING];
+}
+
+message DeleteTemplateResponse {}
+
+// Threads
+
 message ListThreadsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  optional resources.timestamp.Timestamp after = 2;
+  // Search params
+  repeated uint64 email_ids = 2 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp after = 3;
 }
 
 message ListThreadsResponse {
@@ -44,11 +114,14 @@ message DeleteThreadRequest {
 
 message DeleteThreadResponse {}
 
-message SetThreadUserStateRequest {
-  resources.mailer.ThreadUserState state = 1 [(validate.rules).message.required = true];
+message SetThreadStateRequest {
+  oneof state {
+    resources.mailer.ThreadStateUser user = 1;
+    resources.mailer.ThreadStateEmail email = 2;
+  }
 }
 
-message SetThreadUserStateResponse {}
+message SetThreadStateResponse {}
 
 message LeaveThreadRequest {
   uint64 thread_id = 1 [jstype = JS_STRING];
@@ -72,12 +145,12 @@ message SetUserSettingsResponse {
 
 // Messages
 
-message GetThreadMessagesRequest {
+message ListThreadMessagesRequest {
   uint64 thread_id = 1 [jstype = JS_STRING];
   resources.timestamp.Timestamp after = 2;
 }
 
-message GetThreadMessagesResponse {
+message ListThreadMessagesResponse {
   repeated resources.mailer.Message messages = 1;
 }
 
@@ -98,27 +171,45 @@ message DeleteMessageResponse {}
 
 service MailerService {
   // @perm
+  rpc ListEmails(ListEmailsRequest) returns (ListEmailsResponse);
+  // @perm: Name=ListEmails
+  rpc GetEmail(GetEmailRequest) returns (GetEmailResponse);
+  // @perm: Name=ListEmails
+  rpc CreateOrUpdateEmail(CreateOrUpdateEmailRequest) returns (CreateOrUpdateEmailResponse);
+  // @perm
+  rpc DeleteEmail(DeleteEmailRequest) returns (DeleteEmailResponse);
+
+  // @perm: Name=ListEmails
+  rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
+  // @perm: Name=ListEmails
+  rpc GetTemplate(GetTemplateRequest) returns (GetTemplateResponse);
+  // @perm: Name=ListEmails
+  rpc CreateOrUpdateTemplate(CreateOrUpdateTemplateRequest) returns (CreateOrUpdateTemplateResponse);
+  // @perm: Name=ListEmails
+  rpc DeleteTemplate(DeleteTemplateRequest) returns (DeleteTemplateResponse);
+
+  // @perm: Name=ListEmails
   rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
-  // @perm: Name=ListThreads
+  // @perm: Name=ListEmails
   rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
   // @perm
   rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
-  // @perm
+  // @perm: Name=SuperUser
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
-  // @perm: Name=ListThreads
-  rpc SetThreadUserState(SetThreadUserStateRequest) returns (SetThreadUserStateResponse);
-  // @perm: Name=ListThreads
+  // @perm: Name=ListEmails
+  rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse);
+  // @perm: Name=ListEmails
   rpc LeaveThread(LeaveThreadRequest) returns (LeaveThreadResponse);
 
-  // @perm: Name=ListThreads
-  rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse);
-  // @perm: Name=ListThreads
-  rpc SetUserSettings(SetUserSettingsRequest) returns (SetUserSettingsResponse);
-
-  // @perm: Name=ListThreads
-  rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);
-  // @perm
+  // @perm: Name=ListEmails
+  rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse);
+  // @perm: Name=ListEmails
   rpc PostMessage(PostMessageRequest) returns (PostMessageResponse);
   // @perm: Name=SuperUser
   rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+
+  // @perm: Name=ListEmails
+  rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse);
+  // @perm: Name=ListEmails
+  rpc SetUserSettings(SetUserSettingsRequest) returns (SetUserSettingsResponse);
 }

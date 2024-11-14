@@ -18,7 +18,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func (s *Server) GetThreadMessages(ctx context.Context, req *GetThreadMessagesRequest) (*GetThreadMessagesResponse, error) {
+func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.ThreadId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -33,7 +33,7 @@ func (s *Server) GetThreadMessages(ctx context.Context, req *GetThreadMessagesRe
 		}
 	}
 
-	resp := &GetThreadMessagesResponse{
+	resp := &ListThreadMessagesResponse{
 		Messages: []*mailer.Message{},
 	}
 
@@ -44,7 +44,7 @@ func (s *Server) GetThreadMessages(ctx context.Context, req *GetThreadMessagesRe
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
-			tMessages.Message,
+			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
 			tCreator.ID,
@@ -91,7 +91,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
-			tMessages.Message,
+			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
 			tCreator.ID,
@@ -217,13 +217,13 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 	stmt := tMessages.
 		INSERT(
 			tMessages.ThreadID,
-			tMessages.Message,
+			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
 		).
 		VALUES(
 			msg.ThreadId,
-			msg.Message,
+			msg.Content,
 			msg.Data,
 			msg.CreatorId,
 		)

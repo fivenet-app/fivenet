@@ -11,7 +11,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/completor;completor";
 
 message CompleteCitizensRequest {
-  string search = 1 [(validate.rules).string.max_len = 50];
+  string search = 1 [(validate.rules).string.max_len = 64];
   optional bool current_job = 2;
   optional bool on_duty = 3;
   optional int32 user_id = 4 [(validate.rules).int32.gt = 0];
@@ -22,7 +22,7 @@ message CompleteCitizensRespoonse {
 }
 
 message CompleteJobsRequest {
-  optional string search = 1 [(validate.rules).string.max_len = 50];
+  optional string search = 1 [(validate.rules).string.max_len = 64];
   optional bool exact_match = 2;
   optional bool current_job = 3;
 }
@@ -32,7 +32,7 @@ message CompleteJobsResponse {
 }
 
 message CompleteDocumentCategoriesRequest {
-  string search = 1 [(validate.rules).string.max_len = 128];
+  string search = 1 [(validate.rules).string.max_len = 64];
 }
 
 message CompleteDocumentCategoriesResponse {
@@ -46,7 +46,7 @@ message ListLawBooksResponse {
 }
 
 message CompleteCitizenAttributesRequest {
-  string search = 1 [(validate.rules).string.max_len = 32];
+  string search = 1 [(validate.rules).string.max_len = 64];
 }
 
 message CompleteCitizenAttributesResponse {

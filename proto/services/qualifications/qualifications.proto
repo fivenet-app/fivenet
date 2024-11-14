@@ -15,7 +15,8 @@ message ListQualificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string search = 3;
+  optional string search = 3 [(validate.rules).string.max_len = 64];
+  optional string job = 4 [(validate.rules).string.max_len = 20];
 }
 
 message ListQualificationsResponse {

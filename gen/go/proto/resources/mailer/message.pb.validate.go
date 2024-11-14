@@ -89,15 +89,100 @@ func (m *Message) validate(all bool) error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 8192 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := MessageValidationError{
-			field:  "Message",
+			field:  "Title",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetContent()); l < 3 || l > 8192 {
+		err := MessageValidationError{
+			field:  "Content",
 			reason: "value length must be between 3 and 8192 runes, inclusive",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.SenderEmailId != nil {
+		// no validation rules for SenderEmailId
+	}
+
+	if m.SenderEmail != nil {
+
+		if all {
+			switch v := interface{}(m.GetSenderEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MessageValidationError{
+						field:  "SenderEmail",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MessageValidationError{
+						field:  "SenderEmail",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSenderEmail()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MessageValidationError{
+					field:  "SenderEmail",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.SenderUserId != nil {
+		// no validation rules for SenderUserId
+	}
+
+	if m.SenderUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetSenderUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MessageValidationError{
+						field:  "SenderUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MessageValidationError{
+						field:  "SenderUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSenderUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MessageValidationError{
+					field:  "SenderUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.UpdatedAt != nil {
@@ -191,54 +276,6 @@ func (m *Message) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return MessageValidationError{
 					field:  "Data",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.CreatorId != nil {
-
-		if m.GetCreatorId() <= 0 {
-			err := MessageValidationError{
-				field:  "CreatorId",
-				reason: "value must be greater than 0",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Creator != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreator()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MessageValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MessageValidationError{
-						field:  "Creator",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MessageValidationError{
-					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

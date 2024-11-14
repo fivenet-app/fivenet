@@ -10,9 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { ThreadAccess } from "./access";
 import { UserShort } from "../users/users";
-import { Message } from "./message";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.mailer.Thread
@@ -41,34 +39,126 @@ export interface Thread {
      */
     title: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.Message last_message = 6;
-     */
-    lastMessage?: Message;
-    /**
-     * @generated from protobuf field: resources.mailer.ThreadUserState user_state = 7;
-     */
-    userState?: ThreadUserState;
-    /**
-     * @generated from protobuf field: string creator_job = 8;
+     * @generated from protobuf field: string creator_job = 6;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 9;
+     * @generated from protobuf field: optional int32 creator_id = 7;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: resources.mailer.ThreadAccess access = 11;
+     * @generated from protobuf field: resources.mailer.ThreadRecipients recipients = 11;
      */
-    access?: ThreadAccess;
+    recipients?: ThreadRecipients;
+    /**
+     * @generated from protobuf field: optional resources.mailer.ThreadStateUser user_state = 12;
+     */
+    userState?: ThreadStateUser;
+    /**
+     * @generated from protobuf field: optional resources.mailer.ThreadStateEmail email_state = 13;
+     */
+    emailState?: ThreadStateEmail;
 }
 /**
- * @generated from protobuf message resources.mailer.ThreadUserState
+ * @generated from protobuf message resources.mailer.ThreadRecipients
  */
-export interface ThreadUserState {
+export interface ThreadRecipients {
+    /**
+     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientEmail emails = 1;
+     */
+    emails: ThreadRecipientEmail[];
+    /**
+     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientUser users = 2;
+     */
+    users: ThreadRecipientUser[];
+}
+/**
+ * @generated from protobuf message resources.mailer.ThreadRecipientEmail
+ */
+export interface ThreadRecipientEmail {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
+     */
+    targetId: string; // @gotags: alias:"thread_id"
+    /**
+     * @generated from protobuf field: uint64 email_id = 5 [jstype = JS_STRING];
+     */
+    emailId: string;
+}
+/**
+ * @generated from protobuf message resources.mailer.ThreadRecipientUser
+ */
+export interface ThreadRecipientUser {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
+     */
+    targetId: string; // @gotags: alias:"thread_id"
+    /**
+     * @generated from protobuf field: int32 user_id = 5;
+     */
+    userId: number;
+}
+/**
+ * @generated from protobuf message resources.mailer.ThreadStateEmail
+ */
+export interface ThreadStateEmail {
+    /**
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
+     */
+    threadId: string;
+    /**
+     * @generated from protobuf field: uint64 email_id = 2 [jstype = JS_STRING];
+     */
+    emailId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_read = 3;
+     */
+    lastRead?: Timestamp;
+    /**
+     * @generated from protobuf field: bool unread = 4;
+     */
+    unread: boolean;
+    /**
+     * @generated from protobuf field: bool important = 5;
+     */
+    important: boolean;
+    /**
+     * @generated from protobuf field: bool favorite = 6;
+     */
+    favorite: boolean;
+    /**
+     * @generated from protobuf field: bool muted = 7;
+     */
+    muted: boolean;
+    /**
+     * @generated from protobuf field: bool archived = 8;
+     */
+    archived: boolean;
+}
+/**
+ * @generated from protobuf message resources.mailer.ThreadStateUser
+ */
+export interface ThreadStateUser {
     /**
      * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
      */
@@ -78,13 +168,13 @@ export interface ThreadUserState {
      */
     userId: number;
     /**
-     * @generated from protobuf field: bool unread = 3;
-     */
-    unread: boolean;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp last_read = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_read = 3;
      */
     lastRead?: Timestamp;
+    /**
+     * @generated from protobuf field: bool unread = 4;
+     */
+    unread: boolean;
     /**
      * @generated from protobuf field: bool important = 5;
      */
@@ -111,12 +201,12 @@ class Thread$Type extends MessageType<Thread> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 6, name: "last_message", kind: "message", T: () => Message },
-            { no: 7, name: "user_state", kind: "message", T: () => ThreadUserState },
-            { no: 8, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort },
-            { no: 11, name: "access", kind: "message", T: () => ThreadAccess }
+            { no: 6, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "creator", kind: "message", T: () => UserShort },
+            { no: 11, name: "recipients", kind: "message", T: () => ThreadRecipients },
+            { no: 12, name: "user_state", kind: "message", T: () => ThreadStateUser },
+            { no: 13, name: "email_state", kind: "message", T: () => ThreadStateEmail }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
@@ -148,23 +238,23 @@ class Thread$Type extends MessageType<Thread> {
                 case /* string title */ 5:
                     message.title = reader.string();
                     break;
-                case /* optional resources.mailer.Message last_message */ 6:
-                    message.lastMessage = Message.internalBinaryRead(reader, reader.uint32(), options, message.lastMessage);
-                    break;
-                case /* resources.mailer.ThreadUserState user_state */ 7:
-                    message.userState = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.userState);
-                    break;
-                case /* string creator_job */ 8:
+                case /* string creator_job */ 6:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional int32 creator_id */ 9:
+                case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 10:
+                case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* resources.mailer.ThreadAccess access */ 11:
-                    message.access = ThreadAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* resources.mailer.ThreadRecipients recipients */ 11:
+                    message.recipients = ThreadRecipients.internalBinaryRead(reader, reader.uint32(), options, message.recipients);
+                    break;
+                case /* optional resources.mailer.ThreadStateUser user_state */ 12:
+                    message.userState = ThreadStateUser.internalBinaryRead(reader, reader.uint32(), options, message.userState);
+                    break;
+                case /* optional resources.mailer.ThreadStateEmail email_state */ 13:
+                    message.emailState = ThreadStateEmail.internalBinaryRead(reader, reader.uint32(), options, message.emailState);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -193,24 +283,24 @@ class Thread$Type extends MessageType<Thread> {
         /* string title = 5; */
         if (message.title !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.title);
-        /* optional resources.mailer.Message last_message = 6; */
-        if (message.lastMessage)
-            Message.internalBinaryWrite(message.lastMessage, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.ThreadUserState user_state = 7; */
-        if (message.userState)
-            ThreadUserState.internalBinaryWrite(message.userState, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 8; */
+        /* string creator_job = 6; */
         if (message.creatorJob !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional int32 creator_id = 9; */
+            writer.tag(6, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 10; */
+            writer.tag(7, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* resources.mailer.ThreadAccess access = 11; */
-        if (message.access)
-            ThreadAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.ThreadRecipients recipients = 11; */
+        if (message.recipients)
+            ThreadRecipients.internalBinaryWrite(message.recipients, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.ThreadStateUser user_state = 12; */
+        if (message.userState)
+            ThreadStateUser.internalBinaryWrite(message.userState, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.ThreadStateEmail email_state = 13; */
+        if (message.emailState)
+            ThreadStateEmail.internalBinaryWrite(message.emailState, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -222,33 +312,228 @@ class Thread$Type extends MessageType<Thread> {
  */
 export const Thread = new Thread$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ThreadUserState$Type extends MessageType<ThreadUserState> {
+class ThreadRecipients$Type extends MessageType<ThreadRecipients> {
     constructor() {
-        super("resources.mailer.ThreadUserState", [
+        super("resources.mailer.ThreadRecipients", [
+            { no: 1, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientUser }
+        ]);
+    }
+    create(value?: PartialMessage<ThreadRecipients>): ThreadRecipients {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.emails = [];
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<ThreadRecipients>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadRecipients): ThreadRecipients {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.mailer.ThreadRecipientEmail emails */ 1:
+                    message.emails.push(ThreadRecipientEmail.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.mailer.ThreadRecipientUser users */ 2:
+                    message.users.push(ThreadRecipientUser.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ThreadRecipients, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.mailer.ThreadRecipientEmail emails = 1; */
+        for (let i = 0; i < message.emails.length; i++)
+            ThreadRecipientEmail.internalBinaryWrite(message.emails[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.ThreadRecipientUser users = 2; */
+        for (let i = 0; i < message.users.length; i++)
+            ThreadRecipientUser.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.ThreadRecipients
+ */
+export const ThreadRecipients = new ThreadRecipients$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
+    constructor() {
+        super("resources.mailer.ThreadRecipientEmail", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ThreadRecipientEmail>): ThreadRecipientEmail {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.targetId = "0";
+        message.emailId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ThreadRecipientEmail>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadRecipientEmail): ThreadRecipientEmail {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.targetId = reader.uint64().toString();
+                    break;
+                case /* uint64 email_id = 5 [jstype = JS_STRING];*/ 5:
+                    message.emailId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ThreadRecipientEmail, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 target_id = 4 [jstype = JS_STRING]; */
+        if (message.targetId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.targetId);
+        /* uint64 email_id = 5 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
+            writer.tag(5, WireType.Varint).uint64(message.emailId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.ThreadRecipientEmail
+ */
+export const ThreadRecipientEmail = new ThreadRecipientEmail$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThreadRecipientUser$Type extends MessageType<ThreadRecipientUser> {
+    constructor() {
+        super("resources.mailer.ThreadRecipientUser", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ThreadRecipientUser>): ThreadRecipientUser {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.targetId = "0";
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ThreadRecipientUser>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadRecipientUser): ThreadRecipientUser {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.targetId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 5:
+                    message.userId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ThreadRecipientUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 target_id = 4 [jstype = JS_STRING]; */
+        if (message.targetId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.targetId);
+        /* int32 user_id = 5; */
+        if (message.userId !== 0)
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.ThreadRecipientUser
+ */
+export const ThreadRecipientUser = new ThreadRecipientUser$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThreadStateEmail$Type extends MessageType<ThreadStateEmail> {
+    constructor() {
+        super("resources.mailer.ThreadStateEmail", [
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 3, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "last_read", kind: "message", T: () => Timestamp },
+            { no: 2, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "last_read", kind: "message", T: () => Timestamp },
+            { no: 4, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<ThreadUserState>): ThreadUserState {
+    create(value?: PartialMessage<ThreadStateEmail>): ThreadStateEmail {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.threadId = "0";
-        message.userId = 0;
+        message.emailId = "0";
         message.unread = false;
         message.important = false;
         message.favorite = false;
         message.muted = false;
         message.archived = false;
         if (value !== undefined)
-            reflectionMergePartial<ThreadUserState>(this, message, value);
+            reflectionMergePartial<ThreadStateEmail>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadUserState): ThreadUserState {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadStateEmail): ThreadStateEmail {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -256,14 +541,14 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
                 case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
                     message.threadId = reader.uint64().toString();
                     break;
-                case /* int32 user_id */ 2:
-                    message.userId = reader.int32();
+                case /* uint64 email_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.emailId = reader.uint64().toString();
                     break;
-                case /* bool unread */ 3:
-                    message.unread = reader.bool();
-                    break;
-                case /* optional resources.timestamp.Timestamp last_read */ 4:
+                case /* optional resources.timestamp.Timestamp last_read */ 3:
                     message.lastRead = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRead);
+                    break;
+                case /* bool unread */ 4:
+                    message.unread = reader.bool();
                     break;
                 case /* bool important */ 5:
                     message.important = reader.bool();
@@ -288,19 +573,19 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         }
         return message;
     }
-    internalBinaryWrite(message: ThreadUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ThreadStateEmail, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 thread_id = 1 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.threadId);
-        /* int32 user_id = 2; */
-        if (message.userId !== 0)
-            writer.tag(2, WireType.Varint).int32(message.userId);
-        /* bool unread = 3; */
-        if (message.unread !== false)
-            writer.tag(3, WireType.Varint).bool(message.unread);
-        /* optional resources.timestamp.Timestamp last_read = 4; */
+        /* uint64 email_id = 2 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.emailId);
+        /* optional resources.timestamp.Timestamp last_read = 3; */
         if (message.lastRead)
-            Timestamp.internalBinaryWrite(message.lastRead, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.lastRead, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool unread = 4; */
+        if (message.unread !== false)
+            writer.tag(4, WireType.Varint).bool(message.unread);
         /* bool important = 5; */
         if (message.important !== false)
             writer.tag(5, WireType.Varint).bool(message.important);
@@ -320,6 +605,108 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.mailer.ThreadUserState
+ * @generated MessageType for protobuf message resources.mailer.ThreadStateEmail
  */
-export const ThreadUserState = new ThreadUserState$Type();
+export const ThreadStateEmail = new ThreadStateEmail$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThreadStateUser$Type extends MessageType<ThreadStateUser> {
+    constructor() {
+        super("resources.mailer.ThreadStateUser", [
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 3, name: "last_read", kind: "message", T: () => Timestamp },
+            { no: 4, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ThreadStateUser>): ThreadStateUser {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.threadId = "0";
+        message.userId = 0;
+        message.unread = false;
+        message.important = false;
+        message.favorite = false;
+        message.muted = false;
+        message.archived = false;
+        if (value !== undefined)
+            reflectionMergePartial<ThreadStateUser>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadStateUser): ThreadStateUser {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp last_read */ 3:
+                    message.lastRead = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRead);
+                    break;
+                case /* bool unread */ 4:
+                    message.unread = reader.bool();
+                    break;
+                case /* bool important */ 5:
+                    message.important = reader.bool();
+                    break;
+                case /* bool favorite */ 6:
+                    message.favorite = reader.bool();
+                    break;
+                case /* bool muted */ 7:
+                    message.muted = reader.bool();
+                    break;
+                case /* bool archived */ 8:
+                    message.archived = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ThreadStateUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* optional resources.timestamp.Timestamp last_read = 3; */
+        if (message.lastRead)
+            Timestamp.internalBinaryWrite(message.lastRead, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool unread = 4; */
+        if (message.unread !== false)
+            writer.tag(4, WireType.Varint).bool(message.unread);
+        /* bool important = 5; */
+        if (message.important !== false)
+            writer.tag(5, WireType.Varint).bool(message.important);
+        /* bool favorite = 6; */
+        if (message.favorite !== false)
+            writer.tag(6, WireType.Varint).bool(message.favorite);
+        /* bool muted = 7; */
+        if (message.muted !== false)
+            writer.tag(7, WireType.Varint).bool(message.muted);
+        /* bool archived = 8; */
+        if (message.archived !== false)
+            writer.tag(8, WireType.Varint).bool(message.archived);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.ThreadStateUser
+ */
+export const ThreadStateUser = new ThreadStateUser$Type();

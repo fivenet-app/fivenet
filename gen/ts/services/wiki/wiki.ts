@@ -159,7 +159,7 @@ class ListPagesRequest$Type extends MessageType<ListPagesRequest> {
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 4, name: "root_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 5, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<ListPagesRequest>): ListPagesRequest {

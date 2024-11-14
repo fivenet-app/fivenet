@@ -6,9 +6,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import DocEditor from '../partials/DocEditor.vue';
-import { canAccessThread } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -23,13 +21,15 @@ const props = withDefaults(
 const mailerStore = useMailerStore();
 
 const schema = z.object({
-    message: z.string().min(1).max(2048),
+    title: z.string().min(1).max(255),
+    content: z.string().min(1).max(2048),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    message: '',
+    title: '',
+    content: '',
 });
 
 const { data: thread, pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, async () =>
@@ -38,7 +38,7 @@ const { data: thread, pending: loading } = useLazyAsyncData(`mailer-thread:${pro
 
 onBeforeMount(async () => {
     const count = await mailerDB.threads.count();
-    const call = getGRPCMailerClient().getThreadMessages({
+    const call = getGRPCMailerClient().listThreadMessages({
         threadId: props.threadId,
         after: count > 0 ? undefined : toTimestamp(),
     });
@@ -50,7 +50,7 @@ onBeforeMount(async () => {
 watchDebounced(
     () => props.threadId,
     async () =>
-        mailerStore.setThreadUserState({
+        mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
         }),
@@ -84,11 +84,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             message: {
                 id: '0',
                 threadId: props.threadId,
-                message: event.data.message,
-                data: {},
+                title: event.data.title,
+                content: event.data.content,
+                data: {
+                    entry: [],
+                },
             },
         })
-        .then(() => (state.message = ''))
+        .then(() => (state.content = ''))
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
 </script>
@@ -188,7 +191,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     }
                                 "
                                 class="prose dark:prose-invert min-w-full px-4 py-2"
-                                v-html="message.message"
+                                v-html="message.content"
                             ></div>
                         </div>
                     </div>
@@ -198,18 +201,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <UDivider class="my-2" />
 
-        <UForm
-            v-if="thread && canAccessThread(thread.access, thread.creator, AccessLevel.PARTICIPANT)"
-            :schema="schema"
-            :state="state"
-            class="flex flex-col gap-2"
-            @submit="onSubmitThrottle"
-        >
+        <UForm v-if="thread" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
             <!-- TODO add recipients field -->
 
             <UFormGroup name="message">
                 <ClientOnly>
-                    <DocEditor v-model="state.message" :disabled="!canSubmit" />
+                    <DocEditor v-model="state.content" :disabled="!canSubmit" />
                 </ClientOnly>
             </UFormGroup>
 

@@ -18,7 +18,7 @@ import (
 
 var tSettingsBlocks = table.FivenetMailerSettingsBlocked
 
-func (s *Server) SetThreadUserState(ctx context.Context, req *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error) {
+func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	check, err := s.access.CanUserAccessTarget(ctx, req.State.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
@@ -65,7 +65,7 @@ func (s *Server) SetThreadUserState(ctx context.Context, req *SetThreadUserState
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return &SetThreadUserStateResponse{}, nil
+	return &SetThreadStateResponse{}, nil
 }
 
 func (s *Server) setUnreadState(ctx context.Context, threadId uint64, userIds []int32) error {
@@ -105,7 +105,7 @@ func (s *Server) GetUserSettings(ctx context.Context, req *GetUserSettingsReques
 
 	stmt := tSettingsBlocks.
 		SELECT(
-			tSettingsBlocks.SourceID,
+			tSettingsBlocks.SourceEmailID,
 			tSettingsBlocks.UserID,
 			tUsers.Firstname,
 			tUsers.Lastname,

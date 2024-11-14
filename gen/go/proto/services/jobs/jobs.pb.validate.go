@@ -101,10 +101,10 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetSearch()) > 50 {
+	if utf8.RuneCountInString(m.GetSearch()) > 64 {
 		err := ListColleaguesRequestValidationError{
 			field:  "Search",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err

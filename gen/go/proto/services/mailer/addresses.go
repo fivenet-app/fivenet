@@ -1,3 +1,0 @@
-package mailer
-
-// TODO

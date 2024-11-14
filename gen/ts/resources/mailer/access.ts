@@ -10,30 +10,67 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { QualificationShort } from "../qualifications/qualifications";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @generated from protobuf message resources.mailer.ThreadAccess
+ * @generated from protobuf message resources.mailer.Access
  */
-export interface ThreadAccess {
+export interface Access {
     /**
-     * @generated from protobuf field: repeated resources.mailer.ThreadJobAccess jobs = 1;
+     * @generated from protobuf field: repeated resources.mailer.JobAccess jobs = 1;
      */
-    jobs: ThreadJobAccess[]; // @gotags: alias:"job_access"
+    jobs: JobAccess[]; // @gotags: alias:"job_access"
     /**
-     * @generated from protobuf field: repeated resources.mailer.ThreadUserAccess users = 2;
+     * @generated from protobuf field: repeated resources.mailer.UserAccess users = 2;
      */
-    users: ThreadUserAccess[]; // @gotags: alias:"user_access"
+    users: UserAccess[]; // @gotags: alias:"user_access"
+    /**
+     * @generated from protobuf field: repeated resources.mailer.QualificationAccess qualifications = 3;
+     */
+    qualifications: QualificationAccess[]; // @gotags: alias:"qualification_access"
 }
 /**
- * @generated from protobuf message resources.mailer.ThreadJobAccess
+ * @generated from protobuf message resources.mailer.JobAccess
  */
-export interface ThreadJobAccess {
+export interface JobAccess {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
+     */
+    targetId: string; // @gotags: alias:"email_id"
+    /**
+     * @generated from protobuf field: string job = 5;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 6;
+     */
+    jobLabel?: string;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 7;
+     */
+    minimumGrade: number;
+    /**
+     * @generated from protobuf field: optional string job_grade_label = 8;
+     */
+    jobGradeLabel?: string;
+    /**
+     * @generated from protobuf field: resources.mailer.AccessLevel access = 9;
+     */
+    access: AccessLevel;
 }
 /**
- * @generated from protobuf message resources.mailer.ThreadUserAccess
+ * @generated from protobuf message resources.mailer.UserAccess
  */
-export interface ThreadUserAccess {
+export interface UserAccess {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
@@ -60,6 +97,35 @@ export interface ThreadUserAccess {
     access: AccessLevel;
 }
 /**
+ * @generated from protobuf message resources.mailer.QualificationAccess
+ */
+export interface QualificationAccess {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 target_id = 3 [jstype = JS_STRING];
+     */
+    targetId: string; // @gotags: alias:"thread_id"
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
+     */
+    qualification?: QualificationShort;
+    /**
+     * @generated from protobuf field: resources.mailer.AccessLevel access = 6;
+     */
+    access: AccessLevel;
+}
+/**
  * @generated from protobuf enum resources.mailer.AccessLevel
  */
 export enum AccessLevel {
@@ -68,42 +134,57 @@ export enum AccessLevel {
      */
     UNSPECIFIED = 0,
     /**
-     * UNUSED
-     *
      * @generated from protobuf enum value: ACCESS_LEVEL_BLOCKED = 1;
      */
     BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_PARTICIPANT = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
      */
-    PARTICIPANT = 2
+    VIEW = 2,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_READ = 3;
+     */
+    READ = 3,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_WRITE = 4;
+     */
+    WRITE = 4,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 5;
+     */
+    MANAGE = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class ThreadAccess$Type extends MessageType<ThreadAccess> {
+class Access$Type extends MessageType<Access> {
     constructor() {
-        super("resources.mailer.ThreadAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+        super("resources.mailer.Access", [
+            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 3, name: "qualifications", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
-    create(value?: PartialMessage<ThreadAccess>): ThreadAccess {
+    create(value?: PartialMessage<Access>): Access {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.jobs = [];
         message.users = [];
+        message.qualifications = [];
         if (value !== undefined)
-            reflectionMergePartial<ThreadAccess>(this, message, value);
+            reflectionMergePartial<Access>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadAccess): ThreadAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Access): Access {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.mailer.ThreadJobAccess jobs */ 1:
-                    message.jobs.push(ThreadJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.mailer.JobAccess jobs */ 1:
+                    message.jobs.push(JobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.mailer.ThreadUserAccess users */ 2:
-                    message.users.push(ThreadUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.mailer.UserAccess users */ 2:
+                    message.users.push(UserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.mailer.QualificationAccess qualifications */ 3:
+                    message.qualifications.push(QualificationAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -116,13 +197,16 @@ class ThreadAccess$Type extends MessageType<ThreadAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: ThreadAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.mailer.ThreadJobAccess jobs = 1; */
+    internalBinaryWrite(message: Access, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.mailer.JobAccess jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            ThreadJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.ThreadUserAccess users = 2; */
+            JobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.UserAccess users = 2; */
         for (let i = 0; i < message.users.length; i++)
-            ThreadUserAccess.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            UserAccess.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.QualificationAccess qualifications = 3; */
+        for (let i = 0; i < message.qualifications.length; i++)
+            QualificationAccess.internalBinaryWrite(message.qualifications[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -130,24 +214,99 @@ class ThreadAccess$Type extends MessageType<ThreadAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.mailer.ThreadAccess
+ * @generated MessageType for protobuf message resources.mailer.Access
  */
-export const ThreadAccess = new ThreadAccess$Type();
+export const Access = new Access$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ThreadJobAccess$Type extends MessageType<ThreadJobAccess> {
+class JobAccess$Type extends MessageType<JobAccess> {
     constructor() {
-        super("resources.mailer.ThreadJobAccess", []);
+        super("resources.mailer.JobAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
     }
-    create(value?: PartialMessage<ThreadJobAccess>): ThreadJobAccess {
+    create(value?: PartialMessage<JobAccess>): JobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.targetId = "0";
+        message.job = "";
+        message.minimumGrade = 0;
+        message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<ThreadJobAccess>(this, message, value);
+            reflectionMergePartial<JobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadJobAccess): ThreadJobAccess {
-        return target ?? this.create();
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobAccess): JobAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.targetId = reader.uint64().toString();
+                    break;
+                case /* string job */ 5:
+                    message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 6:
+                    message.jobLabel = reader.string();
+                    break;
+                case /* int32 minimum_grade */ 7:
+                    message.minimumGrade = reader.int32();
+                    break;
+                case /* optional string job_grade_label */ 8:
+                    message.jobGradeLabel = reader.string();
+                    break;
+                case /* resources.mailer.AccessLevel access */ 9:
+                    message.access = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
-    internalBinaryWrite(message: ThreadJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 target_id = 4 [jstype = JS_STRING]; */
+        if (message.targetId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.targetId);
+        /* string job = 5; */
+        if (message.job !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 6; */
+        if (message.jobLabel !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 minimum_grade = 7; */
+        if (message.minimumGrade !== 0)
+            writer.tag(7, WireType.Varint).int32(message.minimumGrade);
+        /* optional string job_grade_label = 8; */
+        if (message.jobGradeLabel !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.jobGradeLabel);
+        /* resources.mailer.AccessLevel access = 9; */
+        if (message.access !== 0)
+            writer.tag(9, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -155,13 +314,13 @@ class ThreadJobAccess$Type extends MessageType<ThreadJobAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.mailer.ThreadJobAccess
+ * @generated MessageType for protobuf message resources.mailer.JobAccess
  */
-export const ThreadJobAccess = new ThreadJobAccess$Type();
+export const JobAccess = new JobAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ThreadUserAccess$Type extends MessageType<ThreadUserAccess> {
+class UserAccess$Type extends MessageType<UserAccess> {
     constructor() {
-        super("resources.mailer.ThreadUserAccess", [
+        super("resources.mailer.UserAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
@@ -170,17 +329,17 @@ class ThreadUserAccess$Type extends MessageType<ThreadUserAccess> {
             { no: 6, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<ThreadUserAccess>): ThreadUserAccess {
+    create(value?: PartialMessage<UserAccess>): UserAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.targetId = "0";
         message.userId = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<ThreadUserAccess>(this, message, value);
+            reflectionMergePartial<UserAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadUserAccess): ThreadUserAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserAccess): UserAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -214,7 +373,7 @@ class ThreadUserAccess$Type extends MessageType<ThreadUserAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: ThreadUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: UserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -240,6 +399,91 @@ class ThreadUserAccess$Type extends MessageType<ThreadUserAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.mailer.ThreadUserAccess
+ * @generated MessageType for protobuf message resources.mailer.UserAccess
  */
-export const ThreadUserAccess = new ThreadUserAccess$Type();
+export const UserAccess = new UserAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QualificationAccess$Type extends MessageType<QualificationAccess> {
+    constructor() {
+        super("resources.mailer.QualificationAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
+            { no: 6, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.targetId = "0";
+        message.qualificationId = "0";
+        message.access = 0;
+        if (value !== undefined)
+            reflectionMergePartial<QualificationAccess>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationAccess): QualificationAccess {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* uint64 target_id = 3 [jstype = JS_STRING];*/ 3:
+                    message.targetId = reader.uint64().toString();
+                    break;
+                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* optional resources.qualifications.QualificationShort qualification */ 5:
+                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                case /* resources.mailer.AccessLevel access */ 6:
+                    message.access = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: QualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 target_id = 3 [jstype = JS_STRING]; */
+        if (message.targetId !== "0")
+            writer.tag(3, WireType.Varint).uint64(message.targetId);
+        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(4, WireType.Varint).uint64(message.qualificationId);
+        /* optional resources.qualifications.QualificationShort qualification = 5; */
+        if (message.qualification)
+            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.AccessLevel access = 6; */
+        if (message.access !== 0)
+            writer.tag(6, WireType.Varint).int32(message.access);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.QualificationAccess
+ */
+export const QualificationAccess = new QualificationAccess$Type();

@@ -11,10 +11,10 @@ import (
 	"time"
 )
 
-type FivenetMailerThreadsJobAccess struct {
+type FivenetMailerEmailsJobAccess struct {
 	ID           uint64     `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	AddressID    uint64     `json:"address_id"`
+	EmailID      uint64     `json:"email_id"`
 	Job          string     `json:"job"`
 	MinimumGrade int32      `json:"minimum_grade"`
 	Access       int16      `json:"access"`

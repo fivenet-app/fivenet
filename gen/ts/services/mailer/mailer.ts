@@ -2,22 +2,167 @@
 // @generated from protobuf file "services/mailer/mailer.proto" (package "services.mailer", syntax proto3)
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserSettings } from "../../resources/mailer/settings";
-import { ThreadUserState } from "../../resources/mailer/thread";
+import { ThreadStateEmail } from "../../resources/mailer/thread";
+import { ThreadStateUser } from "../../resources/mailer/thread";
 import { Message } from "../../resources/mailer/message";
 import { Thread } from "../../resources/mailer/thread";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { PaginationRequest } from "../../resources/common/database/database";
+import { Template } from "../../resources/mailer/template";
+import { Email } from "../../resources/mailer/email";
+// Emails
+
+/**
+ * @generated from protobuf message services.mailer.ListEmailsRequest
+ */
+export interface ListEmailsRequest {
+}
+/**
+ * @generated from protobuf message services.mailer.ListEmailsResponse
+ */
+export interface ListEmailsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.mailer.Email emails = 1;
+     */
+    emails: Email[];
+}
+/**
+ * @generated from protobuf message services.mailer.GetEmailRequest
+ */
+export interface GetEmailRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+}
+/**
+ * @generated from protobuf message services.mailer.GetEmailResponse
+ */
+export interface GetEmailResponse {
+    /**
+     * @generated from protobuf field: resources.mailer.Email email = 1;
+     */
+    email?: Email;
+}
+/**
+ * @generated from protobuf message services.mailer.CreateOrUpdateEmailRequest
+ */
+export interface CreateOrUpdateEmailRequest {
+    /**
+     * @generated from protobuf field: resources.mailer.Email email = 1;
+     */
+    email?: Email;
+}
+/**
+ * @generated from protobuf message services.mailer.CreateOrUpdateEmailResponse
+ */
+export interface CreateOrUpdateEmailResponse {
+    /**
+     * @generated from protobuf field: resources.mailer.Email email = 1;
+     */
+    email?: Email;
+}
+/**
+ * @generated from protobuf message services.mailer.DeleteEmailRequest
+ */
+export interface DeleteEmailRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+}
+/**
+ * @generated from protobuf message services.mailer.DeleteEmailResponse
+ */
+export interface DeleteEmailResponse {
+}
+// Templates
+
+/**
+ * @generated from protobuf message services.mailer.ListTemplatesRequest
+ */
+export interface ListTemplatesRequest {
+    /**
+     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     */
+    emailId: string;
+}
+/**
+ * @generated from protobuf message services.mailer.ListTemplatesResponse
+ */
+export interface ListTemplatesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.mailer.Template templates = 1;
+     */
+    templates: Template[];
+}
+/**
+ * @generated from protobuf message services.mailer.GetTemplateRequest
+ */
+export interface GetTemplateRequest {
+    /**
+     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     */
+    emailId: string;
+    /**
+     * @generated from protobuf field: uint64 template_id = 2 [jstype = JS_STRING];
+     */
+    templateId: string;
+}
+/**
+ * @generated from protobuf message services.mailer.GetTemplateResponse
+ */
+export interface GetTemplateResponse {
+    /**
+     * @generated from protobuf field: resources.mailer.Template template = 1;
+     */
+    template?: Template;
+}
+/**
+ * @generated from protobuf message services.mailer.CreateOrUpdateTemplateRequest
+ */
+export interface CreateOrUpdateTemplateRequest {
+    /**
+     * @generated from protobuf field: resources.mailer.Template template = 1;
+     */
+    template?: Template;
+}
+/**
+ * @generated from protobuf message services.mailer.CreateOrUpdateTemplateResponse
+ */
+export interface CreateOrUpdateTemplateResponse {
+    /**
+     * @generated from protobuf field: resources.mailer.Template template = 1;
+     */
+    template?: Template;
+}
+/**
+ * @generated from protobuf message services.mailer.DeleteTemplateRequest
+ */
+export interface DeleteTemplateRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+}
+/**
+ * @generated from protobuf message services.mailer.DeleteTemplateResponse
+ */
+export interface DeleteTemplateResponse {
+}
+// Threads
+
 /**
  * @generated from protobuf message services.mailer.ListThreadsRequest
  */
@@ -27,7 +172,13 @@ export interface ListThreadsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 2;
+     * Search params
+     *
+     * @generated from protobuf field: repeated uint64 email_ids = 2 [jstype = JS_STRING];
+     */
+    emailIds: string[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 3;
      */
     after?: Timestamp;
 }
@@ -99,18 +250,32 @@ export interface DeleteThreadRequest {
 export interface DeleteThreadResponse {
 }
 /**
- * @generated from protobuf message services.mailer.SetThreadUserStateRequest
+ * @generated from protobuf message services.mailer.SetThreadStateRequest
  */
-export interface SetThreadUserStateRequest {
+export interface SetThreadStateRequest {
     /**
-     * @generated from protobuf field: resources.mailer.ThreadUserState state = 1;
+     * @generated from protobuf oneof: state
      */
-    state?: ThreadUserState;
+    state: {
+        oneofKind: "user";
+        /**
+         * @generated from protobuf field: resources.mailer.ThreadStateUser user = 1;
+         */
+        user: ThreadStateUser;
+    } | {
+        oneofKind: "email";
+        /**
+         * @generated from protobuf field: resources.mailer.ThreadStateEmail email = 2;
+         */
+        email: ThreadStateEmail;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
- * @generated from protobuf message services.mailer.SetThreadUserStateResponse
+ * @generated from protobuf message services.mailer.SetThreadStateResponse
  */
-export interface SetThreadUserStateResponse {
+export interface SetThreadStateResponse {
 }
 /**
  * @generated from protobuf message services.mailer.LeaveThreadRequest
@@ -161,9 +326,9 @@ export interface SetUserSettingsResponse {
 // Messages
 
 /**
- * @generated from protobuf message services.mailer.GetThreadMessagesRequest
+ * @generated from protobuf message services.mailer.ListThreadMessagesRequest
  */
-export interface GetThreadMessagesRequest {
+export interface ListThreadMessagesRequest {
     /**
      * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
      */
@@ -174,9 +339,9 @@ export interface GetThreadMessagesRequest {
     after?: Timestamp;
 }
 /**
- * @generated from protobuf message services.mailer.GetThreadMessagesResponse
+ * @generated from protobuf message services.mailer.ListThreadMessagesResponse
  */
-export interface GetThreadMessagesResponse {
+export interface ListThreadMessagesResponse {
     /**
      * @generated from protobuf field: repeated resources.mailer.Message messages = 1;
      */
@@ -219,15 +384,705 @@ export interface DeleteMessageRequest {
 export interface DeleteMessageResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
+    constructor() {
+        super("services.mailer.ListEmailsRequest", []);
+    }
+    create(value?: PartialMessage<ListEmailsRequest>): ListEmailsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListEmailsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListEmailsRequest): ListEmailsRequest {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: ListEmailsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.ListEmailsRequest
+ */
+export const ListEmailsRequest = new ListEmailsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
+    constructor() {
+        super("services.mailer.ListEmailsResponse", [
+            { no: 1, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email }
+        ]);
+    }
+    create(value?: PartialMessage<ListEmailsResponse>): ListEmailsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.emails = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListEmailsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListEmailsResponse): ListEmailsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.mailer.Email emails */ 1:
+                    message.emails.push(Email.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListEmailsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.mailer.Email emails = 1; */
+        for (let i = 0; i < message.emails.length; i++)
+            Email.internalBinaryWrite(message.emails[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.ListEmailsResponse
+ */
+export const ListEmailsResponse = new ListEmailsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetEmailRequest$Type extends MessageType<GetEmailRequest> {
+    constructor() {
+        super("services.mailer.GetEmailRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetEmailRequest>): GetEmailRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetEmailRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEmailRequest): GetEmailRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetEmailRequest
+ */
+export const GetEmailRequest = new GetEmailRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetEmailResponse$Type extends MessageType<GetEmailResponse> {
+    constructor() {
+        super("services.mailer.GetEmailResponse", [
+            { no: 1, name: "email", kind: "message", T: () => Email, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetEmailResponse>): GetEmailResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetEmailResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEmailResponse): GetEmailResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Email email */ 1:
+                    message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEmailResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Email email = 1; */
+        if (message.email)
+            Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetEmailResponse
+ */
+export const GetEmailResponse = new GetEmailResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateEmailRequest$Type extends MessageType<CreateOrUpdateEmailRequest> {
+    constructor() {
+        super("services.mailer.CreateOrUpdateEmailRequest", [
+            { no: 1, name: "email", kind: "message", T: () => Email, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrUpdateEmailRequest>): CreateOrUpdateEmailRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrUpdateEmailRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateEmailRequest): CreateOrUpdateEmailRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Email email */ 1:
+                    message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrUpdateEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Email email = 1; */
+        if (message.email)
+            Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.CreateOrUpdateEmailRequest
+ */
+export const CreateOrUpdateEmailRequest = new CreateOrUpdateEmailRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateEmailResponse$Type extends MessageType<CreateOrUpdateEmailResponse> {
+    constructor() {
+        super("services.mailer.CreateOrUpdateEmailResponse", [
+            { no: 1, name: "email", kind: "message", T: () => Email }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrUpdateEmailResponse>): CreateOrUpdateEmailResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrUpdateEmailResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateEmailResponse): CreateOrUpdateEmailResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Email email */ 1:
+                    message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrUpdateEmailResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Email email = 1; */
+        if (message.email)
+            Email.internalBinaryWrite(message.email, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.CreateOrUpdateEmailResponse
+ */
+export const CreateOrUpdateEmailResponse = new CreateOrUpdateEmailResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteEmailRequest$Type extends MessageType<DeleteEmailRequest> {
+    constructor() {
+        super("services.mailer.DeleteEmailRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteEmailRequest>): DeleteEmailRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteEmailRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteEmailRequest): DeleteEmailRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.DeleteEmailRequest
+ */
+export const DeleteEmailRequest = new DeleteEmailRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteEmailResponse$Type extends MessageType<DeleteEmailResponse> {
+    constructor() {
+        super("services.mailer.DeleteEmailResponse", []);
+    }
+    create(value?: PartialMessage<DeleteEmailResponse>): DeleteEmailResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteEmailResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteEmailResponse): DeleteEmailResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: DeleteEmailResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.DeleteEmailResponse
+ */
+export const DeleteEmailResponse = new DeleteEmailResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
+    constructor() {
+        super("services.mailer.ListTemplatesRequest", [
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListTemplatesRequest>): ListTemplatesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.emailId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ListTemplatesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTemplatesRequest): ListTemplatesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.emailId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListTemplatesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 email_id = 1 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.emailId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.ListTemplatesRequest
+ */
+export const ListTemplatesRequest = new ListTemplatesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListTemplatesResponse$Type extends MessageType<ListTemplatesResponse> {
+    constructor() {
+        super("services.mailer.ListTemplatesResponse", [
+            { no: 1, name: "templates", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Template }
+        ]);
+    }
+    create(value?: PartialMessage<ListTemplatesResponse>): ListTemplatesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.templates = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListTemplatesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTemplatesResponse): ListTemplatesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.mailer.Template templates */ 1:
+                    message.templates.push(Template.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListTemplatesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.mailer.Template templates = 1; */
+        for (let i = 0; i < message.templates.length; i++)
+            Template.internalBinaryWrite(message.templates[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.ListTemplatesResponse
+ */
+export const ListTemplatesResponse = new ListTemplatesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
+    constructor() {
+        super("services.mailer.GetTemplateRequest", [
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetTemplateRequest>): GetTemplateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.emailId = "0";
+        message.templateId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetTemplateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetTemplateRequest): GetTemplateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.emailId = reader.uint64().toString();
+                    break;
+                case /* uint64 template_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.templateId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 email_id = 1 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.emailId);
+        /* uint64 template_id = 2 [jstype = JS_STRING]; */
+        if (message.templateId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.templateId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetTemplateRequest
+ */
+export const GetTemplateRequest = new GetTemplateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetTemplateResponse$Type extends MessageType<GetTemplateResponse> {
+    constructor() {
+        super("services.mailer.GetTemplateResponse", [
+            { no: 1, name: "template", kind: "message", T: () => Template, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetTemplateResponse>): GetTemplateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetTemplateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetTemplateResponse): GetTemplateResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Template template */ 1:
+                    message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Template template = 1; */
+        if (message.template)
+            Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetTemplateResponse
+ */
+export const GetTemplateResponse = new GetTemplateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateTemplateRequest$Type extends MessageType<CreateOrUpdateTemplateRequest> {
+    constructor() {
+        super("services.mailer.CreateOrUpdateTemplateRequest", [
+            { no: 1, name: "template", kind: "message", T: () => Template, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrUpdateTemplateRequest>): CreateOrUpdateTemplateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrUpdateTemplateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateTemplateRequest): CreateOrUpdateTemplateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Template template */ 1:
+                    message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrUpdateTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Template template = 1; */
+        if (message.template)
+            Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.CreateOrUpdateTemplateRequest
+ */
+export const CreateOrUpdateTemplateRequest = new CreateOrUpdateTemplateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateTemplateResponse$Type extends MessageType<CreateOrUpdateTemplateResponse> {
+    constructor() {
+        super("services.mailer.CreateOrUpdateTemplateResponse", [
+            { no: 1, name: "template", kind: "message", T: () => Template, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CreateOrUpdateTemplateResponse>): CreateOrUpdateTemplateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CreateOrUpdateTemplateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateTemplateResponse): CreateOrUpdateTemplateResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.Template template */ 1:
+                    message.template = Template.internalBinaryRead(reader, reader.uint32(), options, message.template);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CreateOrUpdateTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Template template = 1; */
+        if (message.template)
+            Template.internalBinaryWrite(message.template, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.CreateOrUpdateTemplateResponse
+ */
+export const CreateOrUpdateTemplateResponse = new CreateOrUpdateTemplateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteTemplateRequest$Type extends MessageType<DeleteTemplateRequest> {
+    constructor() {
+        super("services.mailer.DeleteTemplateRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteTemplateRequest>): DeleteTemplateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteTemplateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteTemplateRequest): DeleteTemplateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.DeleteTemplateRequest
+ */
+export const DeleteTemplateRequest = new DeleteTemplateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteTemplateResponse$Type extends MessageType<DeleteTemplateResponse> {
+    constructor() {
+        super("services.mailer.DeleteTemplateResponse", []);
+    }
+    create(value?: PartialMessage<DeleteTemplateResponse>): DeleteTemplateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteTemplateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteTemplateResponse): DeleteTemplateResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: DeleteTemplateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.DeleteTemplateResponse
+ */
+export const DeleteTemplateResponse = new DeleteTemplateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
     constructor() {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "after", kind: "message", T: () => Timestamp }
+            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListThreadsRequest>): ListThreadsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.emailIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListThreadsRequest>(this, message, value);
         return message;
@@ -240,7 +1095,14 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* optional resources.timestamp.Timestamp after */ 2:
+                case /* repeated uint64 email_ids = 2 [jstype = JS_STRING];*/ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.emailIds.push(reader.uint64().toString());
+                    else
+                        message.emailIds.push(reader.uint64().toString());
+                    break;
+                case /* optional resources.timestamp.Timestamp after */ 3:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
                     break;
                 default:
@@ -258,9 +1120,16 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp after = 2; */
+        /* repeated uint64 email_ids = 2 [jstype = JS_STRING]; */
+        if (message.emailIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.emailIds.length; i++)
+                writer.uint64(message.emailIds[i]);
+            writer.join();
+        }
+        /* optional resources.timestamp.Timestamp after = 3; */
         if (message.after)
-            Timestamp.internalBinaryWrite(message.after, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.after, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -590,25 +1459,36 @@ class DeleteThreadResponse$Type extends MessageType<DeleteThreadResponse> {
  */
 export const DeleteThreadResponse = new DeleteThreadResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetThreadUserStateRequest$Type extends MessageType<SetThreadUserStateRequest> {
+class SetThreadStateRequest$Type extends MessageType<SetThreadStateRequest> {
     constructor() {
-        super("services.mailer.SetThreadUserStateRequest", [
-            { no: 1, name: "state", kind: "message", T: () => ThreadUserState, options: { "validate.rules": { message: { required: true } } } }
+        super("services.mailer.SetThreadStateRequest", [
+            { no: 1, name: "user", kind: "message", oneof: "state", T: () => ThreadStateUser },
+            { no: 2, name: "email", kind: "message", oneof: "state", T: () => ThreadStateEmail }
         ]);
     }
-    create(value?: PartialMessage<SetThreadUserStateRequest>): SetThreadUserStateRequest {
+    create(value?: PartialMessage<SetThreadStateRequest>): SetThreadStateRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.state = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<SetThreadUserStateRequest>(this, message, value);
+            reflectionMergePartial<SetThreadStateRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadUserStateRequest): SetThreadUserStateRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadStateRequest): SetThreadStateRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.mailer.ThreadUserState state */ 1:
-                    message.state = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.state);
+                case /* resources.mailer.ThreadStateUser user */ 1:
+                    message.state = {
+                        oneofKind: "user",
+                        user: ThreadStateUser.internalBinaryRead(reader, reader.uint32(), options, (message.state as any).user)
+                    };
+                    break;
+                case /* resources.mailer.ThreadStateEmail email */ 2:
+                    message.state = {
+                        oneofKind: "email",
+                        email: ThreadStateEmail.internalBinaryRead(reader, reader.uint32(), options, (message.state as any).email)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -621,10 +1501,13 @@ class SetThreadUserStateRequest$Type extends MessageType<SetThreadUserStateReque
         }
         return message;
     }
-    internalBinaryWrite(message: SetThreadUserStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.mailer.ThreadUserState state = 1; */
-        if (message.state)
-            ThreadUserState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: SetThreadStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.ThreadStateUser user = 1; */
+        if (message.state.oneofKind === "user")
+            ThreadStateUser.internalBinaryWrite(message.state.user, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.ThreadStateEmail email = 2; */
+        if (message.state.oneofKind === "email")
+            ThreadStateEmail.internalBinaryWrite(message.state.email, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -632,24 +1515,24 @@ class SetThreadUserStateRequest$Type extends MessageType<SetThreadUserStateReque
     }
 }
 /**
- * @generated MessageType for protobuf message services.mailer.SetThreadUserStateRequest
+ * @generated MessageType for protobuf message services.mailer.SetThreadStateRequest
  */
-export const SetThreadUserStateRequest = new SetThreadUserStateRequest$Type();
+export const SetThreadStateRequest = new SetThreadStateRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SetThreadUserStateResponse$Type extends MessageType<SetThreadUserStateResponse> {
+class SetThreadStateResponse$Type extends MessageType<SetThreadStateResponse> {
     constructor() {
-        super("services.mailer.SetThreadUserStateResponse", []);
+        super("services.mailer.SetThreadStateResponse", []);
     }
-    create(value?: PartialMessage<SetThreadUserStateResponse>): SetThreadUserStateResponse {
+    create(value?: PartialMessage<SetThreadStateResponse>): SetThreadStateResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<SetThreadUserStateResponse>(this, message, value);
+            reflectionMergePartial<SetThreadStateResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadUserStateResponse): SetThreadUserStateResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadStateResponse): SetThreadStateResponse {
         return target ?? this.create();
     }
-    internalBinaryWrite(message: SetThreadUserStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: SetThreadStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -657,9 +1540,9 @@ class SetThreadUserStateResponse$Type extends MessageType<SetThreadUserStateResp
     }
 }
 /**
- * @generated MessageType for protobuf message services.mailer.SetThreadUserStateResponse
+ * @generated MessageType for protobuf message services.mailer.SetThreadStateResponse
  */
-export const SetThreadUserStateResponse = new SetThreadUserStateResponse$Type();
+export const SetThreadStateResponse = new SetThreadStateResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class LeaveThreadRequest$Type extends MessageType<LeaveThreadRequest> {
     constructor() {
@@ -896,21 +1779,21 @@ class SetUserSettingsResponse$Type extends MessageType<SetUserSettingsResponse> 
  */
 export const SetUserSettingsResponse = new SetUserSettingsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest> {
+class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesRequest> {
     constructor() {
-        super("services.mailer.GetThreadMessagesRequest", [
+        super("services.mailer.ListThreadMessagesRequest", [
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
-    create(value?: PartialMessage<GetThreadMessagesRequest>): GetThreadMessagesRequest {
+    create(value?: PartialMessage<ListThreadMessagesRequest>): ListThreadMessagesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.threadId = "0";
         if (value !== undefined)
-            reflectionMergePartial<GetThreadMessagesRequest>(this, message, value);
+            reflectionMergePartial<ListThreadMessagesRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadMessagesRequest): GetThreadMessagesRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListThreadMessagesRequest): ListThreadMessagesRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -932,7 +1815,7 @@ class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest
         }
         return message;
     }
-    internalBinaryWrite(message: GetThreadMessagesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListThreadMessagesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 thread_id = 1 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.threadId);
@@ -946,24 +1829,24 @@ class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest
     }
 }
 /**
- * @generated MessageType for protobuf message services.mailer.GetThreadMessagesRequest
+ * @generated MessageType for protobuf message services.mailer.ListThreadMessagesRequest
  */
-export const GetThreadMessagesRequest = new GetThreadMessagesRequest$Type();
+export const ListThreadMessagesRequest = new ListThreadMessagesRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesResponse> {
+class ListThreadMessagesResponse$Type extends MessageType<ListThreadMessagesResponse> {
     constructor() {
-        super("services.mailer.GetThreadMessagesResponse", [
+        super("services.mailer.ListThreadMessagesResponse", [
             { no: 1, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Message }
         ]);
     }
-    create(value?: PartialMessage<GetThreadMessagesResponse>): GetThreadMessagesResponse {
+    create(value?: PartialMessage<ListThreadMessagesResponse>): ListThreadMessagesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.messages = [];
         if (value !== undefined)
-            reflectionMergePartial<GetThreadMessagesResponse>(this, message, value);
+            reflectionMergePartial<ListThreadMessagesResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadMessagesResponse): GetThreadMessagesResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListThreadMessagesResponse): ListThreadMessagesResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -982,7 +1865,7 @@ class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesRespon
         }
         return message;
     }
-    internalBinaryWrite(message: GetThreadMessagesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListThreadMessagesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated resources.mailer.Message messages = 1; */
         for (let i = 0; i < message.messages.length; i++)
             Message.internalBinaryWrite(message.messages[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -993,9 +1876,9 @@ class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesRespon
     }
 }
 /**
- * @generated MessageType for protobuf message services.mailer.GetThreadMessagesResponse
+ * @generated MessageType for protobuf message services.mailer.ListThreadMessagesResponse
  */
-export const GetThreadMessagesResponse = new GetThreadMessagesResponse$Type();
+export const ListThreadMessagesResponse = new ListThreadMessagesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
     constructor() {
@@ -1172,15 +2055,23 @@ export const DeleteMessageResponse = new DeleteMessageResponse$Type();
  * @generated ServiceType for protobuf service services.mailer.MailerService
  */
 export const MailerService = new ServiceType("services.mailer.MailerService", [
+    { name: "ListEmails", options: {}, I: ListEmailsRequest, O: ListEmailsResponse },
+    { name: "GetEmail", options: {}, I: GetEmailRequest, O: GetEmailResponse },
+    { name: "CreateOrUpdateEmail", options: {}, I: CreateOrUpdateEmailRequest, O: CreateOrUpdateEmailResponse },
+    { name: "DeleteEmail", options: {}, I: DeleteEmailRequest, O: DeleteEmailResponse },
+    { name: "ListTemplates", options: {}, I: ListTemplatesRequest, O: ListTemplatesResponse },
+    { name: "GetTemplate", options: {}, I: GetTemplateRequest, O: GetTemplateResponse },
+    { name: "CreateOrUpdateTemplate", options: {}, I: CreateOrUpdateTemplateRequest, O: CreateOrUpdateTemplateResponse },
+    { name: "DeleteTemplate", options: {}, I: DeleteTemplateRequest, O: DeleteTemplateResponse },
     { name: "ListThreads", options: {}, I: ListThreadsRequest, O: ListThreadsResponse },
     { name: "GetThread", options: {}, I: GetThreadRequest, O: GetThreadResponse },
     { name: "CreateThread", options: {}, I: CreateThreadRequest, O: CreateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
-    { name: "SetThreadUserState", options: {}, I: SetThreadUserStateRequest, O: SetThreadUserStateResponse },
+    { name: "SetThreadState", options: {}, I: SetThreadStateRequest, O: SetThreadStateResponse },
     { name: "LeaveThread", options: {}, I: LeaveThreadRequest, O: LeaveThreadResponse },
-    { name: "GetUserSettings", options: {}, I: GetUserSettingsRequest, O: GetUserSettingsResponse },
-    { name: "SetUserSettings", options: {}, I: SetUserSettingsRequest, O: SetUserSettingsResponse },
-    { name: "GetThreadMessages", options: {}, I: GetThreadMessagesRequest, O: GetThreadMessagesResponse },
+    { name: "ListThreadMessages", options: {}, I: ListThreadMessagesRequest, O: ListThreadMessagesResponse },
     { name: "PostMessage", options: {}, I: PostMessageRequest, O: PostMessageResponse },
-    { name: "DeleteMessage", options: {}, I: DeleteMessageRequest, O: DeleteMessageResponse }
+    { name: "DeleteMessage", options: {}, I: DeleteMessageRequest, O: DeleteMessageResponse },
+    { name: "GetUserSettings", options: {}, I: GetUserSettingsRequest, O: GetUserSettingsResponse },
+    { name: "SetUserSettings", options: {}, I: SetUserSettingsRequest, O: SetUserSettingsResponse }
 ]);

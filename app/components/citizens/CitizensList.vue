@@ -14,7 +14,7 @@ import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/servic
 const { t } = useI18n();
 
 const schema = z.object({
-    name: z.string().optional(),
+    name: z.string().max(64).optional(),
     phoneNumber: z.string().max(20).optional(),
     wanted: z.boolean().optional(),
     trafficInfractionPoints: z.coerce.number().nonnegative().optional(),

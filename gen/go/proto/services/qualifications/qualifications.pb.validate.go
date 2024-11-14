@@ -135,7 +135,33 @@ func (m *ListQualificationsRequest) validate(all bool) error {
 	}
 
 	if m.Search != nil {
-		// no validation rules for Search
+
+		if utf8.RuneCountInString(m.GetSearch()) > 64 {
+			err := ListQualificationsRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
+			err := ListQualificationsRequestValidationError{
+				field:  "Job",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

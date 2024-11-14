@@ -43,6 +43,10 @@ export interface ListQualificationsRequest {
      * @generated from protobuf field: optional string search = 3;
      */
     search?: string;
+    /**
+     * @generated from protobuf field: optional string job = 4;
+     */
+    job?: string;
 }
 /**
  * @generated from protobuf message services.qualifications.ListQualificationsResponse
@@ -431,7 +435,8 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
         super("services.qualifications.ListQualificationsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsRequest>): ListQualificationsRequest {
@@ -454,6 +459,9 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
                 case /* optional string search */ 3:
                     message.search = reader.string();
                     break;
+                case /* optional string job */ 4:
+                    message.job = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -475,6 +483,9 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
         /* optional string search = 3; */
         if (message.search !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.search);
+        /* optional string job = 4; */
+        if (message.job !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

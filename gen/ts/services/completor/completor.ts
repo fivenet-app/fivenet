@@ -126,7 +126,7 @@ export interface CompleteCitizenAttributesResponse {
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
     constructor() {
         super("services.completor.CompleteCitizensRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 2, name: "current_job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
@@ -241,7 +241,7 @@ export const CompleteCitizensRespoonse = new CompleteCitizensRespoonse$Type();
 class CompleteJobsRequest$Type extends MessageType<CompleteJobsRequest> {
     constructor() {
         super("services.completor.CompleteJobsRequest", [
-            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 2, name: "exact_match", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "current_job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -348,7 +348,7 @@ export const CompleteJobsResponse = new CompleteJobsResponse$Type();
 class CompleteDocumentCategoriesRequest$Type extends MessageType<CompleteDocumentCategoriesRequest> {
     constructor() {
         super("services.completor.CompleteDocumentCategoriesRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<CompleteDocumentCategoriesRequest>): CompleteDocumentCategoriesRequest {
@@ -514,7 +514,7 @@ export const ListLawBooksResponse = new ListLawBooksResponse$Type();
 class CompleteCitizenAttributesRequest$Type extends MessageType<CompleteCitizenAttributesRequest> {
     constructor() {
         super("services.completor.CompleteCitizenAttributesRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<CompleteCitizenAttributesRequest>): CompleteCitizenAttributesRequest {

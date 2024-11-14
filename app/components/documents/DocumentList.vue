@@ -32,7 +32,7 @@ const openclose: OpenClose[] = [
 
 const schema = z.object({
     documentIds: z.string().max(16).optional(),
-    title: z.string().max(64),
+    title: z.string().max(64).optional(),
     creators: z.custom<UserShort>().array().max(5),
     date: z
         .object({

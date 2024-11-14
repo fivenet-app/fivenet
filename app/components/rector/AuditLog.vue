@@ -33,7 +33,7 @@ const schema = z.object({
         .optional(),
     services: z.string().max(64).array().max(10),
     methods: z.string().max(64).array().max(10),
-    search: z.string().max(128),
+    search: z.string().max(64),
 });
 
 type Schema = z.output<typeof schema>;

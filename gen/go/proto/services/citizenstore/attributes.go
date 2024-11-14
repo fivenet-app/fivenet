@@ -156,14 +156,14 @@ func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userin
 		).
 		LIMIT(10)
 
-	dest := database.DataCount{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	var count database.DataCount
+	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return false, err
 		}
 	}
 
-	return len(attributes) == int(dest.TotalCount), nil
+	return len(attributes) == int(count.TotalCount), nil
 }
 
 func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.CitizenAttributes, error) {

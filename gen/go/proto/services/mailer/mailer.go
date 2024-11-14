@@ -20,11 +20,15 @@ var (
 
 	tUserProps = table.FivenetUserProps
 
-	tThreads           = table.FivenetMsgsThreads.AS("thread")
-	tThreadsUserState  = table.FivenetMsgsThreadsUserState.AS("threaduserstate")
-	tThreadsUserAccess = table.FivenetMsgsThreadsUserAccess
+	tEmails           = table.FivenetMailerEmails.AS("email")
+	tEmailsUserAccess = table.FivenetMailerEmailsUserAccess
+	tEmailsJobAccess  = table.FivenetMailerEmailsJobAccess
 
-	tMessages = table.FivenetMsgsMessages.AS("message")
+	tThreads           = table.FivenetMailerThreads.AS("thread")
+	tThreadsEmailState = table.FivenetMailerThreadsStateEmail.AS("thread_state_email")
+	tThreadsUserState  = table.FivenetMailerThreadsStateUser.AS("thread_state_user")
+
+	tMessages = table.FivenetMailerMessages.AS("message")
 )
 
 type Server struct {
@@ -36,7 +40,7 @@ type Server struct {
 	aud      audit.IAuditer
 	js       *events.JSWrapper
 
-	access *access.Grouped[mailer.ThreadJobAccess, *mailer.ThreadJobAccess, mailer.ThreadUserAccess, *mailer.ThreadUserAccess, mailer.AccessLevel]
+	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel]
 }
 
 type Params struct {
@@ -57,36 +61,58 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		js:       p.JS,
 
-		access: access.NewGrouped[mailer.ThreadJobAccess, *mailer.ThreadJobAccess, mailer.ThreadUserAccess, *mailer.ThreadUserAccess, mailer.AccessLevel](
+		access: access.NewGrouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel](
 			p.DB,
-			table.FivenetMsgsThreads,
+			table.FivenetMailerEmails,
 			&access.TargetTableColumns{
-				ID:         table.FivenetMsgsThreads.ID,
-				DeletedAt:  table.FivenetMsgsThreads.DeletedAt,
-				CreatorID:  table.FivenetMsgsThreads.CreatorID,
-				CreatorJob: table.FivenetMsgsThreads.CreatorJob,
+				ID:         table.FivenetMailerEmails.ID,
+				DeletedAt:  table.FivenetMailerEmails.DeletedAt,
+				CreatorJob: table.FivenetMailerEmails.Job,
 			},
-			nil,
-			access.NewUsers[mailer.ThreadUserAccess, *mailer.ThreadUserAccess, mailer.AccessLevel](
-				table.FivenetMsgsThreadsUserAccess,
-				&access.UserAccessColumns{
+			access.NewJobs[mailer.JobAccess, *mailer.JobAccess, mailer.AccessLevel](
+				table.FivenetMailerEmailsJobAccess,
+				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetMsgsThreadsUserAccess.ID,
-						CreatedAt: table.FivenetMsgsThreadsUserAccess.CreatedAt,
-						TargetID:  table.FivenetMsgsThreadsUserAccess.ThreadID,
-						Access:    table.FivenetMsgsThreadsUserAccess.Access,
+						ID:        table.FivenetMailerEmailsJobAccess.ID,
+						CreatedAt: table.FivenetMailerEmailsJobAccess.CreatedAt,
+						TargetID:  table.FivenetMailerEmailsJobAccess.EmailID,
+						Access:    table.FivenetMailerEmailsJobAccess.Access,
 					},
-					UserId: table.FivenetMsgsThreadsUserAccess.UserID,
+					Job:          table.FivenetMailerEmailsJobAccess.Job,
+					MinimumGrade: table.FivenetMailerEmailsJobAccess.MinimumGrade,
 				},
-				table.FivenetMsgsThreadsUserAccess.AS("thread_user_access"),
+				table.FivenetMailerEmailsJobAccess.AS("email_job_access"),
+				&access.JobAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetMailerEmailsJobAccess.AS("email_job_access").ID,
+						CreatedAt: table.FivenetMailerEmailsJobAccess.AS("email_job_access").CreatedAt,
+						TargetID:  table.FivenetMailerEmailsJobAccess.AS("email_job_access").EmailID,
+						Access:    table.FivenetMailerEmailsJobAccess.AS("email_job_access").Access,
+					},
+					Job:          table.FivenetMailerEmailsJobAccess.AS("email_job_access").Job,
+					MinimumGrade: table.FivenetMailerEmailsJobAccess.AS("email_job_access").MinimumGrade,
+				},
+			),
+			access.NewUsers[mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel](
+				table.FivenetMailerEmailsUserAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetMsgsThreadsUserAccess.AS("thread_user_access").ID,
-						CreatedAt: table.FivenetMsgsThreadsUserAccess.AS("thread_user_access").CreatedAt,
-						TargetID:  table.FivenetMsgsThreadsUserAccess.AS("thread_user_access").ThreadID,
-						Access:    table.FivenetMsgsThreadsUserAccess.AS("thread_user_access").Access,
+						ID:        table.FivenetMailerEmailsUserAccess.ID,
+						CreatedAt: table.FivenetMailerEmailsUserAccess.CreatedAt,
+						TargetID:  table.FivenetMailerEmailsUserAccess.EmailID,
+						Access:    table.FivenetMailerEmailsUserAccess.Access,
 					},
-					UserId: table.FivenetMsgsThreadsUserAccess.AS("thread_user_access").UserID,
+					UserId: table.FivenetMailerEmailsUserAccess.UserID,
+				},
+				table.FivenetMailerEmailsUserAccess.AS("email_user_access"),
+				&access.UserAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetMailerEmailsUserAccess.AS("email_user_access").ID,
+						CreatedAt: table.FivenetMailerEmailsUserAccess.AS("email_user_access").CreatedAt,
+						TargetID:  table.FivenetMailerEmailsUserAccess.AS("email_user_access").EmailID,
+						Access:    table.FivenetMailerEmailsUserAccess.AS("email_user_access").Access,
+					},
+					UserId: table.FivenetMailerEmailsUserAccess.AS("email_user_access").UserID,
 				},
 			),
 		),

@@ -11,13 +11,22 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: MailerService
-	"MailerService/DeleteMessage":      "SuperUser",
-	"MailerService/GetThread":          "MailerService/ListThreads",
-	"MailerService/GetThreadMessages":  "MailerService/ListThreads",
-	"MailerService/GetUserSettings":    "MailerService/ListThreads",
-	"MailerService/LeaveThread":        "MailerService/ListThreads",
-	"MailerService/SetThreadUserState": "MailerService/ListThreads",
-	"MailerService/SetUserSettings":    "MailerService/ListThreads",
+	"MailerService/CreateOrUpdateEmail":    "MailerService/ListEmails",
+	"MailerService/CreateOrUpdateTemplate": "MailerService/ListEmails",
+	"MailerService/DeleteMessage":          "SuperUser",
+	"MailerService/DeleteTemplate":         "MailerService/ListEmails",
+	"MailerService/DeleteThread":           "SuperUser",
+	"MailerService/GetEmail":               "MailerService/ListEmails",
+	"MailerService/GetTemplate":            "MailerService/ListEmails",
+	"MailerService/GetThread":              "MailerService/ListEmails",
+	"MailerService/GetUserSettings":        "MailerService/ListEmails",
+	"MailerService/LeaveThread":            "MailerService/ListEmails",
+	"MailerService/ListTemplates":          "MailerService/ListEmails",
+	"MailerService/ListThreadMessages":     "MailerService/ListEmails",
+	"MailerService/ListThreads":            "MailerService/ListEmails",
+	"MailerService/PostMessage":            "MailerService/ListEmails",
+	"MailerService/SetThreadState":         "MailerService/ListEmails",
+	"MailerService/SetUserSettings":        "MailerService/ListEmails",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -35,17 +44,12 @@ func init() {
 		},
 		{
 			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceDeleteThreadPerm,
+			Name:     permkeys.MailerServiceDeleteEmailPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
 			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceListThreadsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServicePostMessagePerm,
+			Name:     permkeys.MailerServiceListEmailsPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})
