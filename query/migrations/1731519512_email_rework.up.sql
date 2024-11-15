@@ -3,9 +3,9 @@ BEGIN;
 -- Remove old messenger tables
 DROP TABLE IF EXISTS `fivenet_msgs_messages`;
 DROP TABLE IF EXISTS `fivenet_msgs_settings_blocks`;
-DROP TABLE IF EXISTS `fivenet_msgs_threads`;
 DROP TABLE IF EXISTS `fivenet_msgs_threads_user_access`;
 DROP TABLE IF EXISTS `fivenet_msgs_threads_user_state`;
+DROP TABLE IF EXISTS `fivenet_msgs_threads`;
 
 -- Table: fivenet_mailer_emails
 CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (

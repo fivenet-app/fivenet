@@ -6,10 +6,10 @@ require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.35.0
-	github.com/adhocore/gronx v1.19.4
+	github.com/adhocore/gronx v1.19.5
 	github.com/alecthomas/kong v1.4.0
 	github.com/bep/debounce v1.2.1
-	github.com/blevesearch/bleve/v2 v2.4.2
+	github.com/blevesearch/bleve/v2 v2.4.3
 	github.com/coder/websocket v1.8.12
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
@@ -17,7 +17,7 @@ require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.1.0
 	github.com/gin-contrib/cors v1.7.2
-	github.com/gin-contrib/pprof v1.5.0
+	github.com/gin-contrib/pprof v1.5.1
 	github.com/gin-contrib/sessions v1.0.1
 	github.com/gin-contrib/static v1.1.2
 	github.com/gin-contrib/zap v1.1.4
@@ -67,7 +67,7 @@ require (
 	golang.org/x/oauth2 v0.24.0
 	golang.org/x/text v0.20.0
 	google.golang.org/grpc v1.68.0
-	google.golang.org/protobuf v1.35.1
+	google.golang.org/protobuf v1.35.2
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.1
 	willnorris.com/go/imageproxy v0.11.2
@@ -102,14 +102,14 @@ require (
 	github.com/blevesearch/zapx/v13 v13.3.10 // indirect
 	github.com/blevesearch/zapx/v14 v14.3.10 // indirect
 	github.com/blevesearch/zapx/v15 v15.3.16 // indirect
-	github.com/blevesearch/zapx/v16 v16.1.7 // indirect
+	github.com/blevesearch/zapx/v16 v16.1.8 // indirect
 	github.com/bytedance/sonic v1.12.4 // indirect
 	github.com/bytedance/sonic/loader v0.2.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.4 // indirect
 	github.com/cloudwego/iasm v0.2.0 // indirect
-	github.com/containerd/continuity v0.4.4 // indirect
+	github.com/containerd/continuity v0.4.5 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/docker/cli v27.3.1+incompatible // indirect
@@ -205,8 +205,8 @@ require (
 	golang.org/x/arch v0.12.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/time v0.8.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20241104194629-dd2ea8efbc28 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20241104194629-dd2ea8efbc28 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20241113202542-65e8d215514f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20241113202542-65e8d215514f // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	nhooyr.io/websocket v1.8.17 // indirect

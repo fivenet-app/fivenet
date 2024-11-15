@@ -54,12 +54,16 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 	return resp, nil
 }
 
-func (s *Server) getTemplate(ctx context.Context, id uint64, emailId uint64) (*mailer.Template, error) {
+func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*mailer.Template, error) {
 	condition := tTemplates.ID.EQ(jet.Uint64(id))
 
-	if emailId > 0 {
+	if emailId == nil || *emailId <= 0 {
 		condition = condition.AND(
-			tTemplates.EmailID.EQ(jet.Uint64(emailId)),
+			tTemplates.EmailID.EQ(jet.IntExp(jet.NULL)),
+		)
+	} else {
+		condition = condition.AND(
+			tTemplates.EmailID.EQ(jet.Uint64(*emailId)),
 		)
 	}
 
@@ -106,7 +110,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 
 	resp := &GetTemplateResponse{}
 
-	resp.Template, err = s.getTemplate(ctx, req.TemplateId, req.EmailId)
+	resp.Template, err = s.getTemplate(ctx, req.TemplateId, &req.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -125,6 +129,16 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
+
+	if req.Template.EmailId != nil && *req.Template.EmailId > 0 {
+		check, err := s.access.CanUserAccessTarget(ctx, *req.Template.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+		if !check {
+			return nil, errorsmailer.ErrFailedQuery
+		}
+	}
 
 	if req.Template.Id <= 0 {
 		countStmt := tTemplates.
@@ -148,14 +162,73 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 			return nil, errorsmailer.ErrTemplateLimitReached
 		}
 
-		// TODO create template
-	} else {
-		// TODO check perms for template
+		if req.Template.CreatorJob != nil {
+			req.Template.CreatorJob = &userInfo.Job
+		}
 
-		// TODO Update existing template
+		stmt := tTemplates.
+			INSERT(
+				tTemplates.Title,
+				tTemplates.Content,
+				tTemplates.EmailID,
+				tTemplates.CreatorJob,
+				tTemplates.CreatorID,
+			).
+			VALUES(
+				req.Template.Title,
+				req.Template.Content,
+				req.Template.EmailId,
+				req.Template.CreatorJob,
+				userInfo.UserId,
+			)
+
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+		req.Template.Id = uint64(lastId)
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+	} else {
+		template, err := s.getTemplate(ctx, req.Template.Id, req.Template.EmailId)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		if template == nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		stmt := tTemplates.
+			UPDATE().
+			SET(
+				tTemplates.Title.SET(jet.String(req.Template.Title)),
+				tTemplates.Content.SET(jet.String(req.Template.Content)),
+			).
+			WHERE(jet.AND(
+				tTemplates.ID.EQ(jet.Uint64(req.Template.Id)),
+			))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	return nil, nil
+	template, err := s.getTemplate(ctx, req.Template.Id, req.Template.EmailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	return &CreateOrUpdateTemplateResponse{
+		Template: template,
+	}, nil
 }
 
 func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest) (*DeleteTemplateResponse, error) {
