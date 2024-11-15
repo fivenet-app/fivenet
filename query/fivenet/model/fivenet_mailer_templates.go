@@ -16,9 +16,9 @@ type FivenetMailerTemplates struct {
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DeletedAt  *time.Time `json:"deleted_at"`
+	EmailID    *uint64    `json:"email_id"`
 	Title      string     `json:"title"`
 	Content    string     `json:"content"`
-	EmailID    *uint64    `json:"email_id"`
 	CreatorJob *string    `json:"creator_job"`
 	CreatorID  *int32     `json:"creator_id"`
 }

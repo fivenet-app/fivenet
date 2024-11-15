@@ -42,7 +42,7 @@ const dropdownItems = computed(() =>
     [
         [
             {
-                label: selectedThread.value?.userState?.archived ? t('common.unarchive') : t('common.archive'),
+                label: selectedThread.value?.state?.archived ? t('common.unarchive') : t('common.archive'),
                 icon: 'i-mdi-archive',
                 click: () =>
                     modal.open(ConfirmModal, {
@@ -79,7 +79,8 @@ const dropdownItems = computed(() =>
 
 const personalEmail: Email = {
     id: '0',
-    domain: 'fivenet.app',
+    disabled: false,
+    email: '',
     label: t('common.personal_email'),
     internal: false,
 };
@@ -115,15 +116,15 @@ const threads = useDexieLiveQuery(() => mailerDB.threads.toArray().then((threads
 // Filter mails based on the selected tab
 const filteredThreads = computed(() => {
     if (selectedTab.value === 1) {
-        return threads.value.threads.filter((thread) => !thread.userState?.archived && !!thread.userState?.lastRead);
+        return threads.value.threads.filter((thread) => !thread.state?.archived && !!thread.state?.lastRead);
     } else if (selectedTab.value === 2) {
-        return threads.value.threads.filter((thread) => !!thread.userState?.archived);
+        return threads.value.threads.filter((thread) => !!thread.state?.archived);
     }
 
-    return threads.value.threads.filter((thread) => !thread.userState?.archived);
+    return threads.value.threads.filter((thread) => !thread.state?.archived);
 });
 
-const threadUserState = computed(() => selectedThread.value?.userState);
+const threadUserState = computed(() => selectedThread.value?.state);
 
 const isMailerPanelOpen = computed({
     get() {
@@ -189,21 +190,23 @@ const editing = ref(false);
                 :ui="{ wrapper: 'p-0 gap-x-0', container: 'gap-x-0 justify-stretch items-stretch h-full flex flex-1 flex-col' }"
             >
                 <div class="bg-gray-100 p-1 dark:bg-gray-800">
-                    <USelectMenu
-                        v-model="selectedEmail"
-                        :options="emails"
-                        :placeholder="$t('common.mail')"
-                        :searchable-placeholder="$t('common.search_field')"
-                        :search-attributes="['label']"
-                        trailing
-                        by="id"
-                    >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="selectedEmail"
+                            :options="emails"
+                            :placeholder="$t('common.mail')"
+                            :searchable-placeholder="$t('common.search_field')"
+                            :search-attributes="['label']"
+                            trailing
+                            by="id"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
 
-                        <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
-                    </USelectMenu>
+                            <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
                 </div>
 
                 <UTabs
@@ -241,7 +244,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadState({
+                                        (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             unread: !threadUserState?.unread,
                                         }))
@@ -256,7 +259,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadState({
+                                        (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             important: !threadUserState?.important,
                                         }))
@@ -273,7 +276,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadState({
+                                        (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             favorite: !threadUserState?.favorite,
                                         }))
@@ -288,7 +291,7 @@ const editing = ref(false);
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.userState = await mailerStore.setThreadState({
+                                        (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
                                             muted: !threadUserState?.muted,
                                         }))

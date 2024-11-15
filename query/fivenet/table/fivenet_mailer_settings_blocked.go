@@ -17,8 +17,8 @@ type fivenetMailerSettingsBlockedTable struct {
 	mysql.Table
 
 	// Columns
-	SourceEmailID mysql.ColumnInteger
-	TargetEmailID mysql.ColumnInteger
+	EmailID     mysql.ColumnInteger
+	TargetEmail mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -59,18 +59,18 @@ func newFivenetMailerSettingsBlockedTable(schemaName, tableName, alias string) *
 
 func newFivenetMailerSettingsBlockedTableImpl(schemaName, tableName, alias string) fivenetMailerSettingsBlockedTable {
 	var (
-		SourceEmailIDColumn = mysql.IntegerColumn("source_email_id")
-		TargetEmailIDColumn = mysql.IntegerColumn("target_email_id")
-		allColumns          = mysql.ColumnList{SourceEmailIDColumn, TargetEmailIDColumn}
-		mutableColumns      = mysql.ColumnList{}
+		EmailIDColumn     = mysql.IntegerColumn("email_id")
+		TargetEmailColumn = mysql.StringColumn("target_email")
+		allColumns        = mysql.ColumnList{EmailIDColumn, TargetEmailColumn}
+		mutableColumns    = mysql.ColumnList{}
 	)
 
 	return fivenetMailerSettingsBlockedTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		SourceEmailID: SourceEmailIDColumn,
-		TargetEmailID: TargetEmailIDColumn,
+		EmailID:     EmailIDColumn,
+		TargetEmail: TargetEmailColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

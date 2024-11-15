@@ -17,16 +17,15 @@ var PermsRemap = map[string]string{
 	"MailerService/DeleteTemplate":         "MailerService/ListEmails",
 	"MailerService/DeleteThread":           "SuperUser",
 	"MailerService/GetEmail":               "MailerService/ListEmails",
+	"MailerService/GetEmailSettings":       "MailerService/ListEmails",
 	"MailerService/GetTemplate":            "MailerService/ListEmails",
 	"MailerService/GetThread":              "MailerService/ListEmails",
-	"MailerService/GetUserSettings":        "MailerService/ListEmails",
-	"MailerService/LeaveThread":            "MailerService/ListEmails",
 	"MailerService/ListTemplates":          "MailerService/ListEmails",
 	"MailerService/ListThreadMessages":     "MailerService/ListEmails",
 	"MailerService/ListThreads":            "MailerService/ListEmails",
 	"MailerService/PostMessage":            "MailerService/ListEmails",
+	"MailerService/SetEmailSettings":       "MailerService/ListEmails",
 	"MailerService/SetThreadState":         "MailerService/ListEmails",
-	"MailerService/SetUserSettings":        "MailerService/ListEmails",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

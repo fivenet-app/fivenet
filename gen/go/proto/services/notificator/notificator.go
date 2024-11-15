@@ -9,7 +9,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
@@ -30,13 +29,7 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-var (
-	tNotifications = table.FivenetNotifications
-	tUsers         = table.Users.AS("user")
-	tJobs          = table.Jobs
-	tJobGrades     = table.JobGrades
-	tJobProps      = table.FivenetJobProps.AS("jobprops")
-)
+var tNotifications = table.FivenetNotifications
 
 var (
 	ErrFailedRequest = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedRequest")
@@ -261,7 +254,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			msg, err := cons.Next()
 			if err != nil {
 				close(msgCh)
-				break
+				return
 			}
 
 			msgCh <- msg
@@ -414,57 +407,4 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	}
 
 	return nil, false, nil
-}
-
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {
-	stmt := tUsers.
-		SELECT(
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.Group.AS("group"),
-			tJobs.Label.AS("user.job_label"),
-			tJobGrades.Label.AS("user.job_grade_label"),
-			tJobProps.Theme,
-			tJobProps.RadioFrequency,
-			tJobProps.QuickButtons,
-			tJobProps.LogoURL,
-		).
-		FROM(
-			tUsers.
-				LEFT_JOIN(tJobs,
-					tJobs.Name.EQ(tUsers.Job),
-				).
-				LEFT_JOIN(tJobGrades,
-					jet.AND(
-						tJobGrades.Grade.EQ(tUsers.JobGrade),
-						tJobGrades.JobName.EQ(tUsers.Job),
-					),
-				).
-				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tJobs.Name),
-				),
-		).
-		WHERE(
-			tUsers.ID.EQ(jet.Int32(charId)),
-		).
-		LIMIT(1)
-
-	var dest struct {
-		users.User
-		Group    string
-		JobProps *users.JobProps
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, nil, "", err
-	}
-
-	if dest.JobProps != nil {
-		s.enricher.EnrichJobName(dest.JobProps)
-	}
-
-	return &dest.User, dest.JobProps, dest.Group, nil
 }

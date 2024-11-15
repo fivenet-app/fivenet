@@ -27,7 +27,12 @@ if (website.links.privacyPolicy === undefined) {
             <ULandingHero
                 :title="$t('common.redirecting_to', [$t('common.privacy_policy')])"
                 :links="[
-                    { label: $t('common.privacy_policy'), icon: 'i-mdi-link-variant', size: 'lg', to: website.links.imprint },
+                    {
+                        label: $t('common.privacy_policy'),
+                        icon: 'i-mdi-link-variant',
+                        size: 'lg',
+                        to: website.links.privacyPolicy,
+                    },
                 ]"
             />
         </div>

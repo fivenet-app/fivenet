@@ -19,7 +19,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer
 message ListEmailsRequest {}
 
 message ListEmailsResponse {
-  repeated resources.mailer.Email emails = 1;
+  repeated resources.mailer.EmailShort emails = 1;
 }
 
 message GetEmailRequest {
@@ -115,32 +115,23 @@ message DeleteThreadRequest {
 message DeleteThreadResponse {}
 
 message SetThreadStateRequest {
-  oneof state {
-    resources.mailer.ThreadStateUser user = 1;
-    resources.mailer.ThreadStateEmail email = 2;
-  }
+  resources.mailer.ThreadState state = 1;
 }
 
 message SetThreadStateResponse {}
 
-message LeaveThreadRequest {
-  uint64 thread_id = 1 [jstype = JS_STRING];
+message GetEmailSettingsRequest {}
+
+message GetEmailSettingsResponse {
+  resources.mailer.EmailSettings settings = 1;
 }
 
-message LeaveThreadResponse {}
-
-message GetUserSettingsRequest {}
-
-message GetUserSettingsResponse {
-  resources.mailer.UserSettings settings = 1;
+message SetEmailSettingsRequest {
+  resources.mailer.EmailSettings settings = 1 [(validate.rules).message.required = true];
 }
 
-message SetUserSettingsRequest {
-  resources.mailer.UserSettings settings = 1 [(validate.rules).message.required = true];
-}
-
-message SetUserSettingsResponse {
-  resources.mailer.UserSettings settings = 1;
+message SetEmailSettingsResponse {
+  resources.mailer.EmailSettings settings = 1;
 }
 
 // Messages
@@ -198,8 +189,6 @@ service MailerService {
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
   // @perm: Name=ListEmails
   rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse);
-  // @perm: Name=ListEmails
-  rpc LeaveThread(LeaveThreadRequest) returns (LeaveThreadResponse);
 
   // @perm: Name=ListEmails
   rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse);
@@ -209,7 +198,7 @@ service MailerService {
   rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
 
   // @perm: Name=ListEmails
-  rpc GetUserSettings(GetUserSettingsRequest) returns (GetUserSettingsResponse);
+  rpc GetEmailSettings(GetEmailSettingsRequest) returns (GetEmailSettingsResponse);
   // @perm: Name=ListEmails
-  rpc SetUserSettings(SetUserSettingsRequest) returns (SetUserSettingsResponse);
+  rpc SetEmailSettings(SetEmailSettingsRequest) returns (SetEmailSettingsResponse);
 }

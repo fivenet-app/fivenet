@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "resources/mailer/email.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -18,17 +19,12 @@ message Thread {
     min_len: 3,
     max_len: 255
   }];
-  string creator_job = 6 [(validate.rules).string.max_len = 40];
-  optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
-  ThreadRecipients recipients = 11;
-  optional ThreadStateUser user_state = 12;
-  optional ThreadStateEmail email_state = 13;
-}
-
-message ThreadRecipients {
-  repeated ThreadRecipientEmail emails = 1;
-  repeated ThreadRecipientUser users = 2;
+  uint64 creator_email_id = 6;
+  optional resources.mailer.EmailShort creator_email = 7;
+  optional int32 creator_id = 8 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
+  repeated ThreadRecipientEmail recipients = 10;
+  optional ThreadState state = 11;
 }
 
 message ThreadRecipientEmail {
@@ -38,27 +34,10 @@ message ThreadRecipientEmail {
   uint64 email_id = 5 [jstype = JS_STRING];
 }
 
-message ThreadRecipientUser {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 4 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
-  int32 user_id = 5 [(validate.rules).int32.gte = 0];
-}
-
-message ThreadStateEmail {
+message ThreadState {
   uint64 thread_id = 1 [jstype = JS_STRING];
   uint64 email_id = 2 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp last_read = 3;
-  bool unread = 4;
-  bool important = 5;
-  bool favorite = 6;
-  bool muted = 7;
-  bool archived = 8;
-}
 
-message ThreadStateUser {
-  uint64 thread_id = 1 [jstype = JS_STRING];
-  int32 user_id = 2 [(validate.rules).int32.gte = 0];
   optional resources.timestamp.Timestamp last_read = 3;
   bool unread = 4;
   bool important = 5;

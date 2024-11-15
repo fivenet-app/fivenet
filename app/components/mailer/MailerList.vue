@@ -76,18 +76,18 @@ defineShortcuts({
                 <div
                     class="cursor-pointer border-l-2 p-4 text-sm"
                     :class="[
-                        thread.userState?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+                        thread.state?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
                         selectedThread && selectedThread.id === thread.id
                             ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
                             : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
                     ]"
                     @click="selectedThread = thread"
                 >
-                    <div class="flex items-center justify-between" :class="[thread.userState?.unread && 'font-semibold']">
+                    <div class="flex items-center justify-between" :class="[thread.state?.unread && 'font-semibold']">
                         <div class="flex items-center gap-3 font-semibold">
                             {{ thread.title }}
 
-                            <UChip v-if="thread.userState?.unread" />
+                            <UChip v-if="thread.state?.unread" />
                         </div>
 
                         <span>{{
@@ -100,12 +100,8 @@ defineShortcuts({
                         <p>{{ thread.creator?.firstname }} {{ thread.creator?.lastname }}</p>
 
                         <div class="inline-flex gap-1">
-                            <UIcon
-                                v-if="thread.userState?.important"
-                                name="i-mdi-exclamation-thick"
-                                class="size-5 text-red-500"
-                            />
-                            <UIcon v-if="thread.userState?.favorite" name="i-mdi-star" class="size-5 text-yellow-500" />
+                            <UIcon v-if="thread.state?.important" name="i-mdi-exclamation-thick" class="size-5 text-red-500" />
+                            <UIcon v-if="thread.state?.favorite" name="i-mdi-star" class="size-5 text-yellow-500" />
                         </div>
                     </div>
                     <p class="line-clamp-1 text-gray-400 dark:text-gray-500">

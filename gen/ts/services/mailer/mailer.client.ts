@@ -4,18 +4,16 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { MailerService } from "./mailer";
-import type { SetUserSettingsResponse } from "./mailer";
-import type { SetUserSettingsRequest } from "./mailer";
-import type { GetUserSettingsResponse } from "./mailer";
-import type { GetUserSettingsRequest } from "./mailer";
+import type { SetEmailSettingsResponse } from "./mailer";
+import type { SetEmailSettingsRequest } from "./mailer";
+import type { GetEmailSettingsResponse } from "./mailer";
+import type { GetEmailSettingsRequest } from "./mailer";
 import type { DeleteMessageResponse } from "./mailer";
 import type { DeleteMessageRequest } from "./mailer";
 import type { PostMessageResponse } from "./mailer";
 import type { PostMessageRequest } from "./mailer";
 import type { ListThreadMessagesResponse } from "./mailer";
 import type { ListThreadMessagesRequest } from "./mailer";
-import type { LeaveThreadResponse } from "./mailer";
-import type { LeaveThreadRequest } from "./mailer";
 import type { SetThreadStateResponse } from "./mailer";
 import type { SetThreadStateRequest } from "./mailer";
 import type { DeleteThreadResponse } from "./mailer";
@@ -130,12 +128,6 @@ export interface IMailerServiceClient {
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: LeaveThread(services.mailer.LeaveThreadRequest) returns (services.mailer.LeaveThreadResponse);
-     */
-    leaveThread(input: LeaveThreadRequest, options?: RpcOptions): UnaryCall<LeaveThreadRequest, LeaveThreadResponse>;
-    /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreadMessages(services.mailer.ListThreadMessagesRequest) returns (services.mailer.ListThreadMessagesResponse);
      */
     listThreadMessages(input: ListThreadMessagesRequest, options?: RpcOptions): UnaryCall<ListThreadMessagesRequest, ListThreadMessagesResponse>;
@@ -154,15 +146,15 @@ export interface IMailerServiceClient {
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: GetUserSettings(services.mailer.GetUserSettingsRequest) returns (services.mailer.GetUserSettingsResponse);
+     * @generated from protobuf rpc: GetEmailSettings(services.mailer.GetEmailSettingsRequest) returns (services.mailer.GetEmailSettingsResponse);
      */
-    getUserSettings(input: GetUserSettingsRequest, options?: RpcOptions): UnaryCall<GetUserSettingsRequest, GetUserSettingsResponse>;
+    getEmailSettings(input: GetEmailSettingsRequest, options?: RpcOptions): UnaryCall<GetEmailSettingsRequest, GetEmailSettingsResponse>;
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: SetUserSettings(services.mailer.SetUserSettingsRequest) returns (services.mailer.SetUserSettingsResponse);
+     * @generated from protobuf rpc: SetEmailSettings(services.mailer.SetEmailSettingsRequest) returns (services.mailer.SetEmailSettingsResponse);
      */
-    setUserSettings(input: SetUserSettingsRequest, options?: RpcOptions): UnaryCall<SetUserSettingsRequest, SetUserSettingsResponse>;
+    setEmailSettings(input: SetEmailSettingsRequest, options?: RpcOptions): UnaryCall<SetEmailSettingsRequest, SetEmailSettingsResponse>;
 }
 /**
  * @generated from protobuf service services.mailer.MailerService
@@ -293,19 +285,10 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: LeaveThread(services.mailer.LeaveThreadRequest) returns (services.mailer.LeaveThreadResponse);
-     */
-    leaveThread(input: LeaveThreadRequest, options?: RpcOptions): UnaryCall<LeaveThreadRequest, LeaveThreadResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<LeaveThreadRequest, LeaveThreadResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=ListEmails
-     *
      * @generated from protobuf rpc: ListThreadMessages(services.mailer.ListThreadMessagesRequest) returns (services.mailer.ListThreadMessagesResponse);
      */
     listThreadMessages(input: ListThreadMessagesRequest, options?: RpcOptions): UnaryCall<ListThreadMessagesRequest, ListThreadMessagesResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListThreadMessagesRequest, ListThreadMessagesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -314,7 +297,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: PostMessage(services.mailer.PostMessageRequest) returns (services.mailer.PostMessageResponse);
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<PostMessageRequest, PostMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -323,25 +306,25 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteMessage(services.mailer.DeleteMessageRequest) returns (services.mailer.DeleteMessageResponse);
      */
     deleteMessage(input: DeleteMessageRequest, options?: RpcOptions): UnaryCall<DeleteMessageRequest, DeleteMessageResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteMessageRequest, DeleteMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: GetUserSettings(services.mailer.GetUserSettingsRequest) returns (services.mailer.GetUserSettingsResponse);
+     * @generated from protobuf rpc: GetEmailSettings(services.mailer.GetEmailSettingsRequest) returns (services.mailer.GetEmailSettingsResponse);
      */
-    getUserSettings(input: GetUserSettingsRequest, options?: RpcOptions): UnaryCall<GetUserSettingsRequest, GetUserSettingsResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetUserSettingsRequest, GetUserSettingsResponse>("unary", this._transport, method, opt, input);
+    getEmailSettings(input: GetEmailSettingsRequest, options?: RpcOptions): UnaryCall<GetEmailSettingsRequest, GetEmailSettingsResponse> {
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetEmailSettingsRequest, GetEmailSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=ListEmails
      *
-     * @generated from protobuf rpc: SetUserSettings(services.mailer.SetUserSettingsRequest) returns (services.mailer.SetUserSettingsResponse);
+     * @generated from protobuf rpc: SetEmailSettings(services.mailer.SetEmailSettingsRequest) returns (services.mailer.SetEmailSettingsResponse);
      */
-    setUserSettings(input: SetUserSettingsRequest, options?: RpcOptions): UnaryCall<SetUserSettingsRequest, SetUserSettingsResponse> {
-        const method = this.methods[18], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SetUserSettingsRequest, SetUserSettingsResponse>("unary", this._transport, method, opt, input);
+    setEmailSettings(input: SetEmailSettingsRequest, options?: RpcOptions): UnaryCall<SetEmailSettingsRequest, SetEmailSettingsResponse> {
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetEmailSettingsRequest, SetEmailSettingsResponse>("unary", this._transport, method, opt, input);
     }
 }

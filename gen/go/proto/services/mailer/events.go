@@ -10,11 +10,12 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/utils"
 )
 
-func (s *Server) sendUpdate(ctx context.Context, event *mailer.MailerEvent, users []int32) error {
-	users = utils.RemoveSliceDuplicates(users)
+func (s *Server) sendUpdate(ctx context.Context, event *mailer.MailerEvent, emailIds []uint64) error {
+	emailIds = utils.RemoveSliceDuplicates(emailIds)
 
-	for _, userId := range users {
-		if _, err := s.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userId), &notifications.UserEvent{
+	for _, emailId := range emailIds {
+		// TODO how to handle sending out the updates to users
+		if _, err := s.js.PublishAsyncProto(ctx, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, emailId), &notifications.UserEvent{
 			Data: &notifications.UserEvent_Mailer{
 				Mailer: event,
 			},

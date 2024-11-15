@@ -10,14 +10,23 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+)
+
+var (
+	tEmails           = table.FivenetMailerEmails.AS("email")
+	tEmailsUserAccess = table.FivenetMailerEmailsUserAccess
+	tEmailsJobAccess  = table.FivenetMailerEmailsJobAccess
 )
 
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
+
+	tEmails := tEmails.AS("email_short")
 
 	if !userInfo.SuperUser {
 		condition = condition.AND(
@@ -39,7 +48,6 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 		SELECT(
 			tEmails.ID,
 			tEmails.Job,
-			tEmails.Domain,
 			tEmails.Email,
 			tEmails.Label,
 			tEmails.Internal,
@@ -80,7 +88,6 @@ func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool) (*mai
 			tEmails.DeletedAt,
 			tEmails.Job,
 			tEmails.Email,
-			tEmails.Domain,
 			tEmails.Label,
 			tEmails.Internal,
 			tEmails.Signature,
@@ -189,7 +196,6 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			INSERT(
 				tEmails.Job,
 				tEmails.Email,
-				tEmails.Domain,
 				tEmails.Label,
 				tEmails.Internal,
 				tEmails.Signature,
@@ -197,7 +203,6 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			VALUES(
 				userInfo.Job,
 				req.Email.Email,
-				req.Email.Domain,
 				req.Email.Label,
 				req.Email.Internal,
 				req.Email.Signature,

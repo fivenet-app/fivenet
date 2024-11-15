@@ -11,8 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
-import { UserShort } from "../users/users";
-import { Email } from "./email";
+import { EmailShort } from "./email";
 /**
  * @generated from protobuf message resources.mailer.Message
  */
@@ -26,49 +25,49 @@ export interface Message {
      */
     threadId: string;
     /**
-     * @generated from protobuf field: optional uint64 sender_email_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 sender_id = 3 [jstype = JS_STRING];
      */
-    senderEmailId?: string;
+    senderId?: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.Email sender_email = 4;
+     * @generated from protobuf field: optional resources.mailer.EmailShort sender = 4;
      */
-    senderEmail?: Email;
+    sender?: EmailShort;
     /**
-     * @generated from protobuf field: optional uint64 sender_user_id = 5;
-     */
-    senderUserId?: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort sender_user = 6;
-     */
-    senderUser?: UserShort; // @gotags: alias:"sender"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 7;
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 8;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 6;
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 9;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 7;
      */
     deletedAt?: Timestamp;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string title = 10;
+     * @generated from protobuf field: string title = 8;
      */
     title: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 11;
+     * @generated from protobuf field: string content = 9;
      */
     content: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.MessageData data = 12;
+     * @generated from protobuf field: optional resources.mailer.MessageData data = 10;
      */
     data?: MessageData;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 11;
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional string creator_job = 12;
+     */
+    creatorJob?: string;
 }
 /**
  * @generated from protobuf message resources.mailer.MessageData
@@ -92,16 +91,16 @@ class Message$Type extends MessageType<Message> {
         super("resources.mailer.Message", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "sender_email_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "sender_email", kind: "message", T: () => Email },
-            { no: 5, name: "sender_user_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 6, name: "sender_user", kind: "message", T: () => UserShort },
-            { no: 7, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 8, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "8192" } } } },
-            { no: 12, name: "data", kind: "message", T: () => MessageData }
+            { no: 3, name: "sender_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "sender", kind: "message", T: () => EmailShort },
+            { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 7, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "8192" } } } },
+            { no: 10, name: "data", kind: "message", T: () => MessageData },
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<Message>): Message {
@@ -125,35 +124,35 @@ class Message$Type extends MessageType<Message> {
                 case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
                     message.threadId = reader.uint64().toString();
                     break;
-                case /* optional uint64 sender_email_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.senderEmailId = reader.uint64().toString();
+                case /* optional uint64 sender_id = 3 [jstype = JS_STRING];*/ 3:
+                    message.senderId = reader.uint64().toString();
                     break;
-                case /* optional resources.mailer.Email sender_email */ 4:
-                    message.senderEmail = Email.internalBinaryRead(reader, reader.uint32(), options, message.senderEmail);
+                case /* optional resources.mailer.EmailShort sender */ 4:
+                    message.sender = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.sender);
                     break;
-                case /* optional uint64 sender_user_id */ 5:
-                    message.senderUserId = reader.uint64().toNumber();
-                    break;
-                case /* optional resources.users.UserShort sender_user */ 6:
-                    message.senderUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.senderUser);
-                    break;
-                case /* resources.timestamp.Timestamp created_at */ 7:
+                case /* resources.timestamp.Timestamp created_at */ 5:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* optional resources.timestamp.Timestamp updated_at */ 8:
+                case /* optional resources.timestamp.Timestamp updated_at */ 6:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* optional resources.timestamp.Timestamp deleted_at */ 9:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 7:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* string title */ 10:
+                case /* string title */ 8:
                     message.title = reader.string();
                     break;
-                case /* string content */ 11:
+                case /* string content */ 9:
                     message.content = reader.string();
                     break;
-                case /* optional resources.mailer.MessageData data */ 12:
+                case /* optional resources.mailer.MessageData data */ 10:
                     message.data = MessageData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                case /* optional int32 creator_id */ 11:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional string creator_job */ 12:
+                    message.creatorJob = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -173,36 +172,36 @@ class Message$Type extends MessageType<Message> {
         /* uint64 thread_id = 2 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* optional uint64 sender_email_id = 3 [jstype = JS_STRING]; */
-        if (message.senderEmailId !== undefined)
-            writer.tag(3, WireType.Varint).uint64(message.senderEmailId);
-        /* optional resources.mailer.Email sender_email = 4; */
-        if (message.senderEmail)
-            Email.internalBinaryWrite(message.senderEmail, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 sender_user_id = 5; */
-        if (message.senderUserId !== undefined)
-            writer.tag(5, WireType.Varint).uint64(message.senderUserId);
-        /* optional resources.users.UserShort sender_user = 6; */
-        if (message.senderUser)
-            UserShort.internalBinaryWrite(message.senderUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.timestamp.Timestamp created_at = 7; */
+        /* optional uint64 sender_id = 3 [jstype = JS_STRING]; */
+        if (message.senderId !== undefined)
+            writer.tag(3, WireType.Varint).uint64(message.senderId);
+        /* optional resources.mailer.EmailShort sender = 4; */
+        if (message.sender)
+            EmailShort.internalBinaryWrite(message.sender, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp created_at = 5; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp updated_at = 8; */
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 6; */
         if (message.updatedAt)
-            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp deleted_at = 9; */
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 7; */
         if (message.deletedAt)
-            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* string title = 10; */
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* string title = 8; */
         if (message.title !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.title);
-        /* string content = 11; */
+            writer.tag(8, WireType.LengthDelimited).string(message.title);
+        /* string content = 9; */
         if (message.content !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.content);
-        /* optional resources.mailer.MessageData data = 12; */
+            writer.tag(9, WireType.LengthDelimited).string(message.content);
+        /* optional resources.mailer.MessageData data = 10; */
         if (message.data)
-            MessageData.internalBinaryWrite(message.data, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            MessageData.internalBinaryWrite(message.data, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 creator_id = 11; */
+        if (message.creatorId !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* optional string creator_job = 12; */
+        if (message.creatorJob !== undefined)
+            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

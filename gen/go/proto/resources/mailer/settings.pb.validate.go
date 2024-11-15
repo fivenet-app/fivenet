@@ -35,42 +35,33 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on UserSettings with the rules defined in
+// Validate checks the field values on EmailSettings with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *UserSettings) Validate() error {
+func (m *EmailSettings) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UserSettings with the rules defined
+// ValidateAll checks the field values on EmailSettings with the rules defined
 // in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UserSettingsMultiError, or
+// result is a list of violation errors wrapped in EmailSettingsMultiError, or
 // nil if none found.
-func (m *UserSettings) ValidateAll() error {
+func (m *EmailSettings) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UserSettings) validate(all bool) error {
+func (m *EmailSettings) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	if m.GetUserId() < 0 {
-		err := UserSettingsValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for EmailId
 
-	if len(m.GetBlockedUsers()) > 25 {
-		err := UserSettingsValidationError{
-			field:  "BlockedUsers",
+	if len(m.GetBlockedEmails()) > 25 {
+		err := EmailSettingsValidationError{
+			field:  "BlockedEmails",
 			reason: "value must contain no more than 25 item(s)",
 		}
 		if !all {
@@ -79,53 +70,20 @@ func (m *UserSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	for idx, item := range m.GetBlockedUsers() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserSettingsValidationError{
-						field:  fmt.Sprintf("BlockedUsers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserSettingsValidationError{
-						field:  fmt.Sprintf("BlockedUsers[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserSettingsValidationError{
-					field:  fmt.Sprintf("BlockedUsers[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
-		return UserSettingsMultiError(errors)
+		return EmailSettingsMultiError(errors)
 	}
 
 	return nil
 }
 
-// UserSettingsMultiError is an error wrapping multiple validation errors
-// returned by UserSettings.ValidateAll() if the designated constraints aren't met.
-type UserSettingsMultiError []error
+// EmailSettingsMultiError is an error wrapping multiple validation errors
+// returned by EmailSettings.ValidateAll() if the designated constraints
+// aren't met.
+type EmailSettingsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UserSettingsMultiError) Error() string {
+func (m EmailSettingsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -134,11 +92,11 @@ func (m UserSettingsMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UserSettingsMultiError) AllErrors() []error { return m }
+func (m EmailSettingsMultiError) AllErrors() []error { return m }
 
-// UserSettingsValidationError is the validation error returned by
-// UserSettings.Validate if the designated constraints aren't met.
-type UserSettingsValidationError struct {
+// EmailSettingsValidationError is the validation error returned by
+// EmailSettings.Validate if the designated constraints aren't met.
+type EmailSettingsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -146,22 +104,22 @@ type UserSettingsValidationError struct {
 }
 
 // Field function returns field value.
-func (e UserSettingsValidationError) Field() string { return e.field }
+func (e EmailSettingsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UserSettingsValidationError) Reason() string { return e.reason }
+func (e EmailSettingsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UserSettingsValidationError) Cause() error { return e.cause }
+func (e EmailSettingsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UserSettingsValidationError) Key() bool { return e.key }
+func (e EmailSettingsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UserSettingsValidationError) ErrorName() string { return "UserSettingsValidationError" }
+func (e EmailSettingsValidationError) ErrorName() string { return "EmailSettingsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e UserSettingsValidationError) Error() string {
+func (e EmailSettingsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -173,14 +131,14 @@ func (e UserSettingsValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUserSettings.%s: %s%s",
+		"invalid %sEmailSettings.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UserSettingsValidationError{}
+var _ error = EmailSettingsValidationError{}
 
 var _ interface {
 	Field() string
@@ -188,138 +146,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UserSettingsValidationError{}
-
-// Validate checks the field values on BlockedUser with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *BlockedUser) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on BlockedUser with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in BlockedUserMultiError, or
-// nil if none found.
-func (m *BlockedUser) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *BlockedUser) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for UserId
-
-	if m.User != nil {
-
-		if all {
-			switch v := interface{}(m.GetUser()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, BlockedUserValidationError{
-						field:  "User",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, BlockedUserValidationError{
-						field:  "User",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return BlockedUserValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return BlockedUserMultiError(errors)
-	}
-
-	return nil
-}
-
-// BlockedUserMultiError is an error wrapping multiple validation errors
-// returned by BlockedUser.ValidateAll() if the designated constraints aren't met.
-type BlockedUserMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m BlockedUserMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m BlockedUserMultiError) AllErrors() []error { return m }
-
-// BlockedUserValidationError is the validation error returned by
-// BlockedUser.Validate if the designated constraints aren't met.
-type BlockedUserValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e BlockedUserValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e BlockedUserValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e BlockedUserValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e BlockedUserValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e BlockedUserValidationError) ErrorName() string { return "BlockedUserValidationError" }
-
-// Error satisfies the builtin error interface
-func (e BlockedUserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sBlockedUser.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = BlockedUserValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = BlockedUserValidationError{}
+} = EmailSettingsValidationError{}

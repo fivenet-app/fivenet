@@ -17,12 +17,12 @@ type fivenetMailerThreadsTable struct {
 	mysql.Table
 
 	// Columns
-	ID         mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	UpdatedAt  mysql.ColumnTimestamp
-	DeletedAt  mysql.ColumnTimestamp
-	CreatorJob mysql.ColumnString
-	CreatorID  mysql.ColumnInteger
+	ID             mysql.ColumnInteger
+	CreatedAt      mysql.ColumnTimestamp
+	UpdatedAt      mysql.ColumnTimestamp
+	DeletedAt      mysql.ColumnTimestamp
+	CreatorEmailID mysql.ColumnInteger
+	CreatorID      mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,26 +63,26 @@ func newFivenetMailerThreadsTable(schemaName, tableName, alias string) *FivenetM
 
 func newFivenetMailerThreadsTableImpl(schemaName, tableName, alias string) fivenetMailerThreadsTable {
 	var (
-		IDColumn         = mysql.IntegerColumn("id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
-		CreatorJobColumn = mysql.StringColumn("creator_job")
-		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CreatorJobColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CreatorJobColumn, CreatorIDColumn}
+		IDColumn             = mysql.IntegerColumn("id")
+		CreatedAtColumn      = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn      = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn      = mysql.TimestampColumn("deleted_at")
+		CreatorEmailIDColumn = mysql.IntegerColumn("creator_email_id")
+		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
+		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CreatorEmailIDColumn, CreatorIDColumn}
+		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CreatorEmailIDColumn, CreatorIDColumn}
 	)
 
 	return fivenetMailerThreadsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:         IDColumn,
-		CreatedAt:  CreatedAtColumn,
-		UpdatedAt:  UpdatedAtColumn,
-		DeletedAt:  DeletedAtColumn,
-		CreatorJob: CreatorJobColumn,
-		CreatorID:  CreatorIDColumn,
+		ID:             IDColumn,
+		CreatedAt:      CreatedAtColumn,
+		UpdatedAt:      UpdatedAtColumn,
+		DeletedAt:      DeletedAtColumn,
+		CreatorEmailID: CreatorEmailIDColumn,
+		CreatorID:      CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

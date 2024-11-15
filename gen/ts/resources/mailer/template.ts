@@ -32,21 +32,21 @@ export interface Template {
      */
     deletedAt?: Timestamp;
     /**
+     * @generated from protobuf field: optional uint64 email_id = 6 [jstype = JS_STRING];
+     */
+    emailId?: string;
+    /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string title = 6;
+     * @generated from protobuf field: string title = 7;
      */
     title: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 7;
+     * @generated from protobuf field: string content = 8;
      */
     content: string;
-    /**
-     * @generated from protobuf field: optional uint64 email_id = 8 [jstype = JS_STRING];
-     */
-    emailId?: string;
     /**
      * @generated from protobuf field: optional string creator_job = 9;
      */
@@ -64,9 +64,9 @@ class Template$Type extends MessageType<Template> {
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 7, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "10240" } } } },
-            { no: 8, name: "email_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 6, name: "email_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "10240" } } } },
             { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
@@ -97,14 +97,14 @@ class Template$Type extends MessageType<Template> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 5:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* string title */ 6:
+                case /* optional uint64 email_id = 6 [jstype = JS_STRING];*/ 6:
+                    message.emailId = reader.uint64().toString();
+                    break;
+                case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* string content */ 7:
+                case /* string content */ 8:
                     message.content = reader.string();
-                    break;
-                case /* optional uint64 email_id = 8 [jstype = JS_STRING];*/ 8:
-                    message.emailId = reader.uint64().toString();
                     break;
                 case /* optional string creator_job */ 9:
                     message.creatorJob = reader.string();
@@ -136,15 +136,15 @@ class Template$Type extends MessageType<Template> {
         /* optional resources.timestamp.Timestamp deleted_at = 5; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string title = 6; */
-        if (message.title !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.title);
-        /* string content = 7; */
-        if (message.content !== "")
-            writer.tag(7, WireType.LengthDelimited).string(message.content);
-        /* optional uint64 email_id = 8 [jstype = JS_STRING]; */
+        /* optional uint64 email_id = 6 [jstype = JS_STRING]; */
         if (message.emailId !== undefined)
-            writer.tag(8, WireType.Varint).uint64(message.emailId);
+            writer.tag(6, WireType.Varint).uint64(message.emailId);
+        /* string title = 7; */
+        if (message.title !== "")
+            writer.tag(7, WireType.LengthDelimited).string(message.title);
+        /* string content = 8; */
+        if (message.content !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.content);
         /* optional string creator_job = 9; */
         if (message.creatorJob !== undefined)
             writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);

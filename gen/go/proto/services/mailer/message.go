@@ -23,7 +23,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -41,6 +41,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 		SELECT(
 			tMessages.ID,
 			tMessages.ThreadID,
+			tMessages.SenderID,
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
@@ -54,15 +55,12 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.Avatar.AS("sender_user.avatar"),
 		).
 		FROM(
 			tMessages.
-				LEFT_JOIN(tCreator,
-					tMessages.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tMessages.CreatorID),
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tMessages.SenderID),
 				),
 		).
 		LIMIT(20)
@@ -75,8 +73,8 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Messages); i++ {
-		if resp.Messages[i].Creator != nil {
-			jobInfoFn(resp.Messages[i].Creator)
+		if resp.Messages[i].Sender != nil {
+			jobInfoFn(resp.Messages[i].Sender)
 		}
 	}
 
@@ -106,7 +104,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 		FROM(
 			tMessages.
 				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tMessages.CreatorID),
+					tCreator.ID.EQ(tMessages.SenderID),
 				).
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCreator.ID),
@@ -126,8 +124,9 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 		return nil, nil
 	}
 
-	if message.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, message.Creator)
+	if message.Sender != nil {
+		// TODO
+		// s.enricher.EnrichJobInfoSafe(userInfo, message.Sender)
 	}
 
 	return &message, nil
@@ -145,7 +144,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Message.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Message.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -163,7 +162,6 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	req.Message.CreatorId = &userInfo.UserId
 	lastId, err := s.createMessage(ctx, tx, req.Message)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -187,22 +185,19 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	if thread != nil && thread.Access != nil && len(thread.Access.Users) > 0 {
-		userIds := []int32{userInfo.UserId}
-		if thread.CreatorId != nil {
-			userIds = append(userIds, *thread.CreatorId)
-		}
-		for _, ua := range thread.Access.Users {
-			userIds = append(userIds, ua.UserId)
+	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {
+		emailIds := []uint64{}
+		for _, ua := range thread.Recipients {
+			emailIds = append(emailIds, ua.EmailId)
 		}
 
 		s.sendUpdate(ctx, &mailer.MailerEvent{
 			Data: &mailer.MailerEvent_MessageUpdate{
 				MessageUpdate: message,
 			},
-		}, userIds)
+		}, emailIds)
 
-		if err := s.setUnreadState(ctx, message.ThreadId, userIds); err != nil {
+		if err := s.setUnreadState(ctx, message.ThreadId, emailIds); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
@@ -213,19 +208,25 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 }
 
 func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Message) (uint64, error) {
-	tMessages := table.FivenetMsgsMessages
+	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		INSERT(
 			tMessages.ThreadID,
+			tMessages.SenderID,
+			tMessages.Title,
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
+			tMessages.CreatorJob,
 		).
 		VALUES(
 			msg.ThreadId,
+			msg.SenderId,
+			msg.Title,
 			msg.Content,
 			msg.Data,
 			msg.CreatorId,
+			msg.CreatorJob,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)
@@ -255,7 +256,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_PARTICIPANT)
+	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -282,17 +283,17 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	if thread != nil && thread.Access != nil && len(thread.Access.Users) > 0 {
-		userIds := []int32{userInfo.UserId}
-		for _, ua := range thread.Access.Users {
-			userIds = append(userIds, ua.UserId)
+	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {
+		emailIds := []uint64{}
+		for _, ua := range thread.Recipients {
+			emailIds = append(emailIds, ua.EmailId)
 		}
 
 		s.sendUpdate(ctx, &mailer.MailerEvent{
 			Data: &mailer.MailerEvent_MessageDelete{
 				MessageDelete: req.MessageId,
 			},
-		}, userIds)
+		}, emailIds)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

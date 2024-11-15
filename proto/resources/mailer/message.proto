@@ -4,7 +4,6 @@ package resources.mailer;
 
 import "resources/mailer/email.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
@@ -12,24 +11,24 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 message Message {
   uint64 id = 1 [jstype = JS_STRING];
   uint64 thread_id = 2 [jstype = JS_STRING];
-  optional uint64 sender_email_id = 3 [jstype = JS_STRING];
-  optional resources.mailer.Email sender_email = 4;
-  optional uint64 sender_user_id = 5;
-  optional resources.users.UserShort sender_user = 6; // @gotags: alias:"sender"
-  resources.timestamp.Timestamp created_at = 7;
-  optional resources.timestamp.Timestamp updated_at = 8;
-  optional resources.timestamp.Timestamp deleted_at = 9;
+  optional uint64 sender_id = 3 [jstype = JS_STRING];
+  optional resources.mailer.EmailShort sender = 4;
+  resources.timestamp.Timestamp created_at = 5;
+  optional resources.timestamp.Timestamp updated_at = 6;
+  optional resources.timestamp.Timestamp deleted_at = 7;
   // @sanitize: method=StripTags
-  string title = 10 [(validate.rules).string = {
+  string title = 8 [(validate.rules).string = {
     min_len: 3,
     max_len: 255
   }];
   // @sanitize
-  string content = 11 [(validate.rules).string = {
+  string content = 9 [(validate.rules).string = {
     min_len: 3,
     max_len: 8192
   }];
-  optional MessageData data = 12;
+  optional MessageData data = 10;
+  optional int32 creator_id = 11;
+  optional string creator_job = 12;
 }
 
 message MessageData {

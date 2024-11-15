@@ -31,7 +31,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     const values = event.data;
     await mailerStore
-        .setUserSettings({
+        .setEmailSettings({
             settings: {
                 userId: activeChar.value?.userId ?? 0,
                 blockedUsers: values.users.map((u) => ({

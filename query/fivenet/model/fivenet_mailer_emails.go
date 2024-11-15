@@ -16,9 +16,10 @@ type FivenetMailerEmails struct {
 	CreatedAt *time.Time `json:"created_at"`
 	UpdatedAt *time.Time `json:"updated_at"`
 	DeletedAt *time.Time `json:"deleted_at"`
-	Job       string     `json:"job"`
+	Disabled  *bool      `json:"disabled"`
+	Job       *string    `json:"job"`
+	UserID    *int32     `json:"user_id"`
 	Email     *string    `json:"email"`
-	Domain    string     `json:"domain"`
 	Label     string     `json:"label"`
 	Internal  *bool      `json:"internal"`
 	Signature *string    `json:"signature"`

@@ -35,9 +35,9 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			tTemplates.CreatedAt,
 			tTemplates.UpdatedAt,
 			tTemplates.DeletedAt,
+			tTemplates.EmailID,
 			tTemplates.Title,
 			tTemplates.Content,
-			tTemplates.EmailID,
 		).
 		FROM(tTemplates).
 		WHERE(jet.AND(
@@ -73,9 +73,9 @@ func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*
 			tTemplates.CreatedAt,
 			tTemplates.UpdatedAt,
 			tTemplates.DeletedAt,
+			tTemplates.EmailID,
 			tTemplates.Title,
 			tTemplates.Content,
-			tTemplates.EmailID,
 			tTemplates.CreatorJob,
 			tTemplates.CreatorID,
 		).
@@ -100,6 +100,15 @@ func (s *Server) getTemplate(ctx context.Context, id uint64, emailId *uint64) (*
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	auditEntry := &model.FivenetAuditLog{
+		Service: MailerService_ServiceDesc.ServiceName,
+		Method:  "GetTemplate",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
 	check, err := s.access.CanUserAccessTarget(ctx, req.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -114,6 +123,8 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -168,16 +179,16 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 
 		stmt := tTemplates.
 			INSERT(
+				tTemplates.EmailID,
 				tTemplates.Title,
 				tTemplates.Content,
-				tTemplates.EmailID,
 				tTemplates.CreatorJob,
 				tTemplates.CreatorID,
 			).
 			VALUES(
+				req.Template.EmailId,
 				req.Template.Title,
 				req.Template.Content,
-				req.Template.EmailId,
 				req.Template.CreatorJob,
 				userInfo.UserId,
 			)

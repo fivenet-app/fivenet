@@ -12,17 +12,17 @@ message Template {
   resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   optional resources.timestamp.Timestamp deleted_at = 5;
+  optional uint64 email_id = 6 [jstype = JS_STRING];
   // @sanitize: method=StripTags
-  string title = 6 [(validate.rules).string = {
+  string title = 7 [(validate.rules).string = {
     min_len: 3,
     max_len: 255
   }];
   // @sanitize
-  string content = 7 [(validate.rules).string = {
+  string content = 8 [(validate.rules).string = {
     min_len: 3,
     max_len: 10240
   }];
-  optional uint64 email_id = 8 [jstype = JS_STRING];
   optional string creator_job = 9 [(validate.rules).string.max_len = 40];
   optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
 }

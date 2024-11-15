@@ -21,9 +21,10 @@ type fivenetMailerEmailsTable struct {
 	CreatedAt mysql.ColumnTimestamp
 	UpdatedAt mysql.ColumnTimestamp
 	DeletedAt mysql.ColumnTimestamp
+	Disabled  mysql.ColumnBool
 	Job       mysql.ColumnString
+	UserID    mysql.ColumnInteger
 	Email     mysql.ColumnString
-	Domain    mysql.ColumnString
 	Label     mysql.ColumnString
 	Internal  mysql.ColumnBool
 	Signature mysql.ColumnString
@@ -71,14 +72,15 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		CreatedAtColumn = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
+		DisabledColumn  = mysql.BoolColumn("disabled")
 		JobColumn       = mysql.StringColumn("job")
+		UserIDColumn    = mysql.IntegerColumn("user_id")
 		EmailColumn     = mysql.StringColumn("email")
-		DomainColumn    = mysql.StringColumn("domain")
 		LabelColumn     = mysql.StringColumn("label")
 		InternalColumn  = mysql.BoolColumn("internal")
 		SignatureColumn = mysql.StringColumn("signature")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, EmailColumn, DomainColumn, LabelColumn, InternalColumn, SignatureColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, EmailColumn, DomainColumn, LabelColumn, InternalColumn, SignatureColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn, SignatureColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn, SignatureColumn}
 	)
 
 	return fivenetMailerEmailsTable{
@@ -89,9 +91,10 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		CreatedAt: CreatedAtColumn,
 		UpdatedAt: UpdatedAtColumn,
 		DeletedAt: DeletedAtColumn,
+		Disabled:  DisabledColumn,
 		Job:       JobColumn,
+		UserID:    UserIDColumn,
 		Email:     EmailColumn,
-		Domain:    DomainColumn,
 		Label:     LabelColumn,
 		Internal:  InternalColumn,
 		Signature: SignatureColumn,

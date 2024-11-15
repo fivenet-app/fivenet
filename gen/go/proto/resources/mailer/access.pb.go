@@ -329,6 +329,7 @@ func (x *UserAccess) GetAccess() AccessLevel {
 	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
+// TODO
 type QualificationAccess struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

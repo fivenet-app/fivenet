@@ -97,6 +97,8 @@ export interface UserAccess {
     access: AccessLevel;
 }
 /**
+ * TODO
+ *
  * @generated from protobuf message resources.mailer.QualificationAccess
  */
 export interface QualificationAccess {

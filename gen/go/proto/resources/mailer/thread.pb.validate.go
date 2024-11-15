@@ -98,44 +98,40 @@ func (m *Thread) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetCreatorJob()) > 40 {
-		err := ThreadValidationError{
-			field:  "CreatorJob",
-			reason: "value length must be at most 40 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	// no validation rules for CreatorEmailId
 
-	if all {
-		switch v := interface{}(m.GetRecipients()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ThreadValidationError{
-					field:  "Recipients",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	for idx, item := range m.GetRecipients() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  fmt.Sprintf("Recipients[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  fmt.Sprintf("Recipients[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ThreadValidationError{
-					field:  "Recipients",
+				return ThreadValidationError{
+					field:  fmt.Sprintf("Recipients[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetRecipients()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ThreadValidationError{
-				field:  "Recipients",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if m.UpdatedAt != nil {
@@ -204,6 +200,39 @@ func (m *Thread) validate(all bool) error {
 
 	}
 
+	if m.CreatorEmail != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatorEmail()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  "CreatorEmail",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  "CreatorEmail",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatorEmail()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ThreadValidationError{
+					field:  "CreatorEmail",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.CreatorId != nil {
 
 		if m.GetCreatorId() <= 0 {
@@ -252,14 +281,14 @@ func (m *Thread) validate(all bool) error {
 
 	}
 
-	if m.UserState != nil {
+	if m.State != nil {
 
 		if all {
-			switch v := interface{}(m.GetUserState()).(type) {
+			switch v := interface{}(m.GetState()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ThreadValidationError{
-						field:  "UserState",
+						field:  "State",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -267,49 +296,16 @@ func (m *Thread) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ThreadValidationError{
-						field:  "UserState",
+						field:  "State",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUserState()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetState()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ThreadValidationError{
-					field:  "UserState",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.EmailState != nil {
-
-		if all {
-			switch v := interface{}(m.GetEmailState()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadValidationError{
-						field:  "EmailState",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadValidationError{
-						field:  "EmailState",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetEmailState()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ThreadValidationError{
-					field:  "EmailState",
+					field:  "State",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -394,174 +390,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ThreadValidationError{}
-
-// Validate checks the field values on ThreadRecipients with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ThreadRecipients) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ThreadRecipients with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ThreadRecipientsMultiError, or nil if none found.
-func (m *ThreadRecipients) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ThreadRecipients) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetEmails() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadRecipientsValidationError{
-						field:  fmt.Sprintf("Emails[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadRecipientsValidationError{
-						field:  fmt.Sprintf("Emails[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ThreadRecipientsValidationError{
-					field:  fmt.Sprintf("Emails[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetUsers() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadRecipientsValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadRecipientsValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ThreadRecipientsValidationError{
-					field:  fmt.Sprintf("Users[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return ThreadRecipientsMultiError(errors)
-	}
-
-	return nil
-}
-
-// ThreadRecipientsMultiError is an error wrapping multiple validation errors
-// returned by ThreadRecipients.ValidateAll() if the designated constraints
-// aren't met.
-type ThreadRecipientsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ThreadRecipientsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ThreadRecipientsMultiError) AllErrors() []error { return m }
-
-// ThreadRecipientsValidationError is the validation error returned by
-// ThreadRecipients.Validate if the designated constraints aren't met.
-type ThreadRecipientsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ThreadRecipientsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ThreadRecipientsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ThreadRecipientsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ThreadRecipientsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ThreadRecipientsValidationError) ErrorName() string { return "ThreadRecipientsValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ThreadRecipientsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sThreadRecipients.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ThreadRecipientsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ThreadRecipientsValidationError{}
 
 // Validate checks the field values on ThreadRecipientEmail with the rules
 // defined in the proto definition for this message. If any rules are
@@ -704,172 +532,22 @@ var _ interface {
 	ErrorName() string
 } = ThreadRecipientEmailValidationError{}
 
-// Validate checks the field values on ThreadRecipientUser with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ThreadRecipientUser) Validate() error {
+// Validate checks the field values on ThreadState with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ThreadState) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ThreadRecipientUser with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ThreadRecipientUserMultiError, or nil if none found.
-func (m *ThreadRecipientUser) ValidateAll() error {
+// ValidateAll checks the field values on ThreadState with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ThreadStateMultiError, or
+// nil if none found.
+func (m *ThreadState) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ThreadRecipientUser) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for TargetId
-
-	if m.GetUserId() < 0 {
-		err := ThreadRecipientUserValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.CreatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadRecipientUserValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadRecipientUserValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ThreadRecipientUserValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return ThreadRecipientUserMultiError(errors)
-	}
-
-	return nil
-}
-
-// ThreadRecipientUserMultiError is an error wrapping multiple validation
-// errors returned by ThreadRecipientUser.ValidateAll() if the designated
-// constraints aren't met.
-type ThreadRecipientUserMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ThreadRecipientUserMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ThreadRecipientUserMultiError) AllErrors() []error { return m }
-
-// ThreadRecipientUserValidationError is the validation error returned by
-// ThreadRecipientUser.Validate if the designated constraints aren't met.
-type ThreadRecipientUserValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ThreadRecipientUserValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ThreadRecipientUserValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ThreadRecipientUserValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ThreadRecipientUserValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ThreadRecipientUserValidationError) ErrorName() string {
-	return "ThreadRecipientUserValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e ThreadRecipientUserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sThreadRecipientUser.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ThreadRecipientUserValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ThreadRecipientUserValidationError{}
-
-// Validate checks the field values on ThreadStateEmail with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ThreadStateEmail) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ThreadStateEmail with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ThreadStateEmailMultiError, or nil if none found.
-func (m *ThreadStateEmail) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ThreadStateEmail) validate(all bool) error {
+func (m *ThreadState) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -896,7 +574,7 @@ func (m *ThreadStateEmail) validate(all bool) error {
 			switch v := interface{}(m.GetLastRead()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadStateEmailValidationError{
+					errors = append(errors, ThreadStateValidationError{
 						field:  "LastRead",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -904,7 +582,7 @@ func (m *ThreadStateEmail) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadStateEmailValidationError{
+					errors = append(errors, ThreadStateValidationError{
 						field:  "LastRead",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -913,7 +591,7 @@ func (m *ThreadStateEmail) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetLastRead()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ThreadStateEmailValidationError{
+				return ThreadStateValidationError{
 					field:  "LastRead",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -924,19 +602,18 @@ func (m *ThreadStateEmail) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ThreadStateEmailMultiError(errors)
+		return ThreadStateMultiError(errors)
 	}
 
 	return nil
 }
 
-// ThreadStateEmailMultiError is an error wrapping multiple validation errors
-// returned by ThreadStateEmail.ValidateAll() if the designated constraints
-// aren't met.
-type ThreadStateEmailMultiError []error
+// ThreadStateMultiError is an error wrapping multiple validation errors
+// returned by ThreadState.ValidateAll() if the designated constraints aren't met.
+type ThreadStateMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ThreadStateEmailMultiError) Error() string {
+func (m ThreadStateMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -945,11 +622,11 @@ func (m ThreadStateEmailMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ThreadStateEmailMultiError) AllErrors() []error { return m }
+func (m ThreadStateMultiError) AllErrors() []error { return m }
 
-// ThreadStateEmailValidationError is the validation error returned by
-// ThreadStateEmail.Validate if the designated constraints aren't met.
-type ThreadStateEmailValidationError struct {
+// ThreadStateValidationError is the validation error returned by
+// ThreadState.Validate if the designated constraints aren't met.
+type ThreadStateValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -957,22 +634,22 @@ type ThreadStateEmailValidationError struct {
 }
 
 // Field function returns field value.
-func (e ThreadStateEmailValidationError) Field() string { return e.field }
+func (e ThreadStateValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ThreadStateEmailValidationError) Reason() string { return e.reason }
+func (e ThreadStateValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ThreadStateEmailValidationError) Cause() error { return e.cause }
+func (e ThreadStateValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ThreadStateEmailValidationError) Key() bool { return e.key }
+func (e ThreadStateValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ThreadStateEmailValidationError) ErrorName() string { return "ThreadStateEmailValidationError" }
+func (e ThreadStateValidationError) ErrorName() string { return "ThreadStateValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ThreadStateEmailValidationError) Error() string {
+func (e ThreadStateValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -984,14 +661,14 @@ func (e ThreadStateEmailValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sThreadStateEmail.%s: %s%s",
+		"invalid %sThreadState.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ThreadStateEmailValidationError{}
+var _ error = ThreadStateValidationError{}
 
 var _ interface {
 	Field() string
@@ -999,160 +676,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ThreadStateEmailValidationError{}
-
-// Validate checks the field values on ThreadStateUser with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ThreadStateUser) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ThreadStateUser with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ThreadStateUserMultiError, or nil if none found.
-func (m *ThreadStateUser) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ThreadStateUser) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for ThreadId
-
-	if m.GetUserId() < 0 {
-		err := ThreadStateUserValidationError{
-			field:  "UserId",
-			reason: "value must be greater than or equal to 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for Unread
-
-	// no validation rules for Important
-
-	// no validation rules for Favorite
-
-	// no validation rules for Muted
-
-	// no validation rules for Archived
-
-	if m.LastRead != nil {
-
-		if all {
-			switch v := interface{}(m.GetLastRead()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ThreadStateUserValidationError{
-						field:  "LastRead",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ThreadStateUserValidationError{
-						field:  "LastRead",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetLastRead()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ThreadStateUserValidationError{
-					field:  "LastRead",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return ThreadStateUserMultiError(errors)
-	}
-
-	return nil
-}
-
-// ThreadStateUserMultiError is an error wrapping multiple validation errors
-// returned by ThreadStateUser.ValidateAll() if the designated constraints
-// aren't met.
-type ThreadStateUserMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ThreadStateUserMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ThreadStateUserMultiError) AllErrors() []error { return m }
-
-// ThreadStateUserValidationError is the validation error returned by
-// ThreadStateUser.Validate if the designated constraints aren't met.
-type ThreadStateUserValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ThreadStateUserValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ThreadStateUserValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ThreadStateUserValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ThreadStateUserValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ThreadStateUserValidationError) ErrorName() string { return "ThreadStateUserValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ThreadStateUserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sThreadStateUser.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ThreadStateUserValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ThreadStateUserValidationError{}
+} = ThreadStateValidationError{}

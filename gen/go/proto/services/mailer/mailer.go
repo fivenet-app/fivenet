@@ -20,14 +20,6 @@ var (
 
 	tUserProps = table.FivenetUserProps
 
-	tEmails           = table.FivenetMailerEmails.AS("email")
-	tEmailsUserAccess = table.FivenetMailerEmailsUserAccess
-	tEmailsJobAccess  = table.FivenetMailerEmailsJobAccess
-
-	tThreads           = table.FivenetMailerThreads.AS("thread")
-	tThreadsEmailState = table.FivenetMailerThreadsStateEmail.AS("thread_state_email")
-	tThreadsUserState  = table.FivenetMailerThreadsStateUser.AS("thread_state_user")
-
 	tMessages = table.FivenetMailerMessages.AS("message")
 )
 

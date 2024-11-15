@@ -9,7 +9,16 @@ import (
 
 func (m *Email) Sanitize() error {
 
-	m.Domain = htmlsanitizer.StripTags(m.Domain)
+	if m.Email != nil {
+		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	m.Label = htmlsanitizer.StripTags(m.Label)
+
+	return nil
+}
+
+func (m *EmailShort) Sanitize() error {
 
 	if m.Email != nil {
 		*m.Email = htmlsanitizer.StripTags(*m.Email)

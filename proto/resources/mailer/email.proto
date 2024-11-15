@@ -4,6 +4,7 @@ package resources.mailer;
 
 import "resources/mailer/access.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
@@ -13,18 +14,37 @@ message Email {
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  optional string job = 5 [(validate.rules).string.max_len = 40];
-  optional int32 creator_id = 6 [(validate.rules).int32.gt = 0];
+  bool disabled = 5;
+  optional string job = 6 [(validate.rules).string.max_len = 40];
+  optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 8;
   // @sanitize: method=StripTags
-  optional string email = 7 [(validate.rules).string = {min_len: 2, max_len: 40}];
+  optional string email = 9 [(validate.rules).string = {min_len: 6, max_len: 80}];
   // @sanitize: method=StripTags
-  string domain = 8 [(validate.rules).string = {min_len: 5, max_len: 80}];
-  // @sanitize: method=StripTags
-  string label = 9 [(validate.rules).string = {
+  string label = 10 [(validate.rules).string = {
     min_len: 2,
     max_len: 128
   }];
-  bool internal = 10;
-  optional string signature = 11 [(validate.rules).string.max_len = 1024];
-  Access access = 12;
+  bool internal = 11;
+  optional string signature = 12 [(validate.rules).string.max_len = 1024];
+  Access access = 13;
+}
+
+message EmailShort {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  bool disabled = 5;
+  optional string job = 6 [(validate.rules).string.max_len = 40];
+  optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 8;
+  // @sanitize: method=StripTags
+  optional string email = 9 [(validate.rules).string = {min_len: 2, max_len: 40}];
+  // @sanitize: method=StripTags
+  string label = 10 [(validate.rules).string = {
+    min_len: 2,
+    max_len: 128
+  }];
+  bool internal = 11;
 }

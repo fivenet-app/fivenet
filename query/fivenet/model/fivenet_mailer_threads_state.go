@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type FivenetMailerThreadsStateEmail struct {
+type FivenetMailerThreadsState struct {
 	ThreadID  uint64     `sql:"primary_key" json:"thread_id"`
 	EmailID   uint64     `sql:"primary_key" json:"email_id"`
 	LastRead  *time.Time `json:"last_read"`

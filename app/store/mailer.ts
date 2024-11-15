@@ -10,13 +10,13 @@ import type {
     CreateThreadResponse,
     DeleteThreadRequest,
     DeleteThreadResponse,
-    GetUserSettingsRequest,
-    GetUserSettingsResponse,
+    GetEmailSettingsRequest,
+    GetEmailSettingsResponse,
     LeaveThreadResponse,
     PostMessageRequest,
     PostMessageResponse,
-    SetUserSettingsRequest,
-    SetUserSettingsResponse,
+    SetEmailSettingsRequest,
+    SetEmailSettingsResponse,
 } from '~~/gen/ts/services/mailer/mailer';
 
 const logger = useLogger('💬 Mailer');
@@ -260,7 +260,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // User Settings
-        async getUserSettings(req: GetUserSettingsRequest): Promise<GetUserSettingsResponse> {
+        async getUserSettings(req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> {
             try {
                 const call = getGRPCMailerClient().getUserSettings(req);
                 const { response } = await call;
@@ -275,9 +275,9 @@ export const useMailerStore = defineStore('mailer', {
                 throw e;
             }
         },
-        async setUserSettings(req: SetUserSettingsRequest): Promise<SetUserSettingsResponse> {
+        async setEmailSettings(req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> {
             try {
-                const call = getGRPCMailerClient().setUserSettings(req);
+                const call = getGRPCMailerClient().setEmailSettings(req);
                 const { response } = await call;
 
                 if (response.settings) {

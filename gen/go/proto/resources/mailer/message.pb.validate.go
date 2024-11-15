@@ -111,18 +111,18 @@ func (m *Message) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.SenderEmailId != nil {
-		// no validation rules for SenderEmailId
+	if m.SenderId != nil {
+		// no validation rules for SenderId
 	}
 
-	if m.SenderEmail != nil {
+	if m.Sender != nil {
 
 		if all {
-			switch v := interface{}(m.GetSenderEmail()).(type) {
+			switch v := interface{}(m.GetSender()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, MessageValidationError{
-						field:  "SenderEmail",
+						field:  "Sender",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -130,53 +130,16 @@ func (m *Message) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, MessageValidationError{
-						field:  "SenderEmail",
+						field:  "Sender",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetSenderEmail()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetSender()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return MessageValidationError{
-					field:  "SenderEmail",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.SenderUserId != nil {
-		// no validation rules for SenderUserId
-	}
-
-	if m.SenderUser != nil {
-
-		if all {
-			switch v := interface{}(m.GetSenderUser()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MessageValidationError{
-						field:  "SenderUser",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MessageValidationError{
-						field:  "SenderUser",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetSenderUser()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MessageValidationError{
-					field:  "SenderUser",
+					field:  "Sender",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -282,6 +245,14 @@ func (m *Message) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
+	if m.CreatorJob != nil {
+		// no validation rules for CreatorJob
 	}
 
 	if len(errors) > 0 {

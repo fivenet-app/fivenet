@@ -21,9 +21,9 @@ type fivenetMailerTemplatesTable struct {
 	CreatedAt  mysql.ColumnTimestamp
 	UpdatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp
+	EmailID    mysql.ColumnInteger
 	Title      mysql.ColumnString
 	Content    mysql.ColumnString
-	EmailID    mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
 	CreatorID  mysql.ColumnInteger
 
@@ -70,13 +70,13 @@ func newFivenetMailerTemplatesTableImpl(schemaName, tableName, alias string) fiv
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
+		EmailIDColumn    = mysql.IntegerColumn("email_id")
 		TitleColumn      = mysql.StringColumn("title")
 		ContentColumn    = mysql.StringColumn("content")
-		EmailIDColumn    = mysql.IntegerColumn("email_id")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, EmailIDColumn, CreatorJobColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, EmailIDColumn, CreatorJobColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, EmailIDColumn, TitleColumn, ContentColumn, CreatorJobColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, EmailIDColumn, TitleColumn, ContentColumn, CreatorJobColumn, CreatorIDColumn}
 	)
 
 	return fivenetMailerTemplatesTable{
@@ -87,9 +87,9 @@ func newFivenetMailerTemplatesTableImpl(schemaName, tableName, alias string) fiv
 		CreatedAt:  CreatedAtColumn,
 		UpdatedAt:  UpdatedAtColumn,
 		DeletedAt:  DeletedAtColumn,
+		EmailID:    EmailIDColumn,
 		Title:      TitleColumn,
 		Content:    ContentColumn,
-		EmailID:    EmailIDColumn,
 		CreatorJob: CreatorJobColumn,
 		CreatorID:  CreatorIDColumn,
 

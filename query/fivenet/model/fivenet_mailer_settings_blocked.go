@@ -8,6 +8,6 @@
 package model
 
 type FivenetMailerSettingsBlocked struct {
-	SourceEmailID uint64 `sql:"primary_key" json:"source_email_id"`
-	TargetEmailID uint64 `sql:"primary_key" json:"target_email_id"`
+	EmailID     uint64 `sql:"primary_key" json:"email_id"`
+	TargetEmail string `sql:"primary_key" json:"target_email"`
 }
