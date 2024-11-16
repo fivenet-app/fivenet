@@ -3,11 +3,12 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { useMailerStore } from '~/store/mailer';
-import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import DocEditor from '../partials/DocEditor.vue';
 
 const { isOpen } = useModal();
+
+const { activeChar } = useAuth();
 
 const mailerStore = useMailerStore();
 const { draft: state } = storeToRefs(mailerStore);
@@ -28,23 +29,24 @@ async function createThread(values: Schema): Promise<void> {
     await mailerStore.createThread({
         thread: {
             id: '0',
-            title: values.title,
-            creatorJob: '',
-            access: {
-                jobs: [],
-                users: values.users.map((u) => ({
+            recipients: [
+                {
                     id: '0',
-                    targetId: '0',
-                    userId: u.userId,
-                    access: AccessLevel.PARTICIPANT,
-                })),
-            },
+                    emailId: '1',
+                    targetId: '2',
+                },
+            ],
+            creatorEmailId: '1',
+            creatorId: activeChar.value!.userId,
         },
 
         message: {
             id: '0',
             threadId: '0',
-            message: values.content,
+            title: values.title,
+            content: values.content,
+            creatorId: activeChar.value!.userId,
+            creatorJob: activeChar.value!.job,
         },
     });
 

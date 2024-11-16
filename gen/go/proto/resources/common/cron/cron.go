@@ -6,6 +6,15 @@ func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 	if in.State > CronjobState_CRONJOB_STATE_UNSPECIFIED {
 		x.State = in.State
 	}
+
+	if in.NextScheduleTime != nil {
+		x.NextScheduleTime = in.NextScheduleTime
+	}
+
+	if in.LastAttemptTime != nil {
+		x.LastAttemptTime = in.LastAttemptTime
+	}
+
 	if in.Data != nil {
 		x.Data = in.Data
 	}

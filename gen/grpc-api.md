@@ -336,19 +336,6 @@
   
     - [PageActivityType](#resources-wiki-PageActivityType)
   
-- [resources/mailer/events.proto](#resources_mailer_events-proto)
-    - [MailerEvent](#resources-mailer-MailerEvent)
-  
-- [resources/mailer/message.proto](#resources_mailer_message-proto)
-    - [Message](#resources-mailer-Message)
-    - [MessageData](#resources-mailer-MessageData)
-    - [MessageDataEntry](#resources-mailer-MessageDataEntry)
-  
-- [resources/mailer/thread.proto](#resources_mailer_thread-proto)
-    - [Thread](#resources-mailer-Thread)
-    - [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail)
-    - [ThreadState](#resources-mailer-ThreadState)
-  
 - [resources/mailer/access.proto](#resources_mailer_access-proto)
     - [Access](#resources-mailer-Access)
     - [JobAccess](#resources-mailer-JobAccess)
@@ -357,15 +344,28 @@
   
     - [AccessLevel](#resources-mailer-AccessLevel)
   
+- [resources/mailer/email.proto](#resources_mailer_email-proto)
+    - [Email](#resources-mailer-Email)
+    - [EmailShort](#resources-mailer-EmailShort)
+  
+- [resources/mailer/events.proto](#resources_mailer_events-proto)
+    - [MailerEvent](#resources-mailer-MailerEvent)
+  
+- [resources/mailer/message.proto](#resources_mailer_message-proto)
+    - [Message](#resources-mailer-Message)
+    - [MessageData](#resources-mailer-MessageData)
+    - [MessageDataEntry](#resources-mailer-MessageDataEntry)
+  
 - [resources/mailer/settings.proto](#resources_mailer_settings-proto)
     - [EmailSettings](#resources-mailer-EmailSettings)
   
 - [resources/mailer/template.proto](#resources_mailer_template-proto)
     - [Template](#resources-mailer-Template)
   
-- [resources/mailer/email.proto](#resources_mailer_email-proto)
-    - [Email](#resources-mailer-Email)
-    - [EmailShort](#resources-mailer-EmailShort)
+- [resources/mailer/thread.proto](#resources_mailer_thread-proto)
+    - [Thread](#resources-mailer-Thread)
+    - [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail)
+    - [ThreadState](#resources-mailer-ThreadState)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -562,6 +562,19 @@
   
     - [JobsConductService](#services-jobs-JobsConductService)
   
+- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
+    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
+    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
+    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
+    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
+    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
+    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+    - [TimeclockDay](#services-jobs-TimeclockDay)
+    - [TimeclockRange](#services-jobs-TimeclockRange)
+    - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
+  
+    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
+  
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
@@ -579,19 +592,6 @@
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
   
     - [JobsService](#services-jobs-JobsService)
-  
-- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
-    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
-    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
-    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
-    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
-    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
-    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-    - [TimeclockDay](#services-jobs-TimeclockDay)
-    - [TimeclockRange](#services-jobs-TimeclockRange)
-    - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
-  
-    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
   
 - [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
@@ -5591,188 +5591,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_mailer_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/events.proto
-
-
-
-<a name="resources-mailer-MailerEvent"></a>
-
-### MailerEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_update | [Thread](#resources-mailer-Thread) |  | TODO |
-| thread_delete | [uint64](#uint64) |  |  |
-| message_update | [Message](#resources-mailer-Message) |  |  |
-| message_delete | [uint64](#uint64) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_mailer_message-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/message.proto
-
-
-
-<a name="resources-mailer-Message"></a>
-
-### Message
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| thread_id | [uint64](#uint64) |  |  |
-| sender_id | [uint64](#uint64) | optional |  |
-| sender | [EmailShort](#resources-mailer-EmailShort) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
-| data | [MessageData](#resources-mailer-MessageData) | optional |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator_job | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-mailer-MessageData"></a>
-
-### MessageData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| entry | [MessageDataEntry](#resources-mailer-MessageDataEntry) | repeated |  |
-
-
-
-
-
-
-<a name="resources-mailer-MessageDataEntry"></a>
-
-### MessageDataEntry
-TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_mailer_thread-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/thread.proto
-
-
-
-<a name="resources-mailer-Thread"></a>
-
-### Thread
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| title | [string](#string) |  | @sanitize: method=StripTags |
-| creator_email_id | [uint64](#uint64) |  |  |
-| creator_email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| recipients | [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail) | repeated |  |
-| state | [ThreadState](#resources-mailer-ThreadState) | optional |  |
-
-
-
-
-
-
-<a name="resources-mailer-ThreadRecipientEmail"></a>
-
-### ThreadRecipientEmail
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
-| email_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="resources-mailer-ThreadState"></a>
-
-### ThreadState
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| thread_id | [uint64](#uint64) |  |  |
-| email_id | [uint64](#uint64) |  |  |
-| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| unread | [bool](#bool) |  |  |
-| important | [bool](#bool) |  |  |
-| favorite | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
-| archived | [bool](#bool) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_mailer_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5884,6 +5702,177 @@ TODO
 
 
 
+<a name="resources_mailer_email-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/email.proto
+
+
+
+<a name="resources-mailer-Email"></a>
+
+### Email
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| disabled | [bool](#bool) |  |  |
+| job | [string](#string) | optional |  |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
+| label | [string](#string) |  | @sanitize: method=StripTags |
+| internal | [bool](#bool) |  |  |
+| signature | [string](#string) | optional |  |
+| access | [Access](#resources-mailer-Access) |  |  |
+
+
+
+
+
+
+<a name="resources-mailer-EmailShort"></a>
+
+### EmailShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| disabled | [bool](#bool) |  |  |
+| job | [string](#string) | optional |  |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
+| label | [string](#string) |  | @sanitize: method=StripTags |
+| internal | [bool](#bool) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/events.proto
+
+
+
+<a name="resources-mailer-MailerEvent"></a>
+
+### MailerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email_update | [Email](#resources-mailer-Email) |  |  |
+| email_delete | [uint64](#uint64) |  |  |
+| thread_update | [Thread](#resources-mailer-Thread) |  |  |
+| thread_delete | [uint64](#uint64) |  |  |
+| message_update | [Message](#resources-mailer-Message) |  |  |
+| message_delete | [uint64](#uint64) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_message-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/message.proto
+
+
+
+<a name="resources-mailer-Message"></a>
+
+### Message
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| thread_id | [uint64](#uint64) |  |  |
+| sender_id | [uint64](#uint64) | optional |  |
+| sender | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  | @sanitize: method=StripTags |
+| content | [string](#string) |  | @sanitize |
+| data | [MessageData](#resources-mailer-MessageData) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator_job | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-mailer-MessageData"></a>
+
+### MessageData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [MessageDataEntry](#resources-mailer-MessageDataEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-mailer-MessageDataEntry"></a>
+
+### MessageDataEntry
+TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_mailer_settings-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5955,43 +5944,16 @@ TODO
 
 
 
-<a name="resources_mailer_email-proto"></a>
+<a name="resources_mailer_thread-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/mailer/email.proto
+## resources/mailer/thread.proto
 
 
 
-<a name="resources-mailer-Email"></a>
+<a name="resources-mailer-Thread"></a>
 
-### Email
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| disabled | [bool](#bool) |  |  |
-| job | [string](#string) | optional |  |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-| label | [string](#string) |  | @sanitize: method=StripTags |
-| internal | [bool](#bool) |  |  |
-| signature | [string](#string) | optional |  |
-| access | [Access](#resources-mailer-Access) |  |  |
-
-
-
-
-
-
-<a name="resources-mailer-EmailShort"></a>
-
-### EmailShort
+### Thread
 
 
 
@@ -6001,13 +5963,53 @@ TODO
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| disabled | [bool](#bool) |  |  |
-| job | [string](#string) | optional |  |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-| label | [string](#string) |  | @sanitize: method=StripTags |
-| internal | [bool](#bool) |  |  |
+| creator_email_id | [uint64](#uint64) |  |  |
+| creator_email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| recipients | [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail) | repeated |  |
+| state | [ThreadState](#resources-mailer-ThreadState) | optional |  |
+
+
+
+
+
+
+<a name="resources-mailer-ThreadRecipientEmail"></a>
+
+### ThreadRecipientEmail
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
+| email_id | [uint64](#uint64) |  |  |
+| email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-mailer-ThreadState"></a>
+
+### ThreadState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+| email_id | [uint64](#uint64) |  |  |
+| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| unread | [bool](#bool) |  |  |
+| important | [bool](#bool) |  |  |
+| favorite | [bool](#bool) |  |  |
+| muted | [bool](#bool) |  |  |
+| archived | [bool](#bool) |  |  |
 
 
 
@@ -8781,6 +8783,190 @@ TODO
 
 
 
+<a name="services_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/jobs/timeclock.proto
+
+
+
+<a name="services-jobs-GetTimeclockStatsRequest"></a>
+
+### GetTimeclockStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-GetTimeclockStatsResponse"></a>
+
+### GetTimeclockStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesRequest"></a>
+
+### ListInactiveEmployeesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| days | [int32](#int32) |  | Search params |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesResponse"></a>
+
+### ListInactiveEmployeesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockRequest"></a>
+
+### ListTimeclockRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| user_mode | [resources.jobs.TimeclockUserMode](#resources-jobs-TimeclockUserMode) |  | Search params |
+| mode | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
+| date | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
+| per_day | [bool](#bool) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockResponse"></a>
+
+### ListTimeclockResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| stats_weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+| daily | [TimeclockDay](#services-jobs-TimeclockDay) |  |  |
+| weekly | [TimeclockWeekly](#services-jobs-TimeclockWeekly) |  |  |
+| range | [TimeclockRange](#services-jobs-TimeclockRange) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockDay"></a>
+
+### TimeclockDay
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockRange"></a>
+
+### TimeclockRange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockWeekly"></a>
+
+### TimeclockWeekly
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-jobs-JobsTimeclockService"></a>
+
+### JobsTimeclockService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
+| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
+| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
+
+ 
+
+
+
 <a name="services_jobs_jobs-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -9019,190 +9205,6 @@ TODO
 | SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}|Types/StringList:[]string{&#34;AbsenceDate&#34;,&#34;Note&#34;} |
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
-
- 
-
-
-
-<a name="services_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/jobs/timeclock.proto
-
-
-
-<a name="services-jobs-GetTimeclockStatsRequest"></a>
-
-### GetTimeclockStatsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-GetTimeclockStatsResponse"></a>
-
-### GetTimeclockStatsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesRequest"></a>
-
-### ListInactiveEmployeesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| days | [int32](#int32) |  | Search params |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesResponse"></a>
-
-### ListInactiveEmployeesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockRequest"></a>
-
-### ListTimeclockRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| user_mode | [resources.jobs.TimeclockUserMode](#resources-jobs-TimeclockUserMode) |  | Search params |
-| mode | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
-| date | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
-| per_day | [bool](#bool) |  |  |
-| user_ids | [int32](#int32) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockResponse"></a>
-
-### ListTimeclockResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| stats_weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-| daily | [TimeclockDay](#services-jobs-TimeclockDay) |  |  |
-| weekly | [TimeclockWeekly](#services-jobs-TimeclockWeekly) |  |  |
-| range | [TimeclockRange](#services-jobs-TimeclockRange) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockDay"></a>
-
-### TimeclockDay
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| sum | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockRange"></a>
-
-### TimeclockRange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| sum | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-TimeclockWeekly"></a>
-
-### TimeclockWeekly
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| sum | [float](#float) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-jobs-JobsTimeclockService"></a>
-
-### JobsTimeclockService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
-| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
-| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
 
  
 

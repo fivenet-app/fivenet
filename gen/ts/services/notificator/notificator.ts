@@ -66,9 +66,9 @@ export interface MarkNotificationsRequest {
  */
 export interface MarkNotificationsResponse {
     /**
-     * @generated from protobuf field: uint64 updated = 1;
+     * @generated from protobuf field: uint64 updated = 1 [jstype = JS_STRING];
      */
-    updated: number;
+    updated: string;
 }
 /**
  * @generated from protobuf message services.notificator.StreamRequest
@@ -301,12 +301,12 @@ export const MarkNotificationsRequest = new MarkNotificationsRequest$Type();
 class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsResponse> {
     constructor() {
         super("services.notificator.MarkNotificationsResponse", [
-            { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<MarkNotificationsResponse>): MarkNotificationsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.updated = 0;
+        message.updated = "0";
         if (value !== undefined)
             reflectionMergePartial<MarkNotificationsResponse>(this, message, value);
         return message;
@@ -316,8 +316,8 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 updated */ 1:
-                    message.updated = reader.uint64().toNumber();
+                case /* uint64 updated = 1 [jstype = JS_STRING];*/ 1:
+                    message.updated = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -331,8 +331,8 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
         return message;
     }
     internalBinaryWrite(message: MarkNotificationsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 updated = 1; */
-        if (message.updated !== 0)
+        /* uint64 updated = 1 [jstype = JS_STRING]; */
+        if (message.updated !== "0")
             writer.tag(1, WireType.Varint).uint64(message.updated);
         let u = options.writeUnknownFields;
         if (u !== false)

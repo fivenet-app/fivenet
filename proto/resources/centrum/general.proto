@@ -18,7 +18,7 @@ message Disponents {
 }
 
 message UserUnitMapping {
-  uint64 unit_id = 1;
+  uint64 unit_id = 1 [jstype = JS_STRING];
   string job = 2;
   int32 user_id = 3 [(validate.rules).int32.gte = 0];
   resources.timestamp.Timestamp created_at = 4;

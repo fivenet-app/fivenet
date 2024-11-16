@@ -58,6 +58,59 @@ func (m *MailerEvent) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Data.(type) {
+	case *MailerEvent_EmailUpdate:
+		if v == nil {
+			err := MailerEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetEmailUpdate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "EmailUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "EmailUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEmailUpdate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MailerEventValidationError{
+					field:  "EmailUpdate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *MailerEvent_EmailDelete:
+		if v == nil {
+			err := MailerEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for EmailDelete
 	case *MailerEvent_ThreadUpdate:
 		if v == nil {
 			err := MailerEventValidationError{

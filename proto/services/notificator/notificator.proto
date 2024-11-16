@@ -37,7 +37,7 @@ message MarkNotificationsRequest {
 }
 
 message MarkNotificationsResponse {
-  uint64 updated = 1;
+  uint64 updated = 1 [jstype = JS_STRING];
 }
 
 message StreamRequest {}

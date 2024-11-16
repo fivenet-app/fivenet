@@ -128,13 +128,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         disable-blur-toggle
                                     />
 
-                                    <ProfilePictureImg
-                                        v-for="user in thread.access?.users"
-                                        :key="user.userId"
-                                        :src="user.user?.avatar?.url"
-                                        :name="`${user.user?.firstname} ${user.user?.lastname}`"
-                                        disable-blur-toggle
-                                    />
+                                    <div v-for="recipient in thread.recipients" :key="recipient.emailId">
+                                        {{ recipient.emailId }}
+                                    </div>
                                 </UAvatarGroup>
                             </UButton>
 
@@ -144,8 +140,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <li v-if="thread.creator">
                                             <CitizenInfoPopover :user="thread.creator" show-avatar-in-name />
                                         </li>
-                                        <li v-for="ua in thread.access?.users" :key="ua.userId">
-                                            <CitizenInfoPopover :user="ua.user" show-avatar-in-name />
+                                        <li v-for="ua in thread.recipients" :key="ua.emailId">
+                                            {{ ua.emailId }}
                                         </li>
                                     </ul>
                                 </div>

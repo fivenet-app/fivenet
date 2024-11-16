@@ -93,7 +93,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
 		ag.logger.Error("failed to unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 
-		if err := msg.Nak(); err != nil {
+		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return
@@ -101,7 +101,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 
 	fn := ag.handlers.getCronjobHandler(job.Cronjob.Name)
 	if fn == nil {
-		if err := msg.Nak(); err != nil {
+		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return

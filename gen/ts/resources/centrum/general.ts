@@ -39,9 +39,9 @@ export interface Disponents {
  */
 export interface UserUnitMapping {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: number;
+    unitId: string;
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -161,7 +161,7 @@ export const Disponents = new Disponents$Type();
 class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
     constructor() {
         super("resources.centrum.UserUnitMapping", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp }
@@ -169,7 +169,7 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
     }
     create(value?: PartialMessage<UserUnitMapping>): UserUnitMapping {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = 0;
+        message.unitId = "0";
         message.job = "";
         message.userId = 0;
         if (value !== undefined)
@@ -181,8 +181,8 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id */ 1:
-                    message.unitId = reader.uint64().toNumber();
+                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.unitId = reader.uint64().toString();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -205,8 +205,8 @@ class UserUnitMapping$Type extends MessageType<UserUnitMapping> {
         return message;
     }
     internalBinaryWrite(message: UserUnitMapping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1; */
-        if (message.unitId !== 0)
+        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
+        if (message.unitId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         /* string job = 2; */
         if (message.job !== "")

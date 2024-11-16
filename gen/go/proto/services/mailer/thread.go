@@ -286,9 +286,8 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 			tThreads.CreatorID,
 		).
 		VALUES(
-			req.Thread.Title,
+			req.Thread.CreatorEmailId,
 			userInfo.UserId,
-			userInfo.Job,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

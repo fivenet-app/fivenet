@@ -80,7 +80,7 @@ func New(p Params) (ICron, error) {
 			return err
 		}
 
-		kv, err := p.JS.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+		ownerKv, err := p.JS.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 			Bucket:  "cron_locks",
 			Storage: jetstream.MemoryStorage,
 			History: 5,
@@ -88,9 +88,9 @@ func New(p Params) (ICron, error) {
 		if err != nil {
 			return err
 		}
-		cr.ownerKv = kv
+		cr.ownerKv = ownerKv
 
-		ownerLock, err := locks.New(p.Logger, kv, kv.Bucket(), 20*time.Second)
+		ownerLock, err := locks.New(p.Logger, ownerKv, ownerKv.Bucket(), 20*time.Second)
 		if err != nil {
 			return err
 		}

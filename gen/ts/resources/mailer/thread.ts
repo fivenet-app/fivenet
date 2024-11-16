@@ -34,33 +34,27 @@ export interface Thread {
      */
     deletedAt?: Timestamp;
     /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string title = 5;
+     * @generated from protobuf field: uint64 creator_email_id = 5 [jstype = JS_STRING];
      */
-    title: string;
+    creatorEmailId: string;
     /**
-     * @generated from protobuf field: uint64 creator_email_id = 6;
-     */
-    creatorEmailId: number;
-    /**
-     * @generated from protobuf field: optional resources.mailer.EmailShort creator_email = 7;
+     * @generated from protobuf field: optional resources.mailer.EmailShort creator_email = 6;
      */
     creatorEmail?: EmailShort;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 8;
+     * @generated from protobuf field: optional int32 creator_id = 7;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 9;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientEmail recipients = 10;
+     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientEmail recipients = 9;
      */
     recipients: ThreadRecipientEmail[];
     /**
-     * @generated from protobuf field: optional resources.mailer.ThreadState state = 11;
+     * @generated from protobuf field: optional resources.mailer.ThreadState state = 10;
      */
     state?: ThreadState;
 }
@@ -84,6 +78,10 @@ export interface ThreadRecipientEmail {
      * @generated from protobuf field: uint64 email_id = 5 [jstype = JS_STRING];
      */
     emailId: string;
+    /**
+     * @generated from protobuf field: optional resources.mailer.EmailShort email = 6;
+     */
+    email?: EmailShort;
 }
 /**
  * @generated from protobuf message resources.mailer.ThreadState
@@ -130,20 +128,18 @@ class Thread$Type extends MessageType<Thread> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 6, name: "creator_email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 7, name: "creator_email", kind: "message", T: () => EmailShort },
-            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "creator", kind: "message", T: () => UserShort },
-            { no: 10, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
-            { no: 11, name: "state", kind: "message", T: () => ThreadState }
+            { no: 5, name: "creator_email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 6, name: "creator_email", kind: "message", T: () => EmailShort },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "creator", kind: "message", T: () => UserShort },
+            { no: 9, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
+            { no: 10, name: "state", kind: "message", T: () => ThreadState }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
-        message.title = "";
-        message.creatorEmailId = 0;
+        message.creatorEmailId = "0";
         message.recipients = [];
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
@@ -166,25 +162,22 @@ class Thread$Type extends MessageType<Thread> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* string title */ 5:
-                    message.title = reader.string();
+                case /* uint64 creator_email_id = 5 [jstype = JS_STRING];*/ 5:
+                    message.creatorEmailId = reader.uint64().toString();
                     break;
-                case /* uint64 creator_email_id */ 6:
-                    message.creatorEmailId = reader.uint64().toNumber();
-                    break;
-                case /* optional resources.mailer.EmailShort creator_email */ 7:
+                case /* optional resources.mailer.EmailShort creator_email */ 6:
                     message.creatorEmail = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.creatorEmail);
                     break;
-                case /* optional int32 creator_id */ 8:
+                case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 9:
+                case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* repeated resources.mailer.ThreadRecipientEmail recipients */ 10:
+                case /* repeated resources.mailer.ThreadRecipientEmail recipients */ 9:
                     message.recipients.push(ThreadRecipientEmail.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.mailer.ThreadState state */ 11:
+                case /* optional resources.mailer.ThreadState state */ 10:
                     message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
                     break;
                 default:
@@ -211,27 +204,24 @@ class Thread$Type extends MessageType<Thread> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* string title = 5; */
-        if (message.title !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.title);
-        /* uint64 creator_email_id = 6; */
-        if (message.creatorEmailId !== 0)
-            writer.tag(6, WireType.Varint).uint64(message.creatorEmailId);
-        /* optional resources.mailer.EmailShort creator_email = 7; */
+        /* uint64 creator_email_id = 5 [jstype = JS_STRING]; */
+        if (message.creatorEmailId !== "0")
+            writer.tag(5, WireType.Varint).uint64(message.creatorEmailId);
+        /* optional resources.mailer.EmailShort creator_email = 6; */
         if (message.creatorEmail)
-            EmailShort.internalBinaryWrite(message.creatorEmail, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 8; */
+            EmailShort.internalBinaryWrite(message.creatorEmail, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 9; */
+            writer.tag(7, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.ThreadRecipientEmail recipients = 10; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.ThreadRecipientEmail recipients = 9; */
         for (let i = 0; i < message.recipients.length; i++)
-            ThreadRecipientEmail.internalBinaryWrite(message.recipients[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.mailer.ThreadState state = 11; */
+            ThreadRecipientEmail.internalBinaryWrite(message.recipients[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.ThreadState state = 10; */
         if (message.state)
-            ThreadState.internalBinaryWrite(message.state, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            ThreadState.internalBinaryWrite(message.state, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -249,7 +239,8 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 5, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 6, name: "email", kind: "message", T: () => EmailShort }
         ]);
     }
     create(value?: PartialMessage<ThreadRecipientEmail>): ThreadRecipientEmail {
@@ -278,6 +269,9 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
                 case /* uint64 email_id = 5 [jstype = JS_STRING];*/ 5:
                     message.emailId = reader.uint64().toString();
                     break;
+                case /* optional resources.mailer.EmailShort email */ 6:
+                    message.email = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.email);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -302,6 +296,9 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
         /* uint64 email_id = 5 [jstype = JS_STRING]; */
         if (message.emailId !== "0")
             writer.tag(5, WireType.Varint).uint64(message.emailId);
+        /* optional resources.mailer.EmailShort email = 6; */
+        if (message.email)
+            EmailShort.internalBinaryWrite(message.email, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

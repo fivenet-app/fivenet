@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Message } from "./message";
 import { Thread } from "./thread";
+import { Email } from "./email";
 /**
  * @generated from protobuf message resources.mailer.MailerEvent
  */
@@ -20,10 +21,20 @@ export interface MailerEvent {
      * @generated from protobuf oneof: data
      */
     data: {
+        oneofKind: "emailUpdate";
+        /**
+         * @generated from protobuf field: resources.mailer.Email email_update = 1;
+         */
+        emailUpdate: Email;
+    } | {
+        oneofKind: "emailDelete";
+        /**
+         * @generated from protobuf field: uint64 email_delete = 2 [jstype = JS_STRING];
+         */
+        emailDelete: string;
+    } | {
         oneofKind: "threadUpdate";
         /**
-         * TODO
-         *
          * @generated from protobuf field: resources.mailer.Thread thread_update = 3;
          */
         threadUpdate: Thread;
@@ -53,6 +64,8 @@ export interface MailerEvent {
 class MailerEvent$Type extends MessageType<MailerEvent> {
     constructor() {
         super("resources.mailer.MailerEvent", [
+            { no: 1, name: "email_update", kind: "message", oneof: "data", T: () => Email },
+            { no: 2, name: "email_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "thread_update", kind: "message", oneof: "data", T: () => Thread },
             { no: 4, name: "thread_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "message_update", kind: "message", oneof: "data", T: () => Message },
@@ -71,6 +84,18 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* resources.mailer.Email email_update */ 1:
+                    message.data = {
+                        oneofKind: "emailUpdate",
+                        emailUpdate: Email.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).emailUpdate)
+                    };
+                    break;
+                case /* uint64 email_delete = 2 [jstype = JS_STRING];*/ 2:
+                    message.data = {
+                        oneofKind: "emailDelete",
+                        emailDelete: reader.uint64().toString()
+                    };
+                    break;
                 case /* resources.mailer.Thread thread_update */ 3:
                     message.data = {
                         oneofKind: "threadUpdate",
@@ -107,6 +132,12 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
         return message;
     }
     internalBinaryWrite(message: MailerEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.Email email_update = 1; */
+        if (message.data.oneofKind === "emailUpdate")
+            Email.internalBinaryWrite(message.data.emailUpdate, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 email_delete = 2 [jstype = JS_STRING]; */
+        if (message.data.oneofKind === "emailDelete")
+            writer.tag(2, WireType.Varint).uint64(message.data.emailDelete);
         /* resources.mailer.Thread thread_update = 3; */
         if (message.data.oneofKind === "threadUpdate")
             Thread.internalBinaryWrite(message.data.threadUpdate, writer.tag(3, WireType.LengthDelimited).fork(), options).join();

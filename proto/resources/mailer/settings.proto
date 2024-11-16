@@ -7,6 +7,6 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
 
 message EmailSettings {
-  uint64 email_id = 1;
+  uint64 email_id = 1 [jstype = JS_STRING];
   repeated string blocked_emails = 3 [(validate.rules).repeated.max_items = 25];
 }

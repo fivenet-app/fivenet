@@ -3,6 +3,7 @@ package croner
 import (
 	"context"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/adhocore/gronx"
@@ -10,7 +11,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
@@ -142,6 +142,8 @@ func (s *Scheduler) start(ctx context.Context) {
 				ctx, cancel := context.WithCancel(ctx)
 				defer cancel()
 
+				wg := sync.WaitGroup{}
+
 				s.jobs.Range(func(key string, value *jobWrapper) bool {
 					job, err := s.store.GetOrLoad(ctx, key)
 					if err != nil {
@@ -158,13 +160,18 @@ func (s *Scheduler) start(ctx context.Context) {
 						return true
 					}
 
-					if err := s.runCronjob(ctx, job); err != nil {
-						s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
-						return true
-					}
+					wg.Add(1)
+					go func() {
+						defer wg.Done()
+						if err := s.runCronjob(ctx, job); err != nil {
+							s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
+						}
+					}()
 
 					return true
 				})
+
+				wg.Wait()
 			}()
 		}
 	}
@@ -175,12 +182,7 @@ func (s *Scheduler) runCronjob(ctx context.Context, job *cron.Cronjob) error {
 		Cronjob: job,
 	}
 
-	out, err := protoutils.Marshal(msg)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.js.PublishAsync(ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic), out); err != nil {
+	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", CronScheduleSubject, CronScheduleTopic), msg); err != nil {
 		return err
 	}
 
@@ -191,7 +193,7 @@ func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 	consumer, err := s.js.CreateConsumer(ctxStartup, CronScheduleStreamName, jetstream.ConsumerConfig{
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 		FilterSubject: fmt.Sprintf("%s.%s", CronScheduleSubject, CronCompleteTopic),
-		MaxDeliver:    2,
+		MaxDeliver:    3,
 	})
 	if err != nil {
 		return err
@@ -212,7 +214,7 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 	if err := protojson.Unmarshal(msg.Data(), job); err != nil {
 		s.logger.Error("failed to unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 
-		if err := msg.Nak(); err != nil {
+		if err := msg.NakWithDelay(150 * time.Millisecond); err != nil {
 			s.logger.Error("failed to nack unmarshal cron completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return
