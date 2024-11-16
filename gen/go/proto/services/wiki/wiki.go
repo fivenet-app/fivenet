@@ -34,6 +34,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const defaultWikiUpperLimit = 250
+
 var (
 	tPage        = table.FivenetWikiPages.AS("page")
 	tPageShort   = table.FivenetWikiPages.AS("pageshort")
@@ -230,7 +232,7 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 40)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, defaultWikiUpperLimit)
 	resp := &ListPagesResponse{
 		Pagination: pag,
 		Pages:      []*wiki.PageShort{},
