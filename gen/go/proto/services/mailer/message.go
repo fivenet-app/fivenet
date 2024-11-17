@@ -26,7 +26,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.EmailId, req.ThreadId, mailer.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.ThreadId, req.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
 		return nil, err
 	}
 
@@ -107,6 +107,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 		SELECT(
 			tMessages.ID,
 			tMessages.ThreadID,
+			tMessages.SenderID,
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
@@ -120,7 +121,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 		FROM(
 			tMessages.
 				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tThreads.CreatorEmailID),
+					tEmails.ID.EQ(tMessages.SenderID),
 				),
 		).
 		WHERE(tMessages.ID.EQ(jet.Uint64(messageId))).
@@ -182,14 +183,14 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	thread, err := s.getThread(ctx, req.Message.ThreadId, userInfo, true)
+	recipients, err := s.getThreadRecipients(ctx, req.Message.ThreadId)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {
+	if len(recipients) > 0 {
 		emailIds := []uint64{}
-		for _, ua := range thread.Recipients {
+		for _, ua := range recipients {
 			emailIds = append(emailIds, ua.EmailId)
 		}
 
@@ -197,7 +198,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 			Data: &mailer.MailerEvent_MessageUpdate{
 				MessageUpdate: message,
 			},
-		}, emailIds)
+		}, emailIds...)
 
 		if err := s.setUnreadState(ctx, message.ThreadId, emailIds); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -249,10 +250,6 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.EmailId, req.ThreadId, mailer.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
-		return nil, err
-	}
-
 	auditEntry := &model.FivenetAuditLog{
 		Service: MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteMessage",
@@ -293,7 +290,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 			Data: &mailer.MailerEvent_MessageDelete{
 				MessageDelete: req.MessageId,
 			},
-		}, emailIds)
+		}, emailIds...)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

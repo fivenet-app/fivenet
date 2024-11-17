@@ -18,7 +18,7 @@ const items = [
         title: t('common.mail'),
         description: t('pages.overview.features.mailer'),
         to: { name: 'mail' },
-        permission: 'MailerService.ListThreads',
+        permission: 'MailerService.ListEmails',
         icon: 'i-mdi-inbox-full-outline',
     },
     {

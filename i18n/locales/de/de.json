@@ -2150,11 +2150,11 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "DeleteThread": {
+            "DeleteEmail": {
                 "key": "E-Mails löschen",
                 "description": "Benötigt Admin Zugriff auf die Konversation."
             },
-            "ListThreads": {
+            "ListEmails": {
                 "key": "E-Mails auflisten/sehen",
                 "description": "Minimum Berechtigung um E-Mails sehen zu können."
             },

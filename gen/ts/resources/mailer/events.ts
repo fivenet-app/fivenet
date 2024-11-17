@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { ThreadState } from "./thread";
 import { Message } from "./message";
 import { Thread } from "./thread";
 import { Email } from "./email";
@@ -57,6 +58,12 @@ export interface MailerEvent {
          */
         messageDelete: string;
     } | {
+        oneofKind: "threadStateUpdate";
+        /**
+         * @generated from protobuf field: resources.mailer.ThreadState thread_state_update = 7;
+         */
+        threadStateUpdate: ThreadState;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -69,7 +76,8 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
             { no: 3, name: "thread_update", kind: "message", oneof: "data", T: () => Thread },
             { no: 4, name: "thread_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "message_update", kind: "message", oneof: "data", T: () => Message },
-            { no: 6, name: "message_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ }
+            { no: 6, name: "message_delete", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/ },
+            { no: 7, name: "thread_state_update", kind: "message", oneof: "data", T: () => ThreadState }
         ]);
     }
     create(value?: PartialMessage<MailerEvent>): MailerEvent {
@@ -120,6 +128,12 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
                         messageDelete: reader.uint64().toString()
                     };
                     break;
+                case /* resources.mailer.ThreadState thread_state_update */ 7:
+                    message.data = {
+                        oneofKind: "threadStateUpdate",
+                        threadStateUpdate: ThreadState.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).threadStateUpdate)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -150,6 +164,9 @@ class MailerEvent$Type extends MessageType<MailerEvent> {
         /* uint64 message_delete = 6 [jstype = JS_STRING]; */
         if (message.data.oneofKind === "messageDelete")
             writer.tag(6, WireType.Varint).uint64(message.data.messageDelete);
+        /* resources.mailer.ThreadState thread_state_update = 7; */
+        if (message.data.oneofKind === "threadStateUpdate")
+            ThreadState.internalBinaryWrite(message.data.threadStateUpdate, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

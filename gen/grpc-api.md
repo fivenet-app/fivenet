@@ -23,11 +23,6 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
-- [resources/centrum/general.proto](#resources_centrum_general-proto)
-    - [Attributes](#resources-centrum-Attributes)
-    - [Disponents](#resources-centrum-Disponents)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
@@ -42,6 +37,11 @@
     - [Timings](#resources-centrum-Timings)
   
     - [CentrumMode](#resources-centrum-CentrumMode)
+  
+- [resources/centrum/general.proto](#resources_centrum_general-proto)
+    - [Attributes](#resources-centrum-Attributes)
+    - [Disponents](#resources-centrum-Disponents)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -344,20 +344,20 @@
   
     - [AccessLevel](#resources-mailer-AccessLevel)
   
+- [resources/mailer/events.proto](#resources_mailer_events-proto)
+    - [MailerEvent](#resources-mailer-MailerEvent)
+  
+- [resources/mailer/settings.proto](#resources_mailer_settings-proto)
+    - [EmailSettings](#resources-mailer-EmailSettings)
+  
 - [resources/mailer/email.proto](#resources_mailer_email-proto)
     - [Email](#resources-mailer-Email)
     - [EmailShort](#resources-mailer-EmailShort)
-  
-- [resources/mailer/events.proto](#resources_mailer_events-proto)
-    - [MailerEvent](#resources-mailer-MailerEvent)
   
 - [resources/mailer/message.proto](#resources_mailer_message-proto)
     - [Message](#resources-mailer-Message)
     - [MessageData](#resources-mailer-MessageData)
     - [MessageDataEntry](#resources-mailer-MessageDataEntry)
-  
-- [resources/mailer/settings.proto](#resources_mailer_settings-proto)
-    - [EmailSettings](#resources-mailer-EmailSettings)
   
 - [resources/mailer/template.proto](#resources_mailer_template-proto)
     - [Template](#resources-mailer-Template)
@@ -1111,71 +1111,6 @@
 
 
 
-<a name="resources_centrum_general-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/general.proto
-
-
-
-<a name="resources-centrum-Attributes"></a>
-
-### Attributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| user_id | [int32](#int32) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1373,6 +1308,71 @@
 | CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
 | CENTRUM_MODE_SIMPLIFIED | 4 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_general-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/general.proto
+
+
+
+<a name="resources-centrum-Attributes"></a>
+
+### Attributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| user_id | [int32](#int32) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ 
 
  
 
@@ -3335,7 +3335,6 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | refresh_token | [bool](#bool) |  |  |
 | notification | [Notification](#resources-notifications-Notification) |  | Notifications |
-| mailer | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  | Mailer |
 
 
 
@@ -5688,11 +5687,79 @@ TODO
 | ---- | ------ | ----------- |
 | ACCESS_LEVEL_UNSPECIFIED | 0 |  |
 | ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_READ | 3 |  |
-| ACCESS_LEVEL_WRITE | 4 |  |
-| ACCESS_LEVEL_MANAGE | 5 |  |
+| ACCESS_LEVEL_READ | 2 |  |
+| ACCESS_LEVEL_WRITE | 3 |  |
+| ACCESS_LEVEL_MANAGE | 4 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/events.proto
+
+
+
+<a name="resources-mailer-MailerEvent"></a>
+
+### MailerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email_update | [Email](#resources-mailer-Email) |  |  |
+| email_delete | [uint64](#uint64) |  |  |
+| thread_update | [Thread](#resources-mailer-Thread) |  |  |
+| thread_delete | [uint64](#uint64) |  |  |
+| message_update | [Message](#resources-mailer-Message) |  |  |
+| message_delete | [uint64](#uint64) |  |  |
+| thread_state_update | [ThreadState](#resources-mailer-ThreadState) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_mailer_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/mailer/settings.proto
+
+
+
+<a name="resources-mailer-EmailSettings"></a>
+
+### EmailSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
+| blocked_emails | [string](#string) | repeated |  |
+
+
+
+
+
+ 
 
  
 
@@ -5770,42 +5837,6 @@ TODO
 
 
 
-<a name="resources_mailer_events-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/events.proto
-
-
-
-<a name="resources-mailer-MailerEvent"></a>
-
-### MailerEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| email_update | [Email](#resources-mailer-Email) |  |  |
-| email_delete | [uint64](#uint64) |  |  |
-| thread_update | [Thread](#resources-mailer-Thread) |  |  |
-| thread_delete | [uint64](#uint64) |  |  |
-| message_update | [Message](#resources-mailer-Message) |  |  |
-| message_delete | [uint64](#uint64) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_mailer_message-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5858,38 +5889,6 @@ TODO
 
 ### MessageDataEntry
 TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, calendar entries, qualifications, etc.)
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_mailer_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/settings.proto
-
-
-
-<a name="resources-mailer-EmailSettings"></a>
-
-### EmailSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| email_id | [uint64](#uint64) |  |  |
-| blocked_emails | [string](#string) | repeated |  |
 
 
 
@@ -9463,6 +9462,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | user_event | [resources.notifications.UserEvent](#resources-notifications-UserEvent) |  |  |
 | job_event | [resources.notifications.JobEvent](#resources-notifications-JobEvent) |  |  |
 | system_event | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
+| mailer_event | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  |  |
 
 
 
@@ -11766,6 +11766,11 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
+
+
 
 
 
@@ -12048,6 +12053,11 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 ### SetThreadStateResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [resources.mailer.ThreadState](#resources-mailer-ThreadState) |  |  |
 
 
 

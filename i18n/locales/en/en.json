@@ -503,7 +503,8 @@
         "categories": "No Categories | {n} Category | {n} Categories",
         "sort_by": "Sort by",
         "personal_email": "Personal Email",
-        "participant": "Participant | Participants"
+        "participant": "Participant | Participants",
+        "sender": "Sender"
     },
     "components": {
         "partials": {
@@ -2150,11 +2151,11 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "DeleteThread": {
-                "key": "Delete E-Mail threads",
+            "DeleteEmail": {
+                "key": "Delete E-Mails",
                 "description": "Requires admin access to the E-Mail thread."
             },
-            "ListThreads": {
+            "ListEmails": {
                 "key": "List E-Mail threads",
                 "description": "Minimum permission to see E-Mails."
             },

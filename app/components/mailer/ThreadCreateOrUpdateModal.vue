@@ -11,7 +11,7 @@ const { isOpen } = useModal();
 const { activeChar } = useAuth();
 
 const mailerStore = useMailerStore();
-const { draft: state, selectedEmail, selectedThread } = storeToRefs(mailerStore);
+const { draft: state, selectedEmail } = storeToRefs(mailerStore);
 
 const completorStore = useCompletorStore();
 
@@ -89,13 +89,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div class="flex w-full">
                     <div class="flex w-full flex-col gap-2">
-                        <div class="flex flex-1 items-center justify-between gap-1">
+                        <div class="flex flex-1 flex-col items-center justify-between gap-1">
+                            <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
+                                <UInput type="text" disabled :model-value="selectedEmail?.email ?? 'N/A'" />
+                            </UFormGroup>
+
                             <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
                                 <UInput
                                     v-model="state.title"
                                     type="text"
                                     size="xl"
-                                    class="font-semibold text-gray-900 dark:text-white"
+                                    class="font-semibold"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
                                 />

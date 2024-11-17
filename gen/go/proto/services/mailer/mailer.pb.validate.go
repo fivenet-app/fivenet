@@ -3205,6 +3205,17 @@ func (m *SetThreadStateRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetState() == nil {
+		err := SetThreadStateRequestValidationError{
+			field:  "State",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetState()).(type) {
 		case interface{ ValidateAll() error }:
@@ -3336,6 +3347,35 @@ func (m *SetThreadStateResponse) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetState()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SetThreadStateResponseValidationError{
+					field:  "State",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SetThreadStateResponseValidationError{
+					field:  "State",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetState()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SetThreadStateResponseValidationError{
+				field:  "State",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return SetThreadStateResponseMultiError(errors)
 	}
@@ -3437,6 +3477,17 @@ func (m *GetEmailSettingsRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetEmailId() <= 0 {
+		err := GetEmailSettingsRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetEmailSettingsRequestMultiError(errors)

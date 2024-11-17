@@ -11,6 +11,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { MailerEvent } from "../../resources/mailer/events";
 import { SystemEvent } from "../../resources/notifications/events";
 import { JobEvent } from "../../resources/notifications/events";
 import { UserEvent } from "../../resources/notifications/events";
@@ -108,6 +109,12 @@ export interface StreamResponse {
          * @generated from protobuf field: resources.notifications.SystemEvent system_event = 5;
          */
         systemEvent: SystemEvent;
+    } | {
+        oneofKind: "mailerEvent";
+        /**
+         * @generated from protobuf field: resources.mailer.MailerEvent mailer_event = 6;
+         */
+        mailerEvent: MailerEvent;
     } | {
         oneofKind: undefined;
     };
@@ -377,7 +384,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 2, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "user_event", kind: "message", oneof: "data", T: () => UserEvent },
             { no: 4, name: "job_event", kind: "message", oneof: "data", T: () => JobEvent },
-            { no: 5, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent }
+            { no: 5, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent },
+            { no: 6, name: "mailer_event", kind: "message", oneof: "data", T: () => MailerEvent }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -417,6 +425,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         systemEvent: SystemEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).systemEvent)
                     };
                     break;
+                case /* resources.mailer.MailerEvent mailer_event */ 6:
+                    message.data = {
+                        oneofKind: "mailerEvent",
+                        mailerEvent: MailerEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).mailerEvent)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -444,6 +458,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.notifications.SystemEvent system_event = 5; */
         if (message.data.oneofKind === "systemEvent")
             SystemEvent.internalBinaryWrite(message.data.systemEvent, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.mailer.MailerEvent mailer_event = 6; */
+        if (message.data.oneofKind === "mailerEvent")
+            MailerEvent.internalBinaryWrite(message.data.mailerEvent, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

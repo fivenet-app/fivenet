@@ -27,7 +27,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const { data: thread, pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, async () =>
+const { data: thread, pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, () =>
     mailerStore.getThread(props.threadId),
 );
 
@@ -75,12 +75,6 @@ watchDebounced(
         }),
 );
 
-const messageRef = ref<Element | undefined>();
-watchDebounced(messages, () => messageRef.value?.scrollIntoView({ behavior: 'smooth' }), {
-    debounce: 100,
-    maxWait: 350,
-});
-
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) {
@@ -112,7 +106,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UDashboardToolbar>
-        <USkeleton v-if="!thread && loading" class="h-12 w-full" />
+        <USkeleton v-if="loading" class="h-12 w-full" />
 
         <div v-else-if="thread" class="flex w-full">
             <div class="flex w-full flex-col gap-2">
@@ -156,7 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <template v-else>
                 <template v-for="message in messages?.messages" :key="message.id">
                     <div
-                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 hover:bg-base-800 dark:border-gray-900"
+                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
                     >
                         <UDivider>
                             <GenericTime :value="message.createdAt" :type="'short'" />
@@ -177,17 +171,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                             <!-- eslint-disable vue/no-v-html -->
-                            <div
-                                :ref="
-                                    (el) => {
-                                        if (messages?.messages.length) {
-                                            messageRef = el as Element;
-                                        }
-                                    }
-                                "
-                                class="prose dark:prose-invert min-w-full px-4 py-2"
-                                v-html="message.content"
-                            ></div>
+                            <div class="prose dark:prose-invert min-w-full px-4 py-2" v-html="message.content"></div>
                         </div>
                     </div>
                 </template>
@@ -202,33 +186,41 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <UDivider class="my-2" />
 
-        <UForm v-if="thread" :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-            <!-- TODO add "add recipients" field -->
-            <UFormGroup name="title" class="w-full flex-1">
-                <UInput
-                    v-model="state.title"
-                    type="text"
-                    size="xl"
-                    class="font-semibold text-gray-900 dark:text-white"
-                    :placeholder="$t('common.title')"
-                    :disabled="!canSubmit"
-                />
-            </UFormGroup>
+        <UAccordion
+            v-if="thread"
+            variant="outline"
+            :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
+        >
+            <template #compose>
+                <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                    <!-- TODO add "add recipients" field -->
+                    <UFormGroup name="title" class="w-full flex-1">
+                        <UInput
+                            v-model="state.title"
+                            type="text"
+                            size="xl"
+                            class="font-semibold text-gray-900 dark:text-white"
+                            :placeholder="$t('common.title')"
+                            :disabled="!canSubmit"
+                        />
+                    </UFormGroup>
 
-            <UFormGroup name="message">
-                <ClientOnly>
-                    <DocEditor v-model="state.content" :disabled="!canSubmit" :min-height="250" />
-                </ClientOnly>
-            </UFormGroup>
+                    <UFormGroup name="message">
+                        <ClientOnly>
+                            <DocEditor v-model="state.content" :disabled="!canSubmit" :min-height="250" />
+                        </ClientOnly>
+                    </UFormGroup>
 
-            <UButton
-                type="submit"
-                :disabled="!canSubmit"
-                block
-                class="flex-1"
-                :label="$t('components.mailer.send')"
-                trailing-icon="i-mdi-paper-airplane"
-            />
-        </UForm>
+                    <UButton
+                        type="submit"
+                        :disabled="!canSubmit"
+                        block
+                        class="flex-1"
+                        :label="$t('components.mailer.send')"
+                        trailing-icon="i-mdi-paper-airplane"
+                    />
+                </UForm>
+            </template>
+        </UAccordion>
     </UDashboardPanelContent>
 </template>

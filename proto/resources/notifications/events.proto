@@ -3,7 +3,6 @@ syntax = "proto3";
 package resources.notifications;
 
 import "resources/notifications/notifications.proto";
-import "resources/mailer/events.proto";
 import "resources/users/job_props.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
@@ -15,8 +14,6 @@ message UserEvent {
     bool refresh_token = 1;
     // Notifications
     resources.notifications.Notification notification = 2;
-    // Mailer
-    resources.mailer.MailerEvent mailer = 3;
   }
 }
 

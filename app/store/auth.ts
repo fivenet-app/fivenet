@@ -48,6 +48,7 @@ export const useAuthStore = defineStore('auth', {
     actions: {
         loginStart(): void {
             this.loggingIn = true;
+            this.loginError = null;
         },
         loginStop(errorMessage: null | string): void {
             this.loggingIn = false;

@@ -12,10 +12,9 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 enum AccessLevel {
   ACCESS_LEVEL_UNSPECIFIED = 0;
   ACCESS_LEVEL_BLOCKED = 1;
-  ACCESS_LEVEL_VIEW = 2;
-  ACCESS_LEVEL_READ = 3;
-  ACCESS_LEVEL_WRITE = 4;
-  ACCESS_LEVEL_MANAGE = 5;
+  ACCESS_LEVEL_READ = 2;
+  ACCESS_LEVEL_WRITE = 3;
+  ACCESS_LEVEL_MANAGE = 4;
 }
 
 message Access {

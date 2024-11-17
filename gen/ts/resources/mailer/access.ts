@@ -140,21 +140,17 @@ export enum AccessLevel {
      */
     BLOCKED = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_READ = 2;
      */
-    VIEW = 2,
+    READ = 2,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_READ = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_WRITE = 3;
      */
-    READ = 3,
+    WRITE = 3,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_WRITE = 4;
+     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 4;
      */
-    WRITE = 4,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 5;
-     */
-    MANAGE = 5
+    MANAGE = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Access$Type extends MessageType<Access> {

@@ -12,7 +12,7 @@ useHead({
 definePageMeta({
     title: 'common.mail',
     requiresAuth: true,
-    permission: 'MailerService.ListThreads',
+    permission: 'MailerService.ListEmails',
 });
 
 const { t } = useI18n();
@@ -22,7 +22,7 @@ const { can } = useAuth();
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { selectedEmail, selectedThread } = storeToRefs(mailerStore);
+const { emails, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
 const tabItems = [
     {
@@ -73,24 +73,25 @@ const dropdownItems = computed(() =>
     ].flatMap((items) => (items.length > 0 ? [items] : [])),
 );
 
-const { data: emails } = useLazyAsyncData('emails', async () => {
-    const emails = await mailerStore.listEmails();
-    if (emails.length > 0) {
-        selectedEmail.value = emails[0];
-    }
-    return emails;
+onBeforeMount(async () => {
+    await mailerStore.listEmails();
+    await loadThreads();
 });
 
-watch(selectedEmail, async () => loadThreads);
+watch(selectedEmail, loadThreads);
 
 async function loadThreads(): Promise<void> {
+    if (!selectedEmail.value?.id) {
+        return;
+    }
+
     const count = await mailerDB.threads.count();
 
     const call = getGRPCMailerClient().listThreads({
         pagination: {
             offset: 0,
         },
-        emailIds: emails.value && emails.value[0]?.id !== undefined ? [emails.value[0].id] : [],
+        emailIds: [selectedEmail.value?.id],
         after: count > 0 ? undefined : toTimestamp(),
     });
     const { response } = await call;
@@ -105,7 +106,7 @@ const threads = useDexieLiveQuery(() => mailerDB.threads.toArray().then((threads
 // Filter mails based on the selected tab
 const filteredThreads = computed(() => {
     if (selectedTab.value === 1) {
-        return threads.value.threads.filter((thread) => !thread.state?.archived && !!thread.state?.lastRead);
+        return threads.value.threads.filter((thread) => !thread.state?.archived && !!thread.state?.unread);
     } else if (selectedTab.value === 2) {
         return threads.value.threads.filter((thread) => !!thread.state?.archived);
     }

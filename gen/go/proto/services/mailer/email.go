@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -26,6 +27,19 @@ var (
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	emails, err := ListUserEmails(ctx, s.db, userInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &ListEmailsResponse{
+		Emails: emails,
+	}
+
+	return resp, nil
+}
+
+func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo) ([]*mailer.EmailShort, error) {
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
 		condition = condition.AND(
@@ -34,11 +48,11 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 				jet.AND(
 					tEmailsUserAccess.Access.IS_NULL(),
 					tEmailsJobAccess.Access.IS_NOT_NULL(),
-					tEmailsJobAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_VIEW))),
+					tEmailsJobAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ))),
 				),
 				jet.AND(
 					tEmailsUserAccess.Access.IS_NOT_NULL(),
-					tEmailsUserAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_VIEW))),
+					tEmailsUserAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ))),
 				),
 			),
 		)
@@ -73,13 +87,13 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 		ORDER_BY(tEmailsShort.Job.ASC(), tEmailsShort.Label.ASC())
 
 	resp := &ListEmailsResponse{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Emails); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &resp.Emails); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
 
-	return resp, nil
+	return resp.Emails, nil
 }
 
 func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool) (*mailer.Email, error) {
@@ -136,7 +150,7 @@ func (s *Server) GetEmail(ctx context.Context, req *GetEmailRequest) (*GetEmailR
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Id, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.access.CanUserAccessTarget(ctx, req.Id, userInfo, mailer.AccessLevel_ACCESS_LEVEL_READ)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -260,6 +274,14 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	s.sendUpdate(ctx, &mailer.MailerEvent{
+		Data: &mailer.MailerEvent_EmailUpdate{
+			EmailUpdate: resp.Email,
+		},
+	},
+		resp.Email.Id,
+	)
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return resp, nil
@@ -316,6 +338,14 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 	if !check {
 		return nil, errorsmailer.ErrNoPerms
 	}
+
+	s.sendUpdate(ctx, &mailer.MailerEvent{
+		Data: &mailer.MailerEvent_EmailDelete{
+			EmailDelete: req.Id,
+		},
+	},
+		req.Id,
+	)
 
 	stmt := tEmails.
 		DELETE().

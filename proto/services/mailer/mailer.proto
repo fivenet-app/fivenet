@@ -118,12 +118,16 @@ message DeleteThreadRequest {
 message DeleteThreadResponse {}
 
 message SetThreadStateRequest {
+  resources.mailer.ThreadState state = 1 [(validate.rules).message.required = true];
+}
+
+message SetThreadStateResponse {
   resources.mailer.ThreadState state = 1;
 }
 
-message SetThreadStateResponse {}
-
-message GetEmailSettingsRequest {}
+message GetEmailSettingsRequest {
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+}
 
 message GetEmailSettingsResponse {
   resources.mailer.EmailSettings settings = 1;

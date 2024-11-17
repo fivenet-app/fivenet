@@ -141,10 +141,6 @@ export const useNotificatorStore = defineStore('notifications', {
 
                                 this.add(not);
                                 continue;
-                            } else if (resp.data.userEvent.data.oneofKind === 'mailer') {
-                                if (can('MailerService.ListThreads').value) {
-                                    useMailerStore().handleEvent(resp.data.userEvent.data.mailer);
-                                }
                             }
                         } else if (resp.data.oneofKind === 'jobEvent') {
                             if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
@@ -155,6 +151,10 @@ export const useNotificatorStore = defineStore('notifications', {
                             continue;
                         } else if (resp.data.oneofKind === 'systemEvent') {
                             logger.warn('No systemEvent handlers available.', resp.data);
+                        } else if (resp.data.oneofKind === 'mailerEvent') {
+                            if (can('MailerService.ListEmails').value) {
+                                useMailerStore().handleEvent(resp.data.mailerEvent);
+                            }
                         } else {
                             // @ts-expect-error this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);

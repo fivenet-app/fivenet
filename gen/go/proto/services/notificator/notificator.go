@@ -4,29 +4,23 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
-	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 var tNotifications = table.FivenetNotifications
@@ -218,193 +212,4 @@ func (s *Server) getNotificationCount(ctx context.Context, userId int32) (int32,
 	}
 
 	return dest.Count, nil
-}
-
-func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer) error {
-	userInfo, ok := auth.GetUserInfoFromContext(srv.Context())
-	if !ok {
-		return ErrFailedStream
-	}
-
-	// Track changes to user info, so we can send an updated user info to the user
-	currentUserInfo := userInfo.Clone()
-
-	// Setup consumer
-	c, err := s.js.CreateConsumer(srv.Context(), notifi.StreamName, jetstream.ConsumerConfig{
-		FilterSubjects: []string{
-			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, currentUserInfo.UserId),
-			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, currentUserInfo.Job),
-			fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
-		},
-		DeliverPolicy: jetstream.DeliverNewPolicy,
-	})
-	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-
-	cons, err := c.Messages()
-	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-	defer cons.Stop()
-
-	msgCh := make(chan jetstream.Msg, 8)
-	go func() {
-		for {
-			msg, err := cons.Next()
-			if err != nil {
-				close(msgCh)
-				return
-			}
-
-			msgCh <- msg
-		}
-	}()
-
-	// Update Ticker
-	updateTicker := time.NewTicker(35 * time.Second)
-	defer updateTicker.Stop()
-
-	// Check user token validity and update if necessary
-	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
-	if err != nil {
-		return err
-	}
-
-	notsCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
-	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-
-	if err := srv.Send(&StreamResponse{
-		NotificationCount: notsCount,
-		Data:              data,
-		Restart:           &stop,
-	}); err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
-	}
-
-	for {
-		select {
-		case <-srv.Context().Done():
-			return nil
-
-		case <-updateTicker.C:
-			// Check user token validity
-			data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
-			if err != nil {
-				return err
-			}
-			if data != nil {
-				resp := &StreamResponse{
-					Data: data,
-				}
-				if err := srv.Send(resp); err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-			}
-
-			if stop {
-				// End stream if we should "stop"
-				return nil
-			}
-
-			// Make sure the notification is in sync (again)
-			notsCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
-			if err != nil {
-				return errswrap.NewError(err, ErrFailedStream)
-			}
-
-		case msg := <-msgCh:
-			// Publish notifications sent directly to user via the message queue
-			if msg == nil {
-				s.logger.Warn("nil notification message received via message queue", zap.Int32("user_id", currentUserInfo.UserId))
-				return nil
-			}
-
-			if err := msg.Ack(); err != nil {
-				s.logger.Error("failed to ack notification message", zap.Error(err))
-			}
-
-			_, topic, _ := notifi.SplitSubject(msg.Subject())
-			switch topic {
-			case notifi.UserTopic:
-				var dest notifications.UserEvent
-				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-
-				switch dest.Data.(type) {
-				case *notifications.UserEvent_Notification:
-					notsCount++
-				}
-
-				resp := &StreamResponse{
-					NotificationCount: notsCount,
-					Data: &StreamResponse_UserEvent{
-						UserEvent: &dest,
-					},
-				}
-
-				if err := srv.Send(resp); err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-
-			case notifi.JobTopic:
-				var dest notifications.JobEvent
-				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-
-				resp := &StreamResponse{
-					NotificationCount: notsCount,
-					Data: &StreamResponse_JobEvent{
-						JobEvent: &dest,
-					},
-				}
-
-				if err := srv.Send(resp); err != nil {
-					return errswrap.NewError(err, ErrFailedStream)
-				}
-
-			case notifi.SystemTopic:
-				// No events yet...
-			}
-		}
-	}
-}
-
-func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInfo) (isStreamResponse_Data, bool, error) {
-	newUserInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
-	if err != nil {
-		return nil, true, errswrap.NewError(err, ErrFailedStream)
-	}
-
-	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
-		if !currentUserInfo.CanBeSuper && !currentUserInfo.SuperUser {
-			return nil, true, auth.ErrCharLock
-		}
-	}
-
-	token, err := auth.GetTokenFromGRPCContext(ctx)
-	if err != nil {
-		return nil, true, auth.ErrInvalidToken
-	}
-
-	claims, err := s.tm.ParseWithClaims(token)
-	if err != nil {
-		return nil, true, auth.ErrInvalidToken
-	}
-
-	// Either token should be renewed or new user info is not equal
-	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime || !currentUserInfo.Equal(newUserInfo) {
-		// Cause client to refresh token
-		return &StreamResponse_UserEvent{UserEvent: &notifications.UserEvent{
-			Data: &notifications.UserEvent_RefreshToken{
-				RefreshToken: true,
-			},
-		}}, true, nil
-	}
-
-	return nil, false, nil
 }

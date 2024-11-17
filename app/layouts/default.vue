@@ -22,7 +22,7 @@ const modal = useModal();
 
 const { website } = useAppConfig();
 
-const unreadThreadCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.userState?.unread).count(), {
+const unreadThreadCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.state?.unread).count(), {
     initialValue: 0,
 });
 
@@ -46,7 +46,7 @@ const links = computed(() =>
                 text: t('common.mail'),
                 shortcuts: ['G', 'I'],
             },
-            permission: 'MailerService.ListThreads' as Perms,
+            permission: 'MailerService.ListEmails' as Perms,
         },
         {
             label: t('common.citizen'),

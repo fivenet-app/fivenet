@@ -68,7 +68,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		).
 		FROM(
 			tThreads.
-				LEFT_JOIN(tThreadsRecipients,
+				INNER_JOIN(tThreadsRecipients,
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
 				),
 		).
@@ -113,6 +113,9 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		).
 		FROM(
 			tThreads.
+				LEFT_JOIN(tThreadsRecipients,
+					tThreadsRecipients.EmailID.IN(ids...),
+				).
 				LEFT_JOIN(tEmails,
 					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				).
@@ -241,14 +244,8 @@ func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*m
 func (s *Server) GetThread(ctx context.Context, req *GetThreadRequest) (*GetThreadResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.ThreadId, req.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+		return nil, err
 	}
 
 	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
@@ -274,6 +271,14 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
+
+	check, err := s.access.CanUserAccessTarget(ctx, req.Thread.CreatorEmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_WRITE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorsmailer.ErrNoPerms
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -314,43 +319,25 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
-
-	/*
-		    TODO handle recipients
-
-				accessChanges, err := s.access.HandleAccessChanges(ctx, tx, req.Thread.Id, nil, req.Thread.Recipients)
-				if err != nil {
-					return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-				}
-	*/
+	// Add creator of email to recipients
+	req.Thread.Recipients = append(req.Thread.Recipients, &mailer.ThreadRecipientEmail{
+		EmailId: req.Thread.CreatorEmailId,
+	})
+	if err := s.handleRecipientsChanges(ctx, tx, req.Thread.Id, req.Thread.Recipients); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+
 	thread, err := s.getThread(ctx, req.Thread.Id, userInfo, true)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
-
-	/*
-		    TODO inform affected email ids via notificator
-
-				if accessChanges != nil && len(accessChanges.Users.ToDelete) > 0 {
-					emailIds := []int32{}
-					for _, ua := range accessChanges.Users.ToDelete {
-						emailIds = append(emailIds, ua.UserId)
-					}
-
-					s.sendUpdate(ctx, &mailer.MailerEvent{
-						Data: &mailer.MailerEvent_ThreadDelete{
-							ThreadDelete: thread.Id,
-						},
-					}, emailIds)
-				}
-	*/
 
 	if len(thread.Recipients) > 0 {
 		emailIds := []uint64{}
@@ -365,7 +352,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 			Data: &mailer.MailerEvent_ThreadUpdate{
 				ThreadUpdate: thread,
 			},
-		}, emailIds)
+		}, emailIds...)
 	}
 
 	return &CreateThreadResponse{
@@ -406,19 +393,19 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 	}
 
 	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {
-		emailids := []uint64{}
+		emailIds := []uint64{}
 		if thread.CreatorId != nil {
-			emailids = append(emailids, thread.CreatorEmailId)
+			emailIds = append(emailIds, thread.CreatorEmailId)
 		}
 		for _, ua := range thread.Recipients {
-			emailids = append(emailids, ua.EmailId)
+			emailIds = append(emailIds, ua.EmailId)
 		}
 
 		s.sendUpdate(ctx, &mailer.MailerEvent{
 			Data: &mailer.MailerEvent_ThreadDelete{
 				ThreadDelete: req.ThreadId,
 			},
-		}, emailids)
+		}, emailIds...)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

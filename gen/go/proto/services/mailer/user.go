@@ -2,6 +2,7 @@ package mailer
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
@@ -9,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 var tSettingsBlocks = table.FivenetMailerSettingsBlocked
@@ -16,14 +18,8 @@ var tSettingsBlocks = table.FivenetMailerSettingsBlocked
 func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.State.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_READ)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.State.ThreadId, req.State.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+		return nil, err
 	}
 
 	tThreadsState := table.FivenetMailerThreadsState
@@ -60,7 +56,52 @@ func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest)
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	return &SetThreadStateResponse{}, nil
+	state, err := s.getThreadState(ctx, req.State.ThreadId, req.State.EmailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	s.sendUpdate(ctx, &mailer.MailerEvent{
+		Data: &mailer.MailerEvent_ThreadStateUpdate{
+			ThreadStateUpdate: state,
+		},
+	}, req.State.EmailId)
+
+	return &SetThreadStateResponse{
+		State: state,
+	}, nil
+}
+
+func (s *Server) getThreadState(ctx context.Context, threadId uint64, emaildId uint64) (*mailer.ThreadState, error) {
+	stmt := tThreadsState.
+		SELECT(
+			tThreadsState.ThreadID,
+			tThreadsState.EmailID,
+			tThreadsState.Unread,
+			tThreadsState.LastRead,
+			tThreadsState.Important,
+			tThreadsState.Favorite,
+			tThreadsState.Muted,
+			tThreadsState.Archived,
+		).
+		FROM(tThreadsState).
+		WHERE(jet.AND(
+			tThreadsState.ThreadID.EQ(jet.Uint64(threadId)),
+			tThreadsState.EmailID.EQ(jet.Uint64(emaildId)),
+		))
+
+	dest := &mailer.ThreadState{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	if dest.ThreadId == 0 || dest.EmailId == 0 {
+		return nil, nil
+	}
+
+	return dest, nil
 }
 
 func (s *Server) setUnreadState(ctx context.Context, threadId uint64, emailIds []uint64) error {

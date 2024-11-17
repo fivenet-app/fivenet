@@ -111,47 +111,6 @@ func (m *UserEvent) validate(all bool) error {
 			}
 		}
 
-	case *UserEvent_Mailer:
-		if v == nil {
-			err := UserEventValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetMailer()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserEventValidationError{
-						field:  "Mailer",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserEventValidationError{
-						field:  "Mailer",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMailer()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserEventValidationError{
-					field:  "Mailer",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	default:
 		_ = v // ensures v is used
 	}

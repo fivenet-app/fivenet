@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.notificator;
 
 import "resources/common/database/database.proto";
+import "resources/mailer/events.proto";
 import "resources/notifications/events.proto";
 import "resources/notifications/notifications.proto";
 import "validate/validate.proto";
@@ -50,6 +51,7 @@ message StreamResponse {
     resources.notifications.UserEvent user_event = 3;
     resources.notifications.JobEvent job_event = 4;
     resources.notifications.SystemEvent system_event = 5;
+    resources.mailer.MailerEvent mailer_event = 6;
   }
 }
 

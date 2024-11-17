@@ -16,5 +16,6 @@ message MailerEvent {
     uint64 thread_delete = 4 [jstype = JS_STRING];
     Message message_update = 5;
     uint64 message_delete = 6 [jstype = JS_STRING];
+    ThreadState thread_state_update = 7;
   }
 }

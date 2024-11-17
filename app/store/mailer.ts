@@ -25,6 +25,7 @@ export interface MailerState {
         content: string;
         emails: string[];
     };
+    emails: (Email | EmailShort)[];
     selectedEmail: EmailShort | undefined;
     selectedThread: Thread | undefined;
     settings: EmailSettings;
@@ -38,6 +39,7 @@ export const useMailerStore = defineStore('mailer', {
                 content: '',
                 emails: [],
             },
+            emails: [],
             selectedEmail: undefined,
             selectedThread: undefined,
             settings: {
@@ -48,7 +50,30 @@ export const useMailerStore = defineStore('mailer', {
     persist: false,
     actions: {
         async handleEvent(event: MailerEvent): Promise<void> {
-            if (event.data.oneofKind === 'threadUpdate') {
+            console.log('MAILEREVENT', event);
+            if (event.data.oneofKind === 'emailUpdate') {
+                const idx = this.emails.findIndex((e) => {
+                    if (event.data.oneofKind !== 'emailDelete') {
+                        return false;
+                    }
+
+                    return e.id === event.data.emailDelete;
+                });
+                if (idx > -1) {
+                    this.emails[idx] = event.data.emailUpdate;
+                }
+            } else if (event.data.oneofKind === 'emailDelete') {
+                const idx = this.emails.findIndex((e) => {
+                    if (event.data.oneofKind !== 'emailDelete') {
+                        return false;
+                    }
+
+                    return e.id === event.data.emailDelete;
+                });
+                if (idx > -1) {
+                    this.emails.splice(idx, 1);
+                }
+            } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
             } else if (event.data.oneofKind === 'threadDelete') {
                 await mailerDB.threads.delete(event.data.threadDelete);
@@ -57,9 +82,8 @@ export const useMailerStore = defineStore('mailer', {
                 await mailerDB.messages.put(event.data.messageUpdate);
 
                 if (!msg) {
-                    // Only set unread state when message isn't from user himself
-                    const { activeChar } = useAuth();
-                    if (event.data.messageUpdate.creatorId !== activeChar.value?.userId) {
+                    // Only set unread state when message isn't from same email
+                    if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
                         useSound().play({ name: 'notification' });
                     }
 
@@ -75,6 +99,8 @@ export const useMailerStore = defineStore('mailer', {
                 }
             } else if (event.data.oneofKind === 'messageDelete') {
                 await mailerDB.messages.delete(event.data.messageDelete);
+            } else if (event.data.oneofKind === 'threadStateUpdate') {
+                this.setThreadState(event.data.threadStateUpdate, true);
             } else {
                 logger.debug('Unknown MailerEvent received:', event.data.oneofKind);
             }
@@ -86,7 +112,12 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().listEmails({});
                 const { response } = await call;
 
-                return response.emails;
+                this.emails = response.emails;
+                if (this.emails.length > 0) {
+                    this.selectedEmail = this.emails[0];
+                }
+
+                return this.emails;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -288,7 +319,7 @@ class MailerDexie extends Dexie {
     constructor() {
         super('mailer');
         this.version(1).stores({
-            threads: 'id',
+            threads: 'id, creatorEmailId',
             messages: 'id, threadId, emailId',
         });
     }
