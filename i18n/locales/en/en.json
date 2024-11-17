@@ -501,7 +501,9 @@
         "recipients": "No Recipient | {n} Recipient | {n} Recipients",
         "unarchive": "Unarchive",
         "categories": "No Categories | {n} Category | {n} Categories",
-        "sort_by": "Sort by"
+        "sort_by": "Sort by",
+        "personal_email": "Personal Email",
+        "participant": "Participant | Participants"
     },
     "components": {
         "partials": {
