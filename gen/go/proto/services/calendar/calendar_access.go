@@ -461,27 +461,3 @@ func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 
 	return nil
 }
-
-func (s *Server) clearCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64) error {
-	jobStmt := tCJobAccess.
-		DELETE().
-		WHERE(jet.AND(
-			tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-		))
-
-	if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	userStmt := tCUserAccess.
-		DELETE().
-		WHERE(jet.AND(
-			tCUserAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-		))
-
-	if _, err := userStmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
-}

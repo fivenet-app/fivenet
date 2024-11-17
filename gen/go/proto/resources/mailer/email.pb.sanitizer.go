@@ -9,22 +9,22 @@ import (
 
 func (m *Email) Sanitize() error {
 
-	if m.Email != nil {
-		*m.Email = htmlsanitizer.StripTags(*m.Email)
-	}
+	m.Email = htmlsanitizer.StripTags(m.Email)
 
-	m.Label = htmlsanitizer.StripTags(m.Label)
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
+	}
 
 	return nil
 }
 
 func (m *EmailShort) Sanitize() error {
 
-	if m.Email != nil {
-		*m.Email = htmlsanitizer.StripTags(*m.Email)
-	}
+	m.Email = htmlsanitizer.StripTags(m.Email)
 
-	m.Label = htmlsanitizer.StripTags(m.Label)
+	if m.Label != nil {
+		*m.Label = htmlsanitizer.StripTags(*m.Label)
+	}
 
 	return nil
 }

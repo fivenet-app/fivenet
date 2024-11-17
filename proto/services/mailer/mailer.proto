@@ -23,7 +23,7 @@ message ListEmailsResponse {
 }
 
 message GetEmailRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message GetEmailResponse {
@@ -39,7 +39,7 @@ message CreateOrUpdateEmailResponse {
 }
 
 message DeleteEmailRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message DeleteEmailResponse {}
@@ -47,7 +47,7 @@ message DeleteEmailResponse {}
 // Templates
 
 message ListTemplatesRequest {
-  uint64 email_id = 1 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message ListTemplatesResponse {
@@ -55,8 +55,8 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 email_id = 1 [jstype = JS_STRING];
-  uint64 template_id = 2 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 template_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message GetTemplateResponse {
@@ -72,7 +72,8 @@ message CreateOrUpdateTemplateResponse {
 }
 
 message DeleteTemplateRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message DeleteTemplateResponse {}
@@ -92,7 +93,8 @@ message ListThreadsResponse {
 }
 
 message GetThreadRequest {
-  uint64 thread_id = 1 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 thread_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message GetThreadResponse {
@@ -109,7 +111,8 @@ message CreateThreadResponse {
 }
 
 message DeleteThreadRequest {
-  uint64 thread_id = 1 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 thread_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message DeleteThreadResponse {}
@@ -137,12 +140,15 @@ message SetEmailSettingsResponse {
 // Messages
 
 message ListThreadMessagesRequest {
-  uint64 thread_id = 1 [jstype = JS_STRING];
-  resources.timestamp.Timestamp after = 2;
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 email_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 thread_id = 3 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  resources.timestamp.Timestamp after = 4;
 }
 
 message ListThreadMessagesResponse {
-  repeated resources.mailer.Message messages = 1;
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.mailer.Message messages = 2;
 }
 
 message PostMessageRequest {
@@ -154,8 +160,9 @@ message PostMessageResponse {
 }
 
 message DeleteMessageRequest {
-  uint64 thread_id = 1 [jstype = JS_STRING];
-  uint64 message_id = 2 [jstype = JS_STRING];
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 thread_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 message_id = 3 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message DeleteMessageResponse {}

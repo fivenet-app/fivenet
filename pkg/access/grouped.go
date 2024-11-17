@@ -92,6 +92,10 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargets(ctx cont
 	return len(out) == len(targetIds), err
 }
 
+type canAccessIdsHelper struct {
+	IDs []uint64 `alias:"id"`
+}
+
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx context.Context, userInfo *userinfo.UserInfo, access V, targetIds ...uint64) ([]uint64, error) {
 	if len(targetIds) == 0 {
 		return targetIds, nil
@@ -110,11 +114,20 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx co
 	var from jet.ReadableTable
 	from = g.targetTable
 
-	accessCheckCondition := g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.Job))
-	if g.targetTableColumns.CreatorID != nil {
-		accessCheckCondition = accessCheckCondition.AND(g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+	accessCheckConditions := []jet.BoolExpression{}
+	accessCheckCondition := jet.Bool(false)
+	if g.targetTableColumns.CreatorJob != nil {
+		accessCheckCondition = g.targetTableColumns.CreatorJob.EQ(jet.String(userInfo.Job))
 	}
-	accessCheckConditions := []jet.BoolExpression{accessCheckCondition}
+	if g.targetTableColumns.CreatorID != nil {
+		if g.targetTableColumns.CreatorJob == nil {
+			accessCheckCondition = g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.UserId))
+		} else {
+			accessCheckCondition = accessCheckCondition.AND(g.targetTableColumns.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+		}
+	}
+	accessCheckConditions = append(accessCheckConditions, accessCheckCondition)
+
 	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
 
 	if g.Jobs != nil {
@@ -164,9 +177,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, V]) CanUserAccessTargetIDs(ctx co
 		GROUP_BY(g.targetTableColumns.ID).
 		ORDER_BY(orderBys...)
 
-	var dest struct {
-		IDs []uint64 `alias:"id"`
-	}
+	dest := &canAccessIdsHelper{}
 	if err := stmt.QueryContext(ctx, g.db, &dest.IDs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err

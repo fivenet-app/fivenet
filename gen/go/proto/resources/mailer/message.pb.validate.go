@@ -60,6 +60,8 @@ func (m *Message) validate(all bool) error {
 
 	// no validation rules for ThreadId
 
+	// no validation rules for SenderId
+
 	if all {
 		switch v := interface{}(m.GetCreatedAt()).(type) {
 		case interface{ ValidateAll() error }:
@@ -109,10 +111,6 @@ func (m *Message) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if m.SenderId != nil {
-		// no validation rules for SenderId
 	}
 
 	if m.Sender != nil {

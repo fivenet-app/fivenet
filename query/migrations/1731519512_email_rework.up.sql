@@ -16,13 +16,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   `disabled` tinyint(1) DEFAULT 0,
   `job` varchar(40) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
-  `email` varchar(80) DEFAULT NULL,
+  `email` varchar(80) NOT NULL,
   `label` varchar(128) DEFAULT NULL,
   `internal` tinyint(1) DEFAULT 0,
   `signature` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_mailer_emails_email` (`email`),
-  KEY `idx_fivenet_mailer_emails_job` (`job`),
+  UNIQUE KEY `idx_fivenet_mailer_emails_job_user_id` (`job`, `user_id`),
+  UNIQUE KEY `fk_fivenet_mailer_emails_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_mailer_emails_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_templates` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
-  `email_id` bigint(20) unsigned DEFAULT NULL,
+  `email_id` bigint(20) unsigned NOT NULL,
   `title` varchar(255) NOT NULL,
   `content` longtext NOT NULL,
   `creator_job` varchar(40) DEFAULT NULL,
@@ -94,6 +95,7 @@ CREATE TABLE
         `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
         `deleted_at` datetime(3) DEFAULT NULL,
+        `title` varchar(255) NOT NULL,
         `creator_email_id` bigint(20) unsigned NOT NULL,
         `creator_id` int(11) DEFAULT NULL,
         PRIMARY KEY (`id`),
@@ -135,8 +137,8 @@ CREATE TABLE
 CREATE TABLE
     IF NOT EXISTS `fivenet_mailer_messages` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-        `thread_id` bigint(20) unsigned DEFAULT NULL,
-        `sender_id` bigint(20) unsigned DEFAULT NULL,
+        `thread_id` bigint(20) unsigned NOT NULL,
+        `sender_id` bigint(20) unsigned NOT NULL,
         `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
         `deleted_at` datetime(3) DEFAULT NULL,
@@ -146,7 +148,7 @@ CREATE TABLE
         `creator_id` int(11) DEFAULT NULL,
         `creator_job` varchar(40) DEFAULT NULL,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `idx_fivenet_mailer_messages_thread_id` (`thread_id`),
+        KEY `idx_fivenet_mailer_messages_thread_id` (`thread_id`),
         KEY `idx_fivenet_mailer_messages_sender_id` (`sender_id`),
         KEY `idx_fivenet_mailer_messages_deleted_at` (`deleted_at`),
         KEY `idx_fivenet_mailer_messages_creator_id` (`creator_id`),

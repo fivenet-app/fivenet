@@ -16,7 +16,9 @@ import (
 )
 
 var (
-	tEmails           = table.FivenetMailerEmails.AS("email")
+	tEmails      = table.FivenetMailerEmails.AS("email")
+	tEmailsShort = tEmails.AS("email_short")
+
 	tEmailsUserAccess = table.FivenetMailerEmailsUserAccess
 	tEmailsJobAccess  = table.FivenetMailerEmailsJobAccess
 )
@@ -25,12 +27,10 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
-
-	tEmails := tEmails.AS("email_short")
-
 	if !userInfo.SuperUser {
 		condition = condition.AND(
 			jet.OR(
+				tEmailsShort.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tEmailsUserAccess.Access.IS_NULL(),
 					tEmailsJobAccess.Access.IS_NOT_NULL(),
@@ -44,30 +44,33 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 		)
 	}
 
-	stmt := tEmails.
+	stmt := tEmailsShort.
 		SELECT(
-			tEmails.ID,
-			tEmails.Job,
-			tEmails.Email,
-			tEmails.Label,
-			tEmails.Internal,
-			tEmails.Signature,
+			tEmailsShort.ID,
+			tEmailsShort.CreatedAt,
+			tEmailsShort.UpdatedAt,
+			tEmailsShort.DeletedAt,
+			tEmailsShort.Job,
+			tEmailsShort.UserID,
+			tEmailsShort.Email,
+			tEmailsShort.Label,
+			tEmailsShort.Internal,
 		).
 		FROM(
-			tEmails.
+			tEmailsShort.
 				LEFT_JOIN(tEmailsJobAccess,
-					tEmailsJobAccess.EmailID.EQ(tEmails.ID).
+					tEmailsJobAccess.EmailID.EQ(tEmailsShort.ID).
 						AND(tEmailsJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tEmailsJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(tEmailsUserAccess,
-					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
+					tEmailsUserAccess.EmailID.EQ(tEmailsShort.ID).
 						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
 				),
 		).
 		WHERE(condition).
-		GROUP_BY(tEmails.ID).
-		ORDER_BY(tEmails.Job.ASC(), tEmails.Label.ASC())
+		GROUP_BY(tEmailsShort.ID).
+		ORDER_BY(tEmailsShort.Job.ASC(), tEmailsShort.Label.ASC())
 
 	resp := &ListEmailsResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Emails); err != nil {
@@ -87,6 +90,7 @@ func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool) (*mai
 			tEmails.UpdatedAt,
 			tEmails.DeletedAt,
 			tEmails.Job,
+			tEmails.UserID,
 			tEmails.Email,
 			tEmails.Label,
 			tEmails.Internal,
@@ -181,7 +185,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// TODO validate email and domain
+	// TODO validate email format
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -192,30 +196,17 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	defer tx.Rollback()
 
 	if req.Email.Id <= 0 {
-		stmt := tEmails.
-			INSERT(
-				tEmails.Job,
-				tEmails.Email,
-				tEmails.Label,
-				tEmails.Internal,
-				tEmails.Signature,
-			).
-			VALUES(
-				userInfo.Job,
-				req.Email.Email,
-				req.Email.Label,
-				req.Email.Internal,
-				req.Email.Signature,
-			)
-
-		res, err := stmt.ExecContext(ctx, s.db)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		if req.Email.UserId != nil {
+			req.Email.UserId = &userInfo.UserId
+			req.Email.Job = nil
+		} else {
+			req.Email.UserId = nil
+			req.Email.Job = &userInfo.Job
 		}
 
-		lastId, err := res.LastInsertId()
+		lastId, err := s.createEmail(ctx, req.Email)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			return nil, err
 		}
 
 		req.Email.Id = uint64(lastId)
@@ -228,12 +219,21 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			return nil, errorsmailer.ErrNoPerms
 		}
 
+		label := jet.NULL
+		if req.Email.Label != nil {
+			label = jet.String(*req.Email.Label)
+		}
+
 		stmt := tEmails.
-			UPDATE().
+			UPDATE(
+				tEmails.Label,
+				tEmails.Internal,
+				tEmails.Signature,
+			).
 			SET(
-				tEmails.Label.SET(jet.String(req.Email.Label)),
-				tEmails.Internal.SET(jet.Bool(req.Email.Internal)),
-				tEmails.Signature.SET(jet.String(*req.Email.Signature)),
+				label,
+				jet.Bool(req.Email.Internal),
+				jet.String(*req.Email.Signature),
 			).
 			WHERE(jet.AND(
 				tEmails.ID.EQ(jet.Uint64(req.Email.Id)),
@@ -263,6 +263,38 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return resp, nil
+}
+
+func (s *Server) createEmail(ctx context.Context, email *mailer.Email) (uint64, error) {
+	stmt := tEmails.
+		INSERT(
+			tEmails.Job,
+			tEmails.UserID,
+			tEmails.Email,
+			tEmails.Label,
+			tEmails.Internal,
+			tEmails.Signature,
+		).
+		VALUES(
+			email.Job,
+			email.UserId,
+			email.Email,
+			email.Label,
+			email.Internal,
+			email.Signature,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	return uint64(lastId), nil
 }
 
 func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*DeleteEmailResponse, error) {

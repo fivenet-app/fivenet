@@ -141,14 +141,12 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Template.EmailId != nil && *req.Template.EmailId > 0 {
-		check, err := s.access.CanUserAccessTarget(ctx, *req.Template.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	check, err := s.access.CanUserAccessTarget(ctx, req.Template.EmailId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_MANAGE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errorsmailer.ErrFailedQuery
 	}
 
 	if req.Template.Id <= 0 {
@@ -206,7 +204,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		template, err := s.getTemplate(ctx, req.Template.Id, req.Template.EmailId)
+		template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -232,7 +230,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	template, err := s.getTemplate(ctx, req.Template.Id, req.Template.EmailId)
+	template, err := s.getTemplate(ctx, req.Template.Id, &req.Template.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

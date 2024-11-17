@@ -5,7 +5,6 @@ import MailerThread from '~/components/mailer/MailerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
-import type { Email } from '~~/gen/ts/resources/mailer/email';
 
 useHead({
     title: 'common.mail',
@@ -23,7 +22,7 @@ const { can } = useAuth();
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { selectedThread } = storeToRefs(mailerStore);
+const { selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
 const tabItems = [
     {
@@ -51,14 +50,6 @@ const dropdownItems = computed(() =>
                             mailerStore.setThreadState({ threadId: selectedThread.value!.id, archived: true }),
                     }),
             },
-            {
-                label: t('common.leave'),
-                icon: 'i-mdi-door',
-                click: () =>
-                    modal.open(ConfirmModal, {
-                        confirm: async () => selectedThread.value && mailerStore.leaveThread(selectedThread.value!.id),
-                    }),
-            },
         ],
 
         [
@@ -69,7 +60,12 @@ const dropdownItems = computed(() =>
                       click: async () =>
                           modal.open(ConfirmModal, {
                               confirm: async () =>
-                                  selectedThread.value && mailerStore.deleteThread({ threadId: selectedThread.value!.id }),
+                                  selectedEmail.value?.id &&
+                                  selectedThread.value &&
+                                  mailerStore.deleteThread({
+                                      emailId: selectedEmail.value.id,
+                                      threadId: selectedThread.value!.id,
+                                  }),
                           }),
                   }
                 : undefined,
@@ -77,18 +73,11 @@ const dropdownItems = computed(() =>
     ].flatMap((items) => (items.length > 0 ? [items] : [])),
 );
 
-const personalEmail: Email = {
-    id: '0',
-    disabled: false,
-    email: '',
-    label: t('common.personal_email'),
-    internal: false,
-};
-const selectedEmail = ref<Email | undefined>(personalEmail);
-
 const { data: emails } = useLazyAsyncData('emails', async () => {
     const emails = await mailerStore.listEmails();
-    emails.unshift(personalEmail);
+    if (emails.length > 0) {
+        selectedEmail.value = emails[0];
+    }
     return emails;
 });
 
@@ -196,10 +185,34 @@ const editing = ref(false);
                             :options="emails"
                             :placeholder="$t('common.mail')"
                             :searchable-placeholder="$t('common.search_field')"
-                            :search-attributes="['label']"
+                            :search-attributes="['label', 'email']"
                             trailing
                             by="id"
                         >
+                            <template #label>
+                                <span class="truncate">
+                                    {{
+                                        (selectedEmail?.label && selectedEmail?.label !== ''
+                                            ? selectedEmail?.label
+                                            : undefined) ??
+                                        (selectedEmail?.userId ? $t('common.personal_email') : undefined) ??
+                                        selectedEmail?.email ??
+                                        $t('common.none')
+                                    }}
+                                </span>
+                            </template>
+
+                            <template #option="{ option }">
+                                <span class="truncate">
+                                    {{
+                                        (option?.label && option?.label !== '' ? option?.label : undefined) ??
+                                        (option?.userId ? $t('common.personal_email') : undefined) ??
+                                        option?.email ??
+                                        $t('common.none')
+                                    }}
+                                </span>
+                            </template>
+
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>

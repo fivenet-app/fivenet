@@ -11,7 +11,7 @@ const { isOpen } = useModal();
 const { activeChar } = useAuth();
 
 const mailerStore = useMailerStore();
-const { draft: state } = storeToRefs(mailerStore);
+const { draft: state, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
 const completorStore = useCompletorStore();
 
@@ -26,6 +26,10 @@ type Schema = z.output<typeof schema>;
 const usersLoading = ref(false);
 
 async function createThread(values: Schema): Promise<void> {
+    if (!selectedEmail.value?.id) {
+        return;
+    }
+
     await mailerStore.createThread({
         thread: {
             id: '0',
@@ -38,11 +42,13 @@ async function createThread(values: Schema): Promise<void> {
             ],
             creatorEmailId: '1',
             creatorId: activeChar.value!.userId,
+            title: values.title,
         },
 
         message: {
             id: '0',
             threadId: '0',
+            senderId: selectedEmail.value?.id,
             title: values.title,
             content: values.content,
             creatorId: activeChar.value!.userId,
@@ -90,6 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     type="text"
                                     size="xl"
                                     class="font-semibold text-gray-900 dark:text-white"
+                                    :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
                                 />
                             </UFormGroup>
@@ -99,7 +106,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UFormGroup name="users" class="flex-1" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
-                                        v-model="state.users"
+                                        v-model="state.emails"
                                         :placeholder="$t('common.recipient')"
                                         block
                                         multiple
@@ -117,12 +124,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
                                         :search-attributes="['firstname', 'lastname']"
+                                        value-attribute="email"
                                         :disabled="!canSubmit"
                                     >
                                         <template #label>
                                             {{
-                                                state.users.length > 0
-                                                    ? $t('common.recipients', state.users.length)
+                                                state.emails.length > 0
+                                                    ? $t('common.recipients', state.emails.length)
                                                     : $t('common.none_selected', [$t('common.recipient', 2)])
                                             }}
                                         </template>

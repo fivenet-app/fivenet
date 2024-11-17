@@ -89,6 +89,17 @@ func (m *Thread) validate(all bool) error {
 
 	// no validation rules for CreatorEmailId
 
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
+		err := ThreadValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetRecipients() {
 		_, _ = idx, item
 

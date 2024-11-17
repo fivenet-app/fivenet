@@ -24,6 +24,12 @@ type UserAccessColumns struct {
 	UserId jet.ColumnInteger
 }
 
+type QualificationAccessColumns struct {
+	BaseAccessColumns
+
+	QualificationId jet.ColumnInteger
+}
+
 type TargetTableColumns struct {
 	ID        jet.ColumnInteger
 	DeletedAt jet.ColumnTimestamp

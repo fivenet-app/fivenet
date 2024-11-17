@@ -378,7 +378,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
-	if err := s.handleCalendarAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Calendar.Id, req.Calendar.Access.Jobs, req.Calendar.Access.Users); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 

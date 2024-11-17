@@ -11,29 +11,29 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tUsers = table.Users.AS("usershort")
+var tQualifications = table.FivenetQualifications.AS("qualification_short")
 
-type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
+type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
 	GetId() uint64
 	GetTargetId() uint64
 
-	GetUserId() int32
-	SetUserId(int32)
+	GetQualificationId() uint64
+	SetQualificationId(uint64)
 	GetAccess() V
 	SetAccess(V)
 }
 
-type Users[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
+type Qualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum] struct {
 	table         jet.Table
-	columns       *UserAccessColumns
+	columns       *QualificationAccessColumns
 	selectTable   jet.Table
-	selectColumns *UserAccessColumns
+	selectColumns *QualificationAccessColumns
 }
 
-func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *UserAccessColumns, tableAlias jet.Table, columnsAlias *UserAccessColumns) *Users[U, T, V] {
-	return &Users[U, T, V]{
+func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protoutils.ProtoEnum](table jet.Table, columns *QualificationAccessColumns, tableAlias jet.Table, columnsAlias *QualificationAccessColumns) *Qualifications[U, T, V] {
+	return &Qualifications[U, T, V]{
 		table:         table,
 		columns:       columns,
 		selectTable:   tableAlias,
@@ -41,31 +41,29 @@ func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](ta
 	}
 }
 
-func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
 			a.selectColumns.CreatedAt,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
-			a.selectColumns.UserId,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			a.selectColumns.QualificationId,
+			tQualifications.ID,
+			tQualifications.Job,
+			tQualifications.Abbreviation,
+			tQualifications.Title,
 		).
 		FROM(
 			a.selectTable.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(a.selectColumns.UserId),
+				INNER_JOIN(tQualifications,
+					tQualifications.ID.EQ(a.selectColumns.QualificationId),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
-		)
+			tQualifications.DeletedAt.IS_NULL(),
+		))
 
 	var dest []T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
@@ -77,7 +75,7 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) (
 	return dest, nil
 }
 
-func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
+func (a *Qualifications[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) (T, error) {
 	stmt := a.table.
 		DELETE().
 		WHERE(
@@ -94,7 +92,7 @@ func (a *Users[U, T, V]) Clear(ctx context.Context, tx qrm.DB, targetId uint64) 
 	return dest, nil
 }
 
-func (a *Users[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
+func (a *Qualifications[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64, in []T) (toCreate []T, toUpdate []T, toDelete []T, err error) {
 	current, err := a.List(ctx, tx, targetId)
 	if err != nil {
 		return nil, nil, nil, err
@@ -104,7 +102,7 @@ func (a *Users[U, T, V]) Compare(ctx context.Context, tx qrm.DB, targetId uint64
 	return toCreate, toUpdate, toDelete, nil
 }
 
-func (a *Users[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
+func (a *Qualifications[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, toDelete []T) {
 	toCreate = []T{}
 	toUpdate = []T{}
 	toDelete = []T{}
@@ -125,7 +123,7 @@ func (a *Users[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, t
 			var found T
 			var foundIdx int
 			for i, uj := range in {
-				if cj.GetUserId() != uj.GetUserId() {
+				if cj.GetQualificationId() != uj.GetQualificationId() {
 					continue
 				}
 				found = uj
@@ -162,7 +160,7 @@ func (a *Users[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, t
 	return
 }
 
-func (a *Users[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) ([]T, []T, []T, error) {
+func (a *Qualifications[U, T, AccessLevel]) HandleAccessChanges(ctx context.Context, tx qrm.DB, targetId uint64, access []T) ([]T, []T, []T, error) {
 	toCreate, toUpdate, toDelete, err := a.Compare(ctx, tx, targetId, access)
 	if err != nil {
 		return toCreate, toUpdate, toDelete, err

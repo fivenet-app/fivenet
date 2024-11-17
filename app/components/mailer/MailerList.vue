@@ -85,7 +85,9 @@ defineShortcuts({
                 >
                     <div class="flex items-center justify-between" :class="[thread.state?.unread && 'font-semibold']">
                         <div class="flex items-center gap-3 font-semibold">
-                            {{ thread.title }}
+                            <span class="truncate">
+                                {{ thread.title }}
+                            </span>
 
                             <UChip v-if="thread.state?.unread" />
                         </div>
@@ -97,16 +99,13 @@ defineShortcuts({
                         }}</span>
                     </div>
                     <div class="flex items-center justify-between">
-                        <p>{{ thread.creator?.firstname }} {{ thread.creator?.lastname }}</p>
+                        <p>{{ thread.creatorEmail?.email }}</p>
 
                         <div class="inline-flex gap-1">
                             <UIcon v-if="thread.state?.important" name="i-mdi-exclamation-thick" class="size-5 text-red-500" />
                             <UIcon v-if="thread.state?.favorite" name="i-mdi-star" class="size-5 text-yellow-500" />
                         </div>
                     </div>
-                    <p class="line-clamp-1 text-gray-400 dark:text-gray-500">
-                        {{ thread.lastMessage?.message }}
-                    </p>
                 </div>
 
                 <UDivider />

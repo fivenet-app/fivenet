@@ -50,11 +50,17 @@ export interface Thread {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientEmail recipients = 9;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string title = 9;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: repeated resources.mailer.ThreadRecipientEmail recipients = 10;
      */
     recipients: ThreadRecipientEmail[];
     /**
-     * @generated from protobuf field: optional resources.mailer.ThreadState state = 10;
+     * @generated from protobuf field: optional resources.mailer.ThreadState state = 11;
      */
     state?: ThreadState;
 }
@@ -132,14 +138,16 @@ class Thread$Type extends MessageType<Thread> {
             { no: 6, name: "creator_email", kind: "message", T: () => EmailShort },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
-            { no: 9, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
-            { no: 10, name: "state", kind: "message", T: () => ThreadState }
+            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 10, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
+            { no: 11, name: "state", kind: "message", T: () => ThreadState }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.creatorEmailId = "0";
+        message.title = "";
         message.recipients = [];
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
@@ -174,10 +182,13 @@ class Thread$Type extends MessageType<Thread> {
                 case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* repeated resources.mailer.ThreadRecipientEmail recipients */ 9:
+                case /* string title */ 9:
+                    message.title = reader.string();
+                    break;
+                case /* repeated resources.mailer.ThreadRecipientEmail recipients */ 10:
                     message.recipients.push(ThreadRecipientEmail.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.mailer.ThreadState state */ 10:
+                case /* optional resources.mailer.ThreadState state */ 11:
                     message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
                     break;
                 default:
@@ -216,12 +227,15 @@ class Thread$Type extends MessageType<Thread> {
         /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.mailer.ThreadRecipientEmail recipients = 9; */
+        /* string title = 9; */
+        if (message.title !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.title);
+        /* repeated resources.mailer.ThreadRecipientEmail recipients = 10; */
         for (let i = 0; i < message.recipients.length; i++)
-            ThreadRecipientEmail.internalBinaryWrite(message.recipients[i], writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.mailer.ThreadState state = 10; */
+            ThreadRecipientEmail.internalBinaryWrite(message.recipients[i], writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.ThreadState state = 11; */
         if (message.state)
-            ThreadState.internalBinaryWrite(message.state, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            ThreadState.internalBinaryWrite(message.state, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

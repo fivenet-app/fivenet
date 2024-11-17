@@ -295,7 +295,16 @@ func (m *GetEmailRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetId() <= 0 {
+		err := GetEmailRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetEmailRequestMultiError(errors)
@@ -811,7 +820,16 @@ func (m *DeleteEmailRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetId() <= 0 {
+		err := DeleteEmailRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteEmailRequestMultiError(errors)
@@ -1017,7 +1035,16 @@ func (m *ListTemplatesRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for EmailId
+	if m.GetEmailId() <= 0 {
+		err := ListTemplatesRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ListTemplatesRequestMultiError(errors)
@@ -1257,9 +1284,27 @@ func (m *GetTemplateRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for EmailId
+	if m.GetEmailId() <= 0 {
+		err := GetTemplateRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for TemplateId
+	if m.GetTemplateId() <= 0 {
+		err := GetTemplateRequestValidationError{
+			field:  "TemplateId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetTemplateRequestMultiError(errors)
@@ -1791,7 +1836,27 @@ func (m *DeleteTemplateRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetEmailId() <= 0 {
+		err := DeleteTemplateRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetId() <= 0 {
+		err := DeleteTemplateRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteTemplateRequestMultiError(errors)
@@ -2348,7 +2413,27 @@ func (m *GetThreadRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ThreadId
+	if m.GetEmailId() <= 0 {
+		err := GetThreadRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetThreadId() <= 0 {
+		err := GetThreadRequestValidationError{
+			field:  "ThreadId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetThreadRequestMultiError(errors)
@@ -2894,7 +2979,27 @@ func (m *DeleteThreadRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ThreadId
+	if m.GetEmailId() <= 0 {
+		err := DeleteThreadRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetThreadId() <= 0 {
+		err := DeleteThreadRequestValidationError{
+			field:  "ThreadId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteThreadRequestMultiError(errors)
@@ -3839,7 +3944,67 @@ func (m *ListThreadMessagesRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ThreadId
+	if m.GetPagination() == nil {
+		err := ListThreadMessagesRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListThreadMessagesRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListThreadMessagesRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListThreadMessagesRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.GetEmailId() <= 0 {
+		err := ListThreadMessagesRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetThreadId() <= 0 {
+		err := ListThreadMessagesRequestValidationError{
+			field:  "ThreadId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetAfter()).(type) {
@@ -3971,6 +4136,46 @@ func (m *ListThreadMessagesResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListThreadMessagesResponseValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListThreadMessagesResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListThreadMessagesResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListThreadMessagesResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	for idx, item := range m.GetMessages() {
 		_, _ = idx, item
@@ -4381,9 +4586,38 @@ func (m *DeleteMessageRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for ThreadId
+	if m.GetEmailId() <= 0 {
+		err := DeleteMessageRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for MessageId
+	if m.GetThreadId() <= 0 {
+		err := DeleteMessageRequestValidationError{
+			field:  "ThreadId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetMessageId() <= 0 {
+		err := DeleteMessageRequestValidationError{
+			field:  "MessageId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteMessageRequestMultiError(errors)

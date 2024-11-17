@@ -550,7 +550,7 @@ export const GetCalendarResponse = new GetCalendarResponse$Type();
 class CreateOrUpdateCalendarRequest$Type extends MessageType<CreateOrUpdateCalendarRequest> {
     constructor() {
         super("services.calendar.CreateOrUpdateCalendarRequest", [
-            { no: 1, name: "calendar", kind: "message", T: () => Calendar }
+            { no: 1, name: "calendar", kind: "message", T: () => Calendar, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateCalendarRequest>): CreateOrUpdateCalendarRequest {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
@@ -18,23 +19,41 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+var tMessages = table.FivenetMailerMessages.AS("message")
+
 func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.ThreadId)))
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.EmailId, req.ThreadId, mailer.AccessLevel_ACCESS_LEVEL_VIEW); err != nil {
+		return nil, err
 	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
+
+	countStmt := tMessages.
+		SELECT(
+			jet.COUNT(jet.DISTINCT(tMessages.ID)).AS("datacount.totalcount"),
+		).
+		FROM(tMessages).
+		WHERE(jet.AND(
+			tMessages.DeletedAt.IS_NULL(),
+			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
+		))
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
 
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ThreadsDefaultPageSize)
 	resp := &ListThreadMessagesResponse{
-		Messages: []*mailer.Message{},
+		Pagination: pag,
+		Messages:   []*mailer.Message{},
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
 	}
 
 	stmt := tMessages.
@@ -45,25 +64,25 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
+			tMessages.Title,
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("sender_user.avatar"),
+			tEmailsShort.ID,
+			tEmailsShort.Email,
 		).
 		FROM(
 			tMessages.
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tMessages.SenderID),
+				LEFT_JOIN(tEmailsShort,
+					tEmailsShort.ID.EQ(tMessages.SenderID),
 				),
 		).
-		LIMIT(20)
+		WHERE(jet.AND(
+			tMessages.DeletedAt.IS_NULL(),
+			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
+		)).
+		ORDER_BY(tMessages.CreatedAt.DESC()).
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Messages); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -78,6 +97,8 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 		}
 	}
 
+	resp.Pagination.Update(len(resp.Messages))
+
 	return resp, nil
 }
 
@@ -89,25 +110,17 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 			tMessages.CreatedAt,
 			tMessages.UpdatedAt,
 			tMessages.DeletedAt,
+			tMessages.Title,
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tEmails.ID,
+			tEmails.Email,
 		).
 		FROM(
 			tMessages.
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tMessages.SenderID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tCreator.ID),
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				),
 		).
 		WHERE(tMessages.ID.EQ(jet.Uint64(messageId))).
@@ -122,11 +135,6 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *use
 
 	if message.Id == 0 {
 		return nil, nil
-	}
-
-	if message.Sender != nil {
-		// TODO
-		// s.enricher.EnrichJobInfoSafe(userInfo, message.Sender)
 	}
 
 	return &message, nil
@@ -144,14 +152,8 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.Message.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.Message.ThreadId, req.Message.SenderId, mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
+		return nil, err
 	}
 
 	// Begin transaction
@@ -247,6 +249,10 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.EmailId, req.ThreadId, mailer.AccessLevel_ACCESS_LEVEL_MANAGE); err != nil {
+		return nil, err
+	}
+
 	auditEntry := &model.FivenetAuditLog{
 		Service: MailerService_ServiceDesc.ServiceName,
 		Method:  "DeleteMessage",
@@ -256,14 +262,8 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	if !userInfo.SuperUser {
+		return nil, errorsmailer.ErrFailedQuery
 	}
 
 	stmt := tMessages.

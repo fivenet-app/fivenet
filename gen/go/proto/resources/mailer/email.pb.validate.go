@@ -89,10 +89,10 @@ func (m *Email) validate(all bool) error {
 
 	// no validation rules for Disabled
 
-	if l := utf8.RuneCountInString(m.GetLabel()); l < 2 || l > 128 {
+	if l := utf8.RuneCountInString(m.GetEmail()); l < 6 || l > 80 {
 		err := EmailValidationError{
-			field:  "Label",
-			reason: "value length must be between 2 and 128 runes, inclusive",
+			field:  "Email",
+			reason: "value length must be between 6 and 80 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -260,12 +260,12 @@ func (m *Email) validate(all bool) error {
 
 	}
 
-	if m.Email != nil {
+	if m.Label != nil {
 
-		if l := utf8.RuneCountInString(m.GetEmail()); l < 6 || l > 80 {
+		if l := utf8.RuneCountInString(m.GetLabel()); l < 2 || l > 128 {
 			err := EmailValidationError{
-				field:  "Email",
-				reason: "value length must be between 6 and 80 runes, inclusive",
+				field:  "Label",
+				reason: "value length must be between 2 and 128 runes, inclusive",
 			}
 			if !all {
 				return err
@@ -422,10 +422,10 @@ func (m *EmailShort) validate(all bool) error {
 
 	// no validation rules for Disabled
 
-	if l := utf8.RuneCountInString(m.GetLabel()); l < 2 || l > 128 {
+	if l := utf8.RuneCountInString(m.GetEmail()); l < 2 || l > 40 {
 		err := EmailShortValidationError{
-			field:  "Label",
-			reason: "value length must be between 2 and 128 runes, inclusive",
+			field:  "Email",
+			reason: "value length must be between 2 and 40 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -564,12 +564,12 @@ func (m *EmailShort) validate(all bool) error {
 
 	}
 
-	if m.Email != nil {
+	if m.Label != nil {
 
-		if l := utf8.RuneCountInString(m.GetEmail()); l < 2 || l > 40 {
+		if l := utf8.RuneCountInString(m.GetLabel()); l < 2 || l > 128 {
 			err := EmailShortValidationError{
-				field:  "Email",
-				reason: "value length must be between 2 and 40 runes, inclusive",
+				field:  "Label",
+				reason: "value length must be between 2 and 128 runes, inclusive",
 			}
 			if !all {
 				return err

@@ -12,7 +12,7 @@ message Template {
   resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   optional resources.timestamp.Timestamp deleted_at = 5;
-  optional uint64 email_id = 6 [jstype = JS_STRING];
+  uint64 email_id = 6 [jstype = JS_STRING];
   // @sanitize: method=StripTags
   string title = 7 [(validate.rules).string = {
     min_len: 3,

@@ -1,43 +1,36 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useCompletorStore } from '~/store/completor';
 import { useMailerStore } from '~/store/mailer';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { isOpen } = useModal();
 
-const { activeChar } = useAuth();
-
-const completorStore = useCompletorStore();
-
 const mailerStore = useMailerStore();
+const { selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
-    users: z.custom<UserShort>().array().max(25),
+    emails: z.string().array().max(25),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    users: [],
+    emails: [],
 });
-
-const usersLoading = ref(false);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (!selectedEmail.value?.id) {
+        return;
+    }
     canSubmit.value = false;
 
     const values = event.data;
     await mailerStore
         .setEmailSettings({
             settings: {
-                userId: activeChar.value?.userId ?? 0,
-                blockedUsers: values.users.map((u) => ({
-                    userId: u.userId,
-                    user: u,
-                })),
+                emailId: selectedEmail.value?.id,
+                blockedEmails: values.emails.map((e) => e.trim()),
             },
         })
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -59,57 +52,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup name="users" class="flex-1" :label="$t('common.blocklist')">
-                        <ClientOnly>
-                            <USelectMenu
-                                v-model="state.users"
-                                :placeholder="$t('common.citizen')"
-                                block
-                                multiple
-                                trailing
-                                by="userId"
-                                :searchable="
-                                    async (query: string): Promise<UserShort[]> => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: query,
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['firstname', 'lastname']"
-                            >
-                                <template #label>
-                                    {{
-                                        state.users.length > 0
-                                            ? $t('common.citizens', state.users.length)
-                                            : $t('common.none_selected', [$t('common.citizen', 2)])
-                                    }}
-                                </template>
+                    <UFormGroup name="emails" class="flex-1" :label="$t('common.blocklist')">
+                        <div class="flex flex-col gap-1">
+                            <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">
+                                <UFormGroup :name="`emails.${idx}`" class="flex-1">
+                                    <UInput v-model="state.emails[idx]" type="text" :placeholder="$t('common.mail')" />
+                                </UFormGroup>
 
-                                <template #option="{ option: user }">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.citizen', 2)]) }}
-                                </template>
-                            </USelectMenu>
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-                        <div v-for="user in state.users" :key="user.userId">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                <UButton
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    icon="i-mdi-close"
+                                    @click="state.emails.splice(idx, 1)"
+                                />
+                            </div>
                         </div>
-                    </div>
+
+                        <UButton
+                            :ui="{ rounded: 'rounded-full' }"
+                            icon="i-mdi-plus"
+                            :disabled="!canSubmit || state.emails.length >= 25"
+                            :class="state.emails.length ? 'mt-2' : ''"
+                            @click="state.emails.push('')"
+                        />
+                    </UFormGroup>
                 </div>
 
                 <template #footer>

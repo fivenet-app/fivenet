@@ -230,7 +230,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 }
 
 func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion) (toCreate []*qualifications.ExamQuestion, toUpdate []*qualifications.ExamQuestion, toDelete []*qualifications.ExamQuestion) {
-	if current == nil || len(current) == 0 {
+	if len(current) == 0 {
 		return in, toUpdate, toDelete
 	}
 

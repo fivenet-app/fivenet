@@ -96,7 +96,7 @@ func (a *Jobs[U, T, V]) compare(current, in []T) (toCreate []T, toUpdate []T, to
 	toUpdate = []T{}
 	toDelete = []T{}
 
-	if current == nil || len(current) == 0 {
+	if len(current) == 0 {
 		return in, toUpdate, toDelete
 	}
 

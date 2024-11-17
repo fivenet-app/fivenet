@@ -5725,8 +5725,8 @@ TODO
 | job | [string](#string) | optional |  |
 | user_id | [int32](#int32) | optional |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-| label | [string](#string) |  | @sanitize: method=StripTags |
+| email | [string](#string) |  | @sanitize: method=StripTags |
+| label | [string](#string) | optional | @sanitize: method=StripTags |
 | internal | [bool](#bool) |  |  |
 | signature | [string](#string) | optional |  |
 | access | [Access](#resources-mailer-Access) |  |  |
@@ -5752,8 +5752,8 @@ TODO
 | job | [string](#string) | optional |  |
 | user_id | [int32](#int32) | optional |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-| label | [string](#string) |  | @sanitize: method=StripTags |
+| email | [string](#string) |  | @sanitize: method=StripTags |
+| label | [string](#string) | optional | @sanitize: method=StripTags |
 | internal | [bool](#bool) |  |  |
 
 
@@ -5823,7 +5823,7 @@ TODO
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
-| sender_id | [uint64](#uint64) | optional |  |
+| sender_id | [uint64](#uint64) |  |  |
 | sender | [EmailShort](#resources-mailer-EmailShort) | optional |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
@@ -5924,7 +5924,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| email_id | [uint64](#uint64) | optional |  |
+| email_id | [uint64](#uint64) |  |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
 | content | [string](#string) |  | @sanitize |
 | creator_job | [string](#string) | optional |  |
@@ -5967,6 +5967,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | creator_email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| title | [string](#string) |  | @sanitize: method=StripTags |
 | recipients | [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail) | repeated |  |
 | state | [ThreadState](#resources-mailer-ThreadState) | optional |  |
 
@@ -11658,6 +11659,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 | message_id | [uint64](#uint64) |  |  |
 
@@ -11684,6 +11686,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
 | id | [uint64](#uint64) |  |  |
 
 
@@ -11709,6 +11712,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 
 
@@ -11820,6 +11824,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| email_id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 
 
@@ -11905,6 +11910,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| email_id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 | after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
@@ -11921,6 +11928,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | messages | [resources.mailer.Message](#resources-mailer-Message) | repeated |  |
 
 

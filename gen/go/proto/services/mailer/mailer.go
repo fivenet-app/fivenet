@@ -19,8 +19,6 @@ var (
 	tCreator = table.Users.AS("creator")
 
 	tUserProps = table.FivenetUserProps
-
-	tMessages = table.FivenetMailerMessages.AS("message")
 )
 
 type Server struct {
@@ -57,9 +55,9 @@ func NewServer(p Params) *Server {
 			p.DB,
 			table.FivenetMailerEmails,
 			&access.TargetTableColumns{
-				ID:         table.FivenetMailerEmails.ID,
-				DeletedAt:  table.FivenetMailerEmails.DeletedAt,
-				CreatorJob: table.FivenetMailerEmails.Job,
+				ID:        table.FivenetMailerEmails.ID,
+				DeletedAt: table.FivenetMailerEmails.DeletedAt,
+				CreatorID: table.FivenetMailerEmails.UserID,
 			},
 			access.NewJobs[mailer.JobAccess, *mailer.JobAccess, mailer.AccessLevel](
 				table.FivenetMailerEmailsJobAccess,

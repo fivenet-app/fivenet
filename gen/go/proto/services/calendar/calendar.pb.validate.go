@@ -653,6 +653,17 @@ func (m *CreateOrUpdateCalendarRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetCalendar() == nil {
+		err := CreateOrUpdateCalendarRequestValidationError{
+			field:  "Calendar",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetCalendar()).(type) {
 		case interface{ ValidateAll() error }:

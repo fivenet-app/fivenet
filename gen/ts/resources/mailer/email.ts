@@ -52,15 +52,15 @@ export interface Email {
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string email = 9;
+     * @generated from protobuf field: string email = 9;
      */
-    email?: string;
+    email: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string label = 10;
+     * @generated from protobuf field: optional string label = 10;
      */
-    label: string;
+    label?: string;
     /**
      * @generated from protobuf field: bool internal = 11;
      */
@@ -113,15 +113,15 @@ export interface EmailShort {
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string email = 9;
+     * @generated from protobuf field: string email = 9;
      */
-    email?: string;
+    email: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string label = 10;
+     * @generated from protobuf field: optional string label = 10;
      */
-    label: string;
+    label?: string;
     /**
      * @generated from protobuf field: bool internal = 11;
      */
@@ -139,8 +139,8 @@ class Email$Type extends MessageType<Email> {
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
-            { no: 10, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "128" } } } },
+            { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
+            { no: 10, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "128" } } } },
             { no: 11, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 13, name: "access", kind: "message", T: () => Access }
@@ -150,7 +150,7 @@ class Email$Type extends MessageType<Email> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.disabled = false;
-        message.label = "";
+        message.email = "";
         message.internal = false;
         if (value !== undefined)
             reflectionMergePartial<Email>(this, message, value);
@@ -185,10 +185,10 @@ class Email$Type extends MessageType<Email> {
                 case /* optional resources.users.UserShort user */ 8:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional string email */ 9:
+                case /* string email */ 9:
                     message.email = reader.string();
                     break;
-                case /* string label */ 10:
+                case /* optional string label */ 10:
                     message.label = reader.string();
                     break;
                 case /* bool internal */ 11:
@@ -236,11 +236,11 @@ class Email$Type extends MessageType<Email> {
         /* optional resources.users.UserShort user = 8; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional string email = 9; */
-        if (message.email !== undefined)
+        /* string email = 9; */
+        if (message.email !== "")
             writer.tag(9, WireType.LengthDelimited).string(message.email);
-        /* string label = 10; */
-        if (message.label !== "")
+        /* optional string label = 10; */
+        if (message.label !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.label);
         /* bool internal = 11; */
         if (message.internal !== false)
@@ -273,8 +273,8 @@ class EmailShort$Type extends MessageType<EmailShort> {
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "40" } } } },
-            { no: 10, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "128" } } } },
+            { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "40" } } } },
+            { no: 10, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "128" } } } },
             { no: 11, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -282,7 +282,7 @@ class EmailShort$Type extends MessageType<EmailShort> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.disabled = false;
-        message.label = "";
+        message.email = "";
         message.internal = false;
         if (value !== undefined)
             reflectionMergePartial<EmailShort>(this, message, value);
@@ -317,10 +317,10 @@ class EmailShort$Type extends MessageType<EmailShort> {
                 case /* optional resources.users.UserShort user */ 8:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional string email */ 9:
+                case /* string email */ 9:
                     message.email = reader.string();
                     break;
-                case /* string label */ 10:
+                case /* optional string label */ 10:
                     message.label = reader.string();
                     break;
                 case /* bool internal */ 11:
@@ -362,11 +362,11 @@ class EmailShort$Type extends MessageType<EmailShort> {
         /* optional resources.users.UserShort user = 8; */
         if (message.user)
             UserShort.internalBinaryWrite(message.user, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional string email = 9; */
-        if (message.email !== undefined)
+        /* string email = 9; */
+        if (message.email !== "")
             writer.tag(9, WireType.LengthDelimited).string(message.email);
-        /* string label = 10; */
-        if (message.label !== "")
+        /* optional string label = 10; */
+        if (message.label !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.label);
         /* bool internal = 11; */
         if (message.internal !== false)

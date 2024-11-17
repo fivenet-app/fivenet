@@ -21,6 +21,8 @@ const (
 	JobTopic events.Topic = "job"
 	// System event topic
 	SystemTopic events.Topic = "sys"
+	// Mailer event topic
+	MailerTopic events.Topic = "mailer"
 )
 
 func (n *Notifi) registerEvents(ctx context.Context) error {

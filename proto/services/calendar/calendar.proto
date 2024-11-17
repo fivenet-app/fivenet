@@ -33,7 +33,7 @@ message GetCalendarResponse {
 }
 
 message CreateOrUpdateCalendarRequest {
-  resources.calendar.Calendar calendar = 1;
+  resources.calendar.Calendar calendar = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateCalendarResponse {

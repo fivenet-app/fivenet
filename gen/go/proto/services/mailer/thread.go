@@ -91,12 +91,17 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		return resp, nil
 	}
 
+	tEmails := tEmails.AS("email_short")
 	stmt := tThreads.
 		SELECT(
 			tThreads.ID,
 			tThreads.CreatedAt,
 			tThreads.UpdatedAt,
 			tThreads.DeletedAt,
+			tThreads.Title,
+			tThreads.CreatorEmailID,
+			tEmails.ID,
+			tEmails.Email,
 			tThreads.CreatorID,
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
@@ -108,6 +113,9 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		).
 		FROM(
 			tThreads.
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tThreads.CreatorEmailID),
+				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID),
 				),
@@ -138,21 +146,18 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 }
 
 func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *userinfo.UserInfo, withRecipients bool) (*mailer.Thread, error) {
+	tEmails := tEmails.AS("email_short")
 	stmt := tThreads.
 		SELECT(
 			tThreads.ID,
 			tThreads.CreatedAt,
 			tThreads.UpdatedAt,
 			tThreads.DeletedAt,
+			tThreads.Title,
+			tThreads.CreatorEmailID,
 			tThreads.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tEmails.ID,
+			tEmails.Email,
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
 			tThreadsState.LastRead,
@@ -163,11 +168,8 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 		).
 		FROM(
 			tThreads.
-				LEFT_JOIN(tCreator,
-					tThreads.CreatorID.EQ(tCreator.ID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tThreads.CreatorID),
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
@@ -206,26 +208,28 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 }
 
 func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*mailer.ThreadRecipientEmail, error) {
-	recipients := []*mailer.ThreadRecipientEmail{}
-
-	emailsStmt := tThreadsRecipients.
+	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
+	stmt := tThreadsRecipients.
 		SELECT(
 			tThreadsRecipients.ID,
 			tThreadsRecipients.ThreadID,
 			tThreadsRecipients.EmailID,
-			tEmails.Email,
+			tEmailsShort.ID,
+			tEmailsShort.Email,
 		).
 		FROM(
 			tThreadsRecipients.
-				INNER_JOIN(tEmails,
-					tEmails.ID.EQ(tThreadsRecipients.EmailID),
+				INNER_JOIN(tEmailsShort,
+					tEmailsShort.ID.EQ(tThreadsRecipients.EmailID),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			tThreadsRecipients.ThreadID.EQ(jet.Uint64(threadId)),
-		)
+			tEmailsShort.DeletedAt.IS_NULL(),
+		))
 
-	if err := emailsStmt.QueryContext(ctx, s.db, &recipients); err != nil {
+	recipients := []*mailer.ThreadRecipientEmail{}
+	if err := stmt.QueryContext(ctx, s.db, &recipients); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -282,10 +286,12 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	tThreads := table.FivenetMailerThreads
 	stmt := tThreads.
 		INSERT(
+			tThreads.Title,
 			tThreads.CreatorEmailID,
 			tThreads.CreatorID,
 		).
 		VALUES(
+			req.Thread.Title,
 			req.Thread.CreatorEmailId,
 			userInfo.UserId,
 		)
@@ -311,10 +317,12 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	/*
-		accessChanges, err := s.access.HandleAccessChanges(ctx, tx, req.Thread.Id, nil, req.Thread.Recipients)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
+		    TODO handle recipients
+
+				accessChanges, err := s.access.HandleAccessChanges(ctx, tx, req.Thread.Id, nil, req.Thread.Recipients)
+				if err != nil {
+					return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+				}
 	*/
 
 	// Commit the transaction
@@ -328,7 +336,8 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	}
 
 	/*
-		    TODO
+		    TODO inform affected email ids via notificator
+
 				if accessChanges != nil && len(accessChanges.Users.ToDelete) > 0 {
 					emailIds := []int32{}
 					for _, ua := range accessChanges.Users.ToDelete {
@@ -378,14 +387,8 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.access.CanUserAccessTarget(ctx, req.ThreadId, userInfo, mailer.AccessLevel_ACCESS_LEVEL_VIEW)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-	if !check && !userInfo.SuperUser {
-		if !userInfo.SuperUser {
-			return nil, errorsmailer.ErrFailedQuery
-		}
+	if !userInfo.SuperUser {
+		return nil, errorsmailer.ErrFailedQuery
 	}
 
 	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)

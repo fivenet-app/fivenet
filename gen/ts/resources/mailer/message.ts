@@ -25,9 +25,9 @@ export interface Message {
      */
     threadId: string;
     /**
-     * @generated from protobuf field: optional uint64 sender_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 sender_id = 3 [jstype = JS_STRING];
      */
-    senderId?: string;
+    senderId: string;
     /**
      * @generated from protobuf field: optional resources.mailer.EmailShort sender = 4;
      */
@@ -91,7 +91,7 @@ class Message$Type extends MessageType<Message> {
         super("resources.mailer.Message", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "sender_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "sender_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "sender", kind: "message", T: () => EmailShort },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
@@ -107,6 +107,7 @@ class Message$Type extends MessageType<Message> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.threadId = "0";
+        message.senderId = "0";
         message.title = "";
         message.content = "";
         if (value !== undefined)
@@ -124,7 +125,7 @@ class Message$Type extends MessageType<Message> {
                 case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
                     message.threadId = reader.uint64().toString();
                     break;
-                case /* optional uint64 sender_id = 3 [jstype = JS_STRING];*/ 3:
+                case /* uint64 sender_id = 3 [jstype = JS_STRING];*/ 3:
                     message.senderId = reader.uint64().toString();
                     break;
                 case /* optional resources.mailer.EmailShort sender */ 4:
@@ -172,8 +173,8 @@ class Message$Type extends MessageType<Message> {
         /* uint64 thread_id = 2 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* optional uint64 sender_id = 3 [jstype = JS_STRING]; */
-        if (message.senderId !== undefined)
+        /* uint64 sender_id = 3 [jstype = JS_STRING]; */
+        if (message.senderId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.senderId);
         /* optional resources.mailer.EmailShort sender = 4; */
         if (message.sender)

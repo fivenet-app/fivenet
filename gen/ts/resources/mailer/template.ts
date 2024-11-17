@@ -32,9 +32,9 @@ export interface Template {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 email_id = 6 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 6 [jstype = JS_STRING];
      */
-    emailId?: string;
+    emailId: string;
     /**
      * @sanitize: method=StripTags
      *
@@ -64,7 +64,7 @@ class Template$Type extends MessageType<Template> {
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "email_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 6, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "10240" } } } },
             { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
@@ -74,6 +74,7 @@ class Template$Type extends MessageType<Template> {
     create(value?: PartialMessage<Template>): Template {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
+        message.emailId = "0";
         message.title = "";
         message.content = "";
         if (value !== undefined)
@@ -97,7 +98,7 @@ class Template$Type extends MessageType<Template> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 5:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* optional uint64 email_id = 6 [jstype = JS_STRING];*/ 6:
+                case /* uint64 email_id = 6 [jstype = JS_STRING];*/ 6:
                     message.emailId = reader.uint64().toString();
                     break;
                 case /* string title */ 7:
@@ -136,8 +137,8 @@ class Template$Type extends MessageType<Template> {
         /* optional resources.timestamp.Timestamp deleted_at = 5; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 email_id = 6 [jstype = JS_STRING]; */
-        if (message.emailId !== undefined)
+        /* uint64 email_id = 6 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
             writer.tag(6, WireType.Varint).uint64(message.emailId);
         /* string title = 7; */
         if (message.title !== "")

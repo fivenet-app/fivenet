@@ -88,6 +88,8 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for EmailId
+
 	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := TemplateValidationError{
 			field:  "Title",
@@ -174,10 +176,6 @@ func (m *Template) validate(all bool) error {
 			}
 		}
 
-	}
-
-	if m.EmailId != nil {
-		// no validation rules for EmailId
 	}
 
 	if m.CreatorJob != nil {

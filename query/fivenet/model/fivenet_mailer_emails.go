@@ -19,8 +19,8 @@ type FivenetMailerEmails struct {
 	Disabled  *bool      `json:"disabled"`
 	Job       *string    `json:"job"`
 	UserID    *int32     `json:"user_id"`
-	Email     *string    `json:"email"`
-	Label     string     `json:"label"`
+	Email     string     `json:"email"`
+	Label     *string    `json:"label"`
 	Internal  *bool      `json:"internal"`
 	Signature *string    `json:"signature"`
 }
