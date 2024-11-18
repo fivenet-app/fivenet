@@ -3,7 +3,7 @@ import { writeUInt32BE } from '~/utils/array';
 import { Body, Cancel, Complete, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal, errUnavailable } from '../../errors';
-import { Metadata } from '../../metadata';
+import type { Metadata } from '../../metadata';
 import type { Transport, TransportFactory, TransportOptions } from '../transport';
 import { createRpcError } from './utils';
 
@@ -14,17 +14,6 @@ export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSock
         opts.debug && logger.debug('Websocket factory triggered');
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
-
-            // (Re-)start any active stream channels
-            if (wsChannel.activeStreams.size > 0) {
-                wsChannel.activeStreams.forEach((stream) => {
-                    if (!stream[1].isStream) {
-                        return;
-                    }
-
-                    stream[1].start(new Metadata());
-                });
-            }
         }
 
         return wsChannel.getStream(opts);

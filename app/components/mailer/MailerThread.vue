@@ -32,12 +32,17 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const { data: thread, pending: loading } = useLazyAsyncData(
-    `mailer-thread:${props.threadId}`,
-    () => mailerStore.getThread(props.threadId),
-    {
-        watch: [() => props.threadId],
-    },
+const { pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, () => mailerStore.getThread(props.threadId), {
+    watch: [() => props.threadId],
+});
+
+const thread = useDexieLiveQueryWithDeps([() => props.threadId], ([threadId]: [string, number]) =>
+    mailerDB.threads
+        .where('id')
+        .equals(threadId)
+        .limit(1)
+        .toArray()
+        .then((thread) => (thread.length > 0 ? thread[0] : undefined)),
 );
 
 const page = ref(1);

@@ -1,0 +1,116 @@
+<script lang="ts" setup>
+import { useMailerStore } from '~/store/mailer';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
+import DocEditor from '../partials/DocEditor.vue';
+import { canAccess } from './helpers';
+import TemplateEditForm from './TemplateEditForm.vue';
+
+const { isOpen } = useModal();
+
+const mailerStore = useMailerStore();
+const { selectedEmail } = storeToRefs(mailerStore);
+
+const { data: templates, refresh } = useLazyAsyncData(`mailer-templates:${selectedEmail.value!.id}`, () => listTemplates());
+
+async function listTemplates(): Promise<ListTemplatesResponse> {
+    try {
+        const call = getGRPCMailerClient().listTemplates({
+            emailId: selectedEmail.value!.id,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const accordionItems = computed(() =>
+    templates.value?.templates.map((t) => ({
+        label: t.title,
+    })),
+);
+
+const creating = ref(false);
+const editing = ref(false);
+</script>
+
+<template>
+    <UModal fullscreen>
+        <UCard
+            :ui="{
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                base: 'flex flex-1 flex-col',
+                body: { base: 'flex flex-1 flex-col' },
+            }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('common.template', 2) }}
+                    </h3>
+
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                </div>
+            </template>
+
+            <div class="mx-auto flex w-full max-w-screen-xl flex-col gap-2">
+                <UButton
+                    v-if="!creating && !editing && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
+                    :label="$t('common.create')"
+                    trailing-icon="i-mdi-plus"
+                    @click="creating = true"
+                />
+
+                <TemplateEditForm v-if="creating" @refresh="refresh" @close="creating = false" />
+                <UAccordion v-else :items="accordionItems">
+                    <template #item="{ index }">
+                        <template v-if="templates?.templates[index]">
+                            <template v-if="!editing">
+                                <UButtonGroup
+                                    v-if="canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
+                                    class="mx-4 mb-2 flex"
+                                >
+                                    <UButton
+                                        class="flex-1"
+                                        icon="i-mdi-pencil"
+                                        :label="$t('common.edit')"
+                                        @click="editing = !editing"
+                                    />
+
+                                    <UButton icon="i-mdi-trash-can" color="red" :label="$t('common.delete')" />
+                                </UButtonGroup>
+
+                                <ClientOnly>
+                                    <DocEditor
+                                        v-model="templates.templates[index].content"
+                                        disabled
+                                        :config="{ toolbar: false }"
+                                        split-screen
+                                    />
+                                </ClientOnly>
+                            </template>
+                            <TemplateEditForm
+                                v-else
+                                :template="templates.templates[index]"
+                                @refresh="refresh"
+                                @close="editing = false"
+                            />
+                        </template>
+                    </template>
+                </UAccordion>
+            </div>
+
+            <template #footer>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                </UButtonGroup>
+            </template>
+        </UCard>
+    </UModal>
+</template>

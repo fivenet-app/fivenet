@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
+import { canAccess } from '~/components/mailer/helpers';
 import MailerList from '~/components/mailer/MailerList.vue';
 import MailerThread from '~/components/mailer/MailerThread.vue';
+import TemplatesModal from '~/components/mailer/TemplatesModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
 useHead({
     title: 'common.mail',
@@ -38,9 +41,7 @@ const tabItems = [
 ];
 const selectedTab = ref(0);
 
-watch(selectedEmail, async () => {
-    Promise.all([loadThreads()]);
-});
+watch(selectedEmail, async () => loadThreads());
 
 async function loadThreads(): Promise<void> {
     if (!selectedEmail.value?.id) {
@@ -130,7 +131,11 @@ onBeforeMount(async () => {
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
                     <UButton
-                        v-if="can('MailerService.CreateThread').value && selectedEmail"
+                        v-if="
+                            can('MailerService.CreateThread').value &&
+                            selectedEmail &&
+                            canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
+                        "
                         color="gray"
                         trailing-icon="i-mdi-plus"
                         @click="modal.open(ThreadCreateOrUpdateModal, {})"
@@ -215,12 +220,21 @@ onBeforeMount(async () => {
                             @click="() => modal.open(EmailSettingsModal, {})"
                         />
                     </template>
+
+                    <template #right>
+                        <UButton
+                            color="gray"
+                            trailing-icon="i-mdi-file-outline"
+                            :label="$t('common.template', 2)"
+                            @click="() => modal.open(TemplatesModal, {})"
+                        />
+                    </template>
                 </UDashboardToolbar>
             </template>
             <div v-else class="flex flex-1 flex-col items-center">
                 <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
                     <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
-                    <EmailCreateForm personal-email />
+                    <EmailCreateForm v-if="emails.length === 0" personal-email />
                 </div>
             </div>
         </UDashboardPanel>

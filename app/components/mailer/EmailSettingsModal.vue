@@ -2,7 +2,9 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import DocEditor from '../partials/DocEditor.vue';
+import { canAccess } from './helpers';
 
 const { isOpen } = useModal();
 
@@ -20,6 +22,8 @@ const state = reactive<Schema>({
     signature: '',
     emails: [],
 });
+
+const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -60,7 +64,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div class="flex flex-col gap-2">
                     <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
                         <ClientOnly>
-                            <DocEditor v-model="state.signature" :min-height="200" />
+                            <DocEditor v-model="state.signature" :disabled="!canManage" :min-height="200" />
                         </ClientOnly>
                     </UFormGroup>
 
@@ -68,7 +72,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <div class="flex flex-col gap-1">
                             <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">
                                 <UFormGroup :name="`emails.${idx}`" class="flex-1">
-                                    <UInput v-model="state.emails[idx]" type="text" :placeholder="$t('common.mail')" />
+                                    <UInput
+                                        v-model="state.emails[idx]"
+                                        type="text"
+                                        :placeholder="$t('common.mail')"
+                                        :disabled="!canManage"
+                                    />
                                 </UFormGroup>
 
                                 <UButton
@@ -80,6 +89,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <UButton
+                            v-if="canManage"
                             :ui="{ rounded: 'rounded-full' }"
                             icon="i-mdi-plus"
                             :disabled="!canSubmit || state.emails.length >= 25"
@@ -95,7 +105,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton
+                            v-if="canManage"
+                            type="submit"
+                            block
+                            class="flex-1"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                        >
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>

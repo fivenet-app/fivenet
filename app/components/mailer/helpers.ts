@@ -1,7 +1,6 @@
-import type { AccessLevel, ThreadAccess } from '~~/gen/ts/resources/mailer/access';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
-export function canAccessThread(access: ThreadAccess | undefined, creator: UserShort | undefined, level: AccessLevel): boolean {
+export function canAccess(access: Access | undefined, creatorId: number | undefined, level: AccessLevel): boolean {
     const { activeChar, isSuperuser } = useAuth();
     if (isSuperuser.value) {
         return true;
@@ -11,7 +10,7 @@ export function canAccessThread(access: ThreadAccess | undefined, creator: UserS
         return false;
     }
 
-    if (creator !== undefined && activeChar.value.userId === creator.userId) {
+    if (creatorId !== undefined && activeChar.value.userId === creatorId) {
         return true;
     }
 

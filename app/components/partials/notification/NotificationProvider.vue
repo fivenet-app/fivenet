@@ -31,7 +31,7 @@ const { pause, resume } = useIntervalFn(
         checkAppointments();
         resume();
     },
-    (60 + 2 * Math.random()) * 1000,
+    (60 + randomNumber(2, 7)) * 1000,
     { immediate: false },
 );
 

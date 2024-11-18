@@ -94,7 +94,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </template>
 
-                <div class="flex w-full">
+                <div class="mx-auto flex w-full max-w-screen-xl">
                     <div class="flex w-full flex-col gap-2">
                         <div class="flex flex-1 flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
@@ -111,10 +111,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :disabled="!canSubmit"
                                 />
                             </UFormGroup>
-                        </div>
 
-                        <div class="min-w-0">
-                            <UFormGroup name="recipients" class="flex-1" :label="$t('common.recipient', 2)">
+                            <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.recipients"
@@ -152,20 +150,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </ClientOnly>
                             </UFormGroup>
                         </div>
+
+                        <UDivider class="my-2" />
+
+                        <UFormGroup
+                            :label="$t('common.message', 1)"
+                            name="content"
+                            :ui="{ wrapper: 'flex flex-1 flex-col', container: 'flex flex-1 flex-col' }"
+                        >
+                            <ClientOnly>
+                                <DocEditor v-model="state.content" class="h-full w-full flex-1" :disabled="!canSubmit" />
+                            </ClientOnly>
+                        </UFormGroup>
                     </div>
                 </div>
-
-                <UDivider class="my-2" />
-
-                <UFormGroup
-                    :label="$t('common.message', 1)"
-                    name="content"
-                    :ui="{ wrapper: 'flex flex-1 flex-col', container: 'flex flex-1 flex-col' }"
-                >
-                    <ClientOnly>
-                        <DocEditor v-model="state.content" class="h-full w-full flex-1" :disabled="!canSubmit" />
-                    </ClientOnly>
-                </UFormGroup>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">

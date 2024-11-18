@@ -13,12 +13,14 @@ const props = withDefaults(
         splitScreen?: boolean;
         minHeight?: number;
         editor?: (typeof JoditEditor)['$props'];
+        config?: Record<string, unknown>;
     }>(),
     {
         disabled: false,
         splitScreen: false,
         minHeight: 475,
         editor: undefined,
+        config: undefined,
     },
 );
 
@@ -188,7 +190,7 @@ watch(props, () => {
             ref="editorRef"
             v-bind="editor"
             v-model="content"
-            :config="config"
+            :config="{ ...config, ...$props.config }"
             :plugins="plugins"
             :extra-buttons="extraButtons"
         />

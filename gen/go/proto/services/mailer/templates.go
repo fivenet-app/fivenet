@@ -16,7 +16,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tTemplates = table.FivenetMailerTemplates
+var tTemplates = table.FivenetMailerTemplates.AS("template")
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -42,7 +42,8 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 		FROM(tTemplates).
 		WHERE(jet.AND(
 			tTemplates.EmailID.EQ(jet.Uint64(req.EmailId)),
-		))
+		)).
+		LIMIT(25)
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
@@ -118,7 +119,6 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	}
 
 	resp := &GetTemplateResponse{}
-
 	resp.Template, err = s.getTemplate(ctx, req.TemplateId, &req.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -134,7 +134,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: MailerService_ServiceDesc.ServiceName,
-		Method:  "DeleteTemplate",
+		Method:  "CreateOrUpdateTemplate",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -149,6 +149,7 @@ func (s *Server) CreateOrUpdateTemplate(ctx context.Context, req *CreateOrUpdate
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
+	tTemplates := table.FivenetMailerTemplates
 	if req.Template.Id <= 0 {
 		countStmt := tTemplates.
 			SELECT(
