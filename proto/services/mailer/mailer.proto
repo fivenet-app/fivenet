@@ -1,4 +1,5 @@
 
+
 syntax = "proto3";
 
 package services.mailer;
@@ -19,7 +20,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer
 message ListEmailsRequest {}
 
 message ListEmailsResponse {
-  repeated resources.mailer.EmailShort emails = 1;
+  repeated resources.mailer.Email emails = 1;
 }
 
 message GetEmailRequest {
@@ -83,7 +84,11 @@ message DeleteTemplateResponse {}
 message ListThreadsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
-  repeated uint64 email_ids = 2 [jstype = JS_STRING, (validate.rules).repeated.max_items = 10];
+  repeated uint64 email_ids = 2 [jstype = JS_STRING, (validate.rules).repeated = {
+    min_items: 1,
+    max_items: 10,
+    items: { uint64: { gt: 0 } },
+  }];
   optional resources.timestamp.Timestamp after = 3;
 }
 
@@ -104,7 +109,11 @@ message GetThreadResponse {
 message CreateThreadRequest {
   resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
   resources.mailer.Message message = 2 [(validate.rules).message.required = true];
-  repeated string recipients = 3 [(validate.rules).repeated.max_items = 20];
+  repeated string recipients = 3 [(validate.rules).repeated = {
+    min_items: 1,
+    max_items: 15,
+    items: { string: { min_len: 6, max_len: 80 } },
+  }];
 }
 
 message CreateThreadResponse {
@@ -158,7 +167,10 @@ message ListThreadMessagesResponse {
 
 message PostMessageRequest {
   resources.mailer.Message message = 1 [(validate.rules).message.required = true];
-  repeated string recipients = 2 [(validate.rules).repeated.max_items = 10];
+  repeated string recipients = 2 [(validate.rules).repeated = {
+    max_items: 10,
+    items: { string: { min_len: 6, max_len: 80 } },
+  }];
 }
 
 message PostMessageResponse {

@@ -183,8 +183,8 @@ export const Settings = new Settings$Type();
 class PredefinedStatus$Type extends MessageType<PredefinedStatus> {
     constructor() {
         super("resources.centrum.PredefinedStatus", [
-            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "5" } } } },
-            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "5" } } } }
+            { no: 1, name: "unit_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "5", items: { string: { maxLen: "64" } } } } } },
+            { no: 2, name: "dispatch_status", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "5", items: { string: { maxLen: "64" } } } } } }
         ]);
     }
     create(value?: PartialMessage<PredefinedStatus>): PredefinedStatus {

@@ -779,7 +779,7 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         getNotificationActions(): NotificationActionI18n[] {
-            return useRoute().name !== 'centrum' || useRoute().name !== 'livemap'
+            return useRoute().name !== 'centrum' && useRoute().name !== 'livemap'
                 ? [
                       {
                           label: { key: 'common.click_here' },

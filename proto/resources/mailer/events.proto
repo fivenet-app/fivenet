@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.mailer;
 
 import "resources/mailer/email.proto";
+import "resources/mailer/settings.proto";
 import "resources/mailer/message.proto";
 import "resources/mailer/thread.proto";
 
@@ -12,10 +13,14 @@ message MailerEvent {
   oneof data {
     Email email_update = 1;
     uint64 email_delete = 2 [jstype = JS_STRING];
-    Thread thread_update = 3;
-    uint64 thread_delete = 4 [jstype = JS_STRING];
-    Message message_update = 5;
-    uint64 message_delete = 6 [jstype = JS_STRING];
-    ThreadState thread_state_update = 7;
+    EmailSettings email_settings_updated = 3;
+
+    Thread thread_update = 4;
+    uint64 thread_delete = 5 [jstype = JS_STRING];
+
+    ThreadState thread_state_update = 6;
+
+    Message message_update = 7;
+    uint64 message_delete = 8 [jstype = JS_STRING];
   }
 }

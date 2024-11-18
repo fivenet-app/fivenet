@@ -22,5 +22,4 @@ type FivenetMailerEmails struct {
 	Email     string     `json:"email"`
 	Label     *string    `json:"label"`
 	Internal  *bool      `json:"internal"`
-	Signature *string    `json:"signature"`
 }

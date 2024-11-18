@@ -24,8 +24,14 @@ message Settings {
 }
 
 message PredefinedStatus {
-  repeated string unit_status = 1 [(validate.rules).repeated.max_items = 5];
-  repeated string dispatch_status = 2 [(validate.rules).repeated.max_items = 5];
+  repeated string unit_status = 1 [(validate.rules).repeated = {
+    max_items: 5,
+    items: { string: { max_len: 64 } }
+  }];
+  repeated string dispatch_status = 2 [(validate.rules).repeated = {
+    max_items: 5,
+    items: { string: { max_len: 64 } }
+  }];
 }
 
 message Timings {

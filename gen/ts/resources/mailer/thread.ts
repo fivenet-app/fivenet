@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
-import { EmailShort } from "./email";
+import { Email } from "./email";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.mailer.Thread
@@ -38,9 +38,9 @@ export interface Thread {
      */
     creatorEmailId: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.EmailShort creator_email = 6;
+     * @generated from protobuf field: optional resources.mailer.Email creator_email = 6;
      */
-    creatorEmail?: EmailShort;
+    creatorEmail?: Email;
     /**
      * @generated from protobuf field: optional int32 creator_id = 7;
      */
@@ -62,7 +62,7 @@ export interface Thread {
     /**
      * @generated from protobuf field: optional resources.mailer.ThreadState state = 11;
      */
-    state?: ThreadState;
+    state?: ThreadState; // @gotags: alias:"thread_state"
 }
 /**
  * @generated from protobuf message resources.mailer.ThreadRecipientEmail
@@ -85,9 +85,9 @@ export interface ThreadRecipientEmail {
      */
     emailId: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.EmailShort email = 6;
+     * @generated from protobuf field: optional resources.mailer.Email email = 6;
      */
-    email?: EmailShort;
+    email?: Email;
 }
 /**
  * @generated from protobuf message resources.mailer.ThreadState
@@ -135,7 +135,7 @@ class Thread$Type extends MessageType<Thread> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "creator_email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 6, name: "creator_email", kind: "message", T: () => EmailShort },
+            { no: 6, name: "creator_email", kind: "message", T: () => Email },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
@@ -173,8 +173,8 @@ class Thread$Type extends MessageType<Thread> {
                 case /* uint64 creator_email_id = 5 [jstype = JS_STRING];*/ 5:
                     message.creatorEmailId = reader.uint64().toString();
                     break;
-                case /* optional resources.mailer.EmailShort creator_email */ 6:
-                    message.creatorEmail = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.creatorEmail);
+                case /* optional resources.mailer.Email creator_email */ 6:
+                    message.creatorEmail = Email.internalBinaryRead(reader, reader.uint32(), options, message.creatorEmail);
                     break;
                 case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
@@ -218,9 +218,9 @@ class Thread$Type extends MessageType<Thread> {
         /* uint64 creator_email_id = 5 [jstype = JS_STRING]; */
         if (message.creatorEmailId !== "0")
             writer.tag(5, WireType.Varint).uint64(message.creatorEmailId);
-        /* optional resources.mailer.EmailShort creator_email = 6; */
+        /* optional resources.mailer.Email creator_email = 6; */
         if (message.creatorEmail)
-            EmailShort.internalBinaryWrite(message.creatorEmail, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Email.internalBinaryWrite(message.creatorEmail, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
             writer.tag(7, WireType.Varint).int32(message.creatorId);
@@ -254,7 +254,7 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 6, name: "email", kind: "message", T: () => EmailShort }
+            { no: 6, name: "email", kind: "message", T: () => Email }
         ]);
     }
     create(value?: PartialMessage<ThreadRecipientEmail>): ThreadRecipientEmail {
@@ -283,8 +283,8 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
                 case /* uint64 email_id = 5 [jstype = JS_STRING];*/ 5:
                     message.emailId = reader.uint64().toString();
                     break;
-                case /* optional resources.mailer.EmailShort email */ 6:
-                    message.email = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.email);
+                case /* optional resources.mailer.Email email */ 6:
+                    message.email = Email.internalBinaryRead(reader, reader.uint32(), options, message.email);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -310,9 +310,9 @@ class ThreadRecipientEmail$Type extends MessageType<ThreadRecipientEmail> {
         /* uint64 email_id = 5 [jstype = JS_STRING]; */
         if (message.emailId !== "0")
             writer.tag(5, WireType.Varint).uint64(message.emailId);
-        /* optional resources.mailer.EmailShort email = 6; */
+        /* optional resources.mailer.Email email = 6; */
         if (message.email)
-            EmailShort.internalBinaryWrite(message.email, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Email.internalBinaryWrite(message.email, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

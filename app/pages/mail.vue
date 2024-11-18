@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
+import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import MailerList from '~/components/mailer/MailerList.vue';
-import MailerSettingsModal from '~/components/mailer/MailerSettingsModal.vue';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -17,7 +18,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { can } = useAuth();
+const { can, isSuperuser } = useAuth();
 
 const modal = useModal();
 
@@ -37,48 +38,9 @@ const tabItems = [
 ];
 const selectedTab = ref(0);
 
-const dropdownItems = computed(() =>
-    [
-        [
-            {
-                label: selectedThread.value?.state?.archived ? t('common.unarchive') : t('common.archive'),
-                icon: 'i-mdi-archive',
-                click: () =>
-                    modal.open(ConfirmModal, {
-                        confirm: async () =>
-                            selectedThread.value &&
-                            mailerStore.setThreadState({ threadId: selectedThread.value!.id, archived: true }),
-                    }),
-            },
-        ],
-
-        [
-            can('MailerService.DeleteEmail').value
-                ? {
-                      label: t('common.delete'),
-                      icon: 'i-mdi-trash-can-outline',
-                      click: async () =>
-                          modal.open(ConfirmModal, {
-                              confirm: async () =>
-                                  selectedEmail.value?.id &&
-                                  selectedThread.value &&
-                                  mailerStore.deleteThread({
-                                      emailId: selectedEmail.value.id,
-                                      threadId: selectedThread.value!.id,
-                                  }),
-                          }),
-                  }
-                : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])),
-    ].flatMap((items) => (items.length > 0 ? [items] : [])),
-);
-
-onBeforeMount(async () => {
-    await mailerStore.listEmails();
-    await loadThreads();
+watch(selectedEmail, async () => {
+    Promise.all([loadThreads()]);
 });
-
-watch(selectedEmail, loadThreads);
 
 async function loadThreads(): Promise<void> {
     if (!selectedEmail.value?.id) {
@@ -86,22 +48,26 @@ async function loadThreads(): Promise<void> {
     }
 
     const count = await mailerDB.threads.count();
-
-    const call = getGRPCMailerClient().listThreads({
+    await mailerStore.listThreads({
         pagination: {
             offset: 0,
         },
-        emailIds: [selectedEmail.value?.id],
+        emailIds: [selectedEmail.value.id],
         after: count > 0 ? undefined : toTimestamp(),
     });
-    const { response } = await call;
-
-    mailerDB.threads.bulkPut(response.threads);
 }
 
-const threads = useDexieLiveQuery(() => mailerDB.threads.toArray().then((threads) => ({ threads, loaded: true })), {
-    initialValue: { threads: [], loaded: false },
-});
+const threads = useDexieLiveQuery(
+    () =>
+        mailerDB.threads
+            .orderBy('id')
+            .reverse()
+            .toArray()
+            .then((threads) => ({ threads: threads, loaded: true })),
+    {
+        initialValue: { threads: [], loaded: false },
+    },
+);
 
 // Filter mails based on the selected tab
 const filteredThreads = computed(() => {
@@ -114,11 +80,11 @@ const filteredThreads = computed(() => {
     return threads.value.threads.filter((thread) => !thread.state?.archived);
 });
 
-const threadUserState = computed(() => selectedThread.value?.state);
+const threadState = computed(() => selectedThread.value?.state);
 
 const isMailerPanelOpen = computed({
     get() {
-        return !!selectedThread.value || editing.value;
+        return !!selectedThread.value;
     },
     set(value: boolean) {
         if (!value) {
@@ -147,8 +113,8 @@ watch(selectedThread, () => {
     }
 });
 
-onMounted(async () => {
-    loadThreads();
+onBeforeMount(async () => {
+    await mailerStore.listEmails();
 
     if (!route.query.thread) {
         return;
@@ -156,8 +122,6 @@ onMounted(async () => {
 
     selectedThread.value = await mailerStore.getThread(route.query.thread as string);
 });
-
-const editing = ref(false);
 </script>
 
 <template>
@@ -166,7 +130,7 @@ const editing = ref(false);
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
                     <UButton
-                        v-if="can('MailerService.CreateThread').value"
+                        v-if="can('MailerService.CreateThread').value && selectedEmail"
                         color="gray"
                         trailing-icon="i-mdi-plus"
                         @click="modal.open(ThreadCreateOrUpdateModal, {})"
@@ -177,26 +141,31 @@ const editing = ref(false);
             </UDashboardNavbar>
 
             <UDashboardToolbar
+                v-if="selectedEmail"
                 :ui="{ wrapper: 'p-0 gap-x-0', container: 'gap-x-0 justify-stretch items-stretch h-full flex flex-1 flex-col' }"
             >
-                <div class="bg-gray-100 p-1 dark:bg-gray-800">
+                <div class="inline-flex gap-1 bg-gray-100 p-1 dark:bg-gray-800">
                     <ClientOnly>
                         <USelectMenu
                             v-model="selectedEmail"
                             :options="emails"
                             :placeholder="$t('common.mail')"
+                            searchable
                             :searchable-placeholder="$t('common.search_field')"
                             :search-attributes="['label', 'email']"
                             trailing
                             by="id"
+                            class="flex-1"
                         >
                             <template #label>
                                 <span class="truncate">
                                     {{
                                         (selectedEmail?.label && selectedEmail?.label !== ''
-                                            ? selectedEmail?.label
+                                            ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
                                             : undefined) ??
-                                        (selectedEmail?.userId ? $t('common.personal_email') : undefined) ??
+                                        (selectedEmail?.userId
+                                            ? $t('common.personal_email') + ' (' + selectedEmail.email + ')'
+                                            : undefined) ??
                                         selectedEmail?.email ??
                                         $t('common.none')
                                     }}
@@ -206,7 +175,9 @@ const editing = ref(false);
                             <template #option="{ option }">
                                 <span class="truncate">
                                     {{
-                                        (option?.label && option?.label !== '' ? option?.label : undefined) ??
+                                        (option?.label && option?.label !== ''
+                                            ? option?.label + ' (' + option.email + ')'
+                                            : undefined) ??
                                         (option?.userId ? $t('common.personal_email') : undefined) ??
                                         option?.email ??
                                         $t('common.none')
@@ -230,18 +201,31 @@ const editing = ref(false);
                 />
             </UDashboardToolbar>
 
-            <div class="relative flex-1 overflow-x-auto">
-                <MailerList v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
-            </div>
+            <template v-if="selectedEmail">
+                <div class="relative flex-1 overflow-x-auto">
+                    <MailerList v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
+                </div>
 
-            <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                <template #left>
-                    <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(MailerSettingsModal, {})" />
-                </template>
-            </UDashboardToolbar>
+                <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+                    <template #left>
+                        <UButton
+                            color="gray"
+                            trailing-icon="i-mdi-cog"
+                            :label="$t('common.settings')"
+                            @click="() => modal.open(EmailSettingsModal, {})"
+                        />
+                    </template>
+                </UDashboardToolbar>
+            </template>
+            <div v-else class="flex flex-1 flex-col items-center">
+                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+                    <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                    <EmailCreateForm personal-email />
+                </div>
+            </div>
         </UDashboardPanel>
 
-        <UDashboardPanel id="mailerthreadview" v-model="isMailerPanelOpen" collapsible grow side="right">
+        <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen" collapsible grow side="right">
             <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>
@@ -253,14 +237,14 @@ const editing = ref(false);
                     <template #left>
                         <UTooltip :text="$t('components.mailer.mark_unread')">
                             <UButton
-                                :icon="!threadUserState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
+                                :icon="!threadState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
                                     async () =>
                                         (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
-                                            unread: !threadUserState?.unread,
+                                            unread: !threadState?.unread,
                                         }))
                                 "
                             />
@@ -268,14 +252,14 @@ const editing = ref(false);
 
                         <UTooltip :text="$t('components.mailer.mark_important')">
                             <UButton
-                                :icon="!threadUserState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
+                                :icon="!threadState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
                                     async () =>
                                         (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
-                                            important: !threadUserState?.important,
+                                            important: !threadState?.important,
                                         }))
                                 "
                             />
@@ -285,14 +269,14 @@ const editing = ref(false);
                     <template #right>
                         <UTooltip :text="$t('components.mailer.star_thread')">
                             <UButton
-                                :icon="!threadUserState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
+                                :icon="!threadState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
                                     async () =>
                                         (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
-                                            favorite: !threadUserState?.favorite,
+                                            favorite: !threadState?.favorite,
                                         }))
                                 "
                             />
@@ -300,24 +284,54 @@ const editing = ref(false);
 
                         <UTooltip :text="$t('components.mailer.mute_thread')">
                             <UButton
-                                :icon="!threadUserState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
+                                :icon="!threadState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
                                     async () =>
                                         (selectedThread!.state = await mailerStore.setThreadState({
                                             threadId: selectedThread!.id,
-                                            muted: !threadUserState?.muted,
+                                            muted: !threadState?.muted,
                                         }))
                                 "
                             />
                         </UTooltip>
 
-                        <UDivider orientation="vertical" class="mx-1.5" />
+                        <UTooltip :text="threadState?.archived ? $t('common.unarchive') : $t('common.archive')">
+                            <UButton
+                                :icon="threadState?.archived ? 'i-mdi-archive' : 'i-mdi-archive-outline'"
+                                color="gray"
+                                variant="ghost"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () =>
+                                            (selectedThread!.state = await mailerStore.setThreadState({
+                                                threadId: selectedThread!.id,
+                                                archived: !threadState?.archived,
+                                            })),
+                                    })
+                                "
+                            />
+                        </UTooltip>
 
-                        <UDropdown :items="dropdownItems">
-                            <UButton icon="i-mdi-ellipsis-vertical" color="gray" variant="ghost" />
-                        </UDropdown>
+                        <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
+                            <UButton
+                                icon="i-mdi-trash-can-outline"
+                                color="gray"
+                                variant="ghost"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () =>
+                                            selectedEmail?.id &&
+                                            selectedThread &&
+                                            mailerStore.deleteThread({
+                                                emailId: selectedEmail.id,
+                                                threadId: selectedThread.id,
+                                            }),
+                                    })
+                                "
+                            />
+                        </UTooltip>
                     </template>
                 </UDashboardNavbar>
 

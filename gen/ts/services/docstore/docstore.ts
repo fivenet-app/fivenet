@@ -3059,7 +3059,7 @@ class ListDocumentActivityRequest$Type extends MessageType<ListDocumentActivityR
         super("services.docstore.ListDocumentActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { items: { enum: { in: [13, 14, 15, 16, 17, 18] } } } } } }
+            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10", items: { enum: { in: [13, 14, 15, 16, 17, 18] } } } } } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentActivityRequest>): ListDocumentActivityRequest {

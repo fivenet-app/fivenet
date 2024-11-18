@@ -13,8 +13,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tSettingsBlocks = table.FivenetMailerSettingsBlocked
-
 func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -45,6 +43,7 @@ func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest)
 			req.State.Archived,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
+			tThreadsState.Unread.SET(jet.Bool(req.State.Unread)),
 			tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")),
 			tThreadsState.Important.SET(jet.Bool(req.State.Important)),
 			tThreadsState.Favorite.SET(jet.Bool(req.State.Favorite)),

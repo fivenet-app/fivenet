@@ -15,7 +15,7 @@ message Thread {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   uint64 creator_email_id = 5 [jstype = JS_STRING];
-  optional resources.mailer.EmailShort creator_email = 6;
+  optional resources.mailer.Email creator_email = 6;
   optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
   // @sanitize: method=StripTags
@@ -24,7 +24,7 @@ message Thread {
     max_len: 255
   }];
   repeated ThreadRecipientEmail recipients = 10 [(validate.rules).repeated.max_items = 20];
-  optional ThreadState state = 11;
+  optional ThreadState state = 11; // @gotags: alias:"thread_state"
 }
 
 message ThreadRecipientEmail {
@@ -32,7 +32,7 @@ message ThreadRecipientEmail {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 4 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
   uint64 email_id = 5 [jstype = JS_STRING];
-  optional resources.mailer.EmailShort email = 6;
+  optional resources.mailer.Email email = 6;
 }
 
 message ThreadState {

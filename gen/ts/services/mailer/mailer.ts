@@ -20,7 +20,6 @@ import { Timestamp } from "../../resources/timestamp/timestamp";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { Template } from "../../resources/mailer/template";
 import { Email } from "../../resources/mailer/email";
-import { EmailShort } from "../../resources/mailer/email";
 // Emails
 
 /**
@@ -33,9 +32,9 @@ export interface ListEmailsRequest {
  */
 export interface ListEmailsResponse {
     /**
-     * @generated from protobuf field: repeated resources.mailer.EmailShort emails = 1;
+     * @generated from protobuf field: repeated resources.mailer.Email emails = 1;
      */
-    emails: EmailShort[];
+    emails: Email[];
 }
 /**
  * @generated from protobuf message services.mailer.GetEmailRequest
@@ -428,7 +427,7 @@ export const ListEmailsRequest = new ListEmailsRequest$Type();
 class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
     constructor() {
         super("services.mailer.ListEmailsResponse", [
-            { no: 1, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => EmailShort }
+            { no: 1, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email }
         ]);
     }
     create(value?: PartialMessage<ListEmailsResponse>): ListEmailsResponse {
@@ -443,8 +442,8 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.mailer.EmailShort emails */ 1:
-                    message.emails.push(EmailShort.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.mailer.Email emails */ 1:
+                    message.emails.push(Email.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -458,9 +457,9 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListEmailsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.mailer.EmailShort emails = 1; */
+        /* repeated resources.mailer.Email emails = 1; */
         for (let i = 0; i < message.emails.length; i++)
-            EmailShort.internalBinaryWrite(message.emails[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Email.internalBinaryWrite(message.emails[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1100,7 +1099,7 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
     constructor() {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
+            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { uint64: { gt: "0" } } } } } },
             { no: 3, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -1325,7 +1324,7 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         super("services.mailer.CreateThreadRequest", [
             { no: 1, name: "thread", kind: "message", T: () => Thread, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } },
-            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "15", items: { string: { minLen: "6", maxLen: "80" } } } } } }
         ]);
     }
     create(value?: PartialMessage<CreateThreadRequest>): CreateThreadRequest {
@@ -1911,7 +1910,7 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
     constructor() {
         super("services.mailer.PostMessageRequest", [
             { no: 1, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10", items: { string: { minLen: "6", maxLen: "80" } } } } } }
         ]);
     }
     create(value?: PartialMessage<PostMessageRequest>): PostMessageRequest {

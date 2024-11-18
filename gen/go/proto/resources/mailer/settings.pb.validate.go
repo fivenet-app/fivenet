@@ -70,6 +70,21 @@ func (m *EmailSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.Signature != nil {
+
+		if utf8.RuneCountInString(m.GetSignature()) > 1024 {
+			err := EmailSettingsValidationError{
+				field:  "Signature",
+				reason: "value length must be at most 1024 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return EmailSettingsMultiError(errors)
 	}

@@ -111,6 +111,47 @@ func (m *MailerEvent) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		// no validation rules for EmailDelete
+	case *MailerEvent_EmailSettingsUpdated:
+		if v == nil {
+			err := MailerEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetEmailSettingsUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "EmailSettingsUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "EmailSettingsUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEmailSettingsUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MailerEventValidationError{
+					field:  "EmailSettingsUpdated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *MailerEvent_ThreadUpdate:
 		if v == nil {
 			err := MailerEventValidationError{
@@ -164,6 +205,47 @@ func (m *MailerEvent) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		// no validation rules for ThreadDelete
+	case *MailerEvent_ThreadStateUpdate:
+		if v == nil {
+			err := MailerEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetThreadStateUpdate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "ThreadStateUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MailerEventValidationError{
+						field:  "ThreadStateUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetThreadStateUpdate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MailerEventValidationError{
+					field:  "ThreadStateUpdate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *MailerEvent_MessageUpdate:
 		if v == nil {
 			err := MailerEventValidationError{
@@ -217,47 +299,6 @@ func (m *MailerEvent) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		// no validation rules for MessageDelete
-	case *MailerEvent_ThreadStateUpdate:
-		if v == nil {
-			err := MailerEventValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetThreadStateUpdate()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MailerEventValidationError{
-						field:  "ThreadStateUpdate",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MailerEventValidationError{
-						field:  "ThreadStateUpdate",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetThreadStateUpdate()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MailerEventValidationError{
-					field:  "ThreadStateUpdate",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	default:
 		_ = v // ensures v is used
 	}

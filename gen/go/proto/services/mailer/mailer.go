@@ -14,8 +14,6 @@ import (
 	"google.golang.org/grpc"
 )
 
-var tUsers = table.Users.AS("usershort")
-
 type Server struct {
 	MailerServiceServer
 

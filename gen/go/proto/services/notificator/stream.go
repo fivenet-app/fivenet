@@ -32,7 +32,10 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
-	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, userInfo)
+	// Clone user info and disable superuser
+	cloned := currentUserInfo.Clone()
+	cloned.SuperUser = false
+	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, &cloned)
 	if err != nil {
 		return ErrFailedStream
 	}

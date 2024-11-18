@@ -1,9 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useCompletorStore } from '~/store/completor';
 import { useMailerStore } from '~/store/mailer';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 import DocEditor from '../partials/DocEditor.vue';
 
 const { isOpen } = useModal();
@@ -13,17 +11,17 @@ const { activeChar } = useAuth();
 const mailerStore = useMailerStore();
 const { draft: state, selectedEmail } = storeToRefs(mailerStore);
 
-const completorStore = useCompletorStore();
-
 const schema = z.object({
     title: z.string().min(3).max(255),
     content: z.string().min(1).max(2048),
-    users: z.custom<UserShort>().array().min(1).max(25),
+    recipients: z
+        .object({ label: z.string().min(6).max(80) })
+        .array()
+        .min(1)
+        .max(20),
 });
 
 type Schema = z.output<typeof schema>;
-
-const usersLoading = ref(false);
 
 async function createThread(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) {
@@ -34,7 +32,7 @@ async function createThread(values: Schema): Promise<void> {
         thread: {
             id: '0',
             recipients: [],
-            creatorEmailId: '1',
+            creatorEmailId: selectedEmail.value.id,
             creatorId: activeChar.value!.userId,
             title: values.title,
         },
@@ -49,11 +47,24 @@ async function createThread(values: Schema): Promise<void> {
             creatorJob: activeChar.value!.job,
         },
 
-        recipients: [],
+        recipients: [...new Set(values.recipients.map((r) => r.label))],
     });
+
+    state.value.title = '';
+    state.value.content = '';
+    state.value.recipients = [];
 
     isOpen.value = false;
 }
+
+onBeforeMount(() => {
+    if (
+        (!state.value.content || state.value.content === '' || state.value.content === '<p><br></p>') &&
+        !!selectedEmail.value?.settings?.signature
+    ) {
+        state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
+    }
+});
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -103,40 +114,31 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <div class="min-w-0">
-                            <UFormGroup name="users" class="flex-1" :label="$t('common.recipient', 2)">
+                            <UFormGroup name="recipients" class="flex-1" :label="$t('common.recipient', 2)">
                                 <ClientOnly>
                                     <USelectMenu
-                                        v-model="state.emails"
+                                        v-model="state.recipients"
                                         :placeholder="$t('common.recipient')"
                                         block
                                         multiple
                                         trailing
-                                        :searchable="
-                                            async (query: string): Promise<UserShort[]> => {
-                                                usersLoading = true;
-                                                const users = await completorStore.completeCitizens({
-                                                    search: query,
-                                                });
-                                                usersLoading = false;
-                                                return users;
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['firstname', 'lastname']"
-                                        value-attribute="email"
+                                        value-attribute="label"
+                                        searchable
+                                        :options="state.recipients"
+                                        :searchable-placeholder="$t('common.mail', 1)"
+                                        creatable
                                         :disabled="!canSubmit"
                                     >
                                         <template #label>
                                             {{
-                                                state.emails.length > 0
-                                                    ? $t('common.recipients', state.emails.length)
+                                                state.recipients.length > 0
+                                                    ? state.recipients.map((r) => r.label).join(', ')
                                                     : $t('common.none_selected', [$t('common.recipient', 2)])
                                             }}
                                         </template>
 
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        <template #option-create="{ option }">
+                                            <span class="flex-shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
                                         </template>
 
                                         <template #option-empty="{ query: search }">

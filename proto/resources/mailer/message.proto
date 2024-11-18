@@ -12,7 +12,7 @@ message Message {
   uint64 id = 1 [jstype = JS_STRING];
   uint64 thread_id = 2 [jstype = JS_STRING];
   uint64 sender_id = 3 [jstype = JS_STRING];
-  optional resources.mailer.EmailShort sender = 4;
+  optional resources.mailer.Email sender = 4;
   resources.timestamp.Timestamp created_at = 5;
   optional resources.timestamp.Timestamp updated_at = 6;
   optional resources.timestamp.Timestamp deleted_at = 7;

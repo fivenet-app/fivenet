@@ -56,6 +56,7 @@ func UseSchema(schema string) {
 	FivenetMailerEmailsQualificationsAccess = FivenetMailerEmailsQualificationsAccess.FromSchema(schema)
 	FivenetMailerEmailsUserAccess = FivenetMailerEmailsUserAccess.FromSchema(schema)
 	FivenetMailerMessages = FivenetMailerMessages.FromSchema(schema)
+	FivenetMailerSettings = FivenetMailerSettings.FromSchema(schema)
 	FivenetMailerSettingsBlocked = FivenetMailerSettingsBlocked.FromSchema(schema)
 	FivenetMailerTemplates = FivenetMailerTemplates.FromSchema(schema)
 	FivenetMailerThreads = FivenetMailerThreads.FromSchema(schema)

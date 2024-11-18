@@ -6,7 +6,11 @@ import (
 )
 
 var (
-	ErrFailedQuery          = status.Error(codes.Internal, "errors.MailerService.ErrFailedQuery")
-	ErrNoPerms              = status.Error(codes.InvalidArgument, "errors.MailerService.ErrNoPerms")
+	ErrFailedQuery = status.Error(codes.Internal, "errors.MailerService.ErrFailedQuery")
+	ErrNoPerms     = status.Error(codes.InvalidArgument, "errors.MailerService.ErrNoPerms")
+
 	ErrTemplateLimitReached = status.Error(codes.InvalidArgument, "errors.MailerService.ErrTemplateLimitReached")
+	ErrEmailAccessRequired  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessRequired")
+	ErrRecipientMinium      = status.Error(codes.InvalidArgument, "errors.MailerService.ErrRecipientMinium")
+	ErrInvalidRecipients    = status.Error(codes.InvalidArgument, "errors.MailerService.ErrInvalidRecipients")
 )

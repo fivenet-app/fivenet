@@ -246,7 +246,10 @@ message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
   // Search params
-  repeated resources.documents.DocActivityType activity_types = 3 [(validate.rules).repeated.items.enum = {in: [13,14,15,16,17,18]}];
+  repeated resources.documents.DocActivityType activity_types = 3 [(validate.rules).repeated = {
+    max_items: 10,
+    items: { enum: { in: [13,14,15,16,17,18] }}
+  }];
 }
 
 message ListDocumentActivityResponse {

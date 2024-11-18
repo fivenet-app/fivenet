@@ -67,13 +67,13 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
-			tEmailsShort.ID,
-			tEmailsShort.Email,
+			tEmails.ID,
+			tEmails.Email,
 		).
 		FROM(
 			tMessages.
-				LEFT_JOIN(tEmailsShort,
-					tEmailsShort.ID.EQ(tMessages.SenderID),
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tMessages.SenderID),
 				),
 		).
 		WHERE(jet.AND(
@@ -156,7 +156,14 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, err
 	}
 
-	// TODO handle any new recipients `req.Recipients`
+	var emails []*mailer.ThreadRecipientEmail
+	var err error
+	if len(req.Recipients) > 0 {
+		emails, err = s.resolveRecipientsToEmails(ctx, req.Recipients)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -171,6 +178,16 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	req.Message.Id = uint64(lastId)
+
+	if len(emails) > 0 {
+		if err := s.handleRecipientsChanges(ctx, tx, req.Message.ThreadId, emails); err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+	}
+
+	if err := s.updateThreadTime(ctx, tx, req.Message.ThreadId); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -276,7 +293,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}

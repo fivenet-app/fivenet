@@ -17,14 +17,3 @@ func (m *Email) Sanitize() error {
 
 	return nil
 }
-
-func (m *EmailShort) Sanitize() error {
-
-	m.Email = htmlsanitizer.StripTags(m.Email)
-
-	if m.Label != nil {
-		*m.Label = htmlsanitizer.StripTags(*m.Label)
-	}
-
-	return nil
-}

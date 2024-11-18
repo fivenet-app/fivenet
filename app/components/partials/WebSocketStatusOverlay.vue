@@ -90,7 +90,7 @@ useTimeoutFn(() => {
 </script>
 
 <template>
-    <div v-if="notificationId" ref="overlay" class="relative z-150">
+    <div v-if="notificationId" ref="overlay" class="relative z-[999999]">
         <div class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
 
         <div class="fixed inset-0 overflow-y-auto">

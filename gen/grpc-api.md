@@ -352,7 +352,6 @@
   
 - [resources/mailer/email.proto](#resources_mailer_email-proto)
     - [Email](#resources-mailer-Email)
-    - [EmailShort](#resources-mailer-EmailShort)
   
 - [resources/mailer/message.proto](#resources_mailer_message-proto)
     - [Message](#resources-mailer-Message)
@@ -5717,11 +5716,12 @@ TODO
 | ----- | ---- | ----- | ----------- |
 | email_update | [Email](#resources-mailer-Email) |  |  |
 | email_delete | [uint64](#uint64) |  |  |
+| email_settings_updated | [EmailSettings](#resources-mailer-EmailSettings) |  |  |
 | thread_update | [Thread](#resources-mailer-Thread) |  |  |
 | thread_delete | [uint64](#uint64) |  |  |
+| thread_state_update | [ThreadState](#resources-mailer-ThreadState) |  |  |
 | message_update | [Message](#resources-mailer-Message) |  |  |
 | message_delete | [uint64](#uint64) |  |  |
-| thread_state_update | [ThreadState](#resources-mailer-ThreadState) |  |  |
 
 
 
@@ -5753,6 +5753,7 @@ TODO
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | email_id | [uint64](#uint64) |  |  |
+| signature | [string](#string) | optional |  |
 | blocked_emails | [string](#string) | repeated |  |
 
 
@@ -5795,33 +5796,8 @@ TODO
 | email | [string](#string) |  | @sanitize: method=StripTags |
 | label | [string](#string) | optional | @sanitize: method=StripTags |
 | internal | [bool](#bool) |  |  |
-| signature | [string](#string) | optional |  |
 | access | [Access](#resources-mailer-Access) |  |  |
-
-
-
-
-
-
-<a name="resources-mailer-EmailShort"></a>
-
-### EmailShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| disabled | [bool](#bool) |  |  |
-| job | [string](#string) | optional |  |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| email | [string](#string) |  | @sanitize: method=StripTags |
-| label | [string](#string) | optional | @sanitize: method=StripTags |
-| internal | [bool](#bool) |  |  |
+| settings | [EmailSettings](#resources-mailer-EmailSettings) | optional |  |
 
 
 
@@ -5855,7 +5831,7 @@ TODO
 | id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 | sender_id | [uint64](#uint64) |  |  |
-| sender | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+| sender | [Email](#resources-mailer-Email) | optional |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
@@ -5963,12 +5939,12 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | creator_email_id | [uint64](#uint64) |  |  |
-| creator_email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+| creator_email | [Email](#resources-mailer-Email) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | title | [string](#string) |  | @sanitize: method=StripTags |
 | recipients | [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail) | repeated |  |
-| state | [ThreadState](#resources-mailer-ThreadState) | optional |  |
+| state | [ThreadState](#resources-mailer-ThreadState) | optional | @gotags: alias:&#34;thread_state&#34; |
 
 
 
@@ -5987,7 +5963,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | target_id | [uint64](#uint64) |  | @gotags: alias:&#34;thread_id&#34; |
 | email_id | [uint64](#uint64) |  |  |
-| email | [EmailShort](#resources-mailer-EmailShort) | optional |  |
+| email | [Email](#resources-mailer-Email) | optional |  |
 
 
 
@@ -11871,7 +11847,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| emails | [resources.mailer.EmailShort](#resources-mailer-EmailShort) | repeated |  |
+| emails | [resources.mailer.Email](#resources-mailer-Email) | repeated |  |
 
 
 

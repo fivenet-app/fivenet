@@ -19,7 +19,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   `email` varchar(80) NOT NULL,
   `label` varchar(128) DEFAULT NULL,
   `internal` tinyint(1) DEFAULT 0,
-  `signature` varchar(1024) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_mailer_emails_email` (`email`),
   UNIQUE KEY `idx_fivenet_mailer_emails_job_user_id` (`job`, `user_id`),
@@ -157,6 +156,14 @@ CREATE TABLE
         CONSTRAINT `fk_fivenet_mailer_messages_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `fivenet_mailer_threads` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         CONSTRAINT `fk_fivenet_mailer_messages_sender_id` FOREIGN KEY (`sender_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE=InnoDB;
+
+-- Table: fivenet_mailer_settings
+CREATE TABLE IF NOT EXISTS `fivenet_mailer_settings` (
+  `email_id` bigint(20) unsigned NOT NULL,
+  `signature` varchar(1024) DEFAULT NULL,
+  PRIMARY KEY (`email_id`),
+  CONSTRAINT `fk_fivenet_mailer_settings_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_settings_blocked
 CREATE TABLE IF NOT EXISTS `fivenet_mailer_settings_blocked` (

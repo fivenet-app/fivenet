@@ -504,7 +504,10 @@
         "sort_by": "Sort by",
         "personal_email": "Personal Email",
         "participant": "Participant | Participants",
-        "sender": "Sender"
+        "sender": "Sender",
+        "signature": "Signature",
+        "internal": "Internal",
+        "label": "Label"
     },
     "components": {
         "partials": {
@@ -1175,7 +1178,7 @@
             }
         },
         "mathcalculator": {
-            "title": "Taschenrechner"
+            "title": "Calculator"
         },
         "mailer": {
             "mark_unread": "Mark as unread",

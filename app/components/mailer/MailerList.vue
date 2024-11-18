@@ -93,9 +93,9 @@ defineShortcuts({
                         </div>
 
                         <span>{{
-                            isToday(toDate(thread.createdAt))
-                                ? format(toDate(thread.createdAt), 'HH:mm')
-                                : format(toDate(thread.createdAt), 'dd MMM')
+                            isToday(toDate(thread.updatedAt ?? thread.createdAt))
+                                ? format(toDate(thread.updatedAt ?? thread.createdAt), 'HH:mm')
+                                : format(toDate(thread.updatedAt ?? thread.createdAt), 'dd MMM')
                         }}</span>
                     </div>
                     <div class="flex items-center justify-between">

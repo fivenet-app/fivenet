@@ -4,6 +4,7 @@ import { isToday } from 'date-fns';
 import { z } from 'zod';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
+import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
 
@@ -17,6 +18,10 @@ const props = withDefaults(
     },
 );
 
+const modal = useModal();
+
+const { isSuperuser } = useAuth();
+
 const mailerStore = useMailerStore();
 const { draft: state, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
@@ -27,53 +32,74 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const { data: thread, pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, () =>
-    mailerStore.getThread(props.threadId),
+const { data: thread, pending: loading } = useLazyAsyncData(
+    `mailer-thread:${props.threadId}`,
+    () => mailerStore.getThread(props.threadId),
+    {
+        watch: [() => props.threadId],
+    },
 );
 
 const page = ref(1);
-const offset = computed(() =>
-    messages.value?.pagination?.pageSize ? messages.value?.pagination?.pageSize * (page.value - 1) : 0,
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
+const messages = useDexieLiveQuery(
+    () =>
+        mailerDB.messages
+            .where({ threadId: props.threadId })
+            .reverse()
+            .toArray()
+            .then((messages) => ({ messages: messages, loaded: true })),
+    {
+        initialValue: { messages: [], loaded: false },
+    },
 );
 
-const { data: messages, pending: messagesLoading } = useLazyAsyncData(
+const {
+    data,
+    pending: messagesLoading,
+    refresh: refreshMessages,
+} = useLazyAsyncData(
     `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
-        if (!selectedEmail.value) {
-            return;
-        }
-
         const count = await mailerDB.threads.count();
-        const call = getGRPCMailerClient().listThreadMessages({
+
+        const response = await mailerStore.listThreadMessages({
             pagination: {
                 offset: offset.value,
             },
-            emailId: selectedEmail.value.id,
+            emailId: selectedEmail.value!.id,
             threadId: props.threadId,
             after: count > 0 ? undefined : toTimestamp(),
         });
-        const { response } = await call;
-
-        await mailerDB.messages.bulkPut(response.messages);
 
         if (selectedThread.value) {
             if (state.value.title === '') {
                 state.value.title = 'RE: ' + selectedThread.value.title;
             }
+
+            if ((!state.value.content || state.value.content === '<p><br></p>') && !!selectedEmail.value?.settings?.signature) {
+                state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
+            }
         }
 
         return response;
     },
+    { watch: [() => props.threadId] },
 );
 
-watchDebounced(
-    () => props.threadId,
-    async () =>
-        mailerStore.setThreadState({
+const { start } = useTimeoutFn(
+    async () => {
+        return mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
-        }),
+        });
+    },
+    1250,
+    { immediate: false },
 );
+
+onMounted(() => start());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -94,11 +120,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     entry: [],
                 },
             },
+            recipients: [],
         })
         .then(() => {
             state.value.title = '';
             state.value.content = '';
-            state.value.emails = [];
+            state.value.recipients = [];
         })
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
@@ -152,8 +179,30 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div
                         class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
                     >
-                        <UDivider>
+                        <UDivider class="relative">
                             <GenericTime :value="message.createdAt" :type="'short'" />
+
+                            <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
+                                <UButton
+                                    icon="i-mdi-trash-can-outline"
+                                    color="gray"
+                                    variant="ghost"
+                                    size="xs"
+                                    @click="
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () =>
+                                                selectedEmail?.id &&
+                                                selectedThread &&
+                                                (await mailerStore.deleteMessage({
+                                                    emailId: selectedEmail.id,
+                                                    threadId: selectedThread.id,
+                                                    messageId: message.id,
+                                                })) &&
+                                                (await refreshMessages()),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
                         </UDivider>
 
                         <div class="flex flex-col gap-1">
@@ -179,9 +228,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <Pagination
-            v-if="messages?.pagination && messages?.pagination?.totalCount / messages?.pagination?.pageSize > 1"
+            v-if="data?.pagination && data?.pagination?.totalCount / data?.pagination?.pageSize > 1"
             v-model="page"
-            :pagination="messages?.pagination"
+            :pagination="data?.pagination"
         />
 
         <UDivider class="my-2" />

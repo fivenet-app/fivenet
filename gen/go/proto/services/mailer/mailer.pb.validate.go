@@ -2102,15 +2102,31 @@ func (m *ListThreadsRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetEmailIds()) > 10 {
+	if l := len(m.GetEmailIds()); l < 1 || l > 10 {
 		err := ListThreadsRequestValidationError{
 			field:  "EmailIds",
-			reason: "value must contain no more than 10 item(s)",
+			reason: "value must contain between 1 and 10 items, inclusive",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetEmailIds() {
+		_, _ = idx, item
+
+		if item <= 0 {
+			err := ListThreadsRequestValidationError{
+				field:  fmt.Sprintf("EmailIds[%v]", idx),
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.After != nil {
@@ -2757,15 +2773,31 @@ func (m *CreateThreadRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetRecipients()) > 20 {
+	if l := len(m.GetRecipients()); l < 1 || l > 15 {
 		err := CreateThreadRequestValidationError{
 			field:  "Recipients",
-			reason: "value must contain no more than 20 item(s)",
+			reason: "value must contain between 1 and 15 items, inclusive",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetRecipients() {
+		_, _ = idx, item
+
+		if l := utf8.RuneCountInString(item); l < 6 || l > 80 {
+			err := CreateThreadRequestValidationError{
+				field:  fmt.Sprintf("Recipients[%v]", idx),
+				reason: "value length must be between 6 and 80 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -4426,15 +4458,31 @@ func (m *PostMessageRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetRecipients()) > 20 {
+	if len(m.GetRecipients()) > 10 {
 		err := PostMessageRequestValidationError{
 			field:  "Recipients",
-			reason: "value must contain no more than 20 item(s)",
+			reason: "value must contain no more than 10 item(s)",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetRecipients() {
+		_, _ = idx, item
+
+		if l := utf8.RuneCountInString(item); l < 6 || l > 80 {
+			err := PostMessageRequestValidationError{
+				field:  fmt.Sprintf("Recipients[%v]", idx),
+				reason: "value length must be between 6 and 80 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

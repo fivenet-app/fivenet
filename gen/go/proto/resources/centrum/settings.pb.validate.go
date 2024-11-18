@@ -264,6 +264,22 @@ func (m *PredefinedStatus) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	for idx, item := range m.GetUnitStatus() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 64 {
+			err := PredefinedStatusValidationError{
+				field:  fmt.Sprintf("UnitStatus[%v]", idx),
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(m.GetDispatchStatus()) > 5 {
 		err := PredefinedStatusValidationError{
 			field:  "DispatchStatus",
@@ -273,6 +289,22 @@ func (m *PredefinedStatus) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetDispatchStatus() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 64 {
+			err := PredefinedStatusValidationError{
+				field:  fmt.Sprintf("DispatchStatus[%v]", idx),
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

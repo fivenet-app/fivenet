@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
+import DocEditor from '../partials/DocEditor.vue';
 
 const { isOpen } = useModal();
 
@@ -9,12 +10,14 @@ const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
+    signature: z.string().max(1024),
     emails: z.string().array().max(25),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
+    signature: '',
     emails: [],
 });
 
@@ -30,10 +33,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         .setEmailSettings({
             settings: {
                 emailId: selectedEmail.value?.id,
+                signature: values.signature,
                 blockedEmails: values.emails.map((e) => e.trim()),
             },
         })
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+
+    isOpen.value = false;
 }, 1000);
 </script>
 
@@ -51,7 +57,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </template>
 
-                <div>
+                <div class="flex flex-col gap-2">
+                    <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
+                        <ClientOnly>
+                            <DocEditor v-model="state.signature" :min-height="200" />
+                        </ClientOnly>
+                    </UFormGroup>
+
                     <UFormGroup name="emails" class="flex-1" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
                             <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">

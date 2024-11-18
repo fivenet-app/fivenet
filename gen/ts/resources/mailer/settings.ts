@@ -19,6 +19,10 @@ export interface EmailSettings {
      */
     emailId: string;
     /**
+     * @generated from protobuf field: optional string signature = 2;
+     */
+    signature?: string;
+    /**
      * @generated from protobuf field: repeated string blocked_emails = 3;
      */
     blockedEmails: string[];
@@ -28,6 +32,7 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
     constructor() {
         super("resources.mailer.EmailSettings", [
             { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "25" } } } }
         ]);
     }
@@ -47,6 +52,9 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
                 case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
                     message.emailId = reader.uint64().toString();
                     break;
+                case /* optional string signature */ 2:
+                    message.signature = reader.string();
+                    break;
                 case /* repeated string blocked_emails */ 3:
                     message.blockedEmails.push(reader.string());
                     break;
@@ -65,6 +73,9 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         /* uint64 email_id = 1 [jstype = JS_STRING]; */
         if (message.emailId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.emailId);
+        /* optional string signature = 2; */
+        if (message.signature !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.signature);
         /* repeated string blocked_emails = 3; */
         for (let i = 0; i < message.blockedEmails.length; i++)
             writer.tag(3, WireType.LengthDelimited).string(message.blockedEmails[i]);

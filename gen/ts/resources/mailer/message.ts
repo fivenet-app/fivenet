@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
-import { EmailShort } from "./email";
+import { Email } from "./email";
 /**
  * @generated from protobuf message resources.mailer.Message
  */
@@ -29,9 +29,9 @@ export interface Message {
      */
     senderId: string;
     /**
-     * @generated from protobuf field: optional resources.mailer.EmailShort sender = 4;
+     * @generated from protobuf field: optional resources.mailer.Email sender = 4;
      */
-    sender?: EmailShort;
+    sender?: Email;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5;
      */
@@ -92,7 +92,7 @@ class Message$Type extends MessageType<Message> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "sender_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "sender", kind: "message", T: () => EmailShort },
+            { no: 4, name: "sender", kind: "message", T: () => Email },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 7, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -128,8 +128,8 @@ class Message$Type extends MessageType<Message> {
                 case /* uint64 sender_id = 3 [jstype = JS_STRING];*/ 3:
                     message.senderId = reader.uint64().toString();
                     break;
-                case /* optional resources.mailer.EmailShort sender */ 4:
-                    message.sender = EmailShort.internalBinaryRead(reader, reader.uint32(), options, message.sender);
+                case /* optional resources.mailer.Email sender */ 4:
+                    message.sender = Email.internalBinaryRead(reader, reader.uint32(), options, message.sender);
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 5:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -176,9 +176,9 @@ class Message$Type extends MessageType<Message> {
         /* uint64 sender_id = 3 [jstype = JS_STRING]; */
         if (message.senderId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.senderId);
-        /* optional resources.mailer.EmailShort sender = 4; */
+        /* optional resources.mailer.Email sender = 4; */
         if (message.sender)
-            EmailShort.internalBinaryWrite(message.sender, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Email.internalBinaryWrite(message.sender, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.timestamp.Timestamp created_at = 5; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

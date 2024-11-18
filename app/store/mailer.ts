@@ -1,16 +1,22 @@
 import Dexie, { type Table } from 'dexie';
-import type { Email, EmailShort } from '~~/gen/ts/resources/mailer/email';
+import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
 import type { Message } from '~~/gen/ts/resources/mailer/message';
-import type { EmailSettings } from '~~/gen/ts/resources/mailer/settings';
 import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
 import type {
+    CreateOrUpdateEmailRequest,
+    CreateOrUpdateEmailResponse,
     CreateThreadRequest,
     CreateThreadResponse,
+    DeleteMessageRequest,
+    DeleteMessageResponse,
     DeleteThreadRequest,
     DeleteThreadResponse,
     GetEmailSettingsRequest,
     GetEmailSettingsResponse,
+    ListThreadMessagesRequest,
+    ListThreadMessagesResponse,
+    ListThreadsRequest,
     PostMessageRequest,
     PostMessageResponse,
     SetEmailSettingsRequest,
@@ -23,12 +29,11 @@ export interface MailerState {
     draft: {
         title: string;
         content: string;
-        emails: string[];
+        recipients: { label: string }[];
     };
-    emails: (Email | EmailShort)[];
-    selectedEmail: EmailShort | undefined;
+    emails: Email[];
+    selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
-    settings: EmailSettings;
 }
 
 export const useMailerStore = defineStore('mailer', {
@@ -37,72 +42,69 @@ export const useMailerStore = defineStore('mailer', {
             draft: {
                 title: '',
                 content: '',
-                emails: [],
+                recipients: [],
             },
             emails: [],
             selectedEmail: undefined,
             selectedThread: undefined,
-            settings: {
-                emailId: '0',
-                blockedEmails: [],
-            },
         }) as MailerState,
-    persist: false,
+    persist: {
+        pick: ['draft'],
+    },
     actions: {
         async handleEvent(event: MailerEvent): Promise<void> {
-            console.log('MAILEREVENT', event);
-            if (event.data.oneofKind === 'emailUpdate') {
-                const idx = this.emails.findIndex((e) => {
-                    if (event.data.oneofKind !== 'emailDelete') {
-                        return false;
-                    }
+            logger.debug('Received change - Kind:', event.data.oneofKind, event.data);
 
-                    return e.id === event.data.emailDelete;
-                });
+            if (event.data.oneofKind === 'emailUpdate') {
+                const searchId = event.data.emailUpdate.id;
+                const idx = this.emails.findIndex((e) => e.id === searchId);
                 if (idx > -1) {
                     this.emails[idx] = event.data.emailUpdate;
                 }
             } else if (event.data.oneofKind === 'emailDelete') {
-                const idx = this.emails.findIndex((e) => {
-                    if (event.data.oneofKind !== 'emailDelete') {
-                        return false;
-                    }
-
-                    return e.id === event.data.emailDelete;
-                });
+                const searchId = event.data.emailDelete;
+                const idx = this.emails.findIndex((e) => e.id === searchId);
                 if (idx > -1) {
                     this.emails.splice(idx, 1);
+                }
+            } else if (event.data.oneofKind === 'emailSettingsUpdated') {
+                const searchId = event.data.emailSettingsUpdated.emailId;
+                const idx = this.emails.findIndex((e) => e.id === searchId);
+                if (idx > -1 && this.emails[idx]) {
+                    this.emails[idx].settings = event.data.emailSettingsUpdated;
                 }
             } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
             } else if (event.data.oneofKind === 'threadDelete') {
                 await mailerDB.threads.delete(event.data.threadDelete);
             } else if (event.data.oneofKind === 'messageUpdate') {
-                const msg = await mailerDB.messages.get(event.data.messageUpdate.id);
                 await mailerDB.messages.put(event.data.messageUpdate);
 
-                if (!msg) {
-                    // Only set unread state when message isn't from same email
-                    if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
-                        useSound().play({ name: 'notification' });
-                    }
+                // Only set unread state when message isn't from same email
+                if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
+                    useSound().play({ name: 'notification' });
+                }
 
-                    if (this.selectedThread?.id !== event.data.messageUpdate.threadId) {
-                        await this.setThreadState(
-                            {
-                                threadId: event.data.messageUpdate.threadId,
-                                unread: true,
-                            },
-                            true,
-                        );
-                    }
+                // Update thread updated at time
+                await mailerDB.threads.update(event.data.messageUpdate.threadId, {
+                    updatedAt: event.data.messageUpdate.updatedAt,
+                });
+
+                if (this.selectedThread?.id !== event.data.messageUpdate.threadId) {
+                    await this.setThreadState(
+                        {
+                            threadId: event.data.messageUpdate.threadId,
+                            unread: true,
+                        },
+                        true,
+                    );
                 }
             } else if (event.data.oneofKind === 'messageDelete') {
                 await mailerDB.messages.delete(event.data.messageDelete);
             } else if (event.data.oneofKind === 'threadStateUpdate') {
                 this.setThreadState(event.data.threadStateUpdate, true);
             } else {
-                logger.debug('Unknown MailerEvent received:', event.data.oneofKind);
+                logger.debug('Unknown MailerEvent type received:', event.data.oneofKind);
             }
         },
 
@@ -113,8 +115,10 @@ export const useMailerStore = defineStore('mailer', {
                 const { response } = await call;
 
                 this.emails = response.emails;
-                if (this.emails.length > 0) {
+                if (this.emails.length > 0 && this.emails[0]) {
                     this.selectedEmail = this.emails[0];
+
+                    this.getEmail(this.selectedEmail.id);
                 }
 
                 return this.emails;
@@ -124,7 +128,74 @@ export const useMailerStore = defineStore('mailer', {
             }
         },
 
+        async getEmail(id: string): Promise<Email | undefined> {
+            try {
+                const call = getGRPCMailerClient().getEmail({
+                    id: id,
+                });
+                const { response } = await call;
+
+                if (this.selectedEmail && this.selectedEmail.id === response.email?.id) {
+                    this.selectedEmail.settings = response.email.settings;
+                    this.selectedEmail.access = response.email.access;
+                } else {
+                    const email = this.emails.find((e) => e.id === id);
+                    if (email) {
+                        email.settings = response.email?.settings;
+                        email.access = response.email?.access;
+                    }
+                }
+
+                return response.email;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+
+        async createOrUpdateEmail(req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> {
+            try {
+                const call = getGRPCMailerClient().createOrUpdateEmail(req);
+                const { response } = await call;
+
+                if (response.email) {
+                    const idx = this.emails.findIndex((e) => e.id === response.email!.id);
+                    if (idx === -1) {
+                        this.emails.unshift(response.email);
+                    } else {
+                        this.emails[idx] = response.email;
+                    }
+
+                    if (this.selectedEmail === undefined) {
+                        this.selectedEmail = response.email;
+                    }
+                }
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+
         // Thread
+        async listThreads(req: ListThreadsRequest): Promise<Thread[] | undefined> {
+            if (!this.selectedEmail) {
+                return;
+            }
+
+            try {
+                const call = getGRPCMailerClient().listThreads(req);
+                const { response } = await call;
+
+                mailerDB.threads.bulkPut(response.threads);
+
+                return response.threads;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
         async getThread(threadId: string): Promise<Thread | undefined> {
             if (!this.selectedEmail) {
                 return;
@@ -229,6 +300,7 @@ export const useMailerStore = defineStore('mailer', {
                 if (state.unread !== undefined && thread.state.unread !== state.unread) {
                     update = true;
                     thread.state.unread = state.unread;
+                    thread.state.lastRead = toTimestamp();
                 }
                 if (state.important !== undefined && thread.state.important !== state.important) {
                     update = true;
@@ -249,7 +321,7 @@ export const useMailerStore = defineStore('mailer', {
             }
 
             if (update) {
-                mailerDB.threads.update(thread.id, thread);
+                await mailerDB.threads.put(thread, thread.id);
 
                 if (!local) {
                     await getGRPCMailerClient().setThreadState({
@@ -262,6 +334,23 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Messages
+        async listThreadMessages(req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> {
+            if (!this.selectedEmail) {
+                return;
+            }
+
+            try {
+                const call = getGRPCMailerClient().listThreadMessages(req);
+                const { response } = await call;
+
+                await mailerDB.messages.bulkPut(response.messages);
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
         async postMessage(req: PostMessageRequest): Promise<PostMessageResponse> {
             try {
                 const call = getGRPCMailerClient().postMessage(req);
@@ -278,14 +367,28 @@ export const useMailerStore = defineStore('mailer', {
             }
         },
 
+        async deleteMessage(req: DeleteMessageRequest): Promise<DeleteMessageResponse> {
+            try {
+                const call = getGRPCMailerClient().deleteMessage(req);
+                const { response } = await call;
+
+                mailerDB.messages.delete(req.messageId);
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+
         // User Settings
         async getEmailSettings(req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> {
             try {
                 const call = getGRPCMailerClient().getEmailSettings(req);
                 const { response } = await call;
 
-                if (response.settings) {
-                    this.settings = response.settings;
+                if (response.settings && this.selectedEmail) {
+                    this.selectedEmail.settings = response.settings;
                 }
 
                 return response;
@@ -299,8 +402,8 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().setEmailSettings(req);
                 const { response } = await call;
 
-                if (response.settings) {
-                    this.settings = response.settings;
+                if (response.settings && this.selectedEmail) {
+                    this.selectedEmail.settings = response.settings;
                 }
 
                 return response;

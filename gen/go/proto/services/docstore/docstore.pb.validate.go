@@ -5787,6 +5787,17 @@ func (m *ListDocumentActivityRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if len(m.GetActivityTypes()) > 10 {
+		err := ListDocumentActivityRequestValidationError{
+			field:  "ActivityTypes",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetActivityTypes() {
 		_, _ = idx, item
 

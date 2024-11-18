@@ -278,7 +278,7 @@ const accordionItems = computed(() =>
 
                 <UPageBody prose class="pb-8">
                     <!-- eslint-disable vue/no-v-html -->
-                    <div ref="contentRef" class="prose dark:prose-invert" v-html="page.content" />
+                    <div ref="contentRef" class="prose dark:prose-invert max-w-fit" v-html="page.content" />
                 </UPageBody>
 
                 <UDivider class="mb-4" />

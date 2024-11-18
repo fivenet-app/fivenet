@@ -27,7 +27,6 @@ type fivenetMailerEmailsTable struct {
 	Email     mysql.ColumnString
 	Label     mysql.ColumnString
 	Internal  mysql.ColumnBool
-	Signature mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -78,9 +77,8 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		EmailColumn     = mysql.StringColumn("email")
 		LabelColumn     = mysql.StringColumn("label")
 		InternalColumn  = mysql.BoolColumn("internal")
-		SignatureColumn = mysql.StringColumn("signature")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn, SignatureColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn, SignatureColumn}
+		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn}
 	)
 
 	return fivenetMailerEmailsTable{
@@ -97,7 +95,6 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		Email:     EmailColumn,
 		Label:     LabelColumn,
 		Internal:  InternalColumn,
-		Signature: SignatureColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

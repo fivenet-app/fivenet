@@ -11,8 +11,14 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+)
+
+var (
+	tSettings       = table.FivenetMailerSettings
+	tSettingsBlocks = table.FivenetMailerSettingsBlocked
 )
 
 func (s *Server) GetEmailSettings(ctx context.Context, req *GetEmailSettingsRequest) (*GetEmailSettingsResponse, error) {
@@ -37,26 +43,27 @@ func (s *Server) GetEmailSettings(ctx context.Context, req *GetEmailSettingsRequ
 }
 
 func (s *Server) getEmailSettings(ctx context.Context, emailId uint64) (*mailer.EmailSettings, error) {
-	stmt := tSettingsBlocks.
+	tSettings := tSettings.AS("email_settings")
+	stmt := tSettings.
 		SELECT(
-			tSettingsBlocks.EmailID,
-			tSettingsBlocks.TargetEmail,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
+			tSettings.EmailID,
+			tSettings.Signature,
+			tSettingsBlocks.TargetEmail.AS("email_settings.blocked_emails"),
 		).
 		FROM(
-			tSettingsBlocks.
-				INNER_JOIN(tUsers,
-					tUsers.ID.EQ(tSettingsBlocks.EmailID),
+			tSettings.
+				LEFT_JOIN(tSettingsBlocks,
+					tSettingsBlocks.EmailID.EQ(tSettings.EmailID),
 				),
 		).
 		WHERE(
-			tSettingsBlocks.EmailID.EQ(jet.Uint64(emailId)),
+			tSettings.EmailID.EQ(jet.Uint64(emailId)),
 		).
 		LIMIT(25)
 
-	dest := &mailer.EmailSettings{}
+	dest := &mailer.EmailSettings{
+		EmailId: emailId,
+	}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
@@ -84,6 +91,28 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 	}
 	if !check {
 		return nil, errorsmailer.ErrNoPerms
+	}
+
+	signature := jet.StringExp(jet.NULL)
+	if req.Settings.Signature != nil {
+		signature = jet.String(*req.Settings.Signature)
+	}
+
+	stmt := tSettings.
+		INSERT(
+			tSettings.EmailID,
+			tSettings.Signature,
+		).
+		VALUES(
+			req.Settings.EmailId,
+			req.Settings.Signature,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tSettings.Signature.SET(signature),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	settings, err := s.getEmailSettings(ctx, req.Settings.EmailId)
@@ -162,6 +191,12 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
+
+	s.sendUpdate(ctx, &mailer.MailerEvent{
+		Data: &mailer.MailerEvent_EmailSettingsUpdated{
+			EmailSettingsUpdated: settings,
+		},
+	}, req.Settings.EmailId)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 

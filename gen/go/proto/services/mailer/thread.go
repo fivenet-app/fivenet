@@ -91,7 +91,6 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		return resp, nil
 	}
 
-	tEmails := tEmails.AS("email_short")
 	stmt := tThreads.
 		SELECT(
 			tThreads.ID,
@@ -105,6 +104,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.CreatorID,
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
+			tThreadsState.Unread,
 			tThreadsState.LastRead,
 			tThreadsState.Important,
 			tThreadsState.Favorite,
@@ -113,14 +113,15 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		).
 		FROM(
 			tThreads.
-				LEFT_JOIN(tThreadsRecipients,
-					tThreadsRecipients.EmailID.IN(ids...),
+				INNER_JOIN(tThreadsRecipients,
+					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
 				).
 				LEFT_JOIN(tEmails,
 					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				).
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID),
+					tThreadsState.ThreadID.EQ(tThreads.ID).
+						AND(tThreadsState.EmailID.EQ(jet.Uint64(req.EmailIds[0]))),
 				),
 		).
 		WHERE(jet.AND(
@@ -128,6 +129,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		)).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tThreads.ID).
+		ORDER_BY(tThreads.ID.DESC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Threads); err != nil {
@@ -148,8 +150,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 	return resp, nil
 }
 
-func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *userinfo.UserInfo, withRecipients bool) (*mailer.Thread, error) {
-	tEmails := tEmails.AS("email_short")
+func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64, userInfo *userinfo.UserInfo, withRecipients bool) (*mailer.Thread, error) {
 	stmt := tThreads.
 		SELECT(
 			tThreads.ID,
@@ -163,6 +164,7 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 			tEmails.Email,
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
+			tThreadsState.Unread,
 			tThreadsState.LastRead,
 			tThreadsState.Important,
 			tThreadsState.Favorite,
@@ -176,13 +178,14 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
-						AND(tThreadsState.EmailID.EQ(jet.Int32(userInfo.UserId))),
+						AND(tThreadsState.EmailID.EQ(jet.Uint64(emailId))),
 				),
 		).
 		WHERE(jet.AND(
 			tThreads.ID.EQ(jet.Uint64(threadId)),
 		)).
-		GROUP_BY(tThreads.ID)
+		GROUP_BY(tThreads.ID).
+		LIMIT(1)
 
 	var thread mailer.Thread
 	if err := stmt.QueryContext(ctx, s.db, &thread); err != nil {
@@ -217,18 +220,18 @@ func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*m
 			tThreadsRecipients.ID,
 			tThreadsRecipients.ThreadID,
 			tThreadsRecipients.EmailID,
-			tEmailsShort.ID,
-			tEmailsShort.Email,
+			tEmails.ID,
+			tEmails.Email,
 		).
 		FROM(
 			tThreadsRecipients.
-				INNER_JOIN(tEmailsShort,
-					tEmailsShort.ID.EQ(tThreadsRecipients.EmailID),
+				INNER_JOIN(tEmails,
+					tEmails.ID.EQ(tThreadsRecipients.EmailID),
 				),
 		).
 		WHERE(jet.AND(
 			tThreadsRecipients.ThreadID.EQ(jet.Uint64(threadId)),
-			tEmailsShort.DeletedAt.IS_NULL(),
+			tEmails.DeletedAt.IS_NULL(),
 		))
 
 	recipients := []*mailer.ThreadRecipientEmail{}
@@ -248,7 +251,7 @@ func (s *Server) GetThread(ctx context.Context, req *GetThreadRequest) (*GetThre
 		return nil, err
 	}
 
-	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -280,7 +283,10 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	// TODO handle recipients string list `req.Recipients`
+	emails, err := s.resolveRecipientsToEmails(ctx, req.Recipients)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -322,10 +328,10 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	}
 
 	// Add creator of email to recipients
-	req.Thread.Recipients = append(req.Thread.Recipients, &mailer.ThreadRecipientEmail{
+	emails = append(emails, &mailer.ThreadRecipientEmail{
 		EmailId: req.Thread.CreatorEmailId,
 	})
-	if err := s.handleRecipientsChanges(ctx, tx, req.Thread.Id, req.Thread.Recipients); err != nil {
+	if err := s.handleRecipientsChanges(ctx, tx, req.Thread.Id, emails); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -336,7 +342,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	thread, err := s.getThread(ctx, req.Thread.Id, userInfo, true)
+	thread, err := s.getThread(ctx, req.Thread.Id, req.Thread.CreatorEmailId, userInfo, true)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
@@ -362,6 +368,25 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	}, nil
 }
 
+func (s *Server) updateThreadTime(ctx context.Context, tx qrm.DB, threadId uint64) error {
+	stmt := tThreads.
+		UPDATE(
+			tThreads.UpdatedAt,
+		).
+		SET(
+			tThreads.UpdatedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(
+			tThreads.ID.EQ(jet.Uint64(threadId)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*DeleteThreadResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.mailer.thread.id", int64(req.ThreadId)))
 
@@ -380,7 +405,7 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
-	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
 		return nil, errorsmailer.ErrFailedQuery
 	}
