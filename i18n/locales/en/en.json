@@ -505,9 +505,7 @@
         "personal_email": "Personal Email",
         "participant": "Participant | Participants",
         "sender": "Sender",
-        "signature": "Signature",
-        "internal": "Internal",
-        "label": "Label"
+        "signature": "Signature"
     },
     "components": {
         "partials": {
@@ -2154,14 +2152,6 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "DeleteEmail": {
-                "key": "Delete E-Mails",
-                "description": "Requires admin access to the E-Mail thread."
-            },
-            "ListEmails": {
-                "key": "List E-Mail threads",
-                "description": "Minimum permission to see E-Mails."
-            },
             "PostMessage": {
                 "key": "Post responses",
                 "description": "Allow users to post responses to E-Mails they have access to."
@@ -2169,6 +2159,14 @@
             "CreateThread": {
                 "key": "Create or update E-Mails",
                 "description": "Updating E-Mail threads requires manage or higher access to a E-Mail thread."
+            },
+            "DeleteEmail": {
+                "key": "Delete E-Mail addresses",
+                "description": "Requires manage access to the E-Mail address."
+            },
+            "ListEmails": {
+                "key": "List E-Mail threads",
+                "description": "Minimum permission to see E-Mails."
             }
         }
     },
