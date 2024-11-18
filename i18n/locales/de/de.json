@@ -505,7 +505,9 @@
         "personal_email": "Eigene Email",
         "participant": "Teilnehmer",
         "sender": "Absender",
-        "signature": "Signatur"
+        "signature": "Signatur",
+        "internal": "Intern",
+        "label": "Bezeichnung"
     },
     "components": {
         "partials": {
