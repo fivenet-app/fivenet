@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
@@ -20,8 +21,11 @@ var (
 	tEmails      = table.FivenetMailerEmails.AS("email")
 	tEmailsShort = tEmails.AS("email_short")
 
-	tEmailsUserAccess = table.FivenetMailerEmailsUserAccess
-	tEmailsJobAccess  = table.FivenetMailerEmailsJobAccess
+	tEmailsJobAccess            = table.FivenetMailerEmailsJobAccess
+	tEmailsUserAccess           = table.FivenetMailerEmailsUserAccess
+	tEmailsQualificationsAccess = table.FivenetMailerEmailsQualificationsAccess
+
+	tQualificationsResults = table.FivenetQualificationsResults
 )
 
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
@@ -42,17 +46,25 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo) ([]*mailer.EmailShort, error) {
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
+		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		condition = condition.AND(
 			jet.OR(
 				tEmailsShort.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tEmailsUserAccess.Access.IS_NULL(),
 					tEmailsJobAccess.Access.IS_NOT_NULL(),
-					tEmailsJobAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ))),
+					tEmailsJobAccess.Access.GT_EQ(jet.Int32(access)),
 				),
 				jet.AND(
 					tEmailsUserAccess.Access.IS_NOT_NULL(),
-					tEmailsUserAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ))),
+					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
+				),
+				jet.AND(
+					tEmailsQualificationsAccess.Access.IS_NOT_NULL(),
+					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
+					tQualificationsResults.DeletedAt.IS_NULL(),
+					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
+					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
 				),
 			),
 		)
@@ -80,6 +92,13 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 				LEFT_JOIN(tEmailsUserAccess,
 					tEmailsUserAccess.EmailID.EQ(tEmailsShort.ID).
 						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+				).
+				LEFT_JOIN(tEmailsQualificationsAccess,
+					tEmailsQualificationsAccess.EmailID.EQ(tEmailsShort.ID),
+				).
+				LEFT_JOIN(tQualificationsResults,
+					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID).
+						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 				),
 		).
 		WHERE(condition).
@@ -184,6 +203,12 @@ func (s *Server) getEmailAccess(ctx context.Context, id uint64) (*mailer.Access,
 	}
 	access.Users = usersAccess
 
+	qualiAccess, err := s.access.Qualifications.List(ctx, s.db, id)
+	if err != nil {
+		return nil, err
+	}
+	access.Qualifications = qualiAccess
+
 	return access, nil
 }
 
@@ -259,7 +284,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Email.Id, req.Email.Access.Jobs, req.Email.Access.Users); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, req.Email.Id, req.Email.Access.Jobs, req.Email.Access.Users, req.Email.Access.Qualifications); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

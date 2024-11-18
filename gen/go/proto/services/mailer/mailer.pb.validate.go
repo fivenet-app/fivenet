@@ -2102,6 +2102,17 @@ func (m *ListThreadsRequest) validate(all bool) error {
 		}
 	}
 
+	if len(m.GetEmailIds()) > 10 {
+		err := ListThreadsRequestValidationError{
+			field:  "EmailIds",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.After != nil {
 
 		if all {
@@ -2744,6 +2755,17 @@ func (m *CreateThreadRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetRecipients()) > 20 {
+		err := CreateThreadRequestValidationError{
+			field:  "Recipients",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -4402,6 +4424,17 @@ func (m *PostMessageRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetRecipients()) > 20 {
+		err := PostMessageRequestValidationError{
+			field:  "Recipients",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

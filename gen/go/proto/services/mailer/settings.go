@@ -104,23 +104,68 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 		}
 	} else {
 		toCreate := []string{}
-		toUpdate := []string{}
+		toDelete := []string{}
 
 		for _, be := range req.Settings.BlockedEmails {
-			if slices.ContainsFunc(settings.BlockedEmails, func(a string) bool {
+			if !slices.ContainsFunc(settings.BlockedEmails, func(a string) bool {
 				return a == be
 			}) {
-				toUpdate = append(toUpdate, be)
-			} else {
 				toCreate = append(toCreate, be)
+			}
+		}
+
+		for _, be := range settings.BlockedEmails {
+			if !slices.ContainsFunc(req.Settings.BlockedEmails, func(a string) bool {
+				return a == be
+			}) {
+				toDelete = append(toDelete, be)
+			}
+		}
+
+		if len(toCreate) > 0 {
+			stmt := tSettingsBlocks.
+				INSERT(
+					tSettingsBlocks.EmailID,
+					tSettingsBlocks.TargetEmail,
+				)
+
+			for _, be := range toCreate {
+				stmt = stmt.
+					VALUES(
+						req.Settings.EmailId,
+						be,
+					)
+			}
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			}
+		}
+
+		if len(toDelete) > 0 {
+			targets := []jet.Expression{}
+
+			stmt := tSettingsBlocks.
+				DELETE().
+				WHERE(jet.AND(
+					tSettingsBlocks.EmailID.EQ(jet.Uint64(req.Settings.EmailId)),
+					tSettingsBlocks.TargetEmail.IN(targets...),
+				))
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
 	}
 
-	// Handle blocked emails changes
-	// TODO
+	settings, err = s.getEmailSettings(ctx, req.Settings.EmailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return nil, nil
+	return &SetEmailSettingsResponse{
+		Settings: settings,
+	}, nil
 }

@@ -11605,6 +11605,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
 | message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
+| recipients | [string](#string) | repeated |  |
 
 
 
@@ -11983,6 +11984,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
+| recipients | [string](#string) | repeated |  |
 
 
 

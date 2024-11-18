@@ -37,6 +37,8 @@ type Agent struct {
 	ctx    context.Context
 	js     *events.JSWrapper
 
+	jsCons jetstream.ConsumeContext
+
 	handlers *Handlers
 }
 
@@ -78,7 +80,12 @@ func (ag *Agent) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 		return err
 	}
 
-	if _, err := consumer.Consume(ag.watchForEvents,
+	if ag.jsCons != nil {
+		ag.jsCons.Stop()
+		ag.jsCons = nil
+	}
+
+	if ag.jsCons, err = consumer.Consume(ag.watchForEvents,
 		ag.js.ConsumeErrHandlerWithRestart(ctxCancel, ag.logger,
 			ag.registerSubscriptions,
 		)); err != nil {

@@ -139,7 +139,7 @@ class Thread$Type extends MessageType<Thread> {
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 10, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail },
+            { no: 10, name: "recipients", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ThreadRecipientEmail, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
             { no: 11, name: "state", kind: "message", T: () => ThreadState }
         ]);
     }

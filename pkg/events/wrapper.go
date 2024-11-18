@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
@@ -20,13 +21,16 @@ const DescriptionPrefix = "FiveNet: "
 type JSWrapper struct {
 	jetstream.JetStream
 
+	mu         sync.Mutex
 	cfg        config.NATS
 	shutdowner fx.Shutdowner
 }
 
 func NewJSWrapper(js jetstream.JetStream, cfg config.NATS, shutdowner fx.Shutdowner) *JSWrapper {
 	return &JSWrapper{
-		JetStream:  js,
+		JetStream: js,
+
+		mu:         sync.Mutex{},
 		cfg:        cfg,
 		shutdowner: shutdowner,
 	}
@@ -73,6 +77,9 @@ type ConsumeErrRestartFn func(ctxTimeout context.Context, ctxCancel context.Cont
 
 func (j *JSWrapper) ConsumeErrHandlerWithRestart(ctxCancel context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) jetstream.PullConsumeOpt {
 	return jetstream.ConsumeErrHandler(func(ctxConsume jetstream.ConsumeContext, err error) {
+		j.mu.Lock()
+		defer j.mu.Unlock()
+
 		if err != nil {
 			logger.Error("error during jetstream consume, trying to restart...", zap.Error(err))
 

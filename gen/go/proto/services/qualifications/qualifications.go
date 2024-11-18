@@ -48,7 +48,7 @@ type Server struct {
 	notif    notifi.INotifi
 	st       storage.IStorage
 
-	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel]
+	access *access.Grouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel]
 }
 
 type Params struct {
@@ -77,7 +77,7 @@ func NewServer(p Params) *Server {
 		notif:    p.Notif,
 		st:       p.Storage,
 
-		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, qualifications.AccessLevel](
+		access: access.NewGrouped[qualifications.QualificationJobAccess, *qualifications.QualificationJobAccess, qualifications.QualificationUserAccess, *qualifications.QualificationUserAccess, access.DummyQualificationAccess[qualifications.AccessLevel], *access.DummyQualificationAccess[qualifications.AccessLevel], qualifications.AccessLevel](
 			p.DB,
 			table.FivenetQualifications,
 			&access.TargetTableColumns{
@@ -110,6 +110,7 @@ func NewServer(p Params) *Server {
 					MinimumGrade: table.FivenetQualificationsJobAccess.AS("qualification_job_access").MinimumGrade,
 				},
 			),
+			nil,
 			nil,
 		),
 	}
@@ -371,7 +372,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 	}
 
 	if req.Qualification.Access != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Qualification.Access.Jobs, nil); err != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Qualification.Access.Jobs, nil, nil); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -485,7 +486,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	}
 
 	if req.Qualification.Access != nil {
-		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Qualification.Id, req.Qualification.Access.Jobs, nil); err != nil {
+		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Qualification.Id, req.Qualification.Access.Jobs, nil, nil); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}

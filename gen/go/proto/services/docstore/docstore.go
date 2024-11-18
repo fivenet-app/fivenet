@@ -63,8 +63,8 @@ type Server struct {
 	notif    notifi.INotifi
 	htmlDiff *htmldiffer.Differ
 
-	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel]
-	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, documents.AccessLevel]
+	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
+	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 }
 
 type Params struct {
@@ -91,7 +91,7 @@ func NewServer(p Params) *Server {
 		notif:    p.Notif,
 		htmlDiff: p.HTMLDiffer,
 
-		access: access.NewGrouped(
+		access: access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 			p.DB,
 			table.FivenetDocuments,
 			&access.TargetTableColumns{
@@ -146,9 +146,10 @@ func NewServer(p Params) *Server {
 					UserId: table.FivenetDocumentsUserAccess.AS("document_user_access").UserID,
 				},
 			),
+			nil,
 		),
 
-		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, documents.AccessLevel](
+		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 			p.DB,
 			table.FivenetDocumentsTemplates,
 			&access.TargetTableColumns{
@@ -181,6 +182,7 @@ func NewServer(p Params) *Server {
 					MinimumGrade: table.FivenetDocumentsTemplatesJobAccess.AS("template_job_access").MinimumGrade,
 				},
 			),
+			nil,
 			nil,
 		),
 	}
@@ -496,7 +498,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Access.Jobs, req.Access.Users); err != nil {
+	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Access.Jobs, req.Access.Users, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
 		}

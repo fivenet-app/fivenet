@@ -56,7 +56,7 @@ type Server struct {
 	enricher *mstlystcdata.UserAwareEnricher
 	htmlDiff *htmldiffer.Differ
 
-	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, wiki.AccessLevel]
+	access *access.Grouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel], *access.DummyQualificationAccess[wiki.AccessLevel], wiki.AccessLevel]
 }
 
 type Params struct {
@@ -81,7 +81,7 @@ func NewServer(p Params) *Server {
 		enricher: p.Enricher,
 		htmlDiff: p.HTMLDiffer,
 
-		access: access.NewGrouped(
+		access: access.NewGrouped[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.PageUserAccess, *wiki.PageUserAccess, access.DummyQualificationAccess[wiki.AccessLevel]](
 			p.DB,
 			table.FivenetWikiPages,
 			&access.TargetTableColumns{
@@ -136,6 +136,7 @@ func NewServer(p Params) *Server {
 					UserId: table.FivenetWikiPageUserAccess.AS("page_user_access").UserID,
 				},
 			),
+			nil,
 		),
 	}
 
@@ -756,7 +757,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 }
 
 func (s *Server) handlePageAccessChange(ctx context.Context, tx qrm.DB, pageId uint64, userInfo *userinfo.UserInfo, access *wiki.PageAccess, addActivity bool) error {
-	changes, err := s.access.HandleAccessChanges(ctx, tx, pageId, access.Jobs, access.Users)
+	changes, err := s.access.HandleAccessChanges(ctx, tx, pageId, access.Jobs, access.Users, nil)
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return errswrap.NewError(err, errorswiki.ErrFailedQuery)

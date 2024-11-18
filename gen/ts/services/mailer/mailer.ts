@@ -233,6 +233,10 @@ export interface CreateThreadRequest {
      * @generated from protobuf field: resources.mailer.Message message = 2;
      */
     message?: Message;
+    /**
+     * @generated from protobuf field: repeated string recipients = 3;
+     */
+    recipients: string[];
 }
 /**
  * @generated from protobuf message services.mailer.CreateThreadResponse
@@ -359,6 +363,10 @@ export interface PostMessageRequest {
      * @generated from protobuf field: resources.mailer.Message message = 1;
      */
     message?: Message;
+    /**
+     * @generated from protobuf field: repeated string recipients = 2;
+     */
+    recipients: string[];
 }
 /**
  * @generated from protobuf message services.mailer.PostMessageResponse
@@ -1092,7 +1100,7 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
     constructor() {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 3, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
@@ -1316,11 +1324,13 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
     constructor() {
         super("services.mailer.CreateThreadRequest", [
             { no: 1, name: "thread", kind: "message", T: () => Thread, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } },
+            { no: 3, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<CreateThreadRequest>): CreateThreadRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.recipients = [];
         if (value !== undefined)
             reflectionMergePartial<CreateThreadRequest>(this, message, value);
         return message;
@@ -1335,6 +1345,9 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
                     break;
                 case /* resources.mailer.Message message */ 2:
                     message.message = Message.internalBinaryRead(reader, reader.uint32(), options, message.message);
+                    break;
+                case /* repeated string recipients */ 3:
+                    message.recipients.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1354,6 +1367,9 @@ class CreateThreadRequest$Type extends MessageType<CreateThreadRequest> {
         /* resources.mailer.Message message = 2; */
         if (message.message)
             Message.internalBinaryWrite(message.message, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string recipients = 3; */
+        for (let i = 0; i < message.recipients.length; i++)
+            writer.tag(3, WireType.LengthDelimited).string(message.recipients[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1894,11 +1910,13 @@ export const ListThreadMessagesResponse = new ListThreadMessagesResponse$Type();
 class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
     constructor() {
         super("services.mailer.PostMessageRequest", [
-            { no: 1, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "recipients", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<PostMessageRequest>): PostMessageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.recipients = [];
         if (value !== undefined)
             reflectionMergePartial<PostMessageRequest>(this, message, value);
         return message;
@@ -1910,6 +1928,9 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
             switch (fieldNo) {
                 case /* resources.mailer.Message message */ 1:
                     message.message = Message.internalBinaryRead(reader, reader.uint32(), options, message.message);
+                    break;
+                case /* repeated string recipients */ 2:
+                    message.recipients.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1926,6 +1947,9 @@ class PostMessageRequest$Type extends MessageType<PostMessageRequest> {
         /* resources.mailer.Message message = 1; */
         if (message.message)
             Message.internalBinaryWrite(message.message, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string recipients = 2; */
+        for (let i = 0; i < message.recipients.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.recipients[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

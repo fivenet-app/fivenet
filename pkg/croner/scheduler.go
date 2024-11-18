@@ -48,6 +48,8 @@ type Scheduler struct {
 	store *store.Store[cron.Cronjob, *cron.Cronjob]
 	gron  *gronx.Gronx
 
+	jsCons jetstream.ConsumeContext
+
 	jobs *xsync.MapOf[string, *jobWrapper]
 }
 
@@ -199,10 +201,16 @@ func (s *Scheduler) registerSubscriptions(ctxStartup context.Context, ctxCancel 
 		return err
 	}
 
-	if _, err := consumer.Consume(s.watchForCompletions,
+	if s.jsCons != nil {
+		s.jsCons.Stop()
+		s.jsCons = nil
+	}
+
+	s.jsCons, err = consumer.Consume(s.watchForCompletions,
 		s.js.ConsumeErrHandlerWithRestart(ctxCancel, s.logger,
 			s.registerSubscriptions,
-		)); err != nil {
+		))
+	if err != nil {
 		return err
 	}
 

@@ -45,7 +45,7 @@ type Server struct {
 	notif    notifi.INotifi
 	js       *events.JSWrapper
 
-	access *access.Grouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel]
+	access *access.Grouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, access.DummyQualificationAccess[calendar.AccessLevel], *access.DummyQualificationAccess[calendar.AccessLevel], calendar.AccessLevel]
 }
 
 type Params struct {
@@ -71,7 +71,7 @@ func NewServer(p Params) *Server {
 		appCfg:   p.AppConfig,
 		notif:    p.Notif,
 		js:       p.JS,
-		access: access.NewGrouped(
+		access: access.NewGrouped[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.CalendarUserAccess, *calendar.CalendarUserAccess, access.DummyQualificationAccess[calendar.AccessLevel], *access.DummyQualificationAccess[calendar.AccessLevel], calendar.AccessLevel](
 			p.DB,
 			table.FivenetDocuments,
 			&access.TargetTableColumns{
@@ -126,6 +126,7 @@ func NewServer(p Params) *Server {
 					UserId: table.FivenetCalendarUserAccess.AS("calendar_user_access").UserID,
 				},
 			),
+			nil,
 		),
 	}
 }

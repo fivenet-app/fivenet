@@ -286,7 +286,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess, nil); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, uint64(lastId), req.Template.JobAccess, nil, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
 		}
@@ -382,7 +382,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess, nil); err != nil {
+	if _, err := s.templateAccess.HandleAccessChanges(ctx, tx, req.Template.Id, req.Template.JobAccess, nil, nil); err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
 		}

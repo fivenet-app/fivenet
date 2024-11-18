@@ -33,13 +33,7 @@ async function createThread(values: Schema): Promise<void> {
     await mailerStore.createThread({
         thread: {
             id: '0',
-            recipients: [
-                {
-                    id: '0',
-                    emailId: '1',
-                    targetId: '2',
-                },
-            ],
+            recipients: [],
             creatorEmailId: '1',
             creatorId: activeChar.value!.userId,
             title: values.title,
@@ -54,6 +48,8 @@ async function createThread(values: Schema): Promise<void> {
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
         },
+
+        recipients: [],
     });
 
     isOpen.value = false;

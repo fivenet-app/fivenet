@@ -14,12 +14,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-var (
-	tUsers   = table.Users.AS("usershort")
-	tCreator = table.Users.AS("creator")
-
-	tUserProps = table.FivenetUserProps
-)
+var tUsers = table.Users.AS("usershort")
 
 type Server struct {
 	MailerServiceServer
@@ -30,7 +25,7 @@ type Server struct {
 	aud      audit.IAuditer
 	js       *events.JSWrapper
 
-	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel]
+	access *access.Grouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel]
 }
 
 type Params struct {
@@ -51,7 +46,7 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		js:       p.JS,
 
-		access: access.NewGrouped[mailer.JobAccess, *mailer.JobAccess, mailer.UserAccess, *mailer.UserAccess, mailer.AccessLevel](
+		access: access.NewGrouped(
 			p.DB,
 			table.FivenetMailerEmails,
 			&access.TargetTableColumns{
@@ -103,6 +98,28 @@ func NewServer(p Params) *Server {
 						Access:    table.FivenetMailerEmailsUserAccess.AS("email_user_access").Access,
 					},
 					UserId: table.FivenetMailerEmailsUserAccess.AS("email_user_access").UserID,
+				},
+			),
+			access.NewQualifications[mailer.QualificationAccess, *mailer.QualificationAccess, mailer.AccessLevel](
+				table.FivenetMailerEmailsQualificationsAccess,
+				&access.QualificationAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetMailerEmailsQualificationsAccess.ID,
+						CreatedAt: table.FivenetMailerEmailsQualificationsAccess.CreatedAt,
+						TargetID:  table.FivenetMailerEmailsQualificationsAccess.EmailID,
+						Access:    table.FivenetMailerEmailsQualificationsAccess.Access,
+					},
+					QualificationId: table.FivenetMailerEmailsQualificationsAccess.QualificationID,
+				},
+				table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access"),
+				&access.QualificationAccessColumns{
+					BaseAccessColumns: access.BaseAccessColumns{
+						ID:        table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access").ID,
+						CreatedAt: table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access").CreatedAt,
+						TargetID:  table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access").QualificationID,
+						Access:    table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access").Access,
+					},
+					QualificationId: table.FivenetMailerEmailsQualificationsAccess.AS("email_qualifications_access").QualificationID,
 				},
 			),
 		),

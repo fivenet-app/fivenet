@@ -83,7 +83,7 @@ message DeleteTemplateResponse {}
 message ListThreadsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
-  repeated uint64 email_ids = 2 [jstype = JS_STRING];
+  repeated uint64 email_ids = 2 [jstype = JS_STRING, (validate.rules).repeated.max_items = 10];
   optional resources.timestamp.Timestamp after = 3;
 }
 
@@ -104,6 +104,7 @@ message GetThreadResponse {
 message CreateThreadRequest {
   resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
   resources.mailer.Message message = 2 [(validate.rules).message.required = true];
+  repeated string recipients = 3 [(validate.rules).repeated.max_items = 20];
 }
 
 message CreateThreadResponse {
@@ -157,6 +158,7 @@ message ListThreadMessagesResponse {
 
 message PostMessageRequest {
   resources.mailer.Message message = 1 [(validate.rules).message.required = true];
+  repeated string recipients = 2 [(validate.rules).repeated.max_items = 10];
 }
 
 message PostMessageResponse {

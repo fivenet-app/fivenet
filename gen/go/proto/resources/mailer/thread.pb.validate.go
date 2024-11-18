@@ -100,6 +100,17 @@ func (m *Thread) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetRecipients()) > 20 {
+		err := ThreadValidationError{
+			field:  "Recipients",
+			reason: "value must contain no more than 20 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetRecipients() {
 		_, _ = idx, item
 

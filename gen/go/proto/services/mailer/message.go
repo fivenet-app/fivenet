@@ -9,7 +9,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -102,7 +101,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 	return resp, nil
 }
 
-func (s *Server) getMessage(ctx context.Context, messageId uint64, userInfo *userinfo.UserInfo) (*mailer.Message, error) {
+func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Message, error) {
 	stmt := tMessages.
 		SELECT(
 			tMessages.ID,
@@ -157,6 +156,8 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, err
 	}
 
+	// TODO handle any new recipients `req.Recipients`
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -176,7 +177,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	message, err := s.getMessage(ctx, req.Message.Id, userInfo)
+	message, err := s.getMessage(ctx, req.Message.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

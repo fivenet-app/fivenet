@@ -23,7 +23,7 @@ message Thread {
     min_len: 3,
     max_len: 255
   }];
-  repeated ThreadRecipientEmail recipients = 10;
+  repeated ThreadRecipientEmail recipients = 10 [(validate.rules).repeated.max_items = 20];
   optional ThreadState state = 11;
 }
 

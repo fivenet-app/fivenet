@@ -21,3 +21,11 @@ func (x *UserAccess) SetUserId(id int32) {
 func (x *UserAccess) SetAccess(access AccessLevel) {
 	x.Access = access
 }
+
+func (x *QualificationAccess) SetQualificationId(id uint64) {
+	x.QualificationId = id
+}
+
+func (x *QualificationAccess) SetAccess(access AccessLevel) {
+	x.Access = access
+}

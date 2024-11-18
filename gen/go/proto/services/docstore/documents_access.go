@@ -113,7 +113,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 }
 
 func (s *Server) handleDocumentAccessChange(ctx context.Context, tx qrm.DB, documentId uint64, userInfo *userinfo.UserInfo, access *documents.DocumentAccess, addActivity bool) error {
-	changes, err := s.access.HandleAccessChanges(ctx, tx, documentId, access.Jobs, access.Users)
+	changes, err := s.access.HandleAccessChanges(ctx, tx, documentId, access.Jobs, access.Users, nil)
 	if err != nil {
 		if dbutils.IsDuplicateError(err) {
 			return errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)

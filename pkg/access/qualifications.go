@@ -11,7 +11,10 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tQualifications = table.FivenetQualifications.AS("qualification_short")
+var (
+	tQualifications        = table.FivenetQualifications.AS("qualification_short")
+	tQualificationsResults = table.FivenetQualificationsResults
+)
 
 type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
@@ -58,11 +61,15 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 			a.selectTable.
 				INNER_JOIN(tQualifications,
 					tQualifications.ID.EQ(a.selectColumns.QualificationId),
+				).
+				INNER_JOIN(tQualificationsResults,
+					tQualificationsResults.QualificationID.EQ(a.selectColumns.QualificationId),
 				),
 		).
 		WHERE(jet.AND(
 			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
 			tQualifications.DeletedAt.IS_NULL(),
+			tQualificationsResults.DeletedAt.IS_NULL(),
 		))
 
 	var dest []T

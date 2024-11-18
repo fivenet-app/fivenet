@@ -280,6 +280,8 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errorsmailer.ErrNoPerms
 	}
 
+	// TODO handle recipients string list `req.Recipients`
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
