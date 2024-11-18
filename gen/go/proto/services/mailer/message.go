@@ -80,6 +80,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 			tMessages.DeletedAt.IS_NULL(),
 			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
 		)).
+		OFFSET(req.Pagination.Offset).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
 		LIMIT(limit)
 

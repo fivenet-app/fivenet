@@ -423,7 +423,7 @@ class MailerDexie extends Dexie {
         super('mailer');
         this.version(1).stores({
             threads: 'id, creatorEmailId',
-            messages: 'id, threadId, emailId',
+            messages: 'id, threadId',
         });
     }
 }

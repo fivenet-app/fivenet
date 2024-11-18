@@ -43,10 +43,14 @@ const { data: thread, pending: loading } = useLazyAsyncData(
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const messages = useDexieLiveQuery(
-    () =>
+const messages = useDexieLiveQueryWithDeps(
+    [() => props.threadId, page],
+    ([threadId, _]: [string, number]) =>
         mailerDB.messages
-            .where({ threadId: props.threadId })
+            .where('threadId')
+            .equals(threadId)
+            .offset(offset.value ?? 0)
+            .limit(16)
             .reverse()
             .toArray()
             .then((messages) => ({ messages: messages, loaded: true })),
@@ -70,7 +74,7 @@ const {
             },
             emailId: selectedEmail.value!.id,
             threadId: props.threadId,
-            after: count > 0 ? undefined : toTimestamp(),
+            after: offset.value === 0 && count > 0 ? undefined : toTimestamp(),
         });
 
         if (selectedThread.value) {
@@ -87,6 +91,8 @@ const {
     },
     { watch: [() => props.threadId] },
 );
+
+watch(offset, async () => refreshMessages());
 
 const { start } = useTimeoutFn(
     async () => {
