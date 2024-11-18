@@ -498,12 +498,14 @@
         "blocklist": "Sperrliste",
         "blocked": "Blockiert",
         "recipient": "Empfänger",
-        "recipients": "Keine Empfänger | {n} Empfänger | {n} Empfänger",
+        "recipients": "Keine Empfänger | {n} Empfänger",
         "unarchive": "Entarchivieren",
         "categories": "Keine Kategorie | {n} Kategorie | {n} Kategorien",
         "sort_by": "Sortierung",
         "personal_email": "Eigene Email",
-        "participant": "Teilnehmer"
+        "participant": "Teilnehmer",
+        "sender": "Absender",
+        "signature": "Signatur"
     },
     "components": {
         "partials": {
@@ -2150,14 +2152,6 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "DeleteEmail": {
-                "key": "E-Mails löschen",
-                "description": "Benötigt Admin Zugriff auf die Konversation."
-            },
-            "ListEmails": {
-                "key": "E-Mails auflisten/sehen",
-                "description": "Minimum Berechtigung um E-Mails sehen zu können."
-            },
             "PostMessage": {
                 "key": "Nachrichten schreiben",
                 "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
@@ -2165,6 +2159,14 @@
             "CreateThread": {
                 "key": "Erstellen und aktualisieren von E-Mails",
                 "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte im E-Mail Thread."
+            },
+            "DeleteEmail": {
+                "key": "E-Mail Adressen löschen",
+                "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
+            },
+            "ListEmails": {
+                "key": "E-Mails Feature nutzen können",
+                "description": "Minimum um das E-Mail Feature komplett nutzen zu können."
             }
         }
     },
