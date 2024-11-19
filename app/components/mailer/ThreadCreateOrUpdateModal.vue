@@ -3,6 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
 import DocEditor from '../partials/DocEditor.vue';
+import TemplateSelector from './TemplateSelector.vue';
+import { defaultEmptyContent } from './helpers';
 
 const { isOpen } = useModal();
 
@@ -62,7 +64,7 @@ onBeforeMount(() => {
         (!state.value.content || state.value.content === '' || state.value.content === '<p><br></p>') &&
         !!selectedEmail.value?.settings?.signature
     ) {
-        state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
+        state.value.content = defaultEmptyContent + selectedEmail.value?.settings?.signature;
     }
 });
 
@@ -105,7 +107,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UInput
                                     v-model="state.title"
                                     type="text"
-                                    size="xl"
+                                    size="lg"
                                     class="font-semibold"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
@@ -156,8 +158,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup
                             :label="$t('common.message', 1)"
                             name="content"
-                            :ui="{ wrapper: 'flex flex-1 flex-col', container: 'flex flex-1 flex-col' }"
+                            :ui="{
+                                wrapper: 'flex flex-1 flex-col',
+                                container: 'flex flex-1 flex-col',
+                                label: { base: 'flex flex-1' },
+                            }"
                         >
+                            <template #label>
+                                <div class="flex flex-1 flex-col items-center sm:flex-row">
+                                    <span>{{ $t('common.message', 2) }}</span>
+
+                                    <TemplateSelector v-model="state.content" class="ml-auto" />
+                                </div>
+                            </template>
+
                             <ClientOnly>
                                 <DocEditor v-model="state.content" class="h-full w-full flex-1" :disabled="!canSubmit" />
                             </ClientOnly>

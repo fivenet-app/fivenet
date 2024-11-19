@@ -55,12 +55,11 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
-            async () => useCalendarStore().listCalendarEntries();
-
             logger.debug('Starting Data Stream');
 
             this.abort = new AbortController();
             this.reconnecting = false;
+
             const authStore = useAuthStore();
             const { can } = useAuth();
 
@@ -77,87 +76,83 @@ export const useNotificatorStore = defineStore('notifications', {
                 for await (const resp of call.responses) {
                     this.notificationsCount = resp.notificationCount;
 
-                    if (resp.data.oneofKind !== undefined) {
-                        if (resp.data.oneofKind === 'userEvent') {
-                            if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
-                                logger.info('Refreshing token...');
-                                await authStore.chooseCharacter(undefined);
+                    if (resp === undefined || !resp.data || resp.data.oneofKind === undefined) {
+                        continue;
+                    }
+
+                    if (resp.data.oneofKind === 'userEvent') {
+                        if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
+                            logger.info('Refreshing token...');
+                            await authStore.chooseCharacter(undefined);
+                        } else if (resp.data.userEvent.data.oneofKind === 'notification') {
+                            const n = resp.data.userEvent.data.notification;
+                            const nType: NotificationType =
+                                n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
+
+                            if (n.title === undefined || n.content === undefined) {
                                 continue;
-                            } else if (resp.data.userEvent.data.oneofKind === 'notification') {
-                                const n = resp.data.userEvent.data.notification;
-                                const nType: NotificationType =
-                                    n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
+                            }
 
-                                if (n.title === undefined || n.content === undefined) {
-                                    continue;
-                                }
+                            const not: Notification = {
+                                title: { key: n.title.key, parameters: n.title.parameters },
+                                description: {
+                                    key: n.content.key,
+                                    parameters: n.content.parameters,
+                                },
+                                type: nType,
+                                category: n.category,
+                                data: n.data,
+                                actions: [],
+                            };
 
-                                const not: Notification = {
-                                    title: { key: n.title.key, parameters: n.title.parameters },
-                                    description: {
-                                        key: n.content.key,
-                                        parameters: n.content.parameters,
-                                    },
-                                    type: nType,
-                                    category: n.category,
-                                    data: n.data,
-                                    actions: [],
-                                };
+                            if (n.data?.link !== undefined) {
+                                not.actions?.push({
+                                    label: { key: 'common.click_here' },
+                                    to: n.data.link.to,
+                                    external: n.data.link.external,
+                                });
+                            }
 
-                                if (n.data?.link !== undefined) {
-                                    not.actions?.push({
-                                        label: { key: 'common.click_here' },
-                                        to: n.data.link.to,
-                                        external: n.data.link.external,
-                                    });
-                                }
+                            if (n.category === NotificationCategory.CALENDAR) {
+                                useSound().play({ name: 'notification' });
 
-                                if (n.category === NotificationCategory.CALENDAR) {
-                                    useSound().play({ name: 'notification' });
+                                if (n.data?.calendar !== undefined) {
+                                    const calendarStore = useCalendarStore();
 
-                                    if (n.data?.calendar !== undefined) {
-                                        const calendarStore = useCalendarStore();
-
-                                        try {
-                                            if (n.data?.calendar.calendarId !== undefined) {
-                                                calendarStore.getCalendar({
-                                                    calendarId: n.data?.calendar.calendarId,
-                                                });
-                                            } else if (n.data?.calendar.calendarEntryId !== undefined) {
-                                                calendarStore.getCalendarEntry({
-                                                    entryId: n.data?.calendar.calendarEntryId,
-                                                });
-                                            }
-                                        } catch (e) {
-                                            logger.warn(
-                                                'Error while retrieving calendar/entry for calendar notification, Notification ID:',
-                                                n.id,
-                                                'Error:',
-                                                e,
-                                            );
+                                    try {
+                                        if (n.data?.calendar.calendarId !== undefined) {
+                                            calendarStore.getCalendar({
+                                                calendarId: n.data?.calendar.calendarId,
+                                            });
+                                        } else if (n.data?.calendar.calendarEntryId !== undefined) {
+                                            calendarStore.getCalendarEntry({
+                                                entryId: n.data?.calendar.calendarEntryId,
+                                            });
                                         }
+                                    } catch (e) {
+                                        logger.warn(
+                                            'Error while retrieving calendar/entry for calendar notification, Notification ID:',
+                                            n.id,
+                                            'Error:',
+                                            e,
+                                        );
                                     }
                                 }
+                            }
 
-                                this.add(not);
-                                continue;
-                            }
-                        } else if (resp.data.oneofKind === 'jobEvent') {
-                            if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
-                                authStore.setJobProps(resp.data.jobEvent.data.jobProps);
-                            } else {
-                                logger.warn('Unknown job event data received - Kind: ', resp.data.oneofKind, resp.data);
-                            }
-                            continue;
-                        } else if (resp.data.oneofKind === 'systemEvent') {
-                            logger.warn('No systemEvent handlers available.', resp.data);
-                        } else if (resp.data.oneofKind === 'mailerEvent') {
-                            if (can('MailerService.ListEmails').value) {
-                                useMailerStore().handleEvent(resp.data.mailerEvent);
-                            }
+                            this.add(not);
+                        }
+                    } else if (resp.data.oneofKind === 'jobEvent') {
+                        if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
+                            authStore.setJobProps(resp.data.jobEvent.data.jobProps);
                         } else {
-                            // @ts-expect-error this is a catch all "unknown", so okay if it is technically "never" reached till it is..
-                            logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown job event data received - Kind: ', resp.data.oneofKind, resp.data);
+                        }
+                    } else if (resp.data.oneofKind === 'systemEvent') {
+                        logger.warn('No systemEvent handlers available.', resp.data);
+                    } else if (resp.data.oneofKind === 'mailerEvent') {
+                        if (can('MailerService.ListEmails').value) {
+                            useMailerStore().handleEvent(resp.data.mailerEvent);
                         }
                     }
 
@@ -176,8 +171,9 @@ export const useNotificatorStore = defineStore('notifications', {
                     logger.debug('Stream failed', error.code, error.message, error.cause);
 
                     if (error.message.includes('ErrCharLock')) {
-                        handleGRPCError(error);
-                    } else {
+                        await handleGRPCError(error);
+                    }
+                    if (this.abort !== undefined && !this.abort?.signal.aborted) {
                         this.restartStream();
                     }
                 } else {
@@ -193,7 +189,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
-            this.abort?.abort();
+            this.abort.abort();
             this.abort = undefined;
             logger.debug('Stopping Data Stream');
         },

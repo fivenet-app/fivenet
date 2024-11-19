@@ -3,8 +3,8 @@ withDefaults(
     defineProps<{
         title?: string;
         description?: string;
-        cancel?: () => Promise<unknown>;
-        confirm: () => Promise<unknown>;
+        cancel?: () => Promise<unknown> | unknown;
+        confirm: () => Promise<unknown> | unknown;
         icon?: string;
     }>(),
     {

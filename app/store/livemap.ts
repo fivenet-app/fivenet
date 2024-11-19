@@ -166,6 +166,7 @@ export const useLivemapStore = defineStore('livemap', {
 
             logger.debug('Data Stream Ended');
         },
+
         async stopStream(): Promise<void> {
             if (this.abort === undefined) {
                 return;
@@ -175,6 +176,7 @@ export const useLivemapStore = defineStore('livemap', {
             this.abort = undefined;
             logger.debug('Stopping Data Stream');
         },
+
         async restartStream(): Promise<void> {
             this.reconnecting = true;
 

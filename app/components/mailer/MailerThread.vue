@@ -7,6 +7,7 @@ import { mailerDB, useMailerStore } from '~/store/mailer';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
+import TemplateSelector from './TemplateSelector.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -255,14 +256,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                     <!-- TODO add "add recipients" field -->
                     <UFormGroup name="title" class="w-full flex-1">
-                        <UInput
-                            v-model="state.title"
-                            type="text"
-                            size="xl"
-                            class="font-semibold text-gray-900 dark:text-white"
-                            :placeholder="$t('common.title')"
-                            :disabled="!canSubmit"
-                        />
+                        <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
+                            <UInput
+                                v-model="state.title"
+                                type="text"
+                                size="lg"
+                                class="w-full font-semibold text-gray-900 dark:text-white"
+                                :placeholder="$t('common.title')"
+                                :disabled="!canSubmit"
+                            />
+
+                            <TemplateSelector v-model="state.content" size="lg" class="ml-auto" />
+                        </div>
                     </UFormGroup>
 
                     <UFormGroup name="message">
