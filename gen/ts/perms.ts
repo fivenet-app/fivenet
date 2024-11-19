@@ -134,7 +134,7 @@ export type Perms =
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
-	| 'MailerService.CreateThread'
+	| 'MailerService.CreateOrUpdateEmail'
 	| 'MailerService.DeleteEmail'
 	| 'MailerService.ListEmails'
 	| 'QualificationsService.CreateOrUpdateQualificationResult'

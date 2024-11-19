@@ -47,7 +47,7 @@ type MailerServiceClient interface {
 	ListEmails(ctx context.Context, in *ListEmailsRequest, opts ...grpc.CallOption) (*ListEmailsResponse, error)
 	// @perm: Name=ListEmails
 	GetEmail(ctx context.Context, in *GetEmailRequest, opts ...grpc.CallOption) (*GetEmailResponse, error)
-	// @perm: Name=ListEmails
+	// @perm: Attrs=Fields/StringList:[]string{"Job"}
 	CreateOrUpdateEmail(ctx context.Context, in *CreateOrUpdateEmailRequest, opts ...grpc.CallOption) (*CreateOrUpdateEmailResponse, error)
 	// @perm
 	DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error)
@@ -63,7 +63,7 @@ type MailerServiceClient interface {
 	ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error)
 	// @perm: Name=ListEmails
 	GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error)
-	// @perm
+	// @perm: Name=ListEmails
 	CreateThread(ctx context.Context, in *CreateThreadRequest, opts ...grpc.CallOption) (*CreateThreadResponse, error)
 	// @perm: Name=SuperUser
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
@@ -259,7 +259,7 @@ type MailerServiceServer interface {
 	ListEmails(context.Context, *ListEmailsRequest) (*ListEmailsResponse, error)
 	// @perm: Name=ListEmails
 	GetEmail(context.Context, *GetEmailRequest) (*GetEmailResponse, error)
-	// @perm: Name=ListEmails
+	// @perm: Attrs=Fields/StringList:[]string{"Job"}
 	CreateOrUpdateEmail(context.Context, *CreateOrUpdateEmailRequest) (*CreateOrUpdateEmailResponse, error)
 	// @perm
 	DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error)
@@ -275,7 +275,7 @@ type MailerServiceServer interface {
 	ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error)
 	// @perm: Name=ListEmails
 	GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error)
-	// @perm
+	// @perm: Name=ListEmails
 	CreateThread(context.Context, *CreateThreadRequest) (*CreateThreadResponse, error)
 	// @perm: Name=SuperUser
 	DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error)

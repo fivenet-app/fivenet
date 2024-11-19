@@ -262,11 +262,13 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 	}
 
 	stmt := tTemplates.
-		DELETE().
+		UPDATE().
+		SET(
+			tTemplates.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
 		WHERE(jet.AND(
 			tTemplates.ID.EQ(jet.Uint64(req.Id)),
-		)).
-		LIMIT(1)
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err

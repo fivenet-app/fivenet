@@ -124,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         trailing
                                         value-attribute="label"
                                         searchable
-                                        :options="state.recipients"
+                                        :options="state.recipients.filter((elem, index, self) => index === self.indexOf(elem))"
                                         :searchable-placeholder="$t('common.mail', 1)"
                                         creatable
                                         :disabled="!canSubmit"

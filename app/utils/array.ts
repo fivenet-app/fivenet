@@ -1,3 +1,4 @@
+import { ResultStatus, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 // GRPC Websocket helper functions
@@ -38,9 +39,18 @@ type UserAccess<L> = {
     access: L;
 };
 
+type QualificationAccess<L> = {
+    qualificationId: string;
+    qualification?: QualificationShort;
+    access: L;
+};
+
 export function checkAccess<L = number>(
     activeChar: UserShort,
-    access: { jobs?: JobAccess<L>[]; users?: UserAccess<L>[] } | undefined,
+    access:
+        | { jobs?: JobAccess<L>[]; users?: UserAccess<L>[]; qualifications?: QualificationAccess<L>[] }
+        | { jobs?: JobAccess<L>[]; users?: UserAccess<L>[]; qualifications?: QualificationAccess<L>[] }
+        | undefined,
     creator: UserShort | undefined,
     level: L,
 ): boolean {
@@ -57,25 +67,46 @@ export function checkAccess<L = number>(
         return true;
     }
 
-    let lowestAccess: L | undefined = undefined;
-    if (access.jobs === undefined) {
-        return false;
-    }
-    for (let index = 0; index < access.jobs?.length; index++) {
-        const ja = access.jobs[index]!;
-        if (ja.job !== activeChar.job) {
-            continue;
+    if (access.jobs !== undefined) {
+        let lowestAccess: L | undefined = undefined;
+        for (let index = 0; index < access.jobs?.length; index++) {
+            const ja = access.jobs[index]!;
+            if (ja.job !== activeChar.job) {
+                continue;
+            }
+            if (ja.minimumGrade > activeChar.jobGrade) {
+                continue;
+            }
+            if (ja.access < level) {
+                continue;
+            }
+            if (lowestAccess === undefined || ja.access < lowestAccess!) {
+                lowestAccess = ja.access;
+            }
         }
-        if (ja.minimumGrade > activeChar.jobGrade) {
-            continue;
-        }
-        if (ja.access < level) {
-            continue;
-        }
-        if (lowestAccess === undefined || ja.access < lowestAccess!) {
-            lowestAccess = ja.access;
+
+        if (level <= (lowestAccess ?? 0)) {
+            return true;
         }
     }
 
-    return level <= (lowestAccess ?? 0);
+    if (access.qualifications !== undefined) {
+        for (let index = 0; index < access.qualifications.length; index++) {
+            const jq = access.qualifications[index]!;
+
+            if (jq.qualification === undefined || jq.qualification.result === undefined) {
+                continue;
+            }
+
+            if (jq.qualification.result.status !== ResultStatus.SUCCESSFUL) {
+                continue;
+            }
+
+            if (level <= jq?.access) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }

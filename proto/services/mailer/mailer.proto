@@ -17,7 +17,10 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer
 
 // Emails
 
-message ListEmailsRequest {}
+message ListEmailsRequest {
+  // Search params
+  optional bool job_only = 1;
+}
 
 message ListEmailsResponse {
   repeated resources.mailer.Email emails = 1;
@@ -190,7 +193,7 @@ service MailerService {
   rpc ListEmails(ListEmailsRequest) returns (ListEmailsResponse);
   // @perm: Name=ListEmails
   rpc GetEmail(GetEmailRequest) returns (GetEmailResponse);
-  // @perm: Name=ListEmails
+  // @perm: Attrs=Fields/StringList:[]string{"Job"}
   rpc CreateOrUpdateEmail(CreateOrUpdateEmailRequest) returns (CreateOrUpdateEmailResponse);
   // @perm
   rpc DeleteEmail(DeleteEmailRequest) returns (DeleteEmailResponse);
@@ -208,7 +211,7 @@ service MailerService {
   rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
   // @perm: Name=ListEmails
   rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
-  // @perm
+  // @perm: Name=ListEmails
   rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
   // @perm: Name=SuperUser
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);

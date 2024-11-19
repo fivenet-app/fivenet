@@ -215,17 +215,17 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 			LEFT_JOIN(g.Qualifications.table,
 				g.Qualifications.columns.TargetID.EQ(g.targetTableColumns.ID),
 			).
-			LEFT_JOIN(tQualificationsResults,
-				tQualificationsResults.QualificationID.EQ(g.Qualifications.columns.QualificationId).
-					AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+			LEFT_JOIN(tQualiResults,
+				tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId).
+					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 
 		condition := []jet.BoolExpression{
 			g.Qualifications.columns.Access.IS_NOT_NULL(),
 			g.Qualifications.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
-			tQualificationsResults.DeletedAt.IS_NULL(),
-			tQualificationsResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
-			tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
+			tQualiResults.DeletedAt.IS_NULL(),
+			tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
+			tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
 			// TODO should we check the job of the qualification as well?
 		}
 		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))

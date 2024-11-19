@@ -57,6 +57,10 @@ func (m *ListEmailsRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.JobOnly != nil {
+		// no validation rules for JobOnly
+	}
+
 	if len(errors) > 0 {
 		return ListEmailsRequestMultiError(errors)
 	}

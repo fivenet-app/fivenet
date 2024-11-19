@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
+import EmailCreateModal from '~/components/mailer/EmailCreateModal.vue';
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerList from '~/components/mailer/MailerList.vue';
@@ -41,11 +42,15 @@ const tabItems = [
 ];
 const selectedTab = ref(0);
 
-watch(selectedEmail, async () => loadThreads());
+watch(selectedEmail, async () => await loadThreads());
 
 async function loadThreads(): Promise<void> {
     if (!selectedEmail.value?.id) {
         return;
+    }
+
+    if (selectedEmail.value.settings === undefined) {
+        await mailerStore.getEmail(selectedEmail.value.id);
     }
 
     const count = await mailerDB.threads.count();
@@ -131,11 +136,7 @@ onBeforeMount(async () => {
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
                     <UButton
-                        v-if="
-                            can('MailerService.CreateThread').value &&
-                            selectedEmail &&
-                            canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
-                        "
+                        v-if="selectedEmail && canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)"
                         color="gray"
                         trailing-icon="i-mdi-plus"
                         @click="modal.open(ThreadCreateOrUpdateModal, {})"
@@ -147,7 +148,10 @@ onBeforeMount(async () => {
 
             <UDashboardToolbar
                 v-if="selectedEmail"
-                :ui="{ wrapper: 'p-0 gap-x-0', container: 'gap-x-0 justify-stretch items-stretch h-full flex flex-1 flex-col' }"
+                :ui="{
+                    wrapper: 'p-0 gap-x-0',
+                    container: 'gap-x-0 justify-stretch items-stretch h-full inline-flex flex-col',
+                }"
             >
                 <div class="inline-flex gap-1 bg-gray-100 p-1 dark:bg-gray-800">
                     <ClientOnly>
@@ -160,7 +164,7 @@ onBeforeMount(async () => {
                             :search-attributes="['label', 'email']"
                             trailing
                             by="id"
-                            class="flex-1"
+                            class="w-full"
                         >
                             <template #label>
                                 <span class="truncate">
@@ -213,28 +217,28 @@ onBeforeMount(async () => {
 
                 <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                     <template #left>
-                        <UButton
-                            color="gray"
-                            trailing-icon="i-mdi-cog"
-                            :label="$t('common.settings')"
-                            @click="() => modal.open(EmailSettingsModal, {})"
-                        />
+                        <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(EmailSettingsModal, {})">
+                            <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
+                        </UButton>
+
+                        <UButton icon="i-mdi-email-plus" color="gray" @click="modal.open(EmailCreateModal, {})" />
                     </template>
 
                     <template #right>
-                        <UButton
-                            color="gray"
-                            trailing-icon="i-mdi-file-outline"
-                            :label="$t('common.template', 2)"
-                            @click="() => modal.open(TemplatesModal, {})"
-                        />
+                        <UButton color="gray" trailing-icon="i-mdi-file-outline" @click="() => modal.open(TemplatesModal, {})">
+                            <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
+                        </UButton>
                     </template>
                 </UDashboardToolbar>
             </template>
+
             <div v-else class="flex flex-1 flex-col items-center">
                 <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
                     <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
-                    <EmailCreateForm v-if="emails.length === 0" personal-email />
+                    <EmailCreateForm
+                        v-if="can('MailerService.CreateOrUpdateEmail').value && emails.length === 0"
+                        personal-email
+                    />
                 </div>
             </div>
         </UDashboardPanel>

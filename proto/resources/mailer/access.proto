@@ -43,7 +43,6 @@ message UserAccess {
   AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
 }
 
-// TODO
 message QualificationAccess {
   uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;

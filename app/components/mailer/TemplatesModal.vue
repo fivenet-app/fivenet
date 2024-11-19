@@ -2,6 +2,9 @@
 import { useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
@@ -11,7 +14,12 @@ const { isOpen } = useModal();
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
 
-const { data: templates, refresh } = useLazyAsyncData(`mailer-templates:${selectedEmail.value!.id}`, () => listTemplates());
+const {
+    data: templates,
+    pending: loading,
+    error,
+    refresh,
+} = useLazyAsyncData(`mailer-templates:${selectedEmail.value!.id}`, () => listTemplates());
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
@@ -66,42 +74,56 @@ const editing = ref(false);
                 />
 
                 <TemplateEditForm v-if="creating" @refresh="refresh" @close="creating = false" />
-                <UAccordion v-else :items="accordionItems">
-                    <template #item="{ index }">
-                        <template v-if="templates?.templates[index]">
-                            <template v-if="!editing">
-                                <UButtonGroup
-                                    v-if="canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
-                                    class="mx-4 mb-2 flex"
-                                >
-                                    <UButton
-                                        class="flex-1"
-                                        icon="i-mdi-pencil"
-                                        :label="$t('common.edit')"
-                                        @click="editing = !editing"
-                                    />
+                <template v-else>
+                    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template')])" />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.template')])"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock
+                        v-if="!templates?.templates || templates?.templates.length === 0"
+                        :type="$t('common.mail')"
+                        icon="i-mdi-file-outline"
+                    />
 
-                                    <UButton icon="i-mdi-trash-can" color="red" :label="$t('common.delete')" />
-                                </UButtonGroup>
+                    <UAccordion v-else :items="accordionItems">
+                        <template #item="{ index }">
+                            <template v-if="templates?.templates[index]">
+                                <template v-if="!editing">
+                                    <UButtonGroup
+                                        v-if="canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
+                                        class="mx-4 mb-2 flex"
+                                    >
+                                        <UButton
+                                            class="flex-1"
+                                            icon="i-mdi-pencil"
+                                            :label="$t('common.edit')"
+                                            @click="editing = !editing"
+                                        />
 
-                                <ClientOnly>
-                                    <DocEditor
-                                        v-model="templates.templates[index].content"
-                                        disabled
-                                        :config="{ toolbar: false }"
-                                        split-screen
-                                    />
-                                </ClientOnly>
+                                        <UButton icon="i-mdi-trash-can" color="red" :label="$t('common.delete')" />
+                                    </UButtonGroup>
+
+                                    <ClientOnly>
+                                        <DocEditor
+                                            v-model="templates.templates[index].content"
+                                            disabled
+                                            :config="{ toolbar: false }"
+                                            split-screen
+                                        />
+                                    </ClientOnly>
+                                </template>
+                                <TemplateEditForm
+                                    v-else
+                                    :template="templates.templates[index]"
+                                    @refresh="refresh"
+                                    @close="editing = false"
+                                />
                             </template>
-                            <TemplateEditForm
-                                v-else
-                                :template="templates.templates[index]"
-                                @refresh="refresh"
-                                @close="editing = false"
-                            />
                         </template>
-                    </template>
-                </UAccordion>
+                    </UAccordion>
+                </template>
             </div>
 
             <template #footer>

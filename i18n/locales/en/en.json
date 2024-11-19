@@ -2158,9 +2158,9 @@
                 "key": "Post responses",
                 "description": "Allow users to post responses to E-Mails they have access to."
             },
-            "CreateThread": {
+            "CreateOrUpdateEmail": {
                 "key": "Create or update E-Mails",
-                "description": "Updating E-Mail threads requires manage or higher access to a E-Mail thread."
+                "description": "Updating E-Mails requires manage or higher access to a E-Mail thread."
             },
             "DeleteEmail": {
                 "key": "Delete E-Mail addresses",
@@ -2331,6 +2331,21 @@
                 "title": "Calendar Entry is closed",
                 "content": "The calendar entry is closed and can't be RSVPed to anymore."
             }
+        },
+        "WikiService": {
+            "ErrFailedQuery": "Failed to load wiki data!",
+            "ErrPageDenied": "You don't have access to this page!"
+        },
+        "MailerService": {
+            "ErrAddresseAlreadyTaken": {
+                "title": "E-Mail adress already taken!",
+                "content": "Please try again with another e-mail address."
+            },
+            "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
+            "ErrEmailAccessRequired": "You must have access to the e-mail address!",
+            "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
+            "ErrInvalidRecipients": "One or more e-mail addresses are wrong",
+            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!"
         }
     },
     "system": {

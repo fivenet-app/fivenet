@@ -5638,7 +5638,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 <a name="resources-mailer-QualificationAccess"></a>
 
 ### QualificationAccess
-TODO
+
 
 
 | Field | Type | Label | Description |
@@ -11835,6 +11835,11 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_only | [bool](#bool) | optional | Search params |
+
+
 
 
 
@@ -12057,7 +12062,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----------- | ------------ | ------------- | ------------|
 | ListEmails | [ListEmailsRequest](#services-mailer-ListEmailsRequest) | [ListEmailsResponse](#services-mailer-ListEmailsResponse) | @perm |
 | GetEmail | [GetEmailRequest](#services-mailer-GetEmailRequest) | [GetEmailResponse](#services-mailer-GetEmailResponse) | @perm: Name=ListEmails |
-| CreateOrUpdateEmail | [CreateOrUpdateEmailRequest](#services-mailer-CreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#services-mailer-CreateOrUpdateEmailResponse) | @perm: Name=ListEmails |
+| CreateOrUpdateEmail | [CreateOrUpdateEmailRequest](#services-mailer-CreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#services-mailer-CreateOrUpdateEmailResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;} |
 | DeleteEmail | [DeleteEmailRequest](#services-mailer-DeleteEmailRequest) | [DeleteEmailResponse](#services-mailer-DeleteEmailResponse) | @perm |
 | ListTemplates | [ListTemplatesRequest](#services-mailer-ListTemplatesRequest) | [ListTemplatesResponse](#services-mailer-ListTemplatesResponse) | @perm: Name=ListEmails |
 | GetTemplate | [GetTemplateRequest](#services-mailer-GetTemplateRequest) | [GetTemplateResponse](#services-mailer-GetTemplateResponse) | @perm: Name=ListEmails |
@@ -12065,7 +12070,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | DeleteTemplate | [DeleteTemplateRequest](#services-mailer-DeleteTemplateRequest) | [DeleteTemplateResponse](#services-mailer-DeleteTemplateResponse) | @perm: Name=ListEmails |
 | ListThreads | [ListThreadsRequest](#services-mailer-ListThreadsRequest) | [ListThreadsResponse](#services-mailer-ListThreadsResponse) | @perm: Name=ListEmails |
 | GetThread | [GetThreadRequest](#services-mailer-GetThreadRequest) | [GetThreadResponse](#services-mailer-GetThreadResponse) | @perm: Name=ListEmails |
-| CreateThread | [CreateThreadRequest](#services-mailer-CreateThreadRequest) | [CreateThreadResponse](#services-mailer-CreateThreadResponse) | @perm |
+| CreateThread | [CreateThreadRequest](#services-mailer-CreateThreadRequest) | [CreateThreadResponse](#services-mailer-CreateThreadResponse) | @perm: Name=ListEmails |
 | DeleteThread | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm: Name=SuperUser |
 | SetThreadState | [SetThreadStateRequest](#services-mailer-SetThreadStateRequest) | [SetThreadStateResponse](#services-mailer-SetThreadStateResponse) | @perm: Name=ListEmails |
 | ListThreadMessages | [ListThreadMessagesRequest](#services-mailer-ListThreadMessagesRequest) | [ListThreadMessagesResponse](#services-mailer-ListThreadMessagesResponse) | @perm: Name=ListEmails |

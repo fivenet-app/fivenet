@@ -40,7 +40,7 @@ const selectedTemplate = ref<Template | undefined>(undefined);
 </script>
 
 <template>
-    <ClientOnly v-if="templates?.templates">
+    <ClientOnly v-if="templates?.templates && templates?.templates.length > 0">
         <USelectMenu
             v-if="!selectedTemplate"
             v-model="selectedTemplate"

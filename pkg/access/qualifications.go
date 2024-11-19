@@ -5,6 +5,7 @@ import (
 	"errors"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -12,8 +13,8 @@ import (
 )
 
 var (
-	tQualifications        = table.FivenetQualifications.AS("qualification_short")
-	tQualificationsResults = table.FivenetQualificationsResults
+	tQualifications = table.FivenetQualifications.AS("qualification_short")
+	tQualiResults   = table.FivenetQualificationsResults
 )
 
 type QualificationsAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
@@ -45,6 +46,10 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 }
 
 func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tQualiResults := tQualiResults.AS("qualificationresult")
+
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
@@ -56,20 +61,24 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 			tQualifications.Job,
 			tQualifications.Abbreviation,
 			tQualifications.Title,
+			tQualiResults.ID,
+			tQualiResults.QualificationID,
+			tQualiResults.Status,
 		).
 		FROM(
 			a.selectTable.
 				INNER_JOIN(tQualifications,
 					tQualifications.ID.EQ(a.selectColumns.QualificationId),
 				).
-				INNER_JOIN(tQualificationsResults,
-					tQualificationsResults.QualificationID.EQ(a.selectColumns.QualificationId),
+				LEFT_JOIN(tQualiResults,
+					tQualiResults.QualificationID.EQ(a.selectColumns.QualificationId),
 				),
 		).
 		WHERE(jet.AND(
 			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
 			tQualifications.DeletedAt.IS_NULL(),
-			tQualificationsResults.DeletedAt.IS_NULL(),
+			tQualiResults.DeletedAt.IS_NULL(),
+			tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
 		))
 
 	var dest []T

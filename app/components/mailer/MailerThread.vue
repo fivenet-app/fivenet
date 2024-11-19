@@ -245,7 +245,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :pagination="data?.pagination"
         />
 
-        <UDivider class="my-2" />
+        <UDivider class="mb-2" />
 
         <UAccordion
             v-if="thread"

@@ -280,26 +280,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>
-    <template v-else>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UDashboardNavbar :title="$t('pages.rector.settings.title')">
-                <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                        {{ $t('common.back') }}
-                    </UButton>
+    <UForm
+        v-else
+        :schema="schema"
+        :state="state"
+        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @submit="onSubmitThrottle"
+    >
+        <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+            <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                    {{ $t('common.back') }}
+                </UButton>
 
-                    <UButton
-                        v-if="config"
-                        type="submit"
-                        trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
-                </template>
-            </UDashboardNavbar>
+                <UButton
+                    v-if="config"
+                    type="submit"
+                    trailing-icon="i-mdi-content-save"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                >
+                    {{ $t('common.save', 1) }}
+                </UButton>
+            </template>
+        </UDashboardNavbar>
 
+        <UDashboardPanelContent class="p-0">
             <div v-if="loading" class="space-y-1 px-4">
                 <USkeleton class="mb-6 h-11 w-full" />
                 <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
@@ -806,6 +812,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
                 </UTabs>
             </template>
-        </UForm>
-    </template>
+        </UDashboardPanelContent>
+    </UForm>
 </template>

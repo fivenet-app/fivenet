@@ -4,6 +4,7 @@
 package mailer
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/perms"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 )
@@ -11,8 +12,8 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: MailerService
-	"MailerService/CreateOrUpdateEmail":    "MailerService/ListEmails",
 	"MailerService/CreateOrUpdateTemplate": "MailerService/ListEmails",
+	"MailerService/CreateThread":           "MailerService/ListEmails",
 	"MailerService/DeleteMessage":          "SuperUser",
 	"MailerService/DeleteTemplate":         "MailerService/ListEmails",
 	"MailerService/DeleteThread":           "SuperUser",
@@ -38,8 +39,14 @@ func init() {
 		// Service: MailerService
 		{
 			Category: permkeys.MailerServicePerm,
-			Name:     permkeys.MailerServiceCreateThreadPerm,
-			Attrs:    []perms.Attr{},
+			Name:     permkeys.MailerServiceCreateOrUpdateEmailPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.MailerServiceCreateOrUpdateEmailFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Job"},
+				},
+			},
 		},
 		{
 			Category: permkeys.MailerServicePerm,

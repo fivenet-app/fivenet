@@ -79,6 +79,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 		WHERE(jet.AND(
 			tMessages.DeletedAt.IS_NULL(),
 			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
+			tEmails.DeletedAt.IS_NULL(),
 		)).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
@@ -124,7 +125,9 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 					tEmails.ID.EQ(tMessages.SenderID),
 				),
 		).
-		WHERE(tMessages.ID.EQ(jet.Uint64(messageId))).
+		WHERE(
+			tMessages.ID.EQ(jet.Uint64(messageId)),
+		).
 		LIMIT(1)
 
 	var message mailer.Message
@@ -157,10 +160,14 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, err
 	}
 
+	senderEmail, err := s.getEmail(ctx, req.Message.SenderId, false, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
 	var emails []*mailer.ThreadRecipientEmail
-	var err error
 	if len(req.Recipients) > 0 {
-		emails, err = s.resolveRecipientsToEmails(ctx, req.Recipients)
+		emails, err = s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}

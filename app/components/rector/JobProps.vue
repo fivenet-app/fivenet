@@ -256,26 +256,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>
-    <template v-else>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
-                <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                        {{ $t('common.back') }}
-                    </UButton>
+    <UForm
+        v-else
+        :schema="schema"
+        :state="state"
+        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @submit="onSubmitThrottle"
+    >
+        <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
+            <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                    {{ $t('common.back') }}
+                </UButton>
 
-                    <UButton
-                        v-if="!!jobProps"
-                        type="submit"
-                        trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
-                </template>
-            </UDashboardNavbar>
+                <UButton
+                    v-if="!!jobProps"
+                    type="submit"
+                    trailing-icon="i-mdi-content-save"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                >
+                    {{ $t('common.save', 1) }}
+                </UButton>
+            </template>
+        </UDashboardNavbar>
 
+        <UDashboardPanelContent class="p-0">
             <DataErrorBlock
                 v-if="error"
                 :title="$t('common.unable_to_load', [$t('components.rector.job_props.job_properties')])"
@@ -994,8 +1000,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
                 </UTabs>
             </template>
-        </UForm>
-    </template>
+        </UDashboardPanelContent>
+    </UForm>
 </template>
 
 <style scoped>

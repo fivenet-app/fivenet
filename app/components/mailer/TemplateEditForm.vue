@@ -54,14 +54,13 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
         });
         const { response } = await call;
 
-        emits('refresh');
-
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
+        emits('refresh');
         emits('close');
 
         return response;

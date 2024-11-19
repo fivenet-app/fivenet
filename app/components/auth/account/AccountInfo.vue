@@ -73,13 +73,13 @@ const selectedTab = computed({
 </script>
 
 <template>
-    <div>
-        <template v-if="streamerMode">
-            <UDashboardPanelContent>
-                <StreamerModeAlert />
-            </UDashboardPanelContent>
-        </template>
-        <template v-else>
+    <template v-if="streamerMode">
+        <UDashboardPanelContent>
+            <StreamerModeAlert />
+        </UDashboardPanelContent>
+    </template>
+    <template v-else>
+        <UDashboardPanelContent class="p-0">
             <DataPendingBlock
                 v-if="loading"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
@@ -91,86 +91,81 @@ const selectedTab = computed({
             />
             <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
-            <UDashboardPanelContent v-else class="p-0">
-                <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
-                    <template #accountInfo>
-                        <UDashboardPanelContent>
-                            <UDashboardSection
-                                :title="$t('components.auth.AccountInfo.title')"
-                                :description="$t('components.auth.AccountInfo.subtitle')"
+            <UTabs v-else v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+                <template #accountInfo>
+                    <UDashboardPanelContent>
+                        <UDashboardSection
+                            :title="$t('components.auth.AccountInfo.title')"
+                            :description="$t('components.auth.AccountInfo.subtitle')"
+                        >
+                            <UFormGroup
+                                name="username"
+                                :label="$t('common.username')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
                             >
-                                <UFormGroup
-                                    name="username"
-                                    :label="$t('common.username')"
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    :ui="{ container: '' }"
-                                >
-                                    <div class="inline-flex w-full justify-between gap-2">
-                                        <span class="truncate">
-                                            {{ account.account?.username }}
-                                        </span>
-                                        <CopyToClipboardButton
-                                            v-if="account.account?.username"
-                                            :value="account.account?.username"
-                                        />
-                                    </div>
-                                </UFormGroup>
+                                <div class="inline-flex w-full justify-between gap-2">
+                                    <span class="truncate">
+                                        {{ account.account?.username }}
+                                    </span>
+                                    <CopyToClipboardButton
+                                        v-if="account.account?.username"
+                                        :value="account.account?.username"
+                                    />
+                                </div>
+                            </UFormGroup>
 
-                                <UFormGroup
-                                    name="license"
-                                    :label="$t('components.auth.AccountInfo.license')"
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    :ui="{ container: '' }"
-                                >
-                                    <div class="inline-flex w-full justify-between gap-2">
-                                        <span class="truncate">
-                                            {{ account.account?.license }}
-                                        </span>
-                                        <CopyToClipboardButton
-                                            v-if="account.account?.license"
-                                            :value="account.account?.license"
-                                        />
-                                    </div>
-                                </UFormGroup>
+                            <UFormGroup
+                                name="license"
+                                :label="$t('components.auth.AccountInfo.license')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <div class="inline-flex w-full justify-between gap-2">
+                                    <span class="truncate">
+                                        {{ account.account?.license }}
+                                    </span>
+                                    <CopyToClipboardButton v-if="account.account?.license" :value="account.account?.license" />
+                                </div>
+                            </UFormGroup>
 
-                                <UFormGroup
-                                    name="change_username"
-                                    :label="$t('components.auth.AccountInfo.change_username')"
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    :ui="{ container: '' }"
-                                >
-                                    <UButton @click="modal.open(ChangeUsernameModal, {})">
-                                        {{ $t('components.auth.AccountInfo.change_username_button') }}
-                                    </UButton>
-                                </UFormGroup>
+                            <UFormGroup
+                                name="change_username"
+                                :label="$t('components.auth.AccountInfo.change_username')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UButton @click="modal.open(ChangeUsernameModal, {})">
+                                    {{ $t('components.auth.AccountInfo.change_username_button') }}
+                                </UButton>
+                            </UFormGroup>
 
-                                <UFormGroup
-                                    name="change_password"
-                                    :label="$t('components.auth.AccountInfo.change_password')"
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    :ui="{ container: '' }"
-                                >
-                                    <UButton @click="modal.open(ChangePasswordModal, {})">
-                                        {{ $t('components.auth.AccountInfo.change_password_button') }}
-                                    </UButton>
-                                </UFormGroup>
-                            </UDashboardSection>
-                        </UDashboardPanelContent>
-                    </template>
+                            <UFormGroup
+                                name="change_password"
+                                :label="$t('components.auth.AccountInfo.change_password')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UButton @click="modal.open(ChangePasswordModal, {})">
+                                    {{ $t('components.auth.AccountInfo.change_password_button') }}
+                                </UButton>
+                            </UFormGroup>
+                        </UDashboardSection>
+                    </UDashboardPanelContent>
+                </template>
 
-                    <template #oauth2Connections>
-                        <OAuth2Connections
-                            :providers="account.oauth2Providers"
-                            :connections="account.oauth2Connections"
-                            @disconnected="removeOAuth2Connection($event)"
-                        />
-                    </template>
+                <template #oauth2Connections>
+                    <OAuth2Connections
+                        :providers="account.oauth2Providers"
+                        :connections="account.oauth2Connections"
+                        @disconnected="removeOAuth2Connection($event)"
+                    />
+                </template>
 
-                    <template #debugInfo>
-                        <DebugInfo />
-                    </template>
-                </UTabs>
-            </UDashboardPanelContent>
-        </template>
-    </div>
+                <template #debugInfo>
+                    <DebugInfo />
+                </template>
+            </UTabs>
+        </UDashboardPanelContent>
+    </template>
 </template>

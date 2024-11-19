@@ -116,9 +116,11 @@ export const useMailerStore = defineStore('mailer', {
 
                 this.emails = response.emails;
                 if (this.emails.length > 0 && this.emails[0]) {
-                    this.selectedEmail = this.emails[0];
-
-                    this.getEmail(this.selectedEmail.id);
+                    if (this.emails[0].settings === undefined) {
+                        this.selectedEmail = await this.getEmail(this.emails[0].id);
+                    } else {
+                        this.selectedEmail = this.emails[0];
+                    }
                 }
 
                 return this.emails;
@@ -196,6 +198,7 @@ export const useMailerStore = defineStore('mailer', {
                 throw e;
             }
         },
+
         async getThread(threadId: string): Promise<Thread | undefined> {
             if (!this.selectedEmail) {
                 return;
@@ -351,6 +354,7 @@ export const useMailerStore = defineStore('mailer', {
                 throw e;
             }
         },
+
         async postMessage(req: PostMessageRequest): Promise<PostMessageResponse> {
             try {
                 const call = getGRPCMailerClient().postMessage(req);
@@ -397,6 +401,7 @@ export const useMailerStore = defineStore('mailer', {
                 throw e;
             }
         },
+
         async setEmailSettings(req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> {
             try {
                 const call = getGRPCMailerClient().setEmailSettings(req);

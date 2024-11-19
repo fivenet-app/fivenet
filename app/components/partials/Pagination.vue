@@ -56,7 +56,7 @@ watchDebounced(
 <template>
     <div class="@container">
         <div
-            class="@md:flex-row flex justify-between gap-1 px-3 py-3.5 md:items-center"
+            class="@md:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
             <div class="flex flex-col items-center gap-2">

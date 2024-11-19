@@ -16,10 +16,5 @@ export function canAccess(access: Access | undefined, creatorId: number | undefi
         return true;
     }
 
-    const ju = access?.users.find((ua) => ua.userId === activeChar.value?.userId && level <= ua.access);
-    if (ju !== undefined) {
-        return true;
-    }
-
-    return false;
+    return checkAccess(activeChar.value, access, undefined, level);
 }

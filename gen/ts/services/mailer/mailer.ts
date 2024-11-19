@@ -2,12 +2,12 @@
 // @generated from protobuf file "services/mailer/mailer.proto" (package "services.mailer", syntax proto3)
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -26,6 +26,12 @@ import { Email } from "../../resources/mailer/email";
  * @generated from protobuf message services.mailer.ListEmailsRequest
  */
 export interface ListEmailsRequest {
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: optional bool job_only = 1;
+     */
+    jobOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.mailer.ListEmailsResponse
@@ -401,7 +407,9 @@ export interface DeleteMessageResponse {
 // @generated message type with reflection information, may provide speed optimized methods
 class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
     constructor() {
-        super("services.mailer.ListEmailsRequest", []);
+        super("services.mailer.ListEmailsRequest", [
+            { no: 1, name: "job_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
     create(value?: PartialMessage<ListEmailsRequest>): ListEmailsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -410,9 +418,28 @@ class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListEmailsRequest): ListEmailsRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional bool job_only */ 1:
+                    message.jobOnly = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ListEmailsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional bool job_only = 1; */
+        if (message.jobOnly !== undefined)
+            writer.tag(1, WireType.Varint).bool(message.jobOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

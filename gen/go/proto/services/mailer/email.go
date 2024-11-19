@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -47,7 +48,9 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
-		condition = condition.AND(
+		condition = condition.AND(jet.AND(
+			tEmails.DeletedAt.IS_NULL(),
+			tEmails.Disabled.IS_FALSE(),
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
@@ -67,7 +70,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
 				),
 			),
-		)
+		))
 	}
 
 	stmt := tEmails.
@@ -115,7 +118,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 	return resp.Emails, nil
 }
 
-func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool, withSettings bool) (*mailer.Email, error) {
+func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, withSettings bool) (*mailer.Email, error) {
 	stmt := tEmails.
 		SELECT(
 			tEmails.ID,
@@ -129,9 +132,9 @@ func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool, withS
 			tEmails.Internal,
 		).
 		FROM(tEmails).
-		WHERE(
-			tEmails.ID.EQ(jet.Uint64(id)),
-		).
+		WHERE(jet.AND(
+			tEmails.ID.EQ(jet.Uint64(emailId)),
+		)).
 		LIMIT(1)
 
 	dest := &mailer.Email{}
@@ -146,7 +149,7 @@ func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool, withS
 	}
 
 	if withAccess {
-		access, err := s.getEmailAccess(ctx, id)
+		access, err := s.getEmailAccess(ctx, emailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -154,7 +157,7 @@ func (s *Server) getEmail(ctx context.Context, id uint64, withAccess bool, withS
 	}
 
 	if withSettings {
-		settings, err := s.getEmailSettings(ctx, id)
+		settings, err := s.getEmailSettings(ctx, emailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -184,33 +187,38 @@ func (s *Server) GetEmail(ctx context.Context, req *GetEmailRequest) (*GetEmailR
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	resp := &GetEmailResponse{}
-	resp.Email, err = s.getEmail(ctx, req.Id, true, true)
+	email, err := s.getEmail(ctx, req.Id, true, true)
 	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	if email.Disabled {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
-	return resp, nil
+	return &GetEmailResponse{
+		Email: email,
+	}, nil
 }
 
-func (s *Server) getEmailAccess(ctx context.Context, id uint64) (*mailer.Access, error) {
+func (s *Server) getEmailAccess(ctx context.Context, emailId uint64) (*mailer.Access, error) {
 	access := &mailer.Access{}
 
-	jobsAccess, err := s.access.Jobs.List(ctx, s.db, id)
+	jobsAccess, err := s.access.Jobs.List(ctx, s.db, emailId)
 	if err != nil {
 		return nil, err
 	}
 	access.Jobs = jobsAccess
 
-	usersAccess, err := s.access.Users.List(ctx, s.db, id)
+	usersAccess, err := s.access.Users.List(ctx, s.db, emailId)
 	if err != nil {
 		return nil, err
 	}
 	access.Users = usersAccess
 
-	qualiAccess, err := s.access.Qualifications.List(ctx, s.db, id)
+	qualiAccess, err := s.access.Qualifications.List(ctx, s.db, emailId)
 	if err != nil {
 		return nil, err
 	}
@@ -349,6 +357,9 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return 0, errorsmailer.ErrAddresseAlreadyTaken
+		}
 		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -390,11 +401,13 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 
 	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
-		DELETE().
+		UPDATE().
+		SET(
+			tEmails.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
 		WHERE(jet.AND(
 			tEmails.ID.EQ(jet.Uint64(req.Id)),
-		)).
-		LIMIT(1)
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
@@ -415,41 +428,4 @@ func (s *Server) validateEmailName(email string) (string, error) {
 	email += "@fivenet.app"
 
 	return email, nil
-}
-
-func (s *Server) resolveRecipientsToEmails(ctx context.Context, recipients []string) ([]*mailer.ThreadRecipientEmail, error) {
-	if len(recipients) == 0 {
-		return nil, errorsmailer.ErrRecipientMinium
-	}
-
-	emails := make([]jet.Expression, len(recipients))
-	for idx := range recipients {
-		emails[idx] = jet.String(recipients[idx])
-	}
-
-	tEmails := tEmails.AS("thread_recipient_email")
-	stmt := tEmails.
-		SELECT(
-			tEmails.ID.AS("thread_recipient_email.email_id"),
-		).
-		FROM(tEmails).
-		WHERE(jet.AND(
-			tEmails.Email.IN(emails...),
-		)).
-		LIMIT(int64(len(recipients)))
-
-	dest := []*mailer.ThreadRecipientEmail{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	if len(recipients) != len(dest) {
-		return nil, errorsmailer.ErrInvalidRecipients
-	}
-
-	// TODO check blocklist of receivers
-
-	return dest, nil
 }

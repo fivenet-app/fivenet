@@ -52,6 +52,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
+				tEmails.DeletedAt.IS_NULL(),
 				tThreads.DeletedAt.IS_NULL(),
 				tThreadsRecipients.EmailID.IN(ids...),
 			),
@@ -70,6 +71,9 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.
 				INNER_JOIN(tThreadsRecipients,
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
+				).
+				LEFT_JOIN(tEmails,
+					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				),
 		).
 		WHERE(jet.AND(
@@ -213,37 +217,6 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64,
 	return &thread, nil
 }
 
-func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*mailer.ThreadRecipientEmail, error) {
-	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
-	stmt := tThreadsRecipients.
-		SELECT(
-			tThreadsRecipients.ID,
-			tThreadsRecipients.ThreadID,
-			tThreadsRecipients.EmailID,
-			tEmails.ID,
-			tEmails.Email,
-		).
-		FROM(
-			tThreadsRecipients.
-				INNER_JOIN(tEmails,
-					tEmails.ID.EQ(tThreadsRecipients.EmailID),
-				),
-		).
-		WHERE(jet.AND(
-			tThreadsRecipients.ThreadID.EQ(jet.Uint64(threadId)),
-			tEmails.DeletedAt.IS_NULL(),
-		))
-
-	recipients := []*mailer.ThreadRecipientEmail{}
-	if err := stmt.QueryContext(ctx, s.db, &recipients); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return recipients, nil
-}
-
 func (s *Server) GetThread(ctx context.Context, req *GetThreadRequest) (*GetThreadResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -283,7 +256,12 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	emails, err := s.resolveRecipientsToEmails(ctx, req.Recipients)
+	senderEmail, err := s.getEmail(ctx, req.Thread.CreatorEmailId, false, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	emails, err := s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

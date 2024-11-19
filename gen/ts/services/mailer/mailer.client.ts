@@ -60,7 +60,7 @@ export interface IMailerServiceClient {
      */
     getEmail(input: GetEmailRequest, options?: RpcOptions): UnaryCall<GetEmailRequest, GetEmailResponse>;
     /**
-     * @perm: Name=ListEmails
+     * @perm: Attrs=Fields/StringList:[]string{"Job"}
      *
      * @generated from protobuf rpc: CreateOrUpdateEmail(services.mailer.CreateOrUpdateEmailRequest) returns (services.mailer.CreateOrUpdateEmailResponse);
      */
@@ -108,7 +108,7 @@ export interface IMailerServiceClient {
      */
     getThread(input: GetThreadRequest, options?: RpcOptions): UnaryCall<GetThreadRequest, GetThreadResponse>;
     /**
-     * @perm
+     * @perm: Name=ListEmails
      *
      * @generated from protobuf rpc: CreateThread(services.mailer.CreateThreadRequest) returns (services.mailer.CreateThreadResponse);
      */
@@ -184,7 +184,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetEmailRequest, GetEmailResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=ListEmails
+     * @perm: Attrs=Fields/StringList:[]string{"Job"}
      *
      * @generated from protobuf rpc: CreateOrUpdateEmail(services.mailer.CreateOrUpdateEmailRequest) returns (services.mailer.CreateOrUpdateEmailResponse);
      */
@@ -256,7 +256,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
         return stackIntercept<GetThreadRequest, GetThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=ListEmails
      *
      * @generated from protobuf rpc: CreateThread(services.mailer.CreateThreadRequest) returns (services.mailer.CreateThreadResponse);
      */

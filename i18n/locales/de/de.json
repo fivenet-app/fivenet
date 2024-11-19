@@ -2158,9 +2158,15 @@
                 "key": "Nachrichten schreiben",
                 "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
             },
-            "CreateThread": {
+            "CreateOrUpdateEmail": {
                 "key": "Erstellen und aktualisieren von E-Mails",
-                "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte im E-Mail Thread."
+                "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte auf die E-Mail.",
+                "attrs": {
+                    "Job": "E-Mail Adressen für seinen Beruf (+ Interne Option)"
+                },
+                "attrs_types": {
+                    "Fields": "Zugriff auf spezielle E-Mail Adressen"
+                }
             },
             "DeleteEmail": {
                 "key": "E-Mail Adressen löschen",

@@ -10,7 +10,8 @@ import (
 const (
 	MailerServicePerm perms.Category = "MailerService"
 
-	MailerServiceCreateThreadPerm perms.Name = "CreateThread"
-	MailerServiceDeleteEmailPerm  perms.Name = "DeleteEmail"
-	MailerServiceListEmailsPerm   perms.Name = "ListEmails"
+	MailerServiceCreateOrUpdateEmailPerm            perms.Name = "CreateOrUpdateEmail"
+	MailerServiceCreateOrUpdateEmailFieldsPermField perms.Key  = "Fields"
+	MailerServiceDeleteEmailPerm                    perms.Name = "DeleteEmail"
+	MailerServiceListEmailsPerm                     perms.Name = "ListEmails"
 )
