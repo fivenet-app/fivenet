@@ -1197,6 +1197,10 @@
                 "update": {
                     "title": "Update E-Mail Thread"
                 }
+            },
+            "manage": {
+                "title": "Welcome to FiveNet Mail!",
+                "subtitle": "Please pick an e-mail address from below to get started receiving and sending e-mails."
             }
         }
     },
@@ -1580,6 +1584,12 @@
         "document_comment_added": {
             "title": "Document: New comment",
             "content": "A new comment has been posted on \"{title}\" document."
+        },
+        "mailer": {
+            "new_email": {
+                "title": "New E-Mail received!",
+                "content": "\"{title}\" from \"{from}\""
+            }
         }
     },
     "perms": {
@@ -2345,7 +2355,8 @@
             "ErrEmailAccessRequired": "You must have access to the e-mail address!",
             "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
             "ErrInvalidRecipients": "One or more e-mail addresses are wrong",
-            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!"
+            "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
+            "ErrCantDeleteOwnEmail": "TODO"
         }
     },
     "system": {
@@ -2575,10 +2586,9 @@
             "AccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "MESSAGE": "Message",
-                "MANAGE": "Manage",
-                "ADMIN": "Admin"
+                "READ": "Read",
+                "WRITE": "Write",
+                "MANAGE": "Manage"
             }
         }
     },

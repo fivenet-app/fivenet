@@ -71,7 +71,5 @@ func TestBasicCentrumFlow(t *testing.T) {
 	_ = ctx
 	_ = client
 
-	// TODO add basic test
-
 	app.RequireStop()
 }

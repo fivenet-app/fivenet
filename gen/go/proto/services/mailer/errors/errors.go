@@ -12,6 +12,7 @@ var (
 	ErrAddresseAlreadyTaken = status.Error(codes.InvalidArgument, "errors.MailerService.ErrAddresseAlreadyTaken.title;errors.MailerService.ErrAddresseAlreadyTaken.content")
 	ErrTemplateLimitReached = status.Error(codes.InvalidArgument, "errors.MailerService.ErrTemplateLimitReached")
 	ErrEmailAccessRequired  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessRequired")
+	ErrCantDeleteOwnEmail   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrCantDeleteOwnEmail")
 
 	ErrRecipientMinium   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrRecipientMinium")
 	ErrInvalidRecipients = status.Error(codes.InvalidArgument, "errors.MailerService.ErrInvalidRecipients")

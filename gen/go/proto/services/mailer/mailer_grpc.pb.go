@@ -23,6 +23,7 @@ const (
 	MailerService_GetEmail_FullMethodName               = "/services.mailer.MailerService/GetEmail"
 	MailerService_CreateOrUpdateEmail_FullMethodName    = "/services.mailer.MailerService/CreateOrUpdateEmail"
 	MailerService_DeleteEmail_FullMethodName            = "/services.mailer.MailerService/DeleteEmail"
+	MailerService_GetEmailProposals_FullMethodName      = "/services.mailer.MailerService/GetEmailProposals"
 	MailerService_ListTemplates_FullMethodName          = "/services.mailer.MailerService/ListTemplates"
 	MailerService_GetTemplate_FullMethodName            = "/services.mailer.MailerService/GetTemplate"
 	MailerService_CreateOrUpdateTemplate_FullMethodName = "/services.mailer.MailerService/CreateOrUpdateTemplate"
@@ -51,6 +52,8 @@ type MailerServiceClient interface {
 	CreateOrUpdateEmail(ctx context.Context, in *CreateOrUpdateEmailRequest, opts ...grpc.CallOption) (*CreateOrUpdateEmailResponse, error)
 	// @perm
 	DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error)
+	// @perm: Name=ListEmails
+	GetEmailProposals(ctx context.Context, in *GetEmailProposalsRequest, opts ...grpc.CallOption) (*GetEmailProposalsResponse, error)
 	// @perm: Name=ListEmails
 	ListTemplates(ctx context.Context, in *ListTemplatesRequest, opts ...grpc.CallOption) (*ListTemplatesResponse, error)
 	// @perm: Name=ListEmails
@@ -119,6 +122,15 @@ func (c *mailerServiceClient) CreateOrUpdateEmail(ctx context.Context, in *Creat
 func (c *mailerServiceClient) DeleteEmail(ctx context.Context, in *DeleteEmailRequest, opts ...grpc.CallOption) (*DeleteEmailResponse, error) {
 	out := new(DeleteEmailResponse)
 	err := c.cc.Invoke(ctx, MailerService_DeleteEmail_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *mailerServiceClient) GetEmailProposals(ctx context.Context, in *GetEmailProposalsRequest, opts ...grpc.CallOption) (*GetEmailProposalsResponse, error) {
+	out := new(GetEmailProposalsResponse)
+	err := c.cc.Invoke(ctx, MailerService_GetEmailProposals_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -264,6 +276,8 @@ type MailerServiceServer interface {
 	// @perm
 	DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error)
 	// @perm: Name=ListEmails
+	GetEmailProposals(context.Context, *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error)
+	// @perm: Name=ListEmails
 	ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error)
 	// @perm: Name=ListEmails
 	GetTemplate(context.Context, *GetTemplateRequest) (*GetTemplateResponse, error)
@@ -309,6 +323,9 @@ func (UnimplementedMailerServiceServer) CreateOrUpdateEmail(context.Context, *Cr
 }
 func (UnimplementedMailerServiceServer) DeleteEmail(context.Context, *DeleteEmailRequest) (*DeleteEmailResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteEmail not implemented")
+}
+func (UnimplementedMailerServiceServer) GetEmailProposals(context.Context, *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetEmailProposals not implemented")
 }
 func (UnimplementedMailerServiceServer) ListTemplates(context.Context, *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListTemplates not implemented")
@@ -433,6 +450,24 @@ func _MailerService_DeleteEmail_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MailerServiceServer).DeleteEmail(ctx, req.(*DeleteEmailRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MailerService_GetEmailProposals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEmailProposalsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).GetEmailProposals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_GetEmailProposals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).GetEmailProposals(ctx, req.(*GetEmailProposalsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -711,6 +746,10 @@ var MailerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteEmail",
 			Handler:    _MailerService_DeleteEmail_Handler,
+		},
+		{
+			MethodName: "GetEmailProposals",
+			Handler:    _MailerService_GetEmailProposals_Handler,
 		},
 		{
 			MethodName: "ListTemplates",

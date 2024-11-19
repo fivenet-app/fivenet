@@ -1017,6 +1017,229 @@ var _ interface {
 	ErrorName() string
 } = DeleteEmailResponseValidationError{}
 
+// Validate checks the field values on GetEmailProposalsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetEmailProposalsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetEmailProposalsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetEmailProposalsRequestMultiError, or nil if none found.
+func (m *GetEmailProposalsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetEmailProposalsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Job != nil {
+		// no validation rules for Job
+	}
+
+	if m.Input != nil {
+
+		if utf8.RuneCountInString(m.GetInput()) > 40 {
+			err := GetEmailProposalsRequestValidationError{
+				field:  "Input",
+				reason: "value length must be at most 40 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetEmailProposalsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetEmailProposalsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetEmailProposalsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetEmailProposalsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetEmailProposalsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetEmailProposalsRequestMultiError) AllErrors() []error { return m }
+
+// GetEmailProposalsRequestValidationError is the validation error returned by
+// GetEmailProposalsRequest.Validate if the designated constraints aren't met.
+type GetEmailProposalsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetEmailProposalsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetEmailProposalsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetEmailProposalsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetEmailProposalsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetEmailProposalsRequestValidationError) ErrorName() string {
+	return "GetEmailProposalsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetEmailProposalsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetEmailProposalsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetEmailProposalsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetEmailProposalsRequestValidationError{}
+
+// Validate checks the field values on GetEmailProposalsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetEmailProposalsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetEmailProposalsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetEmailProposalsResponseMultiError, or nil if none found.
+func (m *GetEmailProposalsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetEmailProposalsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetEmailProposalsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetEmailProposalsResponseMultiError is an error wrapping multiple validation
+// errors returned by GetEmailProposalsResponse.ValidateAll() if the
+// designated constraints aren't met.
+type GetEmailProposalsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetEmailProposalsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetEmailProposalsResponseMultiError) AllErrors() []error { return m }
+
+// GetEmailProposalsResponseValidationError is the validation error returned by
+// GetEmailProposalsResponse.Validate if the designated constraints aren't met.
+type GetEmailProposalsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetEmailProposalsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetEmailProposalsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetEmailProposalsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetEmailProposalsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetEmailProposalsResponseValidationError) ErrorName() string {
+	return "GetEmailProposalsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetEmailProposalsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetEmailProposalsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetEmailProposalsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetEmailProposalsResponseValidationError{}
+
 // Validate checks the field values on ListTemplatesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

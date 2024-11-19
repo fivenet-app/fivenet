@@ -782,6 +782,8 @@
     - [DeleteTemplateResponse](#services-mailer-DeleteTemplateResponse)
     - [DeleteThreadRequest](#services-mailer-DeleteThreadRequest)
     - [DeleteThreadResponse](#services-mailer-DeleteThreadResponse)
+    - [GetEmailProposalsRequest](#services-mailer-GetEmailProposalsRequest)
+    - [GetEmailProposalsResponse](#services-mailer-GetEmailProposalsResponse)
     - [GetEmailRequest](#services-mailer-GetEmailRequest)
     - [GetEmailResponse](#services-mailer-GetEmailResponse)
     - [GetEmailSettingsRequest](#services-mailer-GetEmailSettingsRequest)
@@ -11707,6 +11709,37 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+<a name="services-mailer-GetEmailProposalsRequest"></a>
+
+### GetEmailProposalsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [bool](#bool) | optional |  |
+| input | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="services-mailer-GetEmailProposalsResponse"></a>
+
+### GetEmailProposalsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| proposals | [string](#string) | repeated |  |
+
+
+
+
+
+
 <a name="services-mailer-GetEmailRequest"></a>
 
 ### GetEmailRequest
@@ -12064,6 +12097,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | GetEmail | [GetEmailRequest](#services-mailer-GetEmailRequest) | [GetEmailResponse](#services-mailer-GetEmailResponse) | @perm: Name=ListEmails |
 | CreateOrUpdateEmail | [CreateOrUpdateEmailRequest](#services-mailer-CreateOrUpdateEmailRequest) | [CreateOrUpdateEmailResponse](#services-mailer-CreateOrUpdateEmailResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;} |
 | DeleteEmail | [DeleteEmailRequest](#services-mailer-DeleteEmailRequest) | [DeleteEmailResponse](#services-mailer-DeleteEmailResponse) | @perm |
+| GetEmailProposals | [GetEmailProposalsRequest](#services-mailer-GetEmailProposalsRequest) | [GetEmailProposalsResponse](#services-mailer-GetEmailProposalsResponse) | @perm: Name=ListEmails |
 | ListTemplates | [ListTemplatesRequest](#services-mailer-ListTemplatesRequest) | [ListTemplatesResponse](#services-mailer-ListTemplatesResponse) | @perm: Name=ListEmails |
 | GetTemplate | [GetTemplateRequest](#services-mailer-GetTemplateRequest) | [GetTemplateResponse](#services-mailer-GetTemplateResponse) | @perm: Name=ListEmails |
 | CreateOrUpdateTemplate | [CreateOrUpdateTemplateRequest](#services-mailer-CreateOrUpdateTemplateRequest) | [CreateOrUpdateTemplateResponse](#services-mailer-CreateOrUpdateTemplateResponse) | @perm: Name=ListEmails |

@@ -1,4 +1,5 @@
 import { listEnumValues } from '@protobuf-ts/runtime';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export type JobAccessEntry = {
@@ -21,14 +22,30 @@ export type UserAccessEntry = {
     user?: UserShort;
 };
 
-export type AccessEntryType = 'user' | 'job';
+export type QualificationAccessEntry = {
+    id: string;
+    targetId: string;
+    qualificationId?: string;
+    access: number;
+    required?: boolean;
+    qualification?: QualificationShort;
+};
+
+export type AccessEntryType = 'user' | 'job' | 'qualification';
 
 export type MixedAccessEntry = {
     id: string;
     type: AccessEntryType;
+
     userId?: number;
+    user?: UserShort;
+
     job?: string;
     minimumGrade?: number;
+
+    qualificationId?: string;
+    qualification?: QualificationShort;
+
     access: number;
     required?: boolean;
 };

@@ -48,6 +48,15 @@ message DeleteEmailRequest {
 
 message DeleteEmailResponse {}
 
+message GetEmailProposalsRequest {
+  optional bool job = 1;
+  optional string input = 2 [(validate.rules).string.max_len = 40];
+}
+
+message GetEmailProposalsResponse {
+  repeated string proposals = 1;
+}
+
 // Templates
 
 message ListTemplatesRequest {
@@ -197,6 +206,8 @@ service MailerService {
   rpc CreateOrUpdateEmail(CreateOrUpdateEmailRequest) returns (CreateOrUpdateEmailResponse);
   // @perm
   rpc DeleteEmail(DeleteEmailRequest) returns (DeleteEmailResponse);
+  // @perm: Name=ListEmails
+  rpc GetEmailProposals(GetEmailProposalsRequest) returns (GetEmailProposalsResponse);
 
   // @perm: Name=ListEmails
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);

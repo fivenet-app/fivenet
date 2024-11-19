@@ -32,6 +32,8 @@ import type { GetTemplateResponse } from "./mailer";
 import type { GetTemplateRequest } from "./mailer";
 import type { ListTemplatesResponse } from "./mailer";
 import type { ListTemplatesRequest } from "./mailer";
+import type { GetEmailProposalsResponse } from "./mailer";
+import type { GetEmailProposalsRequest } from "./mailer";
 import type { DeleteEmailResponse } from "./mailer";
 import type { DeleteEmailRequest } from "./mailer";
 import type { CreateOrUpdateEmailResponse } from "./mailer";
@@ -71,6 +73,12 @@ export interface IMailerServiceClient {
      * @generated from protobuf rpc: DeleteEmail(services.mailer.DeleteEmailRequest) returns (services.mailer.DeleteEmailResponse);
      */
     deleteEmail(input: DeleteEmailRequest, options?: RpcOptions): UnaryCall<DeleteEmailRequest, DeleteEmailResponse>;
+    /**
+     * @perm: Name=ListEmails
+     *
+     * @generated from protobuf rpc: GetEmailProposals(services.mailer.GetEmailProposalsRequest) returns (services.mailer.GetEmailProposalsResponse);
+     */
+    getEmailProposals(input: GetEmailProposalsRequest, options?: RpcOptions): UnaryCall<GetEmailProposalsRequest, GetEmailProposalsResponse>;
     /**
      * @perm: Name=ListEmails
      *
@@ -204,10 +212,19 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
     /**
      * @perm: Name=ListEmails
      *
+     * @generated from protobuf rpc: GetEmailProposals(services.mailer.GetEmailProposalsRequest) returns (services.mailer.GetEmailProposalsResponse);
+     */
+    getEmailProposals(input: GetEmailProposalsRequest, options?: RpcOptions): UnaryCall<GetEmailProposalsRequest, GetEmailProposalsResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetEmailProposalsRequest, GetEmailProposalsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=ListEmails
+     *
      * @generated from protobuf rpc: ListTemplates(services.mailer.ListTemplatesRequest) returns (services.mailer.ListTemplatesResponse);
      */
     listTemplates(input: ListTemplatesRequest, options?: RpcOptions): UnaryCall<ListTemplatesRequest, ListTemplatesResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListTemplatesRequest, ListTemplatesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -216,7 +233,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: GetTemplate(services.mailer.GetTemplateRequest) returns (services.mailer.GetTemplateResponse);
      */
     getTemplate(input: GetTemplateRequest, options?: RpcOptions): UnaryCall<GetTemplateRequest, GetTemplateResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetTemplateRequest, GetTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -225,7 +242,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: CreateOrUpdateTemplate(services.mailer.CreateOrUpdateTemplateRequest) returns (services.mailer.CreateOrUpdateTemplateResponse);
      */
     createOrUpdateTemplate(input: CreateOrUpdateTemplateRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateTemplateRequest, CreateOrUpdateTemplateResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateTemplateRequest, CreateOrUpdateTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -234,7 +251,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteTemplate(services.mailer.DeleteTemplateRequest) returns (services.mailer.DeleteTemplateResponse);
      */
     deleteTemplate(input: DeleteTemplateRequest, options?: RpcOptions): UnaryCall<DeleteTemplateRequest, DeleteTemplateResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteTemplateRequest, DeleteTemplateResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -243,7 +260,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: ListThreads(services.mailer.ListThreadsRequest) returns (services.mailer.ListThreadsResponse);
      */
     listThreads(input: ListThreadsRequest, options?: RpcOptions): UnaryCall<ListThreadsRequest, ListThreadsResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListThreadsRequest, ListThreadsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -252,7 +269,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: GetThread(services.mailer.GetThreadRequest) returns (services.mailer.GetThreadResponse);
      */
     getThread(input: GetThreadRequest, options?: RpcOptions): UnaryCall<GetThreadRequest, GetThreadResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetThreadRequest, GetThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -261,7 +278,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: CreateThread(services.mailer.CreateThreadRequest) returns (services.mailer.CreateThreadResponse);
      */
     createThread(input: CreateThreadRequest, options?: RpcOptions): UnaryCall<CreateThreadRequest, CreateThreadResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateThreadRequest, CreateThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -270,7 +287,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteThread(services.mailer.DeleteThreadRequest) returns (services.mailer.DeleteThreadResponse);
      */
     deleteThread(input: DeleteThreadRequest, options?: RpcOptions): UnaryCall<DeleteThreadRequest, DeleteThreadResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteThreadRequest, DeleteThreadResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -279,7 +296,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: SetThreadState(services.mailer.SetThreadStateRequest) returns (services.mailer.SetThreadStateResponse);
      */
     setThreadState(input: SetThreadStateRequest, options?: RpcOptions): UnaryCall<SetThreadStateRequest, SetThreadStateResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetThreadStateRequest, SetThreadStateResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -288,7 +305,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: ListThreadMessages(services.mailer.ListThreadMessagesRequest) returns (services.mailer.ListThreadMessagesResponse);
      */
     listThreadMessages(input: ListThreadMessagesRequest, options?: RpcOptions): UnaryCall<ListThreadMessagesRequest, ListThreadMessagesResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListThreadMessagesRequest, ListThreadMessagesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -297,7 +314,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: PostMessage(services.mailer.PostMessageRequest) returns (services.mailer.PostMessageResponse);
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<PostMessageRequest, PostMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -306,7 +323,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: DeleteMessage(services.mailer.DeleteMessageRequest) returns (services.mailer.DeleteMessageResponse);
      */
     deleteMessage(input: DeleteMessageRequest, options?: RpcOptions): UnaryCall<DeleteMessageRequest, DeleteMessageResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteMessageRequest, DeleteMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -315,7 +332,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: GetEmailSettings(services.mailer.GetEmailSettingsRequest) returns (services.mailer.GetEmailSettingsResponse);
      */
     getEmailSettings(input: GetEmailSettingsRequest, options?: RpcOptions): UnaryCall<GetEmailSettingsRequest, GetEmailSettingsResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetEmailSettingsRequest, GetEmailSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -324,7 +341,7 @@ export class MailerServiceClient implements IMailerServiceClient, ServiceInfo {
      * @generated from protobuf rpc: SetEmailSettings(services.mailer.SetEmailSettingsRequest) returns (services.mailer.SetEmailSettingsResponse);
      */
     setEmailSettings(input: SetEmailSettingsRequest, options?: RpcOptions): UnaryCall<SetEmailSettingsRequest, SetEmailSettingsResponse> {
-        const method = this.methods[17], opt = this._transport.mergeOptions(options);
+        const method = this.methods[18], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetEmailSettingsRequest, SetEmailSettingsResponse>("unary", this._transport, method, opt, input);
     }
 }

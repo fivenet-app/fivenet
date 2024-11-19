@@ -209,6 +209,7 @@ export const grpcMethods = [
 	'MailerService/GetEmail',
 	'MailerService/CreateOrUpdateEmail',
 	'MailerService/DeleteEmail',
+	'MailerService/GetEmailProposals',
 	'MailerService/ListTemplates',
 	'MailerService/GetTemplate',
 	'MailerService/CreateOrUpdateTemplate',

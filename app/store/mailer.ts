@@ -3,11 +3,14 @@ import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
 import type { Message } from '~~/gen/ts/resources/mailer/message';
 import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
     CreateOrUpdateEmailRequest,
     CreateOrUpdateEmailResponse,
     CreateThreadRequest,
     CreateThreadResponse,
+    DeleteEmailRequest,
+    DeleteEmailResponse,
     DeleteMessageRequest,
     DeleteMessageResponse,
     DeleteThreadRequest,
@@ -22,6 +25,7 @@ import type {
     SetEmailSettingsRequest,
     SetEmailSettingsResponse,
 } from '~~/gen/ts/services/mailer/mailer';
+import { useNotificatorStore } from './notificator';
 
 const logger = useLogger('💬 Mailer');
 
@@ -75,6 +79,19 @@ export const useMailerStore = defineStore('mailer', {
                 }
             } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
+
+                useNotificatorStore().add({
+                    title: { key: 'notifications.mailer.new_email.title', parameters: {} },
+                    description: {
+                        key: 'notifications.mailer.new_email.content',
+                        parameters: {
+                            title: event.data.threadUpdate.title,
+                            from: event.data.threadUpdate.creatorEmail?.email ?? 'N/A',
+                        },
+                    },
+                    type: NotificationType.INFO,
+                    actions: this.getNotificationActions(event.data.threadUpdate.id),
+                });
             } else if (event.data.oneofKind === 'threadDelete') {
                 await mailerDB.threads.delete(event.data.threadDelete);
             } else if (event.data.oneofKind === 'messageUpdate') {
@@ -82,6 +99,18 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Only set unread state when message isn't from same email
                 if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
+                    useNotificatorStore().add({
+                        title: { key: 'notifications.mailer.new_email.title', parameters: {} },
+                        description: {
+                            key: 'notifications.mailer.new_email.content',
+                            parameters: {
+                                title: event.data.messageUpdate.title,
+                                from: event.data.messageUpdate.sender?.email ?? 'N/A',
+                            },
+                        },
+                        type: NotificationType.INFO,
+                        actions: this.getNotificationActions(event.data.messageUpdate.threadId),
+                    });
                     useSound().play({ name: 'notification' });
                 }
 
@@ -115,7 +144,11 @@ export const useMailerStore = defineStore('mailer', {
                 const { response } = await call;
 
                 this.emails = response.emails;
-                if (this.emails.length > 0 && this.emails[0]) {
+                if (this.emails.length === 0 || !this.hasPrivateEmail) {
+                    await navigateTo({
+                        name: 'mail-manage',
+                    });
+                } else if (this.emails[0]) {
                     if (this.emails[0].settings === undefined) {
                         this.selectedEmail = await this.getEmail(this.emails[0].id);
                     } else {
@@ -171,6 +204,27 @@ export const useMailerStore = defineStore('mailer', {
                     if (this.selectedEmail === undefined) {
                         this.selectedEmail = response.email;
                     }
+                }
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+
+        async deleteEmail(req: DeleteEmailRequest): Promise<DeleteEmailResponse> {
+            try {
+                const call = getGRPCMailerClient().deleteEmail(req);
+                const { response } = await call;
+
+                if (this.selectedEmail?.id === req.id) {
+                    this.selectedEmail = undefined;
+                }
+
+                const idx = this.emails.findIndex((e) => e.id === req.id);
+                if (idx > -1) {
+                    this.emails.slice(idx, 1);
                 }
 
                 return response;
@@ -416,6 +470,23 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
+        },
+
+        getNotificationActions(threadId?: string): NotificationActionI18n[] {
+            return useRoute().name !== 'mail'
+                ? [
+                      {
+                          label: { key: 'common.click_here' },
+                          to: threadId ? { name: 'mail', query: { thread: threadId }, hash: '#' } : { name: 'mail' },
+                      },
+                  ]
+                : [];
+        },
+    },
+    getters: {
+        hasPrivateEmail: (state) => {
+            const { activeChar } = useAuth();
+            return !!state.emails.find((e) => e.userId === activeChar.value?.userId);
         },
     },
 });

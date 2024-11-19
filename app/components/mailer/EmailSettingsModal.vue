@@ -54,7 +54,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('common.settings') }}
+                            {{ $t('common.settings') }} - {{ selectedEmail?.email }}
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />

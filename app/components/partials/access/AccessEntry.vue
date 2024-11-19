@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
@@ -36,14 +37,25 @@ const schema = z.object({
     id: z.string(),
     type: z.number(),
     userId: z.number().optional(),
+    user: z.custom<UserShort>().optional(),
     job: z.string().optional(),
     minimumGrade: z.number().optional(),
+    qualificationId: z.string().optional(),
     access: z.number(),
     required: z.boolean().optional(),
 });
 
 const selectedUser = ref<UserShort | undefined>();
-watch(selectedUser, () => (entry.value.userId = selectedUser.value?.userId));
+watch(selectedUser, () => {
+    entry.value.user = selectedUser.value;
+    entry.value.userId = selectedUser.value?.userId;
+});
+
+const selectedQualification = ref<QualificationShort | undefined>();
+watch(selectedQualification, () => {
+    entry.value.qualification = selectedQualification.value;
+    entry.value.qualificationId = selectedQualification.value?.id;
+});
 
 const usersLoading = ref(false);
 async function findUser(userId?: number): Promise<UserShort[]> {
@@ -63,6 +75,8 @@ async function setFromProps(): Promise<void> {
 
         const users = await findUser(entry.value.userId);
         selectedUser.value = users.find((char) => char.userId === entry.value.userId);
+    } else if (entry.value.type === 'qualification' && entry.value.qualificationId !== undefined) {
+        // TODO look up qualification
     }
 }
 
@@ -150,6 +164,50 @@ watch(props, () => setFromProps());
                         </template>
 
                         <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
+            </UFormGroup>
+        </template>
+
+        <template v-if="entry.type === 'qualification'">
+            <UFormGroup name="qualificationId" class="flex-1">
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="selectedQualification"
+                        :searchable="
+                            async (query: string) => {
+                                const { response } = await getGRPCQualificationsClient().listQualifications({
+                                    pagination: {
+                                        offset: 0,
+                                    },
+                                    search: query,
+                                });
+                                return response?.qualifications ?? [];
+                            }
+                        "
+                        searchable-lazy
+                        :search-attributes="['abbreviation', 'title']"
+                        :searchable-placeholder="$t('common.search_field')"
+                        class="flex-1"
+                        :placeholder="$t('common.qualification', 1)"
+                    >
+                        <template #label>
+                            <template v-if="selectedQualification">
+                                <span class="truncate">
+                                    {{ selectedQualification.abbreviation }}: {{ selectedQualification.title }}
+                                </span>
+                            </template>
+                        </template>
+
+                        <template #option="{ option: qualification }">
+                            {{ `${qualification?.abbreviation}: ${qualification?.title}` }}
+                        </template>
+
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+
+                        <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
             </UFormGroup>

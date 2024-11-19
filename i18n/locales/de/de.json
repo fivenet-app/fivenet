@@ -2566,10 +2566,9 @@
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
-                "VIEW": "Ansehen",
-                "MESSAGE": "Schreiben",
-                "MANAGE": "Verwalten",
-                "ADMIN": "Admin"
+                "READ": "Ansehen",
+                "WRITE": "Schreiben",
+                "MANAGE": "Verwalten"
             }
         }
     },

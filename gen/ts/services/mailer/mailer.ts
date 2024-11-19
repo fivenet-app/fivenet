@@ -92,6 +92,28 @@ export interface DeleteEmailRequest {
  */
 export interface DeleteEmailResponse {
 }
+/**
+ * @generated from protobuf message services.mailer.GetEmailProposalsRequest
+ */
+export interface GetEmailProposalsRequest {
+    /**
+     * @generated from protobuf field: optional bool job = 1;
+     */
+    job?: boolean;
+    /**
+     * @generated from protobuf field: optional string input = 2;
+     */
+    input?: string;
+}
+/**
+ * @generated from protobuf message services.mailer.GetEmailProposalsResponse
+ */
+export interface GetEmailProposalsResponse {
+    /**
+     * @generated from protobuf field: repeated string proposals = 1;
+     */
+    proposals: string[];
+}
 // Templates
 
 /**
@@ -754,6 +776,106 @@ class DeleteEmailResponse$Type extends MessageType<DeleteEmailResponse> {
  * @generated MessageType for protobuf message services.mailer.DeleteEmailResponse
  */
 export const DeleteEmailResponse = new DeleteEmailResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest> {
+    constructor() {
+        super("services.mailer.GetEmailProposalsRequest", [
+            { no: 1, name: "job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "input", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetEmailProposalsRequest>): GetEmailProposalsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetEmailProposalsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEmailProposalsRequest): GetEmailProposalsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional bool job */ 1:
+                    message.job = reader.bool();
+                    break;
+                case /* optional string input */ 2:
+                    message.input = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEmailProposalsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional bool job = 1; */
+        if (message.job !== undefined)
+            writer.tag(1, WireType.Varint).bool(message.job);
+        /* optional string input = 2; */
+        if (message.input !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.input);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetEmailProposalsRequest
+ */
+export const GetEmailProposalsRequest = new GetEmailProposalsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetEmailProposalsResponse$Type extends MessageType<GetEmailProposalsResponse> {
+    constructor() {
+        super("services.mailer.GetEmailProposalsResponse", [
+            { no: 1, name: "proposals", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetEmailProposalsResponse>): GetEmailProposalsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.proposals = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetEmailProposalsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetEmailProposalsResponse): GetEmailProposalsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string proposals */ 1:
+                    message.proposals.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetEmailProposalsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string proposals = 1; */
+        for (let i = 0; i < message.proposals.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.proposals[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetEmailProposalsResponse
+ */
+export const GetEmailProposalsResponse = new GetEmailProposalsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
     constructor() {
@@ -2128,6 +2250,7 @@ export const MailerService = new ServiceType("services.mailer.MailerService", [
     { name: "GetEmail", options: {}, I: GetEmailRequest, O: GetEmailResponse },
     { name: "CreateOrUpdateEmail", options: {}, I: CreateOrUpdateEmailRequest, O: CreateOrUpdateEmailResponse },
     { name: "DeleteEmail", options: {}, I: DeleteEmailRequest, O: DeleteEmailResponse },
+    { name: "GetEmailProposals", options: {}, I: GetEmailProposalsRequest, O: GetEmailProposalsResponse },
     { name: "ListTemplates", options: {}, I: ListTemplatesRequest, O: ListTemplatesResponse },
     { name: "GetTemplate", options: {}, I: GetTemplateRequest, O: GetTemplateResponse },
     { name: "CreateOrUpdateTemplate", options: {}, I: CreateOrUpdateTemplateRequest, O: CreateOrUpdateTemplateResponse },

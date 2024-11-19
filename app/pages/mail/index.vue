@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
-import EmailCreateModal from '~/components/mailer/EmailCreateModal.vue';
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import MailerList from '~/components/mailer/MailerList.vue';
@@ -22,7 +20,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { can, isSuperuser } = useAuth();
+const { isSuperuser } = useAuth();
 
 const modal = useModal();
 
@@ -221,7 +219,7 @@ onBeforeMount(async () => {
                             <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
                         </UButton>
 
-                        <UButton icon="i-mdi-email-plus" color="gray" @click="modal.open(EmailCreateModal, {})" />
+                        <UButton icon="i-mdi-email-plus" color="gray" to="/mail/manage" />
                     </template>
 
                     <template #right>
@@ -231,16 +229,6 @@ onBeforeMount(async () => {
                     </template>
                 </UDashboardToolbar>
             </template>
-
-            <div v-else class="flex flex-1 flex-col items-center">
-                <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
-                    <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
-                    <EmailCreateForm
-                        v-if="can('MailerService.CreateOrUpdateEmail').value && emails.length === 0"
-                        personal-email
-                    />
-                </div>
-            </div>
         </UDashboardPanel>
 
         <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen" collapsible grow side="right">

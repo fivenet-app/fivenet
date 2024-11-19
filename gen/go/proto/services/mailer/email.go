@@ -3,15 +3,18 @@ package mailer
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
+	permsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/perms"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -118,7 +121,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 	return resp.Emails, nil
 }
 
-func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, withSettings bool) (*mailer.Email, error) {
+func (s *Server) getEmailByCondition(ctx context.Context, tx qrm.DB, condition jet.BoolExpression) (*mailer.Email, error) {
 	stmt := tEmails.
 		SELECT(
 			tEmails.ID,
@@ -132,13 +135,11 @@ func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, 
 			tEmails.Internal,
 		).
 		FROM(tEmails).
-		WHERE(jet.AND(
-			tEmails.ID.EQ(jet.Uint64(emailId)),
-		)).
+		WHERE(condition).
 		LIMIT(1)
 
 	dest := &mailer.Email{}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -148,12 +149,24 @@ func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, 
 		return nil, nil
 	}
 
+	return dest, nil
+}
+
+func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, withSettings bool) (*mailer.Email, error) {
+	email, err := s.getEmailByCondition(ctx, s.db, tEmails.ID.EQ(jet.Uint64(emailId)))
+	if err != nil {
+		return nil, err
+	}
+	if email == nil {
+		return nil, nil
+	}
+
 	if withAccess {
 		access, err := s.getEmailAccess(ctx, emailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-		dest.Access = access
+		email.Access = access
 	}
 
 	if withSettings {
@@ -161,10 +174,10 @@ func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, 
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
-		dest.Settings = settings
+		email.Settings = settings
 	}
 
-	return dest, nil
+	return email, nil
 }
 
 func (s *Server) GetEmail(ctx context.Context, req *GetEmailRequest) (*GetEmailResponse, error) {
@@ -251,10 +264,20 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	} else {
 		req.Email.UserId = nil
 		req.Email.Job = &userInfo.Job
-	}
 
-	if req.Email.Job != nil && req.Email.Access == nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessRequired)
+		// Field Permission Check
+		fieldsAttr, err := s.ps.Attr(userInfo, permsmailer.MailerServicePerm, permsmailer.MailerServiceCreateOrUpdateEmailPerm, permsmailer.MailerServiceCreateOrUpdateEmailFieldsPermField)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+		var fields perms.StringList
+		if fieldsAttr != nil {
+			fields = fieldsAttr.([]string)
+		}
+
+		if !slices.Contains(fields, "Job") {
+			return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessRequired)
+		}
 	}
 
 	// Begin transaction
@@ -266,6 +289,17 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	defer tx.Rollback()
 
 	if req.Email.Id <= 0 {
+		// Check if user already has a personal email
+		if req.Email.UserId != nil {
+			email, err := s.getEmailByCondition(ctx, tx, tEmails.UserID.EQ(jet.Int32(*req.Email.UserId)))
+			if err != nil {
+				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			}
+
+			if email != nil {
+				return nil, errorsmailer.ErrAddresseAlreadyTaken
+			}
+		}
 
 		lastId, err := s.createEmail(ctx, tx, req.Email)
 		if err != nil {
@@ -288,6 +322,11 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 
 		tEmails := table.FivenetMailerEmails
+		condition := tEmails.Job.EQ(jet.String(userInfo.Job))
+		if req.Email.UserId != nil {
+			condition = tEmails.UserID.EQ(jet.Int32(userInfo.UserId))
+		}
+
 		stmt := tEmails.
 			UPDATE(
 				tEmails.Label,
@@ -299,7 +338,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			).
 			WHERE(jet.AND(
 				tEmails.ID.EQ(jet.Uint64(req.Email.Id)),
-				tEmails.Job.EQ(jet.String(userInfo.Job)),
+				condition,
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -307,7 +346,8 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 	}
 
-	if req.Email.Access != nil {
+	// Only handle access changes for job emails
+	if req.Email.Job != nil && req.Email.Access != nil {
 		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Email.Id, req.Email.Access.Jobs, req.Email.Access.Users, req.Email.Access.Qualifications); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -391,6 +431,16 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 		return nil, errorsmailer.ErrNoPerms
 	}
 
+	email, err := s.getEmail(ctx, req.Id, false, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	// Make sure that the user is not deleting their own personal email
+	if email.Job == nil && email.UserId != nil {
+		return nil, errorsmailer.ErrCantDeleteOwnEmail
+	}
+
 	s.sendUpdate(ctx, &mailer.MailerEvent{
 		Data: &mailer.MailerEvent_EmailDelete{
 			EmailDelete: req.Id,
@@ -428,4 +478,10 @@ func (s *Server) validateEmailName(email string) (string, error) {
 	email += "@fivenet.app"
 
 	return email, nil
+}
+
+func (s *Server) GetEmailProposals(context.Context, *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
+	// TODO
+
+	return nil, nil
 }

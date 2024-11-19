@@ -18,7 +18,7 @@ type Server struct {
 	MailerServiceServer
 
 	db       *sql.DB
-	p        perms.Permissions
+	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	js       *events.JSWrapper
@@ -39,7 +39,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
-		p:        p.P,
+		ps:       p.P,
 		enricher: p.Enricher,
 		aud:      p.Aud,
 		js:       p.JS,

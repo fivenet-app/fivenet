@@ -1,5 +1,7 @@
 import type { Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
+export const defaultEmailDomain = '@fivenet.app';
+
 export const defaultEmptyContent = '<p><br></p><p><br></p>';
 
 export function canAccess(access: Access | undefined, creatorId: number | undefined, level: AccessLevel): boolean {
