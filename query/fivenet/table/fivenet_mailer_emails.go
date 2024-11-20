@@ -17,16 +17,17 @@ type fivenetMailerEmailsTable struct {
 	mysql.Table
 
 	// Columns
-	ID        mysql.ColumnInteger
-	CreatedAt mysql.ColumnTimestamp
-	UpdatedAt mysql.ColumnTimestamp
-	DeletedAt mysql.ColumnTimestamp
-	Disabled  mysql.ColumnBool
-	Job       mysql.ColumnString
-	UserID    mysql.ColumnInteger
-	Email     mysql.ColumnString
-	Label     mysql.ColumnString
-	Internal  mysql.ColumnBool
+	ID           mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
+	Disabled     mysql.ColumnBool
+	Job          mysql.ColumnString
+	UserID       mysql.ColumnInteger
+	Email        mysql.ColumnString
+	EmailChanged mysql.ColumnTimestamp
+	Label        mysql.ColumnString
+	Internal     mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -67,34 +68,36 @@ func newFivenetMailerEmailsTable(schemaName, tableName, alias string) *FivenetMa
 
 func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivenetMailerEmailsTable {
 	var (
-		IDColumn        = mysql.IntegerColumn("id")
-		CreatedAtColumn = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn = mysql.TimestampColumn("deleted_at")
-		DisabledColumn  = mysql.BoolColumn("disabled")
-		JobColumn       = mysql.StringColumn("job")
-		UserIDColumn    = mysql.IntegerColumn("user_id")
-		EmailColumn     = mysql.StringColumn("email")
-		LabelColumn     = mysql.StringColumn("label")
-		InternalColumn  = mysql.BoolColumn("internal")
-		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, LabelColumn, InternalColumn}
+		IDColumn           = mysql.IntegerColumn("id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
+		DisabledColumn     = mysql.BoolColumn("disabled")
+		JobColumn          = mysql.StringColumn("job")
+		UserIDColumn       = mysql.IntegerColumn("user_id")
+		EmailColumn        = mysql.StringColumn("email")
+		EmailChangedColumn = mysql.TimestampColumn("email_changed")
+		LabelColumn        = mysql.StringColumn("label")
+		InternalColumn     = mysql.BoolColumn("internal")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
 	)
 
 	return fivenetMailerEmailsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:        IDColumn,
-		CreatedAt: CreatedAtColumn,
-		UpdatedAt: UpdatedAtColumn,
-		DeletedAt: DeletedAtColumn,
-		Disabled:  DisabledColumn,
-		Job:       JobColumn,
-		UserID:    UserIDColumn,
-		Email:     EmailColumn,
-		Label:     LabelColumn,
-		Internal:  InternalColumn,
+		ID:           IDColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
+		Disabled:     DisabledColumn,
+		Job:          JobColumn,
+		UserID:       UserIDColumn,
+		Email:        EmailColumn,
+		EmailChanged: EmailChangedColumn,
+		Label:        LabelColumn,
+		Internal:     InternalColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

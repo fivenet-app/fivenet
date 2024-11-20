@@ -260,6 +260,39 @@ func (m *Email) validate(all bool) error {
 
 	}
 
+	if m.EmailChanged != nil {
+
+		if all {
+			switch v := interface{}(m.GetEmailChanged()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, EmailValidationError{
+						field:  "EmailChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, EmailValidationError{
+						field:  "EmailChanged",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEmailChanged()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return EmailValidationError{
+					field:  "EmailChanged",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Label != nil {
 
 		if utf8.RuneCountInString(m.GetLabel()) > 128 {

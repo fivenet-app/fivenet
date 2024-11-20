@@ -57,21 +57,25 @@ export interface Email {
      */
     email: string;
     /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp email_changed = 10;
+     */
+    emailChanged?: Timestamp;
+    /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string label = 10;
+     * @generated from protobuf field: optional string label = 11;
      */
     label?: string;
     /**
-     * @generated from protobuf field: bool internal = 11;
+     * @generated from protobuf field: bool internal = 12;
      */
     internal: boolean;
     /**
-     * @generated from protobuf field: resources.mailer.Access access = 12;
+     * @generated from protobuf field: resources.mailer.Access access = 13;
      */
     access?: Access;
     /**
-     * @generated from protobuf field: optional resources.mailer.EmailSettings settings = 13;
+     * @generated from protobuf field: optional resources.mailer.EmailSettings settings = 14;
      */
     settings?: EmailSettings;
 }
@@ -88,10 +92,11 @@ class Email$Type extends MessageType<Email> {
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
             { no: 9, name: "email", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
-            { no: 10, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 11, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 12, name: "access", kind: "message", T: () => Access },
-            { no: 13, name: "settings", kind: "message", T: () => EmailSettings }
+            { no: 10, name: "email_changed", kind: "message", T: () => Timestamp },
+            { no: 11, name: "label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 12, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "access", kind: "message", T: () => Access },
+            { no: 14, name: "settings", kind: "message", T: () => EmailSettings }
         ]);
     }
     create(value?: PartialMessage<Email>): Email {
@@ -136,16 +141,19 @@ class Email$Type extends MessageType<Email> {
                 case /* string email */ 9:
                     message.email = reader.string();
                     break;
-                case /* optional string label */ 10:
+                case /* optional resources.timestamp.Timestamp email_changed */ 10:
+                    message.emailChanged = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.emailChanged);
+                    break;
+                case /* optional string label */ 11:
                     message.label = reader.string();
                     break;
-                case /* bool internal */ 11:
+                case /* bool internal */ 12:
                     message.internal = reader.bool();
                     break;
-                case /* resources.mailer.Access access */ 12:
+                case /* resources.mailer.Access access */ 13:
                     message.access = Access.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional resources.mailer.EmailSettings settings */ 13:
+                case /* optional resources.mailer.EmailSettings settings */ 14:
                     message.settings = EmailSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -187,18 +195,21 @@ class Email$Type extends MessageType<Email> {
         /* string email = 9; */
         if (message.email !== "")
             writer.tag(9, WireType.LengthDelimited).string(message.email);
-        /* optional string label = 10; */
+        /* optional resources.timestamp.Timestamp email_changed = 10; */
+        if (message.emailChanged)
+            Timestamp.internalBinaryWrite(message.emailChanged, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional string label = 11; */
         if (message.label !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.label);
-        /* bool internal = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.label);
+        /* bool internal = 12; */
         if (message.internal !== false)
-            writer.tag(11, WireType.Varint).bool(message.internal);
-        /* resources.mailer.Access access = 12; */
+            writer.tag(12, WireType.Varint).bool(message.internal);
+        /* resources.mailer.Access access = 13; */
         if (message.access)
-            Access.internalBinaryWrite(message.access, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.mailer.EmailSettings settings = 13; */
+            Access.internalBinaryWrite(message.access, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.mailer.EmailSettings settings = 14; */
         if (message.settings)
-            EmailSettings.internalBinaryWrite(message.settings, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+            EmailSettings.internalBinaryWrite(message.settings, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

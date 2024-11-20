@@ -27,6 +27,8 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+const emailLastChangedInterval = 14 * 24 * time.Hour
+
 var (
 	tEmails = table.FivenetMailerEmails.AS("email")
 
@@ -92,6 +94,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 			tEmails.Job,
 			tEmails.UserID,
 			tEmails.Email,
+			tEmails.EmailChanged,
 			tEmails.Label,
 			tEmails.Internal,
 		).
@@ -138,6 +141,7 @@ func (s *Server) getEmailByCondition(ctx context.Context, tx qrm.DB, condition j
 			tEmails.Job,
 			tEmails.UserID,
 			tEmails.Email,
+			tEmails.EmailChanged,
 			tEmails.Label,
 			tEmails.Internal,
 		).
@@ -321,25 +325,50 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			return nil, errorsmailer.ErrNoPerms
 		}
 
+		email, err := s.getEmail(ctx, req.Email.Id, false, false)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
 		label := jet.NULL
 		if req.Email.Label != nil {
 			label = jet.String(*req.Email.Label)
 		}
 
+		sets := []interface{}{
+			tEmails.Label.SET(jet.StringExp(label)),
+			tEmails.Internal.SET(jet.Bool(req.Email.Internal)),
+		}
+
+		// Update email only when necessary and allowed
+		if strings.Compare(email.Email, req.Email.Email) != 0 {
+			if req.Email.EmailChanged != nil {
+				// Check if last email change is at least 2 weeks ago
+				since := time.Since(req.Email.EmailChanged.AsTime())
+				if since < emailLastChangedInterval {
+					return nil, errorsmailer.ErrEmailChangeTooEarly
+				}
+			}
+
+			sets = append(sets,
+				tEmails.Email.SET(jet.String(req.Email.Email)),
+				tEmails.EmailChanged.SET(jet.CURRENT_TIMESTAMP()),
+			)
+		}
+
+		condition := tEmails.ID.EQ(jet.Uint64(req.Email.Id))
 		tEmails := table.FivenetMailerEmails
-		condition := tEmails.Job.EQ(jet.String(userInfo.Job))
-		if req.Email.UserId != nil {
-			condition = tEmails.UserID.EQ(jet.Int32(userInfo.UserId))
+		if req.Email.Job != nil {
+			condition = condition.AND(tEmails.Job.EQ(jet.String(userInfo.Job)))
+		} else {
+			condition = condition.AND(tEmails.UserID.EQ(jet.Int32(userInfo.UserId)))
 		}
 
 		stmt := tEmails.
-			UPDATE(
-				tEmails.Label,
-				tEmails.Internal,
-			).
+			UPDATE().
 			SET(
-				label,
-				jet.Bool(req.Email.Internal),
+				sets[0],
+				sets[1:]...,
 			).
 			WHERE(jet.AND(
 				tEmails.ID.EQ(jet.Uint64(req.Email.Id)),

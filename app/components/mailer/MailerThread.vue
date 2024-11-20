@@ -132,7 +132,7 @@ async function postMessage(values: Schema): Promise<void> {
         recipients: [],
     });
 
-    // Clear message field
+    // Clear draft data
     state.value.title = '';
     state.value.content = '';
     state.value.recipients = [];
@@ -260,7 +260,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         >
             <template #compose>
                 <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-                    <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
+                    <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.additional_recipients')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.recipients"
@@ -298,7 +298,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="title" class="w-full flex-1">
+                    <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
                         <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
                             <UInput
                                 v-model="state.title"

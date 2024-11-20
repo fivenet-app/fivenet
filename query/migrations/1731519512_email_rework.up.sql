@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   `job` varchar(40) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `email` varchar(80) NOT NULL,
+  `email_changed` datetime(3) DEFAULT NULL,
   `label` varchar(128) DEFAULT NULL,
   `internal` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),

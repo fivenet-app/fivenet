@@ -21,9 +21,10 @@ message Email {
   optional resources.users.UserShort user = 8;
   // @sanitize: method=StripTags
   string email = 9 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  optional resources.timestamp.Timestamp email_changed = 10;
   // @sanitize: method=StripTags
-  optional string label = 10 [(validate.rules).string.max_len = 128];
-  bool internal = 11;
-  Access access = 12;
-  optional EmailSettings settings = 13;
+  optional string label = 11 [(validate.rules).string.max_len = 128];
+  bool internal = 12;
+  Access access = 13;
+  optional EmailSettings settings = 14;
 }

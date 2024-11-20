@@ -140,7 +140,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :state="state" :schema="schema" class="flex flex-col gap-y-2" @submit="onSubmitThrottle">
-        <UFormGroup :label="$t('common.mail')" class="flex flex-1 flex-col">
+        <UFormGroup
+            :label="$t('common.mail')"
+            :description="$t('components.mailer.manage.email.description')"
+            class="flex flex-1 flex-col"
+        >
             <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
                 <UFormGroup name="email" class="flex-1">
                     <USelectMenu
@@ -149,7 +153,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :options="proposals?.emails"
                         :disabled="disabled"
                         class="flex-1"
-                    />
+                    >
+                        <template #empty>
+                            {{ $t('common.not_found', [$t('common.mail')]) }}
+                        </template>
+                    </USelectMenu>
                     <UInput
                         v-else
                         v-model="state.email"
@@ -169,7 +177,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :options="proposals?.domains"
                         :disabled="disabled"
                         class="flex-1"
-                    />
+                    >
+                        <template #empty>
+                            {{ $t('common.not_found', [$t('common.mail')]) }}
+                        </template>
+                    </USelectMenu>
                     <UInput
                         v-else
                         v-model="state.domain"

@@ -508,7 +508,8 @@
         "sender": "Sender",
         "signature": "Signature",
         "internal": "Internal",
-        "label": "Label"
+        "label": "Label",
+        "additional_recipients": "Weitere Empfänger"
     },
     "components": {
         "partials": {
@@ -1201,7 +1202,10 @@
             },
             "manage": {
                 "title": "Welcome to FiveNet Mail!",
-                "subtitle": "Please pick an e-mail address from below to get started receiving and sending e-mails."
+                "subtitle": "Please pick an e-mail address from below to get started receiving and sending e-mails.",
+                "email": {
+                    "description": "Your e-mail address can only be changed once every 2 weeks."
+                }
             }
         }
     },

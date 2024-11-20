@@ -52,6 +52,7 @@ async function createThread(values: Schema): Promise<void> {
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
     });
 
+    // Clear draft data
     state.value.title = '';
     state.value.content = '';
     state.value.recipients = [];

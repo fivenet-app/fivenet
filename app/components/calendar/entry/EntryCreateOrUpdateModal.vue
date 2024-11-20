@@ -209,6 +209,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <span class="truncate">{{ state.calendar?.name }}</span>
                                         </template>
                                     </template>
+
                                     <template #option="{ option }">
                                         <span
                                             class="size-2 rounded-full"
@@ -216,9 +217,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
                                         <span class="truncate">{{ option.name }}</span>
                                     </template>
+
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
+
                                     <template #empty>
                                         {{ $t('common.not_found', [$t('common.calendar')]) }}
                                     </template>
