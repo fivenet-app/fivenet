@@ -121,7 +121,6 @@
         },
         "qualifications": {
             "title": "Qualifications",
-            "create": "Create Qualification",
             "single": {
                 "title": "Qualification",
                 "exam": {
@@ -133,7 +132,8 @@
             },
             "edit": {
                 "title": "Edit Qualification"
-            }
+            },
+            "create": "Create Qualification"
         },
         "auth": {
             "logout": {
@@ -509,7 +509,7 @@
         "signature": "Signature",
         "internal": "Internal",
         "label": "Label",
-        "additional_recipients": "Weitere Empfänger"
+        "additional_recipients": "Additional Recipients"
     },
     "components": {
         "partials": {
@@ -2173,6 +2173,14 @@
                 "key": "Post responses",
                 "description": "Allow users to post responses to E-Mails they have access to."
             },
+            "DeleteEmail": {
+                "key": "Delete E-Mail addresses",
+                "description": "Requires manage access to the E-Mail address."
+            },
+            "ListEmails": {
+                "key": "List E-Mail threads",
+                "description": "Minimum permission to see E-Mails."
+            },
             "CreateOrUpdateEmail": {
                 "key": "Create or update E-Mails",
                 "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
@@ -2182,14 +2190,6 @@
                 "attrs_types": {
                     "Fields": "Access to create special E-Mail addresses"
                 }
-            },
-            "DeleteEmail": {
-                "key": "Delete E-Mail addresses",
-                "description": "Requires manage access to the E-Mail address."
-            },
-            "ListEmails": {
-                "key": "List E-Mail threads",
-                "description": "Minimum permission to see E-Mails."
             }
         }
     },
@@ -2366,7 +2366,7 @@
             "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
             "ErrEmailAccessDenied": "You must have access to the e-mail address!",
             "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
-            "ErrInvalidRecipients": "One or more e-mail addresses are wrong",
+            "ErrInvalidRecipients": "One or more e-mail addresses are wrong.",
             "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
             "ErrCantDeleteOwnEmail": "You can't delete your own email!",
             "ErrEmailAccessRequired": "A job's email requires at least one access",
@@ -2608,9 +2608,9 @@
             "AccessLevel": {
                 "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
+                "MANAGE": "Manage",
                 "READ": "Read",
-                "WRITE": "Write",
-                "MANAGE": "Manage"
+                "WRITE": "Write"
             }
         }
     },
