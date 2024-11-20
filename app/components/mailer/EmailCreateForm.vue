@@ -12,7 +12,7 @@ import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: Email;
+        modelValue?: Email | undefined;
         personalEmail?: boolean;
         disabled?: boolean;
         hideLabel?: boolean;
@@ -142,7 +142,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     <UForm :state="state" :schema="schema" class="flex flex-col gap-y-2" @submit="onSubmitThrottle">
         <UFormGroup
             :label="$t('common.mail')"
-            :description="$t('components.mailer.manage.email.description')"
+            :description="
+                $t('components.mailer.manage.email.description') +
+                (modelValue?.emailChanged ? ` (${$t('common.updated_at')}: ${$d(toDate(modelValue?.emailChanged))})` : '')
+            "
             class="flex flex-1 flex-col"
         >
             <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
