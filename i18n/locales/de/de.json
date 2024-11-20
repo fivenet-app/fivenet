@@ -132,7 +132,8 @@
             },
             "edit": {
                 "title": "Qualifizierung bearbeiten"
-            }
+            },
+            "create": "Qualifizierung erstellen"
         },
         "auth": {
             "logout": {
@@ -491,7 +492,7 @@
         "wiki": "Lexikon | Lexika",
         "parent_page": "Übergeordnete Seite",
         "corrected": "Korrigiert",
-        "mail": "E-Mail",
+        "mail": "E-Mail | E-Mails",
         "citizens": "Keine Bürger | {n} Bürger",
         "vehicles": "Keine Fahrzeuge | {n} Fahrzeug | {n} Fahrzeuge",
         "documents": "Keine Dokumente | {n} Dokument | {n} Dokumente",
@@ -507,7 +508,8 @@
         "sender": "Absender",
         "signature": "Signatur",
         "internal": "Intern",
-        "label": "Bezeichnung"
+        "label": "Bezeichnung",
+        "additional_recipients": "Weitere Empfänger"
     },
     "components": {
         "partials": {
@@ -1197,6 +1199,13 @@
                 "update": {
                     "title": "E-Mail-Thread aktualisieren"
                 }
+            },
+            "manage": {
+                "title": "Willkommen bei FiveNet E-Mail!",
+                "subtitle": "Bitte wählen Sie eine E-Mail Adresse aus der unteren Liste aus, um E-Mails empfangen und senden zu können.",
+                "email": {
+                    "description": "Deine E-Mail Adresse kann nur alle zwei Wochen geändert werden."
+                }
             }
         }
     },
@@ -1580,6 +1589,12 @@
         "document_comment_added": {
             "title": "Dokument: Neuer Kommentar",
             "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
+        },
+        "mailer": {
+            "new_email": {
+                "title": "Neue E-Mail erhalten!",
+                "content": "\"{title}\" von \"{from}\""
+            }
         }
     },
     "perms": {
@@ -2158,6 +2173,14 @@
                 "key": "Nachrichten schreiben",
                 "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
             },
+            "DeleteEmail": {
+                "key": "E-Mail Adressen löschen",
+                "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
+            },
+            "ListEmails": {
+                "key": "E-Mails Feature nutzen können",
+                "description": "Minimum um das E-Mail Feature komplett nutzen zu können."
+            },
             "CreateOrUpdateEmail": {
                 "key": "Erstellen und aktualisieren von E-Mails",
                 "description": "Aktualisieren von E-Mails benötigt entsprechende Rechte auf die E-Mail.",
@@ -2167,14 +2190,6 @@
                 "attrs_types": {
                     "Fields": "Zugriff auf spezielle E-Mail Adressen"
                 }
-            },
-            "DeleteEmail": {
-                "key": "E-Mail Adressen löschen",
-                "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
-            },
-            "ListEmails": {
-                "key": "E-Mails Feature nutzen können",
-                "description": "Minimum um das E-Mail Feature komplett nutzen zu können."
             }
         }
     },
@@ -2336,6 +2351,33 @@
             "ErrEntryClosed": {
                 "title": "Kalendar Eintrag ist geschlossen",
                 "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+            }
+        },
+        "WikiService": {
+            "ErrFailedQuery": "Fehler beim Laden der Lexikon Daten!",
+            "ErrPageDenied": "Sie haben keinen Zugriff auf diese Seite!"
+        },
+        "MailerService": {
+            "ErrFailedQuery": "Fehler beim Laden der E-Mail Daten!",
+            "ErrAddresseAlreadyTaken": {
+                "title": "E-Mail Adresse bereits vergeben!",
+                "content": "Bitte versuchen es mit einer anderen E-Mail Adresse erneut."
+            },
+            "ErrTemplateLimitReached": "Du kannst keine weiteren Vorlagen erstellen (Limit: 5)!",
+            "ErrEmailAccessDenied": "Sie müssen entsprechenden Lese-/Schreib-Zugriff auf die E-Mail Adresse haben!",
+            "ErrRecipientMinium": "Ihre E-Mail muss mindestens einen Empfänger haben!",
+            "ErrInvalidRecipients": "Eine oder mehrere E-Mail Adressen sind fehlerhaft",
+            "ErrSameAddress": "Die E-Mail kann nicht an dieselbe E-Mail-Adresse senden, von der sie gesendet wurde!",
+            "ErrCantDeleteOwnEmail": "Sie können ihre eigene E-Mail Adresse nicht löschen!",
+            "ErrEmailAccessRequired": "Mindestens ein Zugang ist für eine Job-E-Mail erforderlich",
+            "ErrAddresseInvalid": "Die E-Mail-Adresse ist ungültig, bitte verwende eine andere.",
+            "ErrThreadAccessDenied": {
+                "title": "Du hast keinen Zugriff auf diesen Therad!",
+                "content": "Du wurdest vom Therad entfernt."
+            },
+            "ErrEmailChangeTooEarly": {
+                "title": "Die E-Mail wurde bereits geändert!",
+                "content": "E-Mail Adressen können nur alle zwei Wochen geändert werden."
             }
         }
     },
@@ -2566,9 +2608,9 @@
             "AccessLevel": {
                 "UNSPECIFIED": "Unbestimmt",
                 "BLOCKED": "Blockiert",
+                "MANAGE": "Verwalten",
                 "READ": "Ansehen",
-                "WRITE": "Schreiben",
-                "MANAGE": "Verwalten"
+                "WRITE": "Schreiben"
             }
         }
     },
