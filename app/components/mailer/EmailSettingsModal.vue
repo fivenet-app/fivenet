@@ -108,13 +108,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UButton
                             v-if="canManage"
                             type="submit"
+                            :label="$t('common.save')"
                             block
                             class="flex-1"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
-                        >
-                            {{ $t('common.save') }}
-                        </UButton>
+                        />
                     </UButtonGroup>
                 </template>
             </UCard>
