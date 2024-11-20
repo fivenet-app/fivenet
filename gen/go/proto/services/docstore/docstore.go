@@ -23,7 +23,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -498,11 +497,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.access.HandleAccessChanges(ctx, tx, uint64(lastId), req.Access.Jobs, req.Access.Users, nil); err != nil {
-		if dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
-		}
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	if err := s.handleDocumentAccessChange(ctx, tx, uint64(lastId), userInfo, req.Access, false); err != nil {
+		return nil, err
 	}
 
 	// Commit the transaction

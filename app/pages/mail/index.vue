@@ -108,14 +108,16 @@ watch(filteredThreads, () => {
 const route = useRoute();
 const router = useRouter();
 
-watch(selectedThread, () => {
+function updateQuery(): void {
     if (!selectedThread.value) {
         router.replace({ query: {} });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
         router.replace({ query: { thread: selectedThread.value.id }, hash: '#' });
     }
-});
+}
+
+watch(selectedThread, updateQuery);
 
 onBeforeMount(async () => {
     await mailerStore.listEmails();
@@ -125,6 +127,7 @@ onBeforeMount(async () => {
     }
 
     selectedThread.value = await mailerStore.getThread(route.query.thread as string);
+    updateQuery();
 });
 </script>
 

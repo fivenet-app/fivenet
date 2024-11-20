@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
-import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { AccessLevelEnum, AccessType, MixedAccessEntry } from './helpers';
@@ -76,7 +76,29 @@ async function setFromProps(): Promise<void> {
         const users = await findUser(entry.value.userId);
         selectedUser.value = users.find((char) => char.userId === entry.value.userId);
     } else if (entry.value.type === 'qualification' && entry.value.qualificationId !== undefined) {
-        // TODO look up qualification
+        if (selectedQualification.value?.id === entry.value.qualificationId || entry.value.qualificationId === undefined) {
+            return;
+        }
+
+        try {
+            const { response } = await getGRPCQualificationsClient().getQualification({
+                qualificationId: entry.value.qualificationId,
+            });
+            selectedQualification.value = response.qualification;
+        } catch (_) {
+            // Fallback to show qualification id
+            selectedQualification.value = {
+                id: entry.value.qualificationId,
+                abbreviation: 'N/A',
+                title: 'N/A (ID: ' + entry.value.qualificationId + ')',
+                closed: false,
+                job: '',
+                creatorJob: '',
+                examMode: QualificationExamMode.UNSPECIFIED,
+                requirements: [],
+                weight: 0,
+            };
+        }
     }
 }
 

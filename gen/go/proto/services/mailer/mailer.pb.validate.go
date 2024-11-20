@@ -1039,23 +1039,19 @@ func (m *GetEmailProposalsRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.Job != nil {
-		// no validation rules for Job
+	if utf8.RuneCountInString(m.GetInput()) > 40 {
+		err := GetEmailProposalsRequestValidationError{
+			field:  "Input",
+			reason: "value length must be at most 40 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
-	if m.Input != nil {
-
-		if utf8.RuneCountInString(m.GetInput()) > 40 {
-			err := GetEmailProposalsRequestValidationError{
-				field:  "Input",
-				reason: "value length must be at most 40 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
+	if m.Job != nil {
+		// no validation rules for Job
 	}
 
 	if len(errors) > 0 {

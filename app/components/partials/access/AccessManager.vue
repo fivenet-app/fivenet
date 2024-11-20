@@ -224,6 +224,8 @@ watchArray(
     },
 );
 
+const lastId = ref(0);
+
 function setFromPropsJobs(): void {
     access.value?.push(
         ...jobsAccess.value
@@ -276,7 +278,6 @@ setFromPropsUsers();
 watch(qualificationsAccess, setFromPropsQualifications);
 setFromPropsQualifications();
 
-const lastId = ref(0);
 function addEntry(): void {
     access.value.push({
         id: lastId.value.toString(),

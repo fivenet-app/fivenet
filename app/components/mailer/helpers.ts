@@ -1,6 +1,6 @@
 import type { Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
-export const defaultEmailDomain = '@fivenet.app';
+export const defaultEmailDomain = 'fivenet.ls';
 
 export const defaultEmptyContent = '<p><br></p><p><br></p>';
 

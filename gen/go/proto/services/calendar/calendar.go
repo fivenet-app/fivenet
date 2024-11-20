@@ -77,7 +77,6 @@ func NewServer(p Params) *Server {
 			&access.TargetTableColumns{
 				ID:         table.FivenetDocuments.ID,
 				DeletedAt:  table.FivenetDocuments.DeletedAt,
-				CreatorID:  table.FivenetDocuments.CreatorID,
 				CreatorJob: table.FivenetDocuments.CreatorJob,
 			},
 			access.NewJobs[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.AccessLevel](

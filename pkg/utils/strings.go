@@ -1,6 +1,6 @@
 package utils
 
-// Taken from kAdor here: https://stackoverflow.com/a/41604514
+// Taken from "KAdot" here: https://stackoverflow.com/a/41604514
 func StringFirstN(s string, n int) string {
 	i := 0
 	for j := range s {

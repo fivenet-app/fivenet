@@ -299,7 +299,7 @@ const selectedTab = computed({
         class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
-        <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
+        <UDashboardNavbar :title="qualificationId ? $t('pages.qualifications.edit.title') : $t('pages.qualifications.create')">
             <template #right>
                 <UButton
                     color="black"

@@ -110,7 +110,16 @@ const creating = ref(false);
 
             <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen" collapsible grow side="right">
                 <template v-if="creating">
-                    <UDashboardNavbar :title="$t('common.mail')" />
+                    <UDashboardNavbar :title="$t('common.mail')">
+                        <template #right>
+                            <UButton
+                                :label="$t('common.back')"
+                                icon="i-mdi-arrow-back"
+                                color="black"
+                                @click="creating = false"
+                            />
+                        </template>
+                    </UDashboardNavbar>
 
                     <UDashboardPanelContent>
                         <div class="flex flex-1 flex-col items-center">
@@ -165,7 +174,7 @@ const creating = ref(false);
                         <EmailCreateForm
                             v-model="selectedEmail"
                             :personal-email="selectedEmail.userId !== undefined"
-                            :disabled="canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)"
+                            :disabled="!canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)"
                         />
                     </UDashboardPanelContent>
                 </template>

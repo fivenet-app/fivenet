@@ -49,12 +49,13 @@ message DeleteEmailRequest {
 message DeleteEmailResponse {}
 
 message GetEmailProposalsRequest {
-  optional bool job = 1;
-  optional string input = 2 [(validate.rules).string.max_len = 40];
+  string input = 1 [(validate.rules).string.max_len = 40];
+  optional bool job = 2;
 }
 
 message GetEmailProposalsResponse {
-  repeated string proposals = 1;
+  repeated string emails = 1;
+  repeated string domains = 2;
 }
 
 // Templates

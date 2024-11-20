@@ -57,6 +57,10 @@ type AccessChangesQualifications[QualiU any, QualiT QualificationsAccessProtoMes
 	ToDelete []QualiT
 }
 
+func (a *AccessChangesQualifications[QualiU, QualiT, V]) IsEmpty() bool {
+	return len(a.ToCreate) == 0 && len(a.ToUpdate) == 0 && len(a.ToDelete) == 0
+}
+
 type GroupedAccessChanges[JobsU any, JobsT JobsAccessProtoMessage[JobsU, V], UsersU any, UsersT UsersAccessProtoMessage[UsersU, V], QualiU any, QualiT QualificationsAccessProtoMessage[QualiU, V], V protoutils.ProtoEnum] struct {
 	Jobs           *AccessChangesJobs[JobsU, JobsT, V]
 	Users          *AccessChangesUsers[UsersU, UsersT, V]
@@ -64,7 +68,7 @@ type GroupedAccessChanges[JobsU any, JobsT JobsAccessProtoMessage[JobsU, V], Use
 }
 
 func (a *GroupedAccessChanges[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) IsEmpty() bool {
-	return a.Jobs.IsEmpty() && a.Users.IsEmpty()
+	return a.Jobs.IsEmpty() && a.Users.IsEmpty() && a.Qualifications.IsEmpty()
 }
 
 func NewGrouped[

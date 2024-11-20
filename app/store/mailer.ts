@@ -285,8 +285,13 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response.thread;
             } catch (e) {
-                handleGRPCError(e as RpcError);
-                throw e;
+                const err = e as RpcError;
+                handleGRPCError(err);
+
+                if (err?.message?.includes('.ErrThreadAccessDenied')) {
+                    await mailerDB.threads.delete(threadId);
+                    await mailerDB.messages.where('threadId').equals(threadId).delete();
+                }
             }
         },
 
@@ -404,8 +409,13 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                handleGRPCError(e as RpcError);
-                throw e;
+                const err = e as RpcError;
+                await handleGRPCError(err);
+
+                if (err?.message?.includes('.ErrThreadAccessDenied')) {
+                    await mailerDB.threads.delete(req.threadId);
+                    await mailerDB.messages.where('threadId').equals(req.threadId).delete();
+                }
             }
         },
 

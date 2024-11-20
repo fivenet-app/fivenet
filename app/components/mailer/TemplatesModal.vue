@@ -83,7 +83,7 @@ const editing = ref(false);
                     />
                     <DataNoDataBlock
                         v-if="!templates?.templates || templates?.templates.length === 0"
-                        :type="$t('common.mail')"
+                        :type="$t('common.template', 2)"
                         icon="i-mdi-file-outline"
                     />
 

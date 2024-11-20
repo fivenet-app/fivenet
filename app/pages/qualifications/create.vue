@@ -2,10 +2,10 @@
 import QualificationEditor from '~/components/qualifications/QualificationEditor.vue';
 
 useHead({
-    title: 'pages.qualifications.single.title',
+    title: 'pages.qualifications.create',
 });
 definePageMeta({
-    title: 'pages.qualifications.single.title',
+    title: 'pages.qualifications.create',
     requiresAuth: true,
     permission: 'QualificationsService.CreateQualification',
 });

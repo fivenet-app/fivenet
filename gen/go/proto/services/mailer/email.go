@@ -3,18 +3,23 @@ package mailer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
+	"sort"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	permsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/perms"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -30,6 +35,8 @@ var (
 	tEmailsQualificationsAccess = table.FivenetMailerEmailsQualificationsAccess
 
 	tQualificationsResults = table.FivenetQualificationsResults
+
+	tUsers = table.Users.AS("user_short")
 )
 
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
@@ -252,12 +259,6 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	var err error
-	req.Email.Email, err = s.validateEmailName(req.Email.Email)
-	if err != nil {
-		return nil, err
-	}
-
 	if req.Email.UserId != nil {
 		req.Email.UserId = &userInfo.UserId
 		req.Email.Job = nil
@@ -276,8 +277,12 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 
 		if !slices.Contains(fields, "Job") {
-			return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessRequired)
+			return nil, errswrap.NewError(err, errorsmailer.ErrEmailAccessDenied)
 		}
+	}
+
+	if err := s.validateEmail(ctx, userInfo, req.Email.Email, req.Email.Job != nil); err != nil {
+		return nil, err
 	}
 
 	// Begin transaction
@@ -348,6 +353,10 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 
 	// Only handle access changes for job emails
 	if req.Email.Job != nil && req.Email.Access != nil {
+		if req.Email.Access.IsEmpty() {
+			return nil, errorsmailer.ErrEmailAccessRequired
+		}
+
 		if _, err := s.access.HandleAccessChanges(ctx, tx, req.Email.Id, req.Email.Access.Jobs, req.Email.Access.Users, req.Email.Access.Qualifications); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
@@ -460,7 +469,7 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
@@ -468,20 +477,116 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 	return &DeleteEmailResponse{}, nil
 }
 
-func (s *Server) validateEmailName(email string) (string, error) {
-	if strings.Contains(email, "@") {
-		before, _, found := strings.Cut(email, "@")
-		if found {
-			email = before
-		}
+func (s *Server) validateEmail(ctx context.Context, userInfo *userinfo.UserInfo, input string, forJob bool) error {
+	emails, domains, err := s.generateEmailProposals(ctx, userInfo, forJob)
+	if err != nil {
+		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
-	email += "@fivenet.app"
 
-	return email, nil
+	email, domain, found := strings.Cut(input, "@")
+	if !found {
+		return errorsmailer.ErrAddresseInvalid
+	}
+
+	if len(emails) > 0 && !slices.Contains(emails, email) {
+		return errorsmailer.ErrAddresseInvalid
+	}
+
+	if !slices.Contains(domains, domain) {
+		return errorsmailer.ErrAddresseInvalid
+	}
+
+	return nil
 }
 
-func (s *Server) GetEmailProposals(context.Context, *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
-	// TODO
+const defaultDomain = "fivenet.ls"
 
-	return nil, nil
+func (s *Server) GetEmailProposals(ctx context.Context, req *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	forJob := req.Job != nil && *req.Job
+	emails, domains, err := s.generateEmailProposals(ctx, userInfo, forJob)
+	if err != nil {
+		return nil, err
+	}
+
+	return &GetEmailProposalsResponse{
+		Emails:  emails,
+		Domains: domains,
+	}, nil
+}
+
+func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.UserInfo, forJob bool) ([]string, []string, error) {
+	emails := []string{}
+	domains := []string{}
+
+	if forJob {
+		// Job's email
+		job := s.enricher.GetJobByName(userInfo.Job)
+		if job == nil {
+			return nil, nil, errorsmailer.ErrFailedQuery
+		}
+
+		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Name), defaultDomain))
+		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Label), defaultDomain))
+		if strings.Contains(job.Label, " ") {
+			labelSplit := strings.Split(job.Label, " ")
+			if len(labelSplit) < 3 {
+				for _, split := range labelSplit {
+					domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(split), defaultDomain))
+				}
+			} else {
+				for idx, split := range labelSplit {
+					if idx > 0 && len(labelSplit)-1 >= idx+1 {
+						domains = append(domains,
+							fmt.Sprintf("%s.%s", utils.Slug(split+"."+labelSplit[idx+1]), defaultDomain),
+						)
+					}
+				}
+			}
+		}
+	} else {
+		// User's private email
+		stmt := tUsers.
+			SELECT(
+				tUsers.Firstname,
+				tUsers.Lastname,
+				tUsers.Dateofbirth,
+			).
+			FROM(tUsers).
+			WHERE(
+				tUsers.ID.EQ(jet.Int32(userInfo.UserId)),
+			).
+			LIMIT(1)
+
+		user := &users.UserShort{}
+		if err := stmt.QueryContext(ctx, s.db, user); err != nil {
+			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		domains = append(domains, defaultDomain)
+		emails = append(emails, // User fullname: Erika Mustermann
+			utils.Slug(fmt.Sprintf("%s.%s", user.Firstname, user.Lastname)),                                               // erika.mustermann
+			utils.Slug(fmt.Sprintf("%s%s", utils.StringFirstN(user.Firstname, 1), user.Lastname)),                         // emustermann
+			utils.Slug(fmt.Sprintf("%s%s", user.Firstname, utils.StringFirstN(user.Lastname, 1))),                         // erikam
+			utils.Slug(fmt.Sprintf("%s.%s", utils.StringFirstN(user.Firstname, 1), utils.StringFirstN(user.Lastname, 3))), // eri.mus
+		)
+
+		dateOfBirth, err := time.Parse("02.01.2006", user.Dateofbirth)
+		if err == nil {
+			for _, email := range emails {
+				emails = append(emails, fmt.Sprintf("%s%d", email, dateOfBirth.Year()))
+			}
+		}
+	}
+
+	sort.Slice(emails, func(i, j int) bool {
+		return emails[i] < emails[j]
+	})
+
+	sort.Slice(domains, func(i, j int) bool {
+		return domains[i] < domains[j]
+	})
+
+	return emails, domains, nil
 }

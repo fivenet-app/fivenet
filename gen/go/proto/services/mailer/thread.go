@@ -194,7 +194,7 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64,
 	var thread mailer.Thread
 	if err := stmt.QueryContext(ctx, s.db, &thread); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
 
@@ -226,7 +226,7 @@ func (s *Server) GetThread(ctx context.Context, req *GetThreadRequest) (*GetThre
 
 	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		return nil, err
 	}
 
 	return &GetThreadResponse{
@@ -322,7 +322,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 
 	thread, err := s.getThread(ctx, req.Thread.Id, req.Thread.CreatorEmailId, userInfo, true)
 	if err != nil {
-		return nil, errorsmailer.ErrFailedQuery
+		return nil, err
 	}
 
 	if len(thread.Recipients) > 0 {
@@ -385,7 +385,7 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 
 	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
-		return nil, errorsmailer.ErrFailedQuery
+		return nil, err
 	}
 
 	stmt := tThreads.

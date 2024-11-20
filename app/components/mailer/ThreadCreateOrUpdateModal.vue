@@ -49,7 +49,7 @@ async function createThread(values: Schema): Promise<void> {
             creatorJob: activeChar.value!.job,
         },
 
-        recipients: [...new Set(values.recipients.map((r) => r.label))],
+        recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
     });
 
     state.value.title = '';

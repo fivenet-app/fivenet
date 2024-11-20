@@ -121,6 +121,7 @@
         },
         "qualifications": {
             "title": "Qualifications",
+            "create": "Create Qualification",
             "single": {
                 "title": "Qualification",
                 "exam": {
@@ -2170,7 +2171,13 @@
             },
             "CreateOrUpdateEmail": {
                 "key": "Create or update E-Mails",
-                "description": "Updating E-Mails requires manage or higher access to a E-Mail thread."
+                "description": "Updating E-Mails requires manage or higher access to a E-Mail thread.",
+                "attrs": {
+                    "Job": "E-Mail addresses for your job (+ internal option)"
+                },
+                "attrs_types": {
+                    "Fields": "Access to create special E-Mail addresses"
+                }
             },
             "DeleteEmail": {
                 "key": "Delete E-Mail addresses",
@@ -2347,16 +2354,23 @@
             "ErrPageDenied": "You don't have access to this page!"
         },
         "MailerService": {
+            "ErrFailedQuery": "Failed to load mail data!",
             "ErrAddresseAlreadyTaken": {
                 "title": "E-Mail adress already taken!",
                 "content": "Please try again with another e-mail address."
             },
             "ErrTemplateLimitReached": "You can't have more templates (limit: 5)!",
-            "ErrEmailAccessRequired": "You must have access to the e-mail address!",
+            "ErrEmailAccessDenied": "You must have access to the e-mail address!",
             "ErrRecipientMinium": "Your e-mail must have at least one receiving e-mail address!",
             "ErrInvalidRecipients": "One or more e-mail addresses are wrong",
             "ErrSameAddress": "Can't send an e-mail to the same e-mail address being sent from!",
-            "ErrCantDeleteOwnEmail": "TODO"
+            "ErrCantDeleteOwnEmail": "You can't delete your own email!",
+            "ErrEmailAccessRequired": "A job's email requires at least one access",
+            "ErrAddresseInvalid": "Invalid e-mail address, please choose another one.",
+            "ErrThreadAccessDenied": {
+                "title": "You don't have access to this thread!",
+                "content": "You might have been removed from the thread."
+            }
         }
     },
     "system": {

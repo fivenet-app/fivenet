@@ -22,14 +22,14 @@ func (s *Server) checkIfEmailPartOfThread(ctx context.Context, userInfo *userinf
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
-		return errorsmailer.ErrFailedQuery
+		return errorsmailer.ErrThreadAccessDenied
 	}
 	check, err = s.checkIfEmailIdPartOfThread(ctx, threadId, emailId)
 	if err != nil {
 		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 	if !check && !userInfo.SuperUser {
-		return errorsmailer.ErrFailedQuery
+		return errorsmailer.ErrThreadAccessDenied
 	}
 
 	return nil

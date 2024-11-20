@@ -97,22 +97,26 @@ export interface DeleteEmailResponse {
  */
 export interface GetEmailProposalsRequest {
     /**
-     * @generated from protobuf field: optional bool job = 1;
+     * @generated from protobuf field: string input = 1;
+     */
+    input: string;
+    /**
+     * @generated from protobuf field: optional bool job = 2;
      */
     job?: boolean;
-    /**
-     * @generated from protobuf field: optional string input = 2;
-     */
-    input?: string;
 }
 /**
  * @generated from protobuf message services.mailer.GetEmailProposalsResponse
  */
 export interface GetEmailProposalsResponse {
     /**
-     * @generated from protobuf field: repeated string proposals = 1;
+     * @generated from protobuf field: repeated string emails = 1;
      */
-    proposals: string[];
+    emails: string[];
+    /**
+     * @generated from protobuf field: repeated string domains = 2;
+     */
+    domains: string[];
 }
 // Templates
 
@@ -780,12 +784,13 @@ export const DeleteEmailResponse = new DeleteEmailResponse$Type();
 class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest> {
     constructor() {
         super("services.mailer.GetEmailProposalsRequest", [
-            { no: 1, name: "job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "input", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } }
+            { no: 1, name: "input", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
+            { no: 2, name: "job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetEmailProposalsRequest>): GetEmailProposalsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.input = "";
         if (value !== undefined)
             reflectionMergePartial<GetEmailProposalsRequest>(this, message, value);
         return message;
@@ -795,11 +800,11 @@ class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional bool job */ 1:
-                    message.job = reader.bool();
-                    break;
-                case /* optional string input */ 2:
+                case /* string input */ 1:
                     message.input = reader.string();
+                    break;
+                case /* optional bool job */ 2:
+                    message.job = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -813,12 +818,12 @@ class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest
         return message;
     }
     internalBinaryWrite(message: GetEmailProposalsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional bool job = 1; */
+        /* string input = 1; */
+        if (message.input !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.input);
+        /* optional bool job = 2; */
         if (message.job !== undefined)
-            writer.tag(1, WireType.Varint).bool(message.job);
-        /* optional string input = 2; */
-        if (message.input !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.input);
+            writer.tag(2, WireType.Varint).bool(message.job);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -833,12 +838,14 @@ export const GetEmailProposalsRequest = new GetEmailProposalsRequest$Type();
 class GetEmailProposalsResponse$Type extends MessageType<GetEmailProposalsResponse> {
     constructor() {
         super("services.mailer.GetEmailProposalsResponse", [
-            { no: 1, name: "proposals", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "domains", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<GetEmailProposalsResponse>): GetEmailProposalsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.proposals = [];
+        message.emails = [];
+        message.domains = [];
         if (value !== undefined)
             reflectionMergePartial<GetEmailProposalsResponse>(this, message, value);
         return message;
@@ -848,8 +855,11 @@ class GetEmailProposalsResponse$Type extends MessageType<GetEmailProposalsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated string proposals */ 1:
-                    message.proposals.push(reader.string());
+                case /* repeated string emails */ 1:
+                    message.emails.push(reader.string());
+                    break;
+                case /* repeated string domains */ 2:
+                    message.domains.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -863,9 +873,12 @@ class GetEmailProposalsResponse$Type extends MessageType<GetEmailProposalsRespon
         return message;
     }
     internalBinaryWrite(message: GetEmailProposalsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated string proposals = 1; */
-        for (let i = 0; i < message.proposals.length; i++)
-            writer.tag(1, WireType.LengthDelimited).string(message.proposals[i]);
+        /* repeated string emails = 1; */
+        for (let i = 0; i < message.emails.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.emails[i]);
+        /* repeated string domains = 2; */
+        for (let i = 0; i < message.domains.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.domains[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

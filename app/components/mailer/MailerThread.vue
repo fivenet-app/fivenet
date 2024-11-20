@@ -113,6 +113,31 @@ const { start } = useTimeoutFn(
 
 onMounted(() => start());
 
+async function postMessage(values: Schema): Promise<void> {
+    if (!selectedEmail.value?.id) {
+        return;
+    }
+
+    await mailerStore.postMessage({
+        message: {
+            id: '0',
+            senderId: selectedEmail.value.id,
+            threadId: props.threadId,
+            title: values.title,
+            content: values.content,
+            data: {
+                entry: [],
+            },
+        },
+        recipients: [],
+    });
+
+    // Clear message field
+    state.value.title = '';
+    state.value.content = '';
+    state.value.recipients = [];
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) {
@@ -120,26 +145,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     }
 
     canSubmit.value = false;
-    await mailerStore
-        .postMessage({
-            message: {
-                id: '0',
-                senderId: selectedEmail.value?.id,
-                threadId: props.threadId,
-                title: event.data.title,
-                content: event.data.content,
-                data: {
-                    entry: [],
-                },
-            },
-            recipients: [],
-        })
-        .then(() => {
-            state.value.title = '';
-            state.value.content = '';
-            state.value.recipients = [];
-        })
-        .finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
+    await postMessage(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
 </script>
 
@@ -254,7 +260,44 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         >
             <template #compose>
                 <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-                    <!-- TODO add "add recipients" field -->
+                    <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.recipients"
+                                :placeholder="$t('common.recipient')"
+                                block
+                                multiple
+                                trailing
+                                value-attribute="label"
+                                searchable
+                                :options="state.recipients.filter((elem, index, self) => index === self.indexOf(elem))"
+                                :searchable-placeholder="$t('common.mail', 1)"
+                                creatable
+                                :disabled="!canSubmit"
+                            >
+                                <template #label>
+                                    {{
+                                        state.recipients.length > 0
+                                            ? state.recipients.map((r) => r.label).join(', ')
+                                            : $t('common.none_selected', [$t('common.recipient', 2)])
+                                    }}
+                                </template>
+
+                                <template #option-create="{ option }">
+                                    <span class="flex-shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
+                                </template>
+
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
+
                     <UFormGroup name="title" class="w-full flex-1">
                         <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
                             <UInput
@@ -272,7 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="message">
                         <ClientOnly>
-                            <DocEditor v-model="state.content" :disabled="!canSubmit" :min-height="250" />
+                            <DocEditor v-model="state.content" :disabled="!canSubmit" :min-height="225" />
                         </ClientOnly>
                     </UFormGroup>
 
