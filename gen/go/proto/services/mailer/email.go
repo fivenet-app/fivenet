@@ -330,6 +330,8 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 
+		tEmails := table.FivenetMailerEmails
+
 		label := jet.NULL
 		if req.Email.Label != nil {
 			label = jet.String(*req.Email.Label)
@@ -341,10 +343,10 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 
 		// Update email only when necessary and allowed
-		if strings.Compare(email.Email, req.Email.Email) != 0 {
-			if req.Email.EmailChanged != nil {
+		if strings.Compare(req.Email.Email, email.Email) != 0 {
+			if email.EmailChanged != nil {
 				// Check if last email change is at least 2 weeks ago
-				since := time.Since(req.Email.EmailChanged.AsTime())
+				since := time.Since(email.EmailChanged.AsTime())
 				if since < emailLastChangedInterval {
 					return nil, errorsmailer.ErrEmailChangeTooEarly
 				}
@@ -357,7 +359,6 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		}
 
 		condition := tEmails.ID.EQ(jet.Uint64(req.Email.Id))
-		tEmails := table.FivenetMailerEmails
 		if req.Email.Job != nil {
 			condition = condition.AND(tEmails.Job.EQ(jet.String(userInfo.Job)))
 		} else {

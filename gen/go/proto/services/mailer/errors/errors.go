@@ -15,7 +15,7 @@ var (
 	ErrEmailAccessDenied    = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessDenied")
 	ErrCantDeleteOwnEmail   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrCantDeleteOwnEmail")
 	ErrEmailAccessRequired  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessRequired")
-	ErrEmailChangeTooEarly  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailChangeTooEarly")
+	ErrEmailChangeTooEarly  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailChangeTooEarly.title;errors.MailerService.ErrEmailChangeTooEarly.content")
 
 	ErrRecipientMinium   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrRecipientMinium")
 	ErrInvalidRecipients = status.Error(codes.InvalidArgument, "errors.MailerService.ErrInvalidRecipients")

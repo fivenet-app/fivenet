@@ -2374,6 +2374,10 @@
             "ErrThreadAccessDenied": {
                 "title": "You don't have access to this thread!",
                 "content": "You might have been removed from the thread."
+            },
+            "ErrEmailChangeTooEarly": {
+                "title": "The e-mail has already been changed!",
+                "content": "E-mail addresses can only be changed every two weeks."
             }
         }
     },
