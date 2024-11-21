@@ -510,7 +510,8 @@
         "internal": "Intern",
         "label": "Bezeichnung",
         "additional_recipients": "Weitere Empfänger",
-        "last_updated": "Zuletzt Aktualisiert"
+        "last_updated": "Zuletzt Aktualisiert",
+        "domain": "Domain"
     },
     "components": {
         "partials": {
@@ -2379,6 +2380,10 @@
             "ErrEmailChangeTooEarly": {
                 "title": "Die E-Mail wurde bereits geändert!",
                 "content": "E-Mail Adressen können nur alle zwei Wochen geändert werden."
+            },
+            "ErrEmailDisabled": {
+                "title": "Die E-Mail Adresse wurde deaktiviert!",
+                "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
             }
         }
     },
