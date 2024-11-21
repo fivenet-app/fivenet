@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import EmailSettingsModal from '~/components/mailer/EmailSettingsModal.vue';
 import { canAccess } from '~/components/mailer/helpers';
-import MailerList from '~/components/mailer/MailerList.vue';
 import MailerThread from '~/components/mailer/MailerThread.vue';
 import TemplatesModal from '~/components/mailer/TemplatesModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
+import ThreadList from '~/components/mailer/ThreadList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
@@ -141,7 +141,11 @@ onBeforeMount(async () => {
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
                 <template #right>
                     <UButton
-                        v-if="selectedEmail && canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)"
+                        v-if="
+                            selectedEmail &&
+                            !selectedEmail.deactivated &&
+                            canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.WRITE)
+                        "
                         color="gray"
                         trailing-icon="i-mdi-plus"
                         @click="modal.open(ThreadCreateOrUpdateModal, {})"
@@ -225,6 +229,7 @@ onBeforeMount(async () => {
                 </div>
 
                 <UTabs
+                    v-if="!selectedEmail?.deactivated"
                     v-model="selectedTab"
                     :items="tabItems"
                     :ui="{ wrapper: 'w-full h-full space-y-0', list: { rounded: '' } }"
@@ -239,7 +244,7 @@ onBeforeMount(async () => {
                         :message="$t('errors.MailerService.ErrEmailDisabled.content')"
                     />
 
-                    <MailerList v-else v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
+                    <ThreadList v-else v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
                 </div>
 
                 <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
