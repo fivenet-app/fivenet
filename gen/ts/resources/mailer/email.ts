@@ -35,9 +35,9 @@ export interface Email {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: bool disabled = 5;
+     * @generated from protobuf field: bool deactivated = 5;
      */
-    disabled: boolean;
+    deactivated: boolean;
     /**
      * @generated from protobuf field: optional string job = 6;
      */
@@ -87,7 +87,7 @@ class Email$Type extends MessageType<Email> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "disabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "deactivated", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
@@ -102,7 +102,7 @@ class Email$Type extends MessageType<Email> {
     create(value?: PartialMessage<Email>): Email {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
-        message.disabled = false;
+        message.deactivated = false;
         message.email = "";
         message.internal = false;
         if (value !== undefined)
@@ -126,8 +126,8 @@ class Email$Type extends MessageType<Email> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* bool disabled */ 5:
-                    message.disabled = reader.bool();
+                case /* bool deactivated */ 5:
+                    message.deactivated = reader.bool();
                     break;
                 case /* optional string job */ 6:
                     message.job = reader.string();
@@ -180,9 +180,9 @@ class Email$Type extends MessageType<Email> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool disabled = 5; */
-        if (message.disabled !== false)
-            writer.tag(5, WireType.Varint).bool(message.disabled);
+        /* bool deactivated = 5; */
+        if (message.deactivated !== false)
+            writer.tag(5, WireType.Varint).bool(message.deactivated);
         /* optional string job = 6; */
         if (message.job !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.job);

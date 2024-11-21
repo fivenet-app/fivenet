@@ -52,7 +52,7 @@ func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*m
 			tThreadsRecipients.
 				INNER_JOIN(tEmails,
 					tEmails.ID.EQ(tThreadsRecipients.EmailID).
-						AND(tEmails.Disabled.IS_FALSE()),
+						AND(tEmails.Deactivated.IS_FALSE()),
 				),
 		).
 		WHERE(jet.AND(
@@ -83,7 +83,7 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 	stmt := tEmails.
 		SELECT(
 			tEmails.ID.AS("thread_recipient_email.email_id"),
-			tEmails.Disabled,
+			tEmails.Deactivated,
 			tEmails.Internal,
 		).
 		FROM(tEmails).

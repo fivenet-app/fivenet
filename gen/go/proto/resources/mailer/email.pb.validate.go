@@ -87,7 +87,7 @@ func (m *Email) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Disabled
+	// no validation rules for Deactivated
 
 	if l := utf8.RuneCountInString(m.GetEmail()); l < 6 || l > 80 {
 		err := EmailValidationError{

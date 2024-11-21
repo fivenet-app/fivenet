@@ -21,7 +21,7 @@ type fivenetMailerEmailsTable struct {
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
 	DeletedAt    mysql.ColumnTimestamp
-	Disabled     mysql.ColumnBool
+	Deactivated  mysql.ColumnBool
 	Job          mysql.ColumnString
 	UserID       mysql.ColumnInteger
 	Email        mysql.ColumnString
@@ -72,15 +72,15 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
-		DisabledColumn     = mysql.BoolColumn("disabled")
+		DeactivatedColumn  = mysql.BoolColumn("deactivated")
 		JobColumn          = mysql.StringColumn("job")
 		UserIDColumn       = mysql.IntegerColumn("user_id")
 		EmailColumn        = mysql.StringColumn("email")
 		EmailChangedColumn = mysql.TimestampColumn("email_changed")
 		LabelColumn        = mysql.StringColumn("label")
 		InternalColumn     = mysql.BoolColumn("internal")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
 	)
 
 	return fivenetMailerEmailsTable{
@@ -91,7 +91,7 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
 		DeletedAt:    DeletedAtColumn,
-		Disabled:     DisabledColumn,
+		Deactivated:  DeactivatedColumn,
 		Job:          JobColumn,
 		UserID:       UserIDColumn,
 		Email:        EmailColumn,

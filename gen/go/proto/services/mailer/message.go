@@ -165,6 +165,11 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	// Prevent disabled emails from sending messages
+	if !userInfo.SuperUser && senderEmail.Deactivated {
+		return nil, errorsmailer.ErrEmailDisabled
+	}
+
 	var emails []*mailer.ThreadRecipientEmail
 	if len(req.Recipients) > 0 {
 		emails, err = s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)

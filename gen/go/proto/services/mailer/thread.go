@@ -261,6 +261,11 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	// Prevent disabled emails from creating threads
+	if !userInfo.SuperUser && senderEmail.Deactivated {
+		return nil, errorsmailer.ErrEmailDisabled
+	}
+
 	emails, err := s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
-  `disabled` tinyint(1) DEFAULT 0,
+  `deactivated` tinyint(1) DEFAULT 0,
   `job` varchar(40) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `email` varchar(80) NOT NULL,

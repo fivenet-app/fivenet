@@ -43,6 +43,8 @@ export interface MailerState {
     emails: Email[];
     selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
+
+    addressBook: { label: string; email: string }[];
 }
 
 export const useMailerStore = defineStore('mailer', {
@@ -60,9 +62,11 @@ export const useMailerStore = defineStore('mailer', {
             emails: [],
             selectedEmail: undefined,
             selectedThread: undefined,
+
+            addressBook: [],
         }) as MailerState,
     persist: {
-        pick: ['draft'],
+        pick: ['draft', 'addressBook'],
     },
     actions: {
         async handleEvent(event: MailerEvent): Promise<void> {
@@ -519,6 +523,11 @@ export const useMailerStore = defineStore('mailer', {
         hasPrivateEmail: (state) => {
             const { activeChar } = useAuth();
             return !!state.emails.find((e) => e.userId === activeChar.value?.userId);
+        },
+
+        getPrivateEmail: (state) => {
+            const { activeChar } = useAuth();
+            return state.emails.find((e) => e.userId === activeChar.value!.userId);
         },
     },
 });

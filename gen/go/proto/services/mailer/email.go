@@ -52,7 +52,7 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		condition = condition.AND(jet.AND(
 			tEmails.DeletedAt.IS_NULL(),
-			tEmails.Disabled.IS_FALSE(),
+			// Include deactivated e-mails
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
@@ -115,7 +115,7 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 		return resp, nil
 	}
 
-	emails, err := ListUserEmails(ctx, s.db, userInfo, req.Pagination)
+	emails, err := ListUserEmails(ctx, s.db, userInfo, req.Pagination, true)
 	if err != nil {
 		return nil, err
 	}
@@ -126,13 +126,17 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 	return resp, nil
 }
 
-func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, pag *database.PaginationRequest) ([]*mailer.Email, error) {
+func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, pag *database.PaginationRequest, includeDisabled bool) ([]*mailer.Email, error) {
 	condition := jet.Bool(true)
+	baseCondition := tEmails.DeletedAt.IS_NULL()
+	if !includeDisabled {
+		baseCondition = baseCondition.AND(tEmails.Deactivated.IS_FALSE())
+	}
+
 	if !userInfo.SuperUser {
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		condition = condition.AND(jet.AND(
-			tEmails.DeletedAt.IS_NULL(),
-			tEmails.Disabled.IS_FALSE(),
+			baseCondition,
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
@@ -161,6 +165,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 			tEmails.CreatedAt,
 			tEmails.UpdatedAt,
 			tEmails.DeletedAt,
+			tEmails.Deactivated,
 			tEmails.Job,
 			tEmails.UserID,
 			tEmails.Email,
@@ -216,6 +221,7 @@ func (s *Server) getEmailByCondition(ctx context.Context, tx qrm.DB, condition j
 			tEmails.CreatedAt,
 			tEmails.UpdatedAt,
 			tEmails.DeletedAt,
+			tEmails.Deactivated,
 			tEmails.Job,
 			tEmails.UserID,
 			tEmails.Email,
@@ -291,10 +297,6 @@ func (s *Server) GetEmail(ctx context.Context, req *GetEmailRequest) (*GetEmailR
 
 	email, err := s.getEmail(ctx, req.Id, true, true)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	if email.Disabled {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
@@ -384,6 +386,10 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			}
 
 			if email != nil {
+				if email.Deactivated {
+					return nil, errorsmailer.ErrEmailDisabled
+				}
+
 				return nil, errorsmailer.ErrAddresseAlreadyTaken
 			}
 		}
@@ -406,6 +412,10 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		email, err := s.getEmail(ctx, req.Email.Id, false, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		if !userInfo.SuperUser && email.Deactivated {
+			return nil, errorsmailer.ErrEmailDisabled
 		}
 
 		tEmails := table.FivenetMailerEmails

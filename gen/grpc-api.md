@@ -5720,7 +5720,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| disabled | [bool](#bool) |  |  |
+| deactivated | [bool](#bool) |  |  |
 | job | [string](#string) | optional |  |
 | user_id | [int32](#int32) | optional |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |

@@ -6,6 +6,7 @@ import MailerThread from '~/components/mailer/MailerThread.vue';
 import TemplatesModal from '~/components/mailer/TemplatesModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
@@ -112,11 +113,11 @@ const route = useRoute();
 const router = useRouter();
 
 function updateQuery(): void {
-    if (!selectedThread.value) {
+    if (!selectedThread.value || !selectedEmail.value) {
         router.replace({ query: {} });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { thread: selectedThread.value.id }, hash: '#' });
+        router.replace({ query: { email: selectedEmail.value?.id ?? '0', thread: selectedThread.value.id }, hash: '#' });
     }
 }
 
@@ -183,6 +184,13 @@ onBeforeMount(async () => {
                                         $t('common.none')
                                     }}
                                 </span>
+
+                                <UBadge
+                                    v-if="selectedEmail?.deactivated"
+                                    color="red"
+                                    size="xs"
+                                    :label="$t('common.disabled')"
+                                />
                             </template>
 
                             <template #option="{ option }">
@@ -198,6 +206,13 @@ onBeforeMount(async () => {
                                         $t('common.none')
                                     }}
                                 </span>
+
+                                <UBadge
+                                    v-if="selectedEmail?.deactivated"
+                                    color="red"
+                                    size="xs"
+                                    :label="$t('common.disabled')"
+                                />
                             </template>
 
                             <template #option-empty="{ query: search }">
@@ -218,7 +233,13 @@ onBeforeMount(async () => {
 
             <template v-if="selectedEmail">
                 <div class="relative flex-1 overflow-x-auto">
-                    <MailerList v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
+                    <DataErrorBlock
+                        v-if="selectedEmail.deactivated"
+                        :title="$t('errors.MailerService.ErrEmailDisabled.title')"
+                        :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+                    />
+
+                    <MailerList v-else v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
                 </div>
 
                 <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">

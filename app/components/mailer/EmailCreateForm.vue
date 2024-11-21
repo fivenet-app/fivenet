@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { GetEmailProposalsResponse } from '~~/gen/ts/services/mailer/mailer';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -32,7 +33,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { activeChar } = useAuth();
+const { activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificatorStore();
 
@@ -84,6 +85,7 @@ const schema = z.object({
             message: t('errors.MailerService.ErrAddresseInvalid'),
         }),
     label: z.string().max(128).optional(),
+    deactivated: z.boolean(),
     internal: z.boolean(),
     access: z.custom<Access>(),
 });
@@ -93,6 +95,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     email: '',
     domain: '',
+    deactivated: false,
     internal: false,
     access: {
         jobs: [],
@@ -102,16 +105,17 @@ const state = reactive<Schema>({
 });
 
 function setFromProps(): void {
-    if (!props.modelValue) {
+    if (!props.modelValue || !props.modelValue?.email) {
         return;
     }
 
-    const split = props.modelValue.email.split('@');
+    const split = props.modelValue?.email.split('@');
     if (split[0] && split[1]) {
         state.email = split[0];
         state.domain = split[1];
     }
 
+    state.deactivated = props.modelValue.deactivated;
     state.internal = props.modelValue.internal;
     if (props.modelValue.access) {
         state.access = props.modelValue.access;
@@ -128,7 +132,7 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
             email: values.email + '@' + values.domain,
             internal: values.internal,
             label: values.label !== '' ? values.label : undefined,
-            disabled: false,
+            deactivated: values.deactivated,
             job: props.modelValue?.job ?? activeChar.value!.job,
             userId: props.modelValue?.userId ?? activeChar.value!.userId,
             access: {
@@ -223,6 +227,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UInput v-model="state.label" type="text" :disabled="disabled" />
         </UFormGroup>
 
+        <UFormGroup
+            v-if="modelValue?.id !== undefined && (isSuperuser || state.deactivated)"
+            name="disabled"
+            :label="$t('common.disabled')"
+        >
+            <UToggle v-model="state.deactivated" :disabled="disabled" />
+        </UFormGroup>
+
         <UFormGroup v-if="!personalEmail" name="access" :label="$t('common.access')">
             <AccessManager
                 v-model:jobs="state.access!.jobs"
@@ -239,8 +251,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
         </UFormGroup>
 
-        <UFormGroup v-if="!disabled">
-            <UButton type="submit" block :label="modelValue?.id === '0' ? $t('common.create') : $t('common.update')" />
+        <UFormGroup>
+            <DataErrorBlock
+                v-if="state?.deactivated"
+                :title="$t('errors.MailerService.ErrEmailDisabled.title')"
+                :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+            />
+
+            <UButton
+                v-if="!disabled"
+                type="submit"
+                block
+                :label="modelValue?.id === '0' ? $t('common.create') : $t('common.update')"
+            />
         </UFormGroup>
     </UForm>
 </template>

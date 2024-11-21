@@ -2380,6 +2380,10 @@
             "ErrEmailChangeTooEarly": {
                 "title": "The e-mail has already been changed!",
                 "content": "E-mail addresses can only be changed every two weeks."
+            },
+            "ErrEmailDisabled": {
+                "title": "This e-mail address has been disabled!",
+                "content": "Please contact the FiveNet administration for help on this."
             }
         }
     },

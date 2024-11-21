@@ -22,7 +22,7 @@ definePageMeta({
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { emails, hasPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
+const { emails, getPrivateEmail, hasPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
 
 const { attr, can, isSuperuser } = useAuth();
 
@@ -90,6 +90,12 @@ const creating = ref(false);
                     :retry="async () => await listEmails()"
                 />
                 <DataPendingBlock v-else-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />
+
+                <DataErrorBlock
+                    v-else-if="getPrivateEmail?.deactivated"
+                    :title="$t('errors.MailerService.ErrEmailDisabled.title')"
+                    :message="$t('errors.MailerService.ErrEmailDisabled.content')"
+                />
 
                 <div v-else class="flex flex-1 flex-col items-center">
                     <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
@@ -179,7 +185,7 @@ const creating = ref(false);
                                 v-if="
                                     selectedEmail &&
                                     selectedEmail.id !== '0' &&
-                                    selectedEmail.userId === undefined &&
+                                    selectedEmail.job !== undefined &&
                                     canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)
                                 "
                                 color="red"
@@ -203,18 +209,35 @@ const creating = ref(false);
                         <EmailCreateForm
                             v-model="selectedEmail"
                             :personal-email="selectedEmail.userId !== undefined"
-                            :disabled="!canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)"
+                            :disabled="
+                                !canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE) ||
+                                (!isSuperuser && selectedEmail.deactivated)
+                            "
                         />
                     </UDashboardPanelContent>
                 </template>
 
-                <div
-                    v-else
-                    class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
-                >
-                    <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
-                    <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
-                </div>
+                <template v-else>
+                    <UDashboardNavbar :title="$t('common.mail')">
+                        <template #right>
+                            <UButton
+                                :label="$t('common.back')"
+                                icon="i-mdi-arrow-back"
+                                color="black"
+                                @click="creating = false"
+                            />
+                        </template>
+                    </UDashboardNavbar>
+
+                    <UDashboardPanelContent>
+                        <div
+                            class="hidden flex-1 flex-col items-center justify-center gap-2 text-gray-400 lg:flex dark:text-gray-500"
+                        >
+                            <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
+                            <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
+                        </div>
+                    </UDashboardPanelContent>
+                </template>
             </UDashboardPanel>
         </template>
     </UDashboardPage>

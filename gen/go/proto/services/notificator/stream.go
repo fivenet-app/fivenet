@@ -35,7 +35,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	// Clone user info and disable superuser
 	cloned := currentUserInfo.Clone()
 	cloned.SuperUser = false
-	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, &cloned, nil)
+	emails, err := pbmailer.ListUserEmails(srv.Context(), s.db, &cloned, nil, false)
 	if err != nil {
 		return ErrFailedStream
 	}

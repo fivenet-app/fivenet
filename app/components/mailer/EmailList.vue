@@ -78,18 +78,19 @@ defineShortcuts({
                         selectedEmail && selectedEmail.id === email.id
                             ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
                             : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+                        email.deactivated ? 'border-red-500 bg-red-100 dark:border-red-400 dark:bg-red-900/25' : '',
                     ]"
                     @click="selectedEmail = email"
                 >
                     <div
-                        class="flex items-center justify-between"
+                        class="flex items-center justify-between gap-3"
                         :class="[selectedEmail && selectedEmail.id === email.id && 'font-semibold']"
                     >
-                        <div class="flex items-center gap-3 font-semibold">
-                            <span class="truncate">
-                                {{ email.email }}
-                            </span>
-                        </div>
+                        <span class="truncate font-semibold">
+                            {{ email.email }}
+                        </span>
+
+                        <UBadge v-if="email.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
                     </div>
                     <div class="flex items-center justify-between">
                         <p>{{ $t('common.label') }}: {{ email.label ?? $t('common.na') }}</p>
