@@ -394,7 +394,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			}
 		}
 
-		lastId, err := s.createEmail(ctx, tx, req.Email)
+		lastId, err := s.createEmail(ctx, tx, req.Email, userInfo)
 		if err != nil {
 			return nil, err
 		}
@@ -428,6 +428,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 		sets := []interface{}{
 			tEmails.Label.SET(jet.StringExp(label)),
 			tEmails.Internal.SET(jet.Bool(req.Email.Internal)),
+			tEmails.CreatorID.SET(jet.Int32(userInfo.UserId)),
 		}
 
 		// Update email only when necessary and allowed
@@ -504,7 +505,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 	return resp, nil
 }
 
-func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email) (uint64, error) {
+func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email, userInfo *userinfo.UserInfo) (uint64, error) {
 	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		INSERT(
@@ -513,6 +514,7 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 			tEmails.Email,
 			tEmails.Label,
 			tEmails.Internal,
+			tEmails.CreatorID,
 		).
 		VALUES(
 			email.Job,
@@ -520,6 +522,7 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 			email.Email,
 			email.Label,
 			email.Internal,
+			userInfo.UserId,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

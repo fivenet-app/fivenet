@@ -2134,6 +2134,8 @@
 | weight | [uint32](#uint32) |  |  |
 | title | [string](#string) |  | @sanitize |
 | description | [string](#string) |  | @sanitize |
+| color | [string](#string) | optional | @sanitize: method=StripTags |
+| icon | [string](#string) | optional | @sanitize: method=StripTags |
 | content_title | [string](#string) |  | @gotags: alias:&#34;content_title&#34; |
 | content | [string](#string) |  | @gotags: alias:&#34;content&#34; |
 | state | [string](#string) |  | @gotags: alias:&#34;state&#34; |
@@ -2235,6 +2237,8 @@
 | weight | [uint32](#uint32) |  |  |
 | title | [string](#string) |  | @sanitize |
 | description | [string](#string) |  | @sanitize |
+| color | [string](#string) | optional | @sanitize: method=StripTags |
+| icon | [string](#string) | optional | @sanitize: method=StripTags |
 | schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:&#34;schema&#34; |
 | creator_job | [string](#string) |  |  |
 | creator_job_label | [string](#string) | optional |  |

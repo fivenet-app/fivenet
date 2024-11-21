@@ -30,7 +30,12 @@ watch(categories, () => {
     }
 
     items.value =
-        categories.value?.map((v) => ({ title: v?.name, description: v?.description, icon: v.icon, color: v.color })) ?? [];
+        categories.value?.map((v) => ({
+            title: v?.name,
+            description: v?.description,
+            icon: v.icon ?? 'i-mdi-shape',
+            color: v.color,
+        })) ?? [];
 });
 
 const modal = useModal();

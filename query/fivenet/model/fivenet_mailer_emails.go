@@ -23,4 +23,5 @@ type FivenetMailerEmails struct {
 	EmailChanged *time.Time `json:"email_changed"`
 	Label        *string    `json:"label"`
 	Internal     *bool      `json:"internal"`
+	CreatorID    *int32     `json:"creator_id"`
 }

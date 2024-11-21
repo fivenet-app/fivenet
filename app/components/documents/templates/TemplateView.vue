@@ -135,9 +135,14 @@ const contentAccessTypes: AccessType[] = [
         <template v-else>
             <div class="mt-2 sm:flex sm:items-center">
                 <div>
-                    <h2 class="text-2xl">
-                        {{ template.title }}
+                    <h2 class="inline-flex items-center gap-2 text-2xl">
+                        <UIcon :name="template.icon ?? 'i-mdi-file-outline'" :color="template.color" />
+
+                        <span>
+                            {{ template.title }}
+                        </span>
                     </h2>
+
                     <p class="text-base">
                         <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
                     </p>

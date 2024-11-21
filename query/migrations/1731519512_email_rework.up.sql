@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   `email_changed` datetime(3) DEFAULT NULL,
   `label` varchar(128) DEFAULT NULL,
   `internal` tinyint(1) DEFAULT 0,
+  `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_mailer_emails_email` (`email`),
   UNIQUE KEY `idx_fivenet_mailer_emails_job_user_id` (`job`, `user_id`),

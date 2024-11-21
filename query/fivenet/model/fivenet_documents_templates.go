@@ -20,6 +20,8 @@ type FivenetDocumentsTemplates struct {
 	CategoryID   *uint64    `json:"category_id"`
 	Title        string     `json:"title"`
 	Description  string     `json:"description"`
+	Color        *string    `json:"color"`
+	Icon         *string    `json:"icon"`
 	ContentTitle string     `json:"content_title"`
 	Content      string     `json:"content"`
 	State        string     `json:"state"`

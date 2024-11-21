@@ -22,20 +22,27 @@ message Template {
   string title = 6 [(validate.rules).string.min_len = 3];
   // @sanitize
   string description = 7 [(validate.rules).string.max_len = 255];
-  string content_title = 8 [(validate.rules).string = {
+  // @sanitize: method=StripTags
+  optional string color = 8 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 7,
+  }];
+  // @sanitize: method=StripTags
+  optional string icon = 9 [(validate.rules).string.max_len = 128];
+  string content_title = 10 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 10240
   }]; // @gotags: alias:"content_title"
-  string content = 9 [(validate.rules).string = {
+  string content = 11 [(validate.rules).string = {
     min_len: 0,
     max_bytes: 1500000
   }]; // @gotags: alias:"content"
-  string state = 10 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
-  resources.documents.TemplateSchema schema = 11; // @gotags: alias:"schema"
-  string creator_job = 12 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 13 [(validate.rules).string.max_len = 50];
-  repeated TemplateJobAccess job_access = 14 [(validate.rules).repeated.max_items = 20];
-  resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
+  string state = 12 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
+  resources.documents.TemplateSchema schema = 13; // @gotags: alias:"schema"
+  string creator_job = 14 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 15 [(validate.rules).string.max_len = 50];
+  repeated TemplateJobAccess job_access = 16 [(validate.rules).repeated.max_items = 20];
+  resources.documents.DocumentAccess content_access = 17; // @gotags: alias:"access"
 }
 
 message TemplateShort {
@@ -48,9 +55,16 @@ message TemplateShort {
   string title = 6 [(validate.rules).string.min_len = 3];
   // @sanitize
   string description = 7 [(validate.rules).string.max_len = 255];
-  resources.documents.TemplateSchema schema = 8; // @gotags: alias:"schema"
-  string creator_job = 9 [(validate.rules).string.max_len = 20];
-  optional string creator_job_label = 10 [(validate.rules).string.max_len = 50];
+  // @sanitize: method=StripTags
+  optional string color = 8 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 7,
+  }];
+  // @sanitize: method=StripTags
+  optional string icon = 9 [(validate.rules).string.max_len = 128];
+  resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
+  string creator_job = 11 [(validate.rules).string.max_len = 20];
+  optional string creator_job_label = 12 [(validate.rules).string.max_len = 50];
 }
 
 message TemplateSchema {

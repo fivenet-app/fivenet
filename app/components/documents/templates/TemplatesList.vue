@@ -30,7 +30,12 @@ async function listTemplates(): Promise<TemplateShort[]> {
 const items = ref<CardElements>([]);
 watch(templates, () =>
     templates.value?.forEach((v) => {
-        items.value.push({ title: v?.title, description: v?.description });
+        items.value.push({
+            title: v?.title,
+            description: v?.description,
+            icon: v.icon ?? 'i-mdi-file-outline',
+            color: v.color ?? 'primary',
+        });
     }),
 );
 
@@ -57,6 +62,6 @@ function selected(idx: number): TemplateShort | undefined {
     <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 
     <div v-else class="flex justify-center">
-        <CardsList :class="$attrs.class" :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
+        <CardsList :class="$attrs.class" :items="items" @selected="$emit('selected', selected($event))" />
     </div>
 </template>

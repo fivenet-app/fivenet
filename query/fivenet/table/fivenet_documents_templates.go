@@ -25,6 +25,8 @@ type fivenetDocumentsTemplatesTable struct {
 	CategoryID   mysql.ColumnInteger
 	Title        mysql.ColumnString
 	Description  mysql.ColumnString
+	Color        mysql.ColumnString
+	Icon         mysql.ColumnString
 	ContentTitle mysql.ColumnString
 	Content      mysql.ColumnString
 	State        mysql.ColumnString
@@ -79,14 +81,16 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CategoryIDColumn   = mysql.IntegerColumn("category_id")
 		TitleColumn        = mysql.StringColumn("title")
 		DescriptionColumn  = mysql.StringColumn("description")
+		ColorColumn        = mysql.StringColumn("color")
+		IconColumn         = mysql.StringColumn("icon")
 		ContentTitleColumn = mysql.StringColumn("content_title")
 		ContentColumn      = mysql.StringColumn("content")
 		StateColumn        = mysql.StringColumn("state")
 		AccessColumn       = mysql.StringColumn("access")
 		SchemaColumn       = mysql.StringColumn("schema")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorJobColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorJobColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -101,6 +105,8 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CategoryID:   CategoryIDColumn,
 		Title:        TitleColumn,
 		Description:  DescriptionColumn,
+		Color:        ColorColumn,
+		Icon:         IconColumn,
 		ContentTitle: ContentTitleColumn,
 		Content:      ContentColumn,
 		State:        StateColumn,

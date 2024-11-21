@@ -9,7 +9,15 @@ import (
 
 func (m *Template) Sanitize() error {
 
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.StripTags(*m.Color)
+	}
+
 	m.Description = htmlsanitizer.Sanitize(m.Description)
+
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+	}
 
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 
@@ -18,7 +26,15 @@ func (m *Template) Sanitize() error {
 
 func (m *TemplateShort) Sanitize() error {
 
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.StripTags(*m.Color)
+	}
+
 	m.Description = htmlsanitizer.Sanitize(m.Description)
+
+	if m.Icon != nil {
+		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
+	}
 
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 

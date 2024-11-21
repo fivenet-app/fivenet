@@ -55,35 +55,47 @@ export interface Template {
      */
     description: string;
     /**
-     * @generated from protobuf field: string content_title = 8;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string color = 8;
+     */
+    color?: string;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string icon = 9;
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: string content_title = 10;
      */
     contentTitle: string; // @gotags: alias:"content_title"
     /**
-     * @generated from protobuf field: string content = 9;
+     * @generated from protobuf field: string content = 11;
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: string state = 10;
+     * @generated from protobuf field: string state = 12;
      */
     state: string; // @gotags: alias:"state"
     /**
-     * @generated from protobuf field: resources.documents.TemplateSchema schema = 11;
+     * @generated from protobuf field: resources.documents.TemplateSchema schema = 13;
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: string creator_job = 12;
+     * @generated from protobuf field: string creator_job = 14;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 13;
+     * @generated from protobuf field: optional string creator_job_label = 15;
      */
     creatorJobLabel?: string;
     /**
-     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 14;
+     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 16;
      */
     jobAccess: TemplateJobAccess[];
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 15;
+     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 17;
      */
     contentAccess?: DocumentAccess; // @gotags: alias:"access"
 }
@@ -124,15 +136,27 @@ export interface TemplateShort {
      */
     description: string;
     /**
-     * @generated from protobuf field: resources.documents.TemplateSchema schema = 8;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string color = 8;
+     */
+    color?: string;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string icon = 9;
+     */
+    icon?: string;
+    /**
+     * @generated from protobuf field: resources.documents.TemplateSchema schema = 10;
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: string creator_job = 9;
+     * @generated from protobuf field: string creator_job = 11;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional string creator_job_label = 10;
+     * @generated from protobuf field: optional string creator_job_label = 12;
      */
     creatorJobLabel?: string;
 }
@@ -255,14 +279,16 @@ class Template$Type extends MessageType<Template> {
             { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 8, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "10240" } } } },
-            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "0", maxBytes: "1500000" } } } },
-            { no: 10, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 11, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 13, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 14, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 15, name: "content_access", kind: "message", T: () => DocumentAccess }
+            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "7" } } } },
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 10, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "10240" } } } },
+            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "0", maxBytes: "1500000" } } } },
+            { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 13, name: "schema", kind: "message", T: () => TemplateSchema },
+            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 16, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess }
         ]);
     }
     create(value?: PartialMessage<Template>): Template {
@@ -306,28 +332,34 @@ class Template$Type extends MessageType<Template> {
                 case /* string description */ 7:
                     message.description = reader.string();
                     break;
-                case /* string content_title */ 8:
+                case /* optional string color */ 8:
+                    message.color = reader.string();
+                    break;
+                case /* optional string icon */ 9:
+                    message.icon = reader.string();
+                    break;
+                case /* string content_title */ 10:
                     message.contentTitle = reader.string();
                     break;
-                case /* string content */ 9:
+                case /* string content */ 11:
                     message.content = reader.string();
                     break;
-                case /* string state */ 10:
+                case /* string state */ 12:
                     message.state = reader.string();
                     break;
-                case /* resources.documents.TemplateSchema schema */ 11:
+                case /* resources.documents.TemplateSchema schema */ 13:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* string creator_job */ 12:
+                case /* string creator_job */ 14:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 13:
+                case /* optional string creator_job_label */ 15:
                     message.creatorJobLabel = reader.string();
                     break;
-                case /* repeated resources.documents.TemplateJobAccess job_access */ 14:
+                case /* repeated resources.documents.TemplateJobAccess job_access */ 16:
                     message.jobAccess.push(TemplateJobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* resources.documents.DocumentAccess content_access */ 15:
+                case /* resources.documents.DocumentAccess content_access */ 17:
                     message.contentAccess = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
                     break;
                 default:
@@ -363,30 +395,36 @@ class Template$Type extends MessageType<Template> {
         /* string description = 7; */
         if (message.description !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.description);
-        /* string content_title = 8; */
+        /* optional string color = 8; */
+        if (message.color !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 9; */
+        if (message.icon !== undefined)
+            writer.tag(9, WireType.LengthDelimited).string(message.icon);
+        /* string content_title = 10; */
         if (message.contentTitle !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.contentTitle);
-        /* string content = 9; */
+            writer.tag(10, WireType.LengthDelimited).string(message.contentTitle);
+        /* string content = 11; */
         if (message.content !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.content);
-        /* string state = 10; */
+            writer.tag(11, WireType.LengthDelimited).string(message.content);
+        /* string state = 12; */
         if (message.state !== "")
-            writer.tag(10, WireType.LengthDelimited).string(message.state);
-        /* resources.documents.TemplateSchema schema = 11; */
+            writer.tag(12, WireType.LengthDelimited).string(message.state);
+        /* resources.documents.TemplateSchema schema = 13; */
         if (message.schema)
-            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 12; */
+            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 14; */
         if (message.creatorJob !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 13; */
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 15; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(13, WireType.LengthDelimited).string(message.creatorJobLabel);
-        /* repeated resources.documents.TemplateJobAccess job_access = 14; */
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* repeated resources.documents.TemplateJobAccess job_access = 16; */
         for (let i = 0; i < message.jobAccess.length; i++)
-            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* resources.documents.DocumentAccess content_access = 15; */
+            TemplateJobAccess.internalBinaryWrite(message.jobAccess[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.DocumentAccess content_access = 17; */
         if (message.contentAccess)
-            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+            DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -408,9 +446,11 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 8, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 10, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 8, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "7" } } } },
+            { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 10, name: "schema", kind: "message", T: () => TemplateSchema },
+            { no: 11, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 12, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
@@ -450,13 +490,19 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
                 case /* string description */ 7:
                     message.description = reader.string();
                     break;
-                case /* resources.documents.TemplateSchema schema */ 8:
+                case /* optional string color */ 8:
+                    message.color = reader.string();
+                    break;
+                case /* optional string icon */ 9:
+                    message.icon = reader.string();
+                    break;
+                case /* resources.documents.TemplateSchema schema */ 10:
                     message.schema = TemplateSchema.internalBinaryRead(reader, reader.uint32(), options, message.schema);
                     break;
-                case /* string creator_job */ 9:
+                case /* string creator_job */ 11:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional string creator_job_label */ 10:
+                case /* optional string creator_job_label */ 12:
                     message.creatorJobLabel = reader.string();
                     break;
                 default:
@@ -492,15 +538,21 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         /* string description = 7; */
         if (message.description !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.description);
-        /* resources.documents.TemplateSchema schema = 8; */
+        /* optional string color = 8; */
+        if (message.color !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 9; */
+        if (message.icon !== undefined)
+            writer.tag(9, WireType.LengthDelimited).string(message.icon);
+        /* resources.documents.TemplateSchema schema = 10; */
         if (message.schema)
-            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 9; */
+            TemplateSchema.internalBinaryWrite(message.schema, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 11; */
         if (message.creatorJob !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional string creator_job_label = 10; */
+            writer.tag(11, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional string creator_job_label = 12; */
         if (message.creatorJobLabel !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.creatorJobLabel);
+            writer.tag(12, WireType.LengthDelimited).string(message.creatorJobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

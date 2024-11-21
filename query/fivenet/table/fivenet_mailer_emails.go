@@ -28,6 +28,7 @@ type fivenetMailerEmailsTable struct {
 	EmailChanged mysql.ColumnTimestamp
 	Label        mysql.ColumnString
 	Internal     mysql.ColumnBool
+	CreatorID    mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -79,8 +80,9 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		EmailChangedColumn = mysql.TimestampColumn("email_changed")
 		LabelColumn        = mysql.StringColumn("label")
 		InternalColumn     = mysql.BoolColumn("internal")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn}
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn, CreatorIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DeactivatedColumn, JobColumn, UserIDColumn, EmailColumn, EmailChangedColumn, LabelColumn, InternalColumn, CreatorIDColumn}
 	)
 
 	return fivenetMailerEmailsTable{
@@ -98,6 +100,7 @@ func newFivenetMailerEmailsTableImpl(schemaName, tableName, alias string) fivene
 		EmailChanged: EmailChangedColumn,
 		Label:        LabelColumn,
 		Internal:     InternalColumn,
+		CreatorID:    CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

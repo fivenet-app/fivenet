@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import { useAuthStore } from '~/store/auth';
@@ -38,6 +41,8 @@ const schema = z.object({
     weight: z.coerce.number().min(0).max(999_999),
     title: z.string().min(3).max(255),
     description: z.string().min(3).max(255),
+    color: z.string().max(7),
+    icon: z.string().max(64).optional(),
     contentTitle: z.string().min(3).max(2048),
     content: z.string().min(3).max(1500000),
     contentState: z.union([z.string().min(1).max(2048), z.string().length(0)]),
@@ -55,6 +60,7 @@ const state = reactive<Schema>({
     weight: 0,
     title: '',
     description: '',
+    color: 'primary',
     contentTitle: '',
     content: '',
     contentState: '',
@@ -120,6 +126,8 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             weight: values.weight,
             title: values.title,
             description: values.description,
+            color: values.color,
+            icon: values.icon,
             contentTitle: values.contentTitle,
             content: values.content,
             state: values.contentState,
@@ -183,6 +191,8 @@ function setValuesFromTemplate(tpl: Template): void {
     state.weight = tpl.weight;
     state.title = tpl.title;
     state.description = tpl.description;
+    state.color = tpl.color ?? 'primary';
+    state.icon = tpl.icon;
     state.contentTitle = tpl.contentTitle;
     state.content = tpl.content;
     state.contentState = tpl.state;
@@ -283,6 +293,20 @@ const categoriesLoading = ref(false);
 
                 <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`" required>
                     <UTextarea v-model="state.description" name="description" :rows="4" :label="$t('common.description')" />
+                </UFormGroup>
+
+                <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
+                    <div class="flex flex-1 gap-1">
+                        <ColorPickerTW v-model="state.color" class="flex-1" />
+                    </div>
+                </UFormGroup>
+
+                <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                    <div class="flex flex-1 gap-1">
+                        <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="FileOutlineIcon" />
+
+                        <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                    </div>
                 </UFormGroup>
             </div>
 
