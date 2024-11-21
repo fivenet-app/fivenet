@@ -3,6 +3,7 @@ import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
 import EmailList from '~/components/mailer/EmailList.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/store/mailer';
@@ -21,7 +22,7 @@ definePageMeta({
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { emails, hasPrivateEmail, loaded, selectedEmail } = storeToRefs(mailerStore);
+const { emails, hasPrivateEmail, loaded, error, selectedEmail } = storeToRefs(mailerStore);
 
 const { attr, can, isSuperuser } = useAuth();
 
@@ -83,7 +84,13 @@ const creating = ref(false);
             <UDashboardNavbar :title="$t('common.mail')" />
 
             <UDashboardPanelContent>
-                <DataPendingBlock v-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.mail', 2)])"
+                    :retry="async () => await listEmails()"
+                />
+                <DataPendingBlock v-else-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />
+
                 <div v-else class="flex flex-1 flex-col items-center">
                     <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
                         <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
@@ -119,7 +126,7 @@ const creating = ref(false);
                 </UDashboardNavbar>
 
                 <div class="relative flex-1 overflow-x-auto">
-                    <EmailList v-model="selectedEmail" :emails="emails" :loaded="true">
+                    <EmailList v-model="selectedEmail" :emails="emails" :loaded="loaded">
                         <Pagination
                             v-if="emails.length > (pagination?.pageSize ?? 20)"
                             v-model="page"

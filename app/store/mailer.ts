@@ -32,11 +32,14 @@ const logger = useLogger('💬 Mailer');
 
 export interface MailerState {
     loaded: boolean;
+    error: Error | undefined;
+
     draft: {
         title: string;
         content: string;
         recipients: { label: string }[];
     };
+
     emails: Email[];
     selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
@@ -46,11 +49,14 @@ export const useMailerStore = defineStore('mailer', {
     state: () =>
         ({
             loaded: false,
+            error: undefined,
+
             draft: {
                 title: '',
                 content: '',
                 recipients: [],
             },
+
             emails: [],
             selectedEmail: undefined,
             selectedThread: undefined,
@@ -142,6 +148,8 @@ export const useMailerStore = defineStore('mailer', {
 
         // Emails
         async listEmails(all?: boolean, offset?: number): Promise<ListEmailsResponse> {
+            this.error = undefined;
+
             try {
                 const call = getGRPCMailerClient().listEmails({
                     pagination: {
@@ -167,6 +175,7 @@ export const useMailerStore = defineStore('mailer', {
                 this.loaded = true;
                 return response;
             } catch (e) {
+                this.error = e as RpcError;
                 handleGRPCError(e as RpcError);
                 throw e;
             }
