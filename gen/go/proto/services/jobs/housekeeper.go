@@ -48,18 +48,6 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		return nil
 	})
 
-	p.CronHandlers.Add("jobs.timeclock_handling", func(ctx context.Context, data *cron.CronjobData) error {
-		ctx, span := s.tracer.Start(ctx, "jobs-timeclock-handling")
-		defer span.End()
-
-		if err := s.timeclockHandler(ctx); err != nil {
-			s.logger.Error("error during timeclock handling", zap.Error(err))
-			return err
-		}
-
-		return nil
-	})
-
 	return s
 }
 
@@ -76,26 +64,6 @@ func (s *Housekeeper) timeclockCleanup(ctx context.Context) error {
 			),
 			tTimeClock.StartTime.IS_NOT_NULL(),
 			tTimeClock.EndTime.IS_NULL(),
-		))
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Housekeeper) timeclockHandler(ctx context.Context) error {
-	stmt := tTimeClock.
-		UPDATE().
-		SET(
-			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("`timeclock_entry`.`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `timeclock_entry`.`start_time`, `timeclock_entry`.`end_time`) / 3600) AS DECIMAL(10,2))"))),
-			tTimeClock.StartTime.SET(jet.TimestampExp(jet.NULL)),
-			tTimeClock.EndTime.SET(jet.TimestampExp(jet.NULL)),
-		).
-		WHERE(jet.AND(
-			tTimeClock.StartTime.IS_NOT_NULL(),
-			tTimeClock.EndTime.IS_NOT_NULL(),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
