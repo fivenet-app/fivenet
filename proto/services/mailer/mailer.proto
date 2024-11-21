@@ -18,12 +18,14 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer
 // Emails
 
 message ListEmailsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
-  optional bool job_only = 1;
+  optional bool all = 2;
 }
 
 message ListEmailsResponse {
-  repeated resources.mailer.Email emails = 1;
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.mailer.Email emails = 2;
 }
 
 message GetEmailRequest {

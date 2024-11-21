@@ -509,7 +509,8 @@
         "signature": "Signatur",
         "internal": "Intern",
         "label": "Bezeichnung",
-        "additional_recipients": "Weitere Empfänger"
+        "additional_recipients": "Weitere Empfänger",
+        "last_updated": "Zuletzt Aktualisiert"
     },
     "components": {
         "partials": {

@@ -3,23 +3,21 @@ package mailer
 import (
 	"context"
 	"errors"
-	"fmt"
+	"regexp"
 	"slices"
-	"sort"
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	permsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/perms"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -27,7 +25,12 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-const emailLastChangedInterval = 14 * 24 * time.Hour
+const (
+	emailLastChangedInterval = 14 * 24 * time.Hour
+	listEmailsPageSize       = 20
+)
+
+var namePrefixCleaner = regexp.MustCompile(`(Prof\.|Dr\.|Sr(\.| ))[ ]*`)
 
 var (
 	tEmails = table.FivenetMailerEmails.AS("email")
@@ -44,19 +47,86 @@ var (
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	emails, err := ListUserEmails(ctx, s.db, userInfo)
+	condition := jet.Bool(true)
+	if !userInfo.SuperUser || (userInfo.SuperUser && req.All != nil && !*req.All) {
+		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
+		condition = condition.AND(jet.AND(
+			tEmails.DeletedAt.IS_NULL(),
+			tEmails.Disabled.IS_FALSE(),
+			jet.OR(
+				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
+				jet.AND(
+					tEmailsUserAccess.Access.IS_NULL(),
+					tEmailsJobAccess.Access.IS_NOT_NULL(),
+					tEmailsJobAccess.Access.GT_EQ(jet.Int32(access)),
+				),
+				jet.AND(
+					tEmailsUserAccess.Access.IS_NOT_NULL(),
+					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
+				),
+				jet.AND(
+					tEmailsQualificationsAccess.Access.IS_NOT_NULL(),
+					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
+					tQualificationsResults.DeletedAt.IS_NULL(),
+					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
+					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
+				),
+			),
+		))
+	}
+
+	countStmt := tEmails.
+		SELECT(
+			jet.COUNT(jet.DISTINCT(tEmails.ID)).AS("datacount.totalcount"),
+		).
+		FROM(
+			tEmails.
+				LEFT_JOIN(tEmailsJobAccess,
+					tEmailsJobAccess.EmailID.EQ(tEmails.ID).
+						AND(tEmailsJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tEmailsJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				).
+				LEFT_JOIN(tEmailsUserAccess,
+					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
+						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+				).
+				LEFT_JOIN(tEmailsQualificationsAccess,
+					tEmailsQualificationsAccess.EmailID.EQ(tEmails.ID),
+				).
+				LEFT_JOIN(tQualificationsResults,
+					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID).
+						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
+				),
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+	}
+
+	pag, _ := req.Pagination.GetResponseWithPageSize(count.TotalCount, listEmailsPageSize)
+	resp := &ListEmailsResponse{
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	emails, err := ListUserEmails(ctx, s.db, userInfo, req.Pagination)
 	if err != nil {
 		return nil, err
 	}
+	resp.Emails = emails
 
-	resp := &ListEmailsResponse{
-		Emails: emails,
-	}
+	resp.Pagination.Update(len(resp.Emails))
 
 	return resp, nil
 }
 
-func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo) ([]*mailer.Email, error) {
+func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, pag *database.PaginationRequest) ([]*mailer.Email, error) {
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
@@ -117,9 +187,17 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo)
 						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 				),
 		).
-		WHERE(condition).
+		WHERE(condition)
+
+	if pag != nil {
+		stmt = stmt.
+			OFFSET(pag.Offset)
+	}
+
+	stmt = stmt.
 		GROUP_BY(tEmails.ID).
-		ORDER_BY(tEmails.Job.ASC(), tEmails.Label.ASC())
+		ORDER_BY(tEmails.Job.ASC(), tEmails.Label.ASC()).
+		LIMIT(listEmailsPageSize)
 
 	resp := &ListEmailsResponse{}
 	if err := stmt.QueryContext(ctx, tx, &resp.Emails); err != nil {
@@ -507,30 +585,6 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 	return &DeleteEmailResponse{}, nil
 }
 
-func (s *Server) validateEmail(ctx context.Context, userInfo *userinfo.UserInfo, input string, forJob bool) error {
-	emails, domains, err := s.generateEmailProposals(ctx, userInfo, forJob)
-	if err != nil {
-		return errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-	}
-
-	email, domain, found := strings.Cut(input, "@")
-	if !found {
-		return errorsmailer.ErrAddresseInvalid
-	}
-
-	if len(emails) > 0 && !slices.Contains(emails, email) {
-		return errorsmailer.ErrAddresseInvalid
-	}
-
-	if !slices.Contains(domains, domain) {
-		return errorsmailer.ErrAddresseInvalid
-	}
-
-	return nil
-}
-
-const defaultDomain = "fivenet.ls"
-
 func (s *Server) GetEmailProposals(ctx context.Context, req *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -544,79 +598,4 @@ func (s *Server) GetEmailProposals(ctx context.Context, req *GetEmailProposalsRe
 		Emails:  emails,
 		Domains: domains,
 	}, nil
-}
-
-func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.UserInfo, forJob bool) ([]string, []string, error) {
-	emails := []string{}
-	domains := []string{}
-
-	if forJob {
-		// Job's email
-		job := s.enricher.GetJobByName(userInfo.Job)
-		if job == nil {
-			return nil, nil, errorsmailer.ErrFailedQuery
-		}
-
-		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Name), defaultDomain))
-		domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(job.Label), defaultDomain))
-		if strings.Contains(job.Label, " ") {
-			labelSplit := strings.Split(job.Label, " ")
-			if len(labelSplit) < 3 {
-				for _, split := range labelSplit {
-					domains = append(domains, fmt.Sprintf("%s.%s", utils.Slug(split), defaultDomain))
-				}
-			} else {
-				for idx, split := range labelSplit {
-					if idx > 0 && len(labelSplit)-1 >= idx+1 {
-						domains = append(domains,
-							fmt.Sprintf("%s.%s", utils.Slug(split+"."+labelSplit[idx+1]), defaultDomain),
-						)
-					}
-				}
-			}
-		}
-	} else {
-		// User's private email
-		stmt := tUsers.
-			SELECT(
-				tUsers.Firstname,
-				tUsers.Lastname,
-				tUsers.Dateofbirth,
-			).
-			FROM(tUsers).
-			WHERE(
-				tUsers.ID.EQ(jet.Int32(userInfo.UserId)),
-			).
-			LIMIT(1)
-
-		user := &users.UserShort{}
-		if err := stmt.QueryContext(ctx, s.db, user); err != nil {
-			return nil, nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-
-		domains = append(domains, defaultDomain)
-		emails = append(emails, // User fullname: Erika Mustermann
-			utils.Slug(fmt.Sprintf("%s.%s", user.Firstname, user.Lastname)),                                               // erika.mustermann
-			utils.Slug(fmt.Sprintf("%s%s", utils.StringFirstN(user.Firstname, 1), user.Lastname)),                         // emustermann
-			utils.Slug(fmt.Sprintf("%s%s", user.Firstname, utils.StringFirstN(user.Lastname, 1))),                         // erikam
-			utils.Slug(fmt.Sprintf("%s.%s", utils.StringFirstN(user.Firstname, 1), utils.StringFirstN(user.Lastname, 3))), // eri.mus
-		)
-
-		dateOfBirth, err := time.Parse("02.01.2006", user.Dateofbirth)
-		if err == nil {
-			for _, email := range emails {
-				emails = append(emails, fmt.Sprintf("%s%d", email, dateOfBirth.Year()))
-			}
-		}
-	}
-
-	sort.Slice(emails, func(i, j int) bool {
-		return emails[i] < emails[j]
-	})
-
-	sort.Slice(domains, func(i, j int) bool {
-		return domains[i] < domains[j]
-	})
-
-	return emails, domains, nil
 }

@@ -17,6 +17,7 @@ import type {
     DeleteThreadResponse,
     GetEmailSettingsRequest,
     GetEmailSettingsResponse,
+    ListEmailsResponse,
     ListThreadMessagesRequest,
     ListThreadMessagesResponse,
     ListThreadsRequest,
@@ -30,6 +31,7 @@ import { useNotificatorStore } from './notificator';
 const logger = useLogger('💬 Mailer');
 
 export interface MailerState {
+    loaded: boolean;
     draft: {
         title: string;
         content: string;
@@ -43,6 +45,7 @@ export interface MailerState {
 export const useMailerStore = defineStore('mailer', {
     state: () =>
         ({
+            loaded: false,
             draft: {
                 title: '',
                 content: '',
@@ -138,9 +141,14 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Emails
-        async listEmails(): Promise<Email[]> {
+        async listEmails(all?: boolean, offset?: number): Promise<ListEmailsResponse> {
             try {
-                const call = getGRPCMailerClient().listEmails({});
+                const call = getGRPCMailerClient().listEmails({
+                    pagination: {
+                        offset: offset ?? 0,
+                    },
+                    all: all ?? false,
+                });
                 const { response } = await call;
 
                 this.emails = response.emails;
@@ -156,7 +164,8 @@ export const useMailerStore = defineStore('mailer', {
                     }
                 }
 
-                return this.emails;
+                this.loaded = true;
+                return response;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
@@ -244,7 +253,7 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().listThreads(req);
                 const { response } = await call;
 
-                mailerDB.threads.bulkPut(response.threads);
+                await mailerDB.threads.bulkPut(response.threads);
 
                 return response.threads;
             } catch (e) {
@@ -289,8 +298,10 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(err);
 
                 if (err?.message?.includes('.ErrThreadAccessDenied')) {
-                    await mailerDB.threads.delete(threadId);
-                    await mailerDB.messages.where('threadId').equals(threadId).delete();
+                    await Promise.all([
+                        mailerDB.threads.delete(threadId),
+                        mailerDB.messages.where('threadId').equals(threadId).delete(),
+                    ]);
                 }
             }
         },
@@ -413,8 +424,10 @@ export const useMailerStore = defineStore('mailer', {
                 await handleGRPCError(err);
 
                 if (err?.message?.includes('.ErrThreadAccessDenied')) {
-                    await mailerDB.threads.delete(req.threadId);
-                    await mailerDB.messages.where('threadId').equals(req.threadId).delete();
+                    await Promise.all([
+                        mailerDB.threads.delete(req.threadId),
+                        mailerDB.messages.where('threadId').equals(req.threadId).delete(),
+                    ]);
                 }
             }
         },
@@ -425,7 +438,7 @@ export const useMailerStore = defineStore('mailer', {
                 const { response } = await call;
 
                 if (response.message) {
-                    mailerDB.messages.add(response.message);
+                    await mailerDB.messages.add(response.message);
                 }
 
                 return response;
@@ -440,7 +453,7 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().deleteMessage(req);
                 const { response } = await call;
 
-                mailerDB.messages.delete(req.messageId);
+                await mailerDB.messages.delete(req.messageId);
 
                 return response;
             } catch (e) {

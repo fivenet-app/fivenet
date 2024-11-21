@@ -3,7 +3,10 @@ import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
 import EmailList from '~/components/mailer/EmailList.vue';
 import { canAccess } from '~/components/mailer/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/store/mailer';
+import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
 useHead({
@@ -18,9 +21,9 @@ definePageMeta({
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { emails, hasPrivateEmail, selectedEmail } = storeToRefs(mailerStore);
+const { emails, hasPrivateEmail, loaded, selectedEmail } = storeToRefs(mailerStore);
 
-const { attr, can } = useAuth();
+const { attr, can, isSuperuser } = useAuth();
 
 const isMailerPanelOpen = computed({
     get() {
@@ -46,8 +49,19 @@ watch(selectedEmail, () => {
     }
 });
 
+const page = ref(1);
+const offset = computed(() => (pagination.value?.pageSize ?? 20) * (page.value - 1));
+const pagination = ref<PaginationResponse | undefined>();
+
+async function listEmails(): Promise<void> {
+    const response = await mailerStore.listEmails(isSuperuser.value, offset.value);
+    pagination.value = response.pagination;
+}
+
+watch(offset, async () => await listEmails());
+
 onBeforeMount(async () => {
-    await mailerStore.listEmails();
+    await listEmails();
 
     if (!route.query.email) {
         return;
@@ -69,7 +83,8 @@ const creating = ref(false);
             <UDashboardNavbar :title="$t('common.mail')" />
 
             <UDashboardPanelContent>
-                <div class="flex flex-1 flex-col items-center">
+                <DataPendingBlock v-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />
+                <div v-else class="flex flex-1 flex-col items-center">
                     <div class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
                         <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
 
@@ -95,7 +110,7 @@ const creating = ref(false);
                     <template #right>
                         <UButton
                             v-if="canCreate"
-                            :label="$t('common.mail')"
+                            :label="$t('common.create')"
                             trailing-icon="i-mdi-plus"
                             color="gray"
                             @click="creating = !creating"
@@ -104,7 +119,14 @@ const creating = ref(false);
                 </UDashboardNavbar>
 
                 <div class="relative flex-1 overflow-x-auto">
-                    <EmailList v-model="selectedEmail" :emails="emails" :loaded="true" />
+                    <EmailList v-model="selectedEmail" :emails="emails" :loaded="true">
+                        <Pagination
+                            v-if="emails.length > (pagination?.pageSize ?? 20)"
+                            v-model="page"
+                            :pagination="pagination"
+                            :refresh="async () => await listEmails()"
+                        />
+                    </EmailList>
                 </div>
             </UDashboardPanel>
 

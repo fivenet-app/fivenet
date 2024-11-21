@@ -72,7 +72,7 @@ watchDebounced(
                     </template>
                     <template #total>
                         <span class="text-neutral font-medium">
-                            {{ total }}
+                            {{ total === -1 ? '∞' : total }}
                         </span>
                     </template>
                     <template #maxPage>

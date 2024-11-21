@@ -11872,7 +11872,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| job_only | [bool](#bool) | optional | Search params |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| all | [bool](#bool) | optional | Search params |
 
 
 
@@ -11887,6 +11888,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | emails | [resources.mailer.Email](#resources-mailer-Email) | repeated |  |
 
 

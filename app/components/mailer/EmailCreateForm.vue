@@ -30,9 +30,11 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const notifications = useNotificatorStore();
+const { t } = useI18n();
 
 const { activeChar } = useAuth();
+
+const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
 
@@ -58,9 +60,29 @@ watch(
     async () => refreshProposabls(),
 );
 
+watch(proposals, () => {
+    if (state.domain === '') {
+        if (proposals.value?.domains[0]) {
+            state.domain = proposals.value?.domains[0];
+        }
+    }
+});
+
 const schema = z.object({
-    email: z.string().min(6).max(50),
-    domain: z.string().min(6).max(50),
+    email: z
+        .string()
+        .min(6)
+        .max(50)
+        .refine((email) => (props.personalEmail ? proposals.value?.emails.includes(email) : true), {
+            message: t('errors.MailerService.ErrAddresseInvalid'),
+        }),
+    domain: z
+        .string()
+        .min(6)
+        .max(50)
+        .refine((domain) => proposals.value?.domains.includes(domain), {
+            message: t('errors.MailerService.ErrAddresseInvalid'),
+        }),
     label: z.string().max(128).optional(),
     internal: z.boolean(),
     access: z.custom<Access>(),
@@ -144,7 +166,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :label="$t('common.mail')"
             :description="
                 $t('components.mailer.manage.email.description') +
-                (modelValue?.emailChanged ? ` (${$t('common.updated_at')}: ${$d(toDate(modelValue?.emailChanged))})` : '')
+                (modelValue?.emailChanged ? ` (${$t('common.last_updated')}: ${$d(toDate(modelValue?.emailChanged))})` : '')
             "
             class="flex flex-1 flex-col"
         >

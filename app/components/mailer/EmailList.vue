@@ -98,6 +98,8 @@ defineShortcuts({
 
                 <UDivider />
             </div>
+
+            <slot />
         </template>
     </UDashboardPanelContent>
 </template>

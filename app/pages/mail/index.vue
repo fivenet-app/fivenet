@@ -76,7 +76,10 @@ const threads = useDexieLiveQuery(
 // Filter mails based on the selected tab
 const filteredThreads = computed(() => {
     if (selectedTab.value === 1) {
-        return threads.value.threads.filter((thread) => !thread.state?.archived && !!thread.state?.unread);
+        return threads.value.threads.filter(
+            // Show unread and keep the current selected thread in the list
+            (thread) => !thread.state?.archived && (!!thread.state?.unread || selectedThread.value?.id === thread.id),
+        );
     } else if (selectedTab.value === 2) {
         return threads.value.threads.filter((thread) => !!thread.state?.archived);
     }
@@ -188,7 +191,9 @@ onBeforeMount(async () => {
                                         (option?.label && option?.label !== ''
                                             ? option?.label + ' (' + option.email + ')'
                                             : undefined) ??
-                                        (option?.userId ? $t('common.personal_email') : undefined) ??
+                                        (option?.userId
+                                            ? $t('common.personal_email') + (isSuperuser ? ' (' + option.email + ')' : '')
+                                            : undefined) ??
                                         option?.email ??
                                         $t('common.none')
                                     }}

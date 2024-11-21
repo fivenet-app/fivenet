@@ -15,11 +15,11 @@ import { EmailSettings } from "../../resources/mailer/settings";
 import { ThreadState } from "../../resources/mailer/thread";
 import { Message } from "../../resources/mailer/message";
 import { Thread } from "../../resources/mailer/thread";
-import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
-import { PaginationRequest } from "../../resources/common/database/database";
 import { Template } from "../../resources/mailer/template";
 import { Email } from "../../resources/mailer/email";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 // Emails
 
 /**
@@ -27,18 +27,26 @@ import { Email } from "../../resources/mailer/email";
  */
 export interface ListEmailsRequest {
     /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
      * Search params
      *
-     * @generated from protobuf field: optional bool job_only = 1;
+     * @generated from protobuf field: optional bool all = 2;
      */
-    jobOnly?: boolean;
+    all?: boolean;
 }
 /**
  * @generated from protobuf message services.mailer.ListEmailsResponse
  */
 export interface ListEmailsResponse {
     /**
-     * @generated from protobuf field: repeated resources.mailer.Email emails = 1;
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.mailer.Email emails = 2;
      */
     emails: Email[];
 }
@@ -434,7 +442,8 @@ export interface DeleteMessageResponse {
 class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
     constructor() {
         super("services.mailer.ListEmailsRequest", [
-            { no: 1, name: "job_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListEmailsRequest>): ListEmailsRequest {
@@ -448,8 +457,11 @@ class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional bool job_only */ 1:
-                    message.jobOnly = reader.bool();
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* optional bool all */ 2:
+                    message.all = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -463,9 +475,12 @@ class ListEmailsRequest$Type extends MessageType<ListEmailsRequest> {
         return message;
     }
     internalBinaryWrite(message: ListEmailsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional bool job_only = 1; */
-        if (message.jobOnly !== undefined)
-            writer.tag(1, WireType.Varint).bool(message.jobOnly);
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool all = 2; */
+        if (message.all !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.all);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -480,7 +495,8 @@ export const ListEmailsRequest = new ListEmailsRequest$Type();
 class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
     constructor() {
         super("services.mailer.ListEmailsResponse", [
-            { no: 1, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "emails", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Email }
         ]);
     }
     create(value?: PartialMessage<ListEmailsResponse>): ListEmailsResponse {
@@ -495,7 +511,10 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.mailer.Email emails */ 1:
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.mailer.Email emails */ 2:
                     message.emails.push(Email.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -510,9 +529,12 @@ class ListEmailsResponse$Type extends MessageType<ListEmailsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListEmailsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.mailer.Email emails = 1; */
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.Email emails = 2; */
         for (let i = 0; i < message.emails.length; i++)
-            Email.internalBinaryWrite(message.emails[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Email.internalBinaryWrite(message.emails[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

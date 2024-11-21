@@ -18,7 +18,7 @@ const documentEditorStore = useDocumentEditorStore();
 
 const { setActiveChar, setPermissions, setJobProps } = authStore;
 
-onMounted(async () => {
+onBeforeMount(async () => {
     setActiveChar(null);
     setPermissions([]);
     setJobProps(undefined);

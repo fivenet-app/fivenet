@@ -509,7 +509,9 @@
         "signature": "Signature",
         "internal": "Internal",
         "label": "Label",
-        "additional_recipients": "Additional Recipients"
+        "additional_recipients": "Additional Recipients",
+        "last_updated": "Last Updated",
+        "domain": "Domain"
     },
     "components": {
         "partials": {
