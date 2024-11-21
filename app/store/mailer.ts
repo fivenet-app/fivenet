@@ -93,6 +93,8 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
 
+                // TODO check if sender is on email blocklist
+
                 useNotificatorStore().add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
                     description: {
@@ -112,6 +114,8 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Only set unread state when message isn't from same email
                 if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
+                    // TODO check if thread is muted
+
                     useNotificatorStore().add({
                         title: { key: 'notifications.mailer.new_email.title', parameters: {} },
                         description: {
@@ -451,7 +455,7 @@ export const useMailerStore = defineStore('mailer', {
                 const { response } = await call;
 
                 if (response.message) {
-                    await mailerDB.messages.add(response.message);
+                    await mailerDB.messages.put(response.message);
                 }
 
                 return response;

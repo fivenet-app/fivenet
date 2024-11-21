@@ -19,7 +19,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void;
     (e: 'close'): void;
 }>();
@@ -45,14 +45,14 @@ async function select(item: ClipboardUser): Promise<void> {
     const selectedLength = selected.value.length;
     if (props.specs !== undefined) {
         if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
-            emits('statisfied', true);
+            emit('statisfied', true);
         } else if (props.specs.max !== undefined && selectedLength === props.specs.max) {
-            emits('statisfied', true);
+            emit('statisfied', true);
         } else {
-            emits('statisfied', false);
+            emit('statisfied', false);
         }
     } else {
-        emits('statisfied', true);
+        emit('statisfied', true);
     }
 }
 
@@ -81,9 +81,9 @@ async function removeAll(): Promise<void> {
     }
 
     if (props.specs !== undefined) {
-        emits('statisfied', false);
+        emit('statisfied', false);
     } else {
-        emits('statisfied', true);
+        emit('statisfied', true);
     }
 
     notifications.add({

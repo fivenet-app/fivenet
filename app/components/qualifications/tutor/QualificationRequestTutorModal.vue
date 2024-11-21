@@ -17,7 +17,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
@@ -65,7 +65,7 @@ async function createOrUpdateQualificationRequest(
             type: NotificationType.SUCCESS,
         });
 
-        emits('refresh');
+        emit('refresh');
         isOpen.value = false;
 
         return response;

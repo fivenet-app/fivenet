@@ -6,7 +6,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { getErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'toggle'): void;
 }>();
 
@@ -25,7 +25,7 @@ async function forgotPassword(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emits('toggle');
+        emit('toggle');
     } catch (e) {
         accountError.value = getErrorMessage((e as RpcError).message);
         handleGRPCError(e as RpcError);

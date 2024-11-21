@@ -22,7 +22,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
@@ -69,7 +69,7 @@ if (props.registerShortcuts) {
 
             modal.open(CitizenSetWantedModal, {
                 user: props.user,
-                'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
+                'onUpdate:wantedStatus': ($event) => emit('update:wantedStatus', $event),
             });
         },
         'c-j': () => {
@@ -79,7 +79,7 @@ if (props.registerShortcuts) {
 
             modal.open(CitizenSetJobModal, {
                 user: props.user,
-                'onUpdate:job': ($event) => emits('update:job', $event),
+                'onUpdate:job': ($event) => emit('update:job', $event),
             });
         },
         'c-p': () => {
@@ -89,7 +89,7 @@ if (props.registerShortcuts) {
 
             modal.open(CitizenSetTrafficPointsModal, {
                 user: props.user,
-                'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
+                'onUpdate:trafficInfractionPoints': ($event) => emit('update:trafficInfractionPoints', $event),
             });
         },
         'c-m': () => {
@@ -99,7 +99,7 @@ if (props.registerShortcuts) {
 
             modal.open(CitizenSetMugShotModal, {
                 user: props.user,
-                'onUpdate:mugShot': ($event) => emits('update:mugShot', $event),
+                'onUpdate:mugShot': ($event) => emit('update:mugShot', $event),
             });
         },
         'c-d': () => {

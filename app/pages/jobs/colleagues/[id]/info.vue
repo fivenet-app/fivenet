@@ -28,7 +28,7 @@ const props = defineProps<{
     colleague: Colleague;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
@@ -95,7 +95,7 @@ const editing = ref(false);
 
 watch(editing, () => {
     if (!editing.value) {
-        emits('refresh');
+        emit('refresh');
     }
 });
 </script>

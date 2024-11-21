@@ -7,16 +7,12 @@ const props = defineProps<{
     modelValue?: ExamQuestion;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: ExamQuestion): void;
     (e: 'delete'): void;
 }>();
 
-const question = useVModel(props, 'modelValue', emits);
-
-const appConfig = useAppConfig();
-
-const imageSchema = zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images);
+const question = useVModel(props, 'modelValue', emit);
 
 const schema = z.object({
     id: z.string(),

@@ -11,7 +11,7 @@ const props = defineProps<{
     entryId: string;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'refresh'): void;
 }>();
@@ -35,7 +35,7 @@ const state = reactive<Schema>({
 
 async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCalendarEntryResponse> {
     if (values.users.length === 0) {
-        emits('close');
+        emit('close');
         return;
     }
 
@@ -45,8 +45,8 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
     });
     const { response } = await call;
 
-    emits('refresh');
-    emits('close');
+    emit('refresh');
+    emit('close');
 
     values.users.length = 0;
 

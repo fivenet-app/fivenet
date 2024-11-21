@@ -24,12 +24,12 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: typeof props.modelValue): void;
     (e: 'delete'): void;
 }>();
 
-const entry = useVModel(props, 'modelValue', emits);
+const entry = useVModel(props, 'modelValue', emit);
 
 const completorStore = useCompletorStore();
 

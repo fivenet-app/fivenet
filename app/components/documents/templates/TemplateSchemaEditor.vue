@@ -13,11 +13,11 @@ const props = defineProps<{
     modelValue: SchemaEditorValue;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', payload: SchemaEditorValue): void;
 }>();
 
-const templateSchema = useVModel(props, 'modelValue', emits);
+const templateSchema = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>

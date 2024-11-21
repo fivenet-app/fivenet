@@ -12,12 +12,12 @@ const props = defineProps<{
     modelValue?: Comment;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', comment: Comment | undefined): void;
     (e: 'deleted', id: string | undefined): void;
 }>();
 
-const comment = useVModel(props, 'modelValue', emits);
+const comment = useVModel(props, 'modelValue', emit);
 
 const modal = useModal();
 
@@ -74,7 +74,7 @@ async function deleteComment(id: string): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emits('deleted', comment.value?.id);
+        emit('deleted', comment.value?.id);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

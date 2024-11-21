@@ -6,6 +6,15 @@ import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import DocEditor from '../partials/DocEditor.vue';
 import { canAccess } from './helpers';
 
+withDefaults(
+    defineProps<{
+        disabled?: boolean;
+    }>(),
+    {
+        disabled: false,
+    },
+);
+
 const { isOpen } = useModal();
 
 const mailerStore = useMailerStore();
@@ -64,7 +73,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div class="flex flex-col gap-2">
                     <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
                         <ClientOnly>
-                            <DocEditor v-model="state.signature" :disabled="!canManage" :min-height="200" />
+                            <DocEditor v-model="state.signature" :disabled="disabled || !canManage" :min-height="200" />
                         </ClientOnly>
                     </UFormGroup>
 
@@ -76,23 +85,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.emails[idx]"
                                         type="text"
                                         :placeholder="$t('common.mail')"
-                                        :disabled="!canManage"
+                                        :disabled="disabled || !canManage"
                                     />
                                 </UFormGroup>
 
                                 <UButton
                                     :ui="{ rounded: 'rounded-full' }"
                                     icon="i-mdi-close"
+                                    :disabled="disabled || !canSubmit"
                                     @click="state.emails.splice(idx, 1)"
                                 />
                             </div>
                         </div>
 
                         <UButton
-                            v-if="canManage"
+                            v-if="!disabled || canManage"
                             :ui="{ rounded: 'rounded-full' }"
                             icon="i-mdi-plus"
-                            :disabled="!canSubmit || state.emails.length >= 25"
+                            :disabled="disabled || !canSubmit || state.emails.length >= 25"
                             :class="state.emails.length ? 'mt-2' : ''"
                             @click="state.emails.push('')"
                         />
@@ -106,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton
-                            v-if="canManage"
+                            v-if="!disabled || canManage"
                             type="submit"
                             :label="$t('common.save')"
                             block

@@ -12,7 +12,7 @@ const props = defineProps<{
     startInEdit?: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'deleted', id: string): void;
     (e: 'update:modelValue', book?: LawBook): void;
     (e: 'update:laws', laws: Law[]): void;
@@ -21,7 +21,7 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const lawBook = useVModel(props, 'modelValue', emits);
+const lawBook = useVModel(props, 'modelValue', emit);
 
 const modal = useModal();
 
@@ -40,7 +40,7 @@ const state = reactive<Schema>({
 async function deleteLawBook(id: string): Promise<void> {
     const i = parseInt(id);
     if (i < 0) {
-        emits('deleted', id);
+        emit('deleted', id);
         return;
     }
 
@@ -48,7 +48,7 @@ async function deleteLawBook(id: string): Promise<void> {
         const call = getGRPCRectorLawsClient().deleteLawBook({ id });
         await call;
 
-        emits('deleted', id);
+        emit('deleted', id);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -91,7 +91,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 function deletedLaw(id: string): void {
-    emits(
+    emit(
         'update:laws',
         props.laws.filter((b) => b.id !== id),
     );
@@ -104,7 +104,7 @@ function addLaw(): void {
         return;
     }
 
-    emits('update:laws', [
+    emit('update:laws', [
         ...props.laws,
         {
             lawbookId: lawBook.value.id,

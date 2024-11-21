@@ -16,7 +16,7 @@ import (
 func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.State.ThreadId, req.State.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.State.ThreadId, req.State.EmailId, mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
 	}
 

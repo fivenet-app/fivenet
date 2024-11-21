@@ -8,7 +8,7 @@ const props = defineProps<{
     startInEdit?: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:law', update: { id: string; law: Law }): void;
     (e: 'close'): void;
 }>();
@@ -49,7 +49,7 @@ async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<v
         });
         const { response } = await call;
 
-        emits('update:law', { id, law: response.law! });
+        emit('update:law', { id, law: response.law! });
 
         editing.value = false;
     } catch (e) {

@@ -10,7 +10,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: string | undefined): void;
 }>();
 
@@ -18,7 +18,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const color = useVModel(props, 'modelValue', emits);
+const color = useVModel(props, 'modelValue', emit);
 
 const availableColorOptions = [...primaryColors, ...backgroundColors];
 </script>

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'uploaded', file: FileInfo): void;
 }>();
 
@@ -45,7 +45,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse | undefine
         });
 
         if (response.file) {
-            emits('uploaded', response.file);
+            emit('uploaded', response.file);
         }
 
         isOpen.value = false;

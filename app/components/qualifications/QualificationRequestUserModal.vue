@@ -10,7 +10,7 @@ const props = defineProps<{
     qualificationId: string;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'updatedRequest', value?: QualificationRequest): void;
 }>();
 
@@ -48,7 +48,7 @@ async function createOrUpdateQualificationRequest(
             type: NotificationType.SUCCESS,
         });
 
-        emits('updatedRequest', response.request);
+        emit('updatedRequest', response.request);
         isOpen.value = false;
 
         return response;

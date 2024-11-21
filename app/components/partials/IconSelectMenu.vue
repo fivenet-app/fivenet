@@ -14,7 +14,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: string | undefined): void;
 }>();
 
@@ -22,7 +22,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const icon = useVModel(props, 'modelValue', emits);
+const icon = useVModel(props, 'modelValue', emit);
 
 async function markerIconSearch(query: string): Promise<DefineComponent[]> {
     // Remove spaces from query as icon names don't have spaces

@@ -10,7 +10,7 @@ const props = defineProps<{
     block?: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
     (e: 'close'): void;
 }>();
@@ -22,8 +22,8 @@ defineOptions({
 const color = computed({
     get: () => props.modelValue ?? '',
     set: (value) => {
-        emits('update:modelValue', value);
-        emits('close');
+        emit('update:modelValue', value);
+        emit('close');
     },
 });
 

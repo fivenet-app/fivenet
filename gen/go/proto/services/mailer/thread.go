@@ -268,7 +268,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 
 	emails, err := s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		return nil, err
 	}
 
 	// Begin transaction

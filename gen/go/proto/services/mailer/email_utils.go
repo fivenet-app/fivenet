@@ -113,10 +113,12 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 	sort.Slice(emails, func(i, j int) bool {
 		return emails[i] < emails[j]
 	})
+	utils.RemoveSliceDuplicates(emails)
 
 	sort.Slice(domains, func(i, j int) bool {
 		return domains[i] < domains[j]
 	})
+	utils.RemoveSliceDuplicates(domains)
 
 	return emails, domains, nil
 }

@@ -4,9 +4,11 @@ import { isToday } from 'date-fns';
 import { z } from 'zod';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
+import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
+import { canAccess } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 
 const props = withDefaults(
@@ -29,6 +31,10 @@ const { draft: state, selectedEmail, selectedThread } = storeToRefs(mailerStore)
 const schema = z.object({
     title: z.string().min(1).max(255),
     content: z.string().min(1).max(2048),
+    recipients: z
+        .object({ label: z.string().min(6).max(80) })
+        .array()
+        .max(20),
 });
 
 type Schema = z.output<typeof schema>;
@@ -101,17 +107,16 @@ const {
 watch(offset, async () => refreshMessages());
 
 const { start } = useTimeoutFn(
-    async () => {
-        return mailerStore.setThreadState({
+    async () =>
+        mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
-        });
-    },
+        }),
     1250,
     { immediate: false },
 );
 
-onMounted(() => start());
+onMounted(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) && start());
 
 async function postMessage(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) {
@@ -129,7 +134,7 @@ async function postMessage(values: Schema): Promise<void> {
                 entry: [],
             },
         },
-        recipients: [],
+        recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
     });
 
     // Clear draft data
@@ -137,6 +142,14 @@ async function postMessage(values: Schema): Promise<void> {
     state.value.content = '';
     state.value.recipients = [];
 }
+
+watch(
+    state.value.recipients,
+    () =>
+        (state.value.recipients = state.value.recipients.filter(
+            (item, idx) => state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.label.toLowerCase()) === idx,
+        )),
+);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -186,12 +199,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
     <UDashboardPanelContent>
         <div class="relative -mx-4 flex-1 overflow-x-auto">
-            <template v-if="messagesLoading">
-                <div class="flex-1 space-y-2">
-                    <USkeleton class="h-32 w-full" />
-                    <USkeleton class="h-32 w-full" />
-                </div>
-            </template>
+            <div v-if="messagesLoading" class="flex-1 space-y-2">
+                <USkeleton class="h-32 w-full" />
+                <USkeleton class="h-48 w-full" />
+                <USkeleton class="h-32 w-full" />
+            </div>
+
             <template v-else>
                 <template v-for="message in messages?.messages" :key="message.id">
                     <div
@@ -254,12 +267,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UDivider class="mb-2" />
 
         <UAccordion
-            v-if="thread"
+            v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
             variant="outline"
             :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
         >
             <template #compose>
-                <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+                <UForm
+                    :schema="schema"
+                    :state="state"
+                    class="flex flex-col gap-2"
+                    @error="console.log('error', $event)"
+                    @submit="onSubmitThrottle"
+                >
                     <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.additional_recipients')">
                         <ClientOnly>
                             <USelectMenu
@@ -268,20 +287,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 block
                                 multiple
                                 trailing
-                                value-attribute="label"
                                 searchable
-                                :options="state.recipients.filter((elem, index, self) => index === self.indexOf(elem))"
-                                :searchable-placeholder="$t('common.mail', 1)"
+                                :options="state.recipients"
+                                :searchable-placeholder="$t('common.recipient')"
                                 creatable
                                 :disabled="!canSubmit"
                             >
-                                <template #label>
-                                    {{
-                                        state.recipients.length > 0
-                                            ? state.recipients.map((r) => r.label).join(', ')
-                                            : $t('common.none_selected', [$t('common.recipient', 2)])
-                                    }}
-                                </template>
+                                <template #label>&nbsp;</template>
 
                                 <template #option-create="{ option }">
                                     <span class="flex-shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
@@ -296,6 +308,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
+
+                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                            <UButtonGroup
+                                v-for="(recipient, idx) in state.recipients"
+                                :key="idx"
+                                size="sm"
+                                orientation="horizontal"
+                            >
+                                <UButton variant="link" :padded="false" :label="recipient.label" />
+
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-close"
+                                    color="red"
+                                    @click="state.recipients.splice(idx, 1)"
+                                />
+                            </UButtonGroup>
+                        </div>
                     </UFormGroup>
 
                     <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">

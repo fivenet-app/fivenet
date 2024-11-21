@@ -12,7 +12,7 @@ const props = defineProps<{
     template?: Template;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'refresh'): void;
 }>();
@@ -60,8 +60,8 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
             type: NotificationType.SUCCESS,
         });
 
-        emits('refresh');
-        emits('close');
+        emit('refresh');
+        emit('close');
 
         return response;
     } catch (e) {

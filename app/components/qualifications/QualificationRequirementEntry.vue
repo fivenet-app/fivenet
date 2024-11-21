@@ -15,7 +15,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update-qualification', qualification?: QualificationShort): void;
     (e: 'remove'): void;
 }>();
@@ -43,7 +43,7 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
 }
 const selectedQualification = ref<QualificationShort | undefined>(props.requirement.targetQualification);
 
-watch(selectedQualification, () => emits('update-qualification', selectedQualification.value));
+watch(selectedQualification, () => emit('update-qualification', selectedQualification.value));
 </script>
 
 <template>

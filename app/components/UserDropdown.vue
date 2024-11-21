@@ -92,23 +92,32 @@ const open = ref(false);
         class="w-full"
         mode="hover"
     >
-        <UButton
-            color="gray"
-            variant="ghost"
+        <UChip
             class="w-full"
-            :label="name"
-            :class="[open && 'bg-gray-50 dark:bg-gray-800']"
-            @click="open = !open"
-            @touchstart.passive="open = !open"
+            color="red"
+            :text="$t('common.superuser')"
+            position="top-left"
+            :show="isSuperuser"
+            :ui="{ base: 'top-0 left-1/2' }"
         >
-            <template #leading>
-                <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
-            </template>
+            <UButton
+                color="gray"
+                variant="ghost"
+                class="w-full"
+                :label="name"
+                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
+                @click="open = !open"
+                @touchstart.passive="open = !open"
+            >
+                <template #leading>
+                    <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
+                </template>
 
-            <template #trailing>
-                <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
-            </template>
-        </UButton>
+                <template #trailing>
+                    <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
+                </template>
+            </UButton>
+        </UChip>
 
         <template #account>
             <div class="truncate text-left">

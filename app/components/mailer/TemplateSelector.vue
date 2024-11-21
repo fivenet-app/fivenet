@@ -7,7 +7,7 @@ const props = defineProps<{
     modelValue: string;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
@@ -15,7 +15,7 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const content = useVModel(props, 'modelValue', emits);
+const content = useVModel(props, 'modelValue', emit);
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);

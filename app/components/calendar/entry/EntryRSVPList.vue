@@ -26,7 +26,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
 }>();
 
@@ -37,7 +37,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
 
-const ownEntry = useVModel(props, 'modelValue', emits);
+const ownEntry = useVModel(props, 'modelValue', emit);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));

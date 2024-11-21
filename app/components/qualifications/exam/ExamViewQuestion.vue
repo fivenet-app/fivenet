@@ -11,11 +11,11 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: ExamResponse | undefined): void;
 }>();
 
-const response = useVModel(props, 'modelValue', emits);
+const response = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>

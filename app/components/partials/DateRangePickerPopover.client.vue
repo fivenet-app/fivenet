@@ -27,11 +27,11 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', modelValue: { start: Date; end: Date } | undefined): void;
 }>();
 
-const date = useVModel(props, 'modelValue', emits);
+const date = useVModel(props, 'modelValue', emit);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 

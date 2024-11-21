@@ -16,12 +16,12 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:settings', value: ExamQuestions): void;
     (e: 'update:questions', value: ExamQuestions): void;
 }>();
 
-const { settings, questions } = useVModels(props, emits);
+const { settings, questions } = useVModels(props, emit);
 
 const schema = z.object({
     settings: z.object({

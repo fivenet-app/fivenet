@@ -12,7 +12,7 @@ const props = defineProps<{
     canDelete: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'refreshRequests'): void;
 }>();
 
@@ -27,7 +27,7 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
         });
         const { response } = await call;
 
-        emits('refreshRequests');
+        emit('refreshRequests');
 
         if (response.request !== undefined) {
             if (response.request.requestType === DocActivityType.REQUESTED_UPDATE) {
@@ -59,7 +59,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emits('refreshRequests');
+        emit('refreshRequests');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

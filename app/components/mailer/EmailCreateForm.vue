@@ -135,11 +135,7 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
             deactivated: values.deactivated,
             job: props.modelValue?.job ?? activeChar.value!.job,
             userId: props.modelValue?.userId ?? activeChar.value!.userId,
-            access: {
-                jobs: [],
-                qualifications: [],
-                users: [],
-            },
+            access: values.access,
         },
     });
 
@@ -240,7 +236,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-model:jobs="state.access!.jobs"
                 v-model:users="state.access!.users"
                 v-model:qualifications="state.access!.qualifications"
-                :target-id="modelValue.id ?? '0'"
+                :target-id="modelValue?.id ?? '0'"
                 :access-types="[
                     { type: 'user', name: $t('common.citizen', 2) },
                     { type: 'job', name: $t('common.job', 2) },
@@ -262,8 +258,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-if="!disabled"
                 type="submit"
                 block
-                :label="modelValue?.id === '0' ? $t('common.create') : $t('common.update')"
+                :label="modelValue?.id !== '0' ? $t('common.update') : $t('common.create')"
             />
+            <!-- TODO label is wrong when creating/updating dafuq -->
         </UFormGroup>
     </UForm>
 </template>

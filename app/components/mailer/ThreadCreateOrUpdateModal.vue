@@ -69,6 +69,14 @@ onBeforeMount(() => {
     }
 });
 
+watch(
+    state.value.recipients,
+    () =>
+        (state.value.recipients = state.value.recipients.filter(
+            (item, idx) => state.value.recipients.findIndex((r) => r.label.toLowerCase() === item.label.toLowerCase()) === idx,
+        )),
+);
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -123,20 +131,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         block
                                         multiple
                                         trailing
-                                        value-attribute="label"
                                         searchable
-                                        :options="state.recipients.filter((elem, index, self) => index === self.indexOf(elem))"
+                                        :options="state.recipients"
                                         :searchable-placeholder="$t('common.mail', 1)"
                                         creatable
                                         :disabled="!canSubmit"
                                     >
-                                        <template #label>
-                                            {{
-                                                state.recipients.length > 0
-                                                    ? state.recipients.map((r) => r.label).join(', ')
-                                                    : $t('common.none_selected', [$t('common.recipient', 2)])
-                                            }}
-                                        </template>
+                                        <template #label>&nbsp;</template>
 
                                         <template #option-create="{ option }">
                                             <span class="flex-shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
@@ -151,6 +152,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
+
+                                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                                    <UButtonGroup
+                                        v-for="(recipient, idx) in state.recipients"
+                                        :key="idx"
+                                        size="sm"
+                                        orientation="horizontal"
+                                    >
+                                        <UButton variant="link" :padded="false" :label="recipient.label" />
+
+                                        <UButton
+                                            variant="link"
+                                            icon="i-mdi-close"
+                                            color="red"
+                                            @click="state.recipients.splice(idx, 1)"
+                                        />
+                                    </UButtonGroup>
+                                </div>
                             </UFormGroup>
                         </div>
 

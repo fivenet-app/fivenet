@@ -16,7 +16,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -26,7 +26,7 @@ const sound = new Howl({
     rate: props.rate,
 });
 
-sound.on('end', () => emits('close'));
+sound.on('end', () => emit('close'));
 
 sound.play();
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -96,7 +97,7 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 	dest := []*mailer.ThreadRecipientEmail{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 	}
 

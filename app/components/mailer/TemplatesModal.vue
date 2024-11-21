@@ -41,6 +41,8 @@ const accordionItems = computed(() =>
     })),
 );
 
+const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
+
 const creating = ref(false);
 const editing = ref(false);
 </script>
@@ -67,7 +69,7 @@ const editing = ref(false);
 
             <div class="mx-auto flex w-full max-w-screen-xl flex-col gap-2">
                 <UButton
-                    v-if="!creating && !editing && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
+                    v-if="!creating && !editing && canManage"
                     :label="$t('common.create')"
                     trailing-icon="i-mdi-plus"
                     @click="creating = true"
@@ -91,10 +93,7 @@ const editing = ref(false);
                         <template #item="{ index }">
                             <template v-if="templates?.templates[index]">
                                 <template v-if="!editing">
-                                    <UButtonGroup
-                                        v-if="canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.MANAGE)"
-                                        class="mx-4 mb-2 flex"
-                                    >
+                                    <UButtonGroup v-if="canManage" class="mx-4 mb-2 flex">
                                         <UButton
                                             class="flex-1"
                                             icon="i-mdi-pencil"

@@ -7,11 +7,11 @@ const props = withDefaults(
     {},
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', v: TableSortable): void;
 }>();
 
-const sort = useVModel(props, 'modelValue', emits, {
+const sort = useVModel(props, 'modelValue', emit, {
     deep: true,
 });
 

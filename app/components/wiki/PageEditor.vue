@@ -15,7 +15,7 @@ const props = defineProps<{
     pages: PageShort[];
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', value: Page | undefined): void;
     (e: 'close'): void;
 }>();
@@ -53,7 +53,7 @@ const page = computed({
               } as Page);
     },
     set(value) {
-        emits('update:modelValue', value);
+        emit('update:modelValue', value);
     },
 });
 
@@ -174,7 +174,7 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
                 },
             });
         } else {
-            emits('close');
+            emit('close');
         }
     } catch (e) {
         handleGRPCError(e as RpcError);

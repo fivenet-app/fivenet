@@ -37,7 +37,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:jobs', jobs: JobsT[]): void;
     (e: 'update:users', users: UsersT[]): void;
     (e: 'update:qualifications', qualifications: QualiT[]): void;
@@ -45,9 +45,9 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const jobsAccess = useVModel(props, 'jobs', emits);
-const usersAccess = useVModel(props, 'users', emits);
-const qualificationsAccess = useVModel(props, 'qualifications', emits);
+const jobsAccess = useVModel(props, 'jobs', emit);
+const usersAccess = useVModel(props, 'users', emit);
+const qualificationsAccess = useVModel(props, 'qualifications', emit);
 
 const defaultAccessTypes = [
     { type: 'user', name: t('common.citizen', 2) },

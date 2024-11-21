@@ -174,7 +174,7 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	if len(req.Recipients) > 0 {
 		emails, err = s.resolveRecipientsToEmails(ctx, senderEmail, req.Recipients)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			return nil, err
 		}
 	}
 

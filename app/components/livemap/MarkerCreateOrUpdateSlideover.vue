@@ -14,7 +14,7 @@ const props = defineProps<{
     marker?: MarkerMarker;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -111,7 +111,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             addOrUpdateMarkerMarker(response.marker);
         }
 
-        emits('close');
+        emit('close');
         isOpen.value = false;
     } catch (e) {
         handleGRPCError(e as RpcError);

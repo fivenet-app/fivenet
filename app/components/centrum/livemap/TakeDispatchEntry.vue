@@ -20,7 +20,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'selected', state: boolean): void;
 }>();
 
@@ -39,7 +39,7 @@ const checked = ref(false);
 onBeforeMount(() => {
     if (props.preselected === true) {
         checked.value = props.preselected;
-        emits('selected', true);
+        emit('selected', true);
     }
 });
 </script>

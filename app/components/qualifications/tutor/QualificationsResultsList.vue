@@ -25,7 +25,7 @@ const props = withDefaults(
     },
 );
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
@@ -131,7 +131,7 @@ const columns = [
 ];
 
 async function onRefresh(): Promise<void> {
-    emits('refresh');
+    emit('refresh');
     return refresh();
 }
 

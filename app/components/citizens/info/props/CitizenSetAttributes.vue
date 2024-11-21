@@ -11,13 +11,13 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'update:modelValue', attributes: CitizenAttributes | undefined): void;
 }>();
 
 const { attr, can } = useAuth();
 
-const attributes = useVModel(props, 'modelValue', emits);
+const attributes = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
 
