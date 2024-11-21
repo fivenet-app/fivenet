@@ -253,6 +253,8 @@ export const useMailerStore = defineStore('mailer', {
                     this.emails.slice(idx, 1);
                 }
 
+                useNotificatorStore().restartStream();
+
                 return response;
             } catch (e) {
                 handleGRPCError(e as RpcError);

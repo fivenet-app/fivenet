@@ -141,6 +141,9 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
 
     if (response.email) {
         emit('update:modelValue', response.email);
+
+        // Restart notificator stream
+        notifications.restartStream();
     }
 
     notifications.add({
