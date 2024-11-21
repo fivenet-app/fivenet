@@ -16,6 +16,10 @@ defineEmits<{
     (e: 'selected', idx: number): void;
 }>();
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const { can } = useAuth();
 </script>
 
@@ -23,6 +27,7 @@ const { can } = useAuth();
     <UPageGrid>
         <UPageCard
             v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
+            v-bind="$attrs"
             :key="index"
             :to="module.to"
             :title="module.title"

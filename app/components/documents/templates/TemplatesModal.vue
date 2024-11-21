@@ -150,7 +150,7 @@ async function clipboardDialog(): Promise<void> {
                 </UButton>
 
                 <div class="pt-6">
-                    <TemplatesList @selected="templateSelected($event)" />
+                    <TemplatesList hide-icon @selected="templateSelected($event)" />
                 </div>
             </template>
             <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
