@@ -206,7 +206,13 @@ func (s *Server) getColleague(ctx context.Context, job string, userId int32, wit
 
 	dest := &jobs.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	if dest.UserId == 0 {
+		return nil, nil
 	}
 
 	s.enricher.EnrichJobInfo(dest)
@@ -241,6 +247,9 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if targetUser == nil {
+		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
 
 	infoOnly := req.InfoOnly != nil && *req.InfoOnly
@@ -395,6 +404,9 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	if targetUser == nil {
+		return nil, errorsjobs.ErrNotFoundOrNoPerms
 	}
 
 	if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{
@@ -652,6 +664,9 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		targetUser, err := s.getColleague(ctx, userInfo.Job, userId, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if targetUser == nil {
+			return nil, errorsjobs.ErrNotFoundOrNoPerms
 		}
 
 		if !access.CheckIfHasAccess(colleagueAccess, userInfo, targetUser.Job, &users.UserShort{

@@ -51,7 +51,7 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
         label: { key: 'pages.error.copy_error' },
         click: async () =>
             copyToClipboardWrapper(
-                `## Error occured at ${new Date().toLocaleDateString()}:
+                `## Error occured at ${new Date().toDateString()} - ${new Date().toLocaleDateString()}:
 **Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
 **Message**: \`${err.message}\`
 **TraceID**: \`${traceId}\``,

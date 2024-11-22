@@ -423,6 +423,7 @@ logger.info(
         :schema="schema"
         :state="state"
         class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @error="console.log('error', $event)"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="$t('pages.documents.edit.title')">
@@ -575,6 +576,7 @@ logger.info(
                     </div>
                 </template>
             </UDashboardToolbar>
+
             <DocumentRelationManager
                 v-model="relationManagerData"
                 :open="openRelationManager"

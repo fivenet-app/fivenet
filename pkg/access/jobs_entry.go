@@ -80,7 +80,7 @@ func (a *Jobs[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, ta
 	return nil
 }
 
-func (a *Jobs[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, id uint64, targetId uint64) error {
+func (a *Jobs[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(

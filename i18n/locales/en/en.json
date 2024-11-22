@@ -2336,7 +2336,8 @@
             "ErrFailedQuery": "Failed to get job data!",
             "ErrReasonRequired": "A reason must be provided!",
             "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
-            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!"
+            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
+            "ErrNotFoundOrNoPerms": "Colleague not found!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

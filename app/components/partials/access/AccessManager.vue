@@ -45,9 +45,15 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const jobsAccess = useVModel(props, 'jobs', emit);
-const usersAccess = useVModel(props, 'users', emit);
-const qualificationsAccess = useVModel(props, 'qualifications', emit);
+const jobsAccess = useVModel(props, 'jobs', emit, {
+    deep: true,
+});
+const usersAccess = useVModel(props, 'users', emit, {
+    deep: true,
+});
+const qualificationsAccess = useVModel(props, 'qualifications', emit, {
+    deep: true,
+});
 
 const defaultAccessTypes = [
     { type: 'user', name: t('common.citizen', 2) },
@@ -63,12 +69,16 @@ if (props.accessTypes === undefined) {
 
 const access = ref<MixedAccessEntry[]>([]);
 
-watchArray(
+watch(
     access,
-    (newList, _, added, removed) => {
-        added.forEach((e) => {
+    () => {
+        usersAccess.value.length = 0;
+        jobsAccess.value.length = 0;
+        qualificationsAccess.value.length = 0;
+
+        access.value.forEach((e) => {
             if (e.type === 'user') {
-                const idx = usersAccess.value.findIndex((ua) => ua.id === e.id);
+                const idx = usersAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     usersAccess.value.push({
                         id: e.id,
@@ -79,7 +89,7 @@ watchArray(
                     } as UsersT);
                 }
             } else if (e.type === 'job') {
-                const idx = jobsAccess.value.findIndex((ua) => ua.id === e.id);
+                const idx = jobsAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     jobsAccess.value.push({
                         id: e.id,
@@ -91,7 +101,7 @@ watchArray(
                     } as JobsT);
                 }
             } else if (e.type === 'qualification') {
-                const idx = qualificationsAccess.value.findIndex((ua) => ua.id === e.id);
+                const idx = qualificationsAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     qualificationsAccess.value.push({
                         id: e.id,
@@ -102,120 +112,6 @@ watchArray(
                         qualification: e.qualification,
                     } as QualiT);
                 }
-            }
-        });
-
-        removed.forEach((e) => {
-            if (e.type === 'user') {
-                const idx = usersAccess.value.findIndex((ua) => ua.id === e.id);
-                if (idx > -1) {
-                    usersAccess.value.splice(idx, 1);
-                }
-            } else if (e.type === 'job') {
-                const idx = jobsAccess.value.findIndex((ja) => ja.id === e.id);
-                if (idx > -1) {
-                    jobsAccess.value.splice(idx, 1);
-                }
-            } else if (e.type === 'qualification') {
-                const idx = qualificationsAccess.value.findIndex((ja) => ja.id === e.id);
-                if (idx > -1) {
-                    qualificationsAccess.value.splice(idx, 1);
-                }
-            }
-        });
-
-        newList.forEach((e) => {
-            const uaIdx = usersAccess.value.findIndex((ua) => ua.id === e.id);
-            const jaIdx = jobsAccess.value.findIndex((ua) => ua.id === e.id);
-            const qaIdx = qualificationsAccess.value.findIndex((ua) => ua.id === e.id);
-
-            if (e.type === 'user') {
-                if (jaIdx > -1) {
-                    jobsAccess.value.splice(jaIdx, 1);
-                }
-                if (qaIdx > -1) {
-                    qualificationsAccess.value.splice(qaIdx, 1);
-                }
-
-                usersAccess.value.push({
-                    id: e.id,
-                    targetId: props.targetId,
-                    access: e.access,
-                    userId: e.userId,
-                    required: e.required,
-                } as UsersT);
-                return;
-            } else if (e.type === 'job') {
-                if (uaIdx > -1) {
-                    usersAccess.value.splice(uaIdx, 1);
-                }
-                if (qaIdx > -1) {
-                    qualificationsAccess.value.splice(qaIdx, 1);
-                }
-
-                jobsAccess.value.push({
-                    id: e.id,
-                    targetId: props.targetId,
-                    access: e.access,
-                    job: e.job,
-                    minimumGrade: e.minimumGrade,
-                    required: e.required,
-                } as JobsT);
-                return;
-            } else if (e.type === 'qualification') {
-                if (jaIdx > -1) {
-                    jobsAccess.value.splice(jaIdx, 1);
-                }
-                if (uaIdx > -1) {
-                    usersAccess.value.splice(uaIdx, 1);
-                }
-
-                qualificationsAccess.value.push({
-                    id: e.id,
-                    targetId: props.targetId,
-                    access: e.access,
-                    qualificationId: e.qualificationId,
-                    qualification: e.qualification,
-                    required: e.required,
-                } as QualiT);
-                return;
-            }
-
-            if (uaIdx > -1 && usersAccess.value[uaIdx]) {
-                if (jaIdx > -1) {
-                    jobsAccess.value.splice(jaIdx, 1);
-                }
-                if (qaIdx > -1) {
-                    qualificationsAccess.value.splice(qaIdx, 1);
-                }
-
-                usersAccess.value[uaIdx].userId = e.userId;
-                usersAccess.value[uaIdx].access = e.access;
-                usersAccess.value[uaIdx].required = e.required;
-            } else if (jaIdx > -1 && jobsAccess.value[jaIdx]) {
-                if (uaIdx > -1) {
-                    usersAccess.value.splice(uaIdx, 1);
-                }
-                if (qaIdx > -1) {
-                    qualificationsAccess.value.splice(uaIdx, 1);
-                }
-
-                jobsAccess.value[jaIdx].job = e.job;
-                jobsAccess.value[jaIdx].minimumGrade = e.minimumGrade;
-                jobsAccess.value[jaIdx].access = e.access;
-                jobsAccess.value[jaIdx].required = e.required;
-            } else if (qaIdx > -1 && qualificationsAccess.value[qaIdx]) {
-                if (uaIdx > -1) {
-                    usersAccess.value.splice(uaIdx, 1);
-                }
-                if (jaIdx > -1) {
-                    jobsAccess.value.splice(jaIdx, 1);
-                }
-
-                qualificationsAccess.value[qaIdx].qualificationId = e.qualificationId;
-                qualificationsAccess.value[qaIdx].qualification = e.qualification;
-                qualificationsAccess.value[qaIdx].access = e.access;
-                qualificationsAccess.value[qaIdx].required = e.required;
             }
         });
     },
@@ -229,7 +125,7 @@ const lastId = ref(0);
 function setFromPropsJobs(): void {
     access.value?.push(
         ...jobsAccess.value
-            .filter((a) => !access.value.find((ja) => ja.id === a.id))
+            .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
                 if (a.id === '0') {
                     a.id = lastId.value.toString();
@@ -244,7 +140,7 @@ function setFromPropsJobs(): void {
 function setFromPropsUsers(): void {
     access.value?.push(
         ...usersAccess.value
-            .filter((a) => !access.value.find((ua) => ua.id === a.id))
+            .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
                 if (a.id === '0') {
                     a.id = lastId.value.toString();
@@ -259,7 +155,7 @@ function setFromPropsUsers(): void {
 function setFromPropsQualifications(): void {
     access.value?.push(
         ...usersAccess.value
-            .filter((a) => !access.value.find((ua) => ua.id === a.id))
+            .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
                 if (a.id === '0') {
                     a.id = lastId.value.toString();
@@ -271,12 +167,15 @@ function setFromPropsQualifications(): void {
     );
 }
 
+onBeforeMount(() => {
+    setFromPropsJobs();
+    setFromPropsUsers();
+    setFromPropsQualifications();
+});
+
 watch(jobsAccess, setFromPropsJobs);
-setFromPropsJobs();
 watch(usersAccess, setFromPropsUsers);
-setFromPropsUsers();
 watch(qualificationsAccess, setFromPropsQualifications);
-setFromPropsQualifications();
 
 function addEntry(): void {
     access.value.push({
