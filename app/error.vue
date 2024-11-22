@@ -16,16 +16,14 @@ const route = router.currentRoute;
 
 const buttonDisabled = ref(true);
 
-const { start } = useTimeoutFn(() => (buttonDisabled.value = false), 2000);
+onMounted(() => useTimeoutFn(() => (buttonDisabled.value = false), 2000));
 
-function handleError(url?: string): void {
-    start();
-
+async function handleError(url?: string): Promise<void> {
     if (url === undefined) {
         url = '/';
     }
 
-    clearError();
+    await clearError();
     reloadNuxtApp({
         path: url,
         persistState: false,
