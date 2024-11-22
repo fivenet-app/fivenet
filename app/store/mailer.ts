@@ -535,6 +535,16 @@ export const useMailerStore = defineStore('mailer', {
 
         // Address book
         addToAddressBook(email: string, label?: string): void {
+            email = email.trim();
+            label = label?.trim();
+
+            const idx = this.addressBook.findIndex((a) => a.label === email);
+            if (idx > -1 && this.addressBook[idx]) {
+                this.addressBook[idx].label = email;
+                this.addressBook[idx].name = label;
+                return;
+            }
+
             this.addressBook.unshift({ label: email, name: label });
         },
     },
