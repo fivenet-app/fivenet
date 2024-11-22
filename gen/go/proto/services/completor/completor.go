@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	errorscompletor "github.com/fivenet-app/fivenet/gen/go/proto/services/completor/errors"
 	permscompletor "github.com/fivenet-app/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
@@ -20,8 +21,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
@@ -29,8 +28,6 @@ var (
 	tDCategory            = table.FivenetDocumentsCategories.AS("category")
 	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
-
-var ErrFailedSearch = status.Error(codes.Internal, "errors.CompletorService.ErrFailedSearch")
 
 type Server struct {
 	CompletorServiceServer
@@ -129,7 +126,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	var dest []*users.UserShort
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, ErrFailedSearch)
+			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	}
 
@@ -169,7 +166,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 	var err error
 	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
 	if err != nil {
-		return nil, errswrap.NewError(err, ErrFailedSearch)
+		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 
 	return resp, nil
@@ -180,7 +177,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 
 	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(err, ErrFailedSearch)
+		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
@@ -227,7 +224,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 	resp := &CompleteDocumentCategoriesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Categories); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, ErrFailedSearch)
+			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	}
 
@@ -245,7 +242,7 @@ func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCit
 
 	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
 	if err != nil {
-		return nil, errswrap.NewError(err, ErrFailedSearch)
+		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
 	var jobs perms.StringList
 	if jobsAttr != nil {
@@ -290,7 +287,7 @@ func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCit
 	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, ErrFailedSearch)
+			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	}
 

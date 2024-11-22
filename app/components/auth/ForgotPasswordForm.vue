@@ -12,6 +12,22 @@ const emit = defineEmits<{
 
 const notifications = useNotificatorStore();
 
+const accountError = ref<TranslateItem | undefined>();
+
+const schema = z.object({
+    registrationToken: z.string().length(6).trim(),
+    password: z.string().min(6).max(70),
+});
+
+type Schema = z.output<typeof schema>;
+
+const registrationToken = useRouteQuery('registrationToken', '');
+
+const state = reactive<Schema>({
+    registrationToken: registrationToken.value,
+    password: '',
+});
+
 async function forgotPassword(values: Schema): Promise<void> {
     try {
         await getGRPCAuthClient().forgotPassword({
@@ -27,27 +43,11 @@ async function forgotPassword(values: Schema): Promise<void> {
 
         emit('toggle');
     } catch (e) {
-        accountError.value = getErrorMessage((e as RpcError).message);
+        accountError.value = getErrorMessage(e as RpcError);
         handleGRPCError(e as RpcError);
         throw e;
     }
 }
-
-const accountError = ref('');
-
-const schema = z.object({
-    registrationToken: z.string().length(6).trim(),
-    password: z.string().min(6).max(70),
-});
-
-type Schema = z.output<typeof schema>;
-
-const registrationToken = useRouteQuery('registrationToken', '');
-
-const state = reactive<Schema>({
-    registrationToken: registrationToken.value,
-    password: '',
-});
 
 const passwordVisibility = ref(false);
 
@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             v-if="accountError"
             class="mt-2"
             :title="$t('components.auth.ForgotPassword.create_error')"
-            :description="isTranslatedError(accountError) ? $t(accountError) : accountError"
+            :description="$t(accountError.key, accountError.parameters ?? {})"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',
@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 variant: 'link',
                 padded: false,
             }"
-            @close="accountError = ''"
+            @close="accountError = undefined"
         />
     </UForm>
 </template>

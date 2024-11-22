@@ -6,6 +6,7 @@ import (
 	"math"
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -32,10 +33,9 @@ import (
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
-	"google.golang.org/grpc/status"
 )
 
-var ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error.title;errors.general.internal_error.content")
+var ErrInternalServer = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.general.internal_error.content"}, &common.TranslateItem{Key: "errors.general.internal_error.title"})
 
 // Setup metric for panic recoveries
 var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{

@@ -1,14 +1,14 @@
 package errorscalendar
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrFailedQuery    = status.Error(codes.Internal, "errors.CalendarService.ErrFailedQuery")
-	ErrNoPerms        = status.Error(codes.InvalidArgument, "errors.CalendarService.ErrNoPerms")
-	ErrOnePrivateCal  = status.Error(codes.InvalidArgument, "errors.CalendarService.ErrOnePrivateCal")
-	ErrCalendarClosed = status.Error(codes.InvalidArgument, "errors.CalendarService.ErrCalendarClosed.title;errors.CalendarService.ErrCalendarClosed.content")
-	ErrEntryClosed    = status.Error(codes.InvalidArgument, "errors.CalendarService.ErrEntryClosed.title;errors.CalendarService.ErrEntryClosed.content")
+	ErrFailedQuery    = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.CalendarService.ErrFailedQuery"}, nil)
+	ErrNoPerms        = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CalendarService.ErrNoPerms"}, nil)
+	ErrOnePrivateCal  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CalendarService.ErrOnePrivateCal"}, nil)
+	ErrCalendarClosed = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CalendarService.ErrCalendarClosed.content"}, &common.TranslateItem{Key: "errors.CalendarService.ErrCalendarClosed.title"})
+	ErrEntryClosed    = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CalendarService.ErrEntryClosed.content"}, &common.TranslateItem{Key: "errors.CalendarService.ErrEntryClosed.title"})
 )

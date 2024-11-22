@@ -1,23 +1,23 @@
 package common
 
 import (
-	"fmt"
-
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
 
 const ErrorKeyFormat = "errors.%s.%s"
 
-type Error struct {
-	Title   string
-	Content string
-}
+var errFailedMarshal = []byte("Failed to marshal error")
 
-type Errors struct {
-	service string
-}
+func I18nErr(c codes.Code, content *TranslateItem, title *TranslateItem) error {
+	out, err := protoutils.Marshal(&Error{
+		Title:   title,
+		Content: content,
+	})
+	if err != nil {
+		out = errFailedMarshal
+	}
 
-func (e *Errors) Error(code codes.Code, name string) error {
-	return status.Error(code, fmt.Sprintf(ErrorKeyFormat, e.service, name))
+	return status.Error(c, string(out))
 }

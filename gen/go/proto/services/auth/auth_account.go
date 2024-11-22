@@ -6,16 +6,16 @@ import (
 	"slices"
 
 	accounts "github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-var ErrGenericAccount = status.Error(codes.Internal, "errors.AuthService.ErrGenericAccount")
+var ErrGenericAccount = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.AuthService.ErrGenericAccount"}, nil)
 
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)

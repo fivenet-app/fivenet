@@ -17,7 +17,7 @@ export interface AuthState {
     lastCharID: undefined | number;
     activeChar: null | User;
     loggingIn: boolean;
-    loginError: null | string;
+    loginError: null | TranslateItem;
     permissions: string[];
     jobProps: null | JobProps;
 }
@@ -50,7 +50,7 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = true;
             this.loginError = null;
         },
-        loginStop(errorMessage: null | string): void {
+        loginStop(errorMessage: null | TranslateItem): void {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
@@ -124,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
                     await navigateTo(target);
                 }
             } catch (e) {
-                this.loginStop((e as RpcError).message);
+                this.loginStop(e as RpcError);
                 this.setAccessTokenExpiration(null);
                 handleGRPCError(e as RpcError);
                 throw e;

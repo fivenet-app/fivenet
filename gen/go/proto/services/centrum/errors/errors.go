@@ -1,17 +1,17 @@
 package errorscentrum
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
-	ErrNotPartOfDispatch = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotPartOfDispatch")
-	ErrNotPartOfUnit     = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotPartOfUnit")
-	ErrNotOnDuty         = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotOnDuty.title;errors.CentrumService.ErrNotOnDuty.content")
-	ErrStaticUnit        = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrStaticUnit")
+	ErrFailedQuery       = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.CentrumService.ErrFailedQuery"}, nil)
+	ErrNotPartOfDispatch = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrNotPartOfDispatch"}, nil)
+	ErrNotPartOfUnit     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrNotPartOfUnit"}, nil)
+	ErrNotOnDuty         = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrNotOnDuty.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrNotOnDuty.title"})
+	ErrStaticUnit        = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrStaticUnit"}, nil)
 
-	ErrModeForbidsAction        = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrModeForbidsAction.title;errors.CentrumService.ErrModeForbidsAction.content")
-	ErrDispatchAlreadyCompleted = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrDispatchAlreadyCompleted.title;errors.CentrumService.ErrDispatchAlreadyCompleted.content")
+	ErrModeForbidsAction        = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrModeForbidsAction.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrModeForbidsAction.title"})
+	ErrDispatchAlreadyCompleted = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.content"}, &common.TranslateItem{Key: "errors.CentrumService.ErrDispatchAlreadyCompleted.title"})
 )

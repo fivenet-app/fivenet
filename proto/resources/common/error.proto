@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package resources.common;
+
+import "resources/common/i18n.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common;common";
+
+message Error {
+  optional TranslateItem title = 1;
+  TranslateItem content = 2;
+}

@@ -1,26 +1,26 @@
 package errorsmailer
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.MailerService.ErrFailedQuery")
-	ErrNoPerms     = status.Error(codes.InvalidArgument, "errors.MailerService.ErrNoPerms")
+	ErrFailedQuery = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.MailerService.ErrFailedQuery"}, nil)
+	ErrNoPerms     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrNoPerms"}, nil)
 
-	ErrAddresseAlreadyTaken = status.Error(codes.InvalidArgument, "errors.MailerService.ErrAddresseAlreadyTaken.title;errors.MailerService.ErrAddresseAlreadyTaken.content")
-	ErrAddresseInvalid      = status.Error(codes.InvalidArgument, "errors.MailerService.ErrAddresseInvalid")
-	ErrTemplateLimitReached = status.Error(codes.InvalidArgument, "errors.MailerService.ErrTemplateLimitReached")
-	ErrEmailAccessDenied    = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessDenied")
-	ErrCantDeleteOwnEmail   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrCantDeleteOwnEmail")
-	ErrEmailAccessRequired  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailAccessRequired")
-	ErrEmailChangeTooEarly  = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailChangeTooEarly.title;errors.MailerService.ErrEmailChangeTooEarly.content")
-	ErrEmailDisabled        = status.Error(codes.InvalidArgument, "errors.MailerService.ErrEmailDisabled.title;errors.MailerService.ErrEmailDisabled.content")
+	ErrAddresseAlreadyTaken = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrAddresseAlreadyTaken.content"}, &common.TranslateItem{Key: "errors.MailerService.ErrAddresseAlreadyTaken.title"})
+	ErrAddresseInvalid      = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrAddresseInvalid"}, nil)
+	ErrTemplateLimitReached = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrTemplateLimitReached"}, nil)
+	ErrEmailAccessDenied    = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrEmailAccessDenied"}, nil)
+	ErrCantDeleteOwnEmail   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrCantDeleteOwnEmail"}, nil)
+	ErrEmailAccessRequired  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrEmailAccessRequired"}, nil)
+	ErrEmailChangeTooEarly  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrEmailChangeTooEarly.content"}, &common.TranslateItem{Key: "errors.MailerService.ErrEmailChangeTooEarly.title"})
+	ErrEmailDisabled        = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrEmailDisabled.content"}, &common.TranslateItem{Key: "errors.MailerService.ErrEmailDisabled.title"})
 
-	ErrRecipientMinium   = status.Error(codes.InvalidArgument, "errors.MailerService.ErrRecipientMinium")
-	ErrInvalidRecipients = status.Error(codes.InvalidArgument, "errors.MailerService.ErrInvalidRecipients")
-	ErrSameAddress       = status.Error(codes.InvalidArgument, "errors.MailerService.ErrSameAddress")
+	ErrRecipientMinium   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrRecipientMinium"}, nil)
+	ErrInvalidRecipients = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrInvalidRecipients"}, nil)
+	ErrSameAddress       = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrSameAddress"}, nil)
 
-	ErrThreadAccessDenied = status.Error(codes.InvalidArgument, "errors.MailerService.ErrThreadAccessDenied.title;errors.MailerService.ErrThreadAccessDenied.content")
+	ErrThreadAccessDenied = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.MailerService.ErrThreadAccessDenied.content"}, &common.TranslateItem{Key: "errors.MailerService.ErrThreadAccessDenied.title"})
 )

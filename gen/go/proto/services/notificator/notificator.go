@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -20,14 +21,13 @@ import (
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var tNotifications = table.FivenetNotifications
 
 var (
-	ErrFailedRequest = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedRequest")
-	ErrFailedStream  = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedStream")
+	ErrFailedRequest = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.NotificatorService.ErrFailedRequest"}, nil)
+	ErrFailedStream  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.NotificatorService.ErrFailedStream"}, nil)
 )
 
 type Server struct {

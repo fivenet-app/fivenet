@@ -7,7 +7,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const notifications = useNotificatorStore();
 
-const accountError = ref('');
+const accountError = ref<TranslateItem | undefined>();
 
 const schema = z.object({
     registrationToken: z.string().length(6),
@@ -133,7 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             v-if="accountError"
             class="mt-2"
             :title="$t('components.auth.RegistrationForm.create_error')"
-            :description="isTranslatedError(accountError) ? $t(accountError) : accountError"
+            :description="$t(accountError.key, accountError?.parameters ?? {})"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',
@@ -141,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 variant: 'link',
                 padded: false,
             }"
-            @close="accountError = ''"
+            @close="accountError = undefined"
         />
     </div>
 </template>

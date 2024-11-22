@@ -1,13 +1,13 @@
 package errorsjobs
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrFailedQuery        = status.Error(codes.Internal, "errors.JobsService.ErrFailedQuery")
-	ErrPropsAbsenceDenied = status.Error(codes.PermissionDenied, "errors.JobsService.ErrPropsAbsenceDenied")
-	ErrPropsNoteDenied    = status.Error(codes.PermissionDenied, "errors.JobsService.ErrPropsNoteDenied")
-	ErrReasonRequired     = status.Error(codes.InvalidArgument, "errors.JobsService.ErrReasonRequired")
+	ErrFailedQuery        = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.JobsService.ErrFailedQuery"}, nil)
+	ErrPropsAbsenceDenied = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsAbsenceDenied"}, nil)
+	ErrPropsNoteDenied    = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsNoteDenied"}, nil)
+	ErrReasonRequired     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrReasonRequired"}, nil)
 )

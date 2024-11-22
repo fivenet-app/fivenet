@@ -27,3 +27,16 @@ func (x *TranslateItem) Value() (driver.Value, error) {
 	out, err := protoutils.Marshal(x)
 	return string(out), err
 }
+
+func NewTranslateItem(key string) *TranslateItem {
+	return &TranslateItem{
+		Key: key,
+	}
+}
+
+func NewTranslateItemWithParams(key string, params map[string]string) *TranslateItem {
+	return &TranslateItem{
+		Key:        key,
+		Parameters: params,
+	}
+}

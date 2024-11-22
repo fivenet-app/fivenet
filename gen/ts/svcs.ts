@@ -7,6 +7,7 @@
 // source: resources/centrum/general.proto
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
+// source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
 // source: resources/common/cron/cron.proto

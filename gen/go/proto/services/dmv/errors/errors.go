@@ -1,8 +1,8 @@
 package errorsdmv
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
-var ErrFailedQuery = status.Error(codes.Internal, "errors.DMVService.ErrFailedQuery")
+var ErrFailedQuery = common.I18nErr(codes.Internal, &common.TranslateItem{Key: "errors.DMVService.ErrFailedQuery"}, nil)

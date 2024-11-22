@@ -1,11 +1,11 @@
 package errorswiki
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.WikiService.ErrFailedQuery")
-	ErrPageDenied  = status.Error(codes.InvalidArgument, "errors.WikiService.ErrPageDenied")
+	ErrFailedQuery = common.I18nErr(codes.Internal, common.NewTranslateItem("errors.WikiService.ErrFailedQuery"), nil)
+	ErrPageDenied  = common.I18nErr(codes.InvalidArgument, common.NewTranslateItem("errors.WikiService.ErrPageDenied"), nil)
 )

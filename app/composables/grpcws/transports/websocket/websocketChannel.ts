@@ -114,7 +114,14 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     }
 
                     stream[0].debug &&
-                        this.logger.debug('Received failure for stream', streamId, failure.errorStatus, failure.errorMessage);
+                        this.logger.debug(
+                            'Received failure for stream',
+                            streamId,
+                            'status:',
+                            failure.errorStatus,
+                            'msg:',
+                            failure.errorMessage,
+                        );
 
                     const metaData = headersToMetadata(failure.headers);
                     stream[0].onEnd(createRpcError(metaData, stream[0].methodDefinition));

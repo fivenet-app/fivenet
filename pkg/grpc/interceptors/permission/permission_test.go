@@ -19,7 +19,7 @@ import (
 func failFromMD(ctx context.Context) (bool, error) {
 	val := metadata.ExtractIncoming(ctx).Get("fail")
 	if val == "" {
-		return false, status.Errorf(codes.Internal, "Failed to get fail info from metadata")
+		return false, status.Error(codes.Internal, "Failed to get fail info from metadata")
 	}
 
 	return strconv.ParseBool(val)
@@ -36,7 +36,7 @@ func buildDummyUnaryPermsFunction(t *testing.T, hasRemap bool) func(ctx context.
 		assert.Equal(t, hasRemap, ok, "expected grpc server have or have not a perms remap func")
 
 		if fail {
-			return nil, status.Errorf(codes.PermissionDenied, "buildDummyUnaryPermsFunction fail set in context")
+			return nil, status.Error(codes.PermissionDenied, "buildDummyUnaryPermsFunction fail set in context")
 		}
 		return ctx, nil
 	}
@@ -53,7 +53,7 @@ func buildDummyStreamPermsFunction(t *testing.T, hasRemap bool) func(ctx context
 		assert.Equal(t, hasRemap, ok)
 
 		if fail {
-			return nil, status.Errorf(codes.PermissionDenied, "buildDummyStreamPermsFunction fail set in context")
+			return nil, status.Error(codes.PermissionDenied, "buildDummyStreamPermsFunction fail set in context")
 		}
 		return ctx, nil
 	}

@@ -2,6 +2,7 @@ import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
 import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CalendarServiceClient } from '~~/gen/ts/services/calendar/calendar.client';
@@ -51,9 +52,9 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
         click: async () =>
             copyToClipboardWrapper(
                 `## Error occured at ${new Date().toLocaleDateString()}:
-**Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
-**Message**: ${err.message}
-**TraceID**: ${traceId}`,
+**Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
+**Message**: \`${err.message}\`
+**TraceID**: \`${traceId}\``,
             ),
     });
 }
@@ -75,7 +76,12 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         actions: [],
     } as Notification;
 
-    const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'N/A';
+    const traceId =
+        (err?.meta &&
+            (typeof err.meta['trailer+x-trace-id'] === 'string'
+                ? err.meta['trailer+x-trace-id']
+                : (err.meta['trailer+x-trace-id'] as string[]).join(','))) ??
+        'N/A';
 
     const code = err.code?.toUpperCase();
     if (code !== undefined) {
@@ -160,13 +166,14 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         `Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Code: ${err.code}, Message: ${err.message}`,
     );
 
-    if (isTranslatedError(err.message)) {
-        const errSplits = err.message.split(';');
-        if (errSplits.length > 1) {
-            notification.title = { key: errSplits[0], parameters: {} };
-            notification.description = { key: errSplits[1], parameters: {} };
-        } else {
-            notification.description = { key: err.message, parameters: {} };
+    if (err?.message && isTranslatedError(err.message as string)) {
+        const parsed = JSON.parse(err.message) as CommonError;
+
+        if (parsed.title) {
+            notification.title = parsed.title;
+        }
+        if (parsed.content) {
+            notification.description = parsed.content;
         }
     }
 

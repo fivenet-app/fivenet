@@ -3,13 +3,13 @@ package auth
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 const (
@@ -34,13 +34,13 @@ type userInfoCtxMarker struct{}
 var userInfoCtxMarkerKey = &userInfoCtxMarker{}
 
 var (
-	ErrNoToken          = status.Errorf(codes.Unauthenticated, "errors.pkg-auth.ErrNoToken")
-	ErrInvalidToken     = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrInvalidToken")
-	ErrCheckToken       = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrCheckToken")
-	ErrUserNoPerms      = status.Error(codes.PermissionDenied, "errors.pkg-auth.ErrUserNoPerms")
-	ErrNoUserInfo       = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrNoUserInfo")
-	ErrPermissionDenied = status.Errorf(codes.PermissionDenied, "errors.pkg-auth.ErrPermissionDenied")
-	ErrCharLock         = status.Error(codes.PermissionDenied, "errors.AuthService.ErrCharLock.title;errors.AuthService.ErrCharLock.content") // Copied from the auth service
+	ErrNoToken          = common.I18nErr(codes.Unauthenticated, &common.TranslateItem{Key: "errors.pkg-auth.ErrNoToken"}, nil)
+	ErrInvalidToken     = common.I18nErr(codes.Unauthenticated, &common.TranslateItem{Key: "errors.pkg-auth.ErrInvalidToken"}, nil)
+	ErrCheckToken       = common.I18nErr(codes.Unauthenticated, &common.TranslateItem{Key: "errors.pkg-auth.ErrCheckToken"}, nil)
+	ErrUserNoPerms      = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.pkg-auth.ErrUserNoPerms"}, nil)
+	ErrNoUserInfo       = common.I18nErr(codes.Unauthenticated, &common.TranslateItem{Key: "errors.pkg-auth.ErrNoUserInfo"}, nil)
+	ErrPermissionDenied = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.pkg-auth.ErrPermissionDenied"}, nil)
+	ErrCharLock         = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.AuthService.ErrCharLock.content"}, &common.TranslateItem{Key: "errors.AuthService.ErrCharLock.title"}) // Copied from the auth service
 )
 
 type GRPCAuth struct {

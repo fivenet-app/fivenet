@@ -5,9 +5,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCalendarStore } from '~/store/calendar';
-import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import ColorPickerTW from '../partials/ColorPickerTW.vue';
 import AccessManager from '../partials/access/AccessManager.vue';
@@ -23,14 +23,12 @@ const { attr, activeChar } = useAuth();
 
 const calendarStore = useCalendarStore();
 
-const completorStore = useCompletorStore();
-
 const notifications = useNotificatorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
-    privatecalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value,
+    privateCalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value,
     publicCalendar: attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public').value,
 }));
 
@@ -86,6 +84,12 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCal
             color: values.color,
             creatorJob: '',
             access: values.access,
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;
@@ -176,7 +180,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                             class="flex-1"
                         >
-                            <UToggle v-model="state.private" :disabled="!canDo.privatecalendar || calendarId !== undefined" />
+                            <UToggle v-model="state.private" :disabled="!canDo.privateCalendar || calendarId !== undefined" />
                         </UFormGroup>
 
                         <UFormGroup v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">
