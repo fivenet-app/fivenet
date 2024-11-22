@@ -317,10 +317,10 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response.thread;
             } catch (e) {
-                const err = e as RpcError;
-                handleGRPCError(err);
+                const error = e as RpcError;
+                handleGRPCError(error);
 
-                if (err?.message?.includes('.ErrThreadAccessDenied')) {
+                if (error?.message?.includes('.ErrThreadAccessDenied')) {
                     await Promise.all([
                         mailerDB.threads.delete(threadId),
                         mailerDB.messages.where('threadId').equals(threadId).delete(),
@@ -445,10 +445,10 @@ export const useMailerStore = defineStore('mailer', {
 
                 return response;
             } catch (e) {
-                const err = e as RpcError;
-                await handleGRPCError(err);
+                const error = e as RpcError;
+                await handleGRPCError(error);
 
-                if (err?.message?.includes('.ErrThreadAccessDenied')) {
+                if (error?.message?.includes('.ErrThreadAccessDenied')) {
                     await Promise.all([
                         mailerDB.threads.delete(req.threadId),
                         mailerDB.messages.where('threadId').equals(req.threadId).delete(),
