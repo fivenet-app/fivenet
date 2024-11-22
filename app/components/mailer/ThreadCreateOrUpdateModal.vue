@@ -11,7 +11,7 @@ const { isOpen } = useModal();
 const { activeChar } = useAuth();
 
 const mailerStore = useMailerStore();
-const { draft: state, selectedEmail } = storeToRefs(mailerStore);
+const { draft: state, addressBook, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
     title: z.string().min(3).max(255),
@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         trailing
                                         searchable
-                                        :options="state.recipients"
+                                        :options="[...state.recipients, ...addressBook]"
                                         :searchable-placeholder="$t('common.mail', 1)"
                                         creatable
                                         :disabled="!canSubmit"

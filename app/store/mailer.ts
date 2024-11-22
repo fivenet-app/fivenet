@@ -44,7 +44,7 @@ export interface MailerState {
     selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
 
-    addressBook: { label: string; email: string }[];
+    addressBook: { label: string; name?: string }[];
 }
 
 export const useMailerStore = defineStore('mailer', {
@@ -157,6 +157,10 @@ export const useMailerStore = defineStore('mailer', {
         // Emails
         async listEmails(all?: boolean, offset?: number): Promise<ListEmailsResponse> {
             this.error = undefined;
+
+            if (this.addressBook.length > 30) {
+                this.addressBook.length = 30;
+            }
 
             try {
                 const call = getGRPCMailerClient().listEmails({
@@ -332,6 +336,8 @@ export const useMailerStore = defineStore('mailer', {
 
                 if (response.thread) {
                     await mailerDB.threads.put(response.thread);
+
+                    req.recipients.forEach((r) => this.addToAddressBook(r));
                 }
 
                 return response;
@@ -458,6 +464,8 @@ export const useMailerStore = defineStore('mailer', {
 
                 if (response.message) {
                     await mailerDB.messages.put(response.message);
+
+                    req.recipients.forEach((r) => this.addToAddressBook(r));
                 }
 
                 return response;
@@ -523,6 +531,11 @@ export const useMailerStore = defineStore('mailer', {
                       },
                   ]
                 : [];
+        },
+
+        // Address book
+        addToAddressBook(email: string, label?: string): void {
+            this.addressBook.unshift({ label: email, name: label });
         },
     },
     getters: {

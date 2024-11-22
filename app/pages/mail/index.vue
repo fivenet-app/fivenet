@@ -159,35 +159,31 @@ onBeforeMount(async () => {
                 v-if="selectedEmail"
                 :ui="{
                     wrapper: 'p-0 gap-x-0',
-                    container: 'gap-x-0 justify-stretch items-stretch h-full inline-flex flex-col',
+                    container:
+                        'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800',
                 }"
             >
-                <div class="inline-flex gap-1 bg-gray-100 p-1 dark:bg-gray-800">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="selectedEmail"
-                            :options="emails"
-                            :placeholder="$t('common.mail')"
-                            searchable
-                            :searchable-placeholder="$t('common.search_field')"
-                            :search-attributes="['label', 'email']"
-                            trailing
-                            by="id"
-                            class="w-full"
-                        >
-                            <template #label>
-                                <span class="truncate">
-                                    {{
-                                        (selectedEmail?.label && selectedEmail?.label !== ''
-                                            ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
-                                            : undefined) ??
-                                        (selectedEmail?.userId
-                                            ? $t('common.personal_email') + ' (' + selectedEmail.email + ')'
-                                            : undefined) ??
-                                        selectedEmail?.email ??
-                                        $t('common.none')
-                                    }}
-                                </span>
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="selectedEmail"
+                        :options="emails"
+                        :placeholder="$t('common.mail')"
+                        searchable
+                        :searchable-placeholder="$t('common.search_field')"
+                        :search-attributes="['label', 'email']"
+                        trailing
+                        class="pt-1"
+                        by="id"
+                    >
+                        <template #label>
+                            <span class="overflow-hidden truncate">
+                                {{
+                                    (selectedEmail?.label && selectedEmail?.label !== ''
+                                        ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                                        : undefined) ??
+                                    selectedEmail?.email ??
+                                    $t('common.none')
+                                }}
 
                                 <UBadge
                                     v-if="selectedEmail?.deactivated"
@@ -195,38 +191,33 @@ onBeforeMount(async () => {
                                     size="xs"
                                     :label="$t('common.disabled')"
                                 />
-                            </template>
+                            </span>
+                        </template>
 
-                            <template #option="{ option }">
-                                <span class="truncate">
-                                    {{
-                                        (option?.label && option?.label !== ''
-                                            ? option?.label + ' (' + option.email + ')'
-                                            : undefined) ??
-                                        (option?.userId
-                                            ? $t('common.personal_email') + (isSuperuser ? ' (' + option.email + ')' : '')
-                                            : undefined) ??
-                                        option?.email ??
-                                        $t('common.none')
-                                    }}
-                                </span>
+                        <template #option="{ option }">
+                            <span class="truncate">
+                                {{
+                                    (option?.label && option?.label !== ''
+                                        ? option?.label + ' (' + option.email + ')'
+                                        : undefined) ??
+                                    (option?.userId
+                                        ? $t('common.personal_email') + (isSuperuser ? ' (' + option.email + ')' : '')
+                                        : undefined) ??
+                                    option?.email ??
+                                    $t('common.none')
+                                }}
+                            </span>
 
-                                <UBadge
-                                    v-if="selectedEmail?.deactivated"
-                                    color="red"
-                                    size="xs"
-                                    :label="$t('common.disabled')"
-                                />
-                            </template>
+                            <UBadge v-if="selectedEmail?.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
+                        </template>
 
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
 
-                            <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </div>
+                        <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
 
                 <UTabs
                     v-if="!selectedEmail?.deactivated"

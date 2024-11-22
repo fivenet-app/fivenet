@@ -511,7 +511,8 @@
         "label": "Label",
         "additional_recipients": "Additional Recipients",
         "last_updated": "Last Updated",
-        "domain": "Domain"
+        "domain": "Domain",
+        "address_book": "Address Book"
     },
     "components": {
         "partials": {
@@ -1208,6 +1209,9 @@
                 "email": {
                     "description": "Your e-mail address can only be changed once every 2 weeks."
                 }
+            },
+            "settings": {
+                "clear_address_book": "Clear Address Book"
             }
         }
     },

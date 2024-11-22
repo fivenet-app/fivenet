@@ -18,7 +18,7 @@ withDefaults(
 const { isOpen } = useModal();
 
 const mailerStore = useMailerStore();
-const { selectedEmail } = storeToRefs(mailerStore);
+const { addressBook, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
     signature: z.string().max(1024),
@@ -105,6 +105,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :disabled="disabled || !canSubmit || state.emails.length >= 25"
                             :class="state.emails.length ? 'mt-2' : ''"
                             @click="state.emails.push('')"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup :label="$t('common.address_book')">
+                        <UButton
+                            :label="$t('components.mailer.settings.clear_address_book')"
+                            color="red"
+                            icon="i-mdi-bookmark-remove"
+                            @click="addressBook.length = 0"
                         />
                     </UFormGroup>
                 </div>
