@@ -312,7 +312,8 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 
 	// Add creator of email to recipients
 	emails = append(emails, &mailer.ThreadRecipientEmail{
-		EmailId: req.Thread.CreatorEmailId,
+		EmailId: senderEmail.Id,
+		Email:   senderEmail,
 	})
 	if err := s.handleRecipientsChanges(ctx, tx, req.Thread.Id, emails); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

@@ -3,6 +3,7 @@ package mailer
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
@@ -22,10 +23,12 @@ func (s *Server) handleRecipientsChanges(ctx context.Context, tx qrm.DB, threadI
 			INSERT(
 				tThreadsRecipients.ThreadID,
 				tThreadsRecipients.EmailID,
+				tThreadsRecipients.Email,
 			).
 			VALUES(
 				threadId,
 				recipient.EmailId,
+				recipient.Email.Email,
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -46,7 +49,7 @@ func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*m
 			tThreadsRecipients.ThreadID,
 			tThreadsRecipients.EmailID,
 			tEmails.ID,
-			tEmails.Email,
+			tThreadsRecipients.Email.AS("email.email"),
 			tEmails.Internal,
 		).
 		FROM(
@@ -84,6 +87,7 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 	stmt := tEmails.
 		SELECT(
 			tEmails.ID.AS("thread_recipient_email.email_id"),
+			tEmails.Email,
 			tEmails.Deactivated,
 			tEmails.Internal,
 		).
@@ -105,10 +109,22 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 		return nil, errorsmailer.ErrInvalidRecipients
 	}
 
+	// Add email "name" to thread recipient by matching the email via the recipients list
 	for _, recipient := range dest {
-		// How should we handle internal email addresses of recipients?
 		if senderEmail.Id == recipient.EmailId {
 			return nil, errorsmailer.ErrSameAddress
+		}
+
+		idx := slices.IndexFunc(recipients, func(in string) bool {
+			return in == recipient.Email.Email
+		})
+		if idx == -1 {
+			return nil, errorsmailer.ErrInvalidRecipients
+		}
+
+		recipient.Email = &mailer.Email{
+			Id:    recipient.EmailId,
+			Email: recipient.Email.Email,
 		}
 	}
 

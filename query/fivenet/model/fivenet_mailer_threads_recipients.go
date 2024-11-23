@@ -16,4 +16,5 @@ type FivenetMailerThreadsRecipients struct {
 	CreatedAt *time.Time `json:"created_at"`
 	ThreadID  uint64     `json:"thread_id"`
 	EmailID   uint64     `json:"email_id"`
+	Email     string     `json:"email"`
 }
