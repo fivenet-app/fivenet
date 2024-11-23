@@ -136,7 +136,10 @@ const contentAccessTypes: AccessType[] = [
             <div class="mt-2 sm:flex sm:items-center">
                 <div>
                     <h2 class="inline-flex items-center gap-2 text-2xl">
-                        <UIcon :name="template.icon ?? 'i-mdi-file-outline'" :color="template.color" />
+                        <UIcon
+                            :name="template.icon ?? 'i-mdi-file-outline'"
+                            :class="`text-${template.color}-500 dark:text-${template.color}-400`"
+                        />
 
                         <span>
                             {{ template.title }}

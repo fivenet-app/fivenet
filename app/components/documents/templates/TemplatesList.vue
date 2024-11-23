@@ -38,14 +38,14 @@ async function listTemplates(): Promise<TemplateShort[]> {
 
 const items = ref<CardElements>([]);
 watch(templates, () =>
-    templates.value?.forEach((v) => {
+    templates.value?.forEach((v) =>
         items.value.push({
             title: v?.title,
             description: v?.description,
             icon: v.icon ?? (!props.hideIcon ? 'i-mdi-file-outline' : undefined),
             color: v.color ?? 'primary',
-        });
-    }),
+        }),
+    ),
 );
 
 function selected(idx: number): TemplateShort | undefined {

@@ -35,15 +35,22 @@ const { can } = useAuth();
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
             @click="$emit('selected', index)"
         >
-            <template v-if="showIcon && !module.icon?.startsWith('i-')" #icon>
-                <div v-if="showIcon">
+            <template v-if="showIcon" #icon>
+                <template v-if="!module.icon?.startsWith('i-')">
                     <component
                         :is="markerIcons.find((item) => item.name === module.icon) ?? markerFallbackIcon"
                         v-if="module.icon"
                         class="text-primary h-10 w-10 flex-shrink-0"
-                        :style="{ color: module.color }"
+                        :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"
                     />
-                </div>
+                </template>
+                <template v-else>
+                    <UIcon
+                        :name="module.icon"
+                        class="text-primary h-10 w-10 flex-shrink-0"
+                        :class="`text-${module.color}-500 dark:text-${module.color}-400`"
+                    />
+                </template>
             </template>
 
             <template #description>
