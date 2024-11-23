@@ -380,7 +380,6 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			req.Template.Description,
 			req.Template.Color,
 			req.Template.Icon,
-			req.Template.Content,
 			req.Template.ContentTitle,
 			req.Template.Content,
 			req.Template.State,
