@@ -89,9 +89,9 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guil
 		ms = append(ms, "userinfo")
 	}
 
+	g.logger.Debug("getting discord guild modules", zap.Strings("dc_modules", ms))
 	errs := multierr.Combine()
 	for _, module := range ms {
-		g.logger.Debug("getting discord guild module", zap.String("dc_module", module))
 
 		m, err := modules.GetModule(module, g.base, g.events)
 		if err != nil {
@@ -121,8 +121,8 @@ func (g *Guild) Run() error {
 		planDiff = &users.DiscordSyncChanges{}
 	}
 
-	if _, err := g.bot.dc.Members(g.guild.ID); err != nil {
-		g.logger.Error("failed to request guild members. %w", zap.Error(err))
+	if _, err := g.bot.dc.MembersAfter(g.guild.ID, discord.NullUserID, 0); err != nil {
+		g.logger.Error("failed to request all guild members. %w", zap.Error(err))
 	}
 
 	errs := multierr.Combine()

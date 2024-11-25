@@ -177,10 +177,6 @@ func NewBot(p BotParams) (*Bot, error) {
 			}
 		}()
 
-		if err := b.getGuilds(cancelCtx); err != nil {
-			return fmt.Errorf("failed to get guilds from db. %w", err)
-		}
-
 		go b.syncLoop()
 
 		return nil

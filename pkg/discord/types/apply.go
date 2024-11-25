@@ -3,7 +3,6 @@ package types
 import (
 	"context"
 	"fmt"
-	"log"
 
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -108,7 +107,6 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			for _, role := range user.Roles.ToRemove.ToSlice() {
 				out += "Role Name: " + role.Name + " (ID: " + role.ID.String() + ", " + role.Module + "); "
 			}
-			log.Printf("removing roles from user %d - roles, toRemove: %s", user.ID, out)
 		}
 
 		for _, role := range user.Roles.ToRemove {
