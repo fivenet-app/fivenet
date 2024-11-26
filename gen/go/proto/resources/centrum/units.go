@@ -71,6 +71,10 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		x.HomePostal = in.HomePostal
 	}
 
+	if in.Access != nil {
+		x.Access = in.Access
+	}
+
 	return x
 }
 

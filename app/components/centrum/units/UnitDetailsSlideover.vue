@@ -1,12 +1,14 @@
 <script lang="ts" setup>
-import { unitStatusToBGColor } from '~/components/centrum//helpers';
+import { checkUnitAccess, unitStatusToBGColor } from '~/components/centrum//helpers';
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
 import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
+import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
@@ -15,7 +17,7 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
-const { can } = useAuth();
+const { activeChar, can } = useAuth();
 
 const { isOpen } = useSlideover();
 
@@ -61,6 +63,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             </p>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ `${$t('common.department')} ${$t('common.postal')}` }}
@@ -69,6 +72,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             {{ unit.homePostal ?? $t('common.na') }}
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.last_update') }}
@@ -77,6 +81,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             <GenericTime :value="unit.status?.createdAt" />
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.status') }}
@@ -85,6 +90,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             <UButton
                                 class="rounded px-2 py-1 text-sm font-semibold shadow-sm"
                                 :class="unitStatusColors"
+                                :disabled="!checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                                 @click="
                                     modal.open(UnitStatusUpdateModal, {
                                         unit: unit,
@@ -96,6 +102,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             </UButton>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.code') }}
@@ -104,6 +111,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             {{ unit.status?.code ?? $t('common.na') }}
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.reason') }}
@@ -112,6 +120,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             {{ unit.status?.reason ?? $t('common.na') }}
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.location') }}
@@ -137,6 +146,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             </div>
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.attributes', 2) }}
@@ -145,6 +155,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             <UnitAttributes :attributes="unit.attributes" />
                         </dd>
                     </div>
+
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                         <dt class="text-sm font-medium leading-6">
                             {{ $t('common.members') }}
@@ -185,6 +196,20 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     {{ $t('common.assign') }}
                                 </UButton>
                             </span>
+                        </dd>
+                    </div>
+
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.access') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <AccessBadges
+                                :access-level="UnitAccessLevel"
+                                :jobs="unit.access?.jobs"
+                                :qualifications="unit.access?.qualifications"
+                                i18n-key="enums.centrum"
+                            />
                         </dd>
                     </div>
                 </dl>

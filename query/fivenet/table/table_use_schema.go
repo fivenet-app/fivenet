@@ -25,6 +25,8 @@ func UseSchema(schema string) {
 	FivenetCentrumMarkers = FivenetCentrumMarkers.FromSchema(schema)
 	FivenetCentrumSettings = FivenetCentrumSettings.FromSchema(schema)
 	FivenetCentrumUnits = FivenetCentrumUnits.FromSchema(schema)
+	FivenetCentrumUnitsJobAccess = FivenetCentrumUnitsJobAccess.FromSchema(schema)
+	FivenetCentrumUnitsQualificationsAccess = FivenetCentrumUnitsQualificationsAccess.FromSchema(schema)
 	FivenetCentrumUnitsStatus = FivenetCentrumUnitsStatus.FromSchema(schema)
 	FivenetCentrumUnitsUsers = FivenetCentrumUnitsUsers.FromSchema(schema)
 	FivenetCentrumUsers = FivenetCentrumUsers.FromSchema(schema)

@@ -42,6 +42,11 @@ async function deleteUnit(id: string): Promise<void> {
 
 const columns = [
     {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+    {
         key: 'name',
         label: t('common.name'),
         sortable: true,
@@ -66,11 +71,6 @@ const columns = [
     {
         key: 'homePostal',
         label: t('common.department_postal'),
-    },
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
     },
 ];
 </script>
@@ -115,15 +115,19 @@ const columns = [
                 {{ unit.name }}
             </div>
         </template>
+
         <template #attributes-data="{ row: unit }">
             <UnitAttributes :attributes="unit.attributes" />
         </template>
+
         <template #color-data="{ row: unit }">
             <ColorPickerClient v-model="unit.color" disabled hide-icon />
         </template>
+
         <template #homePostal-data="{ row: unit }">
             {{ unit.homePostal ?? $t('common.na') }}
         </template>
+
         <template #actions-data="{ row: unit }">
             <div .key="unit.id" class="flex items-center">
                 <UButton

@@ -158,7 +158,7 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	// Check if user has access to existing calendar
@@ -167,7 +167,7 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	calAccess, err := s.getAccess(ctx, entry.CalendarId)
@@ -198,7 +198,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Entry.CalendarId)))
@@ -349,7 +349,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	check, err := s.checkIfUserHasAccessToCalendar(ctx, entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
@@ -357,7 +357,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	stmt := tCalendarEntry.

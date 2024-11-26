@@ -53,9 +53,12 @@ export function formatBytes(bytes: number, decimals = 2) {
 }
 
 export interface UserLike {
+    userId: number;
     firstname: string;
     lastname: string;
     dateofbirth?: string;
+    job: string;
+    jobGrade: number;
 }
 
 export function usersToLabel(users: UserLike[]): string {

@@ -1,3 +1,4 @@
+import type { UnitAccess, UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -178,4 +179,25 @@ export function dispatchTimeToTextColorSidebar(
     }
 
     return { ping: true, class: '!bg-red-700' };
+}
+
+export function checkUnitAccess(unitAccess: UnitAccess | undefined, level: UnitAccessLevel): boolean {
+    if (unitAccess === undefined || (unitAccess.jobs.length === 0 && unitAccess.qualifications.length === 0)) {
+        return true;
+    }
+
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
+        return true;
+    }
+
+    if (activeChar.value === null) {
+        return false;
+    }
+
+    if (!checkAccess(activeChar.value, unitAccess, undefined, level)) {
+        return false;
+    }
+
+    return true;
 }

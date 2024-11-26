@@ -46,40 +46,66 @@ func NewQualifications[U any, T QualificationsAccessProtoMessage[U, V], V protou
 }
 
 func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	tQualiResults := tQualiResults.AS("qualificationresult")
 
-	stmt := a.selectTable.
-		SELECT(
-			a.selectColumns.ID,
-			a.selectColumns.CreatedAt,
-			a.selectColumns.TargetID,
-			a.selectColumns.Access,
-			a.selectColumns.QualificationId,
-			tQualifications.ID,
-			tQualifications.Job,
-			tQualifications.Abbreviation,
-			tQualifications.Title,
-			tQualiResults.ID,
-			tQualiResults.QualificationID,
-			tQualiResults.Status,
-		).
-		FROM(
-			a.selectTable.
-				INNER_JOIN(tQualifications,
-					tQualifications.ID.EQ(a.selectColumns.QualificationId),
-				).
-				LEFT_JOIN(tQualiResults,
-					tQualiResults.QualificationID.EQ(a.selectColumns.QualificationId),
-				),
-		).
-		WHERE(jet.AND(
-			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
-			tQualifications.DeletedAt.IS_NULL(),
-			tQualiResults.DeletedAt.IS_NULL(),
-			tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
-		))
+	var stmt jet.SelectStatement
+
+	userInfo, ok := auth.GetUserInfoFromContext(ctx)
+	if ok {
+		stmt = a.selectTable.
+			SELECT(
+				a.selectColumns.ID,
+				a.selectColumns.CreatedAt,
+				a.selectColumns.TargetID,
+				a.selectColumns.Access,
+				a.selectColumns.QualificationId,
+				tQualifications.ID,
+				tQualifications.Job,
+				tQualifications.Abbreviation,
+				tQualifications.Title,
+				tQualiResults.ID,
+				tQualiResults.QualificationID,
+				tQualiResults.Status,
+			).
+			FROM(
+				a.selectTable.
+					INNER_JOIN(tQualifications,
+						tQualifications.ID.EQ(a.selectColumns.QualificationId),
+					).
+					LEFT_JOIN(tQualiResults,
+						tQualiResults.QualificationID.EQ(a.selectColumns.QualificationId),
+					),
+			).
+			WHERE(jet.AND(
+				a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+				tQualifications.DeletedAt.IS_NULL(),
+				tQualiResults.DeletedAt.IS_NULL(),
+				tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
+			))
+	} else {
+		stmt = a.selectTable.
+			SELECT(
+				a.selectColumns.ID,
+				a.selectColumns.CreatedAt,
+				a.selectColumns.TargetID,
+				a.selectColumns.Access,
+				a.selectColumns.QualificationId,
+				tQualifications.ID,
+				tQualifications.Job,
+				tQualifications.Abbreviation,
+				tQualifications.Title,
+			).
+			FROM(
+				a.selectTable.
+					INNER_JOIN(tQualifications,
+						tQualifications.ID.EQ(a.selectColumns.QualificationId),
+					),
+			).
+			WHERE(jet.AND(
+				a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+				tQualifications.DeletedAt.IS_NULL(),
+			))
+	}
 
 	var dest []T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {

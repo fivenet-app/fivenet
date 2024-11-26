@@ -678,3 +678,21 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 
 	return nil
 }
+
+func (s *Manager) ListUnitAccess(ctx context.Context, id uint64) (*centrum.UnitAccess, error) {
+	access := &centrum.UnitAccess{}
+
+	jobsAccess, err := s.unitAccess.Jobs.List(ctx, s.db, id)
+	if err != nil {
+		return nil, err
+	}
+	access.Jobs = jobsAccess
+
+	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, id)
+	if err != nil {
+		return nil, err
+	}
+	access.Qualifications = qualificationsccess
+
+	return access, nil
+}

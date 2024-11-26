@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/store/centrum';
+import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { checkUnitAccess } from '../helpers';
 
 const emit = defineEmits<{
     (e: 'joined', unit: Unit): void;
@@ -47,7 +49,8 @@ const filteredUnits = computed(() =>
                 u.name.toLowerCase().includes(queryUnit.value.toLowerCase()) ||
                 u.initials.toLowerCase().includes(queryUnit.value.toLowerCase()),
         )
-        .sort((a, b) => a.name.localeCompare(b.name)),
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .sort((a, _) => (checkUnitAccess(a.access, UnitAccessLevel.JOIN) ? -1 : 1)),
 );
 </script>
 
@@ -92,7 +95,7 @@ const filteredUnits = computed(() =>
                             v-for="unit in filteredUnits"
                             :key="unit.name"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
-                            :disabled="!canSubmit"
+                            :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
                             class="flex flex-col"
                             @click="onSubmitThrottle(unit.id)"
                         >

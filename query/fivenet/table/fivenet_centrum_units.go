@@ -20,6 +20,7 @@ type fivenetCentrumUnitsTable struct {
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
 	UpdatedAt   mysql.ColumnTimestamp
+	DeletedAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
 	Name        mysql.ColumnString
 	Initials    mysql.ColumnString
@@ -70,6 +71,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		JobColumn         = mysql.StringColumn("job")
 		NameColumn        = mysql.StringColumn("name")
 		InitialsColumn    = mysql.StringColumn("initials")
@@ -77,8 +79,8 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		DescriptionColumn = mysql.StringColumn("description")
 		AttributesColumn  = mysql.StringColumn("attributes")
 		HomePostalColumn  = mysql.StringColumn("home_postal")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
 	)
 
 	return fivenetCentrumUnitsTable{
@@ -88,6 +90,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
 		UpdatedAt:   UpdatedAtColumn,
+		DeletedAt:   DeletedAtColumn,
 		Job:         JobColumn,
 		Name:        NameColumn,
 		Initials:    InitialsColumn,

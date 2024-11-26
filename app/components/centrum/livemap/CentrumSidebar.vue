@@ -258,6 +258,7 @@ onBeforeMount(async () => {
                 logger.error('exception during centrum stream', e);
             }
         }, 550);
+
         toggleSidebarBasedOnUnit();
         toggleRequireUnitNotification();
     }

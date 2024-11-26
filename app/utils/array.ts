@@ -1,5 +1,5 @@
 import { ResultStatus, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserLike } from './strings';
 
 // GRPC Websocket helper functions
 
@@ -46,12 +46,12 @@ type QualificationAccess<L> = {
 };
 
 export function checkAccess<L = number>(
-    activeChar: UserShort,
+    activeChar: UserLike,
     access:
         | { jobs?: JobAccess<L>[]; users?: UserAccess<L>[]; qualifications?: QualificationAccess<L>[] }
         | { jobs?: JobAccess<L>[]; users?: UserAccess<L>[]; qualifications?: QualificationAccess<L>[] }
         | undefined,
-    creator: UserShort | undefined,
+    creator: UserLike | undefined,
     level: L,
 ): boolean {
     if (access === undefined) {

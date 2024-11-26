@@ -361,7 +361,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 			}
 
 			// If the user is found in the list of user markers and not "off duty" (hidden), set found state
-			if !found && !marker.Hidden && (userInfo.Job == job && key == userInfo.UserId) {
+			if !found && !marker.Hidden && (userInfo.Job == job && userInfo.UserId == key) {
 				found = true
 			}
 

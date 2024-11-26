@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.centrum;
 
+import "resources/centrum/access.proto";
 import "resources/centrum/general.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -35,6 +36,7 @@ message Unit {
   repeated UnitAssignment users = 11;
   optional Attributes attributes = 12;
   optional string home_postal = 13 [(validate.rules).string.max_len = 48];
+  resources.centrum.UnitAccess access = 14;
 }
 
 message UnitAssignments {

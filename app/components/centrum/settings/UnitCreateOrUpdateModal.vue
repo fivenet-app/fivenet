@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -21,6 +24,8 @@ const notifications = useNotificatorStore();
 
 const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
 
+const { maxAccessEntries } = useAppConfig();
+
 const schema = z.object({
     name: z.string().min(3).max(24),
     initials: z.string().min(2).max(4),
@@ -28,6 +33,10 @@ const schema = z.object({
     color: z.string().length(7),
     homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
     attributes: z.string().array().max(5),
+    access: z.object({
+        jobs: z.custom<UnitJobAccess>().array().max(maxAccessEntries),
+        qualifications: z.custom<UnitQualificationAccess>().array().max(maxAccessEntries),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -38,6 +47,10 @@ const state = reactive<Schema>({
     description: '',
     color: '#000000',
     attributes: [],
+    access: {
+        jobs: [],
+        qualifications: [],
+    },
 });
 
 const selectedAttributes = ref<string[]>([]);
@@ -57,6 +70,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
                 },
                 users: [],
                 homePostal: values.homePostal,
+                access: values.access,
             },
         });
         const { response } = await call;
@@ -175,6 +189,23 @@ onMounted(async () => updateUnitInForm());
                             name="homePostal"
                             type="text"
                             :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="access" :label="$t('common.access')">
+                        <AccessManager
+                            v-model:jobs="state.access.jobs"
+                            v-model:qualifications="state.access.qualifications"
+                            :target-id="unit?.id ?? '0'"
+                            :access-roles="
+                                enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter(
+                                    (a) => a.value > 1,
+                                )
+                            "
+                            :access-types="[
+                                { type: 'job', name: $t('common.job', 2) },
+                                { type: 'qualification', name: $t('common.qualification', 2) },
+                            ]"
                         />
                     </UFormGroup>
                 </div>

@@ -3,6 +3,7 @@
 // source: resources/accounts/oauth2.proto
 // source: resources/calendar/access.proto
 // source: resources/calendar/calendar.proto
+// source: resources/centrum/access.proto
 // source: resources/centrum/dispatches.proto
 // source: resources/centrum/general.proto
 // source: resources/centrum/settings.proto
@@ -20,6 +21,7 @@
 // source: resources/documents/documents.proto
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
+// source: resources/documents/workflow.proto
 // source: resources/filestore/file.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto

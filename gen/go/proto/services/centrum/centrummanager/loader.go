@@ -192,6 +192,12 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 	}
 
 	for i := 0; i < len(units); i++ {
+		access, err := s.ListUnitAccess(ctx, units[i].Id)
+		if err != nil {
+			return err
+		}
+		units[i].Access = access
+
 		status, err := s.GetLastUnitStatus(ctx, s.db, units[i].Job, units[i].Id)
 		if err != nil {
 			return err

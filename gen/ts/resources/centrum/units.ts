@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
+import { UnitAccess } from "./access";
 import { Attributes } from "./general";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -73,6 +74,10 @@ export interface Unit {
      * @generated from protobuf field: optional string home_postal = 13;
      */
     homePostal?: string;
+    /**
+     * @generated from protobuf field: resources.centrum.UnitAccess access = 14;
+     */
+    access?: UnitAccess;
 }
 /**
  * @generated from protobuf message resources.centrum.UnitAssignments
@@ -227,7 +232,8 @@ class Unit$Type extends MessageType<Unit> {
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
             { no: 12, name: "attributes", kind: "message", T: () => Attributes },
-            { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+            { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 14, name: "access", kind: "message", T: () => UnitAccess }
         ]);
     }
     create(value?: PartialMessage<Unit>): Unit {
@@ -283,6 +289,9 @@ class Unit$Type extends MessageType<Unit> {
                 case /* optional string home_postal */ 13:
                     message.homePostal = reader.string();
                     break;
+                case /* resources.centrum.UnitAccess access */ 14:
+                    message.access = UnitAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -331,6 +340,9 @@ class Unit$Type extends MessageType<Unit> {
         /* optional string home_postal = 13; */
         if (message.homePostal !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.homePostal);
+        /* resources.centrum.UnitAccess access = 14; */
+        if (message.access)
+            UnitAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

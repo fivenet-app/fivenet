@@ -51,6 +51,17 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
+	// Resolve qualifications access per user
+	for _, unit := range resp.Units {
+		if unit.Access != nil && len(unit.Access.Qualifications) > 0 {
+			qualificationsAccess, err := s.state.GetUnitAccess().Qualifications.List(ctx, s.db, unit.Id)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+			unit.Access.Qualifications = qualificationsAccess
+		}
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
@@ -79,10 +90,29 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
+		// Only set access for new units when it isn't empty
+		if req.Unit.Access != nil && !req.Unit.Access.IsEmpty() {
+			req.Unit.Access.ClearQualificationResults()
+
+			if _, err := s.state.GetUnitAccess().HandleAccessChanges(ctx, s.db, unit.Id, req.Unit.Access.Jobs, nil, req.Unit.Access.Qualifications); err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+		}
+
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+
+		if req.Unit.Access == nil {
+			req.Unit.Access = &centrum.UnitAccess{}
+		} else {
+			req.Unit.Access.ClearQualificationResults()
+		}
+
+		if _, err := s.state.GetUnitAccess().HandleAccessChanges(ctx, s.db, unit.Id, req.Unit.Access.Jobs, nil, req.Unit.Access.Qualifications); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
@@ -138,6 +168,20 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
+	// Only check unit access when not empty
+	if unit.Access != nil && !unit.Access.IsEmpty() {
+		// Make sure requestor is not a disponent
+		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+			check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, unit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+			if !check {
+				return nil, errorscentrum.ErrUnitPermDenied
+			}
+		}
+	}
+
 	if !s.state.CheckIfUserPartOfUnit(ctx, userInfo.Job, userInfo.UserId, unit, true) {
 		return nil, errorscentrum.ErrNotPartOfUnit
 	}
@@ -181,7 +225,21 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 	if unit.Job != userInfo.Job {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	// Only check unit access when not empty
+	if unit.Access != nil && !unit.Access.IsEmpty() {
+		// Make sure requestor is not a disponent
+		if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+			check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, unit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
+			if !check {
+				return nil, errorscentrum.ErrUnitPermDenied
+			}
+		}
 	}
 
 	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit.Id, req.ToAdd, req.ToRemove); err != nil {
@@ -228,6 +286,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
 		s.logger.Debug("user joining unit", zap.String("job", userInfo.Job), zap.Int32("user_id", userInfo.UserId), zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+
 		// Remove user from his current unit
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit.Id, nil, []int32{userInfo.UserId}); err != nil {
@@ -238,6 +297,20 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		newUnit, err := s.state.GetUnit(ctx, userInfo.Job, *req.UnitId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
+
+		// Only check unit access when not empty
+		if newUnit.Access != nil && !newUnit.Access.IsEmpty() {
+			// Make sure requestor is not a disponent
+			if !s.state.CheckIfUserIsDisponent(ctx, userInfo.Job, userInfo.UserId) {
+				check, err := s.state.GetUnitAccess().CanUserAccessTarget(ctx, newUnit.Id, userInfo, centrum.UnitAccessLevel_UNIT_ACCESS_LEVEL_JOIN)
+				if err != nil {
+					return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+				}
+				if !check {
+					return nil, errorscentrum.ErrUnitPermDenied
+				}
+			}
 		}
 
 		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit.Id, []int32{userInfo.UserId}, nil); err != nil {

@@ -2324,7 +2324,8 @@
                 "content": "You can't accept/decline completed dispatches."
             },
             "ErrNotPartOfUnit": "You are not part of this unit!",
-            "ErrStaticUnit": "Can't update a static unit's status to be available!"
+            "ErrStaticUnit": "Can't update a static unit's status to be available!",
+            "ErrUnitPermDenied": "You can't access this unit!"
         },
         "general": {
             "internal_error": {
@@ -2490,6 +2491,12 @@
                 "REFERENCED": "Referenced",
                 "DUPLICATED_BY": "Duplicated by",
                 "DUPLICATE_OF": "Duplicates"
+            },
+            "UnitAccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "JOIN": "Join"
             }
         },
         "livemap": {
