@@ -121,8 +121,8 @@ func (g *Guild) Run() error {
 		planDiff = &users.DiscordSyncChanges{}
 	}
 
-	if _, err := g.bot.dc.MembersAfter(g.guild.ID, discord.NullUserID, 0); err != nil {
-		g.logger.Error("failed to request all guild members. %w", zap.Error(err))
+	if _, err := g.bot.dc.MembersAfter(g.guild.ID, 0, 0); err != nil {
+		g.logger.Error("failed to request all guild members", zap.Error(err))
 	}
 
 	errs := multierr.Combine()
