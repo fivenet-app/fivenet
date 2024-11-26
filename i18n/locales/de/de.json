@@ -2324,7 +2324,8 @@
                 "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
             },
             "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
-            "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!"
+            "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!",
+            "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!"
         },
         "general": {
             "internal_error": {
@@ -2336,7 +2337,8 @@
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
             "ErrReasonRequired": "Ein Grund muss gegeben sein!",
             "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
-            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!"
+            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
+            "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
@@ -2489,6 +2491,12 @@
                 "REFERENCED": "Referenziert",
                 "DUPLICATED_BY": "Dupliziert",
                 "DUPLICATE_OF": "Duplikat von"
+            },
+            "UnitAccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "JOIN": "Beitreten"
             }
         },
         "livemap": {
@@ -2564,7 +2572,7 @@
                     "LISTENING": "Listening",
                     "STREAMING": "Streaming",
                     "WATCH": "Watch",
-                    "UNSPECIFIED": "Unspecified"
+                    "UNSPECIFIED": "Unbestimmt"
                 }
             },
             "AuditLog": {
