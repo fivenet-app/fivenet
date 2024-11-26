@@ -14,7 +14,7 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const discordLink = 'https://discord.gg/sWvkHuVQA5';
+const discordLink = 'https://discord.gg/ASRPPr8CeT';
 const repoLink = 'https://github.com/fivenet-app/fivenet';
 
 const faqs = [

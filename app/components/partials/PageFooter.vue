@@ -43,7 +43,7 @@ const year = new Date().getFullYear();
                 icon="i-simple-icons-discord"
                 color="gray"
                 variant="ghost"
-                to="https://discord.gg/sWvkHuVQA5"
+                to="https://discord.gg/ASRPPr8CeT"
                 target="_blank"
             />
         </template>
