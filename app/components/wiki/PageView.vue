@@ -154,6 +154,10 @@ const accordionItems = computed(() =>
         </template>
 
         <template #right>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/wiki">
+                {{ $t('common.wiki') }}
+            </UButton>
+
             <UButton v-if="can('WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                 {{ $t('common.page') }}
             </UButton>
