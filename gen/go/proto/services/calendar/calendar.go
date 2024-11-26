@@ -78,6 +78,7 @@ func NewServer(p Params) *Server {
 				ID:         table.FivenetDocuments.ID,
 				DeletedAt:  table.FivenetDocuments.DeletedAt,
 				CreatorJob: table.FivenetDocuments.CreatorJob,
+				CreatorID:  table.FivenetDocuments.CreatorID,
 			},
 			access.NewJobs[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.AccessLevel](
 				table.FivenetCalendarJobAccess,
