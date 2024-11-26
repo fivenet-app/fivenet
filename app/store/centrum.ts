@@ -105,6 +105,12 @@ export const useCentrumStore = defineStore('centrum', {
             const u = this.units.get(unit.id);
 
             if (u === undefined) {
+                if (unit.access === undefined) {
+                    unit.access = {
+                        jobs: [],
+                        qualifications: [],
+                    };
+                }
                 if (unit.status === undefined) {
                     unit.status = {
                         unitId: unit.id,
@@ -127,6 +133,10 @@ export const useCentrumStore = defineStore('centrum', {
                 } else {
                     u.users.length = 0;
                     u.users.push(...unit.users);
+                }
+
+                if (unit.access) {
+                    u.access = unit.access;
                 }
 
                 this.updateUnitStatus(unit.status);

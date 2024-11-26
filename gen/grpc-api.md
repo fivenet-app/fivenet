@@ -137,6 +137,10 @@
     - [AccessLevel](#resources-documents-AccessLevel)
   
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
+    - [AutoClose](#resources-documents-AutoClose)
+    - [Reminder](#resources-documents-Reminder)
+    - [Workflow](#resources-documents-Workflow)
+  
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
@@ -2713,6 +2717,54 @@ Dummy - DO NOT USE!
 <p align="right"><a href="#top">Top</a></p>
 
 ## resources/documents/workflow.proto
+
+
+
+<a name="resources-documents-AutoClose"></a>
+
+### AutoClose
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| auto_close_duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-Reminder"></a>
+
+### Reminder
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-Workflow"></a>
+
+### Workflow
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reminder | [bool](#bool) |  |  |
+| reminder_settings | [Reminder](#resources-documents-Reminder) |  |  |
+| auto_close | [bool](#bool) |  |  |
+| auto_close_settings | [AutoClose](#resources-documents-AutoClose) |  |  |
+
+
+
 
 
  

@@ -2,6 +2,31 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "google/protobuf/duration.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
 
-// TODO
+message Workflow {
+  bool reminder = 1;
+  Reminder reminder_settings = 2;
+
+  bool auto_close = 3;
+  AutoClose auto_close_settings = 4;
+}
+
+message Reminder {
+  google.protobuf.Duration duration = 1 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 7776000},
+    gte: {seconds: 86400},
+  }];
+}
+
+message AutoClose {
+  google.protobuf.Duration auto_close_duration = 3 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 7776000},
+    gte: {seconds: 86400},
+  }];
+}

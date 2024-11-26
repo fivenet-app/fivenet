@@ -34,3 +34,446 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 )
+
+// Validate checks the field values on Workflow with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Workflow) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Workflow with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in WorkflowMultiError, or nil
+// if none found.
+func (m *Workflow) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Workflow) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Reminder
+
+	if all {
+		switch v := interface{}(m.GetReminderSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, WorkflowValidationError{
+					field:  "ReminderSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, WorkflowValidationError{
+					field:  "ReminderSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetReminderSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return WorkflowValidationError{
+				field:  "ReminderSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for AutoClose
+
+	if all {
+		switch v := interface{}(m.GetAutoCloseSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, WorkflowValidationError{
+					field:  "AutoCloseSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, WorkflowValidationError{
+					field:  "AutoCloseSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAutoCloseSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return WorkflowValidationError{
+				field:  "AutoCloseSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return WorkflowMultiError(errors)
+	}
+
+	return nil
+}
+
+// WorkflowMultiError is an error wrapping multiple validation errors returned
+// by Workflow.ValidateAll() if the designated constraints aren't met.
+type WorkflowMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m WorkflowMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m WorkflowMultiError) AllErrors() []error { return m }
+
+// WorkflowValidationError is the validation error returned by
+// Workflow.Validate if the designated constraints aren't met.
+type WorkflowValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e WorkflowValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e WorkflowValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e WorkflowValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e WorkflowValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e WorkflowValidationError) ErrorName() string { return "WorkflowValidationError" }
+
+// Error satisfies the builtin error interface
+func (e WorkflowValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sWorkflow.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = WorkflowValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = WorkflowValidationError{}
+
+// Validate checks the field values on Reminder with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Reminder) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Reminder with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ReminderMultiError, or nil
+// if none found.
+func (m *Reminder) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Reminder) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetDuration() == nil {
+		err := ReminderValidationError{
+			field:  "Duration",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if d := m.GetDuration(); d != nil {
+		dur, err := d.AsDuration(), d.CheckValid()
+		if err != nil {
+			err = ReminderValidationError{
+				field:  "Duration",
+				reason: "value is not a valid duration",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+
+			lt := time.Duration(7776000*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(86400*time.Second + 0*time.Nanosecond)
+
+			if dur < gte || dur >= lt {
+				err := ReminderValidationError{
+					field:  "Duration",
+					reason: "value must be inside range [24h0m0s, 2160h0m0s)",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return ReminderMultiError(errors)
+	}
+
+	return nil
+}
+
+// ReminderMultiError is an error wrapping multiple validation errors returned
+// by Reminder.ValidateAll() if the designated constraints aren't met.
+type ReminderMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ReminderMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ReminderMultiError) AllErrors() []error { return m }
+
+// ReminderValidationError is the validation error returned by
+// Reminder.Validate if the designated constraints aren't met.
+type ReminderValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ReminderValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ReminderValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ReminderValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ReminderValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ReminderValidationError) ErrorName() string { return "ReminderValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ReminderValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sReminder.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ReminderValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ReminderValidationError{}
+
+// Validate checks the field values on AutoClose with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *AutoClose) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AutoClose with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in AutoCloseMultiError, or nil
+// if none found.
+func (m *AutoClose) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AutoClose) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetAutoCloseDuration() == nil {
+		err := AutoCloseValidationError{
+			field:  "AutoCloseDuration",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if d := m.GetAutoCloseDuration(); d != nil {
+		dur, err := d.AsDuration(), d.CheckValid()
+		if err != nil {
+			err = AutoCloseValidationError{
+				field:  "AutoCloseDuration",
+				reason: "value is not a valid duration",
+				cause:  err,
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		} else {
+
+			lt := time.Duration(7776000*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(86400*time.Second + 0*time.Nanosecond)
+
+			if dur < gte || dur >= lt {
+				err := AutoCloseValidationError{
+					field:  "AutoCloseDuration",
+					reason: "value must be inside range [24h0m0s, 2160h0m0s)",
+				}
+				if !all {
+					return err
+				}
+				errors = append(errors, err)
+			}
+
+		}
+	}
+
+	if len(errors) > 0 {
+		return AutoCloseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AutoCloseMultiError is an error wrapping multiple validation errors returned
+// by AutoClose.ValidateAll() if the designated constraints aren't met.
+type AutoCloseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AutoCloseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AutoCloseMultiError) AllErrors() []error { return m }
+
+// AutoCloseValidationError is the validation error returned by
+// AutoClose.Validate if the designated constraints aren't met.
+type AutoCloseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AutoCloseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AutoCloseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AutoCloseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AutoCloseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AutoCloseValidationError) ErrorName() string { return "AutoCloseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e AutoCloseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAutoClose.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AutoCloseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AutoCloseValidationError{}
