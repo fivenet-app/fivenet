@@ -38,6 +38,17 @@ watch(categories, () => {
         })) ?? [];
 });
 
+function categorySelected(idx: number): void {
+    if (!categories.value) {
+        return;
+    }
+
+    modal.open(CategoriesModal, {
+        category: categories.value[idx],
+        onUpdate: refresh,
+    });
+}
+
 const modal = useModal();
 </script>
 
@@ -82,16 +93,7 @@ const modal = useModal();
         <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
 
         <div v-else class="flex justify-center">
-            <CardsList
-                :items="items"
-                @selected="
-                    categories &&
-                        modal.open(CategoriesModal, {
-                            category: categories[$event],
-                            onUpdate: refresh,
-                        })
-                "
-            />
+            <CardsList :items="items" @selected="categorySelected($event)" />
         </div>
     </UDashboardPanelContent>
 </template>

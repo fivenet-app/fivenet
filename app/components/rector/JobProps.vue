@@ -237,6 +237,10 @@ const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (event.submitter?.getAttribute('role') === 'tab') {
+        return;
+    }
+
     canSubmit.value = false;
     await setJobProps(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);

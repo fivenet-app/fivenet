@@ -267,8 +267,6 @@ const itemsAll = computed(() =>
         { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
-
-const input = useTemplateRef('input');
 </script>
 
 <template>
@@ -441,7 +439,6 @@ const input = useTemplateRef('input');
                             <UFormGroup v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
                                 <ClientOnly>
                                     <USelectMenu
-                                        ref="input"
                                         v-model="query.users"
                                         multiple
                                         :searchable="

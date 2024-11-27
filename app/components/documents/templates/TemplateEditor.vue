@@ -74,6 +74,10 @@ const state = reactive<Schema>({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (event.submitter?.getAttribute('role') === 'tab') {
+        return;
+    }
+
     canSubmit.value = false;
     await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
@@ -249,6 +253,37 @@ onMounted(async () => {
     findCategories();
 });
 
+const items = [
+    {
+        slot: 'meta',
+        label: t('common.info'),
+        icon: 'i-mdi-information',
+    },
+    {
+        slot: 'content',
+        label: t('common.content'),
+        icon: 'i-mdi-file-edit',
+    },
+];
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.slot === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+    },
+});
+
 const categoriesLoading = ref(false);
 </script>
 
@@ -264,144 +299,161 @@ const categoriesLoading = ref(false);
                     {{ $t('common.back') }}
                 </UButton>
 
-                <UButtonGroup class="inline-flex">
-                    <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                        <span class="hidden truncate sm:block">
-                            {{ templateId ? $t('common.save') : $t('common.create') }}
-                        </span>
-                    </UButton>
-                </UButtonGroup>
+                <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                    <span class="hidden truncate sm:block">
+                        {{ templateId ? $t('common.save') : $t('common.create') }}
+                    </span>
+                </UButton>
             </template>
         </UDashboardNavbar>
 
-        <UContainer class="w-full">
-            <div>
-                <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
-                    <UInput
-                        v-model="state.weight"
-                        type="number"
-                        name="weight"
-                        :min="0"
-                        :max="999999"
-                        :placeholder="$t('common.weight')"
-                    />
-                </UFormGroup>
+        <UDashboardPanelContent class="p-0">
+            <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+                <template #meta>
+                    <UContainer class="w-full">
+                        <div>
+                            <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
+                                <UInput
+                                    v-model="state.weight"
+                                    type="number"
+                                    name="weight"
+                                    :min="0"
+                                    :max="999999"
+                                    :placeholder="$t('common.weight')"
+                                />
+                            </UFormGroup>
 
-                <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
-                    <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
-                </UFormGroup>
+                            <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
+                                <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
+                            </UFormGroup>
 
-                <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`" required>
-                    <UTextarea v-model="state.description" name="description" :rows="4" :label="$t('common.description')" />
-                </UFormGroup>
+                            <UFormGroup
+                                name="description"
+                                :label="`${$t('common.template')} ${$t('common.description')}`"
+                                required
+                            >
+                                <UTextarea
+                                    v-model="state.description"
+                                    name="description"
+                                    :rows="4"
+                                    :label="$t('common.description')"
+                                />
+                            </UFormGroup>
 
-                <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
-                    <div class="flex flex-1 gap-1">
-                        <ColorPickerTW v-model="state.color" class="flex-1" />
-                    </div>
-                </UFormGroup>
+                            <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row" required>
+                                <div class="flex flex-1 gap-1">
+                                    <ColorPickerTW v-model="state.color" class="flex-1" />
+                                </div>
+                            </UFormGroup>
 
-                <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
-                    <div class="flex flex-1 gap-1">
-                        <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="FileOutlineIcon" />
+                            <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                                <div class="flex flex-1 gap-1">
+                                    <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="FileOutlineIcon" />
 
-                        <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
-                    </div>
-                </UFormGroup>
-            </div>
+                                    <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                                </div>
+                            </UFormGroup>
+                        </div>
 
-            <div class="my-2">
-                <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                        <div class="my-2">
+                            <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
 
-                <AccessManager
-                    v-model:jobs="state.jobAccess"
-                    :target-id="templateId ?? '0'"
-                    :access-types="accessTypes"
-                    :access-roles="
-                        enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
-                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                        )
-                    "
-                />
-            </div>
+                            <AccessManager
+                                v-model:jobs="state.jobAccess"
+                                :target-id="templateId ?? '0'"
+                                :access-types="accessTypes"
+                                :access-roles="
+                                    enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                                        (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                    )
+                                "
+                            />
+                        </div>
+                    </UContainer>
+                </template>
 
-            <SingleHint
-                class="my-2"
-                hint-id="template_editor_templating"
-                to="https://fivenet.app/user-guides/documents/templates"
-                :external="true"
-                link-target="_blank"
-            />
+                <template #content>
+                    <UContainer class="w-full">
+                        <SingleHint
+                            class="my-2"
+                            hint-id="template_editor_templating"
+                            to="https://fivenet.app/user-guides/documents/templates"
+                            :external="true"
+                            link-target="_blank"
+                        />
 
-            <div>
-                <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                    <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                </UFormGroup>
+                        <div>
+                            <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                                <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
+                            </UFormGroup>
 
-                <UFormGroup name="category" :label="$t('common.category', 1)">
-                    <ClientOnly>
-                        <UInputMenu
-                            v-model="state.category"
-                            option-attribute="name"
-                            :search-attributes="['name']"
-                            block
-                            nullable
-                            :search="
-                                async (search: string) => {
-                                    try {
-                                        categoriesLoading = true;
-                                        const categories = await completorStore.completeDocumentCategories(search);
-                                        categoriesLoading = false;
-                                        return categories;
-                                    } catch (e) {
-                                        handleGRPCError(e as RpcError);
-                                        throw e;
-                                    } finally {
-                                        categoriesLoading = false;
-                                    }
-                                }
-                            "
-                            search-lazy
-                            :search-placeholder="$t('common.search_field')"
-                        >
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                        </UInputMenu>
-                    </ClientOnly>
-                </UFormGroup>
+                            <UFormGroup name="category" :label="$t('common.category', 1)">
+                                <ClientOnly>
+                                    <UInputMenu
+                                        v-model="state.category"
+                                        option-attribute="name"
+                                        :search-attributes="['name']"
+                                        block
+                                        nullable
+                                        :search="
+                                            async (search: string) => {
+                                                try {
+                                                    categoriesLoading = true;
+                                                    const categories = await completorStore.completeDocumentCategories(search);
+                                                    categoriesLoading = false;
+                                                    return categories;
+                                                } catch (e) {
+                                                    handleGRPCError(e as RpcError);
+                                                    throw e;
+                                                } finally {
+                                                    categoriesLoading = false;
+                                                }
+                                            }
+                                        "
+                                        search-lazy
+                                        :search-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                    </UInputMenu>
+                                </ClientOnly>
+                            </UFormGroup>
 
-                <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                    <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                </UFormGroup>
+                            <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                                <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
+                            </UFormGroup>
 
-                <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
-                    <ClientOnly>
-                        <DocEditor v-model="state.content" split-screen />
-                    </ClientOnly>
-                </UFormGroup>
-            </div>
+                            <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
+                                <ClientOnly>
+                                    <DocEditor v-model="state.content" split-screen />
+                                </ClientOnly>
+                            </UFormGroup>
+                        </div>
 
-            <div class="my-2">
-                <h2 class="text-sm">{{ $t('common.requirements', 2) }}</h2>
+                        <div class="my-2">
+                            <h2 class="text-sm">{{ $t('common.requirements', 2) }}</h2>
 
-                <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
-            </div>
+                            <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+                        </div>
 
-            <div class="my-2">
-                <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+                        <div class="my-2">
+                            <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
 
-                <AccessManager
-                    v-model:jobs="state.contentAccess.jobs"
-                    v-model:users="state.contentAccess.users"
-                    :target-id="templateId ?? '0'"
-                    :access-types="contentAccessTypes"
-                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
-                    :disabled="true"
-                    :show-required="true"
-                />
-            </div>
-        </UContainer>
+                            <AccessManager
+                                v-model:jobs="state.contentAccess.jobs"
+                                v-model:users="state.contentAccess.users"
+                                :target-id="templateId ?? '0'"
+                                :access-types="contentAccessTypes"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                :disabled="true"
+                                :show-required="true"
+                            />
+                        </div>
+                    </UContainer>
+                </template>
+            </UTabs>
+        </UDashboardPanelContent>
     </UForm>
 </template>

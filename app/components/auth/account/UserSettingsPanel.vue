@@ -94,146 +94,142 @@ const selectedTab = computed({
 </script>
 
 <template>
-    <div>
-        <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
-            <template #settings>
-                <UDashboardPanelContent>
-                    <UDashboardSection
-                        :title="$t('common.theme')"
-                        :description="$t('components.auth.UserSettingsPanel.customization')"
+    <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+        <template #settings>
+            <UDashboardPanelContent>
+                <UDashboardSection
+                    :title="$t('common.theme')"
+                    :description="$t('components.auth.UserSettingsPanel.customization')"
+                >
+                    <template #links>
+                        <UColorModeSelect color="gray" />
+                    </template>
+
+                    <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                        <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
+                    </UFormGroup>
+
+                    <UFormGroup
+                        name="grayColor"
+                        :label="$t('components.auth.UserSettingsPanel.background_color')"
+                        class="grid grid-cols-2 items-center gap-2"
                     >
-                        <template #links>
-                            <UColorModeSelect color="gray" />
-                        </template>
+                        <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
+                    </UFormGroup>
 
-                        <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
-                            <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
-                        </UFormGroup>
+                    <UFormGroup
+                        name="streamerMode"
+                        :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
+                        :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
+                        class="grid grid-cols-2 items-center gap-2"
+                    >
+                        <UToggle v-model="streamerMode" name="streamerMode">
+                            <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
+                        </UToggle>
+                    </UFormGroup>
 
-                        <UFormGroup
-                            name="grayColor"
-                            :label="$t('components.auth.UserSettingsPanel.background_color')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="streamerMode"
-                            :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
-                            :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <UToggle v-model="streamerMode" name="streamerMode">
-                                <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
+                    <UFormGroup
+                        name="darkModeActive"
+                        :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
+                        class="grid grid-cols-2 items-center gap-2"
+                    >
+                        <div class="flex items-center gap-2">
+                            <UToggle v-model="darkModeActive">
+                                <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
                             </UToggle>
-                        </UFormGroup>
 
-                        <UFormGroup
-                            name="darkModeActive"
-                            :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <div class="flex items-center gap-2">
-                                <UToggle v-model="darkModeActive">
-                                    <span class="sr-only">{{
-                                        $t('components.auth.UserSettingsPanel.editor_theme.title')
-                                    }}</span>
-                                </UToggle>
+                            <span>{{ $t('components.auth.UserSettingsPanel.editor_theme.dark_mode') }}</span>
+                        </div>
+                    </UFormGroup>
 
-                                <span>{{ $t('components.auth.UserSettingsPanel.editor_theme.dark_mode') }}</span>
-                            </div>
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="designDocumentsListStyle"
-                            :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <div class="inline-flex items-center gap-2 text-sm">
-                                <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                                <UToggle v-model="designDocumentsListStyle">
-                                    <span class="sr-only">{{
-                                        $t('components.auth.UserSettingsPanel.documents_lists_style.title')
-                                    }}</span>
-                                </UToggle>
-                                <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
-                            </div>
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="selectedHomepage"
-                            :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <ClientOnly v-if="activeChar">
-                                <USelectMenu
-                                    v-model="selectedHomepage"
-                                    :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
-                                    option-attribute="name"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                />
-                            </ClientOnly>
-                            <p v-else class="text-sm">
-                                {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
-                            </p>
-                        </UFormGroup>
-                    </UDashboardSection>
-                </UDashboardPanelContent>
-            </template>
-
-            <template #notifications>
-                <UDashboardPanelContent>
-                    <UDashboardSection
-                        :title="$t('components.auth.UserSettingsPanel.volumes.title')"
-                        :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
+                    <UFormGroup
+                        name="designDocumentsListStyle"
+                        :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
+                        class="grid grid-cols-2 items-center gap-2"
                     >
-                        <UFormGroup
-                            name="notificationsVolume"
-                            :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
-                            {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
-                        </UFormGroup>
-                    </UDashboardSection>
+                        <div class="inline-flex items-center gap-2 text-sm">
+                            <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
+                            <UToggle v-model="designDocumentsListStyle">
+                                <span class="sr-only">{{
+                                    $t('components.auth.UserSettingsPanel.documents_lists_style.title')
+                                }}</span>
+                            </UToggle>
+                            <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
+                        </div>
+                    </UFormGroup>
 
-                    <UDashboardSection
-                        :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
-                        :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
+                    <UFormGroup
+                        name="selectedHomepage"
+                        :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
+                        class="grid grid-cols-2 items-center gap-2"
                     >
-                        <UFormGroup
-                            name="calendarNotifications"
-                            :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
-                            class="grid grid-cols-2 items-center gap-2"
-                        >
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="calendar.reminderTimes"
-                                    multiple
-                                    :options="calendarReminderTimes"
-                                    value-attribute="value"
-                                >
-                                    <template #label>
-                                        {{
-                                            calendar.reminderTimes.length > 0
-                                                ? [...calendar.reminderTimes]
-                                                      .sort()
-                                                      .map(
-                                                          (n) =>
-                                                              calendarReminderTimes.find((rt) => rt.value === n)?.label ??
-                                                              $t('common.na'),
-                                                      )
-                                                      .join(', ')
-                                                : $t('common.none')
-                                        }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-                        </UFormGroup>
-                    </UDashboardSection>
-                </UDashboardPanelContent>
-            </template>
-        </UTabs>
-    </div>
+                        <ClientOnly v-if="activeChar">
+                            <USelectMenu
+                                v-model="selectedHomepage"
+                                :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
+                                option-attribute="name"
+                                :searchable-placeholder="$t('common.search_field')"
+                            />
+                        </ClientOnly>
+                        <p v-else class="text-sm">
+                            {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
+                        </p>
+                    </UFormGroup>
+                </UDashboardSection>
+            </UDashboardPanelContent>
+        </template>
+
+        <template #notifications>
+            <UDashboardPanelContent>
+                <UDashboardSection
+                    :title="$t('components.auth.UserSettingsPanel.volumes.title')"
+                    :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
+                >
+                    <UFormGroup
+                        name="notificationsVolume"
+                        :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
+                        class="grid grid-cols-2 items-center gap-2"
+                    >
+                        <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
+                        {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
+                    </UFormGroup>
+                </UDashboardSection>
+
+                <UDashboardSection
+                    :title="$t('components.auth.UserSettingsPanel.calendar_notifications.title')"
+                    :description="$t('components.auth.UserSettingsPanel.calendar_notifications.subtitle')"
+                >
+                    <UFormGroup
+                        name="calendarNotifications"
+                        :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
+                        class="grid grid-cols-2 items-center gap-2"
+                    >
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="calendar.reminderTimes"
+                                multiple
+                                :options="calendarReminderTimes"
+                                value-attribute="value"
+                            >
+                                <template #label>
+                                    {{
+                                        calendar.reminderTimes.length > 0
+                                            ? [...calendar.reminderTimes]
+                                                  .sort()
+                                                  .map(
+                                                      (n) =>
+                                                          calendarReminderTimes.find((rt) => rt.value === n)?.label ??
+                                                          $t('common.na'),
+                                                  )
+                                                  .join(', ')
+                                            : $t('common.none')
+                                    }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
+                </UDashboardSection>
+            </UDashboardPanelContent>
+        </template>
+    </UTabs>
 </template>

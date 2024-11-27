@@ -142,6 +142,10 @@ const selectedTab = computed({
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (event.submitter?.getAttribute('role') === 'tab') {
+        return;
+    }
+
     canSubmit.value = false;
     await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);

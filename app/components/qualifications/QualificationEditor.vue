@@ -235,6 +235,10 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (event.submitter?.getAttribute('role') === 'tab') {
+        return;
+    }
+
     canSubmit.value = false;
     if (props.qualificationId === undefined) {
         await createQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
