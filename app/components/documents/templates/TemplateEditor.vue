@@ -288,7 +288,12 @@ const categoriesLoading = ref(false);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm
+        :schema="schema"
+        :state="state"
+        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @submit="onSubmitThrottle"
+    >
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
             <template #right>
                 <UButton

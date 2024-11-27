@@ -127,156 +127,162 @@ const contentAccessTypes: AccessType[] = [
         </template>
     </UDashboardNavbar>
 
-    <UContainer class="w-full">
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
-        <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
+    <UDashboardPanelContent class="p-0">
+        <UContainer class="w-full">
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 
-        <template v-else>
-            <div class="mt-2 sm:flex sm:items-center">
-                <div>
-                    <h2 class="inline-flex items-center gap-2 text-2xl">
-                        <UIcon
-                            :name="template.icon ?? 'i-mdi-file-outline'"
-                            :class="`text-${template.color}-500 dark:text-${template.color}-400`"
-                        />
-
-                        <span>
-                            {{ template.title }}
-                        </span>
-                    </h2>
-
-                    <p class="text-base">
-                        <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
-                    </p>
-                </div>
-            </div>
-
-            <div class="mb-6 mt-4 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="my-2">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-                        </h3>
-                        <div class="my-2">
-                            <UInput type="text" name="weight" disabled :value="template.weight" />
-                        </div>
-                    </div>
-
-                    <div v-if="template.jobAccess" class="my-2">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.template', 2) }} {{ $t('common.access') }}
-                        </h3>
-                        <div class="my-2">
-                            <AccessManager
-                                v-model:jobs="template.jobAccess"
-                                :target-id="templateId ?? '0'"
-                                :access-roles="
-                                    enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
-                                        (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
-                                    )
-                                "
-                                :access-types="templateAccessTypes"
-                                :disabled="true"
+            <template v-else>
+                <div class="mt-2 sm:flex sm:items-center">
+                    <div>
+                        <h2 class="inline-flex items-center gap-2 text-2xl">
+                            <UIcon
+                                :name="template.icon ?? 'i-mdi-file-outline'"
+                                :class="`text-${template.color}-500 dark:text-${template.color}-400`"
                             />
-                        </div>
-                    </div>
 
-                    <div class="my-2">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.content') }} {{ $t('common.title') }}
-                        </h3>
-                        <div class="my-2">
-                            <UTextarea
-                                name="contentTitle"
-                                class="w-full whitespace-pre-wrap"
-                                disabled
-                                :rows="4"
-                                :value="template.contentTitle"
-                            />
-                        </div>
-                    </div>
+                            <span>
+                                {{ template.title }}
+                            </span>
+                        </h2>
 
-                    <div v-if="template.state">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.content') }} {{ $t('common.state') }}
-                        </h3>
-                        <div class="my-2">
-                            <UInput
-                                type="text"
-                                name="state"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                disabled
-                                :value="template.state"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="template.category">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.category') }}
-                        </h3>
-                        <div class="my-2">
-                            <p class="text-sm leading-6 text-gray-100">
-                                {{ template.category?.name }} ({{ $t('common.description') }}:
-                                {{ template.category?.description }})
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="my-2">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.content') }}
-                        </h3>
-                        <div class="my-2">
-                            <UTextarea
-                                name="content"
-                                class="w-full whitespace-pre-wrap"
-                                disabled
-                                :rows="4"
-                                :value="template.content"
-                            />
-                        </div>
-                    </div>
-
-                    <div v-if="reqs">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.schema') }}
-                        </h3>
-                        <div class="my-2">
-                            <ul
-                                class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
-                            >
-                                <li v-if="reqs.users">
-                                    <TemplateRequirementsList name="User" :specs="reqs.users!" />
-                                </li>
-                                <li v-if="reqs.vehicles">
-                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
-                                </li>
-                                <li v-if="reqs.documents">
-                                    <TemplateRequirementsList name="User" :specs="reqs.documents!" />
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div v-if="template.contentAccess" class="my-2">
-                        <h3 class="block text-base font-medium leading-6 text-gray-100">
-                            {{ $t('common.access') }}
-                        </h3>
-                        <div class="my-2">
-                            <AccessManager
-                                v-model:jobs="template.contentAccess.jobs"
-                                :target-id="templateId ?? '0'"
-                                :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
-                                :disabled="true"
-                                :show-required="true"
-                            />
-                        </div>
+                        <p class="text-base">
+                            <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
+                        </p>
                     </div>
                 </div>
-            </div>
-        </template>
-    </UContainer>
+
+                <div class="mb-6 mt-4 flow-root">
+                    <div class="-my-2 mx-0 overflow-x-auto">
+                        <div class="my-2">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+                            </h3>
+                            <div class="my-2">
+                                <UInput type="text" name="weight" disabled :value="template.weight" />
+                            </div>
+                        </div>
+
+                        <div v-if="template.jobAccess" class="my-2">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.template', 2) }} {{ $t('common.access') }}
+                            </h3>
+                            <div class="my-2">
+                                <AccessManager
+                                    v-model:jobs="template.jobAccess"
+                                    :target-id="templateId ?? '0'"
+                                    :access-roles="
+                                        enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
+                                            (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
+                                        )
+                                    "
+                                    :access-types="templateAccessTypes"
+                                    :disabled="true"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="my-2">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.content') }} {{ $t('common.title') }}
+                            </h3>
+                            <div class="my-2">
+                                <UTextarea
+                                    name="contentTitle"
+                                    class="w-full whitespace-pre-wrap"
+                                    disabled
+                                    :rows="4"
+                                    :value="template.contentTitle"
+                                />
+                            </div>
+                        </div>
+
+                        <div v-if="template.state">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.content') }} {{ $t('common.state') }}
+                            </h3>
+                            <div class="my-2">
+                                <UInput
+                                    type="text"
+                                    name="state"
+                                    class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    disabled
+                                    :value="template.state"
+                                />
+                            </div>
+                        </div>
+
+                        <div v-if="template.category">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.category') }}
+                            </h3>
+                            <div class="my-2">
+                                <p class="text-sm leading-6 text-gray-100">
+                                    {{ template.category?.name }} ({{ $t('common.description') }}:
+                                    {{ template.category?.description }})
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="my-2">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.content') }}
+                            </h3>
+                            <div class="my-2">
+                                <UTextarea
+                                    name="content"
+                                    class="w-full whitespace-pre-wrap"
+                                    disabled
+                                    :rows="4"
+                                    :value="template.content"
+                                />
+                            </div>
+                        </div>
+
+                        <div v-if="reqs">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.schema') }}
+                            </h3>
+                            <div class="my-2">
+                                <ul
+                                    class="mb-2 max-w-md list-inside list-disc space-y-1 text-sm font-medium text-gray-100 dark:text-gray-300"
+                                >
+                                    <li v-if="reqs.users">
+                                        <TemplateRequirementsList name="User" :specs="reqs.users!" />
+                                    </li>
+                                    <li v-if="reqs.vehicles">
+                                        <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
+                                    </li>
+                                    <li v-if="reqs.documents">
+                                        <TemplateRequirementsList name="User" :specs="reqs.documents!" />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div v-if="template.contentAccess" class="my-2">
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.access') }}
+                            </h3>
+                            <div class="my-2">
+                                <AccessManager
+                                    v-model:jobs="template.contentAccess.jobs"
+                                    :target-id="templateId ?? '0'"
+                                    :access-types="contentAccessTypes"
+                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                    :disabled="true"
+                                    :show-required="true"
+                                />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </UContainer>
+    </UDashboardPanelContent>
 </template>
