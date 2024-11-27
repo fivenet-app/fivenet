@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useSettingsStore } from '~/store/settings';
+
 useHeadSafe({
     title: 'pages.dereferer.title',
     meta: [{ name: 'referrer', content: 'no-referrer' }],
@@ -11,6 +13,9 @@ definePageMeta({
     showCookieOptions: true,
 });
 
+const settingsStore = useSettingsStore();
+const { isNUIAvailable } = storeToRefs(settingsStore);
+
 const route = useRoute();
 const router = useRouter();
 
@@ -19,7 +24,7 @@ if (!route.query || !route.query.target) {
 } else {
     const url = route.query.target as string;
     useTimeoutFn(async () => {
-        if (isNUIAvailable()) {
+        if (isNUIAvailable.value) {
             openURLInWindow(url);
             router.back();
         } else {

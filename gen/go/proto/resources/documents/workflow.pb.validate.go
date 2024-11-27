@@ -401,6 +401,28 @@ func (m *AutoClose) validate(all bool) error {
 		}
 	}
 
+	if utf8.RuneCountInString(m.GetComment()) < 3 {
+		err := AutoCloseValidationError{
+			field:  "Comment",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetComment()) > 2048 {
+		err := AutoCloseValidationError{
+			field:  "Comment",
+			reason: "value length must be at most 2048 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return AutoCloseMultiError(errors)
 	}

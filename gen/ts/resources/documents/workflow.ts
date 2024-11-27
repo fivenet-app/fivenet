@@ -46,9 +46,13 @@ export interface Reminder {
  */
 export interface AutoClose {
     /**
-     * @generated from protobuf field: google.protobuf.Duration auto_close_duration = 3;
+     * @generated from protobuf field: google.protobuf.Duration auto_close_duration = 1;
      */
     autoCloseDuration?: Duration;
+    /**
+     * @generated from protobuf field: string comment = 2;
+     */
+    comment: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Workflow$Type extends MessageType<Workflow> {
@@ -169,11 +173,13 @@ export const Reminder = new Reminder$Type();
 class AutoClose$Type extends MessageType<AutoClose> {
     constructor() {
         super("resources.documents.AutoClose", [
-            { no: 3, name: "auto_close_duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } }
+            { no: 1, name: "auto_close_duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } },
+            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } }
         ]);
     }
     create(value?: PartialMessage<AutoClose>): AutoClose {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.comment = "";
         if (value !== undefined)
             reflectionMergePartial<AutoClose>(this, message, value);
         return message;
@@ -183,8 +189,11 @@ class AutoClose$Type extends MessageType<AutoClose> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* google.protobuf.Duration auto_close_duration */ 3:
+                case /* google.protobuf.Duration auto_close_duration */ 1:
                     message.autoCloseDuration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.autoCloseDuration);
+                    break;
+                case /* string comment */ 2:
+                    message.comment = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -198,9 +207,12 @@ class AutoClose$Type extends MessageType<AutoClose> {
         return message;
     }
     internalBinaryWrite(message: AutoClose, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* google.protobuf.Duration auto_close_duration = 3; */
+        /* google.protobuf.Duration auto_close_duration = 1; */
         if (message.autoCloseDuration)
-            Duration.internalBinaryWrite(message.autoCloseDuration, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Duration.internalBinaryWrite(message.autoCloseDuration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string comment = 2; */
+        if (message.comment !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.comment);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

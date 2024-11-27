@@ -120,7 +120,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper prot
 		--validate_out="lang=go:./gen/go/proto" \
 		--customizer_opt=paths=source_relative \
 		--customizer_out=./gen/go/proto \
-		--doc_opt=markdown,grpc-api.md \
+		--doc_opt=./internal/protoc-gen-doc-md.tmpl,grpc-api.md \
 		--doc_out=./gen \
 		$(shell find proto/ -iname "*.proto")
 

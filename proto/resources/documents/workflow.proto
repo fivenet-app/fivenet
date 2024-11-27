@@ -18,15 +18,19 @@ message Workflow {
 message Reminder {
   google.protobuf.Duration duration = 1 [(validate.rules).duration = {
     required: true,
-    lt:  {seconds: 7776000},
-    gte: {seconds: 86400},
+    lt:  {seconds: 7776000}, // 90 days
+    gte: {seconds: 86400}, // 1 day
   }];
 }
 
 message AutoClose {
-  google.protobuf.Duration auto_close_duration = 3 [(validate.rules).duration = {
+  google.protobuf.Duration auto_close_duration = 1 [(validate.rules).duration = {
     required: true,
-    lt:  {seconds: 7776000},
-    gte: {seconds: 86400},
+    lt:  {seconds: 7776000}, // 90 days
+    gte: {seconds: 86400}, // 1 day
+  }];
+  string comment = 2 [(validate.rules).string = {
+    min_len: 3,
+    max_bytes: 2048
   }];
 }
