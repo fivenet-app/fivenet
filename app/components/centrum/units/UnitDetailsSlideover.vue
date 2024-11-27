@@ -17,7 +17,7 @@ const props = defineProps<{
     statusSelected?: StatusUnit;
 }>();
 
-const { activeChar, can } = useAuth();
+const { can } = useAuth();
 
 const { isOpen } = useSlideover();
 
