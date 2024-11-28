@@ -307,6 +307,8 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 }
 
 func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.wiki.page_id", int64(req.Id)))
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{

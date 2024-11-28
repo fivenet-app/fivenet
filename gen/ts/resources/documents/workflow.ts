@@ -54,6 +54,15 @@ export interface AutoClose {
      */
     comment: string;
 }
+/**
+ * @generated from protobuf message resources.documents.CronData
+ */
+export interface CronData {
+    /**
+     * @generated from protobuf field: uint64 last_doc_id = 1;
+     */
+    lastDocId: number;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Workflow$Type extends MessageType<Workflow> {
     constructor() {
@@ -223,3 +232,50 @@ class AutoClose$Type extends MessageType<AutoClose> {
  * @generated MessageType for protobuf message resources.documents.AutoClose
  */
 export const AutoClose = new AutoClose$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CronData$Type extends MessageType<CronData> {
+    constructor() {
+        super("resources.documents.CronData", [
+            { no: 1, name: "last_doc_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CronData>): CronData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.lastDocId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CronData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CronData): CronData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 last_doc_id */ 1:
+                    message.lastDocId = reader.uint64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CronData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 last_doc_id = 1; */
+        if (message.lastDocId !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.lastDocId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.CronData
+ */
+export const CronData = new CronData$Type();

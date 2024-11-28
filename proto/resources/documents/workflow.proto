@@ -34,3 +34,7 @@ message AutoClose {
     max_bytes: 2048
   }];
 }
+
+message CronData {
+  uint64 last_doc_id = 1;
+}

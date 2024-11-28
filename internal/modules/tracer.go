@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -49,7 +50,6 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 			otlptracegrpc.WithEndpointURL(p.Config.Tracing.URL),
 			otlptracegrpc.WithTimeout(p.Config.Tracing.Timeout),
 		}
-
 		if p.Config.Tracing.Insecure {
 			opts = append(opts, otlptracegrpc.WithInsecure())
 		}
@@ -61,7 +61,6 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 			otlptracehttp.WithEndpointURL(p.Config.Tracing.URL),
 			otlptracehttp.WithTimeout(p.Config.Tracing.Timeout),
 		}
-
 		if p.Config.Tracing.Insecure {
 			opts = append(opts, otlptracehttp.WithInsecure())
 		}
@@ -92,7 +91,7 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	for i := range p.Config.Tracing.Attributes {
 		split := strings.SplitN(p.Config.Tracing.Attributes[i], "=", 2)
 		if len(split) < 2 {
-			return nil, fmt.Errorf("failed to parse tracing attributes (%q)", p.Config.Tracing.Attributes[i])
+			return nil, fmt.Errorf("failed to parse tracing attribute (%q)", p.Config.Tracing.Attributes[i])
 		}
 
 		customAttrs = append(customAttrs, attribute.String(split[0], split[1]))
@@ -110,6 +109,8 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 		// Record information about this application in a Resource.
 		tracesdk.WithResource(attrs),
 	)
+	otel.SetTracerProvider(tp)
+	// otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)

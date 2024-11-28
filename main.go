@@ -192,7 +192,10 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			tracker.New,
 			tracker.NewManager,
 			userinfo.NewUIRetriever,
+
+			// GRPC Service Helpers, Housekeepers and Co.
 			pbjobs.NewHousekeeper,
+			pbdocstore.NewWorkflow,
 
 			// HTTP Services
 			server.AsService(api.New),

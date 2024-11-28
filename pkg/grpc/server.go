@@ -22,8 +22,6 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
-	"go.opentelemetry.io/otel"
-	"go.opentelemetry.io/otel/propagation"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -98,11 +96,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 		return nil
 	}
 
-	// Setup GRPC tracing
-	otel.SetTracerProvider(p.TP)
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
-	otelgrpcHandler := otelgrpc.NewServerHandler()
-
+	// Setup GRPC server with custom options interceptors, and tracing
 	srv := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle:     0,
@@ -112,7 +106,9 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			Timeout:               20 * time.Second,
 		}),
 		grpc.MaxConcurrentStreams(128),
-		grpc.StatsHandler(otelgrpcHandler),
+
+		grpc.StatsHandler(otelgrpc.NewServerHandler(otelgrpc.WithTracerProvider(p.TP))),
+
 		grpc.ChainUnaryInterceptor(
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),

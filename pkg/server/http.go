@@ -166,8 +166,8 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 
 	// Tracing
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP), otelgin.WithGinFilter(func(c *gin.Context) bool {
-		// Skip `/images/*` requests
-		return !strings.HasPrefix(c.FullPath(), "/images/")
+		// Skip `/images/*` and `/api/grpc` requests
+		return !strings.HasPrefix(c.FullPath(), "/images/") && !strings.HasPrefix(c.FullPath(), "/api/grpc")
 	})))
 	e.Use(InjectToHeaders(p.TP))
 

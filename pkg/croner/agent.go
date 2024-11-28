@@ -12,6 +12,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -118,11 +119,17 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		ag.logger.Error("failed to send in progress for cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 	}
 
+	if job.Cronjob.Data == nil {
+		job.Cronjob.Data = &cron.CronjobData{
+			Data: &anypb.Any{},
+		}
+	}
+
 	start := time.Now()
 	err := fn(ag.ctx, job.Cronjob.Data)
 	elapsed := time.Since(start)
 
-	// Update timestamp
+	// Update timestamp in cronjob data
 	now := timestamp.Now()
 	job.Cronjob.Data.UpdatedAt = now
 
