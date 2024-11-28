@@ -16,7 +16,7 @@ message Workflow {
 }
 
 message Reminder {
-repeated google.protobuf.Duration duration = 1 [(validate.rules).duration = {
+  repeated google.protobuf.Duration duration = 1 [(validate.rules).repeated.items.duration = {
     required: true,
     lt:  {seconds: 7776000}, // 90 days
     gte: {seconds: 86400}, // 1 day

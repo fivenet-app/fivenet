@@ -37,9 +37,9 @@ export interface Workflow {
  */
 export interface Reminder {
     /**
-     * @generated from protobuf field: google.protobuf.Duration duration = 1;
+     * @generated from protobuf field: repeated google.protobuf.Duration duration = 1;
      */
-    duration?: Duration;
+    duration: Duration[];
 }
 /**
  * @generated from protobuf message resources.documents.AutoClose
@@ -136,11 +136,12 @@ export const Workflow = new Workflow$Type();
 class Reminder$Type extends MessageType<Reminder> {
     constructor() {
         super("resources.documents.Reminder", [
-            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } }
+            { no: 1, name: "duration", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Duration, options: { "validate.rules": { repeated: { items: { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } } } }
         ]);
     }
     create(value?: PartialMessage<Reminder>): Reminder {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.duration = [];
         if (value !== undefined)
             reflectionMergePartial<Reminder>(this, message, value);
         return message;
@@ -150,8 +151,8 @@ class Reminder$Type extends MessageType<Reminder> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* google.protobuf.Duration duration */ 1:
-                    message.duration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.duration);
+                case /* repeated google.protobuf.Duration duration */ 1:
+                    message.duration.push(Duration.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -165,9 +166,9 @@ class Reminder$Type extends MessageType<Reminder> {
         return message;
     }
     internalBinaryWrite(message: Reminder, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* google.protobuf.Duration duration = 1; */
-        if (message.duration)
-            Duration.internalBinaryWrite(message.duration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated google.protobuf.Duration duration = 1; */
+        for (let i = 0; i < message.duration.length; i++)
+            Duration.internalBinaryWrite(message.duration[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

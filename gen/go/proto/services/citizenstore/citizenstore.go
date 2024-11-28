@@ -314,6 +314,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	var fields perms.StringList
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
+		selectors = append(selectors, tUserProps.UpdatedAt)
 	}
 
 	for _, field := range fields {
@@ -904,6 +905,7 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 	stmt := tUserProps.
 		SELECT(
 			tUserProps.UserID,
+			tUserProps.UpdatedAt,
 			tUserProps.Wanted,
 			tUserProps.Job,
 			tUserProps.JobGrade,

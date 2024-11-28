@@ -2760,7 +2760,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| duration | [google.protobuf.Duration](#google-protobuf-Duration) | repeated |  |
 
 
 
@@ -4813,6 +4813,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | wanted | [bool](#bool) | optional |  |
 | job_name | [string](#string) | optional | @gotags: alias:"job" |
 | job | [Job](#resources-users-Job) | optional |  |

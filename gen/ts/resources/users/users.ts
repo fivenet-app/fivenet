@@ -10,9 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Timestamp } from "../timestamp/timestamp";
 import { JobGrade } from "./jobs";
 import { Job } from "./jobs";
+import { Timestamp } from "../timestamp/timestamp";
 import { File } from "../filestore/file";
 /**
  * @generated from protobuf message resources.users.UserShort
@@ -158,35 +158,39 @@ export interface UserProps {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional bool wanted = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 2;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional bool wanted = 3;
      */
     wanted?: boolean;
     /**
-     * @generated from protobuf field: optional string job_name = 3;
+     * @generated from protobuf field: optional string job_name = 4;
      */
     jobName?: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: optional resources.users.Job job = 4;
+     * @generated from protobuf field: optional resources.users.Job job = 5;
      */
     job?: Job;
     /**
-     * @generated from protobuf field: optional int32 job_grade_number = 5;
+     * @generated from protobuf field: optional int32 job_grade_number = 6;
      */
     jobGradeNumber?: number; // @gotags: alias:"job_grade"
     /**
-     * @generated from protobuf field: optional resources.users.JobGrade job_grade = 6;
+     * @generated from protobuf field: optional resources.users.JobGrade job_grade = 7;
      */
     jobGrade?: JobGrade;
     /**
-     * @generated from protobuf field: optional uint32 traffic_infraction_points = 7;
+     * @generated from protobuf field: optional uint32 traffic_infraction_points = 8;
      */
     trafficInfractionPoints?: number;
     /**
-     * @generated from protobuf field: optional int64 open_fines = 8;
+     * @generated from protobuf field: optional int64 open_fines = 9;
      */
     openFines?: number;
     /**
-     * @generated from protobuf field: optional string blood_type = 9;
+     * @generated from protobuf field: optional string blood_type = 10;
      */
     bloodType?: string;
     /**
@@ -643,14 +647,15 @@ class UserProps$Type extends MessageType<UserProps> {
     constructor() {
         super("resources.users.UserProps", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 2, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "job", kind: "message", T: () => Job },
-            { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
-            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 9, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "job_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "job", kind: "message", T: () => Job },
+            { no: 6, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 7, name: "job_grade", kind: "message", T: () => JobGrade },
+            { no: 8, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 9, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 10, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "mug_shot", kind: "message", T: () => File },
             { no: 12, name: "attributes", kind: "message", T: () => CitizenAttributes }
         ]);
@@ -670,28 +675,31 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional bool wanted */ 2:
+                case /* optional resources.timestamp.Timestamp updated_at */ 2:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* optional bool wanted */ 3:
                     message.wanted = reader.bool();
                     break;
-                case /* optional string job_name */ 3:
+                case /* optional string job_name */ 4:
                     message.jobName = reader.string();
                     break;
-                case /* optional resources.users.Job job */ 4:
+                case /* optional resources.users.Job job */ 5:
                     message.job = Job.internalBinaryRead(reader, reader.uint32(), options, message.job);
                     break;
-                case /* optional int32 job_grade_number */ 5:
+                case /* optional int32 job_grade_number */ 6:
                     message.jobGradeNumber = reader.int32();
                     break;
-                case /* optional resources.users.JobGrade job_grade */ 6:
+                case /* optional resources.users.JobGrade job_grade */ 7:
                     message.jobGrade = JobGrade.internalBinaryRead(reader, reader.uint32(), options, message.jobGrade);
                     break;
-                case /* optional uint32 traffic_infraction_points */ 7:
+                case /* optional uint32 traffic_infraction_points */ 8:
                     message.trafficInfractionPoints = reader.uint32();
                     break;
-                case /* optional int64 open_fines */ 8:
+                case /* optional int64 open_fines */ 9:
                     message.openFines = reader.int64().toNumber();
                     break;
-                case /* optional string blood_type */ 9:
+                case /* optional string blood_type */ 10:
                     message.bloodType = reader.string();
                     break;
                 case /* optional resources.filestore.File mug_shot */ 11:
@@ -715,30 +723,33 @@ class UserProps$Type extends MessageType<UserProps> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional bool wanted = 2; */
+        /* optional resources.timestamp.Timestamp updated_at = 2; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool wanted = 3; */
         if (message.wanted !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.wanted);
-        /* optional string job_name = 3; */
+            writer.tag(3, WireType.Varint).bool(message.wanted);
+        /* optional string job_name = 4; */
         if (message.jobName !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.jobName);
-        /* optional resources.users.Job job = 4; */
+            writer.tag(4, WireType.LengthDelimited).string(message.jobName);
+        /* optional resources.users.Job job = 5; */
         if (message.job)
-            Job.internalBinaryWrite(message.job, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 job_grade_number = 5; */
+            Job.internalBinaryWrite(message.job, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 job_grade_number = 6; */
         if (message.jobGradeNumber !== undefined)
-            writer.tag(5, WireType.Varint).int32(message.jobGradeNumber);
-        /* optional resources.users.JobGrade job_grade = 6; */
+            writer.tag(6, WireType.Varint).int32(message.jobGradeNumber);
+        /* optional resources.users.JobGrade job_grade = 7; */
         if (message.jobGrade)
-            JobGrade.internalBinaryWrite(message.jobGrade, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint32 traffic_infraction_points = 7; */
+            JobGrade.internalBinaryWrite(message.jobGrade, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint32 traffic_infraction_points = 8; */
         if (message.trafficInfractionPoints !== undefined)
-            writer.tag(7, WireType.Varint).uint32(message.trafficInfractionPoints);
-        /* optional int64 open_fines = 8; */
+            writer.tag(8, WireType.Varint).uint32(message.trafficInfractionPoints);
+        /* optional int64 open_fines = 9; */
         if (message.openFines !== undefined)
-            writer.tag(8, WireType.Varint).int64(message.openFines);
-        /* optional string blood_type = 9; */
+            writer.tag(9, WireType.Varint).int64(message.openFines);
+        /* optional string blood_type = 10; */
         if (message.bloodType !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.bloodType);
+            writer.tag(10, WireType.LengthDelimited).string(message.bloodType);
         /* optional resources.filestore.File mug_shot = 11; */
         if (message.mugShot)
             File.internalBinaryWrite(message.mugShot, writer.tag(11, WireType.LengthDelimited).fork(), options).join();

@@ -218,46 +218,51 @@ func (m *Reminder) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetDuration() == nil {
-		err := ReminderValidationError{
-			field:  "Duration",
-			reason: "value is required",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
+	for idx, item := range m.GetDuration() {
+		_, _ = idx, item
 
-	if d := m.GetDuration(); d != nil {
-		dur, err := d.AsDuration(), d.CheckValid()
-		if err != nil {
-			err = ReminderValidationError{
-				field:  "Duration",
-				reason: "value is not a valid duration",
-				cause:  err,
+		if item == nil {
+			err := ReminderValidationError{
+				field:  fmt.Sprintf("Duration[%v]", idx),
+				reason: "value is required",
 			}
 			if !all {
 				return err
 			}
 			errors = append(errors, err)
-		} else {
+		}
 
-			lt := time.Duration(7776000*time.Second + 0*time.Nanosecond)
-			gte := time.Duration(86400*time.Second + 0*time.Nanosecond)
-
-			if dur < gte || dur >= lt {
-				err := ReminderValidationError{
-					field:  "Duration",
-					reason: "value must be inside range [24h0m0s, 2160h0m0s)",
+		if d := item; d != nil {
+			dur, err := d.AsDuration(), d.CheckValid()
+			if err != nil {
+				err = ReminderValidationError{
+					field:  fmt.Sprintf("Duration[%v]", idx),
+					reason: "value is not a valid duration",
+					cause:  err,
 				}
 				if !all {
 					return err
 				}
 				errors = append(errors, err)
-			}
+			} else {
 
+				lt := time.Duration(7776000*time.Second + 0*time.Nanosecond)
+				gte := time.Duration(86400*time.Second + 0*time.Nanosecond)
+
+				if dur < gte || dur >= lt {
+					err := ReminderValidationError{
+						field:  fmt.Sprintf("Duration[%v]", idx),
+						reason: "value must be inside range [24h0m0s, 2160h0m0s)",
+					}
+					if !all {
+						return err
+					}
+					errors = append(errors, err)
+				}
+
+			}
 		}
+
 	}
 
 	if len(errors) > 0 {

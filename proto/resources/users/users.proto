@@ -69,14 +69,15 @@ message License {
 
 message UserProps {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  optional bool wanted = 2;
-  optional string job_name = 3; // @gotags: alias:"job"
-  optional resources.users.Job job = 4;
-  optional int32 job_grade_number = 5; // @gotags: alias:"job_grade"
-  optional resources.users.JobGrade job_grade = 6;
-  optional uint32 traffic_infraction_points = 7;
-  optional int64 open_fines = 8;
-  optional string blood_type = 9;
+  optional resources.timestamp.Timestamp updated_at = 2;
+  optional bool wanted = 3;
+  optional string job_name = 4; // @gotags: alias:"job"
+  optional resources.users.Job job = 5;
+  optional int32 job_grade_number = 6; // @gotags: alias:"job_grade"
+  optional resources.users.JobGrade job_grade = 7;
+  optional uint32 traffic_infraction_points = 8;
+  optional int64 open_fines = 9;
+  optional string blood_type = 10;
   optional resources.filestore.File mug_shot = 11;
   optional CitizenAttributes attributes = 12;
 }

@@ -18,6 +18,7 @@ type fivenetUserPropsTable struct {
 
 	// Columns
 	UserID                  mysql.ColumnInteger
+	UpdatedAt               mysql.ColumnTimestamp
 	Wanted                  mysql.ColumnBool
 	Job                     mysql.ColumnString
 	JobGrade                mysql.ColumnInteger
@@ -67,6 +68,7 @@ func newFivenetUserPropsTable(schemaName, tableName, alias string) *FivenetUserP
 func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUserPropsTable {
 	var (
 		UserIDColumn                  = mysql.IntegerColumn("user_id")
+		UpdatedAtColumn               = mysql.TimestampColumn("updated_at")
 		WantedColumn                  = mysql.BoolColumn("wanted")
 		JobColumn                     = mysql.StringColumn("job")
 		JobGradeColumn                = mysql.IntegerColumn("job_grade")
@@ -75,8 +77,8 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodTypeColumn               = mysql.StringColumn("blood_type")
 		AvatarColumn                  = mysql.StringColumn("avatar")
 		MugShotColumn                 = mysql.StringColumn("mug_shot")
-		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
+		allColumns                    = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -84,6 +86,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 
 		//Columns
 		UserID:                  UserIDColumn,
+		UpdatedAt:               UpdatedAtColumn,
 		Wanted:                  WantedColumn,
 		Job:                     JobColumn,
 		JobGrade:                JobGradeColumn,
