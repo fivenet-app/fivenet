@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 const powerOn = ref(true);
-const histroryOperation = ref<
+
+const histroryOperation = useState<
     {
         operation: string;
         result: string;
     }[]
->([]);
+>('quickButton:mathCalculator:historyOps', () => []);
+
 const currentCalculate = ref('0');
 const lastOperation = ref('0');
 
@@ -121,7 +123,7 @@ function counted() {
     const rep = currentCalculate.value
         .replace('x', '*')
         .replace(',', '.')
-        .replace(/[*+-/]0/, '');
+        .replace(/([*+/-])0(?!\.)/, '$1');
     const lastCalculate = currentCalculate.value;
     let currentCalt = '';
     currentCalt = eval(rep).toString();

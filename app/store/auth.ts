@@ -183,8 +183,8 @@ export const useAuthStore = defineStore('auth', {
                 this.setJobProps(response.jobProps);
 
                 if (redirect) {
-                    const redirect = useRoute().query.redirect ?? useSettingsStore().startpage ?? '/overview';
-                    const path = redirect || '/overview';
+                    const redirectPath = useRoute().query.redirect ?? useSettingsStore().startpage ?? '/overview';
+                    const path = redirectPath || '/overview';
                     const url = new URL('https://example.com' + path);
 
                     // @ts-expect-error route should be valid, as we test it against a valid URL list

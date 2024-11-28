@@ -27,6 +27,8 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.opentelemetry.io/otel/attribute"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
@@ -173,6 +175,8 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 
 func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, error) {
 	req.Username = strings.TrimSpace(req.Username)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.username", req.Username))
 
 	account, err := s.getAccountFromDB(ctx, jet.AND(
 		tAccounts.Username.EQ(jet.String(req.Username)),
@@ -628,6 +632,8 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.auth.char_id", int64(req.CharId)))
+
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
@@ -757,6 +763,11 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Bool("fivenet.auth.superuser", req.Superuser))
+	if req.Job != nil {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.auth.superuser.job", *req.Job))
+	}
 
 	if !userInfo.CanBeSuper {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
