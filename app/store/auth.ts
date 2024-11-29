@@ -75,7 +75,18 @@ export const useAuthStore = defineStore('auth', {
             if (jp === undefined) {
                 this.jobProps = null;
             } else {
-                this.jobProps = jp;
+                if (!this.jobProps) {
+                    this.jobProps = jp;
+                } else {
+                    this.jobProps.job = jp.job;
+                    this.jobProps.jobLabel = jp.jobLabel;
+                    this.jobProps.theme = jp.theme;
+                    this.jobProps.livemapMarkerColor = jp.livemapMarkerColor;
+                    this.jobProps.radioFrequency = jp.radioFrequency;
+                    this.jobProps.quickButtons = jp.quickButtons;
+                    this.jobProps.discordGuildId = jp.discordGuildId;
+                    this.jobProps.logoUrl = jp.logoUrl;
+                }
             }
         },
         clearAuthInfo(): void {

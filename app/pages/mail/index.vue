@@ -26,7 +26,7 @@ const { isSuperuser } = useAuth();
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { emails, selectedEmail, selectedThread } = storeToRefs(mailerStore);
+const { emails, selectedEmail, selectedThread, draft } = storeToRefs(mailerStore);
 
 const tabItems = [
     {
@@ -126,12 +126,25 @@ watch(selectedThread, updateQuery);
 onBeforeMount(async () => {
     await mailerStore.listEmails();
 
-    if (!route.query.thread) {
-        return;
-    }
+    async () => {
+        if (!route.query.thread) {
+            return;
+        }
 
-    selectedThread.value = await mailerStore.getThread(route.query.thread as string);
-    updateQuery();
+        selectedThread.value = await mailerStore.getThread(route.query.thread as string);
+        updateQuery();
+    };
+
+    if (route.query.to) {
+        const to = (route.query.to as string).trim().toLowerCase();
+        if (!draft.value.recipients.find((r) => r.label === to)) {
+            draft.value.recipients.push({
+                label: to,
+            });
+        }
+
+        modal.open(ThreadCreateOrUpdateModal, {});
+    }
 });
 </script>
 
@@ -273,10 +286,14 @@ onBeforeMount(async () => {
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.state = await mailerStore.setThreadState({
-                                            threadId: selectedThread!.id,
-                                            unread: !threadState?.unread,
-                                        }))
+                                        (selectedThread!.state = await mailerStore.setThreadState(
+                                            {
+                                                threadId: selectedThread!.id,
+                                                unread: !threadState?.unread,
+                                            },
+                                            false,
+                                            true,
+                                        ))
                                 "
                             />
                         </UTooltip>
@@ -288,10 +305,14 @@ onBeforeMount(async () => {
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.state = await mailerStore.setThreadState({
-                                            threadId: selectedThread!.id,
-                                            important: !threadState?.important,
-                                        }))
+                                        (selectedThread!.state = await mailerStore.setThreadState(
+                                            {
+                                                threadId: selectedThread!.id,
+                                                important: !threadState?.important,
+                                            },
+                                            false,
+                                            true,
+                                        ))
                                 "
                             />
                         </UTooltip>
@@ -305,10 +326,14 @@ onBeforeMount(async () => {
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.state = await mailerStore.setThreadState({
-                                            threadId: selectedThread!.id,
-                                            favorite: !threadState?.favorite,
-                                        }))
+                                        (selectedThread!.state = await mailerStore.setThreadState(
+                                            {
+                                                threadId: selectedThread!.id,
+                                                favorite: !threadState?.favorite,
+                                            },
+                                            false,
+                                            true,
+                                        ))
                                 "
                             />
                         </UTooltip>
@@ -320,10 +345,14 @@ onBeforeMount(async () => {
                                 variant="ghost"
                                 @click="
                                     async () =>
-                                        (selectedThread!.state = await mailerStore.setThreadState({
-                                            threadId: selectedThread!.id,
-                                            muted: !threadState?.muted,
-                                        }))
+                                        (selectedThread!.state = await mailerStore.setThreadState(
+                                            {
+                                                threadId: selectedThread!.id,
+                                                muted: !threadState?.muted,
+                                            },
+                                            false,
+                                            true,
+                                        ))
                                 "
                             />
                         </UTooltip>
@@ -336,10 +365,14 @@ onBeforeMount(async () => {
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () =>
-                                            (selectedThread!.state = await mailerStore.setThreadState({
-                                                threadId: selectedThread!.id,
-                                                archived: !threadState?.archived,
-                                            })),
+                                            (selectedThread!.state = await mailerStore.setThreadState(
+                                                {
+                                                    threadId: selectedThread!.id,
+                                                    archived: !threadState?.archived,
+                                                },
+                                                false,
+                                                true,
+                                            )),
                                     })
                                 "
                             />

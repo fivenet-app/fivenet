@@ -7,6 +7,15 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
+func (m *Colleague) Sanitize() error {
+
+	if m.Email != nil {
+		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	return nil
+}
+
 func (m *JobsUserActivity) Sanitize() error {
 
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)

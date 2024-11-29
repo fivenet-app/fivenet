@@ -24,7 +24,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICitizenStoreServiceClient {
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -70,7 +70,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */

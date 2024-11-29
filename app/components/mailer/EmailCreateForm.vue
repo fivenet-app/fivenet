@@ -38,6 +38,7 @@ const { activeChar, isSuperuser } = useAuth();
 const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
+const { selectedEmail } = storeToRefs(mailerStore);
 
 const { data: proposals, refresh: refreshProposabls } = useLazyAsyncData(`emails-proposals`, () => getEmailProposals());
 
@@ -46,6 +47,7 @@ async function getEmailProposals(): Promise<GetEmailProposalsResponse> {
         const call = getGRPCMailerClient().getEmailProposals({
             input: '',
             job: !props.personalEmail,
+            userId: isSuperuser.value ? selectedEmail.value?.userId : undefined,
         });
         const { response } = await call;
 
@@ -252,7 +254,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <UFormGroup>
             <DataErrorBlock
-                v-if="state?.deactivated"
+                v-if="modelValue?.deactivated"
                 :title="$t('errors.MailerService.ErrEmailDisabled.title')"
                 :message="$t('errors.MailerService.ErrEmailDisabled.content')"
             />
@@ -261,9 +263,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-if="!disabled"
                 type="submit"
                 block
-                :label="modelValue?.id !== '0' ? $t('common.update') : $t('common.create')"
+                :label="modelValue?.id !== undefined ? $t('common.update') : $t('common.create')"
             />
-            <!-- TODO label is wrong when creating/updating dafuq -->
         </UFormGroup>
     </UForm>
 </template>

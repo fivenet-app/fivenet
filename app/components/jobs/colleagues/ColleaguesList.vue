@@ -114,6 +114,10 @@ const columns = [
         label: t('common.phone_number'),
     },
     {
+        key: 'email',
+        label: t('common.mail'),
+    },
+    {
         key: 'dateofbirth',
         label: t('common.date_of_birth'),
         class: 'hidden lg:table-cell',
@@ -203,9 +207,11 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #rank-data="{ row: colleague }">
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </template>
+
         <template #absence-data="{ row: colleague }">
             <dl v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))" class="font-normal">
                 <dd class="truncate">
@@ -217,6 +223,7 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #phoneNumber-data="{ row: colleague }">
             <PhoneNumberBlock :number="colleague.phoneNumber" />
             <dl class="font-normal lg:hidden">
@@ -226,9 +233,17 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #dateofbirth-data="{ row: colleague }">
             {{ colleague.dateofbirth.value }}
         </template>
+
+        <template #email-data="{ row: colleague }">
+            <span class="break-all">
+                {{ colleague.email }}
+            </span>
+        </template>
+
         <template #actions-data="{ row: colleague }">
             <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
                 <UButton

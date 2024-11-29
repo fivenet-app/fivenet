@@ -2,6 +2,8 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DocEditor from '../partials/DocEditor.vue';
 import TemplateSelector from './TemplateSelector.vue';
 import { defaultEmptyContent } from './helpers';
@@ -9,6 +11,8 @@ import { defaultEmptyContent } from './helpers';
 const { isOpen } = useModal();
 
 const { activeChar } = useAuth();
+
+const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, selectedEmail } = storeToRefs(mailerStore);
@@ -50,6 +54,12 @@ async function createThread(values: Schema): Promise<void> {
         },
 
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
+    });
+
+    notifications.add({
+        title: { key: 'notifications.action_successfull.title', parameters: {} },
+        description: { key: 'notifications.action_successfull.content', parameters: {} },
+        type: NotificationType.SUCCESS,
     });
 
     // Clear draft data

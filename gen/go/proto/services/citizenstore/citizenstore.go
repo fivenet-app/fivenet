@@ -162,6 +162,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 		case "UserProps.MugShot":
 			selectors = append(selectors, tUserProps.MugShot)
+
+		case "UserProps.Email":
+			selectors = append(selectors, tUserProps.Email)
 		}
 	}
 
@@ -346,6 +349,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.BloodType)
 		case "UserProps.MugShot":
 			selectors = append(selectors, tUserProps.MugShot)
+		case "UserProps.Email":
+			selectors = append(selectors, tUserProps.Email)
 		}
 	}
 

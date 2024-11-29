@@ -64,6 +64,12 @@ export interface Colleague {
      * @generated from protobuf field: resources.jobs.JobsUserProps props = 18;
      */
     props?: JobsUserProps; // @gotags: alias:"fivenet_jobs_user_props"
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string email = 19;
+     */
+    email?: string;
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserProps
@@ -236,7 +242,8 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } },
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 17, name: "avatar", kind: "message", T: () => File },
-            { no: 18, name: "props", kind: "message", T: () => JobsUserProps }
+            { no: 18, name: "props", kind: "message", T: () => JobsUserProps },
+            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
     create(value?: PartialMessage<Colleague>): Colleague {
@@ -292,6 +299,9 @@ class Colleague$Type extends MessageType<Colleague> {
                 case /* resources.jobs.JobsUserProps props */ 18:
                     message.props = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.props);
                     break;
+                case /* optional string email */ 19:
+                    message.email = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -340,6 +350,9 @@ class Colleague$Type extends MessageType<Colleague> {
         /* resources.jobs.JobsUserProps props = 18; */
         if (message.props)
             JobsUserProps.internalBinaryWrite(message.props, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* optional string email = 19; */
+        if (message.email !== undefined)
+            writer.tag(19, WireType.LengthDelimited).string(message.email);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

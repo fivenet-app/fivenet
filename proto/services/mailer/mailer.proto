@@ -53,6 +53,7 @@ message DeleteEmailResponse {}
 message GetEmailProposalsRequest {
   string input = 1 [(validate.rules).string.max_len = 40];
   optional bool job = 2;
+  optional int32 user_id = 3;
 }
 
 message GetEmailProposalsResponse {

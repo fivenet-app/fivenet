@@ -201,6 +201,12 @@ export interface UserProps {
      * @generated from protobuf field: optional resources.users.CitizenAttributes attributes = 12;
      */
     attributes?: CitizenAttributes;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string email = 19;
+     */
+    email?: string;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -657,7 +663,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 9, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "mug_shot", kind: "message", T: () => File },
-            { no: 12, name: "attributes", kind: "message", T: () => CitizenAttributes }
+            { no: 12, name: "attributes", kind: "message", T: () => CitizenAttributes },
+            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
@@ -708,6 +715,9 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional resources.users.CitizenAttributes attributes */ 12:
                     message.attributes = CitizenAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
                     break;
+                case /* optional string email */ 19:
+                    message.email = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -756,6 +766,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.users.CitizenAttributes attributes = 12; */
         if (message.attributes)
             CitizenAttributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional string email = 19; */
+        if (message.email !== undefined)
+            writer.tag(19, WireType.LengthDelimited).string(message.email);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

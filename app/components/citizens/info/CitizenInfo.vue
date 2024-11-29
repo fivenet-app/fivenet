@@ -196,16 +196,19 @@ const isOpen = ref(false);
                                 <CitizenProfile :user="user" />
                             </UContainer>
                         </template>
+
                         <template v-if="can('DMVService.ListVehicles').value" #vehicles>
                             <UContainer>
                                 <CitizenVehicles :user-id="user.userId" />
                             </UContainer>
                         </template>
+
                         <template v-if="can('DocStoreService.ListUserDocuments').value" #documents>
                             <UContainer>
                                 <CitizenDocuments :user-id="user.userId" />
                             </UContainer>
                         </template>
+
                         <template v-if="can('CitizenStoreService.ListUserActivity').value" #activity>
                             <UContainer>
                                 <CitizenActivityFeed :user-id="user.userId" />

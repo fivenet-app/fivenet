@@ -28,11 +28,12 @@ const { attr, can, isSuperuser } = useAuth();
 
 const isMailerPanelOpen = computed({
     get() {
-        return !!selectedEmail.value;
+        return !!selectedEmail.value || creating.value;
     },
     set(value: boolean) {
         if (!value) {
             selectedEmail.value = undefined;
+            creating.value = false;
         }
     },
 });
@@ -177,7 +178,12 @@ const creating = ref(false);
                         </template>
 
                         <template #right>
-                            <UButton color="black" icon="i-mdi-arrow-back" to="/mail">
+                            <UButton
+                                class="hidden md:flex"
+                                color="black"
+                                icon="i-mdi-arrow-back"
+                                @click="selectedEmail = undefined"
+                            >
                                 {{ $t('common.back') }}
                             </UButton>
 

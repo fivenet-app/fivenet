@@ -27,6 +27,7 @@ type fivenetUserPropsTable struct {
 	BloodType               mysql.ColumnString
 	Avatar                  mysql.ColumnString
 	MugShot                 mysql.ColumnString
+	Email                   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -77,8 +78,9 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodTypeColumn               = mysql.StringColumn("blood_type")
 		AvatarColumn                  = mysql.StringColumn("avatar")
 		MugShotColumn                 = mysql.StringColumn("mug_shot")
-		allColumns                    = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn}
+		EmailColumn                   = mysql.StringColumn("email")
+		allColumns                    = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -95,6 +97,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		BloodType:               BloodTypeColumn,
 		Avatar:                  AvatarColumn,
 		MugShot:                 MugShotColumn,
+		Email:                   EmailColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

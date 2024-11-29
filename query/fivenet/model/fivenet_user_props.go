@@ -22,4 +22,5 @@ type FivenetUserProps struct {
 	BloodType               *string    `json:"blood_type"`
 	Avatar                  *string    `json:"avatar"`
 	MugShot                 *string    `json:"mug_shot"`
+	Email                   *string    `json:"email"`
 }

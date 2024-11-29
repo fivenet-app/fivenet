@@ -1,3 +1,4 @@
+
 {
     "pages": {
         "index": {
@@ -1626,7 +1627,8 @@
                     "UserProps_OpenFines": "Offene Geldstrafen",
                     "UserProps_BloodType": "Blutgruppe",
                     "UserProps_MugShot": "Fahndungsfoto",
-                    "UserProps_Attributes": "Attribute"
+                    "UserProps_Attributes": "Attribute",
+                    "UserProps_Email": "E-Mail"
                 },
                 "attrs_types": {
                     "Fields": "Felder"

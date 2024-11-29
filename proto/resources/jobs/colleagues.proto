@@ -27,6 +27,8 @@ message Colleague {
   optional string phone_number = 12 [(validate.rules).string.max_len = 20];
   optional resources.filestore.File avatar = 17;
   JobsUserProps props = 18; // @gotags: alias:"fivenet_jobs_user_props"
+  // @sanitize: method=StripTags
+  optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }
 
 message JobsUserProps {

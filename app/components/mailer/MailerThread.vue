@@ -4,7 +4,9 @@ import { isToday } from 'date-fns';
 import { z } from 'zod';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
+import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
@@ -24,6 +26,8 @@ const props = withDefaults(
 const modal = useModal();
 
 const { isSuperuser } = useAuth();
+
+const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
 const { draft: state, addressBook, selectedEmail, selectedThread } = storeToRefs(mailerStore);
@@ -135,6 +139,12 @@ async function postMessage(values: Schema): Promise<void> {
             },
         },
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
+    });
+
+    notifications.add({
+        title: { key: 'notifications.action_successfull.title', parameters: {} },
+        description: { key: 'notifications.action_successfull.content', parameters: {} },
+        type: NotificationType.SUCCESS,
     });
 
     // Clear draft data

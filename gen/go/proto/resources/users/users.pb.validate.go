@@ -997,6 +997,21 @@ func (m *UserProps) validate(all bool) error {
 
 	}
 
+	if m.Email != nil {
+
+		if l := utf8.RuneCountInString(m.GetEmail()); l < 6 || l > 80 {
+			err := UserPropsValidationError{
+				field:  "Email",
+				reason: "value length must be between 6 and 80 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserPropsMultiError(errors)
 	}

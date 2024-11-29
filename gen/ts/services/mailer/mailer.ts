@@ -112,6 +112,10 @@ export interface GetEmailProposalsRequest {
      * @generated from protobuf field: optional bool job = 2;
      */
     job?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 user_id = 3;
+     */
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetEmailProposalsResponse
@@ -807,7 +811,8 @@ class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest
     constructor() {
         super("services.mailer.GetEmailProposalsRequest", [
             { no: 1, name: "input", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "40" } } } },
-            { no: 2, name: "job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<GetEmailProposalsRequest>): GetEmailProposalsRequest {
@@ -828,6 +833,9 @@ class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest
                 case /* optional bool job */ 2:
                     message.job = reader.bool();
                     break;
+                case /* optional int32 user_id */ 3:
+                    message.userId = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -846,6 +854,9 @@ class GetEmailProposalsRequest$Type extends MessageType<GetEmailProposalsRequest
         /* optional bool job = 2; */
         if (message.job !== undefined)
             writer.tag(2, WireType.Varint).bool(message.job);
+        /* optional int32 user_id = 3; */
+        if (message.userId !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

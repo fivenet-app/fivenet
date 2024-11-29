@@ -170,16 +170,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
 			&notifications.JobEvent{
 				Data: &notifications.JobEvent_JobProps{
-					JobProps: &users.JobProps{
-						Job:                newJobProps.Job,
-						JobLabel:           newJobProps.JobLabel,
-						Theme:              newJobProps.Theme,
-						LivemapMarkerColor: newJobProps.LivemapMarkerColor,
-						QuickButtons:       newJobProps.QuickButtons,
-						RadioFrequency:     newJobProps.RadioFrequency,
-						Motd:               newJobProps.Motd,
-						LogoUrl:            newJobProps.LogoUrl,
-					},
+					JobProps: newJobProps,
 				},
 			}); err != nil {
 			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)

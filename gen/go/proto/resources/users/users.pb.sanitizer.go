@@ -22,3 +22,12 @@ func (m *UserActivity) Sanitize() error {
 
 	return nil
 }
+
+func (m *UserProps) Sanitize() error {
+
+	if m.Email != nil {
+		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	return nil
+}

@@ -148,7 +148,7 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'messageDelete') {
                 await mailerDB.messages.delete(event.data.messageDelete);
             } else if (event.data.oneofKind === 'threadStateUpdate') {
-                this.setThreadState(event.data.threadStateUpdate, true);
+                this.setThreadState(event.data.threadStateUpdate, true, false);
             } else {
                 logger.debug('Unknown MailerEvent type received:', event.data.oneofKind);
             }
@@ -259,6 +259,12 @@ export const useMailerStore = defineStore('mailer', {
 
                 useNotificatorStore().restartStream();
 
+                useNotificatorStore().add({
+                    title: { key: 'notifications.action_successfull.title', parameters: {} },
+                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                });
+
                 return response;
             } catch (e) {
                 handleGRPCError(e as RpcError);
@@ -354,6 +360,12 @@ export const useMailerStore = defineStore('mailer', {
 
                 await mailerDB.threads.delete(req.threadId);
 
+                useNotificatorStore().add({
+                    title: { key: 'notifications.action_successfull.title', parameters: {} },
+                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                });
+
                 return response;
             } catch (e) {
                 handleGRPCError(e as RpcError);
@@ -366,7 +378,7 @@ export const useMailerStore = defineStore('mailer', {
             return (await mailerDB.threads.get(threadId))?.state;
         },
 
-        async setThreadState(state: Partial<ThreadState>, local?: boolean): Promise<ThreadState | undefined> {
+        async setThreadState(state: Partial<ThreadState>, local?: boolean, notify?: boolean): Promise<ThreadState | undefined> {
             if (!this.selectedEmail) {
                 return;
             }
@@ -428,6 +440,14 @@ export const useMailerStore = defineStore('mailer', {
                 }
             }
 
+            if (notify) {
+                useNotificatorStore().add({
+                    title: { key: 'notifications.action_successfull.title', parameters: {} },
+                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                });
+            }
+
             return thread.state;
         },
 
@@ -482,6 +502,12 @@ export const useMailerStore = defineStore('mailer', {
 
                 await mailerDB.messages.delete(req.messageId);
 
+                useNotificatorStore().add({
+                    title: { key: 'notifications.action_successfull.title', parameters: {} },
+                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                });
+
                 return response;
             } catch (e) {
                 handleGRPCError(e as RpcError);
@@ -514,6 +540,12 @@ export const useMailerStore = defineStore('mailer', {
                 if (response.settings && this.selectedEmail) {
                     this.selectedEmail.settings = response.settings;
                 }
+
+                useNotificatorStore().add({
+                    title: { key: 'notifications.action_successfull.title', parameters: {} },
+                    description: { key: 'notifications.action_successfull.content', parameters: {} },
+                    type: NotificationType.SUCCESS,
+                });
 
                 return response;
             } catch (e) {

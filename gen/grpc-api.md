@@ -2932,6 +2932,7 @@ Dummy - DO NOT USE!
 | phone_number | [string](#string) | optional |  |
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"fivenet_jobs_user_props" |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -4824,6 +4825,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | blood_type | [string](#string) | optional |  |
 | mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -7445,7 +7447,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| ListCitizens | [ListCitizensRequest](#services-citizenstore-ListCitizensRequest) | [ListCitizensResponse](#services-citizenstore-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"} |
+| ListCitizens | [ListCitizensRequest](#services-citizenstore-ListCitizensRequest) | [ListCitizensResponse](#services-citizenstore-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"} |
 | GetUser | [GetUserRequest](#services-citizenstore-GetUserRequest) | [GetUserResponse](#services-citizenstore-GetUserResponse) | @perm: Attrs=Jobs/JobGradeList |
 | ListUserActivity | [ListUserActivityRequest](#services-citizenstore-ListUserActivityRequest) | [ListUserActivityResponse](#services-citizenstore-ListUserActivityResponse) | @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
 | SetUserProps | [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"} |
@@ -11948,6 +11950,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | ----- | ---- | ----- | ----------- |
 | input | [string](#string) |  |  |
 | job | [bool](#bool) | optional |  |
+| user_id | [int32](#int32) | optional |  |
 
 
 

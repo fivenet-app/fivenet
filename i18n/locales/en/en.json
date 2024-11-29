@@ -1626,7 +1626,8 @@
                     "UserProps_OpenFines": "Open Fines",
                     "UserProps_BloodType": "Blood Type",
                     "UserProps_MugShot": "Mug Shot",
-                    "UserProps_Attributes": "Attributes"
+                    "UserProps_Attributes": "Attributes",
+                    "UserProps_Email": "E-Mail"
                 },
                 "attrs_types": {
                     "Fields": "Fields"

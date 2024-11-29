@@ -41,7 +41,8 @@ var (
 
 	tQualificationsResults = table.FivenetQualificationsResults
 
-	tUsers = table.Users.AS("user_short")
+	tUsers     = table.Users.AS("user_short")
+	tUserProps = table.FivenetUserProps
 )
 
 func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListEmailsResponse, error) {
@@ -447,6 +448,12 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 			)
 		}
 
+		if userInfo.SuperUser {
+			sets = append(sets,
+				tEmails.Deactivated.SET(jet.Bool(req.Email.Deactivated)),
+			)
+		}
+
 		condition := tEmails.ID.EQ(jet.Uint64(req.Email.Id))
 		if req.Email.Job != nil {
 			condition = condition.AND(tEmails.Job.EQ(jet.String(userInfo.Job)))
@@ -465,8 +472,28 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *CreateOrUpdateEma
 				condition,
 			))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		// Update user email in the user props
+		if req.Email.UserId != nil {
+			upStmt := tUserProps.
+				INSERT(
+					tUserProps.UserID,
+					tUserProps.Email,
+				).
+				VALUES(
+					userInfo.UserId,
+					email.Email,
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tUserProps.Email.SET(jet.String(email.Email)),
+				)
+
+			if _, err := upStmt.ExecContext(ctx, tx); err != nil {
+				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+			}
 		}
 	}
 
@@ -538,6 +565,26 @@ func (s *Server) createEmail(ctx context.Context, tx qrm.DB, email *mailer.Email
 		return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	// Update user email in the user props
+	if email.UserId != nil {
+		upStmt := tUserProps.
+			INSERT(
+				tUserProps.UserID,
+				tUserProps.Email,
+			).
+			VALUES(
+				userInfo.UserId,
+				email.Email,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tUserProps.Email.SET(jet.String(email.Email)),
+			)
+
+		if _, err := upStmt.ExecContext(ctx, tx); err != nil {
+			return 0, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+	}
+
 	return uint64(lastId), nil
 }
 
@@ -600,6 +647,10 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 
 func (s *Server) GetEmailProposals(ctx context.Context, req *GetEmailProposalsRequest) (*GetEmailProposalsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if req.UserId != nil && userInfo.SuperUser {
+		userInfo.UserId = *req.UserId
+	}
 
 	forJob := req.Job != nil && *req.Job
 	emails, domains, err := s.generateEmailProposals(ctx, userInfo, forJob)
