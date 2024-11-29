@@ -512,7 +512,8 @@
         "additional_recipients": "Additional Recipients",
         "last_updated": "Last Updated",
         "domain": "Domain",
-        "address_book": "Address Book"
+        "address_book": "Address Book",
+        "unavailable": "Unavailable"
     },
     "components": {
         "partials": {

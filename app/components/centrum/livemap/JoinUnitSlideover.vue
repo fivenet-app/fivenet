@@ -42,16 +42,24 @@ const onSubmitThrottle = useThrottleFn(async (unitID?: string) => {
 
 const queryUnit = ref('');
 
-const filteredUnits = computed(() =>
-    getSortedUnits.value
+const filteredUnits = computed(() => ({
+    available: getSortedUnits.value
         .filter(
             (u) =>
-                u.name.toLowerCase().includes(queryUnit.value.toLowerCase()) ||
-                u.initials.toLowerCase().includes(queryUnit.value.toLowerCase()),
+                (u.name.toLowerCase().includes(queryUnit.value.toLowerCase()) ||
+                    u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
+                checkUnitAccess(u.access, UnitAccessLevel.JOIN),
         )
-        .sort((a, b) => a.name.localeCompare(b.name))
-        .sort((a, _) => (checkUnitAccess(a.access, UnitAccessLevel.JOIN) ? -1 : 1)),
-);
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    unavailable: getSortedUnits.value
+        .filter(
+            (u) =>
+                (u.name.toLowerCase().includes(queryUnit.value.toLowerCase()) ||
+                    u.initials.toLowerCase().includes(queryUnit.value.toLowerCase())) &&
+                !checkUnitAccess(u.access, UnitAccessLevel.JOIN),
+        )
+        .sort((a, b) => a.name.localeCompare(b.name)),
+}));
 </script>
 
 <template>
@@ -92,7 +100,7 @@ const filteredUnits = computed(() =>
 
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
-                            v-for="unit in filteredUnits"
+                            v-for="unit in filteredUnits.available"
                             :key="unit.name"
                             :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
                             :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
@@ -111,6 +119,33 @@ const filteredUnits = computed(() =>
                                 <span class="line-clamp-1">{{ unit.description }}</span>
                             </span>
                         </UButton>
+                    </div>
+
+                    <div v-if="filteredUnits.unavailable.length > 0">
+                        <h3>{{ $t('common.unavailable') }}</h3>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <UButton
+                                v-for="unit in filteredUnits.unavailable"
+                                :key="unit.name"
+                                :color="ownUnitId !== undefined && ownUnitId === unit.id ? 'amber' : 'primary'"
+                                :disabled="!canSubmit || !checkUnitAccess(unit.access, UnitAccessLevel.JOIN)"
+                                class="flex flex-col"
+                                @click="onSubmitThrottle(unit.id)"
+                            >
+                                <span class="text-base">
+                                    <span class="font-semibold">{{ unit.initials }}:</span>
+                                    {{ unit.name }}
+                                </span>
+                                <span class="mt-0.5 text-xs">
+                                    {{ $t('common.member', unit.users.length) }}
+                                </span>
+                                <span v-if="unit.description && unit.description.length > 0" class="text-xs">
+                                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                                    <span class="line-clamp-1">{{ unit.description }}</span>
+                                </span>
+                            </UButton>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -44,10 +44,14 @@ watch(selectedJob, () => {
             :search-attributes="['name', 'label']"
             :options="jobs"
             :popper="{ placement: 'top' }"
-            :placeholder="$t('common.job')"
+            :placeholder="$t('common.job', 1)"
             :search="
-                async (q?: string) =>
-                    (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
+                async (q?: string) => {
+                    q = q?.toLowerCase()?.trim();
+                    return (await listJobs()).filter(
+                        (j) => q === undefined || j.name.toLowerCase().includes(q) || j.label.toLowerCase().includes(q),
+                    );
+                }
             "
             search-lazy
             :search-placeholder="$t('common.search_field')"
