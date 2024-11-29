@@ -108,8 +108,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		tUserProps.UserID,
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
-
 	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
+	orderBys := []jet.OrderByClause{}
+
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
@@ -135,6 +136,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 			if req.Wanted != nil && *req.Wanted {
 				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
+
+				orderBys = append(orderBys, tUserProps.UpdatedAt.DESC())
 			}
 
 		case "UserProps.Job":
@@ -208,13 +211,23 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	}
 
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
 		var column jet.Column
 		switch req.Sort.Column {
+		case "trafficInfractionPoints":
+			if slices.Contains(fields, "UserProps.TrafficInfractionPoints") {
+				column = tUserProps.TrafficInfractionPoints
+			}
+		case "openFines":
+			if slices.Contains(fields, "UserProps.OpenFines") {
+				column = tUserProps.OpenFines
+			}
 		case "name":
 			fallthrough
 		default:
+			column = tUser.Firstname
+		}
+		if column == nil {
 			column = tUser.Firstname
 		}
 

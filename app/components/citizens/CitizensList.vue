@@ -143,12 +143,14 @@ const columns = [
         ? {
               key: 'trafficInfractionPoints',
               label: t('common.traffic_infraction_points', 2),
+              sortable: true,
           }
         : undefined,
     attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value
         ? {
               key: 'openFines',
               label: t('common.fine', 2),
+              sortable: true,
           }
         : undefined,
     {
