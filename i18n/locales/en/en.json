@@ -2177,10 +2177,6 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "PostMessage": {
-                "key": "Post responses",
-                "description": "Allow users to post responses to E-Mails they have access to."
-            },
             "DeleteEmail": {
                 "key": "Delete E-Mail addresses",
                 "description": "Requires manage access to the E-Mail address."

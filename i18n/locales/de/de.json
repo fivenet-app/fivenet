@@ -2178,10 +2178,6 @@
         },
         "MailerService": {
             "category": "E-Mail",
-            "PostMessage": {
-                "key": "Nachrichten schreiben",
-                "description": "Erlauben das User Antworten auf E-Mail Threads, auf die Sie Zugriff haben."
-            },
             "DeleteEmail": {
                 "key": "E-Mail Adressen löschen",
                 "description": "Benötigt Verwaltungsrechte auf die E-Mail Adresse."
