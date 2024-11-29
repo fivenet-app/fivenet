@@ -45,7 +45,7 @@ function categorySelected(idx: number): void {
 
     modal.open(CategoriesModal, {
         category: categories.value[idx],
-        onUpdate: refresh,
+        onUpdate: () => refresh(),
     });
 }
 
@@ -66,7 +66,7 @@ const modal = useModal();
                     trailing-icon="i-mdi-plus"
                     @click="
                         modal.open(CategoriesModal, {
-                            onUpdate: refresh,
+                            onUpdate: () => refresh(),
                         })
                     "
                 >

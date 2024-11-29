@@ -78,6 +78,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
 
     const traceId =
         (err?.meta &&
+            err.meta['trailer+x-trace-id'] &&
             (typeof err.meta['trailer+x-trace-id'] === 'string'
                 ? err.meta['trailer+x-trace-id']
                 : (err.meta['trailer+x-trace-id'] as string[]).join(','))) ??

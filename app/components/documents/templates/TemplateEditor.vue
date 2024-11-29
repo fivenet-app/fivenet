@@ -452,7 +452,6 @@ const categoriesLoading = ref(false);
                                 :target-id="templateId ?? '0'"
                                 :access-types="contentAccessTypes"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
-                                :disabled="true"
                                 :show-required="true"
                             />
                         </div>

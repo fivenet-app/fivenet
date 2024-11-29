@@ -101,11 +101,15 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
 		VALUES(
 			req.Category.Name,
 			req.Category.Description,
 			userInfo.Job,
+			req.Category.Color,
+			req.Category.Icon,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
