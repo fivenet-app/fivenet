@@ -363,11 +363,12 @@ defineShortcuts({
                                 checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                             "
                             :text="$t('components.jobs.self_service.set_absence_date')"
+                            class="flex-1"
                         >
                             <UButton
                                 :label="$t('components.jobs.self_service.set_absence_date')"
                                 icon="i-mdi-island"
-                                class="flex-1"
+                                block
                                 @click="
                                     modal.open(SelfServicePropsAbsenceDateModal, {
                                         userId: colleague.userId,
@@ -383,11 +384,12 @@ defineShortcuts({
                                 checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
                             "
                             :text="$t('common.show')"
+                            class="flex-1"
                         >
                             <UButton
                                 :label="$t('common.show')"
                                 icon="i-mdi-eye"
-                                class="flex-1"
+                                block
                                 :to="{
                                     name: 'jobs-colleagues-id-info',
                                     params: { id: colleague.userId ?? 0 },
