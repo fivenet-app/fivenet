@@ -16,11 +16,9 @@ const internetStore = useInternetStore();
 const { selectedTab, tabs } = storeToRefs(internetStore);
 
 // Set thread as query param for persistence between reloads
-const route = useRoute();
 const router = useRouter();
 
 function updateQuery(): void {
-    console.log('updateQuery', route.query, selectedTab.value);
     if (!selectedTab.value) {
         router.replace({ query: {} });
     } else {
@@ -60,10 +58,7 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                     :links="
                         tabs.map((t) => ({
                             ...t,
-                            click: () => {
-                                internetStore.selectTab(t.id);
-                                console.log('selectedTab', t.id, selectedTab);
-                            },
+                            click: () => internetStore.selectTab(t.id),
                         }))
                     "
                     :ui="{

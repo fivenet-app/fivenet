@@ -282,13 +282,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
         >
             <template #compose>
-                <UForm
-                    :schema="schema"
-                    :state="state"
-                    class="flex flex-col gap-2"
-                    @error="console.log('error', $event)"
-                    @submit="onSubmitThrottle"
-                >
+                <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
                     <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.additional_recipients')">
                         <ClientOnly>
                             <USelectMenu
