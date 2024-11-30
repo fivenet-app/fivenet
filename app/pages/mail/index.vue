@@ -126,14 +126,10 @@ watch(selectedThread, updateQuery);
 onBeforeMount(async () => {
     await mailerStore.listEmails();
 
-    async () => {
-        if (!route.query.thread) {
-            return;
-        }
-
+    if (route.query.thread) {
         selectedThread.value = await mailerStore.getThread(route.query.thread as string);
         updateQuery();
-    };
+    }
 
     if (route.query.to) {
         const to = (route.query.to as string).trim().toLowerCase();
