@@ -517,7 +517,8 @@
         "unavailable": "Unavailable",
         "internet": "Internet",
         "ad": "Ad | Ads",
-        "card_view": "Card View"
+        "card_view": "Card View",
+        "show": "View"
     },
     "components": {
         "partials": {

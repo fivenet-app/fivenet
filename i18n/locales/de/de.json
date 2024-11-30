@@ -517,7 +517,8 @@
         "unavailable": "Nicht verfügbar",
         "internet": "Internet",
         "ad": "Werbung | Werbung",
-        "card_view": "Kartenansicht"
+        "card_view": "Kartenansicht",
+        "show": "Anzeigen"
     },
     "components": {
         "partials": {

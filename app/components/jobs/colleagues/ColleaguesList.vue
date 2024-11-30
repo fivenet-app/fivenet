@@ -355,37 +355,45 @@ defineShortcuts({
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton
+                        <UTooltip
                             v-if="
                                 can('JobsService.SetJobsUserProps').value &&
                                 (colleague.userId === activeChar!.userId ||
                                     attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                                 checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                             "
-                            :label="$t('components.jobs.self_service.set_absence_date')"
-                            icon="i-mdi-island"
-                            class="flex-1"
-                            @click="
-                                modal.open(SelfServicePropsAbsenceDateModal, {
-                                    userId: colleague.userId,
-                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                })
-                            "
-                        />
+                            :text="$t('components.jobs.self_service.set_absence_date')"
+                        >
+                            <UButton
+                                :label="$t('components.jobs.self_service.set_absence_date')"
+                                icon="i-mdi-island"
+                                class="flex-1"
+                                @click="
+                                    modal.open(SelfServicePropsAbsenceDateModal, {
+                                        userId: colleague.userId,
+                                        'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                    })
+                                "
+                            />
+                        </UTooltip>
 
-                        <UButton
+                        <UTooltip
                             v-if="
                                 can('JobsService.GetColleague').value &&
                                 checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
                             "
-                            :label="$t('common.view')"
-                            icon="i-mdi-eye"
-                            class="flex-1"
-                            :to="{
-                                name: 'jobs-colleagues-id-info',
-                                params: { id: colleague.userId ?? 0 },
-                            }"
-                        />
+                            :text="$t('common.show')"
+                        >
+                            <UButton
+                                :label="$t('common.show')"
+                                icon="i-mdi-eye"
+                                class="flex-1"
+                                :to="{
+                                    name: 'jobs-colleagues-id-info',
+                                    params: { id: colleague.userId ?? 0 },
+                                }"
+                            />
+                        </UTooltip>
                     </UButtonGroup>
                 </template>
             </UPageCard>
