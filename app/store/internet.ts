@@ -42,7 +42,7 @@ export const useInternetStore = defineStore('internet', {
             }
         },
         async addTab(tab: Partial<Tab>): Promise<number> {
-            const id = this.tabs.length === 0 ? 1 : this.tabs.length;
+            const id = this.tabs.length === 0 ? 1 : this.tabs.length + 1;
             this.tabs.push({
                 id: id,
                 label: tab.label ?? '',
@@ -67,6 +67,8 @@ export const useInternetStore = defineStore('internet', {
         },
         async selectTab(id?: number): Promise<void> {
             this.selectedTab = id;
+
+            this.tabs.forEach((t) => (t.active = t.id == id));
         },
 
         // Ads

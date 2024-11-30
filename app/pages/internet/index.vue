@@ -16,9 +16,11 @@ const internetStore = useInternetStore();
 const { selectedTab, tabs } = storeToRefs(internetStore);
 
 // Set thread as query param for persistence between reloads
+const route = useRoute();
 const router = useRouter();
 
 function updateQuery(): void {
+    console.log('updateQuery', route.query, selectedTab.value);
     if (!selectedTab.value) {
         router.replace({ query: {} });
     } else {
@@ -55,7 +57,15 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                 }"
             >
                 <UHorizontalNavigation
-                    :links="tabs.map((t) => ({ ...t, to: `/internet?tab=${t.id}#`, click: () => (selectedTab = t.id) }))"
+                    :links="
+                        tabs.map((t) => ({
+                            ...t,
+                            click: () => {
+                                internetStore.selectTab(t.id);
+                                console.log('selectedTab', t.id, selectedTab);
+                            },
+                        }))
+                    "
                     :ui="{
                         container: 'divide-x divide-gray-200 dark:divide-gray-600',
                         inner: 'min-w-60 max-w-60',
@@ -65,10 +75,10 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                     <template #default="{ link }">
                         <span
                             class="group-hover:text-primary relative flex-1 truncate text-left"
-                            :class="
+                            :class="[
                                 link.id === selectedTab &&
-                                'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white'
-                            "
+                                    'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
+                            ]"
                         >
                             <span v-if="link.id === selectedTab" class="sr-only"> Current page: </span>
                             {{ link.label === '' ? $t('common.home') : link.label }}
