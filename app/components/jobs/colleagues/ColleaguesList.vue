@@ -317,7 +317,7 @@ defineShortcuts({
                                 :enable-popup="true"
                                 :alt="$t('common.avatar')"
                                 :rounded="false"
-                                img-class="h-72 w-72 text-3xl"
+                                img-class="h-40 w-40 md:h-56 md:w-56 xl:h-64 xl:w-64 max-w-full"
                             />
                         </div>
                     </template>
@@ -337,11 +337,9 @@ defineShortcuts({
                                 <span>{{ colleague.dateofbirth.value }}</span>
                             </span>
 
-                            <span class="inline-flex items-center gap-1">
-                                <EmailBlock :email="colleague.email" />
-                            </span>
+                            <EmailBlock :email="colleague.email" />
 
-                            <UBadge
+                            <span
                                 v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                                 class="inline-flex items-center gap-1"
                             >
@@ -349,7 +347,8 @@ defineShortcuts({
                                 <GenericTime :value="colleague.props?.absenceBegin" type="date" />
                                 <span>{{ $t('common.to') }}</span>
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                            </UBadge>
+                            </span>
+                            <span v-else class="h-7"></span>
                         </div>
                     </template>
 
