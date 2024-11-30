@@ -298,6 +298,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	req.Thread.Id = uint64(lastId)
 
 	req.Message.ThreadId = req.Thread.Id
+	req.Message.Sender = senderEmail
 	req.Message.CreatorId = &userInfo.UserId
 	req.Message.CreatorJob = &userInfo.Job
 	if _, err := s.createMessage(ctx, tx, req.Message); err != nil {

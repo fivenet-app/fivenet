@@ -256,6 +256,7 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 			tMessages.Data,
 			tMessages.CreatorID,
 			tMessages.CreatorJob,
+			tMessages.CreatorEmail,
 		).
 		VALUES(
 			msg.ThreadId,
@@ -265,6 +266,7 @@ func (s *Server) createMessage(ctx context.Context, tx qrm.DB, msg *mailer.Messa
 			msg.Data,
 			msg.CreatorId,
 			msg.CreatorJob,
+			msg.Sender.Email,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

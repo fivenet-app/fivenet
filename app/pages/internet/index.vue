@@ -54,6 +54,8 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                         'gap-x-0 gap-y-0 justify-stretch items-stretch h-full flex flex-row bg-gray-100 p-0 px dark:bg-gray-800 overflow-x-hidden',
                 }"
             >
+                <UDashboardNavbarToggle class="px-4 py-2" />
+
                 <UHorizontalNavigation
                     :links="
                         tabs.map((t) => ({
