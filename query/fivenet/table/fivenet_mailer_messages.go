@@ -17,17 +17,18 @@ type fivenetMailerMessagesTable struct {
 	mysql.Table
 
 	// Columns
-	ID         mysql.ColumnInteger
-	ThreadID   mysql.ColumnInteger
-	SenderID   mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	UpdatedAt  mysql.ColumnTimestamp
-	DeletedAt  mysql.ColumnTimestamp
-	Title      mysql.ColumnString
-	Content    mysql.ColumnString
-	Data       mysql.ColumnString
-	CreatorID  mysql.ColumnInteger
-	CreatorJob mysql.ColumnString
+	ID           mysql.ColumnInteger
+	ThreadID     mysql.ColumnInteger
+	SenderID     mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
+	Title        mysql.ColumnString
+	Content      mysql.ColumnString
+	Data         mysql.ColumnString
+	CreatorID    mysql.ColumnInteger
+	CreatorJob   mysql.ColumnString
+	CreatorEmail mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -68,36 +69,38 @@ func newFivenetMailerMessagesTable(schemaName, tableName, alias string) *Fivenet
 
 func newFivenetMailerMessagesTableImpl(schemaName, tableName, alias string) fivenetMailerMessagesTable {
 	var (
-		IDColumn         = mysql.IntegerColumn("id")
-		ThreadIDColumn   = mysql.IntegerColumn("thread_id")
-		SenderIDColumn   = mysql.IntegerColumn("sender_id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
-		TitleColumn      = mysql.StringColumn("title")
-		ContentColumn    = mysql.StringColumn("content")
-		DataColumn       = mysql.StringColumn("data")
-		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn = mysql.StringColumn("creator_job")
-		allColumns       = mysql.ColumnList{IDColumn, ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns   = mysql.ColumnList{ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn}
+		IDColumn           = mysql.IntegerColumn("id")
+		ThreadIDColumn     = mysql.IntegerColumn("thread_id")
+		SenderIDColumn     = mysql.IntegerColumn("sender_id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
+		TitleColumn        = mysql.StringColumn("title")
+		ContentColumn      = mysql.StringColumn("content")
+		DataColumn         = mysql.StringColumn("data")
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn   = mysql.StringColumn("creator_job")
+		CreatorEmailColumn = mysql.StringColumn("creator_email")
+		allColumns         = mysql.ColumnList{IDColumn, ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, CreatorEmailColumn}
+		mutableColumns     = mysql.ColumnList{ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, CreatorEmailColumn}
 	)
 
 	return fivenetMailerMessagesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:         IDColumn,
-		ThreadID:   ThreadIDColumn,
-		SenderID:   SenderIDColumn,
-		CreatedAt:  CreatedAtColumn,
-		UpdatedAt:  UpdatedAtColumn,
-		DeletedAt:  DeletedAtColumn,
-		Title:      TitleColumn,
-		Content:    ContentColumn,
-		Data:       DataColumn,
-		CreatorID:  CreatorIDColumn,
-		CreatorJob: CreatorJobColumn,
+		ID:           IDColumn,
+		ThreadID:     ThreadIDColumn,
+		SenderID:     SenderIDColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
+		Title:        TitleColumn,
+		Content:      ContentColumn,
+		Data:         DataColumn,
+		CreatorID:    CreatorIDColumn,
+		CreatorJob:   CreatorJobColumn,
+		CreatorEmail: CreatorEmailColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

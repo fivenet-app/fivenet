@@ -31,7 +31,7 @@ export interface Message {
     /**
      * @generated from protobuf field: optional resources.mailer.Email sender = 4;
      */
-    sender?: Email;
+    sender?: Email; // @gotags: alias:"sender"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 5;
      */

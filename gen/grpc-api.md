@@ -6067,7 +6067,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
 | sender_id | [uint64](#uint64) |  |  |
-| sender | [Email](#resources-mailer-Email) | optional |  |
+| sender | [Email](#resources-mailer-Email) | optional | @gotags: alias:"sender" |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |

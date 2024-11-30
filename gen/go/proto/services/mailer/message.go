@@ -67,8 +67,8 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
-			tEmails.ID,
-			tEmails.Email,
+			tMessages.SenderID.AS("sender.id"),
+			tMessages.CreatorEmail.AS("sender.email"),
 		).
 		FROM(
 			tMessages.

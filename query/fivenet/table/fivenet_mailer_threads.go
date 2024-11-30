@@ -24,6 +24,7 @@ type fivenetMailerThreadsTable struct {
 	Title          mysql.ColumnString
 	CreatorEmailID mysql.ColumnInteger
 	CreatorID      mysql.ColumnInteger
+	CreatorEmail   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -71,8 +72,9 @@ func newFivenetMailerThreadsTableImpl(schemaName, tableName, alias string) fiven
 		TitleColumn          = mysql.StringColumn("title")
 		CreatorEmailIDColumn = mysql.IntegerColumn("creator_email_id")
 		CreatorIDColumn      = mysql.IntegerColumn("creator_id")
-		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorEmailIDColumn, CreatorIDColumn}
-		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorEmailIDColumn, CreatorIDColumn}
+		CreatorEmailColumn   = mysql.StringColumn("creator_email")
+		allColumns           = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorEmailIDColumn, CreatorIDColumn, CreatorEmailColumn}
+		mutableColumns       = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, CreatorEmailIDColumn, CreatorIDColumn, CreatorEmailColumn}
 	)
 
 	return fivenetMailerThreadsTable{
@@ -86,6 +88,7 @@ func newFivenetMailerThreadsTableImpl(schemaName, tableName, alias string) fiven
 		Title:          TitleColumn,
 		CreatorEmailID: CreatorEmailIDColumn,
 		CreatorID:      CreatorIDColumn,
+		CreatorEmail:   CreatorEmailColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

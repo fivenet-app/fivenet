@@ -19,4 +19,5 @@ type FivenetMailerThreads struct {
 	Title          string     `json:"title"`
 	CreatorEmailID uint64     `json:"creator_email_id"`
 	CreatorID      *int32     `json:"creator_id"`
+	CreatorEmail   string     `json:"creator_email"`
 }

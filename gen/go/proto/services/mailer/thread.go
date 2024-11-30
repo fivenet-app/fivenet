@@ -52,7 +52,6 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
-				tEmails.DeletedAt.IS_NULL(),
 				tThreads.DeletedAt.IS_NULL(),
 				tThreadsRecipients.EmailID.IN(ids...),
 			),
@@ -71,9 +70,6 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.
 				INNER_JOIN(tThreadsRecipients,
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
-				).
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				),
 		).
 		WHERE(jet.AND(
@@ -103,8 +99,9 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.DeletedAt,
 			tThreads.Title,
 			tThreads.CreatorEmailID,
-			tEmails.ID,
-			tEmails.Email,
+			tThreads.CreatorEmail,
+			tThreads.CreatorEmailID.AS("email.id"),
+			tThreads.CreatorEmail.AS("email.email"),
 			tThreads.CreatorID,
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
@@ -119,9 +116,6 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.
 				INNER_JOIN(tThreadsRecipients,
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
-				).
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tThreads.CreatorEmailID),
 				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
@@ -164,8 +158,8 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64,
 			tThreads.Title,
 			tThreads.CreatorEmailID,
 			tThreads.CreatorID,
-			tEmails.ID,
-			tEmails.Email,
+			tThreads.CreatorEmailID.AS("email.id"),
+			tThreads.CreatorEmail.AS("email.email"),
 			tThreadsState.ThreadID,
 			tThreadsState.EmailID,
 			tThreadsState.Unread,
@@ -177,9 +171,6 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64,
 		).
 		FROM(
 			tThreads.
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tThreads.CreatorEmailID),
-				).
 				LEFT_JOIN(tThreadsState,
 					tThreadsState.ThreadID.EQ(tThreads.ID).
 						AND(tThreadsState.EmailID.EQ(jet.Uint64(emailId))),
@@ -285,11 +276,13 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 			tThreads.Title,
 			tThreads.CreatorEmailID,
 			tThreads.CreatorID,
+			tThreads.CreatorEmail,
 		).
 		VALUES(
 			req.Thread.Title,
 			req.Thread.CreatorEmailId,
 			userInfo.UserId,
+			senderEmail.Email,
 		)
 
 	res, err := stmt.ExecContext(ctx, tx)

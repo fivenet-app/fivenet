@@ -93,7 +93,20 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
 
-                // TODO check if sender is on email blocklist
+                // Handle email sent by blocked email
+                if (
+                    event.data.threadUpdate.creatorEmail?.email &&
+                    this.checkIfEmailBlocked(event.data.threadUpdate.creatorEmail?.email)
+                ) {
+                    // Make sure to set thread state accordingly (locally)
+                    await this.setThreadState(
+                        {
+                            archived: true,
+                            muted: true,
+                        },
+                        true,
+                    );
+                }
 
                 useNotificatorStore().add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
@@ -112,9 +125,27 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'messageUpdate') {
                 await mailerDB.messages.put(event.data.messageUpdate);
 
+                // Handle email sent by blocked email
+                if (
+                    event.data.messageUpdate.sender?.email &&
+                    this.checkIfEmailBlocked(event.data.messageUpdate.sender?.email)
+                ) {
+                    // Make sure to set thread state accordingly (locally)
+                    await this.setThreadState(
+                        {
+                            archived: true,
+                            muted: true,
+                        },
+                        true,
+                    );
+                }
+
                 // Only set unread state when message isn't from same email
                 if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
-                    // TODO check if thread is muted
+                    const threadState = await this.getThreadState(event.data.messageUpdate.threadId);
+                    if (threadState?.muted) {
+                        return;
+                    }
 
                     useNotificatorStore().add({
                         title: { key: 'notifications.mailer.new_email.title', parameters: {} },
@@ -552,6 +583,10 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
+        },
+
+        checkIfEmailBlocked(email: string): boolean {
+            return false;
         },
 
         getNotificationActions(threadId?: string): NotificationActionI18n[] {
