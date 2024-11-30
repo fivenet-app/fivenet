@@ -16,7 +16,8 @@
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
                 "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
                 "wiki": "Ein Lexikon für einfache Informationsteilung.",
-                "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen."
+                "mailer": "E-Mail System um Bürger und Kollegen einfacher zu erreichen.",
+                "internet": "Das World Wide Web, in kleiner und lokaler."
             }
         },
         "documents": {
@@ -515,7 +516,8 @@
         "address_book": "Adressbuch",
         "unavailable": "Nicht verfügbar",
         "internet": "Internet",
-        "ad": "Werbung | Werbung"
+        "ad": "Werbung | Werbung",
+        "card_view": "Kartenansicht"
     },
     "components": {
         "partials": {
