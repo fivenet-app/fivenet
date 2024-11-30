@@ -337,6 +337,123 @@ var _ interface {
 	ErrorName() string
 } = JobEventValidationError{}
 
+// Validate checks the field values on JobGradeEvent with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *JobGradeEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobGradeEvent with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in JobGradeEventMultiError, or
+// nil if none found.
+func (m *JobGradeEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobGradeEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.Data.(type) {
+	case *JobGradeEvent_RefreshToken:
+		if v == nil {
+			err := JobGradeEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for RefreshToken
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return JobGradeEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobGradeEventMultiError is an error wrapping multiple validation errors
+// returned by JobGradeEvent.ValidateAll() if the designated constraints
+// aren't met.
+type JobGradeEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobGradeEventMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobGradeEventMultiError) AllErrors() []error { return m }
+
+// JobGradeEventValidationError is the validation error returned by
+// JobGradeEvent.Validate if the designated constraints aren't met.
+type JobGradeEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobGradeEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobGradeEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobGradeEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobGradeEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobGradeEventValidationError) ErrorName() string { return "JobGradeEventValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobGradeEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobGradeEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobGradeEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobGradeEventValidationError{}
+
 // Validate checks the field values on SystemEvent with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

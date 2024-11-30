@@ -3,7 +3,9 @@ package rector
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
@@ -11,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -337,6 +340,17 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 		if err := s.handleAttributeUpdate(ctx, userInfo, role, req.Attrs); err != nil {
 			return nil, errswrap.NewError(err, errorsrector.ErrInvalidAttrs)
 		}
+	}
+
+	// Send event to every employee
+	if _, err := s.js.PublishAsyncProto(ctx,
+		fmt.Sprintf("%s.%s.%s.%d", notifi.BaseSubject, notifi.JobGradeTopic, role.Job, role.Grade),
+		&notifications.JobGradeEvent{
+			Data: &notifications.JobGradeEvent_RefreshToken{
+				RefreshToken: true,
+			},
+		}); err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

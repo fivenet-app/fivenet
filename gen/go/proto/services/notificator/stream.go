@@ -3,6 +3,7 @@ package notificator
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
@@ -29,6 +30,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	subjects := []string{
 		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, currentUserInfo.UserId),
 		fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, currentUserInfo.Job),
+		fmt.Sprintf("%s.%s.%s.>", notifi.BaseSubject, notifi.JobGradeTopic, currentUserInfo.Job),
 		fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic),
 	}
 
@@ -137,7 +139,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				s.logger.Error("failed to ack notification message", zap.Error(err))
 			}
 
-			_, topic, _ := notifi.SplitSubject(msg.Subject())
+			_, topic, parts := notifi.SplitSubject(msg.Subject())
 			switch topic {
 			case notifi.UserTopic:
 				var dest notifications.UserEvent
@@ -171,6 +173,34 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 					NotificationCount: notsCount,
 					Data: &StreamResponse_JobEvent{
 						JobEvent: &dest,
+					},
+				}
+
+				if err := srv.Send(resp); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
+
+			case notifi.JobGradeTopic:
+				// Make sure the job grade is included
+				if len(parts) < 2 {
+					continue
+				}
+				grade, err := strconv.Atoi(parts[1])
+				if err != nil {
+					continue
+				}
+				if currentUserInfo.JobGrade < int32(grade) {
+					continue
+				}
+				var dest notifications.JobGradeEvent
+				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
+
+				resp := &StreamResponse{
+					NotificationCount: notsCount,
+					Data: &StreamResponse_JobGradeEvent{
+						JobGradeEvent: &dest,
 					},
 				}
 

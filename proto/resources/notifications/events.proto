@@ -25,6 +25,14 @@ message JobEvent {
   }
 }
 
+// Job Grade Events
+
+message JobGradeEvent {
+  oneof data {
+    bool refresh_token = 1;
+  }
+}
+
 // System Events
 
 message SystemEvent {}

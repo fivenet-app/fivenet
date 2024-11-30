@@ -181,7 +181,9 @@ export const useAuthStore = defineStore('auth', {
             }
 
             try {
-                const call = getGRPCAuthClient().chooseCharacter({ charId: charId });
+                const call = getGRPCAuthClient().chooseCharacter({
+                    charId: charId,
+                });
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');

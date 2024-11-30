@@ -148,6 +148,10 @@ export const useNotificatorStore = defineStore('notifications', {
                         } else {
                             logger.warn('Unknown job event data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
+                    } else if (resp.data.oneofKind === 'jobGradeEvent') {
+                        if (resp.data.jobGradeEvent.data.oneofKind === 'refreshToken') {
+                            await authStore.chooseCharacter(undefined);
+                        }
                     } else if (resp.data.oneofKind === 'systemEvent') {
                         logger.warn('No systemEvent handlers available.', resp.data);
                     } else if (resp.data.oneofKind === 'mailerEvent') {

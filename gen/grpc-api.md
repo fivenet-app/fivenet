@@ -198,6 +198,7 @@
   
 - [resources/notifications/events.proto](#resources_notifications_events-proto)
     - [JobEvent](#resources-notifications-JobEvent)
+    - [JobGradeEvent](#resources-notifications-JobGradeEvent)
     - [SystemEvent](#resources-notifications-SystemEvent)
     - [UserEvent](#resources-notifications-UserEvent)
   
@@ -3562,6 +3563,21 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+
+
+
+
+
+
+<a name="resources-notifications-JobGradeEvent"></a>
+
+### JobGradeEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| refresh_token | [bool](#bool) |  |  |
 
 
 
@@ -9778,6 +9794,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | restart | [bool](#bool) | optional |  |
 | user_event | [resources.notifications.UserEvent](#resources-notifications-UserEvent) |  |  |
 | job_event | [resources.notifications.JobEvent](#resources-notifications-JobEvent) |  |  |
+| job_grade_event | [resources.notifications.JobGradeEvent](#resources-notifications-JobGradeEvent) |  |  |
 | system_event | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
 | mailer_event | [resources.mailer.MailerEvent](#resources-mailer-MailerEvent) |  |  |
 

@@ -20,7 +20,7 @@ export interface InternetState {
 export const useInternetStore = defineStore('internet', {
     state: () =>
         ({
-            selectedTab: 0,
+            selectedTab: undefined,
             tabs: [],
             history: [],
         }) as InternetState,
@@ -42,7 +42,7 @@ export const useInternetStore = defineStore('internet', {
             }
         },
         async addTab(tab: Partial<Tab>): Promise<number> {
-            const id = this.tabs.length;
+            const id = this.tabs.length === 0 ? 1 : this.tabs.length;
             this.tabs.push({
                 id: id,
                 label: tab.label ?? '',

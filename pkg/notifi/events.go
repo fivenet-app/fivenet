@@ -19,6 +19,8 @@ const (
 	UserTopic events.Topic = "user"
 	// Job event topic
 	JobTopic events.Topic = "job"
+	// Job Grade event topic
+	JobGradeTopic events.Topic = "job_grade"
 	// System event topic
 	SystemTopic events.Topic = "sys"
 	// Mailer event topic

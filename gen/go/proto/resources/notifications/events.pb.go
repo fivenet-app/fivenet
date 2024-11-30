@@ -166,6 +166,71 @@ type JobEvent_JobProps struct {
 
 func (*JobEvent_JobProps) isJobEvent_Data() {}
 
+type JobGradeEvent struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	// Types that are assignable to Data:
+	//
+	//	*JobGradeEvent_RefreshToken
+	Data isJobGradeEvent_Data `protobuf_oneof:"data"`
+}
+
+func (x *JobGradeEvent) Reset() {
+	*x = JobGradeEvent{}
+	mi := &file_resources_notifications_events_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *JobGradeEvent) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JobGradeEvent) ProtoMessage() {}
+
+func (x *JobGradeEvent) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_notifications_events_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JobGradeEvent.ProtoReflect.Descriptor instead.
+func (*JobGradeEvent) Descriptor() ([]byte, []int) {
+	return file_resources_notifications_events_proto_rawDescGZIP(), []int{2}
+}
+
+func (m *JobGradeEvent) GetData() isJobGradeEvent_Data {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (x *JobGradeEvent) GetRefreshToken() bool {
+	if x, ok := x.GetData().(*JobGradeEvent_RefreshToken); ok {
+		return x.RefreshToken
+	}
+	return false
+}
+
+type isJobGradeEvent_Data interface {
+	isJobGradeEvent_Data()
+}
+
+type JobGradeEvent_RefreshToken struct {
+	RefreshToken bool `protobuf:"varint,1,opt,name=refresh_token,json=refreshToken,proto3,oneof"`
+}
+
+func (*JobGradeEvent_RefreshToken) isJobGradeEvent_Data() {}
+
 type SystemEvent struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -174,7 +239,7 @@ type SystemEvent struct {
 
 func (x *SystemEvent) Reset() {
 	*x = SystemEvent{}
-	mi := &file_resources_notifications_events_proto_msgTypes[2]
+	mi := &file_resources_notifications_events_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -186,7 +251,7 @@ func (x *SystemEvent) String() string {
 func (*SystemEvent) ProtoMessage() {}
 
 func (x *SystemEvent) ProtoReflect() protoreflect.Message {
-	mi := &file_resources_notifications_events_proto_msgTypes[2]
+	mi := &file_resources_notifications_events_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -199,7 +264,7 @@ func (x *SystemEvent) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SystemEvent.ProtoReflect.Descriptor instead.
 func (*SystemEvent) Descriptor() ([]byte, []int) {
-	return file_resources_notifications_events_proto_rawDescGZIP(), []int{2}
+	return file_resources_notifications_events_proto_rawDescGZIP(), []int{3}
 }
 
 var File_resources_notifications_events_proto protoreflect.FileDescriptor
@@ -227,6 +292,10 @@ var file_resources_notifications_events_proto_rawDesc = []byte{
 	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63,
 	0x65, 0x73, 0x2e, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x4a, 0x6f, 0x62, 0x50, 0x72, 0x6f, 0x70,
 	0x73, 0x48, 0x00, 0x52, 0x08, 0x6a, 0x6f, 0x62, 0x50, 0x72, 0x6f, 0x70, 0x73, 0x42, 0x06, 0x0a,
+	0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x3e, 0x0a, 0x0d, 0x4a, 0x6f, 0x62, 0x47, 0x72, 0x61, 0x64,
+	0x65, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x12, 0x25, 0x0a, 0x0d, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73,
+	0x68, 0x5f, 0x74, 0x6f, 0x6b, 0x65, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52,
+	0x0c, 0x72, 0x65, 0x66, 0x72, 0x65, 0x73, 0x68, 0x54, 0x6f, 0x6b, 0x65, 0x6e, 0x42, 0x06, 0x0a,
 	0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x0d, 0x0a, 0x0b, 0x53, 0x79, 0x73, 0x74, 0x65, 0x6d, 0x45,
 	0x76, 0x65, 0x6e, 0x74, 0x42, 0x53, 0x5a, 0x51, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
 	0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f, 0x66,
@@ -249,17 +318,18 @@ func file_resources_notifications_events_proto_rawDescGZIP() []byte {
 	return file_resources_notifications_events_proto_rawDescData
 }
 
-var file_resources_notifications_events_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_resources_notifications_events_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_resources_notifications_events_proto_goTypes = []any{
 	(*UserEvent)(nil),      // 0: resources.notifications.UserEvent
 	(*JobEvent)(nil),       // 1: resources.notifications.JobEvent
-	(*SystemEvent)(nil),    // 2: resources.notifications.SystemEvent
-	(*Notification)(nil),   // 3: resources.notifications.Notification
-	(*users.JobProps)(nil), // 4: resources.users.JobProps
+	(*JobGradeEvent)(nil),  // 2: resources.notifications.JobGradeEvent
+	(*SystemEvent)(nil),    // 3: resources.notifications.SystemEvent
+	(*Notification)(nil),   // 4: resources.notifications.Notification
+	(*users.JobProps)(nil), // 5: resources.users.JobProps
 }
 var file_resources_notifications_events_proto_depIdxs = []int32{
-	3, // 0: resources.notifications.UserEvent.notification:type_name -> resources.notifications.Notification
-	4, // 1: resources.notifications.JobEvent.job_props:type_name -> resources.users.JobProps
+	4, // 0: resources.notifications.UserEvent.notification:type_name -> resources.notifications.Notification
+	5, // 1: resources.notifications.JobEvent.job_props:type_name -> resources.users.JobProps
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
 	2, // [2:2] is the sub-list for extension type_name
@@ -280,13 +350,16 @@ func file_resources_notifications_events_proto_init() {
 	file_resources_notifications_events_proto_msgTypes[1].OneofWrappers = []any{
 		(*JobEvent_JobProps)(nil),
 	}
+	file_resources_notifications_events_proto_msgTypes[2].OneofWrappers = []any{
+		(*JobGradeEvent_RefreshToken)(nil),
+	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_notifications_events_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

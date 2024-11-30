@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { MailerEvent } from "../../resources/mailer/events";
 import { SystemEvent } from "../../resources/notifications/events";
+import { JobGradeEvent } from "../../resources/notifications/events";
 import { JobEvent } from "../../resources/notifications/events";
 import { UserEvent } from "../../resources/notifications/events";
 import { Notification } from "../../resources/notifications/notifications";
@@ -103,6 +104,12 @@ export interface StreamResponse {
          * @generated from protobuf field: resources.notifications.JobEvent job_event = 4;
          */
         jobEvent: JobEvent;
+    } | {
+        oneofKind: "jobGradeEvent";
+        /**
+         * @generated from protobuf field: resources.notifications.JobGradeEvent job_grade_event = 7;
+         */
+        jobGradeEvent: JobGradeEvent;
     } | {
         oneofKind: "systemEvent";
         /**
@@ -384,6 +391,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 2, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "user_event", kind: "message", oneof: "data", T: () => UserEvent },
             { no: 4, name: "job_event", kind: "message", oneof: "data", T: () => JobEvent },
+            { no: 7, name: "job_grade_event", kind: "message", oneof: "data", T: () => JobGradeEvent },
             { no: 5, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent },
             { no: 6, name: "mailer_event", kind: "message", oneof: "data", T: () => MailerEvent }
         ]);
@@ -417,6 +425,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                     message.data = {
                         oneofKind: "jobEvent",
                         jobEvent: JobEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobEvent)
+                    };
+                    break;
+                case /* resources.notifications.JobGradeEvent job_grade_event */ 7:
+                    message.data = {
+                        oneofKind: "jobGradeEvent",
+                        jobGradeEvent: JobGradeEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobGradeEvent)
                     };
                     break;
                 case /* resources.notifications.SystemEvent system_event */ 5:
@@ -455,6 +469,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.notifications.JobEvent job_event = 4; */
         if (message.data.oneofKind === "jobEvent")
             JobEvent.internalBinaryWrite(message.data.jobEvent, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.notifications.JobGradeEvent job_grade_event = 7; */
+        if (message.data.oneofKind === "jobGradeEvent")
+            JobGradeEvent.internalBinaryWrite(message.data.jobGradeEvent, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.notifications.SystemEvent system_event = 5; */
         if (message.data.oneofKind === "systemEvent")
             SystemEvent.internalBinaryWrite(message.data.systemEvent, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
