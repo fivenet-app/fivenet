@@ -23,6 +23,8 @@
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
 // source: resources/filestore/file.proto
+// source: resources/internet/ads.proto
+// source: resources/internet/search.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/timeclock.proto
@@ -60,6 +62,8 @@
 // source: services/completor/completor.proto
 // source: services/dmv/vehicles.proto
 // source: services/docstore/docstore.proto
+// source: services/internet/ads.proto
+// source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto

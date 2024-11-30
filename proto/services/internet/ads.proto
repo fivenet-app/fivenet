@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package services.internet;
+
+import "resources/internet/ads.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
+
+message GetAdsRequest {
+  resources.internet.AdType ad_type = 1 [(validate.rules).enum.defined_only = true];
+  int32 count = 2;
+}
+
+message GetAdsResponse {
+  repeated resources.internet.Ad ads = 1;
+}
+
+service AdsService {
+  // @perm: Name=Any
+  rpc GetAds(GetAdsRequest) returns (GetAdsResponse);
+}

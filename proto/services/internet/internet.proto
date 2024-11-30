@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package services.internet;
+
+import "resources/internet/search.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
+
+message SearchRequest {
+  string search = 1;
+}
+
+message SearchResponse {
+  repeated resources.internet.SearchResult results = 1;
+}
+
+service InternetService {
+  // @perm: Name=Any
+  rpc Search(SearchRequest) returns (SearchResponse);
+}

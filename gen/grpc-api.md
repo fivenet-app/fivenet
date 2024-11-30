@@ -383,6 +383,14 @@
     - [ThreadRecipientEmail](#resources-mailer-ThreadRecipientEmail)
     - [ThreadState](#resources-mailer-ThreadState)
   
+- [resources/internet/ads.proto](#resources_internet_ads-proto)
+    - [Ad](#resources-internet-Ad)
+  
+    - [AdType](#resources-internet-AdType)
+  
+- [resources/internet/search.proto](#resources_internet_search-proto)
+    - [SearchResult](#resources-internet-SearchResult)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -825,6 +833,18 @@
     - [SetThreadStateResponse](#services-mailer-SetThreadStateResponse)
   
     - [MailerService](#services-mailer-MailerService)
+  
+- [services/internet/internet.proto](#services_internet_internet-proto)
+    - [SearchRequest](#services-internet-SearchRequest)
+    - [SearchResponse](#services-internet-SearchResponse)
+  
+    - [InternetService](#services-internet-InternetService)
+  
+- [services/internet/ads.proto](#services_internet_ads-proto)
+    - [GetAdsRequest](#services-internet-GetAdsRequest)
+    - [GetAdsResponse](#services-internet-GetAdsResponse)
+  
+    - [AdsService](#services-internet-AdsService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -6219,6 +6239,94 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | favorite | [bool](#bool) |  |  |
 | muted | [bool](#bool) |  |  |
 | archived | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_internet_ads-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/ads.proto
+
+
+
+<a name="resources-internet-Ad"></a>
+
+### Ad
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| disabled | [bool](#bool) |  |  |
+| ad_type | [AdType](#resources-internet-AdType) |  |  |
+| title | [string](#string) |  | @sanitize: method=StripTags |
+| description | [string](#string) |  | @sanitize: method=StripTags |
+| image | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-internet-AdType"></a>
+
+### AdType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| AD_TYPE_UNSPECIFIED | 0 |  |
+| AD_TYPE_SPONSORED | 1 |  |
+| AD_TYPE_SEARCH_RESULT | 2 |  |
+| AD_TYPE_CONTENT_MAIN | 3 |  |
+| AD_TYPE_CONTENT_ASIDE | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_internet_search-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/search.proto
+
+
+
+<a name="resources-internet-SearchResult"></a>
+
+### SearchResult
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| title | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| url | [string](#string) |  |  |
 
 
 
@@ -12347,6 +12455,119 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | DeleteMessage | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=SuperUser |
 | GetEmailSettings | [GetEmailSettingsRequest](#services-mailer-GetEmailSettingsRequest) | [GetEmailSettingsResponse](#services-mailer-GetEmailSettingsResponse) | @perm: Name=ListEmails |
 | SetEmailSettings | [SetEmailSettingsRequest](#services-mailer-SetEmailSettingsRequest) | [SetEmailSettingsResponse](#services-mailer-SetEmailSettingsResponse) | @perm: Name=ListEmails |
+
+ <!-- end services -->
+
+
+
+<a name="services_internet_internet-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/internet/internet.proto
+
+
+
+<a name="services-internet-SearchRequest"></a>
+
+### SearchRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| search | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-internet-SearchResponse"></a>
+
+### SearchResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| results | [resources.internet.SearchResult](#resources-internet-SearchResult) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-internet-InternetService"></a>
+
+### InternetService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| Search | [SearchRequest](#services-internet-SearchRequest) | [SearchResponse](#services-internet-SearchResponse) | @perm: Name=Any |
+
+ <!-- end services -->
+
+
+
+<a name="services_internet_ads-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/internet/ads.proto
+
+
+
+<a name="services-internet-GetAdsRequest"></a>
+
+### GetAdsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ad_type | [resources.internet.AdType](#resources-internet-AdType) |  |  |
+| count | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-internet-GetAdsResponse"></a>
+
+### GetAdsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ads | [resources.internet.Ad](#resources-internet-Ad) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-internet-AdsService"></a>
+
+### AdsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetAds | [GetAdsRequest](#services-internet-GetAdsRequest) | [GetAdsResponse](#services-internet-GetAdsResponse) | @perm: Name=Any |
 
  <!-- end services -->
 

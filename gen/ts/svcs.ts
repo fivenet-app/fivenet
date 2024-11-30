@@ -23,6 +23,8 @@
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
 // source: resources/filestore/file.proto
+// source: resources/internet/ads.proto
+// source: resources/internet/search.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/timeclock.proto
@@ -60,6 +62,8 @@
 // source: services/completor/completor.proto
 // source: services/dmv/vehicles.proto
 // source: services/docstore/docstore.proto
+// source: services/internet/ads.proto
+// source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto
@@ -75,6 +79,7 @@
 // source: services/wiki/wiki.proto
 
 export const grpcServices = [
+    'AdsService',
     'AuthService',
     'CalendarService',
     'CentrumService',
@@ -82,6 +87,7 @@ export const grpcServices = [
     'CompletorService',
     'DMVService',
     'DocStoreService',
+    'InternetService',
     'JobsConductService',
     'JobsService',
     'JobsTimeclockService',
@@ -98,6 +104,7 @@ export const grpcServices = [
 ];
 
 export const grpcMethods = [
+	'AdsService/GetAds',
 	'AuthService/Login',
 	'AuthService/Logout',
 	'AuthService/CreateAccount',
@@ -191,6 +198,7 @@ export const grpcMethods = [
 	'DocStoreService/DeleteCategory',
 	'DocStoreService/ListDocumentPins',
 	'DocStoreService/ToggleDocumentPin',
+	'InternetService/Search',
 	'JobsConductService/ListConductEntries',
 	'JobsConductService/CreateConductEntry',
 	'JobsConductService/UpdateConductEntry',

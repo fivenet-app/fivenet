@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package resources.internet;
+
+import "resources/filestore/file.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
+
+enum AdType {
+  AD_TYPE_UNSPECIFIED = 0;
+  AD_TYPE_SPONSORED = 1;
+  AD_TYPE_SEARCH_RESULT = 2;
+  AD_TYPE_CONTENT_MAIN = 3;
+  AD_TYPE_CONTENT_ASIDE = 4;
+}
+
+message Ad {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  optional resources.timestamp.Timestamp expires_at = 5;
+  bool disabled = 6;
+  AdType ad_type = 7 [(validate.rules).enum.defined_only = true];
+  // @sanitize: method=StripTags
+  string title = 8 [(validate.rules).string = {min_len: 3, max_len: 128}];
+  // @sanitize: method=StripTags
+  string description = 9 [(validate.rules).string = {min_len: 3, max_len: 2048}];
+  optional resources.filestore.File image = 10;
+}

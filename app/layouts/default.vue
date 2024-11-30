@@ -44,7 +44,7 @@ const links = computed(() =>
             badge: unreadThreadCount.value > 0 ? unreadThreadCount.value.toString() : undefined,
             tooltip: {
                 text: t('common.mail'),
-                shortcuts: ['G', 'I'],
+                shortcuts: ['G', 'E'],
             },
             permission: 'MailerService.ListEmails' as Perms,
         },
@@ -162,6 +162,15 @@ const links = computed(() =>
                 text: t('common.wiki'),
             },
             permission: 'WikiService.ListPages' as Perms,
+        },
+        {
+            label: t('common.internet'),
+            icon: 'i-mdi-web',
+            to: '/internet',
+            tooltip: {
+                text: t('common.internet'),
+            },
+            permission: 'TODOService.TODOMethod' as Perms,
         },
         {
             label: t('common.control_panel'),

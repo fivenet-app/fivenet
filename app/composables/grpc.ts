@@ -11,6 +11,8 @@ import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citiz
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
 import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
 import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
+import { AdsServiceClient } from '~~/gen/ts/services/internet/ads.client';
+import { InternetServiceClient } from '~~/gen/ts/services/internet/internet.client';
 import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { JobsTimeclockServiceClient } from '~~/gen/ts/services/jobs/timeclock.client';
@@ -283,4 +285,13 @@ export function getGRPCStatsClient(): StatsServiceClient {
 // Wiki
 export function getGRPCWikiClient(): WikiServiceClient {
     return new WikiServiceClient(grpcWebsocketTransport);
+}
+
+// Internet
+export function getGRPCInternetClient(): InternetServiceClient {
+    return new InternetServiceClient(grpcWebsocketTransport);
+}
+
+export function getGRPCInternetAdsClient(): AdsServiceClient {
+    return new AdsServiceClient(grpcWebsocketTransport);
 }

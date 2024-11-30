@@ -1,3 +1,4 @@
+
 {
     "pages": {
         "index": {
@@ -513,7 +514,9 @@
         "last_updated": "Last Updated",
         "domain": "Domain",
         "address_book": "Address Book",
-        "unavailable": "Unavailable"
+        "unavailable": "Unavailable",
+        "internet": "Internet",
+        "ad": "Ad | Ads"
     },
     "components": {
         "partials": {
@@ -1213,6 +1216,18 @@
             },
             "settings": {
                 "clear_address_book": "Clear Address Book"
+            }
+        },
+        "internet": {
+            "new_tab": "New Tab",
+            "pages": {
+                "homepage": {
+                    "title": "Internet Search",
+                    "description": "Search through the internet."
+                }
+            },
+            "ads": {
+                "sponsored_ad": "Sponsored Advertisement"
             }
         }
     },

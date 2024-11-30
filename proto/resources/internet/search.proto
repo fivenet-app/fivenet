@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resources.internet;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
+
+message SearchResult {
+  string title = 1;
+  string description = 2;
+  string url = 3;
+}

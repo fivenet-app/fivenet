@@ -208,5 +208,20 @@ export default defineNuxtConfig({
         path: '/api/version',
     },
 
+    $production: {
+        icon: {
+            iconifyApiEndpoint: '/api/icons',
+        },
+    },
+
+    $development: {
+        icon: {
+            iconifyApiEndpoint: 'https://api.iconify.design',
+            clientBundle: {
+                scan: false,
+            },
+        },
+    },
+
     compatibilityDate: '2024-07-05',
 });

@@ -19,6 +19,7 @@ import (
 	pbcompletor "github.com/fivenet-app/fivenet/gen/go/proto/services/completor"
 	pbdmv "github.com/fivenet-app/fivenet/gen/go/proto/services/dmv"
 	pbdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore"
+	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
 	pbjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs"
 	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
 	pbmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer"
@@ -222,6 +223,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbrector.NewServer),
 			grpc.AsService(pbstats.NewServer),
 			grpc.AsService(pbwiki.NewServer),
+			grpc.AsService(pbinternet.NewServer),
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),
