@@ -299,6 +299,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 
 	req.Message.ThreadId = req.Thread.Id
 	req.Message.CreatorId = &userInfo.UserId
+	req.Message.CreatorJob = &userInfo.Job
 	if _, err := s.createMessage(ctx, tx, req.Message); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}

@@ -178,6 +178,10 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		}
 	}
 
+	req.Message.Sender = senderEmail
+	req.Message.CreatorId = &userInfo.UserId
+	req.Message.CreatorJob = &userInfo.Job
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
