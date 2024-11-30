@@ -297,109 +297,110 @@ defineShortcuts({
             </template>
         </UTable>
 
-        <UPageGrid
-            v-else
-            class="flex-1"
-            :ui="{
-                wrapper: 'relative overflow-x-auto flex-1 grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
-            }"
-        >
-            <UPageCard
-                v-for="colleague in data?.colleagues"
-                :key="colleague.userId"
-                :title="`${colleague.firstname} ${colleague.lastname}`"
+        <div v-else class="relative flex-1 overflow-x-auto">
+            <UPageGrid
+                :ui="{
+                    wrapper: 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
+                }"
             >
-                <template #header>
-                    <div class="flex items-center justify-center">
-                        <ProfilePictureImg
-                            :src="colleague?.avatar?.url"
-                            :name="`${colleague.firstname} ${colleague.lastname}`"
-                            size="3xl"
-                            :enable-popup="true"
-                            :alt="$t('common.avatar')"
-                            :rounded="false"
-                            img-class="h-72 w-72 text-3xl"
-                        />
-                    </div>
-                </template>
+                <UPageCard
+                    v-for="colleague in data?.colleagues"
+                    :key="colleague.userId"
+                    :title="`${colleague.firstname} ${colleague.lastname}`"
+                >
+                    <template #header>
+                        <div class="flex items-center justify-center">
+                            <ProfilePictureImg
+                                :src="colleague?.avatar?.url"
+                                :name="`${colleague.firstname} ${colleague.lastname}`"
+                                size="3xl"
+                                :enable-popup="true"
+                                :alt="$t('common.avatar')"
+                                :rounded="false"
+                                img-class="h-72 w-72 text-3xl"
+                            />
+                        </div>
+                    </template>
 
-                <template #description>
-                    <div class="flex flex-col gap-1">
-                        <span>
-                            {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                        </span>
+                    <template #description>
+                        <div class="flex flex-col gap-1">
+                            <span>
+                                {{ colleague.jobGradeLabel
+                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                            </span>
 
-                        <PhoneNumberBlock :number="colleague.phoneNumber" />
+                            <PhoneNumberBlock :number="colleague.phoneNumber" />
 
-                        <span class="inline-flex items-center gap-1">
-                            <UIcon name="i-mdi-birthday-cake" class="h-5 w-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <UIcon name="i-mdi-birthday-cake" class="h-5 w-5" />
 
-                            <span>{{ colleague.dateofbirth.value }}</span>
-                        </span>
+                                <span>{{ colleague.dateofbirth.value }}</span>
+                            </span>
 
-                        <span class="inline-flex items-center gap-1">
-                            <EmailBlock :email="colleague.email" />
-                        </span>
+                            <span class="inline-flex items-center gap-1">
+                                <EmailBlock :email="colleague.email" />
+                            </span>
 
-                        <UBadge
-                            v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
-                            class="inline-flex items-center gap-1"
-                        >
-                            <UIcon name="i-mdi-island" class="size-5" />
-                            <GenericTime :value="colleague.props?.absenceBegin" type="date" />
-                            <span>{{ $t('common.to') }}</span>
-                            <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                        </UBadge>
-                    </div>
-                </template>
+                            <UBadge
+                                v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
+                                class="inline-flex items-center gap-1"
+                            >
+                                <UIcon name="i-mdi-island" class="size-5" />
+                                <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                                <span>{{ $t('common.to') }}</span>
+                                <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                            </UBadge>
+                        </div>
+                    </template>
 
-                <template #footer>
-                    <UButtonGroup class="inline-flex w-full">
-                        <UTooltip
-                            v-if="
-                                can('JobsService.SetJobsUserProps').value &&
-                                (colleague.userId === activeChar!.userId ||
-                                    attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
-                                checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
-                            "
-                            :text="$t('components.jobs.self_service.set_absence_date')"
-                            class="flex-1"
-                        >
-                            <UButton
-                                :label="$t('components.jobs.self_service.set_absence_date')"
-                                icon="i-mdi-island"
-                                block
-                                @click="
-                                    modal.open(SelfServicePropsAbsenceDateModal, {
-                                        userId: colleague.userId,
-                                        'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                                    })
+                    <template #footer>
+                        <UButtonGroup class="inline-flex w-full">
+                            <UTooltip
+                                v-if="
+                                    can('JobsService.SetJobsUserProps').value &&
+                                    (colleague.userId === activeChar!.userId ||
+                                        attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
+                                    checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                                 "
-                            />
-                        </UTooltip>
+                                :text="$t('components.jobs.self_service.set_absence_date')"
+                                class="flex-1"
+                            >
+                                <UButton
+                                    :label="$t('components.jobs.self_service.set_absence_date')"
+                                    icon="i-mdi-island"
+                                    block
+                                    @click="
+                                        modal.open(SelfServicePropsAbsenceDateModal, {
+                                            userId: colleague.userId,
+                                            'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                        <UTooltip
-                            v-if="
-                                can('JobsService.GetColleague').value &&
-                                checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
-                            "
-                            :text="$t('common.show')"
-                            class="flex-1"
-                        >
-                            <UButton
-                                :label="$t('common.show')"
-                                icon="i-mdi-eye"
-                                block
-                                :to="{
-                                    name: 'jobs-colleagues-id-info',
-                                    params: { id: colleague.userId ?? 0 },
-                                }"
-                            />
-                        </UTooltip>
-                    </UButtonGroup>
-                </template>
-            </UPageCard>
-        </UPageGrid>
+                            <UTooltip
+                                v-if="
+                                    can('JobsService.GetColleague').value &&
+                                    checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
+                                "
+                                :text="$t('common.show')"
+                                class="flex-1"
+                            >
+                                <UButton
+                                    :label="$t('common.show')"
+                                    icon="i-mdi-eye"
+                                    block
+                                    :to="{
+                                        name: 'jobs-colleagues-id-info',
+                                        params: { id: colleague.userId ?? 0 },
+                                    }"
+                                />
+                            </UTooltip>
+                        </UButtonGroup>
+                    </template>
+                </UPageCard>
+            </UPageGrid>
+        </div>
     </template>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
