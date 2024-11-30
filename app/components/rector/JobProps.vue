@@ -6,8 +6,8 @@ import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
@@ -392,7 +392,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
 
                                         <div class="mt-2 flex w-full items-center justify-center">
-                                            <SquareImg
+                                            <GenericImg
                                                 v-if="jobProps.logoUrl?.url"
                                                 size="3xl"
                                                 :src="jobProps.logoUrl.url"

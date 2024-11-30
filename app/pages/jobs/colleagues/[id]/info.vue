@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import type { TypedRouteFromName } from '@typed-router';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -120,6 +121,15 @@ watch(editing, () => {
                         </dt>
                         <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
                             <PhoneNumberBlock :number="colleague.phoneNumber" />
+                        </dd>
+                    </div>
+
+                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                        <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
+                            {{ $t('common.mail') }}
+                        </dt>
+                        <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
+                            <EmailBlock :email="colleague.email" />
                         </dd>
                     </div>
 

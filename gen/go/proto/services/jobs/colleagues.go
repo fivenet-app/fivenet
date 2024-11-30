@@ -26,6 +26,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+const (
+	ColleaguesDefaultPageSize = 20
+)
+
 var (
 	tJobsUserProps    = table.FivenetJobsUserProps
 	tJobsUserActivity = table.FivenetJobsUserActivity
@@ -85,7 +89,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ColleaguesDefaultPageSize)
 	resp := &ListColleaguesResponse{
 		Pagination: pag,
 	}
@@ -738,7 +742,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ColleaguesDefaultPageSize)
 	resp.Pagination = pag
 	if count.TotalCount <= 0 {
 		return resp, nil

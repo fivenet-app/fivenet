@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { AvatarSize } from '#ui/types';
-import SquareImg from '~/components/partials/elements/SquareImg.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 
 withDefaults(
     defineProps<{
@@ -11,6 +11,7 @@ withDefaults(
         noBlur?: boolean;
         alt?: string;
         disableBlurToggle?: boolean;
+        imgClass?: string;
     }>(),
     {
         src: undefined,
@@ -19,12 +20,13 @@ withDefaults(
         noBlur: undefined,
         alt: undefined,
         disableBlurToggle: false,
+        imgClass: '',
     },
 );
 </script>
 
 <template>
-    <SquareImg
+    <GenericImg
         :src="src"
         :size="size"
         :text="getInitials(name)"
@@ -32,5 +34,6 @@ withDefaults(
         :enable-popup="enablePopup"
         :no-blur="noBlur || src === undefined"
         :disable-blur-toggle="disableBlurToggle"
+        :img-class="imgClass"
     />
 </template>

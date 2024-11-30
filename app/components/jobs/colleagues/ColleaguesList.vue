@@ -2,6 +2,7 @@
 import { isFuture } from 'date-fns';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -20,6 +21,7 @@ const { attr, can, activeChar } = useAuth();
 const schema = z.object({
     name: z.string().max(50),
     absent: z.boolean(),
+    cards: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -27,6 +29,7 @@ type Schema = z.output<typeof schema>;
 const query = reactive<Schema>({
     name: '',
     absent: false,
+    cards: false,
 });
 
 const page = ref(1);
@@ -173,111 +176,221 @@ defineShortcuts({
                     </UToggle>
                 </div>
             </UFormGroup>
+
+            <UFormGroup
+                name="cards"
+                :label="$t('common.card_view')"
+                class="flex flex-initial flex-col"
+                :ui="{ container: 'flex-1 flex' }"
+            >
+                <div class="flex flex-1 items-center">
+                    <UToggle v-model="query.cards">
+                        <span class="sr-only">
+                            {{ $t('common.card_view') }}
+                        </span>
+                    </UToggle>
+                </div>
+            </UFormGroup>
         </UForm>
     </UDashboardToolbar>
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
-    <UTable
-        v-else
-        v-model:sort="sort"
-        :loading="loading"
-        :columns="columns"
-        :rows="data?.colleagues"
-        :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
-        sort-mode="manual"
-        class="flex-1"
-    >
-        <template #name-data="{ row: colleague }">
-            <div class="inline-flex items-center text-gray-900 dark:text-white">
-                <ProfilePictureImg
-                    :src="colleague?.avatar?.url"
-                    :name="`${colleague.firstname} ${colleague.lastname}`"
-                    size="sm"
-                    :enable-popup="true"
-                    :alt="$t('common.avatar')"
-                    class="mr-2"
-                />
-                <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
-            </div>
+    <template v-else>
+        <UTable
+            v-if="!query.cards"
+            v-model:sort="sort"
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.colleagues"
+            :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+            sort-mode="manual"
+            class="flex-1"
+        >
+            <template #name-data="{ row: colleague }">
+                <div class="inline-flex items-center text-gray-900 dark:text-white">
+                    <ProfilePictureImg
+                        :src="colleague?.avatar?.url"
+                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                        size="sm"
+                        :enable-popup="true"
+                        :alt="$t('common.avatar')"
+                        class="mr-2"
+                    />
+                    <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
+                </div>
 
-            <dl class="font-normal lg:hidden">
-                <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
-                <dd class="mt-1 truncate">
-                    {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                </dd>
-            </dl>
-        </template>
+                <dl class="font-normal lg:hidden">
+                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                    <dd class="mt-1 truncate">
+                        {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                    </dd>
+                </dl>
+            </template>
 
-        <template #rank-data="{ row: colleague }">
-            {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-        </template>
+            <template #rank-data="{ row: colleague }">
+                {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+            </template>
 
-        <template #absence-data="{ row: colleague }">
-            <dl v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))" class="font-normal">
-                <dd class="truncate">
-                    {{ $t('common.from') }}:
-                    <GenericTime :value="colleague.props?.absenceBegin" type="date" />
-                </dd>
-                <dd class="truncate">
-                    {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
-                </dd>
-            </dl>
-        </template>
+            <template #absence-data="{ row: colleague }">
+                <dl v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))" class="font-normal">
+                    <dd class="truncate">
+                        {{ $t('common.from') }}:
+                        <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                    </dd>
+                    <dd class="truncate">
+                        {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                    </dd>
+                </dl>
+            </template>
 
-        <template #phoneNumber-data="{ row: colleague }">
-            <PhoneNumberBlock :number="colleague.phoneNumber" />
-            <dl class="font-normal lg:hidden">
-                <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
-                <dd class="mt-1 truncate">
-                    {{ colleague.dateofbirth.value }}
-                </dd>
-            </dl>
-        </template>
+            <template #phoneNumber-data="{ row: colleague }">
+                <PhoneNumberBlock :number="colleague.phoneNumber" />
 
-        <template #dateofbirth-data="{ row: colleague }">
-            {{ colleague.dateofbirth.value }}
-        </template>
+                <dl class="font-normal lg:hidden">
+                    <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
+                    <dd class="mt-1 truncate">
+                        {{ colleague.dateofbirth.value }}
+                    </dd>
+                </dl>
+            </template>
 
-        <template #email-data="{ row: colleague }">
-            <span class="break-all">
-                {{ colleague.email }}
-            </span>
-        </template>
+            <template #dateofbirth-data="{ row: colleague }">
+                {{ colleague.dateofbirth.value }}
+            </template>
 
-        <template #actions-data="{ row: colleague }">
-            <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
-                <UButton
-                    v-if="
-                        can('JobsService.SetJobsUserProps').value &&
-                        (colleague.userId === activeChar!.userId ||
-                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
-                        checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
-                    "
-                    variant="link"
-                    icon="i-mdi-island"
-                    @click="
-                        modal.open(SelfServicePropsAbsenceDateModal, {
-                            userId: colleague.userId,
-                            'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                        })
-                    "
-                />
+            <template #email-data="{ row: colleague }">
+                <EmailBlock :email="colleague.email" hide-icon hide-na-text />
+            </template>
 
-                <UButton
-                    v-if="
-                        can('JobsService.GetColleague').value &&
-                        checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
-                    "
-                    variant="link"
-                    icon="i-mdi-eye"
-                    :to="{
-                        name: 'jobs-colleagues-id-info',
-                        params: { id: colleague.userId ?? 0 },
-                    }"
-                />
-            </div>
-        </template>
-    </UTable>
+            <template #actions-data="{ row: colleague }">
+                <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
+                    <UButton
+                        v-if="
+                            can('JobsService.SetJobsUserProps').value &&
+                            (colleague.userId === activeChar!.userId ||
+                                attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
+                            checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
+                        "
+                        variant="link"
+                        icon="i-mdi-island"
+                        @click="
+                            modal.open(SelfServicePropsAbsenceDateModal, {
+                                userId: colleague.userId,
+                                'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                            })
+                        "
+                    />
+
+                    <UButton
+                        v-if="
+                            can('JobsService.GetColleague').value &&
+                            checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
+                        "
+                        variant="link"
+                        icon="i-mdi-eye"
+                        :to="{
+                            name: 'jobs-colleagues-id-info',
+                            params: { id: colleague.userId ?? 0 },
+                        }"
+                    />
+                </div>
+            </template>
+        </UTable>
+
+        <UPageGrid
+            v-else
+            class="flex-1"
+            :ui="{
+                wrapper: 'relative overflow-x-auto flex-1 grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
+            }"
+        >
+            <UPageCard
+                v-for="colleague in data?.colleagues"
+                :key="colleague.userId"
+                :title="`${colleague.firstname} ${colleague.lastname}`"
+            >
+                <template #header>
+                    <div class="flex items-center justify-center">
+                        <ProfilePictureImg
+                            :src="colleague?.avatar?.url"
+                            :name="`${colleague.firstname} ${colleague.lastname}`"
+                            size="3xl"
+                            :enable-popup="true"
+                            :alt="$t('common.avatar')"
+                            :rounded="false"
+                            img-class="h-72 w-72 text-3xl"
+                        />
+                    </div>
+                </template>
+
+                <template #description>
+                    <div class="flex flex-col gap-1">
+                        <span>
+                            {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                        </span>
+
+                        <PhoneNumberBlock :number="colleague.phoneNumber" />
+
+                        <span class="inline-flex items-center gap-1">
+                            <UIcon name="i-mdi-birthday-cake" class="h-5 w-5" />
+
+                            <span>{{ colleague.dateofbirth.value }}</span>
+                        </span>
+
+                        <span class="inline-flex items-center gap-1">
+                            <EmailBlock :email="colleague.email" />
+                        </span>
+
+                        <UBadge
+                            v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
+                            class="inline-flex items-center gap-1"
+                        >
+                            <UIcon name="i-mdi-island" class="size-5" />
+                            <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                            <span>{{ $t('common.to') }}</span>
+                            <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                        </UBadge>
+                    </div>
+                </template>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton
+                            v-if="
+                                can('JobsService.SetJobsUserProps').value &&
+                                (colleague.userId === activeChar!.userId ||
+                                    attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
+                                checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
+                            "
+                            :label="$t('components.jobs.self_service.set_absence_date')"
+                            icon="i-mdi-island"
+                            class="flex-1"
+                            @click="
+                                modal.open(SelfServicePropsAbsenceDateModal, {
+                                    userId: colleague.userId,
+                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                })
+                            "
+                        />
+
+                        <UButton
+                            v-if="
+                                can('JobsService.GetColleague').value &&
+                                checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
+                            "
+                            :label="$t('common.view')"
+                            icon="i-mdi-eye"
+                            class="flex-1"
+                            :to="{
+                                name: 'jobs-colleagues-id-info',
+                                params: { id: colleague.userId ?? 0 },
+                            }"
+                        />
+                    </UButtonGroup>
+                </template>
+            </UPageCard>
+        </UPageGrid>
+    </template>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
+import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import type { User } from '~~/gen/ts/resources/users/users';
 
@@ -156,13 +157,7 @@ const { attr } = useAuth();
                         {{ $t('common.mail', 1) }}
                     </dt>
                     <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
-                        <UButton
-                            v-if="user?.props?.email"
-                            variant="link"
-                            :label="user?.props?.email"
-                            :to="`/mail?to=${user?.props?.email}`"
-                        />
-                        <span v-else>{{ $t('common.na') }}</span>
+                        <EmailBlock :email="user?.props?.email" />
                     </dd>
                 </div>
 

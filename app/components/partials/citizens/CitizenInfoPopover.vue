@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ClipboardUser } from '~/store/clipboard';
 import type { ClassProp } from '~/typings';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
+import EmailBlock from './EmailBlock.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -66,7 +67,7 @@ async function getCitizen(id: number): Promise<User | undefined> {
     }
 }
 
-const user = computed(() => data.value || props.user);
+const user = computed(() => (data.value || props.user) as User);
 
 const { game } = useAppConfig();
 
@@ -104,7 +105,7 @@ watchOnce(opened, async () => {
 
         <template #panel>
             <div class="flex flex-col gap-2 p-4">
-                <div class="inline-flex w-full gap-1">
+                <div class="grid w-full grid-cols-3 gap-2">
                     <IDCopyBadge
                         :id="userId ?? user?.userId ?? 0"
                         prefix="CIT"
@@ -139,6 +140,8 @@ watchOnce(opened, async () => {
                         :hide-number="true"
                         :show-label="true"
                     />
+
+                    <EmailBlock v-if="user?.props && user.props?.email" :email="user.props?.email" hide-email />
                 </div>
 
                 <div v-if="error">

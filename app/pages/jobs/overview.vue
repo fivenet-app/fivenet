@@ -3,7 +3,7 @@ import JobMotd from '~/components/jobs/JobMotd.vue';
 import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
-import SquareImg from '~/components/partials/elements/SquareImg.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -29,7 +29,7 @@ const showRadioFrequency = ref(false);
                         <UCard class="flex-1">
                             <template #header>
                                 <div class="flex flex-row gap-2">
-                                    <SquareImg
+                                    <GenericImg
                                         v-if="jobProps && jobProps.logoUrl"
                                         :src="jobProps?.logoUrl.url"
                                         :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"

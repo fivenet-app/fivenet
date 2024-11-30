@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import SquareImg from '~/components/partials/elements/SquareImg.vue';
+import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <div class="mt-4 flex flex-1 items-center">
-                        <SquareImg
+                        <GenericImg
                             :src="user?.props?.mugShot?.url"
                             class="m-auto"
                             size="3xl"
