@@ -513,7 +513,9 @@
         "last_updated": "Zuletzt Aktualisiert",
         "domain": "Domain",
         "address_book": "Adressbuch",
-        "unavailable": "Nicht verfügbar"
+        "unavailable": "Nicht verfügbar",
+        "internet": "Internet",
+        "ad": "Werbung | Werbung"
     },
     "components": {
         "partials": {
@@ -1213,6 +1215,18 @@
             },
             "settings": {
                 "clear_address_book": "Adressbuch leeren"
+            }
+        },
+        "internet": {
+            "new_tab": "Neuer Tab",
+            "pages": {
+                "homepage": {
+                    "title": "Internet Suche",
+                    "description": "Das Internet durchsuchen."
+                }
+            },
+            "ads": {
+                "sponsored_ad": "Gesponserte Werbung"
             }
         }
     },
