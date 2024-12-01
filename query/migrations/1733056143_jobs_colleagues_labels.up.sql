@@ -13,10 +13,10 @@ CREATE TABLE `fivenet_jobs_labels` (
 CREATE TABLE `fivenet_jobs_labels_users` (
   `user_id` int NOT NULL,
   `job` varchar(20) NOT NULL,
-  `attribute_id` bigint unsigned NOT NULL,
-  UNIQUE KEY `idx_fivenet_jobs_labels_users_unique` (`user_id`, `job`, `attribute_id`),
-  KEY `fk_fivenet_jobs_labels_users_attribute_id` (`attribute_id`),
-  CONSTRAINT `fk_fivenet_jobs_labels_users_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `fivenet_job_citizen_attributes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  `label_id` bigint unsigned NOT NULL,
+  UNIQUE KEY `idx_fivenet_jobs_labels_users_unique` (`user_id`, `job`, `label_id`),
+  KEY `fk_fivenet_jobs_labels_users_label_id` (`label_id`),
+  CONSTRAINT `fk_fivenet_jobs_labels_users_label_id` FOREIGN KEY (`label_id`) REFERENCES `fivenet_job_citizen_attributes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_jobs_labels_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

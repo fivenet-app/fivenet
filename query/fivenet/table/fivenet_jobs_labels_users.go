@@ -17,9 +17,9 @@ type fivenetJobsLabelsUsersTable struct {
 	mysql.Table
 
 	// Columns
-	UserID      mysql.ColumnInteger
-	Job         mysql.ColumnString
-	AttributeID mysql.ColumnInteger
+	UserID  mysql.ColumnInteger
+	Job     mysql.ColumnString
+	LabelID mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -60,20 +60,20 @@ func newFivenetJobsLabelsUsersTable(schemaName, tableName, alias string) *Fivene
 
 func newFivenetJobsLabelsUsersTableImpl(schemaName, tableName, alias string) fivenetJobsLabelsUsersTable {
 	var (
-		UserIDColumn      = mysql.IntegerColumn("user_id")
-		JobColumn         = mysql.StringColumn("job")
-		AttributeIDColumn = mysql.IntegerColumn("attribute_id")
-		allColumns        = mysql.ColumnList{UserIDColumn, JobColumn, AttributeIDColumn}
-		mutableColumns    = mysql.ColumnList{UserIDColumn, JobColumn, AttributeIDColumn}
+		UserIDColumn   = mysql.IntegerColumn("user_id")
+		JobColumn      = mysql.StringColumn("job")
+		LabelIDColumn  = mysql.IntegerColumn("label_id")
+		allColumns     = mysql.ColumnList{UserIDColumn, JobColumn, LabelIDColumn}
+		mutableColumns = mysql.ColumnList{UserIDColumn, JobColumn, LabelIDColumn}
 	)
 
 	return fivenetJobsLabelsUsersTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:      UserIDColumn,
-		Job:         JobColumn,
-		AttributeID: AttributeIDColumn,
+		UserID:  UserIDColumn,
+		Job:     JobColumn,
+		LabelID: LabelIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

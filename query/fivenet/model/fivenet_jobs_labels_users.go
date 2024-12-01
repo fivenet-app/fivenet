@@ -8,7 +8,7 @@
 package model
 
 type FivenetJobsLabelsUsers struct {
-	UserID      int32  `json:"user_id"`
-	Job         string `json:"job"`
-	AttributeID uint64 `json:"attribute_id"`
+	UserID  int32  `json:"user_id"`
+	Job     string `json:"job"`
+	LabelID uint64 `json:"label_id"`
 }

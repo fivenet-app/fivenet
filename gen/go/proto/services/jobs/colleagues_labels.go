@@ -211,7 +211,7 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 		FROM(
 			tUserLabels.
 				INNER_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tUserLabels.AttributeID),
+					tJobLabels.ID.EQ(tUserLabels.LabelID),
 				),
 		).
 		WHERE(jet.AND(
@@ -236,11 +236,11 @@ func (s *Server) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job 
 
 	if len(added) > 0 {
 		addedLabels := make([]*model.FivenetJobsLabelsUsers, len(added))
-		for i, attribute := range added {
+		for i, label := range added {
 			addedLabels[i] = &model.FivenetJobsLabelsUsers{
-				UserID:      userId,
-				Job:         job,
-				AttributeID: attribute.Id,
+				UserID:  userId,
+				Job:     job,
+				LabelID: label.Id,
 			}
 		}
 
@@ -248,7 +248,7 @@ func (s *Server) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job 
 			INSERT(
 				tUserLabels.UserID,
 				tUserLabels.Job,
-				tUserLabels.AttributeID,
+				tUserLabels.LabelID,
 			).
 			MODELS(addedLabels)
 
@@ -270,7 +270,7 @@ func (s *Server) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job 
 			DELETE().
 			WHERE(jet.AND(
 				tUserLabels.UserID.EQ(jet.Int32(userId)),
-				tUserLabels.AttributeID.IN(ids...),
+				tUserLabels.LabelID.IN(ids...),
 			)).
 			LIMIT(int64(len(removed)))
 

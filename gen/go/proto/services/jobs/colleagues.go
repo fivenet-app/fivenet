@@ -161,7 +161,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 						AND(tUserLabels.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tJobLabels,
-					tJobLabels.ID.EQ(tUserLabels.AttributeID),
+					tJobLabels.ID.EQ(tUserLabels.LabelID),
 				),
 		).
 		WHERE(condition).
