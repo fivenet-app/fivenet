@@ -152,7 +152,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	}
 
 	// Owner override hatch for when a colleague isn't part of the job anymore and the document should be taken over
-	if doc.CreatorJob == userInfo.Job && doc.Creator != nil && doc.CreatorJob != doc.Creator.Job &&
+	if doc.CreatorJob == userInfo.Job && (doc.Creator == nil || doc.Creator.Job != doc.CreatorJob) &&
 		req.RequestType == documents.DocActivityType_DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE {
 		if err := s.updateDocumentOwner(ctx, s.db, doc.Id, userInfo, &users.UserShort{
 			UserId: userInfo.UserId,
