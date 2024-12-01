@@ -35,7 +35,7 @@ export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | un
         case JobsUserActivityType.NOTE:
             return 'i-mdi-note-edit';
         case JobsUserActivityType.LABELS:
-            return 'i-mdi-tag-mutiple';
+            return 'i-mdi-tag-multiple';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';
