@@ -211,6 +211,7 @@ export const grpcMethods = [
 	'JobsService/SetJobsUserProps',
 	'JobsService/GetColleagueLabels',
 	'JobsService/ManageColleagueLabels',
+	'JobsService/GetColleagueLabelsStats',
 	'JobsService/GetMOTD',
 	'JobsService/SetMOTD',
 	'JobsTimeclockService/ListTimeclock',

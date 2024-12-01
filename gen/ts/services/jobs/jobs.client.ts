@@ -8,6 +8,8 @@ import type { SetMOTDResponse } from "./jobs";
 import type { SetMOTDRequest } from "./jobs";
 import type { GetMOTDResponse } from "./jobs";
 import type { GetMOTDRequest } from "./jobs";
+import type { GetColleagueLabelsStatsResponse } from "./jobs";
+import type { GetColleagueLabelsStatsRequest } from "./jobs";
 import type { ManageColleagueLabelsResponse } from "./jobs";
 import type { ManageColleagueLabelsRequest } from "./jobs";
 import type { GetColleagueLabelsResponse } from "./jobs";
@@ -71,6 +73,12 @@ export interface IJobsServiceClient {
      * @generated from protobuf rpc: ManageColleagueLabels(services.jobs.ManageColleagueLabelsRequest) returns (services.jobs.ManageColleagueLabelsResponse);
      */
     manageColleagueLabels(input: ManageColleagueLabelsRequest, options?: RpcOptions): UnaryCall<ManageColleagueLabelsRequest, ManageColleagueLabelsResponse>;
+    /**
+     * @perm: Name=GetColleague
+     *
+     * @generated from protobuf rpc: GetColleagueLabelsStats(services.jobs.GetColleagueLabelsStatsRequest) returns (services.jobs.GetColleagueLabelsStatsResponse);
+     */
+    getColleagueLabelsStats(input: GetColleagueLabelsStatsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse>;
     /**
      * @perm: Name=Any
      *
@@ -157,12 +165,21 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ManageColleagueLabelsRequest, ManageColleagueLabelsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=GetColleague
+     *
+     * @generated from protobuf rpc: GetColleagueLabelsStats(services.jobs.GetColleagueLabelsStatsRequest) returns (services.jobs.GetColleagueLabelsStatsResponse);
+     */
+    getColleagueLabelsStats(input: GetColleagueLabelsStatsRequest, options?: RpcOptions): UnaryCall<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse> {
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetColleagueLabelsStatsRequest, GetColleagueLabelsStatsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm: Name=Any
      *
      * @generated from protobuf rpc: GetMOTD(services.jobs.GetMOTDRequest) returns (services.jobs.GetMOTDResponse);
      */
     getMOTD(input: GetMOTDRequest, options?: RpcOptions): UnaryCall<GetMOTDRequest, GetMOTDResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetMOTDRequest, GetMOTDResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -171,7 +188,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: SetMOTD(services.jobs.SetMOTDRequest) returns (services.jobs.SetMOTDResponse);
      */
     setMOTD(input: SetMOTDRequest, options?: RpcOptions): UnaryCall<SetMOTDRequest, SetMOTDResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetMOTDRequest, SetMOTDResponse>("unary", this._transport, method, opt, input);
     }
 }

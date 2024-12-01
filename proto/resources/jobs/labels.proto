@@ -20,3 +20,8 @@ message Label {
     pattern: "^#[A-Fa-f0-9]{6}$",
   }];
 }
+
+message LabelCount {
+  Label label = 1;
+  int64 count = 2;
+}

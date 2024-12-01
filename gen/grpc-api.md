@@ -172,6 +172,7 @@
   
 - [resources/jobs/labels.proto](#resources_jobs_labels-proto)
     - [Label](#resources-jobs-Label)
+    - [LabelCount](#resources-jobs-LabelCount)
     - [Labels](#resources-jobs-Labels)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
@@ -608,6 +609,8 @@
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest)
     - [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse)
+    - [GetColleagueLabelsStatsRequest](#services-jobs-GetColleagueLabelsStatsRequest)
+    - [GetColleagueLabelsStatsResponse](#services-jobs-GetColleagueLabelsStatsResponse)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
     - [GetMOTDRequest](#services-jobs-GetMOTDRequest)
@@ -3224,6 +3227,22 @@ Dummy - DO NOT USE!
 | job | [string](#string) | optional |  |
 | name | [string](#string) |  |  |
 | color | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-jobs-LabelCount"></a>
+
+### LabelCount
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| label | [Label](#resources-jobs-Label) |  |  |
+| count | [int64](#int64) |  |  |
 
 
 
@@ -9409,6 +9428,36 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
+<a name="services-jobs-GetColleagueLabelsStatsRequest"></a>
+
+### GetColleagueLabelsStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| label_ids | [uint64](#uint64) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-GetColleagueLabelsStatsResponse"></a>
+
+### GetColleagueLabelsStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| count | [resources.jobs.LabelCount](#resources-jobs-LabelCount) | repeated |  |
+
+
+
+
+
+
 <a name="services-jobs-GetColleagueRequest"></a>
 
 ### GetColleagueRequest
@@ -9670,6 +9719,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"} |
 | GetColleagueLabels | [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse) | @perm: Name=SetJobsUserProps |
 | ManageColleagueLabels | [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest) | [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse) | @perm |
+| GetColleagueLabelsStats | [GetColleagueLabelsStatsRequest](#services-jobs-GetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#services-jobs-GetColleagueLabelsStatsResponse) | @perm: Name=GetColleague |
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
 

@@ -281,3 +281,58 @@ func (s *Server) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job 
 
 	return nil
 }
+
+func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	// Types Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+	if userInfo.SuperUser {
+		types = []string{"Labels"}
+	}
+
+	if !slices.Contains(types, "Labels") {
+		return &GetColleagueLabelsStatsResponse{}, nil
+	}
+
+	stmt := tUserLabels.
+		SELECT(
+			jet.COUNT(tUserLabels.LabelID).AS("label_count.count"),
+			tJobLabels.ID,
+			tJobLabels.Job,
+			tJobLabels.Name,
+			tJobLabels.Color,
+		).
+		FROM(
+			tUserLabels.
+				INNER_JOIN(tJobLabels,
+					tJobLabels.ID.EQ(tUserLabels.LabelID),
+				).
+				INNER_JOIN(tUser,
+					tUser.ID.EQ(tUserLabels.UserID),
+				),
+		).
+		WHERE(jet.AND(
+			tUserLabels.Job.EQ(jet.String(userInfo.Job)),
+			tUser.Job.EQ(jet.String(userInfo.Job)),
+		)).
+		GROUP_BY(tJobLabels.ID)
+
+	dest := []*jobs.LabelCount{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+	}
+
+	return &GetColleagueLabelsStatsResponse{
+		Count: dest,
+	}, nil
+}

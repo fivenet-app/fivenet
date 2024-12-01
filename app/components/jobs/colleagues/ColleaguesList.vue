@@ -10,6 +10,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import ColleaguesLabelStatsModal from './ColleaguesLabelStatsModal.vue';
 import JobsLabelsModal from './JobsLabelsModal.vue';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
@@ -194,12 +195,15 @@ defineShortcuts({
             </UFormGroup>
 
             <UFormGroup label="&nbsp">
-                <UButton
-                    v-if="can('JobsService.ManageColleagueLabels').value"
-                    :label="$t('common.label', 2)"
-                    icon="i-mdi-tag"
-                    @click="modal.open(JobsLabelsModal, {})"
-                />
+                <UButtonGroup>
+                    <UButton
+                        v-if="can('JobsService.ManageColleagueLabels').value"
+                        :label="$t('common.label', 2)"
+                        icon="i-mdi-tag"
+                        @click="modal.open(JobsLabelsModal, {})"
+                    />
+                    <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
+                </UButtonGroup>
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>

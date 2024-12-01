@@ -19,15 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsService_ListColleagues_FullMethodName        = "/services.jobs.JobsService/ListColleagues"
-	JobsService_GetSelf_FullMethodName               = "/services.jobs.JobsService/GetSelf"
-	JobsService_GetColleague_FullMethodName          = "/services.jobs.JobsService/GetColleague"
-	JobsService_ListColleagueActivity_FullMethodName = "/services.jobs.JobsService/ListColleagueActivity"
-	JobsService_SetJobsUserProps_FullMethodName      = "/services.jobs.JobsService/SetJobsUserProps"
-	JobsService_GetColleagueLabels_FullMethodName    = "/services.jobs.JobsService/GetColleagueLabels"
-	JobsService_ManageColleagueLabels_FullMethodName = "/services.jobs.JobsService/ManageColleagueLabels"
-	JobsService_GetMOTD_FullMethodName               = "/services.jobs.JobsService/GetMOTD"
-	JobsService_SetMOTD_FullMethodName               = "/services.jobs.JobsService/SetMOTD"
+	JobsService_ListColleagues_FullMethodName          = "/services.jobs.JobsService/ListColleagues"
+	JobsService_GetSelf_FullMethodName                 = "/services.jobs.JobsService/GetSelf"
+	JobsService_GetColleague_FullMethodName            = "/services.jobs.JobsService/GetColleague"
+	JobsService_ListColleagueActivity_FullMethodName   = "/services.jobs.JobsService/ListColleagueActivity"
+	JobsService_SetJobsUserProps_FullMethodName        = "/services.jobs.JobsService/SetJobsUserProps"
+	JobsService_GetColleagueLabels_FullMethodName      = "/services.jobs.JobsService/GetColleagueLabels"
+	JobsService_ManageColleagueLabels_FullMethodName   = "/services.jobs.JobsService/ManageColleagueLabels"
+	JobsService_GetColleagueLabelsStats_FullMethodName = "/services.jobs.JobsService/GetColleagueLabelsStats"
+	JobsService_GetMOTD_FullMethodName                 = "/services.jobs.JobsService/GetMOTD"
+	JobsService_SetMOTD_FullMethodName                 = "/services.jobs.JobsService/SetMOTD"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -48,6 +49,8 @@ type JobsServiceClient interface {
 	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
 	// @perm
 	ManageColleagueLabels(ctx context.Context, in *ManageColleagueLabelsRequest, opts ...grpc.CallOption) (*ManageColleagueLabelsResponse, error)
+	// @perm: Name=GetColleague
+	GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
 	// @perm
@@ -125,6 +128,15 @@ func (c *jobsServiceClient) ManageColleagueLabels(ctx context.Context, in *Manag
 	return out, nil
 }
 
+func (c *jobsServiceClient) GetColleagueLabelsStats(ctx context.Context, in *GetColleagueLabelsStatsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsStatsResponse, error) {
+	out := new(GetColleagueLabelsStatsResponse)
+	err := c.cc.Invoke(ctx, JobsService_GetColleagueLabelsStats_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *jobsServiceClient) GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error) {
 	out := new(GetMOTDResponse)
 	err := c.cc.Invoke(ctx, JobsService_GetMOTD_FullMethodName, in, out, opts...)
@@ -161,6 +173,8 @@ type JobsServiceServer interface {
 	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
 	// @perm
 	ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error)
+	// @perm: Name=GetColleague
+	GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
 	// @perm
@@ -192,6 +206,9 @@ func (UnimplementedJobsServiceServer) GetColleagueLabels(context.Context, *GetCo
 }
 func (UnimplementedJobsServiceServer) ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ManageColleagueLabels not implemented")
+}
+func (UnimplementedJobsServiceServer) GetColleagueLabelsStats(context.Context, *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabelsStats not implemented")
 }
 func (UnimplementedJobsServiceServer) GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMOTD not implemented")
@@ -338,6 +355,24 @@ func _JobsService_ManageColleagueLabels_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_GetColleagueLabelsStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetColleagueLabelsStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).GetColleagueLabelsStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_GetColleagueLabelsStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).GetColleagueLabelsStats(ctx, req.(*GetColleagueLabelsStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _JobsService_GetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMOTDRequest)
 	if err := dec(in); err != nil {
@@ -408,6 +443,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ManageColleagueLabels",
 			Handler:    _JobsService_ManageColleagueLabels_Handler,
+		},
+		{
+			MethodName: "GetColleagueLabelsStats",
+			Handler:    _JobsService_GetColleagueLabelsStats_Handler,
 		},
 		{
 			MethodName: "GetMOTD",

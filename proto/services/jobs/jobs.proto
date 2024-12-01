@@ -81,6 +81,14 @@ message ManageColleagueLabelsResponse {
   repeated resources.jobs.Label labels = 1;
 }
 
+message GetColleagueLabelsStatsRequest {
+  repeated uint64 label_ids = 1 [jstype = JS_STRING];
+}
+
+message GetColleagueLabelsStatsResponse {
+  repeated resources.jobs.LabelCount count = 1;
+}
+
 // MOTD
 
 message GetMOTDRequest {}
@@ -114,6 +122,8 @@ service JobsService {
   rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse);
   // @perm
   rpc ManageColleagueLabels(ManageColleagueLabelsRequest) returns (ManageColleagueLabelsResponse);
+  // @perm: Name=GetColleague
+  rpc GetColleagueLabelsStats(GetColleagueLabelsStatsRequest) returns (GetColleagueLabelsStatsResponse);
 
   // @perm: Name=Any
   rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);

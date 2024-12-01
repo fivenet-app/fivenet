@@ -42,6 +42,19 @@ export interface Label {
      */
     color: string;
 }
+/**
+ * @generated from protobuf message resources.jobs.LabelCount
+ */
+export interface LabelCount {
+    /**
+     * @generated from protobuf field: resources.jobs.Label label = 1;
+     */
+    label?: Label;
+    /**
+     * @generated from protobuf field: int64 count = 2;
+     */
+    count: number;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Labels$Type extends MessageType<Labels> {
     constructor() {
@@ -159,3 +172,57 @@ class Label$Type extends MessageType<Label> {
  * @generated MessageType for protobuf message resources.jobs.Label
  */
 export const Label = new Label$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LabelCount$Type extends MessageType<LabelCount> {
+    constructor() {
+        super("resources.jobs.LabelCount", [
+            { no: 1, name: "label", kind: "message", T: () => Label },
+            { no: 2, name: "count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<LabelCount>): LabelCount {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.count = 0;
+        if (value !== undefined)
+            reflectionMergePartial<LabelCount>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LabelCount): LabelCount {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.jobs.Label label */ 1:
+                    message.label = Label.internalBinaryRead(reader, reader.uint32(), options, message.label);
+                    break;
+                case /* int64 count */ 2:
+                    message.count = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LabelCount, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.jobs.Label label = 1; */
+        if (message.label)
+            Label.internalBinaryWrite(message.label, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* int64 count = 2; */
+        if (message.count !== 0)
+            writer.tag(2, WireType.Varint).int64(message.count);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.LabelCount
+ */
+export const LabelCount = new LabelCount$Type();

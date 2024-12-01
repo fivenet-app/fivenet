@@ -14,9 +14,10 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: JobsService
-	"JobsService/GetColleagueLabels": "JobsService/SetJobsUserProps",
-	"JobsService/GetMOTD":            "Any",
-	"JobsService/GetSelf":            "JobsService/ListColleagues",
+	"JobsService/GetColleagueLabels":      "JobsService/SetJobsUserProps",
+	"JobsService/GetColleagueLabelsStats": "JobsService/GetColleague",
+	"JobsService/GetMOTD":                 "Any",
+	"JobsService/GetSelf":                 "JobsService/ListColleagues",
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",

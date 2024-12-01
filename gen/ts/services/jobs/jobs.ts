@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { LabelCount } from "../../resources/jobs/labels";
 import { Label } from "../../resources/jobs/labels";
 import { JobsUserProps } from "../../resources/jobs/colleagues";
 import { JobsUserActivity } from "../../resources/jobs/colleagues";
@@ -188,6 +189,24 @@ export interface ManageColleagueLabelsResponse {
      * @generated from protobuf field: repeated resources.jobs.Label labels = 1;
      */
     labels: Label[];
+}
+/**
+ * @generated from protobuf message services.jobs.GetColleagueLabelsStatsRequest
+ */
+export interface GetColleagueLabelsStatsRequest {
+    /**
+     * @generated from protobuf field: repeated uint64 label_ids = 1 [jstype = JS_STRING];
+     */
+    labelIds: string[];
+}
+/**
+ * @generated from protobuf message services.jobs.GetColleagueLabelsStatsResponse
+ */
+export interface GetColleagueLabelsStatsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.LabelCount count = 1;
+     */
+    count: LabelCount[];
 }
 // MOTD
 
@@ -931,6 +950,108 @@ class ManageColleagueLabelsResponse$Type extends MessageType<ManageColleagueLabe
  */
 export const ManageColleagueLabelsResponse = new ManageColleagueLabelsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class GetColleagueLabelsStatsRequest$Type extends MessageType<GetColleagueLabelsStatsRequest> {
+    constructor() {
+        super("services.jobs.GetColleagueLabelsStatsRequest", [
+            { no: 1, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetColleagueLabelsStatsRequest>): GetColleagueLabelsStatsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.labelIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetColleagueLabelsStatsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueLabelsStatsRequest): GetColleagueLabelsStatsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated uint64 label_ids = 1 [jstype = JS_STRING];*/ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.labelIds.push(reader.uint64().toString());
+                    else
+                        message.labelIds.push(reader.uint64().toString());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetColleagueLabelsStatsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated uint64 label_ids = 1 [jstype = JS_STRING]; */
+        if (message.labelIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.labelIds.length; i++)
+                writer.uint64(message.labelIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetColleagueLabelsStatsRequest
+ */
+export const GetColleagueLabelsStatsRequest = new GetColleagueLabelsStatsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetColleagueLabelsStatsResponse$Type extends MessageType<GetColleagueLabelsStatsResponse> {
+    constructor() {
+        super("services.jobs.GetColleagueLabelsStatsResponse", [
+            { no: 1, name: "count", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => LabelCount }
+        ]);
+    }
+    create(value?: PartialMessage<GetColleagueLabelsStatsResponse>): GetColleagueLabelsStatsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.count = [];
+        if (value !== undefined)
+            reflectionMergePartial<GetColleagueLabelsStatsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueLabelsStatsResponse): GetColleagueLabelsStatsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.jobs.LabelCount count */ 1:
+                    message.count.push(LabelCount.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetColleagueLabelsStatsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.jobs.LabelCount count = 1; */
+        for (let i = 0; i < message.count.length; i++)
+            LabelCount.internalBinaryWrite(message.count[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.GetColleagueLabelsStatsResponse
+ */
+export const GetColleagueLabelsStatsResponse = new GetColleagueLabelsStatsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetMOTDRequest$Type extends MessageType<GetMOTDRequest> {
     constructor() {
         super("services.jobs.GetMOTDRequest", []);
@@ -1107,6 +1228,7 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "SetJobsUserProps", options: {}, I: SetJobsUserPropsRequest, O: SetJobsUserPropsResponse },
     { name: "GetColleagueLabels", options: {}, I: GetColleagueLabelsRequest, O: GetColleagueLabelsResponse },
     { name: "ManageColleagueLabels", options: {}, I: ManageColleagueLabelsRequest, O: ManageColleagueLabelsResponse },
+    { name: "GetColleagueLabelsStats", options: {}, I: GetColleagueLabelsStatsRequest, O: GetColleagueLabelsStatsResponse },
     { name: "GetMOTD", options: {}, I: GetMOTDRequest, O: GetMOTDResponse },
     { name: "SetMOTD", options: {}, I: SetMOTDRequest, O: SetMOTDResponse }
 ]);
