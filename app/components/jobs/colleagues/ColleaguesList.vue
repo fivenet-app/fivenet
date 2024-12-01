@@ -8,6 +8,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { useSettingsStore } from '~/store/settings';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 import ColleaguesLabelStatsModal from './ColleaguesLabelStatsModal.vue';
@@ -23,7 +24,6 @@ const { attr, can, activeChar } = useAuth();
 const schema = z.object({
     name: z.string().max(50),
     absent: z.boolean(),
-    cards: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -31,8 +31,10 @@ type Schema = z.output<typeof schema>;
 const query = reactive<Schema>({
     name: '',
     absent: false,
-    cards: false,
 });
+
+const settingsStore = useSettingsStore();
+const { jobsService } = storeToRefs(settingsStore);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -186,7 +188,7 @@ defineShortcuts({
                 :ui="{ container: 'flex-1 flex' }"
             >
                 <div class="flex flex-1 items-center">
-                    <UToggle v-model="query.cards">
+                    <UToggle v-model="jobsService.cardView">
                         <span class="sr-only">
                             {{ $t('common.card_view') }}
                         </span>
@@ -211,7 +213,7 @@ defineShortcuts({
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
     <template v-else>
         <UTable
-            v-if="!query.cards"
+            v-if="!jobsService.cardView"
             v-model:sort="sort"
             :loading="loading"
             :columns="columns"

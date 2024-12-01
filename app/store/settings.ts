@@ -35,6 +35,9 @@ export interface SettingsState {
     };
     streamerMode: boolean;
     calculatorPosition: 'top' | 'middle' | 'bottom';
+    jobsService: {
+        cardView: boolean;
+    };
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -74,6 +77,9 @@ export const useSettingsStore = defineStore('settings', {
             },
             streamerMode: false,
             calculatorPosition: 'middle',
+            jobsService: {
+                cardView: false,
+            },
         }) as SettingsState,
     persist: {
         omit: ['updateAvailable'],

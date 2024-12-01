@@ -76,7 +76,7 @@ watch(labels, () => (state.value = labels.value?.labels ?? []));
 
                 <UFormGroup
                     v-if="state && can('CitizenStoreService.SetUserProps').value"
-                    name="citizenAttributes.list"
+                    name="list"
                     class="grid items-center gap-2"
                     :ui="{ container: '' }"
                 >

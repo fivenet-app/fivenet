@@ -185,7 +185,7 @@ onMounted(() => {
                     </template>
 
                     <template #empty>
-                        {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
                     </template>
                 </USelectMenu>
             </ClientOnly>
