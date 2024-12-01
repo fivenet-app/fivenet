@@ -15,7 +15,9 @@ import type {
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
+    CreateQualificationRequest,
     CreateQualificationResponse,
+    UpdateQualificationRequest,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessManager from '../partials/access/AccessManager.vue';
@@ -65,6 +67,8 @@ const schema = z.object({
     access: z.object({
         jobs: z.custom<QualificationJobAccess>().array().max(maxAccessEntries),
     }),
+    labelSyncEnabled: z.boolean(),
+    labelSyncFormat: z.string().max(128).optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -102,6 +106,8 @@ const state = reactive<Schema>({
             },
         ],
     },
+    labelSyncEnabled: false,
+    labelSyncFormat: '%abbr%: %name%',
 });
 const qualiRequirements = ref<QualificationRequirement[]>([]);
 
@@ -163,7 +169,7 @@ onMounted(async () => {
 });
 
 async function createQualification(values: Schema): Promise<CreateQualificationResponse> {
-    const req = {
+    const req: CreateQualificationRequest = {
         qualification: {
             id: '0',
             job: '',
@@ -182,6 +188,8 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             examSettings: values.examSettings,
             exam: values.exam,
             access: values.access,
+            labelSyncEnabled: values.labelSyncEnabled,
+            labelSyncFormat: values.labelSyncFormat,
         },
     };
 
@@ -202,7 +210,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
 }
 
 async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
-    const req = {
+    const req: UpdateQualificationRequest = {
         qualification: {
             id: props.qualificationId!,
             job: '',
@@ -221,6 +229,8 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             examSettings: values.examSettings,
             exam: values.exam,
             access: values.access,
+            labelSyncEnabled: values.labelSyncEnabled,
+            labelSyncFormat: values.labelSyncFormat,
         },
     };
 
@@ -464,7 +474,10 @@ const selectedTab = computed({
 
                             <div>
                                 <UAccordion
-                                    :items="[{ slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' }]"
+                                    :items="[
+                                        { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
+                                        { slot: 'label', label: $t('common.label', 1), icon: 'i-mdi-tag' },
+                                    ]"
                                 >
                                     <template #discord>
                                         <UContainer>
@@ -511,6 +524,47 @@ const selectedTab = computed({
                                                     :placeholder="
                                                         $t(
                                                             'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                        )
+                                                    "
+                                                    :disabled="!canDo.edit"
+                                                />
+                                            </UFormGroup>
+                                        </UContainer>
+                                    </template>
+
+                                    <template #label>
+                                        <UContainer>
+                                            <UFormGroup
+                                                name="labelSyncEnabled"
+                                                :label="$t('common.enabled')"
+                                                :ui="{ container: 'inline-flex gap-2' }"
+                                            >
+                                                <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
+                                                    <span class="sr-only">
+                                                        {{ $t('common.enabled') }}
+                                                    </span>
+                                                </UToggle>
+                                                <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                            </UFormGroup>
+
+                                            <UFormGroup
+                                                name="labelSyncFormat"
+                                                :label="
+                                                    $t('components.qualifications.qualification_editor.label_sync_format.label')
+                                                "
+                                                :description="
+                                                    $t(
+                                                        'components.qualifications.qualification_editor.label_sync_format.description',
+                                                    )
+                                                "
+                                            >
+                                                <UInput
+                                                    v-model="state.labelSyncFormat"
+                                                    name="labelSyncFormat"
+                                                    type="text"
+                                                    :placeholder="
+                                                        $t(
+                                                            'components.qualifications.qualification_editor.label_sync_format.label',
                                                         )
                                                     "
                                                     :disabled="!canDo.edit"

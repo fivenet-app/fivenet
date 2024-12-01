@@ -214,6 +214,8 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for LabelSyncEnabled
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -537,6 +539,21 @@ func (m *Qualification) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.LabelSyncFormat != nil {
+
+		if utf8.RuneCountInString(m.GetLabelSyncFormat()) > 128 {
+			err := QualificationValidationError{
+				field:  "LabelSyncFormat",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -14,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -22,7 +24,12 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var tQualiResults = table.FivenetQualificationsResults.AS("qualificationresult")
+var (
+	tQualiResults = table.FivenetQualificationsResults.AS("qualificationresult")
+
+	tJobLabels  = table.FivenetJobsLabels
+	tUserLabels = table.FivenetJobsLabelsUsers
+)
 
 func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error) {
 	if req.QualificationId != nil {
@@ -252,6 +259,14 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	tQualiResults := table.FivenetQualificationsResults
 	// There is currently no result with status successful
 	if req.Result.Id <= 0 && (result == nil || (result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
@@ -275,7 +290,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 				userInfo.Job,
 			)
 
-		res, err := stmt.ExecContext(ctx, s.db)
+		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -316,7 +331,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 				tQualiResults.DeletedAt.IS_NULL(),
 			))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
@@ -325,6 +340,22 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 	quali, err := s.getQualification(ctx, req.Result.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Result.QualificationId)), userInfo, false)
 	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if quali.LabelSyncEnabled {
+		if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
+			defaultFormat := QualificationsLabelDefaultFormat
+			quali.LabelSyncFormat = &defaultFormat
+		}
+
+		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, req.Result); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -516,4 +547,93 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteQualificationResultResponse{}, nil
+}
+
+func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, quali *qualifications.Qualification, result *qualifications.QualificationResult) error {
+	labelName := strings.ReplaceAll(*quali.LabelSyncFormat, "%abbr%", quali.Abbreviation)
+	labelName = strings.ReplaceAll(labelName, "%name%", quali.Title)
+
+	// Create label if it doesn't exist yet
+	createStmt := tJobLabels.
+		INSERT(
+			tJobLabels.Job,
+			tJobLabels.Name,
+		).
+		VALUES(
+			userInfo.Job,
+			labelName,
+		)
+
+	labelId := uint64(0)
+	res, err := createStmt.ExecContext(ctx, tx)
+	if err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return err
+		}
+
+		// Retrieve existing label
+		tJobLabels := tJobLabels.AS("label")
+		stmt := tJobLabels.
+			SELECT(
+				tJobLabels.ID.AS("id"),
+			).
+			FROM(tJobLabels).
+			WHERE(jet.AND(
+				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
+				tJobLabels.Name.EQ(jet.String(labelName)),
+			)).
+			LIMIT(1)
+
+		dest := struct {
+			ID uint64 `alias:"id"`
+		}{}
+		if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+			return err
+		}
+
+		labelId = dest.ID
+	} else {
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return err
+		}
+
+		labelId = uint64(lastId)
+	}
+
+	// Ensure that the colleague has the label set if successful result or removed
+	if result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+		stmt := tUserLabels.
+			INSERT(
+				tUserLabels.UserID,
+				tUserLabels.Job,
+				tUserLabels.LabelID,
+			).
+			VALUES(
+				result.UserId,
+				userInfo.Job,
+				labelId,
+			)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return err
+			}
+		}
+	} else {
+		stmt := tUserLabels.
+			DELETE().
+			WHERE(jet.AND(
+				tUserLabels.UserID.EQ(jet.Int32(result.UserId)),
+				tUserLabels.Job.EQ(jet.String(userInfo.Job)),
+				tUserLabels.LabelID.EQ(jet.Uint64(labelId)),
+			)).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

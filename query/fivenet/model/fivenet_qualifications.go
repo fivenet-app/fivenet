@@ -29,4 +29,6 @@ type FivenetQualifications struct {
 	DiscordSettings    *string    `json:"discord_settings"`
 	ExamMode           *int16     `json:"exam_mode"`
 	ExamSettings       *string    `json:"exam_settings"`
+	LabelSyncEnabled   *bool      `json:"label_sync_enabled"`
+	LabelSyncFormat    *string    `json:"label_sync_format"`
 }

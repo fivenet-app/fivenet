@@ -4241,6 +4241,8 @@ Dummy - DO NOT USE!
 | exam | [ExamQuestions](#resources-qualifications-ExamQuestions) | optional |  |
 | result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
 | request | [QualificationRequest](#resources-qualifications-QualificationRequest) | optional |  |
+| label_sync_enabled | [bool](#bool) |  |  |
+| label_sync_format | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 

@@ -34,6 +34,8 @@ type fivenetQualificationsTable struct {
 	DiscordSettings    mysql.ColumnString
 	ExamMode           mysql.ColumnInteger
 	ExamSettings       mysql.ColumnString
+	LabelSyncEnabled   mysql.ColumnBool
+	LabelSyncFormat    mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -91,8 +93,10 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 		DiscordSettingsColumn    = mysql.StringColumn("discord_settings")
 		ExamModeColumn           = mysql.IntegerColumn("exam_mode")
 		ExamSettingsColumn       = mysql.StringColumn("exam_settings")
-		allColumns               = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
-		mutableColumns           = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
+		LabelSyncEnabledColumn   = mysql.BoolColumn("label_sync_enabled")
+		LabelSyncFormatColumn    = mysql.StringColumn("label_sync_format")
+		allColumns               = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn, LabelSyncEnabledColumn, LabelSyncFormatColumn}
+		mutableColumns           = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn, LabelSyncEnabledColumn, LabelSyncFormatColumn}
 	)
 
 	return fivenetQualificationsTable{
@@ -116,6 +120,8 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 		DiscordSettings:    DiscordSettingsColumn,
 		ExamMode:           ExamModeColumn,
 		ExamSettings:       ExamSettingsColumn,
+		LabelSyncEnabled:   LabelSyncEnabledColumn,
+		LabelSyncFormat:    LabelSyncFormatColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

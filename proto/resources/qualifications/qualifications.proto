@@ -45,6 +45,9 @@ message Qualification {
   optional resources.qualifications.ExamQuestions exam = 21;
   optional QualificationResult result = 22;
   optional QualificationRequest request = 23;
+  bool label_sync_enabled = 24;
+  // @sanitize: method=StripTags
+  optional string label_sync_format = 25 [(validate.rules).string.max_len = 128];
 }
 
 message QualificationShort {

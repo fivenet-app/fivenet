@@ -131,7 +131,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 		}
 
 		entry.RoleName = strings.ReplaceAll(roleFormat, "%abbr%", entry.Abbreviation)
-		entry.RoleName = strings.ReplaceAll(roleFormat, "%name%", roleName)
+		entry.RoleName = strings.ReplaceAll(entry.RoleName, "%name%", roleName)
 
 		roles = append(roles, &types.Role{
 			Name:   entry.RoleName,

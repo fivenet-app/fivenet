@@ -17,6 +17,10 @@ func (m *Qualification) Sanitize() error {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
 	}
 
+	if m.LabelSyncFormat != nil {
+		*m.LabelSyncFormat = htmlsanitizer.StripTags(*m.LabelSyncFormat)
+	}
+
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 
 	return nil

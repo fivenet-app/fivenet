@@ -1002,7 +1002,13 @@
             "exam_view": {
                 "times_up": "Time's up! Your exam will be graded soon."
             },
-            "correct_question": "Correct"
+            "correct_question": "Correct",
+            "qualification_editor": {
+                "label_sync_format": {
+                    "label": "Label Format",
+                    "description": "Use %abbr% for the abbreviation and %name% for the role name of the qualification. Should the name be longer than 128 characters, it will be cut."
+                }
+            }
         },
         "language_switcher": {
             "title": "Switch language"

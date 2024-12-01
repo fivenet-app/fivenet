@@ -33,7 +33,11 @@ import (
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-const QualificationsPageSize = 10
+const (
+	QualificationsPageSize = 10
+
+	QualificationsLabelDefaultFormat = "%abbr%: %name%"
+)
 
 var tQuali = table.FivenetQualifications.AS("qualification")
 
@@ -464,6 +468,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 			tQuali.DiscordSettings,
 			tQuali.ExamMode,
 			tQuali.ExamSettings,
+			tQuali.LabelSyncEnabled,
+			tQuali.LabelSyncFormat,
 		).
 		SET(
 			req.Qualification.Weight,
@@ -476,6 +482,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 			req.Qualification.DiscordSettings,
 			req.Qualification.ExamMode,
 			req.Qualification.ExamSettings,
+			req.Qualification.LabelSyncEnabled,
+			req.Qualification.LabelSyncFormat,
 		).
 		WHERE(
 			tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),

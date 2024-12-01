@@ -119,6 +119,16 @@ export interface Qualification {
      * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 23;
      */
     request?: QualificationRequest;
+    /**
+     * @generated from protobuf field: bool label_sync_enabled = 24;
+     */
+    labelSyncEnabled: boolean;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string label_sync_format = 25;
+     */
+    labelSyncFormat?: string;
 }
 /**
  * @generated from protobuf message resources.qualifications.QualificationShort
@@ -467,7 +477,9 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 20, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
             { no: 21, name: "exam", kind: "message", T: () => ExamQuestions },
             { no: 22, name: "result", kind: "message", T: () => QualificationResult },
-            { no: 23, name: "request", kind: "message", T: () => QualificationRequest }
+            { no: 23, name: "request", kind: "message", T: () => QualificationRequest },
+            { no: 24, name: "label_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 25, name: "label_sync_format", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -483,6 +495,7 @@ class Qualification$Type extends MessageType<Qualification> {
         message.requirements = [];
         message.discordSyncEnabled = false;
         message.examMode = 0;
+        message.labelSyncEnabled = false;
         if (value !== undefined)
             reflectionMergePartial<Qualification>(this, message, value);
         return message;
@@ -560,6 +573,12 @@ class Qualification$Type extends MessageType<Qualification> {
                     break;
                 case /* optional resources.qualifications.QualificationRequest request */ 23:
                     message.request = QualificationRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
+                    break;
+                case /* bool label_sync_enabled */ 24:
+                    message.labelSyncEnabled = reader.bool();
+                    break;
+                case /* optional string label_sync_format */ 25:
+                    message.labelSyncFormat = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -642,6 +661,12 @@ class Qualification$Type extends MessageType<Qualification> {
         /* optional resources.qualifications.QualificationRequest request = 23; */
         if (message.request)
             QualificationRequest.internalBinaryWrite(message.request, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
+        /* bool label_sync_enabled = 24; */
+        if (message.labelSyncEnabled !== false)
+            writer.tag(24, WireType.Varint).bool(message.labelSyncEnabled);
+        /* optional string label_sync_format = 25; */
+        if (message.labelSyncFormat !== undefined)
+            writer.tag(25, WireType.LengthDelimited).string(message.labelSyncFormat);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
