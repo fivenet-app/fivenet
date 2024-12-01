@@ -3,7 +3,7 @@ syntax = "proto3";
 package resources.jobs;
 
 import "resources/filestore/file.proto";
-import "resources/qualifications/qualifications.proto";
+import "resources/jobs/labels.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -30,7 +30,6 @@ message Colleague {
   JobsUserProps props = 18; // @gotags: alias:"fivenet_jobs_user_props"
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
-  repeated resources.qualifications.QualificationResult qualification_results = 20;
 }
 
 message JobsUserProps {
@@ -40,6 +39,7 @@ message JobsUserProps {
   optional resources.timestamp.Timestamp absence_end = 4;
   // @sanitize: method=StripTags
   optional string note = 5;
+  optional Labels labels = 6;
 }
 
 enum JobsUserActivityType {
@@ -50,6 +50,7 @@ enum JobsUserActivityType {
   JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
   JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
   JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
+  JOBS_USER_ACTIVITY_TYPE_LABELS = 7;
 }
 
 message JobsUserActivity {
@@ -70,6 +71,7 @@ message JobsUserActivityData {
   oneof data {
     ColleagueAbsenceDate absence_date = 1;
     ColleagueGradeChange grade_change = 2;
+    ColleagueLabelsChange labels_change = 3;
   }
 }
 
@@ -81,4 +83,9 @@ message ColleagueAbsenceDate {
 message ColleagueGradeChange {
   int32 grade = 1;
   string grade_label = 2;
+}
+
+message ColleagueLabelsChange {
+  repeated Label added = 1;
+  repeated Label removed = 2;
 }

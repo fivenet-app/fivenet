@@ -50,6 +50,31 @@ withDefaults(
                         <template v-else-if="activity.data?.data.oneofKind === 'gradeChange'">
                             {{ activity.data?.data.gradeChange.gradeLabel }} ({{ activity.data?.data.gradeChange.grade }})
                         </template>
+                        <template v-else-if="activity.data?.data.oneofKind === 'labelsChange'">
+                            <div class="inline-flex gap-1">
+                                <UBadge
+                                    v-for="label in activity.data.data.labelsChange?.removed"
+                                    :key="label.name"
+                                    :style="{ backgroundColor: label.color }"
+                                    class="justify-between gap-2 line-through"
+                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    size="xs"
+                                >
+                                    {{ label.name }}
+                                </UBadge>
+
+                                <UBadge
+                                    v-for="label in activity.data.data.labelsChange?.added"
+                                    :key="label.name"
+                                    :style="{ backgroundColor: label.color }"
+                                    class="justify-between gap-2"
+                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                    size="xs"
+                                >
+                                    {{ label.name }}
+                                </UBadge>
+                            </div>
+                        </template>
                     </template>
                 </h3>
                 <p class="text-sm text-gray-400">

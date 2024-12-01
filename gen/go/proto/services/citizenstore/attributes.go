@@ -21,6 +21,11 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+var (
+	tJobCitizenAttributes  = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
+	tUserCitizenAttributes = table.FivenetUserCitizenAttributes
+)
+
 func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

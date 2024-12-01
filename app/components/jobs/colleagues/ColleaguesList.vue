@@ -10,6 +10,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import JobsLabelsModal from './JobsLabelsModal.vue';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
 const { t } = useI18n();
@@ -191,6 +192,15 @@ defineShortcuts({
                     </UToggle>
                 </div>
             </UFormGroup>
+
+            <UFormGroup label="&nbsp">
+                <UButton
+                    v-if="can('JobsService.ManageColleagueLabels').value"
+                    :label="$t('common.label', 2)"
+                    icon="i-mdi-tag"
+                    @click="modal.open(JobsLabelsModal, {})"
+                />
+            </UFormGroup>
         </UForm>
     </UDashboardToolbar>
 
@@ -339,6 +349,31 @@ defineShortcuts({
 
                             <EmailBlock :email="colleague.email" />
 
+                            <div
+                                v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
+                                class="flex flex-row flex-wrap gap-1"
+                            >
+                                <UIcon name="i-mdi-tag" class="h-5 w-5" />
+
+                                <span v-if="!colleague.props?.labels?.list.length">
+                                    {{ $t('common.none', [$t('common.label', 2)]) }}
+                                </span>
+                                <div v-else class="flex max-w-80 flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="label in colleague.props?.labels?.list"
+                                        :key="label.name"
+                                        :style="{ backgroundColor: label.color }"
+                                        class="justify-between gap-2"
+                                        :class="
+                                            isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
+                                        "
+                                        size="sm"
+                                    >
+                                        {{ label.name }}
+                                    </UBadge>
+                                </div>
+                            </div>
+
                             <span
                                 v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                                 class="inline-flex items-center gap-1"
@@ -349,10 +384,6 @@ defineShortcuts({
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
                             </span>
                             <span v-else class="h-7"></span>
-
-                            <div>
-                                {{ colleague.results }}
-                            </div>
                         </div>
                     </template>
 

@@ -27,6 +27,7 @@
 // source: resources/internet/search.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
+// source: resources/jobs/labels.proto
 // source: resources/jobs/timeclock.proto
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
@@ -134,6 +135,7 @@ export type Perms =
 	| 'JobsService.GetColleague'
 	| 'JobsService.ListColleagueActivity'
 	| 'JobsService.ListColleagues'
+	| 'JobsService.ManageColleagueLabels'
 	| 'JobsService.SetJobsUserProps'
 	| 'JobsService.SetMOTD'
 	| 'JobsTimeclockService.ListInactiveEmployees'

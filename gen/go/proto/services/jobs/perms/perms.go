@@ -25,6 +25,7 @@ const (
 	JobsServiceListColleagueActivityPerm                perms.Name = "ListColleagueActivity"
 	JobsServiceListColleagueActivityTypesPermField      perms.Key  = "Types"
 	JobsServiceListColleaguesPerm                       perms.Name = "ListColleagues"
+	JobsServiceManageColleagueLabelsPerm                perms.Name = "ManageColleagueLabels"
 	JobsServiceSetJobsUserPropsPerm                     perms.Name = "SetJobsUserProps"
 	JobsServiceSetJobsUserPropsAccessPermField          perms.Key  = "Access"
 	JobsServiceSetJobsUserPropsTypesPermField           perms.Key  = "Types"

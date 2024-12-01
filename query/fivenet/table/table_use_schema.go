@@ -48,6 +48,8 @@ func UseSchema(schema string) {
 	FivenetJobPermissions = FivenetJobPermissions.FromSchema(schema)
 	FivenetJobProps = FivenetJobProps.FromSchema(schema)
 	FivenetJobsConduct = FivenetJobsConduct.FromSchema(schema)
+	FivenetJobsLabels = FivenetJobsLabels.FromSchema(schema)
+	FivenetJobsLabelsUsers = FivenetJobsLabelsUsers.FromSchema(schema)
 	FivenetJobsTimeclock = FivenetJobsTimeclock.FromSchema(schema)
 	FivenetJobsUserActivity = FivenetJobsUserActivity.FromSchema(schema)
 	FivenetJobsUserProps = FivenetJobsUserProps.FromSchema(schema)

@@ -34,8 +34,7 @@ watch(chars, async () => {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (charId: number) => {
     canSubmit.value = false;
-    // TODO remove after debugging with user
-    console.info('Choosen character id', charId);
+
     await chooseCharacter(charId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>

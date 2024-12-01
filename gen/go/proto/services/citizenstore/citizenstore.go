@@ -45,9 +45,6 @@ var (
 
 	tUserProps    = table.FivenetUserProps
 	tUserActivity = table.FivenetUserActivity
-
-	tJobCitizenAttributes  = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
-	tUserCitizenAttributes = table.FivenetUserCitizenAttributes
 )
 
 var ZeroTrafficInfractionPoints uint32 = 0

@@ -163,11 +163,16 @@
     - [Colleague](#resources-jobs-Colleague)
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
     - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
+    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
     - [JobsUserActivity](#resources-jobs-JobsUserActivity)
     - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
     - [JobsUserProps](#resources-jobs-JobsUserProps)
   
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
+  
+- [resources/jobs/labels.proto](#resources_jobs_labels-proto)
+    - [Label](#resources-jobs-Label)
+    - [Labels](#resources-jobs-Labels)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -601,6 +606,8 @@
     - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
   
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
+    - [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest)
+    - [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
     - [GetMOTDRequest](#services-jobs-GetMOTDRequest)
@@ -611,6 +618,8 @@
     - [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse)
     - [ListColleaguesRequest](#services-jobs-ListColleaguesRequest)
     - [ListColleaguesResponse](#services-jobs-ListColleaguesResponse)
+    - [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest)
+    - [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse)
     - [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest)
     - [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse)
     - [SetMOTDRequest](#services-jobs-SetMOTDRequest)
@@ -3054,7 +3063,6 @@ Dummy - DO NOT USE!
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"fivenet_jobs_user_props" |
 | email | [string](#string) | optional | @sanitize: method=StripTags |
-| qualification_results | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) | repeated |  |
 
 
 
@@ -3087,6 +3095,22 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | grade | [int32](#int32) |  |  |
 | grade_label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueLabelsChange"></a>
+
+### ColleagueLabelsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [Label](#resources-jobs-Label) | repeated |  |
+| removed | [Label](#resources-jobs-Label) | repeated |  |
 
 
 
@@ -3127,6 +3151,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | absence_date | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
 | grade_change | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
+| labels_change | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
 
 
 
@@ -3146,6 +3171,7 @@ Dummy - DO NOT USE!
 | absence_begin | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | note | [string](#string) | optional | @sanitize: method=StripTags |
+| labels | [Labels](#resources-jobs-Labels) | optional |  |
 
 
 
@@ -3168,7 +3194,57 @@ Dummy - DO NOT USE!
 | JOBS_USER_ACTIVITY_TYPE_DEMOTED | 4 |  |
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 | JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
+| JOBS_USER_ACTIVITY_TYPE_LABELS | 7 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_labels-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/labels.proto
+
+
+
+<a name="resources-jobs-Label"></a>
+
+### Label
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-jobs-Labels"></a>
+
+### Labels
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -9308,6 +9384,31 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
+<a name="services-jobs-GetColleagueLabelsRequest"></a>
+
+### GetColleagueLabelsRequest
+
+
+
+
+
+
+
+<a name="services-jobs-GetColleagueLabelsResponse"></a>
+
+### GetColleagueLabelsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| labels | [resources.jobs.Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
 <a name="services-jobs-GetColleagueRequest"></a>
 
 ### GetColleagueRequest
@@ -9458,6 +9559,36 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
+<a name="services-jobs-ManageColleagueLabelsRequest"></a>
+
+### ManageColleagueLabelsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| labels | [resources.jobs.Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ManageColleagueLabelsResponse"></a>
+
+### ManageColleagueLabelsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| labels | [resources.jobs.Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
 <a name="services-jobs-SetJobsUserPropsRequest"></a>
 
 ### SetJobsUserPropsRequest
@@ -9534,9 +9665,11 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | ----------- | ------------ | ------------- | ------------|
 | ListColleagues | [ListColleaguesRequest](#services-jobs-ListColleaguesRequest) | [ListColleaguesResponse](#services-jobs-ListColleaguesResponse) | @perm |
 | GetSelf | [GetSelfRequest](#services-jobs-GetSelfRequest) | [GetSelfResponse](#services-jobs-GetSelfResponse) | @perm: Name=ListColleagues |
-| GetColleague | [GetColleagueRequest](#services-jobs-GetColleagueRequest) | [GetColleagueResponse](#services-jobs-GetColleagueResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"} |
-| ListColleagueActivity | [ListColleagueActivityRequest](#services-jobs-ListColleagueActivityRequest) | [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse) | @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"} |
-| SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"} |
+| GetColleague | [GetColleagueRequest](#services-jobs-GetColleagueRequest) | [GetColleagueResponse](#services-jobs-GetColleagueResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"} |
+| ListColleagueActivity | [ListColleagueActivityRequest](#services-jobs-ListColleagueActivityRequest) | [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse) | @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"} |
+| SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"} |
+| GetColleagueLabels | [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse) | @perm: Name=SetJobsUserProps |
+| ManageColleagueLabels | [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest) | [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse) | @perm |
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
 

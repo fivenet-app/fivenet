@@ -32,7 +32,7 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 const smallerBreakpoint = breakpoints.smaller('sm');
 
 const colorMode = useColorMode();
-const theme = computed(() => (colorMode.value === 'dark' ? 'dark' : 'white'));
+const theme = computed(() => (colorMode.value === 'dark' ? 'black' : 'white'));
 
 const open = ref(false);
 </script>

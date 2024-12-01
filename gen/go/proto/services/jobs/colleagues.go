@@ -24,6 +24,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -140,6 +141,10 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
+			tJobLabels.ID,
+			tJobLabels.Job,
+			tJobLabels.Name,
+			tJobLabels.Color,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
@@ -150,10 +155,18 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 				LEFT_JOIN(tJobsUserProps,
 					tJobsUserProps.UserID.EQ(tUser.ID).
 						AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
+				).
+				LEFT_JOIN(tUserLabels,
+					tUserLabels.UserID.EQ(tUser.ID).
+						AND(tUserLabels.Job.EQ(jet.String(userInfo.Job))),
+				).
+				LEFT_JOIN(tJobLabels,
+					tJobLabels.ID.EQ(tUserLabels.AttributeID),
 				),
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
+		GROUP_BY(tUser.ID).
 		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
@@ -162,12 +175,6 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
-
-	colleagueIds := []int32{}
-	for _, colleague := range resp.Colleagues {
-		colleagueIds = append(colleagueIds, colleague.UserId)
-	}
-	// TODO retrieve qualification results for each colleague
 
 	resp.Pagination.Update(len(resp.Colleagues))
 
@@ -178,7 +185,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	return resp, nil
 }
 
-func (s *Server) getColleague(ctx context.Context, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
+func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
 	tUser := tUser.AS("colleague")
 	columns := []jet.Projection{
 		tUser.Firstname,
@@ -227,6 +234,19 @@ func (s *Server) getColleague(ctx context.Context, job string, userId int32, wit
 		return nil, nil
 	}
 
+	if dest.Props == nil {
+		dest.Props = &jobs.JobsUserProps{
+			UserId: dest.UserId,
+			Job:    userInfo.Job,
+		}
+	}
+
+	labels, err := s.getUserLabels(ctx, userInfo, userId)
+	if err != nil {
+		return nil, err
+	}
+	dest.Props.Labels = labels
+
 	s.enricher.EnrichJobInfo(dest)
 
 	return dest, nil
@@ -256,7 +276,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		colleagueAccess = accessAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId, nil)
+	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -300,7 +320,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		}
 	}
 
-	colleague, err := s.getColleague(ctx, userInfo.Job, targetUser.UserId, withColumns)
+	colleague, err := s.getColleague(ctx, userInfo, userInfo.Job, targetUser.UserId, withColumns)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -336,7 +356,7 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 		}
 	}
 
-	colleague, err := s.getColleague(ctx, userInfo.Job, userInfo.UserId, withColumns)
+	colleague, err := s.getColleague(ctx, userInfo, userInfo.Job, userInfo.UserId, withColumns)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -346,7 +366,7 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 	}, nil
 }
 
-func (s *Server) getJobsUserProps(ctx context.Context, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
+func (s *Server) getJobsUserProps(ctx context.Context, userInfo *userinfo.UserInfo, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
 	tJobsUserProps := table.FivenetJobsUserProps.AS("jobsuserprops")
 	columns := []jet.Projection{
 		tJobsUserProps.Job,
@@ -382,6 +402,12 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32, job string,
 		}
 	}
 
+	labels, err := s.getUserLabels(ctx, userInfo, userId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	dest.Labels = labels
+
 	return dest, nil
 }
 
@@ -413,7 +439,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		colleagueAccess = accessAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId, nil)
+	targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, req.Props.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -439,10 +465,10 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		types = typesAttr.([]string)
 	}
 	if userInfo.SuperUser {
-		types = []string{"AbsenceDate", "Note"}
+		types = []string{"AbsenceDate", "Note", "Labels"}
 	}
 
-	props, err := s.getJobsUserProps(ctx, targetUser.UserId, targetUser.Job, types)
+	props, err := s.getJobsUserProps(ctx, userInfo, targetUser.UserId, targetUser.Job, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -476,6 +502,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
 		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 	}
+
 	// Generate the update sets
 	if req.Props.Note != nil {
 		if !slices.Contains(types, "Note") && !userInfo.SuperUser {
@@ -485,6 +512,11 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*req.Props.Note)))
 	} else {
 		req.Props.Note = props.Note
+	}
+
+	// Check if user is allowed to update labels
+	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) && !slices.Contains(types, "Labels") && !userInfo.SuperUser {
+		req.Props.Labels = props.Labels
 	}
 
 	// Begin transaction
@@ -518,6 +550,38 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	if !slices.Contains(types, "Labels") && !userInfo.SuperUser {
+		return nil, errorsjobs.ErrPropsAbsenceDenied
+	}
+	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) {
+		added, removed := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
+			func(in *jobs.Label) string {
+				return in.Name
+			})
+
+		if err := s.updateLabels(ctx, tx, req.Props.UserId, targetUser.Job, added, removed); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+
+		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
+			Job:          userInfo.Job,
+			SourceUserId: userInfo.UserId,
+			TargetUserId: req.Props.UserId,
+			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_LABELS,
+			Reason:       req.Reason,
+			Data: &jobs.JobsUserActivityData{
+				Data: &jobs.JobsUserActivityData_LabelsChange{
+					LabelsChange: &jobs.ColleagueLabelsChange{
+						Added:   added,
+						Removed: removed,
+					},
+				},
+			},
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
+
 	// Compare absence dates if any were set
 	if req.Props.AbsenceBegin != nil && (props.AbsenceBegin == nil || req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0) ||
 		req.Props.AbsenceEnd != nil && (props.AbsenceEnd == nil || req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0) {
@@ -539,9 +603,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
-	if ((req.Props.Note == nil && props.Note == nil) ||
-		(req.Props.Note == nil && props.Note != nil) || (req.Props.Note != nil && props.Note == nil)) ||
-		*req.Props.Note != *props.Note {
+	if (req.Props.Note == nil && props.Note != nil) || (req.Props.Note != nil && props.Note == nil) {
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
@@ -560,7 +622,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	props, err = s.getJobsUserProps(ctx, targetUser.UserId, targetUser.Job, types)
+	props, err = s.getJobsUserProps(ctx, userInfo, targetUser.UserId, targetUser.Job, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -673,7 +735,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	} else {
 		userId := req.UserIds[0]
 
-		targetUser, err := s.getColleague(ctx, userInfo.Job, userId, nil)
+		targetUser, err := s.getColleague(ctx, userInfo, userInfo.Job, userId, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -705,7 +767,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		if !userInfo.SuperUser {
 			return resp, nil
 		} else {
-			types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE")
+			types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS")
 		}
 	}
 

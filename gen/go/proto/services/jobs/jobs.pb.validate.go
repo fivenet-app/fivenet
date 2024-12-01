@@ -1516,6 +1516,518 @@ var _ interface {
 	ErrorName() string
 } = SetJobsUserPropsResponseValidationError{}
 
+// Validate checks the field values on GetColleagueLabelsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetColleagueLabelsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetColleagueLabelsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetColleagueLabelsRequestMultiError, or nil if none found.
+func (m *GetColleagueLabelsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetColleagueLabelsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetColleagueLabelsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetColleagueLabelsRequestMultiError is an error wrapping multiple validation
+// errors returned by GetColleagueLabelsRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetColleagueLabelsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetColleagueLabelsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetColleagueLabelsRequestMultiError) AllErrors() []error { return m }
+
+// GetColleagueLabelsRequestValidationError is the validation error returned by
+// GetColleagueLabelsRequest.Validate if the designated constraints aren't met.
+type GetColleagueLabelsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetColleagueLabelsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetColleagueLabelsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetColleagueLabelsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetColleagueLabelsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetColleagueLabelsRequestValidationError) ErrorName() string {
+	return "GetColleagueLabelsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetColleagueLabelsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetColleagueLabelsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetColleagueLabelsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetColleagueLabelsRequestValidationError{}
+
+// Validate checks the field values on GetColleagueLabelsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetColleagueLabelsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetColleagueLabelsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetColleagueLabelsResponseMultiError, or nil if none found.
+func (m *GetColleagueLabelsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetColleagueLabelsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetLabels() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetColleagueLabelsResponseValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetColleagueLabelsResponseValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetColleagueLabelsResponseValidationError{
+					field:  fmt.Sprintf("Labels[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetColleagueLabelsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetColleagueLabelsResponseMultiError is an error wrapping multiple
+// validation errors returned by GetColleagueLabelsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetColleagueLabelsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetColleagueLabelsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetColleagueLabelsResponseMultiError) AllErrors() []error { return m }
+
+// GetColleagueLabelsResponseValidationError is the validation error returned
+// by GetColleagueLabelsResponse.Validate if the designated constraints aren't met.
+type GetColleagueLabelsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetColleagueLabelsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetColleagueLabelsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetColleagueLabelsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetColleagueLabelsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetColleagueLabelsResponseValidationError) ErrorName() string {
+	return "GetColleagueLabelsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetColleagueLabelsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetColleagueLabelsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetColleagueLabelsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetColleagueLabelsResponseValidationError{}
+
+// Validate checks the field values on ManageColleagueLabelsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ManageColleagueLabelsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ManageColleagueLabelsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ManageColleagueLabelsRequestMultiError, or nil if none found.
+func (m *ManageColleagueLabelsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ManageColleagueLabelsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetLabels() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ManageColleagueLabelsRequestValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ManageColleagueLabelsRequestValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ManageColleagueLabelsRequestValidationError{
+					field:  fmt.Sprintf("Labels[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ManageColleagueLabelsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ManageColleagueLabelsRequestMultiError is an error wrapping multiple
+// validation errors returned by ManageColleagueLabelsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ManageColleagueLabelsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ManageColleagueLabelsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ManageColleagueLabelsRequestMultiError) AllErrors() []error { return m }
+
+// ManageColleagueLabelsRequestValidationError is the validation error returned
+// by ManageColleagueLabelsRequest.Validate if the designated constraints
+// aren't met.
+type ManageColleagueLabelsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ManageColleagueLabelsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ManageColleagueLabelsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ManageColleagueLabelsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ManageColleagueLabelsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ManageColleagueLabelsRequestValidationError) ErrorName() string {
+	return "ManageColleagueLabelsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ManageColleagueLabelsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sManageColleagueLabelsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ManageColleagueLabelsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ManageColleagueLabelsRequestValidationError{}
+
+// Validate checks the field values on ManageColleagueLabelsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ManageColleagueLabelsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ManageColleagueLabelsResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ManageColleagueLabelsResponseMultiError, or nil if none found.
+func (m *ManageColleagueLabelsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ManageColleagueLabelsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetLabels() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ManageColleagueLabelsResponseValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ManageColleagueLabelsResponseValidationError{
+						field:  fmt.Sprintf("Labels[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ManageColleagueLabelsResponseValidationError{
+					field:  fmt.Sprintf("Labels[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ManageColleagueLabelsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ManageColleagueLabelsResponseMultiError is an error wrapping multiple
+// validation errors returned by ManageColleagueLabelsResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ManageColleagueLabelsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ManageColleagueLabelsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ManageColleagueLabelsResponseMultiError) AllErrors() []error { return m }
+
+// ManageColleagueLabelsResponseValidationError is the validation error
+// returned by ManageColleagueLabelsResponse.Validate if the designated
+// constraints aren't met.
+type ManageColleagueLabelsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ManageColleagueLabelsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ManageColleagueLabelsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ManageColleagueLabelsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ManageColleagueLabelsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ManageColleagueLabelsResponseValidationError) ErrorName() string {
+	return "ManageColleagueLabelsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ManageColleagueLabelsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sManageColleagueLabelsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ManageColleagueLabelsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ManageColleagueLabelsResponseValidationError{}
+
 // Validate checks the field values on GetMOTDRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

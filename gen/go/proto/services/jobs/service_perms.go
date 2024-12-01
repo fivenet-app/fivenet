@@ -14,8 +14,9 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: JobsService
-	"JobsService/GetMOTD": "Any",
-	"JobsService/GetSelf": "JobsService/ListColleagues",
+	"JobsService/GetColleagueLabels": "JobsService/SetJobsUserProps",
+	"JobsService/GetMOTD":            "Any",
+	"JobsService/GetSelf":            "JobsService/ListColleagues",
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
@@ -69,7 +70,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceGetColleagueTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Note"},
+					ValidValues: []string{"Note", "Labels"},
 				},
 			},
 		},
@@ -80,13 +81,18 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"},
+					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"},
 				},
 			},
 		},
 		{
 			Category: permkeys.JobsServicePerm,
 			Name:     permkeys.JobsServiceListColleaguesPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceManageColleagueLabelsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -101,7 +107,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceSetJobsUserPropsTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"AbsenceDate", "Note"},
+					ValidValues: []string{"AbsenceDate", "Note", "Labels"},
 				},
 			},
 		},

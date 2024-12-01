@@ -308,7 +308,7 @@ onBeforeMount(async () => {
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                     class="my-auto size-4 rounded border-base-300"
-                                    @change="toggleJobGradeValue(job, ($event.target as any).checked)"
+                                    @change="toggleJobGradeValue(job, ($event.target as any)?.checked)"
                                 />
                                 <span class="my-auto flex-1">{{ job.label }}</span>
 

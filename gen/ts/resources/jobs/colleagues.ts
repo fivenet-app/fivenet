@@ -10,8 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Label } from "./labels";
+import { Labels } from "./labels";
 import { Timestamp } from "../timestamp/timestamp";
-import { QualificationResult } from "../qualifications/qualifications";
 import { File } from "../filestore/file";
 /**
  * @generated from protobuf message resources.jobs.Colleague
@@ -71,10 +72,6 @@ export interface Colleague {
      * @generated from protobuf field: optional string email = 19;
      */
     email?: string;
-    /**
-     * @generated from protobuf field: repeated resources.qualifications.QualificationResult qualification_results = 20;
-     */
-    qualificationResults: QualificationResult[];
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserProps
@@ -102,6 +99,10 @@ export interface JobsUserProps {
      * @generated from protobuf field: optional string note = 5;
      */
     note?: string;
+    /**
+     * @generated from protobuf field: optional resources.jobs.Labels labels = 6;
+     */
+    labels?: Labels;
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserActivity
@@ -170,6 +171,12 @@ export interface JobsUserActivityData {
          */
         gradeChange: ColleagueGradeChange;
     } | {
+        oneofKind: "labelsChange";
+        /**
+         * @generated from protobuf field: resources.jobs.ColleagueLabelsChange labels_change = 3;
+         */
+        labelsChange: ColleagueLabelsChange;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -198,6 +205,19 @@ export interface ColleagueGradeChange {
      * @generated from protobuf field: string grade_label = 2;
      */
     gradeLabel: string;
+}
+/**
+ * @generated from protobuf message resources.jobs.ColleagueLabelsChange
+ */
+export interface ColleagueLabelsChange {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Label added = 1;
+     */
+    added: Label[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Label removed = 2;
+     */
+    removed: Label[];
 }
 /**
  * @generated from protobuf enum resources.jobs.JobsUserActivityType
@@ -230,7 +250,11 @@ export enum JobsUserActivityType {
     /**
      * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
      */
-    NOTE = 6
+    NOTE = 6,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_LABELS = 7;
+     */
+    LABELS = 7
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {
@@ -248,8 +272,7 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 17, name: "avatar", kind: "message", T: () => File },
             { no: 18, name: "props", kind: "message", T: () => JobsUserProps },
-            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
-            { no: 20, name: "qualification_results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationResult }
+            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
     create(value?: PartialMessage<Colleague>): Colleague {
@@ -260,7 +283,6 @@ class Colleague$Type extends MessageType<Colleague> {
         message.firstname = "";
         message.lastname = "";
         message.dateofbirth = "";
-        message.qualificationResults = [];
         if (value !== undefined)
             reflectionMergePartial<Colleague>(this, message, value);
         return message;
@@ -308,9 +330,6 @@ class Colleague$Type extends MessageType<Colleague> {
                     break;
                 case /* optional string email */ 19:
                     message.email = reader.string();
-                    break;
-                case /* repeated resources.qualifications.QualificationResult qualification_results */ 20:
-                    message.qualificationResults.push(QualificationResult.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -363,9 +382,6 @@ class Colleague$Type extends MessageType<Colleague> {
         /* optional string email = 19; */
         if (message.email !== undefined)
             writer.tag(19, WireType.LengthDelimited).string(message.email);
-        /* repeated resources.qualifications.QualificationResult qualification_results = 20; */
-        for (let i = 0; i < message.qualificationResults.length; i++)
-            QualificationResult.internalBinaryWrite(message.qualificationResults[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -384,7 +400,8 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "absence_begin", kind: "message", T: () => Timestamp },
             { no: 4, name: "absence_end", kind: "message", T: () => Timestamp },
-            { no: 5, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 5, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "labels", kind: "message", T: () => Labels }
         ]);
     }
     create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
@@ -415,6 +432,9 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
                 case /* optional string note */ 5:
                     message.note = reader.string();
                     break;
+                case /* optional resources.jobs.Labels labels */ 6:
+                    message.labels = Labels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -442,6 +462,9 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         /* optional string note = 5; */
         if (message.note !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.note);
+        /* optional resources.jobs.Labels labels = 6; */
+        if (message.labels)
+            Labels.internalBinaryWrite(message.labels, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -572,7 +595,8 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
     constructor() {
         super("resources.jobs.JobsUserActivityData", [
             { no: 1, name: "absence_date", kind: "message", oneof: "data", T: () => ColleagueAbsenceDate },
-            { no: 2, name: "grade_change", kind: "message", oneof: "data", T: () => ColleagueGradeChange }
+            { no: 2, name: "grade_change", kind: "message", oneof: "data", T: () => ColleagueGradeChange },
+            { no: 3, name: "labels_change", kind: "message", oneof: "data", T: () => ColleagueLabelsChange }
         ]);
     }
     create(value?: PartialMessage<JobsUserActivityData>): JobsUserActivityData {
@@ -599,6 +623,12 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
                         gradeChange: ColleagueGradeChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).gradeChange)
                     };
                     break;
+                case /* resources.jobs.ColleagueLabelsChange labels_change */ 3:
+                    message.data = {
+                        oneofKind: "labelsChange",
+                        labelsChange: ColleagueLabelsChange.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).labelsChange)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -617,6 +647,9 @@ class JobsUserActivityData$Type extends MessageType<JobsUserActivityData> {
         /* resources.jobs.ColleagueGradeChange grade_change = 2; */
         if (message.data.oneofKind === "gradeChange")
             ColleagueGradeChange.internalBinaryWrite(message.data.gradeChange, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.ColleagueLabelsChange labels_change = 3; */
+        if (message.data.oneofKind === "labelsChange")
+            ColleagueLabelsChange.internalBinaryWrite(message.data.labelsChange, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -735,3 +768,58 @@ class ColleagueGradeChange$Type extends MessageType<ColleagueGradeChange> {
  * @generated MessageType for protobuf message resources.jobs.ColleagueGradeChange
  */
 export const ColleagueGradeChange = new ColleagueGradeChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ColleagueLabelsChange$Type extends MessageType<ColleagueLabelsChange> {
+    constructor() {
+        super("resources.jobs.ColleagueLabelsChange", [
+            { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Label },
+            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Label }
+        ]);
+    }
+    create(value?: PartialMessage<ColleagueLabelsChange>): ColleagueLabelsChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.added = [];
+        message.removed = [];
+        if (value !== undefined)
+            reflectionMergePartial<ColleagueLabelsChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ColleagueLabelsChange): ColleagueLabelsChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.jobs.Label added */ 1:
+                    message.added.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated resources.jobs.Label removed */ 2:
+                    message.removed.push(Label.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ColleagueLabelsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.jobs.Label added = 1; */
+        for (let i = 0; i < message.added.length; i++)
+            Label.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.Label removed = 2; */
+        for (let i = 0; i < message.removed.length; i++)
+            Label.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.ColleagueLabelsChange
+ */
+export const ColleagueLabelsChange = new ColleagueLabelsChange$Type();

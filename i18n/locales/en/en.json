@@ -518,7 +518,8 @@
         "internet": "Internet",
         "ad": "Ad | Ads",
         "card_view": "Card View",
-        "show": "View"
+        "show": "View",
+        "selected_no": "{0} selected"
     },
     "components": {
         "partials": {
@@ -1991,7 +1992,8 @@
                     "Same_Rank": "Same Rank",
                     "Any": "Any",
                     "Note": "Note",
-                    "AbsenceDate": "Absence Date"
+                    "AbsenceDate": "Absence Date",
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Access": "Access to factions-own colleague",
@@ -2007,7 +2009,8 @@
                     "Same_Rank": "Same Rank",
                     "Any": "Any",
                     "Note": "Note",
-                    "AbsenceDate": "Absence Date"
+                    "AbsenceDate": "Absence Date",
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Access": "Access to factions-own colleague's properties",
@@ -2023,11 +2026,16 @@
                     "PROMOTED": "Promoted",
                     "DEMOTED": "Demoted",
                     "ABSENCE_DATE": "Absence Date",
-                    "NOTE": "Note"
+                    "NOTE": "Note",
+                    "LABELS": "Labels"
                 },
                 "attrs_types": {
                     "Types": "Types"
                 }
+            },
+            "ManageColleagueLabels": {
+                "key": "Manage labels",
+                "description": "Manage labels to be added/removed on colleagues."
             }
         },
         "JobsConductService": {
@@ -2539,7 +2547,8 @@
                 "HIRED": "Hired",
                 "PROMOTED": "Promoted",
                 "DEMOTED": "Demoted",
-                "NOTE": "Note updated"
+                "NOTE": "Note updated",
+                "LABELS": "Labels updated"
             }
         },
         "qualifications": {

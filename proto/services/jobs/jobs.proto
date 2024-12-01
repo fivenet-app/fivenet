@@ -4,6 +4,7 @@ package services.jobs;
 
 import "resources/common/database/database.proto";
 import "resources/jobs/colleagues.proto";
+import "resources/jobs/labels.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;jobs";
@@ -66,6 +67,20 @@ message SetJobsUserPropsResponse {
   resources.jobs.JobsUserProps props = 1;
 }
 
+message GetColleagueLabelsRequest {}
+
+message GetColleagueLabelsResponse {
+  repeated resources.jobs.Label labels = 1;
+}
+
+message ManageColleagueLabelsRequest {
+  repeated resources.jobs.Label labels = 1;
+}
+
+message ManageColleagueLabelsResponse {
+  repeated resources.jobs.Label labels = 1;
+}
+
 // MOTD
 
 message GetMOTDRequest {}
@@ -89,12 +104,16 @@ service JobsService {
   // @perm: Name=ListColleagues
   rpc GetSelf(GetSelfRequest) returns (GetSelfResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
-  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
+  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"}
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
+  // @perm: Name=SetJobsUserProps
+  rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse);
+  // @perm
+  rpc ManageColleagueLabels(ManageColleagueLabelsRequest) returns (ManageColleagueLabelsResponse);
 
   // @perm: Name=Any
   rpc GetMOTD(GetMOTDRequest) returns (GetMOTDResponse);

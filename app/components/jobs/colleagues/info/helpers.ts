@@ -34,6 +34,8 @@ export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | un
             return 'i-mdi-chevron-double-down';
         case JobsUserActivityType.NOTE:
             return 'i-mdi-note-edit';
+        case JobsUserActivityType.LABELS:
+            return 'i-mdi-tag-mutiple';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';

@@ -24,6 +24,8 @@ const (
 	JobsService_GetColleague_FullMethodName          = "/services.jobs.JobsService/GetColleague"
 	JobsService_ListColleagueActivity_FullMethodName = "/services.jobs.JobsService/ListColleagueActivity"
 	JobsService_SetJobsUserProps_FullMethodName      = "/services.jobs.JobsService/SetJobsUserProps"
+	JobsService_GetColleagueLabels_FullMethodName    = "/services.jobs.JobsService/GetColleagueLabels"
+	JobsService_ManageColleagueLabels_FullMethodName = "/services.jobs.JobsService/ManageColleagueLabels"
 	JobsService_GetMOTD_FullMethodName               = "/services.jobs.JobsService/GetMOTD"
 	JobsService_SetMOTD_FullMethodName               = "/services.jobs.JobsService/SetMOTD"
 )
@@ -36,12 +38,16 @@ type JobsServiceClient interface {
 	ListColleagues(ctx context.Context, in *ListColleaguesRequest, opts ...grpc.CallOption) (*ListColleaguesResponse, error)
 	// @perm: Name=ListColleagues
 	GetSelf(ctx context.Context, in *GetSelfRequest, opts ...grpc.CallOption) (*GetSelfResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
+	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"}
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"}
 	SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error)
+	// @perm: Name=SetJobsUserProps
+	GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error)
+	// @perm
+	ManageColleagueLabels(ctx context.Context, in *ManageColleagueLabelsRequest, opts ...grpc.CallOption) (*ManageColleagueLabelsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
 	// @perm
@@ -101,6 +107,24 @@ func (c *jobsServiceClient) SetJobsUserProps(ctx context.Context, in *SetJobsUse
 	return out, nil
 }
 
+func (c *jobsServiceClient) GetColleagueLabels(ctx context.Context, in *GetColleagueLabelsRequest, opts ...grpc.CallOption) (*GetColleagueLabelsResponse, error) {
+	out := new(GetColleagueLabelsResponse)
+	err := c.cc.Invoke(ctx, JobsService_GetColleagueLabels_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) ManageColleagueLabels(ctx context.Context, in *ManageColleagueLabelsRequest, opts ...grpc.CallOption) (*ManageColleagueLabelsResponse, error) {
+	out := new(ManageColleagueLabelsResponse)
+	err := c.cc.Invoke(ctx, JobsService_ManageColleagueLabels_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *jobsServiceClient) GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error) {
 	out := new(GetMOTDResponse)
 	err := c.cc.Invoke(ctx, JobsService_GetMOTD_FullMethodName, in, out, opts...)
@@ -127,12 +151,16 @@ type JobsServiceServer interface {
 	ListColleagues(context.Context, *ListColleaguesRequest) (*ListColleaguesResponse, error)
 	// @perm: Name=ListColleagues
 	GetSelf(context.Context, *GetSelfRequest) (*GetSelfResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"}
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
-	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
+	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"}
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"}
 	SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error)
+	// @perm: Name=SetJobsUserProps
+	GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error)
+	// @perm
+	ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
 	// @perm
@@ -158,6 +186,12 @@ func (UnimplementedJobsServiceServer) ListColleagueActivity(context.Context, *Li
 }
 func (UnimplementedJobsServiceServer) SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetJobsUserProps not implemented")
+}
+func (UnimplementedJobsServiceServer) GetColleagueLabels(context.Context, *GetColleagueLabelsRequest) (*GetColleagueLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetColleagueLabels not implemented")
+}
+func (UnimplementedJobsServiceServer) ManageColleagueLabels(context.Context, *ManageColleagueLabelsRequest) (*ManageColleagueLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ManageColleagueLabels not implemented")
 }
 func (UnimplementedJobsServiceServer) GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetMOTD not implemented")
@@ -268,6 +302,42 @@ func _JobsService_SetJobsUserProps_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_GetColleagueLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetColleagueLabelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).GetColleagueLabels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_GetColleagueLabels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).GetColleagueLabels(ctx, req.(*GetColleagueLabelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_ManageColleagueLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManageColleagueLabelsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ManageColleagueLabels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ManageColleagueLabels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ManageColleagueLabels(ctx, req.(*ManageColleagueLabelsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _JobsService_GetMOTD_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetMOTDRequest)
 	if err := dec(in); err != nil {
@@ -330,6 +400,14 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetJobsUserProps",
 			Handler:    _JobsService_SetJobsUserProps_Handler,
+		},
+		{
+			MethodName: "GetColleagueLabels",
+			Handler:    _JobsService_GetColleagueLabels_Handler,
+		},
+		{
+			MethodName: "ManageColleagueLabels",
+			Handler:    _JobsService_ManageColleagueLabels_Handler,
 		},
 		{
 			MethodName: "GetMOTD",

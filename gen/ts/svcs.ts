@@ -27,6 +27,7 @@
 // source: resources/internet/search.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
+// source: resources/jobs/labels.proto
 // source: resources/jobs/timeclock.proto
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
@@ -208,6 +209,8 @@ export const grpcMethods = [
 	'JobsService/GetColleague',
 	'JobsService/ListColleagueActivity',
 	'JobsService/SetJobsUserProps',
+	'JobsService/GetColleagueLabels',
+	'JobsService/ManageColleagueLabels',
 	'JobsService/GetMOTD',
 	'JobsService/SetMOTD',
 	'JobsTimeclockService/ListTimeclock',
