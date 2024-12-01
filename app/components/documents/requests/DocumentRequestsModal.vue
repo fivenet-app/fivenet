@@ -17,6 +17,10 @@ const props = defineProps<{
     doc: DocumentShort;
 }>();
 
+const emit = defineEmits<{
+    (e: 'refresh'): void;
+}>();
+
 const { isOpen } = useModal();
 
 const { attr, can, activeChar } = useAuth();
@@ -84,13 +88,22 @@ async function createDocumentRequest(values: Schema): Promise<void> {
             reason: values.reason,
             requestType: values.requestType,
         });
-        await call;
+        const { response } = await call;
 
         notifications.add({
             title: { key: 'notifications.docstore.requests.created.title' },
             description: { key: 'notifications.docstore.requests.created.content' },
             type: NotificationType.SUCCESS,
         });
+
+        // The request should have triggered the "owner override hatch" (creator not part of job anymore)
+        if (
+            values.requestType === DocActivityType.REQUESTED_OWNER_CHANGE &&
+            response.request?.requestType === DocActivityType.OWNER_CHANGED &&
+            !!response.request.accepted
+        ) {
+            emit('refresh');
+        }
 
         refresh();
     } catch (e) {
@@ -150,14 +163,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.type')"
                                         :searchable-placeholder="$t('common.search_field')"
                                     >
+                                        <template v-if="state.requestType" #label>
+                                            <span class="truncate">
+                                                {{
+                                                    $t(
+                                                        `enums.docstore.DocActivityType.${DocActivityType[state.requestType]}`,
+                                                        2,
+                                                    )
+                                                }}
+                                            </span>
+                                        </template>
+
                                         <template #option="{ option }">
                                             <span class="truncate">{{
                                                 $t(`enums.docstore.DocActivityType.${DocActivityType[option.key]}`, 2)
                                             }}</span>
                                         </template>
+
                                         <template #option-empty="{ query: search }">
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
+
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.type', 2)]) }}
                                         </template>

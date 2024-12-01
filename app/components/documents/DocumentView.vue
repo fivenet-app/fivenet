@@ -175,6 +175,7 @@ function openRequestsModal(): void {
     modal.open(DocumentRequestsModal, {
         access: access.value,
         doc: doc.value!,
+        onRefresh: () => refresh(),
     });
 }
 
