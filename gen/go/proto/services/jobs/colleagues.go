@@ -581,14 +581,14 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			return nil, errorsjobs.ErrPropsLabelsDenied
 		}
 
-		if err := s.updateLabels(ctx, tx, req.Props.UserId, targetUser.Job, added, removed); err != nil {
+		if err := s.updateLabels(ctx, tx, targetUser.UserId, targetUser.Job, added, removed); err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
-			TargetUserId: req.Props.UserId,
+			TargetUserId: targetUser.UserId,
 			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_LABELS,
 			Reason:       req.Reason,
 			Data: &jobs.JobsUserActivityData{
