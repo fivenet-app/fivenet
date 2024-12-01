@@ -223,7 +223,7 @@ watch(editing, () => {
                                         </UFormGroup>
 
                                         <UFormGroup name="reason" :label="$t('common.reason')" class="w-full" required>
-                                            <UInput v-model="state.reason" type="text" name="reason" />
+                                            <UInput v-model="state.reason" type="text" />
                                         </UFormGroup>
                                     </template>
                                 </div>

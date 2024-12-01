@@ -105,7 +105,7 @@ onBeforeMount(async () => listJobs());
                 </template>
 
                 <div>
-                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')">
+                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
 

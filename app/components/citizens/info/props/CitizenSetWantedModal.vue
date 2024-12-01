@@ -81,7 +81,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup name="reason" :label="$t('common.reason')" class="flex-1">
+                    <UFormGroup name="reason" :label="$t('common.reason')" class="flex-1" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
                 </div>

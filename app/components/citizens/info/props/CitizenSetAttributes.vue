@@ -174,8 +174,8 @@ watch(state, () => {
         </UFormGroup>
 
         <template v-if="changed">
-            <UFormGroup name="reason" :label="$t('common.reason')">
-                <UInput v-model="state.reason" type="text" name="reason" />
+            <UFormGroup name="reason" :label="$t('common.reason')" required>
+                <UInput v-model="state.reason" type="text" />
             </UFormGroup>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">

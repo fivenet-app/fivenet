@@ -157,13 +157,8 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="reason" class="flex-1">
-                                    <UInput
-                                        v-model="state.reason"
-                                        type="text"
-                                        name="reason"
-                                        :placeholder="$t('common.reason')"
-                                    />
+                                <UFormGroup name="reason" class="flex-1" required>
+                                    <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                                 </UFormGroup>
                             </dd>
                         </div>

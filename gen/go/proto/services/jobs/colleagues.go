@@ -559,6 +559,14 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 				return in.Name
 			})
 
+		valid, err := s.validateLabels(ctx, userInfo, added)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if !valid {
+			return nil, errorsjobs.ErrPropsLabelsDenied
+		}
+
 		if err := s.updateLabels(ctx, tx, req.Props.UserId, targetUser.Job, added, removed); err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}

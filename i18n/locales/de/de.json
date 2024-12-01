@@ -2361,7 +2361,8 @@
             "ErrReasonRequired": "Ein Grund muss gegeben sein!",
             "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
             "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
-            "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!"
+            "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
+            "ErrPropsLabelsDenied": "Sie haben keine Berechtigung die Labels des Kollegen zusetzen!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",

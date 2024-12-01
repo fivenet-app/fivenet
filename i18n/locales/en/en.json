@@ -2361,7 +2361,8 @@
             "ErrReasonRequired": "A reason must be provided!",
             "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
             "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
-            "ErrNotFoundOrNoPerms": "Colleague not found!"
+            "ErrNotFoundOrNoPerms": "Colleague not found!",
+            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",
