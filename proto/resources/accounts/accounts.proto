@@ -19,5 +19,5 @@ message Account {
 message Character {
   bool available = 1;
   string group = 2;
-  resources.users.User char = 3;
+  resources.users.User char = 3; // @gotags: alias:"user"
 }

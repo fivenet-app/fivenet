@@ -107,7 +107,7 @@ type Character struct {
 
 	Available bool        `protobuf:"varint,1,opt,name=available,proto3" json:"available,omitempty"`
 	Group     string      `protobuf:"bytes,2,opt,name=group,proto3" json:"group,omitempty"`
-	Char      *users.User `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty"`
+	Char      *users.User `protobuf:"bytes,3,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
 }
 
 func (x *Character) Reset() {

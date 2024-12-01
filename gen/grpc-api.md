@@ -151,6 +151,14 @@
   
     - [ConductType](#resources-jobs-ConductType)
   
+- [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
+    - [TimeclockEntry](#resources-jobs-TimeclockEntry)
+    - [TimeclockStats](#resources-jobs-TimeclockStats)
+    - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
+  
+    - [TimeclockMode](#resources-jobs-TimeclockMode)
+    - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
+  
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
@@ -160,14 +168,6 @@
     - [JobsUserProps](#resources-jobs-JobsUserProps)
   
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
-  
-- [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
-    - [TimeclockEntry](#resources-jobs-TimeclockEntry)
-    - [TimeclockStats](#resources-jobs-TimeclockStats)
-    - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
-  
-    - [TimeclockMode](#resources-jobs-TimeclockMode)
-    - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -887,7 +887,7 @@
 | ----- | ---- | ----- | ----------- |
 | available | [bool](#bool) |  |  |
 | group | [string](#string) |  |  |
-| char | [resources.users.User](#resources-users-User) |  |  |
+| char | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
 
 
 
@@ -2926,6 +2926,106 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/timeclock.proto
+
+
+
+<a name="resources-jobs-TimeclockEntry"></a>
+
+### TimeclockEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: sql:"primary_key" |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
+| user | [Colleague](#resources-jobs-Colleague) | optional |  |
+| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| spent_time | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-TimeclockStats"></a>
+
+### TimeclockStats
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| spent_time_sum | [float](#float) |  |  |
+| spent_time_avg | [float](#float) |  |  |
+| spent_time_max | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-TimeclockWeeklyStats"></a>
+
+### TimeclockWeeklyStats
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| year | [int32](#int32) |  |  |
+| calendar_week | [int32](#int32) |  |  |
+| sum | [float](#float) |  |  |
+| avg | [float](#float) |  |  |
+| max | [float](#float) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-jobs-TimeclockMode"></a>
+
+### TimeclockMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TIMECLOCK_MODE_UNSPECIFIED | 0 |  |
+| TIMECLOCK_MODE_DAILY | 1 |  |
+| TIMECLOCK_MODE_WEEKLY | 2 |  |
+| TIMECLOCK_MODE_RANGE | 3 |  |
+
+
+
+<a name="resources-jobs-TimeclockUserMode"></a>
+
+### TimeclockUserMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TIMECLOCK_USER_MODE_UNSPECIFIED | 0 |  |
+| TIMECLOCK_USER_MODE_SELF | 1 |  |
+| TIMECLOCK_USER_MODE_ALL | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_jobs_colleagues-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2954,6 +3054,7 @@ Dummy - DO NOT USE!
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"fivenet_jobs_user_props" |
 | email | [string](#string) | optional | @sanitize: method=StripTags |
+| qualification_results | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) | repeated |  |
 
 
 
@@ -3067,106 +3168,6 @@ Dummy - DO NOT USE!
 | JOBS_USER_ACTIVITY_TYPE_DEMOTED | 4 |  |
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 | JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/timeclock.proto
-
-
-
-<a name="resources-jobs-TimeclockEntry"></a>
-
-### TimeclockEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: sql:"primary_key" |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
-| user | [Colleague](#resources-jobs-Colleague) | optional |  |
-| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| spent_time | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-TimeclockStats"></a>
-
-### TimeclockStats
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| spent_time_sum | [float](#float) |  |  |
-| spent_time_avg | [float](#float) |  |  |
-| spent_time_max | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-TimeclockWeeklyStats"></a>
-
-### TimeclockWeeklyStats
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| year | [int32](#int32) |  |  |
-| calendar_week | [int32](#int32) |  |  |
-| sum | [float](#float) |  |  |
-| avg | [float](#float) |  |  |
-| max | [float](#float) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-jobs-TimeclockMode"></a>
-
-### TimeclockMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| TIMECLOCK_MODE_UNSPECIFIED | 0 |  |
-| TIMECLOCK_MODE_DAILY | 1 |  |
-| TIMECLOCK_MODE_WEEKLY | 2 |  |
-| TIMECLOCK_MODE_RANGE | 3 |  |
-
-
-
-<a name="resources-jobs-TimeclockUserMode"></a>
-
-### TimeclockUserMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| TIMECLOCK_USER_MODE_UNSPECIFIED | 0 |  |
-| TIMECLOCK_USER_MODE_SELF | 1 |  |
-| TIMECLOCK_USER_MODE_ALL | 2 |  |
 
 
  <!-- end enums -->
@@ -6448,7 +6449,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | permissions | [string](#string) | repeated |  |
 | job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-| char | [resources.users.User](#resources-users-User) |  |  |
+| char | [resources.users.User](#resources-users-User) |  | @gotags: alias:"user" |
 | username | [string](#string) |  |  |
 
 

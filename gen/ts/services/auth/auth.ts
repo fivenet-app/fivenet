@@ -196,7 +196,7 @@ export interface ChooseCharacterResponse {
     /**
      * @generated from protobuf field: resources.users.User char = 4;
      */
-    char?: User;
+    char?: User; // @gotags: alias:"user"
     /**
      * @generated from protobuf field: string username = 5;
      */

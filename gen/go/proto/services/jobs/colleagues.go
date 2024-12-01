@@ -163,6 +163,12 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
+	colleagueIds := []int32{}
+	for _, colleague := range resp.Colleagues {
+		colleagueIds = append(colleagueIds, colleague.UserId)
+	}
+	// TODO retrieve qualification results for each colleague
+
 	resp.Pagination.Update(len(resp.Colleagues))
 
 	for i := 0; i < len(resp.Colleagues); i++ {

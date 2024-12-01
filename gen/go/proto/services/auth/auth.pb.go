@@ -751,7 +751,7 @@ type ChooseCharacterResponse struct {
 	Expires     *timestamp.Timestamp `protobuf:"bytes,1,opt,name=expires,proto3" json:"expires,omitempty"`
 	Permissions []string             `protobuf:"bytes,2,rep,name=permissions,proto3" json:"permissions,omitempty"`
 	JobProps    *users.JobProps      `protobuf:"bytes,3,opt,name=job_props,json=jobProps,proto3" json:"job_props,omitempty"`
-	Char        *users.User          `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty"`
+	Char        *users.User          `protobuf:"bytes,4,opt,name=char,proto3" json:"char,omitempty" alias:"user"` // @gotags: alias:"user"
 	Username    string               `protobuf:"bytes,5,opt,name=username,proto3" json:"username,omitempty"`
 }
 

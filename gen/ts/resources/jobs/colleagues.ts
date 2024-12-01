@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
+import { QualificationResult } from "../qualifications/qualifications";
 import { File } from "../filestore/file";
 /**
  * @generated from protobuf message resources.jobs.Colleague
@@ -70,6 +71,10 @@ export interface Colleague {
      * @generated from protobuf field: optional string email = 19;
      */
     email?: string;
+    /**
+     * @generated from protobuf field: repeated resources.qualifications.QualificationResult qualification_results = 20;
+     */
+    qualificationResults: QualificationResult[];
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserProps
@@ -243,7 +248,8 @@ class Colleague$Type extends MessageType<Colleague> {
             { no: 12, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 17, name: "avatar", kind: "message", T: () => File },
             { no: 18, name: "props", kind: "message", T: () => JobsUserProps },
-            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
+            { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } },
+            { no: 20, name: "qualification_results", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationResult }
         ]);
     }
     create(value?: PartialMessage<Colleague>): Colleague {
@@ -254,6 +260,7 @@ class Colleague$Type extends MessageType<Colleague> {
         message.firstname = "";
         message.lastname = "";
         message.dateofbirth = "";
+        message.qualificationResults = [];
         if (value !== undefined)
             reflectionMergePartial<Colleague>(this, message, value);
         return message;
@@ -301,6 +308,9 @@ class Colleague$Type extends MessageType<Colleague> {
                     break;
                 case /* optional string email */ 19:
                     message.email = reader.string();
+                    break;
+                case /* repeated resources.qualifications.QualificationResult qualification_results */ 20:
+                    message.qualificationResults.push(QualificationResult.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -353,6 +363,9 @@ class Colleague$Type extends MessageType<Colleague> {
         /* optional string email = 19; */
         if (message.email !== undefined)
             writer.tag(19, WireType.LengthDelimited).string(message.email);
+        /* repeated resources.qualifications.QualificationResult qualification_results = 20; */
+        for (let i = 0; i < message.qualificationResults.length; i++)
+            QualificationResult.internalBinaryWrite(message.qualificationResults[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

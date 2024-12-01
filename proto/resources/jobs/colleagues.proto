@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.jobs;
 
 import "resources/filestore/file.proto";
+import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -29,6 +30,7 @@ message Colleague {
   JobsUserProps props = 18; // @gotags: alias:"fivenet_jobs_user_props"
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
+  repeated resources.qualifications.QualificationResult qualification_results = 20;
 }
 
 message JobsUserProps {

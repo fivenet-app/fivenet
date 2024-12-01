@@ -153,6 +153,40 @@ func (m *Colleague) validate(all bool) error {
 		}
 	}
 
+	for idx, item := range m.GetQualificationResults() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ColleagueValidationError{
+						field:  fmt.Sprintf("QualificationResults[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ColleagueValidationError{
+						field:  fmt.Sprintf("QualificationResults[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ColleagueValidationError{
+					field:  fmt.Sprintf("QualificationResults[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Identifier != nil {
 
 		if utf8.RuneCountInString(m.GetIdentifier()) > 64 {

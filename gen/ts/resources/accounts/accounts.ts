@@ -52,7 +52,7 @@ export interface Character {
     /**
      * @generated from protobuf field: resources.users.User char = 3;
      */
-    char?: User;
+    char?: User; // @gotags: alias:"user"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Account$Type extends MessageType<Account> {

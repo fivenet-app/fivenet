@@ -349,6 +349,10 @@ defineShortcuts({
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
                             </span>
                             <span v-else class="h-7"></span>
+
+                            <div>
+                                {{ colleague.results }}
+                            </div>
                         </div>
                     </template>
 
