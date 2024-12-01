@@ -59,8 +59,6 @@ const state = reactive<Schema>({
 });
 
 async function setUserJobProp(userId: number, values: Schema): Promise<void> {
-    console.log('setUserJobProp labels', values.labels);
-
     const jobsUserProps: JobsUserProps = {
         userId: userId,
         job: '',

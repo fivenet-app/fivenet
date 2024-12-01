@@ -515,7 +515,24 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}
 
 	// Check if user is allowed to update labels
-	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) && !slices.Contains(types, "Labels") && !userInfo.SuperUser {
+	if req.Props.Labels != nil {
+		if !slices.Contains(types, "Labels") && !userInfo.SuperUser {
+			return nil, errorsjobs.ErrPropsAbsenceDenied
+		}
+
+		added, _ := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
+			func(in *jobs.Label) string {
+				return in.Name
+			})
+
+		valid, err := s.validateLabels(ctx, userInfo, added)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if !valid {
+			return nil, errorsjobs.ErrPropsLabelsDenied
+		}
+	} else {
 		req.Props.Labels = props.Labels
 	}
 
@@ -550,9 +567,6 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if !slices.Contains(types, "Labels") && !userInfo.SuperUser {
-		return nil, errorsjobs.ErrPropsAbsenceDenied
-	}
 	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) {
 		added, removed := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
 			func(in *jobs.Label) string {
