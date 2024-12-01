@@ -14,7 +14,7 @@ const completorStore = useCompletorStore();
 const schema = z
     .object({
         id: z.string(),
-        name: z.string().min(1).max(24),
+        name: z.string().min(1).max(64),
         color: z.string().length(7),
     })
     .array()

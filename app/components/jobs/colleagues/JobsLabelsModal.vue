@@ -4,14 +4,12 @@ import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { can } = useAuth();
-
 const { isOpen } = useModal();
 
 const schema = z
     .object({
         id: z.string(),
-        name: z.string().min(1).max(24),
+        name: z.string().min(1).max(64),
         color: z.string().length(7),
     })
     .array()
