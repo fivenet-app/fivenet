@@ -519,7 +519,8 @@
         "ad": "Ad | Ads",
         "card_view": "Card View",
         "show": "View",
-        "selected_no": "{0} selected"
+        "selected_no": "{0} selected",
+        "required": "Required"
     },
     "components": {
         "partials": {

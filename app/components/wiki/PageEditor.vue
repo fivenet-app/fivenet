@@ -47,6 +47,13 @@ const page = computed({
                               minimumGrade: 1,
                               access: AccessLevel.VIEW,
                           },
+                          {
+                              id: '0',
+                              targetId: '0',
+                              job: activeChar.value?.job ?? '',
+                              minimumGrade: -1,
+                              access: AccessLevel.EDIT,
+                          },
                       ],
                       users: [],
                   },

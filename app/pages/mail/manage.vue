@@ -163,7 +163,7 @@ const creating = ref(false);
                                 class="flex flex-1 flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500"
                             >
                                 <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
-                                <EmailCreateForm v-if="canCreate" @refresh="creating = false" />
+                                <EmailCreateForm v-if="canCreate" :personal-email="false" @refresh="creating = false" />
                             </div>
                         </div>
                     </UDashboardPanelContent>

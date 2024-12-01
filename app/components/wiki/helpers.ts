@@ -1,5 +1,6 @@
 // Pageument Activity
 
+import type { AccessLevel, PageAccess } from '~~/gen/ts/resources/wiki/access';
 import { PageActivityType } from '~~/gen/ts/resources/wiki/activity';
 
 export function getPageAtivityIcon(activityType: PageActivityType): string {
@@ -19,4 +20,17 @@ export function getPageAtivityIcon(activityType: PageActivityType): string {
         default:
             return 'i-mdi-help';
     }
+}
+
+export function checkPageAccess(access: PageAccess | undefined, creator: UserLike | undefined, level: AccessLevel) {
+    const { activeChar, isSuperuser } = useAuth();
+    if (isSuperuser.value) {
+        return true;
+    }
+
+    if (activeChar.value === null) {
+        return false;
+    }
+
+    return checkAccess(activeChar.value, access, creator, level);
 }

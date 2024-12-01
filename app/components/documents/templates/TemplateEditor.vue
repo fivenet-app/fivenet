@@ -438,9 +438,11 @@ const categoriesLoading = ref(false);
                         </div>
 
                         <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.requirements', 2) }}</h2>
-
-                            <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+                            <UAccordion :items="[{ slot: 'schema', label: $t('common.requirements', 2) }]">
+                                <template #schema>
+                                    <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+                                </template>
+                            </UAccordion>
                         </div>
 
                         <div class="my-2">

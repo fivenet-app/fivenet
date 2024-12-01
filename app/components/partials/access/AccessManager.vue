@@ -6,6 +6,7 @@
 import { useCompletorStore } from '~/store/completor';
 import AccessEntry from './AccessEntry.vue';
 import type {
+    AccessEntryType,
     AccessLevelEnum,
     AccessType,
     JobAccessEntry,
@@ -25,6 +26,7 @@ const props = withDefaults(
         defaultAccess?: number;
         disabled?: boolean;
         showRequired?: boolean;
+        defaultAccessType?: AccessEntryType;
     }>(),
     {
         jobs: () => [],
@@ -34,6 +36,7 @@ const props = withDefaults(
         defaultAccess: 2, // All `AccessLevel` should have 0 = UNSPECIFIED, 1 = BLOCKED, 2 = VIEW
         disabled: false,
         showRequired: false,
+        defaultAccessType: 'job',
     },
 );
 
@@ -178,9 +181,14 @@ watch(usersAccess, setFromPropsUsers);
 watch(qualificationsAccess, setFromPropsQualifications);
 
 function addEntry(): void {
+    let idx = aTypes.value.findIndex((at) => at.name === props.defaultAccessType);
+    if (idx === -1) {
+        idx = aTypes.value.length - 1;
+    }
+
     access.value.push({
         id: lastId.value.toString(),
-        type: aTypes.value[aTypes.value.length - 1]?.type ?? 'job',
+        type: aTypes.value[idx]?.type ?? 'job',
         access: props.defaultAccess,
     });
     lastId.value++;

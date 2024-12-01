@@ -135,8 +135,8 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
             internal: values.internal,
             label: values.label !== '' ? values.label : undefined,
             deactivated: values.deactivated,
-            job: props.modelValue?.job ?? activeChar.value!.job,
-            userId: props.modelValue?.userId ?? activeChar.value!.userId,
+            job: !props.personalEmail ? (props.modelValue?.job ?? activeChar.value!.job) : undefined,
+            userId: props.personalEmail ? (props.modelValue?.userId ?? activeChar.value!.userId) : undefined,
             access: values.access,
         },
     });
@@ -249,6 +249,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 ]"
                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.mailer.AccessLevel')"
                 :disabled="disabled"
+                default-access-type="job"
             />
         </UFormGroup>
 

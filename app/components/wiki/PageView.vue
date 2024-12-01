@@ -13,6 +13,7 @@ import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
+import { checkPageAccess } from './helpers';
 import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
 
@@ -216,7 +217,7 @@ const accordionItems = computed(() =>
                         <UTooltip
                             v-if="
                                 can('WikiService.CreatePage').value &&
-                                checkAccess(activeChar!, page.access, page.meta.creator, AccessLevel.EDIT)
+                                checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
                             :text="$t('common.edit')"
                         >
@@ -226,7 +227,7 @@ const accordionItems = computed(() =>
                         <UTooltip
                             v-if="
                                 can('WikiService.DeletePage').value &&
-                                checkAccess(activeChar!, page.access, page.meta.creator, AccessLevel.OWNER)
+                                checkPageAccess(page.access, page.meta.creator, AccessLevel.OWNER)
                             "
                             :text="$t('common.delete')"
                         >

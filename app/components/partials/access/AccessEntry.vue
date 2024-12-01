@@ -99,6 +99,13 @@ async function setFromProps(): Promise<void> {
                 weight: 0,
             };
         }
+    } else if (entry.value.type === 'job') {
+        if (entry.value.minimumGrade === -1) {
+            const grades = props.jobs.find((j) => j.name === entry.value.job)?.grades;
+            if (grades) {
+                entry.value.minimumGrade = grades[grades.length - 1]?.grade ?? 0;
+            }
+        }
     }
 }
 
