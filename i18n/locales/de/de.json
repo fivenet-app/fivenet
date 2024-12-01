@@ -519,7 +519,8 @@
         "ad": "Werbung | Werbung",
         "card_view": "Kartenansicht",
         "show": "Aufrufen",
-        "selected_no": "{0} ausgewählt"
+        "selected_no": "{0} ausgewählt",
+        "required": "Benötigt"
     },
     "components": {
         "partials": {
@@ -1001,7 +1002,13 @@
             "exam_view": {
                 "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden."
             },
-            "correct_question": "Richtig"
+            "correct_question": "Richtig",
+            "qualification_editor": {
+                "label_sync_format": {
+                    "label": "Label Format",
+                    "description": "Nutze %abbr% für die Abkürzung und %name% für den Namen der Qualifizierung. Sollte der Label Name länger als 64 Zeichen werden, so wird dieser abgeschnitten."
+                }
+            }
         },
         "language_switcher": {
             "title": "Sprache wechseln"
