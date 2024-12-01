@@ -74,12 +74,7 @@ watch(labels, () => (state.value = labels.value?.labels ?? []));
                     </div>
                 </template>
 
-                <UFormGroup
-                    v-if="state && can('CitizenStoreService.SetUserProps').value"
-                    name="list"
-                    class="grid items-center gap-2"
-                    :ui="{ container: '' }"
-                >
+                <UFormGroup name="list" class="grid items-center gap-2" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
                         <div v-for="(_, idx) in state" :key="idx" class="flex items-center gap-1">
                             <UFormGroup :name="`${idx}.name`" class="flex-1">

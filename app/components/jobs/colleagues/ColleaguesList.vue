@@ -204,7 +204,12 @@ defineShortcuts({
                         icon="i-mdi-tag"
                         @click="modal.open(JobsLabelsModal, {})"
                     />
-                    <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
+                    <UButton
+                        v-if="can('JobsService.GetColleague').value"
+                        icon="i-mdi-chart-donut"
+                        color="white"
+                        @click="modal.open(ColleaguesLabelStatsModal, {})"
+                    />
                 </UButtonGroup>
             </UFormGroup>
         </UForm>
