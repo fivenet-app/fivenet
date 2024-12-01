@@ -509,7 +509,7 @@
         "sender": "Sender",
         "signature": "Signature",
         "internal": "Internal",
-        "label": "Label",
+        "label": "Label | Labels",
         "additional_recipients": "Additional Recipients",
         "last_updated": "Last Updated",
         "domain": "Domain",
