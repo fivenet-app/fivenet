@@ -509,7 +509,7 @@
         "sender": "Absender",
         "signature": "Signatur",
         "internal": "Intern",
-        "label": "Bezeichnung",
+        "label": "Label | Labels",
         "additional_recipients": "Weitere Empfänger",
         "last_updated": "Zuletzt Aktualisiert",
         "domain": "Domain",
@@ -518,7 +518,8 @@
         "internet": "Internet",
         "ad": "Werbung | Werbung",
         "card_view": "Kartenansicht",
-        "show": "Anzeigen"
+        "show": "Aufrufen",
+        "selected_no": "{0} ausgewählt"
     },
     "components": {
         "partials": {
@@ -1991,7 +1992,8 @@
                     "Same_Rank": "Gleicher Rang",
                     "Any": "Egal",
                     "Note": "Notiz",
-                    "AbsenceDate": "Abwesenheitsdatum"
+                    "AbsenceDate": "Abwesenheitsdatum",
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Access": "Zugriff auf Kollegen",
@@ -2007,7 +2009,8 @@
                     "Same_Rank": "Gleicher Rang",
                     "Any": "Egal",
                     "Note": "Notiz",
-                    "AbsenceDate": "Abwesenheitsdatum"
+                    "AbsenceDate": "Abwesenheitsdatum",
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Access": "Zugriff auf Kollegen Eigenschaften",
@@ -2023,11 +2026,16 @@
                     "PROMOTED": "Befördert",
                     "DEMOTED": "Degradiert",
                     "ABSENCE_DATE": "Abwesenheitsdatum",
-                    "NOTE": "Notiz"
+                    "NOTE": "Notiz",
+                    "LABELS": "Labels"
                 },
                 "attrs_types": {
                     "Types": "Aktivitäts-Arten"
                 }
+            },
+            "ManageColleagueLabels": {
+                "key": "Labels verwalten",
+                "description": "Verwalten von Labels für Kollegen."
             }
         },
         "JobsConductService": {
@@ -2539,7 +2547,8 @@
                 "HIRED": "Angestellt",
                 "PROMOTED": "Befördert",
                 "DEMOTED": "Degradiert",
-                "NOTE": "Notiz aktualisiert"
+                "NOTE": "Notiz aktualisiert",
+                "LABELS": "Labels aktualisiert"
             }
         },
         "qualifications": {
