@@ -349,7 +349,8 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 			quali.LabelSyncFormat = &defaultFormat
 		}
 
-		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, req.Result); err != nil {
+		// Add/Remove label based on result status
+		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, req.Result.UserId, req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -389,11 +390,11 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		}
 	} else {
 		// If failed or other status, delete the request
-		if err := s.deleteQualificationRequest(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
+		if err := s.deleteQualificationRequest(ctx, s.db, req.Result.QualificationId, req.Result.UserId); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		if err := s.deleteExamUser(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
+		if err := s.deleteExamUser(ctx, s.db, req.Result.QualificationId, req.Result.UserId); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 	}
@@ -511,7 +512,6 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-
 	if result == nil {
 		return &DeleteQualificationResultResponse{}, nil
 	}
@@ -523,6 +523,19 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	if !check {
 		return nil, errorsqualifications.ErrFailedQuery
 	}
+
+	quali, err := s.getQualification(ctx, result.QualificationId, tQuali.ID.EQ(jet.Uint64(result.QualificationId)), userInfo, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	stmt := tQualiResults.
 		UPDATE(
@@ -536,11 +549,28 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 			tQualiResults.ID.EQ(jet.Uint64(req.ResultId)),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if err := s.deleteExamUser(ctx, result.QualificationId, result.UserId); err != nil {
+	if err := s.deleteExamUser(ctx, tx, result.QualificationId, result.UserId); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if quali.LabelSyncEnabled {
+		if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
+			defaultFormat := QualificationsLabelDefaultFormat
+			quali.LabelSyncFormat = &defaultFormat
+		}
+
+		// Remove label as we are deleting the result
+		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, result.UserId, false); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -549,7 +579,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	return &DeleteQualificationResultResponse{}, nil
 }
 
-func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, quali *qualifications.Qualification, result *qualifications.QualificationResult) error {
+func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, quali *qualifications.Qualification, targetUserId int32, addLabel bool) error {
 	labelName := strings.ReplaceAll(*quali.LabelSyncFormat, "%abbr%", quali.Abbreviation)
 	labelName = strings.ReplaceAll(labelName, "%name%", quali.Title)
 
@@ -602,7 +632,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 	}
 
 	// Ensure that the colleague has the label set if successful result or removed
-	if result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL {
+	if addLabel {
 		stmt := tUserLabels.
 			INSERT(
 				tUserLabels.UserID,
@@ -610,7 +640,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 				tUserLabels.LabelID,
 			).
 			VALUES(
-				result.UserId,
+				targetUserId,
 				userInfo.Job,
 				labelId,
 			)
@@ -624,7 +654,7 @@ func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userIn
 		stmt := tUserLabels.
 			DELETE().
 			WHERE(jet.AND(
-				tUserLabels.UserID.EQ(jet.Int32(result.UserId)),
+				tUserLabels.UserID.EQ(jet.Int32(targetUserId)),
 				tUserLabels.Job.EQ(jet.String(userInfo.Job)),
 				tUserLabels.LabelID.EQ(jet.Uint64(labelId)),
 			)).

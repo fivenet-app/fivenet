@@ -345,7 +345,7 @@ func (s *Server) GetUserExam(ctx context.Context, req *GetUserExamRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) deleteExamUser(ctx context.Context, qualificationId uint64, userId int32) error {
+func (s *Server) deleteExamUser(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32) error {
 	stmt := tExamUser.
 		DELETE().
 		WHERE(jet.AND(
@@ -354,7 +354,7 @@ func (s *Server) deleteExamUser(ctx context.Context, qualificationId uint64, use
 		)).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

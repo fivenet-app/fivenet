@@ -493,7 +493,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	if err := s.deleteQualificationRequest(ctx, re.QualificationId, re.UserId); err != nil {
+	if err := s.deleteQualificationRequest(ctx, s.db, re.QualificationId, re.UserId); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
@@ -502,7 +502,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 	return &DeleteQualificationReqResponse{}, nil
 }
 
-func (s *Server) deleteQualificationRequest(ctx context.Context, qualificationId uint64, userId int32) error {
+func (s *Server) deleteQualificationRequest(ctx context.Context, tx qrm.DB, qualificationId uint64, userId int32) error {
 	stmt := tQualiRequests.
 		UPDATE(
 			tQualiRequests.DeletedAt,
@@ -515,11 +515,11 @@ func (s *Server) deleteQualificationRequest(ctx context.Context, qualificationId
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
-	if err := s.deleteExamUser(ctx, qualificationId, userId); err != nil {
+	if err := s.deleteExamUser(ctx, tx, qualificationId, userId); err != nil {
 		return err
 	}
 
