@@ -344,11 +344,6 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 	}
 
 	if quali.LabelSyncEnabled {
-		if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
-			defaultFormat := QualificationsLabelDefaultFormat
-			quali.LabelSyncFormat = &defaultFormat
-		}
-
 		// Add/Remove label based on result status
 		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, req.Result.UserId, req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -558,11 +553,6 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	}
 
 	if quali.LabelSyncEnabled {
-		if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
-			defaultFormat := QualificationsLabelDefaultFormat
-			quali.LabelSyncFormat = &defaultFormat
-		}
-
 		// Remove label as we are deleting the result
 		if err := s.handleColleagueLabelSync(ctx, tx, userInfo, quali, result.UserId, false); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -580,8 +570,19 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 }
 
 func (s *Server) handleColleagueLabelSync(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo, quali *qualifications.Qualification, targetUserId int32, addLabel bool) error {
+	if quali.LabelSyncFormat == nil || *quali.LabelSyncFormat == "" {
+		defaultFormat := QualificationsLabelDefaultFormat
+		quali.LabelSyncFormat = &defaultFormat
+	}
+
 	labelName := strings.ReplaceAll(*quali.LabelSyncFormat, "%abbr%", quali.Abbreviation)
 	labelName = strings.ReplaceAll(labelName, "%name%", quali.Title)
+	labelName = strings.TrimSpace(labelName)
+
+	// Make sure that the label isn't empty when all is screwed up
+	if labelName == "" {
+		labelName = fmt.Sprintf("%s: %s", quali.Abbreviation, quali.Title)
+	}
 
 	// Create label if it doesn't exist yet
 	createStmt := tJobLabels.
