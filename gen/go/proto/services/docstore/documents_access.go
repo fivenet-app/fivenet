@@ -122,7 +122,7 @@ func (s *Server) handleDocumentAccessChange(ctx context.Context, tx qrm.DB, docu
 	}
 
 	if addActivity && !changes.IsEmpty() {
-		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 			DocumentId:   documentId,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,
 			CreatorId:    &userInfo.UserId,

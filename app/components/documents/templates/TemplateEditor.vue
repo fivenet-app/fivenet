@@ -4,7 +4,7 @@ import { FileOutlineIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import SingleHint from '~/components/SingleHint.vue';
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
-import type { ObjectSpecsValue } from '~/components/documents/templates/types';
+import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
@@ -19,6 +19,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { ObjectSpecs, Template, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -52,6 +53,7 @@ const schema = z.object({
         jobs: z.custom<DocumentJobAccess>().array().max(maxAccessEntries),
         users: z.custom<DocumentUserAccess>().array().max(maxAccessEntries),
     }),
+    workflow: zWorkflow,
 });
 
 type Schema = z.output<typeof schema>;
@@ -69,6 +71,22 @@ const state = reactive<Schema>({
     contentAccess: {
         jobs: [],
         users: [],
+    },
+    workflow: {
+        autoClose: {
+            autoClose: false,
+            autoCloseSettings: {
+                message: '',
+                duration: 7,
+            },
+        },
+
+        reminders: {
+            reminder: false,
+            reminders: {
+                reminders: [],
+            },
+        },
     },
 });
 
@@ -140,8 +158,25 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             },
             contentAccess: values.contentAccess,
             jobAccess: values.jobAccess,
-            category: state.category,
+            category: values.category,
             creatorJob: '',
+            workflow: {
+                reminder: values.workflow.reminders.reminder,
+                reminders: {
+                    reminders: values.workflow.reminders.reminders.reminders
+                        .filter((r) => r.duration !== undefined)
+                        .map((r) => ({
+                            duration: toDuration((r.duration ? r.duration : 0) * 24 * 60 * 60),
+                            message: r.message ?? '',
+                        })),
+                },
+
+                autoClose: values.workflow.autoClose.autoClose,
+                autoCloseSettings: {
+                    duration: toDuration(values.workflow.autoClose.autoCloseSettings.duration * 24 * 60 * 60),
+                    message: values.workflow.autoClose.autoCloseSettings.message ?? '',
+                },
+            },
         },
     };
 
@@ -206,6 +241,31 @@ function setValuesFromTemplate(tpl: Template): void {
         users: [],
     };
     state.jobAccess = tpl.jobAccess;
+
+    const autoCloseDuration = fromDuration(tpl.workflow?.autoCloseSettings?.duration);
+    state.workflow = {
+        reminders: {
+            reminder: tpl.workflow?.reminder ?? false,
+            reminders: {
+                reminders:
+                    tpl.workflow?.reminders?.reminders.map((r) => {
+                        const dur = fromDuration(r.duration);
+                        return {
+                            duration: (dur > 0 ? dur : 604800) / 24 / 60 / 60,
+                            message: r.message ?? '',
+                        };
+                    }) ?? [],
+            },
+        },
+
+        autoClose: {
+            autoClose: tpl.workflow?.autoClose ?? false,
+            autoCloseSettings: {
+                message: tpl.workflow?.autoCloseSettings?.message ?? '',
+                duration: (autoCloseDuration > 0 ? autoCloseDuration : 604800) / 24 / 60 / 60,
+            },
+        },
+    };
 
     schemaEditor.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
     schemaEditor.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
@@ -438,9 +498,22 @@ const categoriesLoading = ref(false);
                         </div>
 
                         <div class="my-2">
-                            <UAccordion :items="[{ slot: 'schema', label: $t('common.requirements', 2) }]">
+                            <UAccordion
+                                :items="[
+                                    { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
+                                    {
+                                        slot: 'workflow',
+                                        label: $t('components.documents.templates.TemplateWorkflowEditor.workflow'),
+                                        icon: 'i-mdi-reminder',
+                                    },
+                                ]"
+                            >
                                 <template #schema>
-                                    <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+                                    <TemplateSchemaEditor v-model="schemaEditor" />
+                                </template>
+
+                                <template #workflow>
+                                    <TemplateWorkflowEditor v-model="state.workflow" />
                                 </template>
                             </UAccordion>
                         </div>

@@ -89,6 +89,7 @@ type WorkerCmd struct {
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
 	ModuleJobsTimeclock      bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
+	ModuleDocsWorkflow       bool `help:"Start Docstore Workflow module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -108,6 +109,9 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	}
 	if c.ModuleJobsTimeclock {
 		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
+	}
+	if c.ModuleDocsWorkflow {
+		fxOpts = append(fxOpts, fx.Invoke(func(*pbdocstore.Workflow) {}))
 	}
 
 	// Only run cron agent in worker

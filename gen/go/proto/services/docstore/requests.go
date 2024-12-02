@@ -201,7 +201,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   doc.Id,
 		ActivityType: req.RequestType,
 		CreatorId:    &userInfo.UserId,
@@ -387,7 +387,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 			}
 		}
 
-		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 			DocumentId:   request.DocumentId,
 			ActivityType: activityType,
 			CreatorId:    &userInfo.UserId,
@@ -469,10 +469,10 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
-			Key: "notifications.document_request_added.title",
+			Key: "notifications.docstore.document_request_added.title",
 		},
 		Content: &common.TranslateItem{
-			Key:        "notifications.document_request_added.content",
+			Key:        "notifications.docstore.document_request_added.content",
 			Parameters: map[string]string{"title": doc.Title},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,

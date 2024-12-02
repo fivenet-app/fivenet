@@ -90,63 +90,7 @@ func NewServer(p Params) *Server {
 		notif:    p.Notif,
 		htmlDiff: p.HTMLDiffer,
 
-		access: access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
-			p.DB,
-			table.FivenetDocuments,
-			&access.TargetTableColumns{
-				ID:         table.FivenetDocuments.ID,
-				DeletedAt:  table.FivenetDocuments.DeletedAt,
-				CreatorID:  table.FivenetDocuments.CreatorID,
-				CreatorJob: table.FivenetDocuments.CreatorJob,
-			},
-			access.NewJobs[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.AccessLevel](
-				table.FivenetDocumentsJobAccess,
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetDocumentsJobAccess.ID,
-						CreatedAt: table.FivenetDocumentsJobAccess.CreatedAt,
-						TargetID:  table.FivenetDocumentsJobAccess.DocumentID,
-						Access:    table.FivenetDocumentsJobAccess.Access,
-					},
-					Job:          table.FivenetDocumentsJobAccess.Job,
-					MinimumGrade: table.FivenetDocumentsJobAccess.MinimumGrade,
-				},
-				table.FivenetDocumentsJobAccess.AS("document_job_access"),
-				&access.JobAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetDocumentsJobAccess.AS("document_job_access").ID,
-						CreatedAt: table.FivenetDocumentsJobAccess.AS("document_job_access").CreatedAt,
-						TargetID:  table.FivenetDocumentsJobAccess.AS("document_job_access").DocumentID,
-						Access:    table.FivenetDocumentsJobAccess.AS("document_job_access").Access,
-					},
-					Job:          table.FivenetDocumentsJobAccess.AS("document_job_access").Job,
-					MinimumGrade: table.FivenetDocumentsJobAccess.AS("document_job_access").MinimumGrade,
-				},
-			),
-			access.NewUsers[documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel](
-				table.FivenetDocumentsUserAccess,
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetDocumentsUserAccess.ID,
-						CreatedAt: table.FivenetDocumentsUserAccess.CreatedAt,
-						TargetID:  table.FivenetDocumentsUserAccess.DocumentID,
-						Access:    table.FivenetDocumentsUserAccess.Access,
-					},
-					UserId: table.FivenetDocumentsUserAccess.UserID,
-				},
-				table.FivenetDocumentsUserAccess.AS("document_user_access"),
-				&access.UserAccessColumns{
-					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetDocumentsUserAccess.AS("document_user_access").ID,
-						CreatedAt: table.FivenetDocumentsUserAccess.AS("document_user_access").CreatedAt,
-						TargetID:  table.FivenetDocumentsUserAccess.AS("document_user_access").DocumentID,
-						Access:    table.FivenetDocumentsUserAccess.AS("document_user_access").Access,
-					},
-					UserId: table.FivenetDocumentsUserAccess.AS("document_user_access").UserID,
-				},
-			),
-			nil,
-		),
+		access: newAccess(p.DB),
 
 		templateAccess: access.NewGrouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
 			p.DB,
@@ -185,6 +129,66 @@ func NewServer(p Params) *Server {
 			nil,
 		),
 	}
+}
+
+func newAccess(db *sql.DB) *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel] {
+	return access.NewGrouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel](
+		db,
+		table.FivenetDocuments,
+		&access.TargetTableColumns{
+			ID:         table.FivenetDocuments.ID,
+			DeletedAt:  table.FivenetDocuments.DeletedAt,
+			CreatorID:  table.FivenetDocuments.CreatorID,
+			CreatorJob: table.FivenetDocuments.CreatorJob,
+		},
+		access.NewJobs[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.AccessLevel](
+			table.FivenetDocumentsJobAccess,
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:        table.FivenetDocumentsJobAccess.ID,
+					CreatedAt: table.FivenetDocumentsJobAccess.CreatedAt,
+					TargetID:  table.FivenetDocumentsJobAccess.DocumentID,
+					Access:    table.FivenetDocumentsJobAccess.Access,
+				},
+				Job:          table.FivenetDocumentsJobAccess.Job,
+				MinimumGrade: table.FivenetDocumentsJobAccess.MinimumGrade,
+			},
+			table.FivenetDocumentsJobAccess.AS("document_job_access"),
+			&access.JobAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:        table.FivenetDocumentsJobAccess.AS("document_job_access").ID,
+					CreatedAt: table.FivenetDocumentsJobAccess.AS("document_job_access").CreatedAt,
+					TargetID:  table.FivenetDocumentsJobAccess.AS("document_job_access").DocumentID,
+					Access:    table.FivenetDocumentsJobAccess.AS("document_job_access").Access,
+				},
+				Job:          table.FivenetDocumentsJobAccess.AS("document_job_access").Job,
+				MinimumGrade: table.FivenetDocumentsJobAccess.AS("document_job_access").MinimumGrade,
+			},
+		),
+		access.NewUsers[documents.DocumentUserAccess, *documents.DocumentUserAccess, documents.AccessLevel](
+			table.FivenetDocumentsUserAccess,
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:        table.FivenetDocumentsUserAccess.ID,
+					CreatedAt: table.FivenetDocumentsUserAccess.CreatedAt,
+					TargetID:  table.FivenetDocumentsUserAccess.DocumentID,
+					Access:    table.FivenetDocumentsUserAccess.Access,
+				},
+				UserId: table.FivenetDocumentsUserAccess.UserID,
+			},
+			table.FivenetDocumentsUserAccess.AS("document_user_access"),
+			&access.UserAccessColumns{
+				BaseAccessColumns: access.BaseAccessColumns{
+					ID:        table.FivenetDocumentsUserAccess.AS("document_user_access").ID,
+					CreatedAt: table.FivenetDocumentsUserAccess.AS("document_user_access").CreatedAt,
+					TargetID:  table.FivenetDocumentsUserAccess.AS("document_user_access").DocumentID,
+					Access:    table.FivenetDocumentsUserAccess.AS("document_user_access").Access,
+				},
+				UserId: table.FivenetDocumentsUserAccess.AS("document_user_access").UserID,
+			},
+		),
+		nil,
+	)
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
@@ -488,7 +492,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   uint64(lastId),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
@@ -626,7 +630,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 
-		if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 			DocumentId:   req.DocumentId,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
@@ -719,7 +723,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.DocumentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
@@ -795,7 +799,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.DocumentId,
 		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,

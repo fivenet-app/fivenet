@@ -10,6 +10,8 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DocumentShort } from "./documents";
+import { Timestamp } from "../timestamp/timestamp";
 import { Duration } from "../../google/protobuf/duration";
 /**
  * @generated from protobuf message resources.documents.Workflow
@@ -20,9 +22,9 @@ export interface Workflow {
      */
     reminder: boolean;
     /**
-     * @generated from protobuf field: resources.documents.Reminder reminder_settings = 2;
+     * @generated from protobuf field: resources.documents.Reminders reminders = 2;
      */
-    reminderSettings?: Reminder;
+    reminders?: Reminders;
     /**
      * @generated from protobuf field: bool auto_close = 3;
      */
@@ -33,26 +35,39 @@ export interface Workflow {
     autoCloseSettings?: AutoClose;
 }
 /**
+ * @generated from protobuf message resources.documents.Reminders
+ */
+export interface Reminders {
+    /**
+     * @generated from protobuf field: repeated resources.documents.Reminder reminders = 1;
+     */
+    reminders: Reminder[];
+}
+/**
  * @generated from protobuf message resources.documents.Reminder
  */
 export interface Reminder {
     /**
-     * @generated from protobuf field: repeated google.protobuf.Duration duration = 1;
+     * @generated from protobuf field: google.protobuf.Duration duration = 1;
      */
-    duration: Duration[];
+    duration?: Duration;
+    /**
+     * @generated from protobuf field: string message = 2;
+     */
+    message: string;
 }
 /**
  * @generated from protobuf message resources.documents.AutoClose
  */
 export interface AutoClose {
     /**
-     * @generated from protobuf field: google.protobuf.Duration auto_close_duration = 1;
+     * @generated from protobuf field: google.protobuf.Duration duration = 1;
      */
-    autoCloseDuration?: Duration;
+    duration?: Duration;
     /**
-     * @generated from protobuf field: string comment = 2;
+     * @generated from protobuf field: string message = 2;
      */
-    comment: string;
+    message: string;
 }
 /**
  * @generated from protobuf message resources.documents.WorkflowCronData
@@ -63,12 +78,70 @@ export interface WorkflowCronData {
      */
     lastDocId: number;
 }
+/**
+ * @generated from protobuf message resources.documents.WorkflowState
+ */
+export interface WorkflowState {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp next_reminder_time = 2;
+     */
+    nextReminderTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional int32 next_reminder_count = 3;
+     */
+    nextReminderCount?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp auto_close_time = 4;
+     */
+    autoCloseTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 5;
+     */
+    workflow?: Workflow; // @gotags: alias:"workflow"
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 6;
+     */
+    document?: DocumentShort;
+}
+/**
+ * @generated from protobuf message resources.documents.WorkflowUserState
+ */
+export interface WorkflowUserState {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp manual_reminder_time = 3;
+     */
+    manualReminderTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string manual_reminder_message = 4;
+     */
+    manualReminderMessage?: string;
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 5;
+     */
+    workflow?: Workflow; // @gotags: alias:"workflow"
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 6;
+     */
+    document?: DocumentShort;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Workflow$Type extends MessageType<Workflow> {
     constructor() {
         super("resources.documents.Workflow", [
             { no: 1, name: "reminder", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "reminder_settings", kind: "message", T: () => Reminder },
+            { no: 2, name: "reminders", kind: "message", T: () => Reminders },
             { no: 3, name: "auto_close", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "auto_close_settings", kind: "message", T: () => AutoClose }
         ]);
@@ -89,8 +162,8 @@ class Workflow$Type extends MessageType<Workflow> {
                 case /* bool reminder */ 1:
                     message.reminder = reader.bool();
                     break;
-                case /* resources.documents.Reminder reminder_settings */ 2:
-                    message.reminderSettings = Reminder.internalBinaryRead(reader, reader.uint32(), options, message.reminderSettings);
+                case /* resources.documents.Reminders reminders */ 2:
+                    message.reminders = Reminders.internalBinaryRead(reader, reader.uint32(), options, message.reminders);
                     break;
                 case /* bool auto_close */ 3:
                     message.autoClose = reader.bool();
@@ -113,9 +186,9 @@ class Workflow$Type extends MessageType<Workflow> {
         /* bool reminder = 1; */
         if (message.reminder !== false)
             writer.tag(1, WireType.Varint).bool(message.reminder);
-        /* resources.documents.Reminder reminder_settings = 2; */
-        if (message.reminderSettings)
-            Reminder.internalBinaryWrite(message.reminderSettings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.documents.Reminders reminders = 2; */
+        if (message.reminders)
+            Reminders.internalBinaryWrite(message.reminders, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* bool auto_close = 3; */
         if (message.autoClose !== false)
             writer.tag(3, WireType.Varint).bool(message.autoClose);
@@ -133,15 +206,63 @@ class Workflow$Type extends MessageType<Workflow> {
  */
 export const Workflow = new Workflow$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class Reminders$Type extends MessageType<Reminders> {
+    constructor() {
+        super("resources.documents.Reminders", [
+            { no: 1, name: "reminders", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Reminder, options: { "validate.rules": { repeated: { maxItems: "3" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<Reminders>): Reminders {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.reminders = [];
+        if (value !== undefined)
+            reflectionMergePartial<Reminders>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Reminders): Reminders {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.documents.Reminder reminders */ 1:
+                    message.reminders.push(Reminder.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Reminders, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.documents.Reminder reminders = 1; */
+        for (let i = 0; i < message.reminders.length; i++)
+            Reminder.internalBinaryWrite(message.reminders[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.Reminders
+ */
+export const Reminders = new Reminders$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Reminder$Type extends MessageType<Reminder> {
     constructor() {
         super("resources.documents.Reminder", [
-            { no: 1, name: "duration", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Duration, options: { "validate.rules": { repeated: { items: { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } } } }
+            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } },
+            { no: 2, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } }
         ]);
     }
     create(value?: PartialMessage<Reminder>): Reminder {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.duration = [];
+        message.message = "";
         if (value !== undefined)
             reflectionMergePartial<Reminder>(this, message, value);
         return message;
@@ -151,8 +272,11 @@ class Reminder$Type extends MessageType<Reminder> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated google.protobuf.Duration duration */ 1:
-                    message.duration.push(Duration.internalBinaryRead(reader, reader.uint32(), options));
+                case /* google.protobuf.Duration duration */ 1:
+                    message.duration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.duration);
+                    break;
+                case /* string message */ 2:
+                    message.message = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -166,9 +290,12 @@ class Reminder$Type extends MessageType<Reminder> {
         return message;
     }
     internalBinaryWrite(message: Reminder, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated google.protobuf.Duration duration = 1; */
-        for (let i = 0; i < message.duration.length; i++)
-            Duration.internalBinaryWrite(message.duration[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* google.protobuf.Duration duration = 1; */
+        if (message.duration)
+            Duration.internalBinaryWrite(message.duration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string message = 2; */
+        if (message.message !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.message);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -183,13 +310,13 @@ export const Reminder = new Reminder$Type();
 class AutoClose$Type extends MessageType<AutoClose> {
     constructor() {
         super("resources.documents.AutoClose", [
-            { no: 1, name: "auto_close_duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } },
-            { no: 2, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } }
+            { no: 1, name: "duration", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "7776000" }, gte: { seconds: "86400" } } } } },
+            { no: 2, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } }
         ]);
     }
     create(value?: PartialMessage<AutoClose>): AutoClose {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.comment = "";
+        message.message = "";
         if (value !== undefined)
             reflectionMergePartial<AutoClose>(this, message, value);
         return message;
@@ -199,11 +326,11 @@ class AutoClose$Type extends MessageType<AutoClose> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* google.protobuf.Duration auto_close_duration */ 1:
-                    message.autoCloseDuration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.autoCloseDuration);
+                case /* google.protobuf.Duration duration */ 1:
+                    message.duration = Duration.internalBinaryRead(reader, reader.uint32(), options, message.duration);
                     break;
-                case /* string comment */ 2:
-                    message.comment = reader.string();
+                case /* string message */ 2:
+                    message.message = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -217,12 +344,12 @@ class AutoClose$Type extends MessageType<AutoClose> {
         return message;
     }
     internalBinaryWrite(message: AutoClose, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* google.protobuf.Duration auto_close_duration = 1; */
-        if (message.autoCloseDuration)
-            Duration.internalBinaryWrite(message.autoCloseDuration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string comment = 2; */
-        if (message.comment !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.comment);
+        /* google.protobuf.Duration duration = 1; */
+        if (message.duration)
+            Duration.internalBinaryWrite(message.duration, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string message = 2; */
+        if (message.message !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.message);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -280,3 +407,168 @@ class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
  * @generated MessageType for protobuf message resources.documents.WorkflowCronData
  */
 export const WorkflowCronData = new WorkflowCronData$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WorkflowState$Type extends MessageType<WorkflowState> {
+    constructor() {
+        super("resources.documents.WorkflowState", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "next_reminder_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "next_reminder_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "auto_close_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 6, name: "document", kind: "message", T: () => DocumentShort }
+        ]);
+    }
+    create(value?: PartialMessage<WorkflowState>): WorkflowState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<WorkflowState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowState): WorkflowState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp next_reminder_time */ 2:
+                    message.nextReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.nextReminderTime);
+                    break;
+                case /* optional int32 next_reminder_count */ 3:
+                    message.nextReminderCount = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp auto_close_time */ 4:
+                    message.autoCloseTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.autoCloseTime);
+                    break;
+                case /* optional resources.documents.Workflow workflow */ 5:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
+                case /* optional resources.documents.DocumentShort document */ 6:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WorkflowState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* optional resources.timestamp.Timestamp next_reminder_time = 2; */
+        if (message.nextReminderTime)
+            Timestamp.internalBinaryWrite(message.nextReminderTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 next_reminder_count = 3; */
+        if (message.nextReminderCount !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.nextReminderCount);
+        /* optional resources.timestamp.Timestamp auto_close_time = 4; */
+        if (message.autoCloseTime)
+            Timestamp.internalBinaryWrite(message.autoCloseTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.Workflow workflow = 5; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 6; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.WorkflowState
+ */
+export const WorkflowState = new WorkflowState$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
+    constructor() {
+        super("resources.documents.WorkflowUserState", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 3, name: "manual_reminder_time", kind: "message", T: () => Timestamp },
+            { no: 4, name: "manual_reminder_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 6, name: "document", kind: "message", T: () => DocumentShort }
+        ]);
+    }
+    create(value?: PartialMessage<WorkflowUserState>): WorkflowUserState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<WorkflowUserState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowUserState): WorkflowUserState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp manual_reminder_time */ 3:
+                    message.manualReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.manualReminderTime);
+                    break;
+                case /* optional string manual_reminder_message */ 4:
+                    message.manualReminderMessage = reader.string();
+                    break;
+                case /* optional resources.documents.Workflow workflow */ 5:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
+                case /* optional resources.documents.DocumentShort document */ 6:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WorkflowUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* optional resources.timestamp.Timestamp manual_reminder_time = 3; */
+        if (message.manualReminderTime)
+            Timestamp.internalBinaryWrite(message.manualReminderTime, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string manual_reminder_message = 4; */
+        if (message.manualReminderMessage !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.manualReminderMessage);
+        /* optional resources.documents.Workflow workflow = 5; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 6; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.WorkflowUserState
+ */
+export const WorkflowUserState = new WorkflowUserState$Type();

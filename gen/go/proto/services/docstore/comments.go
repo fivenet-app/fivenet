@@ -187,7 +187,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.Comment.DocumentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_ADDED,
 		CreatorId:    &userInfo.UserId,
@@ -264,7 +264,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 
 	comment.Comment = req.Comment.Comment
 
-	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.Comment.DocumentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_UPDATED,
 		CreatorId:    &userInfo.UserId,
@@ -387,7 +387,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, s.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   uint64(comment.DocumentId),
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_COMMENT_DELETED,
 		CreatorId:    &userInfo.UserId,
@@ -482,10 +482,10 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 		not := &notifications.Notification{
 			UserId: targetUserId,
 			Title: &common.TranslateItem{
-				Key: "notifications.document_comment_added.title",
+				Key: "notifications.docstore.document_comment_added.title",
 			},
 			Content: &common.TranslateItem{
-				Key:        "notifications.document_comment_added.content",
+				Key:        "notifications.docstore.document_comment_added.content",
 				Parameters: map[string]string{"title": doc.Title},
 			},
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,

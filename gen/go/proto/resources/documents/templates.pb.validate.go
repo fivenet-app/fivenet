@@ -401,6 +401,39 @@ func (m *Template) validate(all bool) error {
 
 	}
 
+	if m.Workflow != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflow()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateValidationError{
+					field:  "Workflow",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return TemplateMultiError(errors)
 	}
@@ -711,6 +744,39 @@ func (m *TemplateShort) validate(all bool) error {
 				return err
 			}
 			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Workflow != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflow()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TemplateShortValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TemplateShortValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TemplateShortValidationError{
+					field:  "Workflow",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}

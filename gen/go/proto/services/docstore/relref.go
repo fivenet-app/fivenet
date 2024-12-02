@@ -672,10 +672,10 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
-			Key: "notifications.document_relation_mentioned.title",
+			Key: "notifications.docstore.document_relation_mentioned.title",
 		},
 		Content: &common.TranslateItem{
-			Key:        "notifications.document_relation_mentioned.content",
+			Key:        "notifications.docstore.document_relation_mentioned.content",
 			Parameters: map[string]string{"title": doc.Title},
 		},
 		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,

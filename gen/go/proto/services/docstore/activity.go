@@ -122,7 +122,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	return resp, nil
 }
 
-func (s *Server) addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
+func addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
 	stmt := tDocActivity.
 		INSERT(
 			tDocActivity.DocumentID,

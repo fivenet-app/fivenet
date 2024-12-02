@@ -520,7 +520,8 @@
         "card_view": "Card View",
         "show": "View",
         "selected_no": "{0} selected",
-        "required": "Required"
+        "required": "Required",
+        "reminder": "Reminder | Reminders"
     },
     "components": {
         "partials": {
@@ -597,6 +598,10 @@
                 },
                 "templates_modal": {
                     "no_template": "Without Template"
+                },
+                "TemplateWorkflowEditor": {
+                    "workflow": "Workflow",
+                    "auto_close": "Auto Close"
                 }
             },
             "activity_list": {
@@ -1540,10 +1545,6 @@
             "title": "Body Checkup: Copied to clipboard",
             "content": "Summary copied to clipboard."
         },
-        "document_take_ownership": {
-            "title": "Document Owner changed",
-            "content": "Document has been transferred to you."
-        },
         "livemap": {
             "failed_loading_postals": {
                 "title": "Failed to load Postal codes",
@@ -1564,6 +1565,34 @@
                     "title": "Document Request updated!",
                     "content": "The document request has been successfully updated."
                 }
+            },
+            "document_relation_mentioned": {
+                "title": "Document: You have been mentioned",
+                "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
+            },
+            "document_request_added": {
+                "title": "Document: Request has been created",
+                "content": "A request against your \"{title}\" document has been added."
+            },
+            "document_comment_added": {
+                "title": "Document: New comment",
+                "content": "A new comment has been posted on \"{title}\" document."
+            },
+            "document_take_ownership": {
+                "title": "Document Owner changed",
+                "content": "Document has been transferred to you."
+            },
+            "document_reminder": {
+                "title": "Document: Reminder for DOC-{id}",
+                "content": "Reminder for document \"{title}\"."
+            },
+            "document_reminder_with_message": {
+                "title": "Document: Own Reminder for DOC-{id}",
+                "content": "Reminder for document \"{title}\", with message: \"{message}\"."
+            },
+            "document_auto_closed": {
+                "title": "Document: DOC-{id} automatically closed",
+                "content": "Document \"{title}\" has been automatically closed, with message: \"{message}\"."
             }
         },
         "superuser_menu": {
@@ -1609,18 +1638,6 @@
                 "title": "Event: \"{title}\" by {name}",
                 "content": "Starting {ago} ({time})."
             }
-        },
-        "document_relation_mentioned": {
-            "title": "Document: You have been mentioned",
-            "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
-        },
-        "document_request_added": {
-            "title": "Document: Request has been created",
-            "content": "A request against your \"{title}\" document has been added."
-        },
-        "document_comment_added": {
-            "title": "Document: New comment",
-            "content": "A new comment has been posted on \"{title}\" document."
         },
         "mailer": {
             "new_email": {

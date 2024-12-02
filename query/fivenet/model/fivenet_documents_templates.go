@@ -27,5 +27,6 @@ type FivenetDocumentsTemplates struct {
 	State        string     `json:"state"`
 	Access       *string    `json:"access"`
 	Schema       *string    `json:"schema"`
+	Workflow     *string    `json:"workflow"`
 	CreatorJob   string     `json:"creator_job"`
 }

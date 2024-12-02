@@ -139,8 +139,11 @@
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
     - [AutoClose](#resources-documents-AutoClose)
     - [Reminder](#resources-documents-Reminder)
+    - [Reminders](#resources-documents-Reminders)
     - [Workflow](#resources-documents-Workflow)
     - [WorkflowCronData](#resources-documents-WorkflowCronData)
+    - [WorkflowState](#resources-documents-WorkflowState)
+    - [WorkflowUserState](#resources-documents-WorkflowUserState)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -397,6 +400,9 @@
   
 - [resources/internet/search.proto](#resources_internet_search-proto)
     - [SearchResult](#resources-internet-SearchResult)
+  
+- [resources/duration/duration.proto](#resources_duration_duration-proto)
+    - [Duration](#resources-duration-Duration)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -2324,6 +2330,7 @@
 | creator_job_label | [string](#string) | optional |  |
 | job_access | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
 | content_access | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:"access" |
+| workflow | [Workflow](#resources-documents-Workflow) | optional |  |
 
 
 
@@ -2422,6 +2429,7 @@
 | schema | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
 | creator_job | [string](#string) |  |  |
 | creator_job_label | [string](#string) | optional |  |
+| workflow | [Workflow](#resources-documents-Workflow) | optional |  |
 
 
 
@@ -2762,8 +2770,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| auto_close_duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| comment | [string](#string) |  |  |
+| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| message | [string](#string) |  |  |
 
 
 
@@ -2778,7 +2786,23 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| duration | [google.protobuf.Duration](#google-protobuf-Duration) | repeated |  |
+| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| message | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-Reminders"></a>
+
+### Reminders
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reminders | [Reminder](#resources-documents-Reminder) | repeated |  |
 
 
 
@@ -2794,7 +2818,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | reminder | [bool](#bool) |  |  |
-| reminder_settings | [Reminder](#resources-documents-Reminder) |  |  |
+| reminders | [Reminders](#resources-documents-Reminders) |  |  |
 | auto_close | [bool](#bool) |  |  |
 | auto_close_settings | [AutoClose](#resources-documents-AutoClose) |  |  |
 
@@ -2812,6 +2836,46 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | last_doc_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowState"></a>
+
+### WorkflowState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| next_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| next_reminder_count | [int32](#int32) | optional |  |
+| auto_close_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
+| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowUserState"></a>
+
+### WorkflowUserState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| manual_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| manual_reminder_message | [string](#string) | optional |  |
+| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
+| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
 
 
 
@@ -6441,6 +6505,37 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | title | [string](#string) |  |  |
 | description | [string](#string) |  |  |
 | url | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_duration_duration-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/duration/duration.proto
+
+
+
+<a name="resources-duration-Duration"></a>
+
+### Duration
+Duration for storage messages. We've defined a new local type wrapper of google.protobuf.Duration so we can implement sql.Scanner and sql.Valuer interfaces. See: https://golang.org/pkg/database/sql/#Scanner https://golang.org/pkg/database/sql/driver/#Valuer
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 
 
 

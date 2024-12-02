@@ -45,6 +45,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			tDTemplates.Color,
 			tDTemplates.Icon,
 			tDTemplates.Schema,
+			tDTemplates.Workflow,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -146,6 +147,7 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
+			tDTemplates.Workflow,
 			tDTemplates.CreatorJob,
 		).
 		FROM(
@@ -267,6 +269,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
+			tDTemplates.Workflow,
 			tDTemplates.CreatorJob,
 		).
 		VALUES(
@@ -281,6 +284,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			req.Template.State,
 			req.Template.ContentAccess,
 			req.Template.Schema,
+			req.Template.Workflow,
 			userInfo.Job,
 		)
 
@@ -372,6 +376,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
+			tDTemplates.Workflow,
 		).
 		SET(
 			req.Template.Weight,
@@ -385,6 +390,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			req.Template.State,
 			req.Template.ContentAccess,
 			req.Template.Schema,
+			req.Template.Workflow,
 		).
 		WHERE(
 			tDTemplates.ID.EQ(jet.Uint64(req.Template.Id)),

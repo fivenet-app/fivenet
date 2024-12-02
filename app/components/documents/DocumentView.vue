@@ -120,8 +120,8 @@ async function changeDocumentOwner(id: string): Promise<void> {
         });
 
         notifications.add({
-            title: { key: 'notifications.document_take_ownership.title', parameters: {} },
-            description: { key: 'notifications.document_take_ownership.content', parameters: {} },
+            title: { key: 'notifications.docstore.document_take_ownership.title', parameters: {} },
+            description: { key: 'notifications.docstore.document_take_ownership.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 

@@ -5,6 +5,7 @@ package resources.documents;
 import "resources/documents/access.proto";
 import "resources/documents/category.proto";
 import "resources/documents/documents.proto";
+import "resources/documents/workflow.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "resources/vehicles/vehicles.proto";
@@ -43,6 +44,7 @@ message Template {
   optional string creator_job_label = 15 [(validate.rules).string.max_len = 50];
   repeated TemplateJobAccess job_access = 16 [(validate.rules).repeated.max_items = 20];
   resources.documents.DocumentAccess content_access = 17; // @gotags: alias:"access"
+  optional resources.documents.Workflow workflow = 18;
 }
 
 message TemplateShort {
@@ -65,6 +67,7 @@ message TemplateShort {
   resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
   string creator_job = 11 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 12 [(validate.rules).string.max_len = 50];
+  optional resources.documents.Workflow workflow = 18;
 }
 
 message TemplateSchema {

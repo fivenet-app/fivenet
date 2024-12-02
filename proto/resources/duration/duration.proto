@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package resources.duration;
+
+import "google/protobuf/duration.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/duration;duration";
+
+// Duration for storage messages.  We've defined a new local type wrapper
+// of google.protobuf.Duration so we can implement sql.Scanner and sql.Valuer
+// interfaces.  See:
+// https://golang.org/pkg/database/sql/#Scanner
+// https://golang.org/pkg/database/sql/driver/#Valuer
+message Duration {
+  google.protobuf.Duration duration = 1;
+}

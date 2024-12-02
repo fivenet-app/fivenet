@@ -290,7 +290,7 @@ func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId 
 		return errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   documentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_OWNER_CHANGED,
 		CreatorId:    &userInfo.UserId,

@@ -12,6 +12,6 @@ export function toDuration(input: string | number): googleProtobufDuration.Durat
     };
 }
 
-export function fromDuration(input: googleProtobufDuration.Duration): number {
-    return parseFloat(input.seconds.toString() + '.' + (input.nanos ?? 0) / 1000000);
+export function fromDuration(input?: googleProtobufDuration.Duration): number {
+    return parseFloat((input ? input?.seconds.toString() : '0') + '.' + (input?.nanos ?? 0) / 1000000);
 }

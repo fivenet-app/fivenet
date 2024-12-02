@@ -43,6 +43,8 @@ func UseSchema(schema string) {
 	FivenetDocumentsTemplates = FivenetDocumentsTemplates.FromSchema(schema)
 	FivenetDocumentsTemplatesJobAccess = FivenetDocumentsTemplatesJobAccess.FromSchema(schema)
 	FivenetDocumentsUserAccess = FivenetDocumentsUserAccess.FromSchema(schema)
+	FivenetDocumentsWorkflowState = FivenetDocumentsWorkflowState.FromSchema(schema)
+	FivenetDocumentsWorkflowUsers = FivenetDocumentsWorkflowUsers.FromSchema(schema)
 	FivenetJobAttrs = FivenetJobAttrs.FromSchema(schema)
 	FivenetJobCitizenAttributes = FivenetJobCitizenAttributes.FromSchema(schema)
 	FivenetJobPermissions = FivenetJobPermissions.FromSchema(schema)

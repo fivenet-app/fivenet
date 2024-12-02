@@ -15,6 +15,7 @@ import { Vehicle } from "../vehicles/vehicles";
 import { UserShort } from "../users/users";
 import { DocumentShort } from "./documents";
 import { User } from "../users/users";
+import { Workflow } from "./workflow";
 import { DocumentAccess } from "./access";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";
@@ -98,6 +99,10 @@ export interface Template {
      * @generated from protobuf field: resources.documents.DocumentAccess content_access = 17;
      */
     contentAccess?: DocumentAccess; // @gotags: alias:"access"
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 18;
+     */
+    workflow?: Workflow;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateShort
@@ -159,6 +164,10 @@ export interface TemplateShort {
      * @generated from protobuf field: optional string creator_job_label = 12;
      */
     creatorJobLabel?: string;
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 18;
+     */
+    workflow?: Workflow;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateSchema
@@ -288,7 +297,8 @@ class Template$Type extends MessageType<Template> {
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 15, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 16, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess }
+            { no: 17, name: "content_access", kind: "message", T: () => DocumentAccess },
+            { no: 18, name: "workflow", kind: "message", T: () => Workflow }
         ]);
     }
     create(value?: PartialMessage<Template>): Template {
@@ -362,6 +372,9 @@ class Template$Type extends MessageType<Template> {
                 case /* resources.documents.DocumentAccess content_access */ 17:
                     message.contentAccess = DocumentAccess.internalBinaryRead(reader, reader.uint32(), options, message.contentAccess);
                     break;
+                case /* optional resources.documents.Workflow workflow */ 18:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -425,6 +438,9 @@ class Template$Type extends MessageType<Template> {
         /* resources.documents.DocumentAccess content_access = 17; */
         if (message.contentAccess)
             DocumentAccess.internalBinaryWrite(message.contentAccess, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.Workflow workflow = 18; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -450,7 +466,8 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 9, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 10, name: "schema", kind: "message", T: () => TemplateSchema },
             { no: 11, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 12, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 12, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 18, name: "workflow", kind: "message", T: () => Workflow }
         ]);
     }
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
@@ -505,6 +522,9 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
                 case /* optional string creator_job_label */ 12:
                     message.creatorJobLabel = reader.string();
                     break;
+                case /* optional resources.documents.Workflow workflow */ 18:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -553,6 +573,9 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         /* optional string creator_job_label = 12; */
         if (message.creatorJobLabel !== undefined)
             writer.tag(12, WireType.LengthDelimited).string(message.creatorJobLabel);
+        /* optional resources.documents.Workflow workflow = 18; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
