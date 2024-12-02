@@ -505,6 +505,10 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 		}
 	}
 
+	if req.Page.ParentId != nil && *req.Page.ParentId == req.Page.Id {
+		req.Page.ParentId = nil
+	}
+
 	if req.Page.Meta.Toc == nil {
 		toc := true
 		req.Page.Meta.Toc = &toc
@@ -656,6 +660,10 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		if !parentCheck {
 			*req.Page.ParentId = *p.ParentId
 		}
+	}
+
+	if req.Page.ParentId != nil && *req.Page.ParentId == req.Page.Id {
+		req.Page.ParentId = nil
 	}
 
 	tPage := table.FivenetWikiPages

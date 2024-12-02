@@ -35,6 +35,6 @@ message AutoClose {
   }];
 }
 
-message CronData {
+message WorkflowCronData {
   uint64 last_doc_id = 1;
 }

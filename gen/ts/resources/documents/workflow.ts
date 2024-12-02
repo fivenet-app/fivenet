@@ -55,9 +55,9 @@ export interface AutoClose {
     comment: string;
 }
 /**
- * @generated from protobuf message resources.documents.CronData
+ * @generated from protobuf message resources.documents.WorkflowCronData
  */
-export interface CronData {
+export interface WorkflowCronData {
     /**
      * @generated from protobuf field: uint64 last_doc_id = 1;
      */
@@ -234,20 +234,20 @@ class AutoClose$Type extends MessageType<AutoClose> {
  */
 export const AutoClose = new AutoClose$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CronData$Type extends MessageType<CronData> {
+class WorkflowCronData$Type extends MessageType<WorkflowCronData> {
     constructor() {
-        super("resources.documents.CronData", [
+        super("resources.documents.WorkflowCronData", [
             { no: 1, name: "last_doc_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
-    create(value?: PartialMessage<CronData>): CronData {
+    create(value?: PartialMessage<WorkflowCronData>): WorkflowCronData {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.lastDocId = 0;
         if (value !== undefined)
-            reflectionMergePartial<CronData>(this, message, value);
+            reflectionMergePartial<WorkflowCronData>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CronData): CronData {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowCronData): WorkflowCronData {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -266,7 +266,7 @@ class CronData$Type extends MessageType<CronData> {
         }
         return message;
     }
-    internalBinaryWrite(message: CronData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: WorkflowCronData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 last_doc_id = 1; */
         if (message.lastDocId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.lastDocId);
@@ -277,6 +277,6 @@ class CronData$Type extends MessageType<CronData> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.CronData
+ * @generated MessageType for protobuf message resources.documents.WorkflowCronData
  */
-export const CronData = new CronData$Type();
+export const WorkflowCronData = new WorkflowCronData$Type();

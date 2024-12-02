@@ -138,9 +138,9 @@
   
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
     - [AutoClose](#resources-documents-AutoClose)
-    - [CronData](#resources-documents-CronData)
     - [Reminder](#resources-documents-Reminder)
     - [Workflow](#resources-documents-Workflow)
+    - [WorkflowCronData](#resources-documents-WorkflowCronData)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -2770,21 +2770,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-documents-CronData"></a>
-
-### CronData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| last_doc_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
 <a name="resources-documents-Reminder"></a>
 
 ### Reminder
@@ -2812,6 +2797,21 @@ Dummy - DO NOT USE!
 | reminder_settings | [Reminder](#resources-documents-Reminder) |  |  |
 | auto_close | [bool](#bool) |  |  |
 | auto_close_settings | [AutoClose](#resources-documents-AutoClose) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowCronData"></a>
+
+### WorkflowCronData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| last_doc_id | [uint64](#uint64) |  |  |
 
 
 

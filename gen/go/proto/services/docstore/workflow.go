@@ -57,7 +57,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 		ctx, span := w.tracer.Start(ctx, "docstore.workflow_run")
 		defer span.End()
 
-		dest := &documents.CronData{}
+		dest := &documents.WorkflowCronData{}
 		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
 			return fmt.Errorf("failed to unmarshal document workflow cron data. %w", err)
 		}
@@ -76,7 +76,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 	return w
 }
 
-func (w *Workflow) handle(ctx context.Context, data *documents.CronData) error {
+func (w *Workflow) handle(ctx context.Context, data *documents.WorkflowCronData) error {
 	// TODO
 
 	return nil

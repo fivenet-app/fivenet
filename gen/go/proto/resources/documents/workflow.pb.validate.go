@@ -505,22 +505,22 @@ var _ interface {
 	ErrorName() string
 } = AutoCloseValidationError{}
 
-// Validate checks the field values on CronData with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *CronData) Validate() error {
+// Validate checks the field values on WorkflowCronData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *WorkflowCronData) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CronData with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in CronDataMultiError, or nil
-// if none found.
-func (m *CronData) ValidateAll() error {
+// ValidateAll checks the field values on WorkflowCronData with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// WorkflowCronDataMultiError, or nil if none found.
+func (m *WorkflowCronData) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CronData) validate(all bool) error {
+func (m *WorkflowCronData) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -530,18 +530,19 @@ func (m *CronData) validate(all bool) error {
 	// no validation rules for LastDocId
 
 	if len(errors) > 0 {
-		return CronDataMultiError(errors)
+		return WorkflowCronDataMultiError(errors)
 	}
 
 	return nil
 }
 
-// CronDataMultiError is an error wrapping multiple validation errors returned
-// by CronData.ValidateAll() if the designated constraints aren't met.
-type CronDataMultiError []error
+// WorkflowCronDataMultiError is an error wrapping multiple validation errors
+// returned by WorkflowCronData.ValidateAll() if the designated constraints
+// aren't met.
+type WorkflowCronDataMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CronDataMultiError) Error() string {
+func (m WorkflowCronDataMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -550,11 +551,11 @@ func (m CronDataMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CronDataMultiError) AllErrors() []error { return m }
+func (m WorkflowCronDataMultiError) AllErrors() []error { return m }
 
-// CronDataValidationError is the validation error returned by
-// CronData.Validate if the designated constraints aren't met.
-type CronDataValidationError struct {
+// WorkflowCronDataValidationError is the validation error returned by
+// WorkflowCronData.Validate if the designated constraints aren't met.
+type WorkflowCronDataValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -562,22 +563,22 @@ type CronDataValidationError struct {
 }
 
 // Field function returns field value.
-func (e CronDataValidationError) Field() string { return e.field }
+func (e WorkflowCronDataValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CronDataValidationError) Reason() string { return e.reason }
+func (e WorkflowCronDataValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CronDataValidationError) Cause() error { return e.cause }
+func (e WorkflowCronDataValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CronDataValidationError) Key() bool { return e.key }
+func (e WorkflowCronDataValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CronDataValidationError) ErrorName() string { return "CronDataValidationError" }
+func (e WorkflowCronDataValidationError) ErrorName() string { return "WorkflowCronDataValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CronDataValidationError) Error() string {
+func (e WorkflowCronDataValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -589,14 +590,14 @@ func (e CronDataValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCronData.%s: %s%s",
+		"invalid %sWorkflowCronData.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CronDataValidationError{}
+var _ error = WorkflowCronDataValidationError{}
 
 var _ interface {
 	Field() string
@@ -604,4 +605,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CronDataValidationError{}
+} = WorkflowCronDataValidationError{}
