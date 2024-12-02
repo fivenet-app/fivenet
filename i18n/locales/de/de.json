@@ -520,7 +520,8 @@
         "card_view": "Kartenansicht",
         "show": "Aufrufen",
         "selected_no": "{0} ausgewählt",
-        "required": "Benötigt"
+        "required": "Benötigt",
+        "reminder": "Erinnerung | Erinnerungen"
     },
     "components": {
         "partials": {
@@ -597,6 +598,10 @@
                 },
                 "templates_modal": {
                     "no_template": "Ohne Vorlage"
+                },
+                "TemplateWorkflowEditor": {
+                    "workflow": "Workflow",
+                    "auto_close": "Automatisches Schließen"
                 }
             },
             "activity_list": {
@@ -1540,10 +1545,6 @@
             "title": "Körper Untersuchung: Zusammenfassung kopiert",
             "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         },
-        "document_take_ownership": {
-            "title": "Dokument-Besitzer geändert",
-            "content": "Das Dokument wurde ihnen übertragen."
-        },
         "livemap": {
             "failed_loading_postals": {
                 "title": "Laden der Postleitzahlen fehlgeschlagen",
@@ -1564,6 +1565,34 @@
                     "title": "Dokumentenanfrage aktualisiert!",
                     "content": "Die Dokumentenanfrage wurde erfolgreich aktualisiert."
                 }
+            },
+            "document_relation_mentioned": {
+                "title": "Dokument: Sie wurden erwähnt",
+                "content": "Sie wurden in Dokument \\\"{title}\\\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+            },
+            "document_request_added": {
+                "title": "Dokument: Anfrage wurde erstellt",
+                "content": "Eine Anfrage an ihr Dokument \\\"{title}\\\" wurde erstellt."
+            },
+            "document_comment_added": {
+                "title": "Dokument: Neuer Kommentar",
+                "content": "Ein neuer Kommentar wurde im Dokument \\\"{title}\\\" veröffentlicht."
+            },
+            "document_take_ownership": {
+                "title": "Dokument-Besitzer geändert",
+                "content": "Das Dokument wurde ihnen übertragen."
+            },
+            "document_reminder": {
+                "title": "Dokument: Erinnerung für DOC-{id}",
+                "content": "Erinnerung für Dokument \"{title}\"."
+            },
+            "document_reminder_with_message": {
+                "title": "Dokument: Eigene Erinnerung für DOC-{id}",
+                "content": "Eigene Erinnerung für Dokument \"{title}\", mit Nachricht: \"{message}\"."
+            },
+            "document_auto_closed": {
+                "title": "Dokument: DOC-{id} wurde automatisch geschlossen",
+                "content": "Dokument \"{title}\" wurde automatisch geschlossen, mit Nachricht: \"{message}\"."
             }
         },
         "superuser_menu": {
@@ -1609,18 +1638,6 @@
                 "title": "Termin: \"{title}\" von {name}",
                 "content": "Startet {ago} ({time})."
             }
-        },
-        "document_relation_mentioned": {
-            "title": "Dokument: Sie wurden erwähnt",
-            "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
-        },
-        "document_request_added": {
-            "title": "Dokument: Anfrage wurde erstellt",
-            "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
-        },
-        "document_comment_added": {
-            "title": "Dokument: Neuer Kommentar",
-            "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
         },
         "mailer": {
             "new_email": {
