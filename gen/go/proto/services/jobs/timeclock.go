@@ -223,6 +223,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 				tJobsUserProps.Job,
 				tJobsUserProps.AbsenceBegin,
 				tJobsUserProps.AbsenceEnd,
+				tJobsUserProps.NamePrefix,
+				tJobsUserProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -284,6 +286,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 				tJobsUserProps.Job,
 				tJobsUserProps.AbsenceBegin,
 				tJobsUserProps.AbsenceEnd,
+				tJobsUserProps.NamePrefix,
+				tJobsUserProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -345,6 +349,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 				tJobsUserProps.Job,
 				tJobsUserProps.AbsenceBegin,
 				tJobsUserProps.AbsenceEnd,
+				tJobsUserProps.NamePrefix,
+				tJobsUserProps.NameSuffix,
 			).
 			FROM(
 				tTimeClock.
@@ -533,6 +539,8 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 		).
 		FROM(
 			tTimeClock.

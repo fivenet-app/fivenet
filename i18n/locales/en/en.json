@@ -523,7 +523,9 @@
         "required": "Required",
         "reminder": "Reminder | Reminders",
         "workflow": "Workflow",
-        "auto_close": "Auto Close"
+        "auto_close": "Auto Close",
+        "prefix": "Prefix",
+        "suffix": "Suffix"
     },
     "components": {
         "partials": {
@@ -2388,7 +2390,8 @@
             "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!",
             "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
             "ErrNotFoundOrNoPerms": "Colleague not found!",
-            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!"
+            "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
+            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

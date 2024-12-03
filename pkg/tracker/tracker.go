@@ -19,9 +19,10 @@ import (
 )
 
 var (
-	tLocs     = table.FivenetUserLocations
-	tUsers    = table.Users.AS("user")
-	tJobProps = table.FivenetJobProps
+	tLocs          = table.FivenetUserLocations
+	tUsers         = table.Users.AS("user")
+	tJobProps      = table.FivenetJobProps
+	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
 )
 
 type ITracker interface {

@@ -167,6 +167,7 @@
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
     - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
     - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
+    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
     - [JobsUserActivity](#resources-jobs-JobsUserActivity)
     - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
     - [JobsUserProps](#resources-jobs-JobsUserProps)
@@ -1096,7 +1097,7 @@
 | reason | [string](#string) | optional | @sanitize |
 | code | [string](#string) | optional | @sanitize |
 | user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| user | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 | x | [double](#double) | optional |  |
 | y | [double](#double) | optional |  |
 | postal | [string](#string) | optional | @sanitize |
@@ -1211,7 +1212,7 @@
 | ----- | ---- | ----- | ----------- |
 | unit_id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"unit_id" |
 | user_id | [int32](#int32) |  | @gotags: sql:"primary_key" alias:"user_id" |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| user | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 
 
 
@@ -1251,12 +1252,12 @@
 | reason | [string](#string) | optional | @sanitize |
 | code | [string](#string) | optional | @sanitize |
 | user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| user | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 | x | [double](#double) | optional |  |
 | y | [double](#double) | optional |  |
 | postal | [string](#string) | optional | @sanitize |
 | creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| creator | [resources.jobs.Colleague](#resources-jobs-Colleague) | optional |  |
 
 
 
@@ -1321,7 +1322,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | job | [string](#string) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+| disponents | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
 
 
 
@@ -3131,7 +3132,7 @@ Dummy - DO NOT USE!
 | dateofbirth | [string](#string) |  |  |
 | phone_number | [string](#string) | optional |  |
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"fivenet_jobs_user_props" |
+| props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"jobs_user_props" |
 | email | [string](#string) | optional | @sanitize: method=StripTags |
 
 
@@ -3187,6 +3188,22 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources-jobs-ColleagueNameChange"></a>
+
+### ColleagueNameChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| prefix | [string](#string) | optional |  |
+| suffix | [string](#string) | optional |  |
+
+
+
+
+
+
 <a name="resources-jobs-JobsUserActivity"></a>
 
 ### JobsUserActivity
@@ -3222,6 +3239,7 @@ Dummy - DO NOT USE!
 | absence_date | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
 | grade_change | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
 | labels_change | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
+| name_change | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
 
 
 
@@ -3242,6 +3260,8 @@ Dummy - DO NOT USE!
 | absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | note | [string](#string) | optional | @sanitize: method=StripTags |
 | labels | [Labels](#resources-jobs-Labels) | optional |  |
+| name_prefix | [string](#string) | optional |  |
+| name_suffix | [string](#string) | optional |  |
 
 
 
@@ -3265,6 +3285,7 @@ Dummy - DO NOT USE!
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 | JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
 | JOBS_USER_ACTIVITY_TYPE_LABELS | 7 |  |
+| JOBS_USER_ACTIVITY_TYPE_NAME | 8 |  |
 
 
  <!-- end enums -->
@@ -3558,7 +3579,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | info | [MarkerInfo](#resources-livemap-MarkerInfo) |  |  |
 | user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:"user" |
+| user | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
 | unit_id | [uint64](#uint64) | optional |  |
 | unit | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
 | hidden | [bool](#bool) |  |  |
@@ -7148,7 +7169,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | ----- | ---- | ----- | ----------- |
 | server_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | settings | [resources.centrum.Settings](#resources-centrum-Settings) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+| disponents | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
 | own_unit_id | [uint64](#uint64) | optional |  |
 | units | [resources.centrum.Unit](#resources-centrum-Unit) | repeated | Send the current units and dispatches |
 | dispatches | [resources.centrum.Dispatch](#resources-centrum-Dispatch) | repeated |  |
@@ -9683,6 +9704,9 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | search | [string](#string) |  | Search params |
 | user_id | [int32](#int32) | optional |  |
 | absent | [bool](#bool) | optional |  |
+| label_ids | [uint64](#uint64) | repeated |  |
+| name_prefix | [string](#string) | optional |  |
+| name_suffix | [string](#string) | optional |  |
 
 
 
@@ -9812,8 +9836,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | ListColleagues | [ListColleaguesRequest](#services-jobs-ListColleaguesRequest) | [ListColleaguesResponse](#services-jobs-ListColleaguesResponse) | @perm |
 | GetSelf | [GetSelfRequest](#services-jobs-GetSelfRequest) | [GetSelfResponse](#services-jobs-GetSelfResponse) | @perm: Name=ListColleagues |
 | GetColleague | [GetColleagueRequest](#services-jobs-GetColleagueRequest) | [GetColleagueResponse](#services-jobs-GetColleagueResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note", "Labels"} |
-| ListColleagueActivity | [ListColleagueActivityRequest](#services-jobs-ListColleagueActivityRequest) | [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse) | @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"} |
-| SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels"} |
+| ListColleagueActivity | [ListColleagueActivityRequest](#services-jobs-ListColleagueActivityRequest) | [ListColleagueActivityResponse](#services-jobs-ListColleagueActivityResponse) | @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"} |
+| SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels", "Name"} |
 | GetColleagueLabels | [GetColleagueLabelsRequest](#services-jobs-GetColleagueLabelsRequest) | [GetColleagueLabelsResponse](#services-jobs-GetColleagueLabelsResponse) | @perm: Name=SetJobsUserProps |
 | ManageColleagueLabels | [ManageColleagueLabelsRequest](#services-jobs-ManageColleagueLabelsRequest) | [ManageColleagueLabelsResponse](#services-jobs-ManageColleagueLabelsResponse) | @perm |
 | GetColleagueLabelsStats | [GetColleagueLabelsStatsRequest](#services-jobs-GetColleagueLabelsStatsRequest) | [GetColleagueLabelsStatsResponse](#services-jobs-GetColleagueLabelsStatsResponse) | @perm: Name=GetColleague |

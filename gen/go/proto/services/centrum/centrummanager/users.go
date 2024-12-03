@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -23,12 +24,20 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tUsers.
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(
@@ -48,7 +57,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 	return &dest, nil
 }
 
-func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*users.UserShort, error) {
+func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*jobs.Colleague, error) {
 	us, err := s.resolveUserShortsByIds(ctx, u)
 	if err != nil {
 		return nil, err
@@ -57,7 +66,7 @@ func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*users.Use
 	return us[0], nil
 }
 
-func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*users.UserShort, error) {
+func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*jobs.Colleague, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -77,12 +86,20 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*us
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tUsers.
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUsers.ID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(
@@ -90,7 +107,7 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*us
 		).
 		LIMIT(int64(len(u)))
 
-	dest := []*users.UserShort{}
+	dest := []*jobs.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to resolve usershorts by ids %+v: %w", u, err)
 	}

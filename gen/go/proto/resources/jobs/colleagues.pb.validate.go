@@ -485,6 +485,36 @@ func (m *JobsUserProps) validate(all bool) error {
 
 	}
 
+	if m.NamePrefix != nil {
+
+		if utf8.RuneCountInString(m.GetNamePrefix()) > 12 {
+			err := JobsUserPropsValidationError{
+				field:  "NamePrefix",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.NameSuffix != nil {
+
+		if utf8.RuneCountInString(m.GetNameSuffix()) > 12 {
+			err := JobsUserPropsValidationError{
+				field:  "NameSuffix",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return JobsUserPropsMultiError(errors)
 	}
@@ -971,6 +1001,47 @@ func (m *JobsUserActivityData) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return JobsUserActivityDataValidationError{
 					field:  "LabelsChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *JobsUserActivityData_NameChange:
+		if v == nil {
+			err := JobsUserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetNameChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobsUserActivityDataValidationError{
+						field:  "NameChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobsUserActivityDataValidationError{
+						field:  "NameChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetNameChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobsUserActivityDataValidationError{
+					field:  "NameChange",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1496,3 +1567,113 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ColleagueLabelsChangeValidationError{}
+
+// Validate checks the field values on ColleagueNameChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ColleagueNameChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ColleagueNameChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ColleagueNameChangeMultiError, or nil if none found.
+func (m *ColleagueNameChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ColleagueNameChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Prefix != nil {
+		// no validation rules for Prefix
+	}
+
+	if m.Suffix != nil {
+		// no validation rules for Suffix
+	}
+
+	if len(errors) > 0 {
+		return ColleagueNameChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// ColleagueNameChangeMultiError is an error wrapping multiple validation
+// errors returned by ColleagueNameChange.ValidateAll() if the designated
+// constraints aren't met.
+type ColleagueNameChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ColleagueNameChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ColleagueNameChangeMultiError) AllErrors() []error { return m }
+
+// ColleagueNameChangeValidationError is the validation error returned by
+// ColleagueNameChange.Validate if the designated constraints aren't met.
+type ColleagueNameChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ColleagueNameChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ColleagueNameChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ColleagueNameChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ColleagueNameChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ColleagueNameChangeValidationError) ErrorName() string {
+	return "ColleagueNameChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ColleagueNameChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sColleagueNameChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ColleagueNameChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ColleagueNameChangeValidationError{}

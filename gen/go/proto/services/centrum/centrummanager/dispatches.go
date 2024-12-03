@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
@@ -479,9 +479,9 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		userId = dsp.CreatorId
 	}
 
-	var statusUser *users.UserShort
+	var statusUser *jobs.Colleague
 	if dsp.Creator != nil {
-		statusUser = dsp.Creator.UserShort()
+		statusUser = dsp.Creator.Colleague()
 	}
 
 	if dsp.Status, err = s.AddDispatchStatus(ctx, tx, dsp.Job, &centrum.DispatchStatus{

@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClassProp } from '~/typings';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import ColleagueName from './ColleagueName.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -94,7 +95,7 @@ watchOnce(opened, async () => {
             </template>
 
             <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
-            <span v-else class="truncate" :class="textClass"> {{ user?.firstname }} {{ user?.lastname }} </span>
+            <span v-else class="truncate" :class="textClass"> <ColleagueName :colleague="user" /> </span>
             <slot name="after" />
         </UButton>
 
@@ -159,7 +160,7 @@ watchOnce(opened, async () => {
                                 params: { id: user.userId ?? 0 },
                             }"
                         >
-                            {{ user.firstname }} {{ user.lastname }}
+                            <ColleagueName :colleague="user" />
                         </UButton>
                         <UButton
                             v-else-if="can('CitizenStoreService.ListCitizens').value"
@@ -170,9 +171,9 @@ watchOnce(opened, async () => {
                                 params: { id: user.userId ?? 0 },
                             }"
                         >
-                            {{ user.firstname }} {{ user.lastname }}
+                            <ColleagueName :colleague="user" />
                         </UButton>
-                        <UButton v-else variant="link" :padded="false"> {{ user.firstname }} {{ user.lastname }} </UButton>
+                        <UButton v-else variant="link" :padded="false"> <ColleagueName :colleague="user" /> </UButton>
 
                         <p v-if="user.jobLabel" class="text-sm font-normal">
                             <span class="font-semibold">{{ $t('common.job') }}:</span>

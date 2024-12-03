@@ -350,7 +350,7 @@ defineShortcuts({
                         class="flex-1"
                         :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                     >
-                        <UButton block @click="togglePin(documentId, !doc.pinned)">
+                        <UButton block class="flex-1 flex-col" @click="togglePin(documentId, !doc.pinned)">
                             <template v-if="!doc.pinned">
                                 <UIcon name="i-mdi-pin" class="size-5" />
                                 {{ $t('common.pin') }}
@@ -369,8 +369,8 @@ defineShortcuts({
                         :shortcuts="['D', 'R']"
                     >
                         <UButton
-                            class="flex-1 flex-col"
                             block
+                            class="flex-1 flex-col"
                             icon="i-mdi-frequently-asked-questions"
                             @click="openRequestsModal"
                         >
@@ -380,8 +380,8 @@ defineShortcuts({
 
                     <UButton
                         v-if="can('DocStoreService.SetDocumentReminder').value"
-                        class="flex-1 flex-col"
                         block
+                        class="flex-1 flex-col"
                         icon="i-mdi-reminder"
                         @click="
                             modal.open(DocumentReminderModal, {
@@ -400,8 +400,8 @@ defineShortcuts({
                             can('DocStoreService.ChangeDocumentOwner').value &&
                             checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
                         "
-                        class="flex-1 flex-col"
                         block
+                        class="flex-1 flex-col"
                         :disabled="doc?.creatorId === activeChar?.userId"
                         icon="i-mdi-creation"
                         @click="
@@ -418,8 +418,8 @@ defineShortcuts({
                             can('DocStoreService.DeleteDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                         "
-                        class="flex-1 flex-col"
                         block
+                        class="flex-1 flex-col"
                         :color="!doc.deletedAt ? 'red' : undefined"
                         :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
                         @click="

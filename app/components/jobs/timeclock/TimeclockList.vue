@@ -446,6 +446,7 @@ const itemsAll = computed(() =>
                                                 usersLoading = true;
                                                 const colleagues = await completorStore.listColleagues({
                                                     search: query,
+                                                    labelIds: [],
                                                 });
                                                 usersLoading = false;
                                                 return colleagues;

@@ -82,7 +82,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS"},
+					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"},
 				},
 			},
 		},
@@ -108,7 +108,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceSetJobsUserPropsTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"AbsenceDate", "Note", "Labels"},
+					ValidValues: []string{"AbsenceDate", "Note", "Labels", "Name"},
 				},
 			},
 		},

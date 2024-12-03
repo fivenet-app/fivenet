@@ -182,6 +182,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     usersLoading = true;
                                                     const colleagues = await completorStore.listColleagues({
                                                         search: query,
+                                                        labelIds: [],
                                                     });
                                                     usersLoading = false;
                                                     return colleagues;

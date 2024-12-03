@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"slices"
 
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -75,7 +75,7 @@ func (x *Attributes) Remove(attribute string) bool {
 
 func (x *Disponents) Merge(in *Disponents) *Disponents {
 	if len(in.Disponents) == 0 {
-		x.Disponents = []*users.UserShort{}
+		x.Disponents = []*jobs.Colleague{}
 	} else {
 		x.Disponents = in.Disponents
 	}

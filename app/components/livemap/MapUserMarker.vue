@@ -8,6 +8,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -158,8 +159,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
 
                 <ul role="list">
                     <li>
-                        <span class="font-semibold"> {{ $t('common.name') }} </span>: {{ marker.user?.firstname }}
-                        {{ marker.user?.lastname }}
+                        <span class="font-semibold"> {{ $t('common.name') }} </span>:
+                        <ColleagueName v-if="marker.user" :colleague="marker.user" />
                     </li>
                     <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
                         <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{

@@ -150,6 +150,8 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Job,

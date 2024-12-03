@@ -17,4 +17,6 @@ type FivenetJobsUserProps struct {
 	AbsenceBegin *time.Time `json:"absence_begin"`
 	AbsenceEnd   *time.Time `json:"absence_end"`
 	Note         *string    `json:"note"`
+	NamePrefix   *string    `json:"name_prefix"`
+	NameSuffix   *string    `json:"name_suffix"`
 }

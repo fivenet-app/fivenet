@@ -9,8 +9,10 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useSettingsStore } from '~/store/settings';
+import type { Label } from '~~/gen/ts/resources/jobs/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import ColleagueName from './ColleagueName.vue';
 import ColleaguesLabelStatsModal from './ColleaguesLabelStatsModal.vue';
 import JobsLabelsModal from './JobsLabelsModal.vue';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
@@ -24,6 +26,9 @@ const { attr, can, activeChar } = useAuth();
 const schema = z.object({
     name: z.string().max(50),
     absent: z.boolean(),
+    labels: z.custom<Label>().array().max(3),
+    namePrefix: z.string().max(12).optional(),
+    nameSuffix: z.string().max(12).optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -31,6 +36,9 @@ type Schema = z.output<typeof schema>;
 const query = reactive<Schema>({
     name: '',
     absent: false,
+    labels: [],
+    namePrefix: undefined,
+    nameSuffix: undefined,
 });
 
 const settingsStore = useSettingsStore();
@@ -67,8 +75,22 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
             sort: sort.value,
             search: query.name,
             absent: query.absent,
+            labelIds: query.labels.map((l) => l.id),
+            namePrefix: query.namePrefix,
+            nameSuffix: query.nameSuffix,
         });
         const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
+    try {
+        const { response } = await getGRPCJobsClient().getColleagueLabels({});
 
         return response;
     } catch (e) {
@@ -148,70 +170,136 @@ defineShortcuts({
 
 <template>
     <UDashboardToolbar>
-        <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup name="name" :label="$t('common.search')" class="flex-1">
-                <UInput
-                    ref="input"
-                    v-model="query.name"
-                    type="text"
-                    name="name"
-                    :placeholder="$t('common.name')"
-                    block
-                    leading-icon="i-mdi-search"
-                    @keydown.esc="$event.target.blur()"
+        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <div class="flex gap-2">
+                <UFormGroup name="name" :label="$t('common.search')" class="flex-1">
+                    <UInput
+                        ref="input"
+                        v-model="query.name"
+                        type="text"
+                        name="name"
+                        :placeholder="$t('common.name')"
+                        block
+                        leading-icon="i-mdi-search"
+                        @keydown.esc="$event.target.blur()"
+                    >
+                        <template #trailing>
+                            <UKbd value="/" />
+                        </template>
+                    </UInput>
+                </UFormGroup>
+
+                <UFormGroup
+                    name="absent"
+                    :label="$t('common.absent')"
+                    class="flex flex-initial flex-col"
+                    :ui="{ container: 'flex-1 flex' }"
                 >
-                    <template #trailing>
-                        <UKbd value="/" />
-                    </template>
-                </UInput>
-            </UFormGroup>
+                    <div class="flex flex-1 items-center">
+                        <UToggle v-model="query.absent">
+                            <span class="sr-only">
+                                {{ $t('common.absent') }}
+                            </span>
+                        </UToggle>
+                    </div>
+                </UFormGroup>
 
-            <UFormGroup
-                name="absent"
-                :label="$t('common.absent')"
-                class="flex flex-initial flex-col"
-                :ui="{ container: 'flex-1 flex' }"
+                <UFormGroup label="&nbsp">
+                    <UButtonGroup>
+                        <UButton
+                            v-if="can('JobsService.ManageColleagueLabels').value"
+                            :label="$t('common.label', 2)"
+                            icon="i-mdi-tag"
+                            @click="modal.open(JobsLabelsModal, {})"
+                        />
+                        <UButton
+                            v-if="can('JobsService.GetColleague').value"
+                            icon="i-mdi-chart-donut"
+                            color="white"
+                            @click="modal.open(ColleaguesLabelStatsModal, {})"
+                        />
+                    </UButtonGroup>
+                </UFormGroup>
+            </div>
+
+            <UAccordion
+                class="mt-2"
+                color="white"
+                variant="soft"
+                size="sm"
+                :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
             >
-                <div class="flex flex-1 items-center">
-                    <UToggle v-model="query.absent">
-                        <span class="sr-only">
-                            {{ $t('common.absent') }}
-                        </span>
-                    </UToggle>
-                </div>
-            </UFormGroup>
+                <template #search>
+                    <div class="flex flex-row flex-wrap gap-2">
+                        <UFormGroup
+                            name="labels"
+                            :label="$t('common.label', 2)"
+                            class="flex flex-1 flex-col"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.labels"
+                                    class="flex-1"
+                                    multiple
+                                    :searchable="
+                                        async (_: string) => {
+                                            return (await getColleagueLabels()).labels;
+                                        }
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-attributes="['name']"
+                                    option-attribute="name"
+                                    by="name"
+                                    clear-search-on-close
+                                >
+                                    <template #label>
+                                        <span v-if="query.labels.length" class="truncate">
+                                            <span v-for="(label, idx) in query.labels" :key="label.id">
+                                                <span class="truncate" :style="{ backgroundColor: label.color }">{{
+                                                    label.name
+                                                }}</span>
+                                                <span v-if="idx < query.labels.length - 1">, </span>
+                                            </span>
+                                        </span>
+                                        <span v-else>&nbsp;</span>
+                                    </template>
 
-            <UFormGroup
-                name="cards"
-                :label="$t('common.card_view')"
-                class="flex flex-initial flex-col"
-                :ui="{ container: 'flex-1 flex' }"
-            >
-                <div class="flex flex-1 items-center">
-                    <UToggle v-model="jobsService.cardView">
-                        <span class="sr-only">
-                            {{ $t('common.card_view') }}
-                        </span>
-                    </UToggle>
-                </div>
-            </UFormGroup>
+                                    <template #option="{ option }">
+                                        <span class="truncate" :style="{ backgroundColor: option.color }">{{
+                                            option.name
+                                        }}</span>
+                                    </template>
 
-            <UFormGroup label="&nbsp">
-                <UButtonGroup>
-                    <UButton
-                        v-if="can('JobsService.ManageColleagueLabels').value"
-                        :label="$t('common.label', 2)"
-                        icon="i-mdi-tag"
-                        @click="modal.open(JobsLabelsModal, {})"
-                    />
-                    <UButton
-                        v-if="can('JobsService.GetColleague').value"
-                        icon="i-mdi-chart-donut"
-                        color="white"
-                        @click="modal.open(ColleaguesLabelStatsModal, {})"
-                    />
-                </UButtonGroup>
-            </UFormGroup>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="cards"
+                            :label="$t('common.card_view')"
+                            class="flex flex-initial flex-col"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <div class="flex flex-1 items-center">
+                                <UToggle v-model="jobsService.cardView">
+                                    <span class="sr-only">
+                                        {{ $t('common.card_view') }}
+                                    </span>
+                                </UToggle>
+                            </div>
+                        </UFormGroup>
+                    </div>
+                </template>
+            </UAccordion>
         </UForm>
     </UDashboardToolbar>
 
@@ -237,7 +325,8 @@ defineShortcuts({
                         :alt="$t('common.avatar')"
                         class="mr-2"
                     />
-                    <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
+
+                    <ColleagueName :colleague="colleague" />
                 </div>
 
                 <dl class="font-normal lg:hidden">
@@ -324,11 +413,11 @@ defineShortcuts({
                     wrapper: 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
                 }"
             >
-                <UPageCard
-                    v-for="colleague in data?.colleagues"
-                    :key="colleague.userId"
-                    :title="`${colleague.firstname} ${colleague.lastname}`"
-                >
+                <UPageCard v-for="colleague in data?.colleagues" :key="colleague.userId">
+                    <template #title>
+                        <ColleagueName :colleague="colleague" />
+                    </template>
+
                     <template #header>
                         <div class="flex items-center justify-center">
                             <ProfilePictureImg
@@ -360,16 +449,13 @@ defineShortcuts({
 
                             <EmailBlock :email="colleague.email" />
 
-                            <div
-                                v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
-                                class="flex flex-row flex-wrap gap-1"
-                            >
-                                <UIcon name="i-mdi-tag" class="h-5 w-5" />
+                            <div v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value" class="flex flex-row gap-1">
+                                <UIcon name="i-mdi-tag" class="h-5 w-5 shrink-0" />
 
                                 <span v-if="!colleague.props?.labels?.list.length">
                                     {{ $t('common.none', [$t('common.label', 2)]) }}
                                 </span>
-                                <div v-else class="flex max-w-80 flex-row flex-wrap gap-1">
+                                <div v-else class="flex max-w-full flex-row flex-wrap gap-1">
                                     <UBadge
                                         v-for="label in colleague.props?.labels?.list"
                                         :key="label.name"
@@ -394,7 +480,6 @@ defineShortcuts({
                                 <span>{{ $t('common.to') }}</span>
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
                             </span>
-                            <span v-else class="h-7"></span>
                         </div>
                     </template>
 
@@ -414,6 +499,7 @@ defineShortcuts({
                                     :label="$t('components.jobs.self_service.set_absence_date')"
                                     icon="i-mdi-island"
                                     block
+                                    truncate
                                     @click="
                                         modal.open(SelfServicePropsAbsenceDateModal, {
                                             userId: colleague.userId,

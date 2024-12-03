@@ -7,8 +7,8 @@ import "resources/centrum/dispatches.proto";
 import "resources/centrum/general.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum;centrum";
@@ -181,7 +181,7 @@ message TakeDispatchResponse {}
 message LatestState {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
-  repeated resources.users.UserShort disponents = 3;
+  repeated resources.jobs.Colleague disponents = 3;
   optional uint64 own_unit_id = 4 [jstype = JS_STRING];
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;

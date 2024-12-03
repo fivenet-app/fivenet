@@ -327,10 +327,6 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	updateSets := []jet.ColumnAssigment{
-		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
-	}
 	stmt := tJobsUserProps.
 		INSERT(
 			tJobsUserProps.UserID,
@@ -345,7 +341,8 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 			absenceEnd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			updateSets...,
+			tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
+			tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, c.db); err != nil {

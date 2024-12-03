@@ -68,6 +68,7 @@ export const useCompletorStore = defineStore('completor', {
             return await this.listColleagues({
                 userId: userId,
                 search: '',
+                labelIds: [],
             }).then((colleagues) => (colleagues.length === 0 ? undefined : colleagues[0]));
         },
         async listColleagues(req: ListColleaguesRequest): Promise<Colleague[]> {

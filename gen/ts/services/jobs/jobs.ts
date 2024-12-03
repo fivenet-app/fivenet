@@ -4,10 +4,10 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -48,6 +48,18 @@ export interface ListColleaguesRequest {
      * @generated from protobuf field: optional bool absent = 5;
      */
     absent?: boolean;
+    /**
+     * @generated from protobuf field: repeated uint64 label_ids = 6 [jstype = JS_STRING];
+     */
+    labelIds: string[];
+    /**
+     * @generated from protobuf field: optional string name_prefix = 7;
+     */
+    namePrefix?: string;
+    /**
+     * @generated from protobuf field: optional string name_suffix = 8;
+     */
+    nameSuffix?: string;
 }
 /**
  * @generated from protobuf message services.jobs.ListColleaguesResponse
@@ -252,12 +264,16 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 5, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 5, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "label_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 7, name: "name_prefix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } },
+            { no: 8, name: "name_suffix", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.search = "";
+        message.labelIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleaguesRequest>(this, message, value);
         return message;
@@ -281,6 +297,19 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                     break;
                 case /* optional bool absent */ 5:
                     message.absent = reader.bool();
+                    break;
+                case /* repeated uint64 label_ids = 6 [jstype = JS_STRING];*/ 6:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.labelIds.push(reader.uint64().toString());
+                    else
+                        message.labelIds.push(reader.uint64().toString());
+                    break;
+                case /* optional string name_prefix */ 7:
+                    message.namePrefix = reader.string();
+                    break;
+                case /* optional string name_suffix */ 8:
+                    message.nameSuffix = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -309,6 +338,19 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* optional bool absent = 5; */
         if (message.absent !== undefined)
             writer.tag(5, WireType.Varint).bool(message.absent);
+        /* repeated uint64 label_ids = 6 [jstype = JS_STRING]; */
+        if (message.labelIds.length) {
+            writer.tag(6, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.labelIds.length; i++)
+                writer.uint64(message.labelIds[i]);
+            writer.join();
+        }
+        /* optional string name_prefix = 7; */
+        if (message.namePrefix !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.namePrefix);
+        /* optional string name_suffix = 8; */
+        if (message.nameSuffix !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.nameSuffix);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

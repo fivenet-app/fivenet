@@ -189,6 +189,10 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
 		).
 		FROM(
@@ -198,6 +202,10 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tUsers.Job),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(jet.AND(

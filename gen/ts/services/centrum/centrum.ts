@@ -12,7 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Disponents } from "../../resources/centrum/general";
-import { UserShort } from "../../resources/users/users";
+import { Colleague } from "../../resources/jobs/colleagues";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";
 import { DispatchStatus } from "../../resources/centrum/dispatches";
@@ -443,9 +443,9 @@ export interface LatestState {
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 3;
+     * @generated from protobuf field: repeated resources.jobs.Colleague disponents = 3;
      */
-    disponents: UserShort[];
+    disponents: Colleague[];
     /**
      * @generated from protobuf field: optional uint64 own_unit_id = 4 [jstype = JS_STRING];
      */
@@ -2339,7 +2339,7 @@ class LatestState$Type extends MessageType<LatestState> {
         super("services.centrum.LatestState", [
             { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
+            { no: 3, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Colleague },
             { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
             { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
@@ -2365,8 +2365,8 @@ class LatestState$Type extends MessageType<LatestState> {
                 case /* resources.centrum.Settings settings */ 2:
                     message.settings = Settings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* repeated resources.users.UserShort disponents */ 3:
-                    message.disponents.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.Colleague disponents */ 3:
+                    message.disponents.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 case /* optional uint64 own_unit_id = 4 [jstype = JS_STRING];*/ 4:
                     message.ownUnitId = reader.uint64().toString();
@@ -2395,9 +2395,9 @@ class LatestState$Type extends MessageType<LatestState> {
         /* resources.centrum.Settings settings = 2; */
         if (message.settings)
             Settings.internalBinaryWrite(message.settings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.UserShort disponents = 3; */
+        /* repeated resources.jobs.Colleague disponents = 3; */
         for (let i = 0; i < message.disponents.length; i++)
-            UserShort.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* optional uint64 own_unit_id = 4 [jstype = JS_STRING]; */
         if (message.ownUnitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.ownUnitId);

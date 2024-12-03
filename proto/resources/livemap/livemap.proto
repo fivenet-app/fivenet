@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.livemap;
 
 import "resources/centrum/units.proto";
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -46,7 +47,7 @@ message UserMarker {
   MarkerInfo info = 1;
 
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
-  resources.users.UserShort user = 3; // @gotags: alias:"user"
+  resources.jobs.Colleague user = 3; // @gotags: alias:"user"
   optional uint64 unit_id = 4 [jstype = JS_STRING];
   optional resources.centrum.Unit unit = 5;
 

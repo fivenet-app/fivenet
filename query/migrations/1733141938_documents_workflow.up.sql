@@ -1,6 +1,6 @@
 BEGIN;
 
-ALTER TABLE `fivenet_documents_templates` ADD `workflow` mediumtext NULL AFTER `schema`;
+ALTER TABLE `fivenet_documents_templates` ADD COLUMN `workflow` mediumtext NULL AFTER `schema`;
 
 -- Table: fivenet_documents_workflow_state
 CREATE TABLE `fivenet_documents_workflow_state` (

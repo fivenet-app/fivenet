@@ -7,8 +7,8 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -90,6 +90,10 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 			tUsers.Job,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
@@ -100,6 +104,10 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tCentrumUsers.UserID).
 						AND(tUsers.Job.EQ(jet.String(job))),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		)
 
@@ -109,23 +117,23 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 		)
 	}
 
-	var dest []*users.UserShort
+	var dest []*jobs.Colleague
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
 	}
 
-	perJob := map[string][]*users.UserShort{}
+	perJob := map[string][]*jobs.Colleague{}
 	for _, j := range s.appCfg.Get().UserTracker.LivemapJobs {
 		if _, ok := perJob[j]; !ok {
-			perJob[j] = []*users.UserShort{}
+			perJob[j] = []*jobs.Colleague{}
 		}
 	}
 
 	for _, user := range dest {
 		if _, ok := perJob[user.Job]; !ok {
-			perJob[user.Job] = []*users.UserShort{}
+			perJob[user.Job] = []*jobs.Colleague{}
 		}
 
 		s.enricher.EnrichJobName(user)

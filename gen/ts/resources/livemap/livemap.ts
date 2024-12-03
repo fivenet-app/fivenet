@@ -10,8 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Unit } from "../centrum/units";
 import { UserShort } from "../users/users";
+import { Unit } from "../centrum/units";
+import { Colleague } from "../jobs/colleagues";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.livemap.MarkerInfo
@@ -89,9 +90,9 @@ export interface UserMarker {
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 3;
+     * @generated from protobuf field: resources.jobs.Colleague user = 3;
      */
-    user?: UserShort; // @gotags: alias:"user"
+    user?: Colleague; // @gotags: alias:"user"
     /**
      * @generated from protobuf field: optional uint64 unit_id = 4 [jstype = JS_STRING];
      */
@@ -350,7 +351,7 @@ class UserMarker$Type extends MessageType<UserMarker> {
         super("resources.livemap.UserMarker", [
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 3, name: "user", kind: "message", T: () => UserShort },
+            { no: 3, name: "user", kind: "message", T: () => Colleague },
             { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -375,8 +376,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
                     break;
-                case /* resources.users.UserShort user */ 3:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                case /* resources.jobs.Colleague user */ 3:
+                    message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* optional uint64 unit_id = 4 [jstype = JS_STRING];*/ 4:
                     message.unitId = reader.uint64().toString();
@@ -405,9 +406,9 @@ class UserMarker$Type extends MessageType<UserMarker> {
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 3; */
+        /* resources.jobs.Colleague user = 3; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* optional uint64 unit_id = 4 [jstype = JS_STRING]; */
         if (message.unitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.unitId);

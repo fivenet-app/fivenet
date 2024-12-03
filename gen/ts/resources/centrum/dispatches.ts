@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { Colleague } from "../jobs/colleagues";
 import { Unit } from "./units";
 import { User } from "../users/users";
 import { Attributes } from "./general";
@@ -177,9 +177,9 @@ export interface DispatchStatus {
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 10;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 10;
      */
-    user?: UserShort;
+    user?: Colleague;
     /**
      * @generated from protobuf field: optional double x = 11;
      */
@@ -630,7 +630,7 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 10, name: "user", kind: "message", T: () => UserShort },
+            { no: 10, name: "user", kind: "message", T: () => Colleague },
             { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
@@ -677,8 +677,8 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
                 case /* optional int32 user_id */ 9:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 10:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                case /* optional resources.jobs.Colleague user */ 10:
+                    message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* optional double x */ 11:
                     message.x = reader.double();
@@ -728,9 +728,9 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
         /* optional int32 user_id = 9; */
         if (message.userId !== undefined)
             writer.tag(9, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 10; */
+        /* optional resources.jobs.Colleague user = 10; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.user, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         /* optional double x = 11; */
         if (message.x !== undefined)
             writer.tag(11, WireType.Bit64).double(message.x);

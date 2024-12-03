@@ -4,8 +4,8 @@ package resources.centrum;
 
 import "resources/centrum/access.proto";
 import "resources/centrum/general.proto";
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrum";
@@ -48,7 +48,7 @@ message UnitAssignments {
 message UnitAssignment {
   uint64 unit_id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"unit_id"
   int32 user_id = 2 [(validate.rules).int32.gte = 0]; // @gotags: sql:"primary_key" alias:"user_id"
-  optional resources.users.UserShort user = 3;
+  optional resources.jobs.Colleague user = 3;
 }
 
 enum StatusUnit {
@@ -73,11 +73,11 @@ message UnitStatus {
   // @sanitize
   optional string code = 7 [(validate.rules).string.max_len = 20];
   optional int32 user_id = 8 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort user = 9;
+  optional resources.jobs.Colleague user = 9;
   optional double x = 10;
   optional double y = 11;
   // @sanitize
   optional string postal = 12  [(validate.rules).string.max_len = 48];
   optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 14;
+  optional resources.jobs.Colleague creator = 14;
 }

@@ -8,6 +8,7 @@ import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/store/completor';
 import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
+import ColleagueName from '../ColleagueName.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -115,6 +116,7 @@ watchDebounced(query, async () => refresh(), {
                                 usersLoading = true;
                                 const colleagues = await completorStore.listColleagues({
                                     search: query,
+                                    labelIds: [],
                                 });
                                 usersLoading = false;
                                 return colleagues;
@@ -134,8 +136,8 @@ watchDebounced(query, async () => refresh(), {
                                 {{ usersToLabel(query.colleagues) }}
                             </template>
                         </template>
-                        <template #option="{ option: user }">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        <template #option="{ option: colleague }">
+                            <ColleagueName :colleague="colleague" birthday />
                         </template>
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

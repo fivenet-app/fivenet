@@ -27,7 +27,7 @@ message Colleague {
   string dateofbirth = 9 [(validate.rules).string.len = 10];
   optional string phone_number = 12 [(validate.rules).string.max_len = 20];
   optional resources.filestore.File avatar = 17;
-  JobsUserProps props = 18; // @gotags: alias:"fivenet_jobs_user_props"
+  JobsUserProps props = 18; // @gotags: alias:"jobs_user_props"
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }
@@ -40,6 +40,8 @@ message JobsUserProps {
   // @sanitize: method=StripTags
   optional string note = 5;
   optional Labels labels = 6;
+  optional string name_prefix = 7 [(validate.rules).string.max_len = 12];
+  optional string name_suffix = 8 [(validate.rules).string.max_len = 12];
 }
 
 enum JobsUserActivityType {
@@ -51,6 +53,7 @@ enum JobsUserActivityType {
   JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
   JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
   JOBS_USER_ACTIVITY_TYPE_LABELS = 7;
+  JOBS_USER_ACTIVITY_TYPE_NAME = 8;
 }
 
 message JobsUserActivity {
@@ -72,6 +75,7 @@ message JobsUserActivityData {
     ColleagueAbsenceDate absence_date = 1;
     ColleagueGradeChange grade_change = 2;
     ColleagueLabelsChange labels_change = 3;
+    ColleagueNameChange name_change = 4;
   }
 }
 
@@ -88,4 +92,9 @@ message ColleagueGradeChange {
 message ColleagueLabelsChange {
   repeated Label added = 1;
   repeated Label removed = 2;
+}
+
+message ColleagueNameChange {
+  optional string prefix = 1;
+  optional string suffix = 2;
 }

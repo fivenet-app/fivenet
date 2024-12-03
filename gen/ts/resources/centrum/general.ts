@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
-import { UserShort } from "../users/users";
+import { Colleague } from "../jobs/colleagues";
 /**
  * @generated from protobuf message resources.centrum.Attributes
  */
@@ -30,9 +30,9 @@ export interface Disponents {
      */
     job: string;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
+     * @generated from protobuf field: repeated resources.jobs.Colleague disponents = 2;
      */
-    disponents: UserShort[];
+    disponents: Colleague[];
 }
 /**
  * @generated from protobuf message resources.centrum.UserUnitMapping
@@ -107,7 +107,7 @@ class Disponents$Type extends MessageType<Disponents> {
     constructor() {
         super("resources.centrum.Disponents", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<Disponents>): Disponents {
@@ -126,8 +126,8 @@ class Disponents$Type extends MessageType<Disponents> {
                 case /* string job */ 1:
                     message.job = reader.string();
                     break;
-                case /* repeated resources.users.UserShort disponents */ 2:
-                    message.disponents.push(UserShort.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.Colleague disponents */ 2:
+                    message.disponents.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -144,9 +144,9 @@ class Disponents$Type extends MessageType<Disponents> {
         /* string job = 1; */
         if (message.job !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* repeated resources.users.UserShort disponents = 2; */
+        /* repeated resources.jobs.Colleague disponents = 2; */
         for (let i = 0; i < message.disponents.length; i++)
-            UserShort.internalBinaryWrite(message.disponents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.disponents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -24,10 +24,11 @@ import (
 )
 
 var (
-	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUsers      = table.Users.AS("usershort")
-	tUserProps  = table.FivenetUserProps
-	tUnits      = table.FivenetCentrumUnits.AS("unit")
+	tUnitStatus    = table.FivenetCentrumUnitsStatus.AS("unitstatus")
+	tUsers         = table.Users.AS("usershort")
+	tUserProps     = table.FivenetUserProps
+	tUnits         = table.FivenetCentrumUnits.AS("unit")
+	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
@@ -387,6 +388,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
@@ -397,6 +402,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tUnitStatus.UserID).
 						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(

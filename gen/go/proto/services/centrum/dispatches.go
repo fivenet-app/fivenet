@@ -542,6 +542,10 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.NamePrefix,
+			tJobsUserProps.NameSuffix,
 			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
@@ -552,6 +556,10 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 				LEFT_JOIN(tUserProps,
 					tUserProps.UserID.EQ(tDispatchStatus.UserID).
 						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(tUsers.Job)),
 				),
 		).
 		WHERE(

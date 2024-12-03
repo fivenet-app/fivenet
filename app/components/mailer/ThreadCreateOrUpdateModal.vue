@@ -10,12 +10,12 @@ import { defaultEmptyContent } from './helpers';
 
 const { isOpen } = useModal();
 
-const { activeChar } = useAuth();
+const { activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
-const { draft: state, addressBook, selectedEmail } = storeToRefs(mailerStore);
+const { draft: state, addressBook, emails, selectedEmail } = storeToRefs(mailerStore);
 
 const schema = z.object({
     title: z.string().min(3).max(255),
@@ -119,7 +119,68 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex w-full flex-col gap-2">
                         <div class="flex flex-1 flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
-                                <UInput type="text" disabled :model-value="selectedEmail?.email ?? 'N/A'" />
+                                <UInput type="text" :model-value="selectedEmail?.email ?? 'N/A'" />
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="selectedEmail"
+                                        :options="emails"
+                                        :placeholder="$t('common.mail')"
+                                        searchable
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['label', 'email']"
+                                        trailing
+                                        class="pt-1"
+                                        by="id"
+                                    >
+                                        <template #label>
+                                            <span class="overflow-hidden truncate">
+                                                {{
+                                                    (selectedEmail?.label && selectedEmail?.label !== ''
+                                                        ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                                                        : undefined) ??
+                                                    selectedEmail?.email ??
+                                                    $t('common.none')
+                                                }}
+
+                                                <UBadge
+                                                    v-if="selectedEmail?.deactivated"
+                                                    color="red"
+                                                    size="xs"
+                                                    :label="$t('common.disabled')"
+                                                />
+                                            </span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="truncate">
+                                                {{
+                                                    (option?.label && option?.label !== ''
+                                                        ? option?.label + ' (' + option.email + ')'
+                                                        : undefined) ??
+                                                    (option?.userId
+                                                        ? $t('common.personal_email') +
+                                                          (isSuperuser ? ' (' + option.email + ')' : '')
+                                                        : undefined) ??
+                                                    option?.email ??
+                                                    $t('common.none')
+                                                }}
+                                            </span>
+
+                                            <UBadge
+                                                v-if="selectedEmail?.deactivated"
+                                                color="red"
+                                                size="xs"
+                                                :label="$t('common.disabled')"
+                                            />
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty> {{ $t('common.not_found', [$t('common.mail', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
 
                             <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">

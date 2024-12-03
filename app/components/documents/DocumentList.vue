@@ -127,236 +127,223 @@ defineShortcuts({
 
 <template>
     <UDashboardToolbar>
-        <template #default>
-            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
-                <UFormGroup name="title" :label="$t('common.search')">
-                    <UInput
-                        ref="input"
-                        v-model="query.title"
-                        type="text"
-                        name="title"
-                        :placeholder="$t('common.title')"
-                        block
-                        leading-icon="i-mdi-search"
-                        @keydown.esc="$event.target.blur()"
-                    >
-                        <template #trailing>
-                            <UKbd value="/" />
-                        </template>
-                    </UInput>
-                </UFormGroup>
-
-                <UAccordion
-                    class="mt-2"
-                    color="white"
-                    variant="soft"
-                    size="sm"
-                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <UFormGroup name="title" :label="$t('common.search')">
+                <UInput
+                    ref="input"
+                    v-model="query.title"
+                    type="text"
+                    name="title"
+                    :placeholder="$t('common.title')"
+                    block
+                    leading-icon="i-mdi-search"
+                    @keydown.esc="$event.target.blur()"
                 >
-                    <template #search>
-                        <div class="flex flex-row flex-wrap gap-1">
-                            <UFormGroup
-                                class="flex-1"
-                                name="documentIds"
-                                :label="`${$t('common.document')} ${$t('common.id')}`"
-                            >
-                                <UInput
-                                    v-model="query.documentIds"
-                                    type="text"
-                                    name="documentIds"
-                                    placeholder="DOC-..."
-                                    block
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.categories"
-                                        multiple
-                                        option-attribute="name"
-                                        :search-attributes="['name']"
-                                        block
-                                        by="name"
-                                        :searchable="
-                                            async (search: string) => {
-                                                try {
-                                                    categoriesLoading = true;
-                                                    const categories = await completorStore.completeDocumentCategories(search);
-                                                    categoriesLoading = false;
-                                                    return categories;
-                                                } catch (e) {
-                                                    handleGRPCError(e as RpcError);
-                                                    throw e;
-                                                } finally {
-                                                    categoriesLoading = false;
-                                                }
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.category', 1)"
-                                    >
-                                        <template #label>
-                                            <div v-if="query.categories.length > 0" class="inline-flex gap-1">
-                                                <template v-for="category in query.categories" :key="category.id">
-                                                    <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
-                                                        <component
-                                                            :is="
-                                                                markerIcons.find((item) => item.name === category?.icon) ??
-                                                                markerFallbackIcon
-                                                            "
-                                                            v-if="category.icon"
-                                                            class="size-5"
-                                                        />
-                                                        <span class="truncate">{{ category.name }}</span>
-                                                    </span>
-                                                </template>
-                                            </div>
-                                            <span v-else> &nbsp; </span>
-                                        </template>
-
-                                        <template #option="{ option }">
-                                            <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
-                                                <component
-                                                    :is="
-                                                        markerIcons.find((item) => item.name === option.icon) ??
-                                                        markerFallbackIcon
-                                                    "
-                                                    v-if="option.icon"
-                                                    class="size-5"
-                                                />
-                                                <span class="truncate">{{ option.name }}</span>
-                                            </span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
-                                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.creators"
-                                        multiple
-                                        nullable
-                                        block
-                                        :searchable="
-                                            async (query: string): Promise<UserShort[]> => {
-                                                usersLoading = true;
-                                                const users = await completorStore.completeCitizens({
-                                                    search: query,
-                                                });
-                                                usersLoading = false;
-                                                return users;
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['firstname', 'lastname']"
-                                        :placeholder="$t('common.creator')"
-                                        trailing
-                                        by="userId"
-                                    >
-                                        <template #label>
-                                            <template v-if="query.creators.length">
-                                                {{ usersToLabel(query.creators) }}
-                                            </template>
-                                        </template>
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-                        </div>
-
-                        <div class="flex flex-row flex-wrap gap-2">
-                            <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="query.closed"
-                                        :options="openclose"
-                                        value-attribute="closed"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <div class="inline-flex items-center gap-1 truncate">
-                                                <template v-if="typeof query.closed === 'boolean'">
-                                                    <UIcon
-                                                        v-if="!query.closed"
-                                                        name="i-mdi-lock-open-variant"
-                                                        color="green"
-                                                        class="size-4"
-                                                    />
-                                                    <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
-                                                </template>
-
-                                                {{
-                                                    query.closed === undefined
-                                                        ? openclose[0]!.label
-                                                        : (openclose.findLast((o) => o.closed === query.closed)?.label ??
-                                                          $t('common.na'))
-                                                }}
-                                            </div>
-                                        </template>
-
-                                        <template #option="{ option }">
-                                            <div class="inline-flex items-center gap-1 truncate">
-                                                <template v-if="typeof option.closed === 'boolean'">
-                                                    <UIcon
-                                                        v-if="!option.closed"
-                                                        name="i-mdi-lock-open-variant"
-                                                        color="green"
-                                                        class="size-4"
-                                                    />
-                                                    <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
-                                                </template>
-
-                                                {{ $t(option.label) }}
-                                            </div>
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-
-                            <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
-                                <DateRangePickerPopoverClient
-                                    v-model="query.date"
-                                    class="flex-1"
-                                    date-format="dd.MM.yyyy HH:mm"
-                                    :popover="{ class: 'flex-1' }"
-                                    :date-picker="{
-                                        mode: 'dateTime',
-                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                        is24Hr: true,
-                                        clearable: true,
-                                    }"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
-                                <SortButton
-                                    v-model="sort"
-                                    :fields="[
-                                        { label: 'common.created_at', value: 'createdAt' },
-                                        { label: 'common.title', value: 'title' },
-                                    ]"
-                                />
-                            </UFormGroup>
-                        </div>
+                    <template #trailing>
+                        <UKbd value="/" />
                     </template>
-                </UAccordion>
-            </UForm>
-        </template>
+                </UInput>
+            </UFormGroup>
+
+            <UAccordion
+                class="mt-2"
+                color="white"
+                variant="soft"
+                size="sm"
+                :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+            >
+                <template #search>
+                    <div class="flex flex-row flex-wrap gap-1">
+                        <UFormGroup class="flex-1" name="documentIds" :label="`${$t('common.document')} ${$t('common.id')}`">
+                            <UInput v-model="query.documentIds" type="text" name="documentIds" placeholder="DOC-..." block />
+                        </UFormGroup>
+
+                        <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.categories"
+                                    multiple
+                                    option-attribute="name"
+                                    :search-attributes="['name']"
+                                    block
+                                    by="name"
+                                    :searchable="
+                                        async (search: string) => {
+                                            try {
+                                                categoriesLoading = true;
+                                                const categories = await completorStore.completeDocumentCategories(search);
+                                                categoriesLoading = false;
+                                                return categories;
+                                            } catch (e) {
+                                                handleGRPCError(e as RpcError);
+                                                throw e;
+                                            } finally {
+                                                categoriesLoading = false;
+                                            }
+                                        }
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.category', 1)"
+                                >
+                                    <template #label>
+                                        <div v-if="query.categories.length > 0" class="inline-flex gap-1">
+                                            <template v-for="category in query.categories" :key="category.id">
+                                                <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
+                                                    <component
+                                                        :is="
+                                                            markerIcons.find((item) => item.name === category?.icon) ??
+                                                            markerFallbackIcon
+                                                        "
+                                                        v-if="category.icon"
+                                                        class="size-5"
+                                                    />
+                                                    <span class="truncate">{{ category.name }}</span>
+                                                </span>
+                                            </template>
+                                        </div>
+                                        <span v-else> &nbsp; </span>
+                                    </template>
+
+                                    <template #option="{ option }">
+                                        <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                            <component
+                                                :is="
+                                                    markerIcons.find((item) => item.name === option.icon) ?? markerFallbackIcon
+                                                "
+                                                v-if="option.icon"
+                                                class="size-5"
+                                            />
+                                            <span class="truncate">{{ option.name }}</span>
+                                        </span>
+                                    </template>
+
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+
+                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormGroup>
+
+                        <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.creators"
+                                    multiple
+                                    nullable
+                                    block
+                                    :searchable="
+                                        async (query: string): Promise<UserShort[]> => {
+                                            usersLoading = true;
+                                            const users = await completorStore.completeCitizens({
+                                                search: query,
+                                            });
+                                            usersLoading = false;
+                                            return users;
+                                        }
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-attributes="['firstname', 'lastname']"
+                                    :placeholder="$t('common.creator')"
+                                    trailing
+                                    by="userId"
+                                >
+                                    <template #label>
+                                        <template v-if="query.creators.length">
+                                            {{ usersToLabel(query.creators) }}
+                                        </template>
+                                    </template>
+                                    <template #option="{ option: user }">
+                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                    </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormGroup>
+                    </div>
+
+                    <div class="flex flex-row flex-wrap gap-2">
+                        <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="query.closed"
+                                    :options="openclose"
+                                    value-attribute="closed"
+                                    :searchable-placeholder="$t('common.search_field')"
+                                >
+                                    <template #label>
+                                        <div class="inline-flex items-center gap-1 truncate">
+                                            <template v-if="typeof query.closed === 'boolean'">
+                                                <UIcon
+                                                    v-if="!query.closed"
+                                                    name="i-mdi-lock-open-variant"
+                                                    color="green"
+                                                    class="size-4"
+                                                />
+                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                            </template>
+
+                                            {{
+                                                query.closed === undefined
+                                                    ? openclose[0]!.label
+                                                    : (openclose.findLast((o) => o.closed === query.closed)?.label ??
+                                                      $t('common.na'))
+                                            }}
+                                        </div>
+                                    </template>
+
+                                    <template #option="{ option }">
+                                        <div class="inline-flex items-center gap-1 truncate">
+                                            <template v-if="typeof option.closed === 'boolean'">
+                                                <UIcon
+                                                    v-if="!option.closed"
+                                                    name="i-mdi-lock-open-variant"
+                                                    color="green"
+                                                    class="size-4"
+                                                />
+                                                <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                            </template>
+
+                                            {{ $t(option.label) }}
+                                        </div>
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
+                        </UFormGroup>
+
+                        <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
+                            <DateRangePickerPopoverClient
+                                v-model="query.date"
+                                class="flex-1"
+                                date-format="dd.MM.yyyy HH:mm"
+                                :popover="{ class: 'flex-1' }"
+                                :date-picker="{
+                                    mode: 'dateTime',
+                                    disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                    is24Hr: true,
+                                    clearable: true,
+                                }"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup :label="$t('common.sort_by')" class="flex-1 grow-0 basis-40">
+                            <SortButton
+                                v-model="sort"
+                                :fields="[
+                                    { label: 'common.created_at', value: 'createdAt' },
+                                    { label: 'common.title', value: 'title' },
+                                ]"
+                            />
+                        </UFormGroup>
+                    </div>
+                </template>
+            </UAccordion>
+        </UForm>
     </UDashboardToolbar>
 
     <UDashboardPanelContent class="p-0">

@@ -4,6 +4,7 @@ package resources.centrum;
 
 import "resources/centrum/general.proto";
 import "resources/centrum/units.proto";
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -75,7 +76,7 @@ message DispatchStatus {
   // @sanitize
   optional string code = 8 [(validate.rules).string.max_len = 20];
   optional int32 user_id = 9 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort user = 10;
+  optional resources.jobs.Colleague user = 10;
   optional double x = 11;
   optional double y = 12;
   // @sanitize

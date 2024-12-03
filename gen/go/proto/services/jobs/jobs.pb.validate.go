@@ -164,6 +164,36 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		// no validation rules for Absent
 	}
 
+	if m.NamePrefix != nil {
+
+		if utf8.RuneCountInString(m.GetNamePrefix()) > 12 {
+			err := ListColleaguesRequestValidationError{
+				field:  "NamePrefix",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.NameSuffix != nil {
+
+		if utf8.RuneCountInString(m.GetNameSuffix()) > 12 {
+			err := ListColleaguesRequestValidationError{
+				field:  "NameSuffix",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListColleaguesRequestMultiError(errors)
 	}

@@ -106,6 +106,7 @@ export const useMailerStore = defineStore('mailer', {
                         },
                         true,
                     );
+                    return;
                 }
 
                 useNotificatorStore().add({
@@ -125,6 +126,11 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'messageUpdate') {
                 await mailerDB.messages.put(event.data.messageUpdate);
 
+                // Update thread updated at time
+                await mailerDB.threads.update(event.data.messageUpdate.threadId, {
+                    updatedAt: event.data.messageUpdate.updatedAt,
+                });
+
                 // Handle email sent by blocked email
                 if (
                     event.data.messageUpdate.sender?.email &&
@@ -138,36 +144,15 @@ export const useMailerStore = defineStore('mailer', {
                         },
                         true,
                     );
+                    return;
                 }
 
-                // Only set unread state when message isn't from same email
-                if (event.data.messageUpdate.senderId !== this.selectedEmail?.id) {
-                    const threadState = await this.getThreadState(event.data.messageUpdate.threadId);
-                    if (threadState?.muted) {
-                        return;
-                    }
-
-                    useNotificatorStore().add({
-                        title: { key: 'notifications.mailer.new_email.title', parameters: {} },
-                        description: {
-                            key: 'notifications.mailer.new_email.content',
-                            parameters: {
-                                title: event.data.messageUpdate.title,
-                                from: event.data.messageUpdate.sender?.email ?? 'N/A',
-                            },
-                        },
-                        type: NotificationType.INFO,
-                        actions: this.getNotificationActions(event.data.messageUpdate.threadId),
-                    });
-                    useSound().play({ name: 'notification' });
+                if (event.data.messageUpdate.senderId === this.selectedEmail?.id) {
+                    return;
                 }
 
-                // Update thread updated at time
-                await mailerDB.threads.update(event.data.messageUpdate.threadId, {
-                    updatedAt: event.data.messageUpdate.updatedAt,
-                });
-
-                if (this.selectedThread?.id !== event.data.messageUpdate.threadId) {
+                // Only set unread state when message isn't from same email and the user isn't active on that thread
+                if (event.data.messageUpdate.threadId !== this.selectedThread?.id) {
                     await this.setThreadState(
                         {
                             threadId: event.data.messageUpdate.threadId,
@@ -176,6 +161,25 @@ export const useMailerStore = defineStore('mailer', {
                         true,
                     );
                 }
+
+                const threadState = await this.getThreadState(event.data.messageUpdate.threadId);
+                if (threadState?.muted) {
+                    return;
+                }
+
+                useNotificatorStore().add({
+                    title: { key: 'notifications.mailer.new_email.title', parameters: {} },
+                    description: {
+                        key: 'notifications.mailer.new_email.content',
+                        parameters: {
+                            title: event.data.messageUpdate.title,
+                            from: event.data.messageUpdate.sender?.email ?? 'N/A',
+                        },
+                    },
+                    type: NotificationType.INFO,
+                    actions: this.getNotificationActions(event.data.messageUpdate.threadId),
+                });
+                useSound().play({ name: 'notification' });
             } else if (event.data.oneofKind === 'messageDelete') {
                 await mailerDB.messages.delete(event.data.messageDelete);
             } else if (event.data.oneofKind === 'threadStateUpdate') {
@@ -586,6 +590,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         checkIfEmailBlocked(email: string): boolean {
+            this.emails.find((e) => email);
             return false;
         },
 

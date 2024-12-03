@@ -5,7 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Labels } from '~~/gen/ts/resources/jobs/labels';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { GetColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
+import type { GetColleagueLabelsResponse, SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = defineProps<{
     modelValue?: Labels;
@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'update:modelValue', labels: Labels | undefined): void;
+    (e: 'refresh'): void;
 }>();
 
 const { attr, can } = useAuth();
@@ -40,6 +41,7 @@ async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
 const changed = ref(false);
 
 const schema = z.object({
+    reason: z.string().min(3).max(255),
     labels: z
         .object({
             id: z.string(),
@@ -48,17 +50,16 @@ const schema = z.object({
         })
         .array()
         .max(10),
-    reason: z.string().min(3).max(255),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    labels: labels.value?.list !== undefined ? labels.value.list.slice() : [],
     reason: '',
+    labels: labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [],
 });
 
-async function setUserJobProp(userId: number, values: Schema): Promise<void> {
+async function setUserJobProp(userId: number, values: Schema): Promise<SetJobsUserPropsResponse> {
     const jobsUserProps: JobsUserProps = {
         userId: userId,
         job: '',
@@ -74,14 +75,18 @@ async function setUserJobProp(userId: number, values: Schema): Promise<void> {
         });
         const { response } = await call;
 
+        changed.value = false;
+        state.reason = '';
+        emit('refresh');
+        state.labels = labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [];
+
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
-        labels.value = response.props?.labels;
-        state.reason = '';
+        return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -92,7 +97,6 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await setUserJobProp(props.userId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    changed.value = false;
 }, 1000);
 
 watch(props, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
@@ -108,17 +112,28 @@ watch(state, () => {
     }
 });
 
-onMounted(() => {
-    state.labels = labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [];
-});
+const editing = ref(false);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
+    <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
         <p v-if="!state.labels.length" class="text-sm leading-6">
             {{ $t('common.none', [$t('common.label', 2)]) }}
         </p>
         <template v-else>
+            <div>
+                <UButton v-if="!editing" icon="i-mdi-pencil" @click="editing = true" />
+                <UButton
+                    v-else
+                    icon="i-mdi-cancel"
+                    color="red"
+                    @click="
+                        state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
+                        editing = false;
+                    "
+                />
+            </div>
+
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
                 <UBadge
                     v-for="(attribute, idx) in state.labels"
@@ -133,7 +148,7 @@ onMounted(() => {
                     </span>
 
                     <UButton
-                        v-if="canDo.set"
+                        v-if="canDo.set && editing"
                         variant="link"
                         icon="i-mdi-close"
                         :padded="false"
@@ -152,7 +167,7 @@ onMounted(() => {
             </div>
         </template>
 
-        <UFormGroup name="labels">
+        <UFormGroup v-if="editing" name="labels">
             <ClientOnly>
                 <USelectMenu
                     v-model="state.labels"
@@ -196,9 +211,13 @@ onMounted(() => {
                 <UInput v-model="state.reason" type="text" />
             </UFormGroup>
 
-            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                {{ $t('common.save') }}
-            </UButton>
+            <UButtonGroup>
+                <UButton type="submit" icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                    {{ $t('common.save') }}
+                </UButton>
+
+                <UButton icon="i-mdi-cancel" color="red" @click="state.labels = labels" />
+            </UButtonGroup>
         </template>
     </UForm>
 </template>

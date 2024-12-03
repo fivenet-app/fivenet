@@ -1,5 +1,7 @@
 package users
 
+import "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+
 func (x *User) SetJob(job string) {
 	x.Job = job
 }
@@ -34,6 +36,21 @@ func (x *UserShort) SetJobGradeLabel(label string) {
 
 func (x *User) UserShort() *UserShort {
 	return &UserShort{
+		UserId:        x.UserId,
+		Identifier:    x.Identifier,
+		Job:           x.Job,
+		JobGrade:      x.JobGrade,
+		Firstname:     x.Firstname,
+		Lastname:      x.Lastname,
+		Dateofbirth:   x.Dateofbirth,
+		PhoneNumber:   x.PhoneNumber,
+		JobLabel:      x.JobLabel,
+		JobGradeLabel: x.JobGradeLabel,
+	}
+}
+
+func (x *User) Colleague() *jobs.Colleague {
+	return &jobs.Colleague{
 		UserId:        x.UserId,
 		Identifier:    x.Identifier,
 		Job:           x.Job,
