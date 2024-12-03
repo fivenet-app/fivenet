@@ -704,6 +704,10 @@ func (s *Manager) ListUnitAccess(ctx context.Context, id uint64) (*centrum.UnitA
 	}
 	access.Jobs = jobsAccess
 
+	for i := 0; i < len(access.Jobs); i++ {
+		s.enricher.EnrichJobInfo(access.Jobs[i])
+	}
+
 	qualificationsccess, err := s.unitAccess.Qualifications.List(ctx, s.db, id)
 	if err != nil {
 		return nil, err

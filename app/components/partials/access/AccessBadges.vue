@@ -1,12 +1,20 @@
 <script lang="ts" setup generic="JobsT extends JobAccessEntry, UsersT extends UserAccessEntry">
 import type { JobAccessEntry, UserAccessEntry } from './helpers';
 
-defineProps<{
-    accessLevel: Zod.EnumLike;
-    jobs?: JobsT[];
-    users?: UsersT[];
-    i18nKey: string;
-}>();
+withDefaults(
+    defineProps<{
+        accessLevel: Zod.EnumLike;
+        jobs?: JobsT[];
+        users?: UsersT[];
+        i18nKey: string;
+        i18nAccessLevelKey?: string;
+    }>(),
+    {
+        jobs: () => [],
+        users: () => [],
+        i18nAccessLevelKey: 'AccessLevel',
+    },
+);
 </script>
 
 <template>
@@ -23,7 +31,7 @@ defineProps<{
                         ({{ entry.jobGradeLabel }})</span
                     >
                     -
-                    {{ $t(`${i18nKey}.AccessLevel.${accessLevel[entry.access]}`) }}
+                    {{ $t(`${i18nKey}.${i18nAccessLevelKey}.${accessLevel[entry.access]}`) }}
                 </span>
             </UBadge>
         </div>
@@ -34,7 +42,7 @@ defineProps<{
                 <span :title="`${$t('common.id')} ${entry.userId}`">
                     {{ entry.user?.firstname }}
                     {{ entry.user?.lastname }} -
-                    {{ $t(`${i18nKey}.AccessLevel.${accessLevel[entry.access]}`) }}
+                    {{ $t(`${i18nKey}.${i18nAccessLevelKey}.${accessLevel[entry.access]}`) }}
                 </span>
             </UBadge>
         </div>

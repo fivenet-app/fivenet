@@ -19,6 +19,22 @@ func (x *UnitAccess) ClearQualificationResults() {
 	}
 }
 
+func (x *UnitJobAccess) SetJobLabel(label string) {
+	x.JobLabel = &label
+}
+
+func (x *UnitJobAccess) GetJobGrade() int32 {
+	return x.MinimumGrade
+}
+
+func (x *UnitJobAccess) SetJobGrade(grade int32) {
+	x.MinimumGrade = grade
+}
+
+func (x *UnitJobAccess) SetJobGradeLabel(jobLabel string) {
+	x.JobGradeLabel = &jobLabel
+}
+
 // pkg/access compatibility
 
 func (x *UnitJobAccess) SetJob(job string) {

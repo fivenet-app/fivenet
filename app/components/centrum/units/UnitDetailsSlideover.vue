@@ -209,6 +209,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 :jobs="unit.access?.jobs"
                                 :qualifications="unit.access?.qualifications"
                                 i18n-key="enums.centrum"
+                                i18n-access-level-key="UnitAccessLevel"
                             />
                         </dd>
                     </div>
