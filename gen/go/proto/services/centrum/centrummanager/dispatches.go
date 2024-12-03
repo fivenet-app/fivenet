@@ -424,6 +424,10 @@ func (s *Manager) CreateDispatch(ctx context.Context, dsp *centrum.Dispatch) (*c
 		if err != nil {
 			return nil, err
 		}
+		// Remove creator props when job isn't equal
+		if dsp.Creator.Job != dsp.Job {
+			dsp.Creator.Props = nil
+		}
 	}
 
 	// Begin transaction
