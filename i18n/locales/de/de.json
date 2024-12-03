@@ -1886,6 +1886,10 @@
             "ToggleDocumentPin": {
                 "key": "Dokument Anheften oder Lösen",
                 "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
+            },
+            "SetDocumentReminder": {
+                "key": "Setzen von eigenen Dokumenten-Erinnerungen",
+                "description": "Erlaubt es eigene Erinnerungen für Dokumente zu setzen."
             }
         },
         "LivemapperService": {
