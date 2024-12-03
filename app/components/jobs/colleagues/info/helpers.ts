@@ -14,6 +14,8 @@ export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType |
             return '!text-orange-500';
         case JobsUserActivityType.NOTE:
             return '!text-teal-500';
+        case JobsUserActivityType.NAME:
+            return '!text-pink-500';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';
@@ -36,6 +38,8 @@ export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | un
             return 'i-mdi-note-edit';
         case JobsUserActivityType.LABELS:
             return 'i-mdi-tag-multiple';
+        case JobsUserActivityType.NAME:
+            return 'i-mdi-rename';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';

@@ -89,6 +89,32 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		)
 	}
 
+	if req.NamePrefix != nil {
+		*req.NamePrefix = strings.TrimSpace(*req.NamePrefix)
+		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, "%", "")
+		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, " ", "%")
+		if *req.NamePrefix != "" {
+			*req.NamePrefix = "%" + *req.NamePrefix + "%"
+			condition = condition.AND(jet.AND(
+				tJobsUserProps.NamePrefix.IS_NOT_NULL(),
+				tJobsUserProps.NamePrefix.LIKE(jet.String(*req.NamePrefix)),
+			))
+		}
+	}
+
+	if req.NameSuffix != nil {
+		*req.NameSuffix = strings.TrimSpace(*req.NameSuffix)
+		*req.NameSuffix = strings.ReplaceAll(*req.NameSuffix, "%", "")
+		*req.NameSuffix = strings.ReplaceAll(*req.NameSuffix, " ", "%")
+		if *req.NameSuffix != "" {
+			*req.NameSuffix = "%" + *req.NameSuffix + "%"
+			condition = condition.AND(jet.AND(
+				tJobsUserProps.NameSuffix.IS_NOT_NULL(),
+				tJobsUserProps.NameSuffix.LIKE(jet.String(*req.NameSuffix)),
+			))
+		}
+	}
+
 	// Get total count of values
 	countStmt := tUser.
 		SELECT(

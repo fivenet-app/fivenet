@@ -2038,7 +2038,8 @@
                     "Any": "Any",
                     "Note": "Note",
                     "AbsenceDate": "Absence Date",
-                    "Labels": "Labels"
+                    "Labels": "Labels",
+                    "Name": "Name"
                 },
                 "attrs_types": {
                     "Access": "Access to factions-own colleague's properties",
@@ -2055,7 +2056,8 @@
                     "DEMOTED": "Demoted",
                     "ABSENCE_DATE": "Absence Date",
                     "NOTE": "Note",
-                    "LABELS": "Labels"
+                    "LABELS": "Labels",
+                    "NAME": "Name"
                 },
                 "attrs_types": {
                     "Types": "Types"
@@ -2578,7 +2580,8 @@
                 "PROMOTED": "Promoted",
                 "DEMOTED": "Demoted",
                 "NOTE": "Note updated",
-                "LABELS": "Labels updated"
+                "LABELS": "Labels updated",
+                "NAME": "Name Prefix/Suffix updated"
             }
         },
         "qualifications": {

@@ -75,6 +75,18 @@ withDefaults(
                                 </UBadge>
                             </div>
                         </template>
+                        <template v-else-if="activity.data?.data.oneofKind === 'nameChange'">
+                            <div class="inline-flex gap-1">
+                                <span
+                                    >{{ $t('common.prefix') }}:
+                                    <span class="font-mono">{{ activity.data.data.nameChange.prefix ?? $t('common.na') }}</span>
+                                </span>
+                                <span
+                                    >{{ $t('common.suffix') }}:
+                                    <span class="font-mono">{{ activity.data.data.nameChange.suffix ?? $t('common.na') }}</span>
+                                </span>
+                            </div>
+                        </template>
                     </template>
                 </h3>
                 <p class="text-sm text-gray-400">

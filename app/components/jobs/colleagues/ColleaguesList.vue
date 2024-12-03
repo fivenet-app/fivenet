@@ -284,6 +284,24 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
+                            name="namePrefix"
+                            :label="$t('common.prefix')"
+                            class="flex flex-col"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <UInput v-model="query.namePrefix" type="text" />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="nameSuffix"
+                            :label="$t('common.suffix')"
+                            class="flex flex-col"
+                            :ui="{ container: 'flex-1 flex' }"
+                        >
+                            <UInput v-model="query.nameSuffix" type="text" />
+                        </UFormGroup>
+
+                        <UFormGroup
                             name="cards"
                             :label="$t('common.card_view')"
                             class="flex flex-initial flex-col"
