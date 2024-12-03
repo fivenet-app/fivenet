@@ -102,19 +102,33 @@ func (w *Workflow) handleWorkflowUserState(ctx context.Context, state *documents
 }
 
 func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
+	reminderTime := jet.TimestampExp(jet.NULL)
+	if state.ManualReminderTime != nil {
+		reminderTime = jet.TimestampT(state.ManualReminderTime.AsTime())
+	}
+
+	reminderMessage := jet.StringExp(jet.NULL)
+	if state.ManualReminderMessage != nil {
+		reminderMessage = jet.String(*state.ManualReminderMessage)
+	}
+
 	stmt := tUserWorkflow.
-		UPDATE(
+		INSERT(
+			tUserWorkflow.DocumentID,
+			tUserWorkflow.UserID,
 			tUserWorkflow.ManualReminderTime,
 			tUserWorkflow.ManualReminderMessage,
 		).
-		SET(
+		VALUES(
+			state.DocumentId,
+			state.UserId,
 			state.ManualReminderTime,
 			state.ManualReminderMessage,
 		).
-		WHERE(jet.AND(
-			tUserWorkflow.DocumentID.EQ(jet.Uint64(state.DocumentId)),
-			tUserWorkflow.UserID.EQ(jet.Int32(state.UserId)),
-		))
+		ON_DUPLICATE_KEY_UPDATE(
+			tUserWorkflow.ManualReminderTime.SET(reminderTime),
+			tUserWorkflow.ManualReminderMessage.SET(reminderMessage),
+		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
