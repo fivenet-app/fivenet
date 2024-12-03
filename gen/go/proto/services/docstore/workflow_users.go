@@ -112,6 +112,7 @@ func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.Wo
 		reminderMessage = jet.String(*state.ManualReminderMessage)
 	}
 
+	tUserWorkflow := table.FivenetDocumentsWorkflowUsers
 	stmt := tUserWorkflow.
 		INSERT(
 			tUserWorkflow.DocumentID,
