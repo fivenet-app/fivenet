@@ -511,6 +511,14 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
+                    <UBadge v-if="doc.workflowUser?.manualReminderTime" color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                        <span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.workflowUser.manualReminderTime" type="short" />
+                        </span>
+                    </UBadge>
+
                     <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-calendar-remove" class="size-5" />
                         <span>

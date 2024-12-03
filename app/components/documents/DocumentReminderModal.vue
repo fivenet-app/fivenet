@@ -32,8 +32,10 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     message: '',
-    reminderTime: undefined,
+    reminderTime: reminderTime.value ? toDate(reminderTime.value) : undefined,
 });
+
+watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(reminderTime.value) : undefined));
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {
@@ -50,7 +52,7 @@ async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderR
             type: NotificationType.SUCCESS,
         });
 
-        reminderTime.value = toTimestamp(values.reminderTime);
+        reminderTime.value = values.reminderTime ? toTimestamp(values.reminderTime) : undefined;
 
         isOpen.value = false;
 
