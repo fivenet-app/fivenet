@@ -144,44 +144,65 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 func (w *Workflow) handleDocuments(ctx context.Context, data *documents.WorkflowCronData) error {
 	nowTs := jet.TimestampT(time.Now())
 
-	stmt := tWorkflow.
-		SELECT(
-			tWorkflow.DocumentID,
-			tWorkflow.NextReminderTime,
-			tWorkflow.NextReminderCount,
-			tWorkflow.AutoCloseTime,
-			tDTemplates.Workflow,
-			tDocumentShort.Title,
-			tDocumentShort.CreatorID,
-			tDocumentShort.CreatorJob,
-		).
-		FROM(
-			tWorkflow.
-				INNER_JOIN(tDocumentShort,
-					tDocumentShort.ID.EQ(tWorkflow.DocumentID).
-						AND(tDocumentShort.DeletedAt.IS_NULL()),
-				).
-				LEFT_JOIN(tDTemplates,
-					tDTemplates.ID.EQ(tDocumentShort.TemplateID).
-						AND(tDTemplates.DeletedAt.IS_NULL()),
-				),
-		).
-		WHERE(jet.AND(
-			tWorkflow.DocumentID.GT(jet.Uint64(data.LastDocId)),
-			jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
-				tDocumentShort.Closed.IS_FALSE(),
-				jet.OR(
-					tWorkflow.NextReminderTime.LT_EQ(nowTs),
-					tWorkflow.AutoCloseTime.LT_EQ(nowTs),
-				),
-			),
-		)).
-		LIMIT(100)
+	tDTemplates := tDTemplates.AS("template")
 
 	dest := []*documents.WorkflowState{}
-	if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+	for {
+		stmt := tWorkflow.
+			SELECT(
+				tWorkflow.DocumentID,
+				tWorkflow.NextReminderTime,
+				tWorkflow.NextReminderCount,
+				tWorkflow.AutoCloseTime,
+				tDTemplates.Workflow.AS("workflowstate.workflow"),
+				tDocumentShort.Title,
+				tDocumentShort.CreatorID,
+				tDocumentShort.CreatorJob,
+			).
+			FROM(
+				tWorkflow.
+					INNER_JOIN(tDocumentShort,
+						tDocumentShort.ID.EQ(tWorkflow.DocumentID).
+							AND(tDocumentShort.DeletedAt.IS_NULL()),
+					).
+					LEFT_JOIN(tDTemplates,
+						tDTemplates.ID.EQ(tDocumentShort.TemplateID).
+							AND(tDTemplates.DeletedAt.IS_NULL()),
+					),
+			).
+			WHERE(jet.AND(
+				tWorkflow.DocumentID.GT(jet.Uint64(data.LastDocId)),
+				jet.AND( // Only auto close and auto remind docs that aren't closed and have an owner
+					tDocumentShort.Closed.IS_FALSE(),
+					jet.OR(
+						tWorkflow.NextReminderTime.LT_EQ(nowTs),
+						tWorkflow.AutoCloseTime.LT_EQ(nowTs),
+					),
+				),
+			)).
+			LIMIT(250)
+
+		if err := stmt.QueryContext(ctx, w.db, &dest); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return err
+			}
+		}
+
+		if data.LastDocId == 0 && len(dest) == 0 {
+			// No entries match condition
+			break
+		} else {
+			// Less than 250 entries? Reset last id to 0
+			if len(dest) < 250 {
+				data.LastDocId = 0
+				break
+				// No entries, reset last id to 0 and try again
+			} else if len(dest) == 0 {
+				data.LastDocId = 0
+				continue
+			}
+
+			break
 		}
 	}
 
@@ -227,7 +248,7 @@ func (w *Workflow) handleWorkflowState(ctx context.Context, state *documents.Wor
 			}
 		}
 
-		// Delete document workflow state, no important data is held in it anymore as the document is closed
+		// Delete document workflow state, auto reminders are not sent for a closed document
 		return w.deleteWorkflowState(ctx, state)
 	} else if state.NextReminderTime != nil && time.Since(state.NextReminderTime.AsTime()) > 0 {
 		if state.Document != nil && state.Document.CreatorId != nil {
@@ -266,15 +287,15 @@ func (w *Workflow) getAutoReminder(state *documents.WorkflowState) *documents.Re
 		count = *state.NextReminderCount
 	}
 
-	if state.Workflow == nil || state.Workflow.Reminders == nil || len(state.Workflow.Reminders.Reminders) < int(count) {
+	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || len(state.Workflow.ReminderSettings.Reminders) < int(count) {
 		return nil
 	}
 
-	return state.Workflow.Reminders.Reminders[count]
+	return state.Workflow.ReminderSettings.Reminders[count]
 }
 
 func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
-	if state.Workflow == nil || state.Workflow.Reminders == nil || !state.Workflow.Reminder || len(state.Workflow.Reminders.Reminders) == 0 {
+	if state.Workflow == nil || state.Workflow.ReminderSettings == nil || !state.Workflow.Reminder || len(state.Workflow.ReminderSettings.Reminders) == 0 {
 		state.NextReminderTime = nil
 		state.NextReminderCount = nil
 		return
@@ -287,8 +308,8 @@ func (w *Workflow) updateAutoReminderTime(state *documents.WorkflowState) {
 		*state.NextReminderCount++
 	}
 
-	if len(state.Workflow.Reminders.Reminders) >= int(*state.NextReminderCount) {
-		reminder := state.Workflow.Reminders.Reminders[*state.NextReminderCount]
+	if len(state.Workflow.ReminderSettings.Reminders) >= int(*state.NextReminderCount) {
+		reminder := state.Workflow.ReminderSettings.Reminders[*state.NextReminderCount]
 
 		// Now + reminder duration = next reminder time
 		state.NextReminderTime = timestamp.New(time.Now().Add(reminder.Duration.AsDuration()))
@@ -356,7 +377,7 @@ func (w *Workflow) autoCloseDocument(ctx context.Context, state *documents.Workf
 		return err
 	}
 
-	if _, err := addDocumentActivity(ctx, w.db, &documents.DocActivity{
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
 		DocumentId:   state.DocumentId,
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_CLOSED,
 		Reason:       &message,

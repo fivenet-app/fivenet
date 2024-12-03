@@ -33,6 +33,7 @@ const (
 	DocStoreServiceListTemplatesPerm                  perms.Name = "ListTemplates"
 	DocStoreServiceListUserDocumentsPerm              perms.Name = "ListUserDocuments"
 	DocStoreServicePostCommentPerm                    perms.Name = "PostComment"
+	DocStoreServiceSetDocumentReminderPerm            perms.Name = "SetDocumentReminder"
 	DocStoreServiceToggleDocumentPerm                 perms.Name = "ToggleDocument"
 	DocStoreServiceToggleDocumentAccessPermField      perms.Key  = "Access"
 	DocStoreServiceToggleDocumentPinPerm              perms.Name = "ToggleDocumentPin"

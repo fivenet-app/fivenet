@@ -881,6 +881,32 @@ export interface ToggleDocumentPinResponse {
      */
     state: boolean;
 }
+// Reminders ==================================================================
+
+/**
+ * @generated from protobuf message services.docstore.SetDocumentReminderRequest
+ */
+export interface SetDocumentReminderRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp reminder_time = 2;
+     */
+    reminderTime?: Timestamp;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string message = 3;
+     */
+    message?: string;
+}
+/**
+ * @generated from protobuf message services.docstore.SetDocumentReminderResponse
+ */
+export interface SetDocumentReminderResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
     constructor() {
@@ -4416,6 +4442,92 @@ class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinRespon
  * @generated MessageType for protobuf message services.docstore.ToggleDocumentPinResponse
  */
 export const ToggleDocumentPinResponse = new ToggleDocumentPinResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetDocumentReminderRequest$Type extends MessageType<SetDocumentReminderRequest> {
+    constructor() {
+        super("services.docstore.SetDocumentReminderRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "reminder_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SetDocumentReminderRequest>): SetDocumentReminderRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<SetDocumentReminderRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetDocumentReminderRequest): SetDocumentReminderRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp reminder_time */ 2:
+                    message.reminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.reminderTime);
+                    break;
+                case /* optional string message */ 3:
+                    message.message = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetDocumentReminderRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* optional resources.timestamp.Timestamp reminder_time = 2; */
+        if (message.reminderTime)
+            Timestamp.internalBinaryWrite(message.reminderTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string message = 3; */
+        if (message.message !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.message);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.SetDocumentReminderRequest
+ */
+export const SetDocumentReminderRequest = new SetDocumentReminderRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetDocumentReminderResponse$Type extends MessageType<SetDocumentReminderResponse> {
+    constructor() {
+        super("services.docstore.SetDocumentReminderResponse", []);
+    }
+    create(value?: PartialMessage<SetDocumentReminderResponse>): SetDocumentReminderResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetDocumentReminderResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetDocumentReminderResponse): SetDocumentReminderResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: SetDocumentReminderResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.SetDocumentReminderResponse
+ */
+export const SetDocumentReminderResponse = new SetDocumentReminderResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.docstore.DocStoreService
  */
@@ -4455,5 +4567,6 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "UpdateCategory", options: {}, I: UpdateCategoryRequest, O: UpdateCategoryResponse },
     { name: "DeleteCategory", options: {}, I: DeleteCategoryRequest, O: DeleteCategoryResponse },
     { name: "ListDocumentPins", options: {}, I: ListDocumentPinsRequest, O: ListDocumentPinsResponse },
-    { name: "ToggleDocumentPin", options: {}, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse }
+    { name: "ToggleDocumentPin", options: {}, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse },
+    { name: "SetDocumentReminder", options: {}, I: SetDocumentReminderRequest, O: SetDocumentReminderResponse }
 ]);

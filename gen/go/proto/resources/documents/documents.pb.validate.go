@@ -345,6 +345,72 @@ func (m *Document) validate(all bool) error {
 		// no validation rules for TemplateId
 	}
 
+	if m.WorkflowState != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflowState()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "WorkflowState",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "WorkflowState",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflowState()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentValidationError{
+					field:  "WorkflowState",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.WorkflowUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflowUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "WorkflowUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentValidationError{
+						field:  "WorkflowUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflowUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentValidationError{
+					field:  "WorkflowUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return DocumentMultiError(errors)
 	}
@@ -696,6 +762,72 @@ func (m *DocumentShort) validate(all bool) error {
 				return err
 			}
 			errors = append(errors, err)
+		}
+
+	}
+
+	if m.WorkflowState != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflowState()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "WorkflowState",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "WorkflowState",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflowState()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentShortValidationError{
+					field:  "WorkflowState",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.WorkflowUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflowUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "WorkflowUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DocumentShortValidationError{
+						field:  "WorkflowUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflowUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DocumentShortValidationError{
+					field:  "WorkflowUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}
@@ -1316,3 +1448,470 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DocumentRelationValidationError{}
+
+// Validate checks the field values on WorkflowState with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *WorkflowState) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on WorkflowState with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in WorkflowStateMultiError, or
+// nil if none found.
+func (m *WorkflowState) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *WorkflowState) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	if m.NextReminderTime != nil {
+
+		if all {
+			switch v := interface{}(m.GetNextReminderTime()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "NextReminderTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "NextReminderTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetNextReminderTime()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowStateValidationError{
+					field:  "NextReminderTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.NextReminderCount != nil {
+		// no validation rules for NextReminderCount
+	}
+
+	if m.AutoCloseTime != nil {
+
+		if all {
+			switch v := interface{}(m.GetAutoCloseTime()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "AutoCloseTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "AutoCloseTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAutoCloseTime()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowStateValidationError{
+					field:  "AutoCloseTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Workflow != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflow()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowStateValidationError{
+					field:  "Workflow",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Document != nil {
+
+		if all {
+			switch v := interface{}(m.GetDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowStateValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowStateValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return WorkflowStateMultiError(errors)
+	}
+
+	return nil
+}
+
+// WorkflowStateMultiError is an error wrapping multiple validation errors
+// returned by WorkflowState.ValidateAll() if the designated constraints
+// aren't met.
+type WorkflowStateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m WorkflowStateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m WorkflowStateMultiError) AllErrors() []error { return m }
+
+// WorkflowStateValidationError is the validation error returned by
+// WorkflowState.Validate if the designated constraints aren't met.
+type WorkflowStateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e WorkflowStateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e WorkflowStateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e WorkflowStateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e WorkflowStateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e WorkflowStateValidationError) ErrorName() string { return "WorkflowStateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e WorkflowStateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sWorkflowState.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = WorkflowStateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = WorkflowStateValidationError{}
+
+// Validate checks the field values on WorkflowUserState with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *WorkflowUserState) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on WorkflowUserState with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// WorkflowUserStateMultiError, or nil if none found.
+func (m *WorkflowUserState) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *WorkflowUserState) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	if m.GetUserId() <= 0 {
+		err := WorkflowUserStateValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.ManualReminderTime != nil {
+
+		if all {
+			switch v := interface{}(m.GetManualReminderTime()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "ManualReminderTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "ManualReminderTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetManualReminderTime()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowUserStateValidationError{
+					field:  "ManualReminderTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.ManualReminderMessage != nil {
+
+		if utf8.RuneCountInString(m.GetManualReminderMessage()) > 255 {
+			err := WorkflowUserStateValidationError{
+				field:  "ManualReminderMessage",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Workflow != nil {
+
+		if all {
+			switch v := interface{}(m.GetWorkflow()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "Workflow",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowUserStateValidationError{
+					field:  "Workflow",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Document != nil {
+
+		if all {
+			switch v := interface{}(m.GetDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, WorkflowUserStateValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return WorkflowUserStateValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return WorkflowUserStateMultiError(errors)
+	}
+
+	return nil
+}
+
+// WorkflowUserStateMultiError is an error wrapping multiple validation errors
+// returned by WorkflowUserState.ValidateAll() if the designated constraints
+// aren't met.
+type WorkflowUserStateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m WorkflowUserStateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m WorkflowUserStateMultiError) AllErrors() []error { return m }
+
+// WorkflowUserStateValidationError is the validation error returned by
+// WorkflowUserState.Validate if the designated constraints aren't met.
+type WorkflowUserStateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e WorkflowUserStateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e WorkflowUserStateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e WorkflowUserStateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e WorkflowUserStateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e WorkflowUserStateValidationError) ErrorName() string {
+	return "WorkflowUserStateValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e WorkflowUserStateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sWorkflowUserState.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = WorkflowUserStateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = WorkflowUserStateValidationError{}

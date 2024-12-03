@@ -98,7 +98,7 @@ export class GrpcWSTransport implements RpcTransport {
                 defHeader.resolvePending({});
                 defTrailer.resolvePending({});
                 defStatus.resolvePending(createGrpcStatus(new Metadata()));
-                defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
+                defMessage.resolvePending(method.O.fromBinary(chunkBytes, opt.binaryOptions));
             },
             onEnd(err) {
                 if (err !== undefined && !(err instanceof RpcError)) {

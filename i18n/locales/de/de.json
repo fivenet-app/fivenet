@@ -521,7 +521,9 @@
         "show": "Aufrufen",
         "selected_no": "{0} ausgewählt",
         "required": "Benötigt",
-        "reminder": "Erinnerung | Erinnerungen"
+        "reminder": "Erinnerung | Erinnerungen",
+        "workflow": "Workflow",
+        "auto_close": "Automatisches Schließen | Automatische Schließung"
     },
     "components": {
         "partials": {
@@ -598,10 +600,6 @@
                 },
                 "templates_modal": {
                     "no_template": "Ohne Vorlage"
-                },
-                "TemplateWorkflowEditor": {
-                    "workflow": "Workflow",
-                    "auto_close": "Automatisches Schließen"
                 }
             },
             "activity_list": {

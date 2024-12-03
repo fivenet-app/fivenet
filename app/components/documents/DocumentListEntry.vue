@@ -77,12 +77,34 @@ defineProps<{
                         </p>
                     </div>
 
+                    <div v-if="document.workflowState?.autoCloseTime" class="flex flex-1 items-center justify-start gap-1.5">
+                        <UIcon name="i-mdi-lock-clock" class="size-4 shrink-0" />
+                        <p class="inline-flex gap-1 text-nowrap">
+                            <span class="hidden truncate lg:block">
+                                {{ $t('common.auto_close', 2) }}
+                            </span>
+                            <GenericTime :value="document.workflowState.autoCloseTime" ago />
+                        </p>
+                    </div>
+                    <div
+                        v-else-if="document.workflowState?.nextReminderTime"
+                        class="flex flex-1 items-center justify-start gap-1.5"
+                    >
+                        <UIcon name="i-mdi-lock-clock" class="size-4 shrink-0" />
+                        <p class="inline-flex gap-1 text-nowrap">
+                            <span class="hidden truncate lg:block">
+                                {{ $t('common.reminder') }}
+                            </span>
+                            <GenericTime :value="document.workflowState.nextReminderTime" ago />
+                        </p>
+                    </div>
+
                     <div v-if="document.updatedAt" class="flex flex-1 items-center justify-end gap-1.5">
                         <p class="inline-flex gap-1 truncate">
                             <span class="hidden md:block">
                                 {{ $t('common.updated') }}
                             </span>
-                            <GenericTime :value="document.updatedAt" :ago="true" />
+                            <GenericTime :value="document.updatedAt" ago />
                         </p>
                         <UIcon name="i-mdi-update" class="size-4 shrink-0" />
                     </div>

@@ -433,12 +433,15 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	var tmpl *documents.Template
 	if req.TemplateId != nil {
-		check, err := s.checkAccessAgainstTemplate(ctx, *req.TemplateId, req.Access)
+		var err error
+		tmpl, err = s.getTemplate(ctx, *req.TemplateId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
-		if !check {
+
+		if !s.checkAccessAgainstTemplate(tmpl, req.Access) {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
 		}
 	}
@@ -503,6 +506,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 	if err := s.handleDocumentAccessChange(ctx, tx, uint64(lastId), userInfo, req.Access, false); err != nil {
 		return nil, err
+	}
+
+	if tmpl != nil {
+		if err := s.createOrUpdateWorkflowState(ctx, tx, uint64(lastId), tmpl.Workflow); err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
 	}
 
 	// Commit the transaction
@@ -571,12 +580,15 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, errorsdocstore.ErrDocUpdateDenied
 	}
 
+	var tmpl *documents.Template
 	if doc.TemplateId != nil {
-		check, err := s.checkAccessAgainstTemplate(ctx, *doc.TemplateId, req.Access)
+		var err error
+		tmpl, err = s.getTemplate(ctx, *doc.TemplateId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
-		if !check {
+
+		if !s.checkAccessAgainstTemplate(tmpl, req.Access) {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
 		}
 	}
@@ -614,7 +626,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 				req.Public,
 			).
 			WHERE(
-				tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+				tDocument.ID.EQ(jet.Uint64(doc.Id)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -631,7 +643,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		}
 
 		if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
-			DocumentId:   req.DocumentId,
+			DocumentId:   doc.Id,
 			ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_UPDATED,
 			CreatorId:    &userInfo.UserId,
 			CreatorJob:   userInfo.Job,
@@ -643,9 +655,15 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
+
+		if tmpl != nil {
+			if err := s.createOrUpdateWorkflowState(ctx, tx, doc.Id, tmpl.Workflow); err != nil {
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			}
+		}
 	}
 
-	if err := s.handleDocumentAccessChange(ctx, tx, req.DocumentId, userInfo, req.Access, true); err != nil {
+	if err := s.handleDocumentAccessChange(ctx, tx, doc.Id, userInfo, req.Access, true); err != nil {
 		return nil, err
 	}
 
@@ -657,7 +675,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateDocumentResponse{
-		DocumentId: req.DocumentId,
+		DocumentId: doc.Id,
 	}, nil
 }
 
@@ -766,6 +784,14 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
+	var tmpl *documents.Template
+	if !req.Closed && doc.TemplateId != nil { // If the document is opened, get template so we can update the reminder/auto close times
+		tmpl, err = s.getTemplate(ctx, *doc.TemplateId)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
+	}
+
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
 	if err != nil {
@@ -784,6 +810,12 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		activityType = documents.DocActivityType_DOC_ACTIVITY_TYPE_STATUS_OPEN
 	}
 
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	stmt := tDocument.
 		UPDATE(
 			tDocument.Closed,
@@ -792,19 +824,30 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 			req.Closed,
 		).
 		WHERE(
-			tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
+			tDocument.ID.EQ(jet.Uint64(doc.Id)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
-		DocumentId:   req.DocumentId,
+	if _, err := addDocumentActivity(ctx, tx, &documents.DocActivity{
+		DocumentId:   doc.Id,
 		ActivityType: activityType,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
 	}); err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
+	if tmpl != nil {
+		if err := s.createOrUpdateWorkflowState(ctx, tx, doc.Id, tmpl.Workflow); err != nil {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

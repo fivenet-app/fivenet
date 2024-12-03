@@ -31,7 +31,7 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const { activeChar, can } = useAuth();
+const { can } = useAuth();
 
 const modal = useModal();
 

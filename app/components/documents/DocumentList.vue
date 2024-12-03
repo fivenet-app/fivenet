@@ -331,8 +331,8 @@ defineShortcuts({
                             <UFormGroup class="flex-1" name="date" :label="$t('common.time_range')">
                                 <DateRangePickerPopoverClient
                                     v-model="query.date"
-                                    mode="date"
                                     class="flex-1"
+                                    date-format="dd.MM.yyyy HH:mm"
                                     :popover="{ class: 'flex-1' }"
                                     :date-picker="{
                                         mode: 'dateTime',

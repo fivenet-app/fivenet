@@ -154,7 +154,7 @@ const { pause, resume } = useIntervalFn(
 
 function toggleRequireUnitNotification(): void {
     if (canStream.value) {
-        if (getOwnUnit.value === undefined) {
+        if (settings.value?.timings?.requireUnit === true && getOwnUnit.value === undefined) {
             resume();
         } else {
             pause();

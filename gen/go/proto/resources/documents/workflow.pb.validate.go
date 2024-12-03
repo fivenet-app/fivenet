@@ -60,11 +60,11 @@ func (m *Workflow) validate(all bool) error {
 	// no validation rules for Reminder
 
 	if all {
-		switch v := interface{}(m.GetReminders()).(type) {
+		switch v := interface{}(m.GetReminderSettings()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, WorkflowValidationError{
-					field:  "Reminders",
+					field:  "ReminderSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -72,16 +72,16 @@ func (m *Workflow) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, WorkflowValidationError{
-					field:  "Reminders",
+					field:  "ReminderSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetReminders()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetReminderSettings()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return WorkflowValidationError{
-				field:  "Reminders",
+				field:  "ReminderSettings",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -196,22 +196,22 @@ var _ interface {
 	ErrorName() string
 } = WorkflowValidationError{}
 
-// Validate checks the field values on Reminders with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Reminders) Validate() error {
+// Validate checks the field values on ReminderSettings with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ReminderSettings) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Reminders with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in RemindersMultiError, or nil
-// if none found.
-func (m *Reminders) ValidateAll() error {
+// ValidateAll checks the field values on ReminderSettings with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ReminderSettingsMultiError, or nil if none found.
+func (m *ReminderSettings) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Reminders) validate(all bool) error {
+func (m *ReminderSettings) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -219,7 +219,7 @@ func (m *Reminders) validate(all bool) error {
 	var errors []error
 
 	if len(m.GetReminders()) > 3 {
-		err := RemindersValidationError{
+		err := ReminderSettingsValidationError{
 			field:  "Reminders",
 			reason: "value must contain no more than 3 item(s)",
 		}
@@ -236,7 +236,7 @@ func (m *Reminders) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RemindersValidationError{
+					errors = append(errors, ReminderSettingsValidationError{
 						field:  fmt.Sprintf("Reminders[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -244,7 +244,7 @@ func (m *Reminders) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RemindersValidationError{
+					errors = append(errors, ReminderSettingsValidationError{
 						field:  fmt.Sprintf("Reminders[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -253,7 +253,7 @@ func (m *Reminders) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RemindersValidationError{
+				return ReminderSettingsValidationError{
 					field:  fmt.Sprintf("Reminders[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -264,18 +264,19 @@ func (m *Reminders) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return RemindersMultiError(errors)
+		return ReminderSettingsMultiError(errors)
 	}
 
 	return nil
 }
 
-// RemindersMultiError is an error wrapping multiple validation errors returned
-// by Reminders.ValidateAll() if the designated constraints aren't met.
-type RemindersMultiError []error
+// ReminderSettingsMultiError is an error wrapping multiple validation errors
+// returned by ReminderSettings.ValidateAll() if the designated constraints
+// aren't met.
+type ReminderSettingsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RemindersMultiError) Error() string {
+func (m ReminderSettingsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -284,11 +285,11 @@ func (m RemindersMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RemindersMultiError) AllErrors() []error { return m }
+func (m ReminderSettingsMultiError) AllErrors() []error { return m }
 
-// RemindersValidationError is the validation error returned by
-// Reminders.Validate if the designated constraints aren't met.
-type RemindersValidationError struct {
+// ReminderSettingsValidationError is the validation error returned by
+// ReminderSettings.Validate if the designated constraints aren't met.
+type ReminderSettingsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -296,22 +297,22 @@ type RemindersValidationError struct {
 }
 
 // Field function returns field value.
-func (e RemindersValidationError) Field() string { return e.field }
+func (e ReminderSettingsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RemindersValidationError) Reason() string { return e.reason }
+func (e ReminderSettingsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RemindersValidationError) Cause() error { return e.cause }
+func (e ReminderSettingsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RemindersValidationError) Key() bool { return e.key }
+func (e ReminderSettingsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RemindersValidationError) ErrorName() string { return "RemindersValidationError" }
+func (e ReminderSettingsValidationError) ErrorName() string { return "ReminderSettingsValidationError" }
 
 // Error satisfies the builtin error interface
-func (e RemindersValidationError) Error() string {
+func (e ReminderSettingsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -323,14 +324,14 @@ func (e RemindersValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sReminders.%s: %s%s",
+		"invalid %sReminderSettings.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RemindersValidationError{}
+var _ error = ReminderSettingsValidationError{}
 
 var _ interface {
 	Field() string
@@ -338,7 +339,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RemindersValidationError{}
+} = ReminderSettingsValidationError{}
 
 // Validate checks the field values on Reminder with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -404,10 +405,10 @@ func (m *Reminder) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetMessage()) > 1024 {
+	if utf8.RuneCountInString(m.GetMessage()) > 255 {
 		err := ReminderValidationError{
 			field:  "Message",
-			reason: "value length must be at most 1024 bytes",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err
@@ -492,22 +493,22 @@ var _ interface {
 	ErrorName() string
 } = ReminderValidationError{}
 
-// Validate checks the field values on AutoClose with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *AutoClose) Validate() error {
+// Validate checks the field values on AutoCloseSettings with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *AutoCloseSettings) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on AutoClose with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in AutoCloseMultiError, or nil
-// if none found.
-func (m *AutoClose) ValidateAll() error {
+// ValidateAll checks the field values on AutoCloseSettings with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AutoCloseSettingsMultiError, or nil if none found.
+func (m *AutoCloseSettings) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *AutoClose) validate(all bool) error {
+func (m *AutoCloseSettings) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -515,7 +516,7 @@ func (m *AutoClose) validate(all bool) error {
 	var errors []error
 
 	if m.GetDuration() == nil {
-		err := AutoCloseValidationError{
+		err := AutoCloseSettingsValidationError{
 			field:  "Duration",
 			reason: "value is required",
 		}
@@ -528,7 +529,7 @@ func (m *AutoClose) validate(all bool) error {
 	if d := m.GetDuration(); d != nil {
 		dur, err := d.AsDuration(), d.CheckValid()
 		if err != nil {
-			err = AutoCloseValidationError{
+			err = AutoCloseSettingsValidationError{
 				field:  "Duration",
 				reason: "value is not a valid duration",
 				cause:  err,
@@ -543,7 +544,7 @@ func (m *AutoClose) validate(all bool) error {
 			gte := time.Duration(86400*time.Second + 0*time.Nanosecond)
 
 			if dur < gte || dur >= lt {
-				err := AutoCloseValidationError{
+				err := AutoCloseSettingsValidationError{
 					field:  "Duration",
 					reason: "value must be inside range [24h0m0s, 2160h0m0s)",
 				}
@@ -556,10 +557,10 @@ func (m *AutoClose) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetMessage()) > 1024 {
-		err := AutoCloseValidationError{
+	if utf8.RuneCountInString(m.GetMessage()) > 255 {
+		err := AutoCloseSettingsValidationError{
 			field:  "Message",
-			reason: "value length must be at most 1024 bytes",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err
@@ -568,18 +569,19 @@ func (m *AutoClose) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return AutoCloseMultiError(errors)
+		return AutoCloseSettingsMultiError(errors)
 	}
 
 	return nil
 }
 
-// AutoCloseMultiError is an error wrapping multiple validation errors returned
-// by AutoClose.ValidateAll() if the designated constraints aren't met.
-type AutoCloseMultiError []error
+// AutoCloseSettingsMultiError is an error wrapping multiple validation errors
+// returned by AutoCloseSettings.ValidateAll() if the designated constraints
+// aren't met.
+type AutoCloseSettingsMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m AutoCloseMultiError) Error() string {
+func (m AutoCloseSettingsMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -588,11 +590,11 @@ func (m AutoCloseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m AutoCloseMultiError) AllErrors() []error { return m }
+func (m AutoCloseSettingsMultiError) AllErrors() []error { return m }
 
-// AutoCloseValidationError is the validation error returned by
-// AutoClose.Validate if the designated constraints aren't met.
-type AutoCloseValidationError struct {
+// AutoCloseSettingsValidationError is the validation error returned by
+// AutoCloseSettings.Validate if the designated constraints aren't met.
+type AutoCloseSettingsValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -600,22 +602,24 @@ type AutoCloseValidationError struct {
 }
 
 // Field function returns field value.
-func (e AutoCloseValidationError) Field() string { return e.field }
+func (e AutoCloseSettingsValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e AutoCloseValidationError) Reason() string { return e.reason }
+func (e AutoCloseSettingsValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e AutoCloseValidationError) Cause() error { return e.cause }
+func (e AutoCloseSettingsValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e AutoCloseValidationError) Key() bool { return e.key }
+func (e AutoCloseSettingsValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e AutoCloseValidationError) ErrorName() string { return "AutoCloseValidationError" }
+func (e AutoCloseSettingsValidationError) ErrorName() string {
+	return "AutoCloseSettingsValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e AutoCloseValidationError) Error() string {
+func (e AutoCloseSettingsValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -627,14 +631,14 @@ func (e AutoCloseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sAutoClose.%s: %s%s",
+		"invalid %sAutoCloseSettings.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = AutoCloseValidationError{}
+var _ error = AutoCloseSettingsValidationError{}
 
 var _ interface {
 	Field() string
@@ -642,7 +646,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = AutoCloseValidationError{}
+} = AutoCloseSettingsValidationError{}
 
 // Validate checks the field values on WorkflowCronData with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -745,459 +749,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = WorkflowCronDataValidationError{}
-
-// Validate checks the field values on WorkflowState with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *WorkflowState) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on WorkflowState with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in WorkflowStateMultiError, or
-// nil if none found.
-func (m *WorkflowState) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *WorkflowState) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for DocumentId
-
-	if m.NextReminderTime != nil {
-
-		if all {
-			switch v := interface{}(m.GetNextReminderTime()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "NextReminderTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "NextReminderTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetNextReminderTime()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowStateValidationError{
-					field:  "NextReminderTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.NextReminderCount != nil {
-		// no validation rules for NextReminderCount
-	}
-
-	if m.AutoCloseTime != nil {
-
-		if all {
-			switch v := interface{}(m.GetAutoCloseTime()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "AutoCloseTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "AutoCloseTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAutoCloseTime()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowStateValidationError{
-					field:  "AutoCloseTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Workflow != nil {
-
-		if all {
-			switch v := interface{}(m.GetWorkflow()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "Workflow",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "Workflow",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowStateValidationError{
-					field:  "Workflow",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Document != nil {
-
-		if all {
-			switch v := interface{}(m.GetDocument()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "Document",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowStateValidationError{
-						field:  "Document",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowStateValidationError{
-					field:  "Document",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return WorkflowStateMultiError(errors)
-	}
-
-	return nil
-}
-
-// WorkflowStateMultiError is an error wrapping multiple validation errors
-// returned by WorkflowState.ValidateAll() if the designated constraints
-// aren't met.
-type WorkflowStateMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m WorkflowStateMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m WorkflowStateMultiError) AllErrors() []error { return m }
-
-// WorkflowStateValidationError is the validation error returned by
-// WorkflowState.Validate if the designated constraints aren't met.
-type WorkflowStateValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e WorkflowStateValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e WorkflowStateValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e WorkflowStateValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e WorkflowStateValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e WorkflowStateValidationError) ErrorName() string { return "WorkflowStateValidationError" }
-
-// Error satisfies the builtin error interface
-func (e WorkflowStateValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sWorkflowState.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = WorkflowStateValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = WorkflowStateValidationError{}
-
-// Validate checks the field values on WorkflowUserState with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *WorkflowUserState) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on WorkflowUserState with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// WorkflowUserStateMultiError, or nil if none found.
-func (m *WorkflowUserState) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *WorkflowUserState) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for DocumentId
-
-	if m.GetUserId() <= 0 {
-		err := WorkflowUserStateValidationError{
-			field:  "UserId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.ManualReminderTime != nil {
-
-		if all {
-			switch v := interface{}(m.GetManualReminderTime()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "ManualReminderTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "ManualReminderTime",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetManualReminderTime()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowUserStateValidationError{
-					field:  "ManualReminderTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.ManualReminderMessage != nil {
-		// no validation rules for ManualReminderMessage
-	}
-
-	if m.Workflow != nil {
-
-		if all {
-			switch v := interface{}(m.GetWorkflow()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "Workflow",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "Workflow",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetWorkflow()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowUserStateValidationError{
-					field:  "Workflow",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Document != nil {
-
-		if all {
-			switch v := interface{}(m.GetDocument()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "Document",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, WorkflowUserStateValidationError{
-						field:  "Document",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return WorkflowUserStateValidationError{
-					field:  "Document",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return WorkflowUserStateMultiError(errors)
-	}
-
-	return nil
-}
-
-// WorkflowUserStateMultiError is an error wrapping multiple validation errors
-// returned by WorkflowUserState.ValidateAll() if the designated constraints
-// aren't met.
-type WorkflowUserStateMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m WorkflowUserStateMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m WorkflowUserStateMultiError) AllErrors() []error { return m }
-
-// WorkflowUserStateValidationError is the validation error returned by
-// WorkflowUserState.Validate if the designated constraints aren't met.
-type WorkflowUserStateValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e WorkflowUserStateValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e WorkflowUserStateValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e WorkflowUserStateValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e WorkflowUserStateValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e WorkflowUserStateValidationError) ErrorName() string {
-	return "WorkflowUserStateValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e WorkflowUserStateValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sWorkflowUserState.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = WorkflowUserStateValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = WorkflowUserStateValidationError{}

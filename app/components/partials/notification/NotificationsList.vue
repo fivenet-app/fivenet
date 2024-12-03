@@ -207,13 +207,13 @@ const canSubmit = ref(true);
                         <div class="hidden sm:flex sm:flex-col sm:items-end">
                             <p class="mt-1 text-xs leading-5">
                                 {{ $t('common.received') }}
-                                <GenericTime :value="not.createdAt" :ago="true" />
+                                <GenericTime :value="not.createdAt" ago />
                             </p>
                             <div class="mt-1 flex items-center gap-x-2">
                                 <template v-if="not.readAt">
                                     <p class="text-xs leading-5">
                                         {{ $t('common.read') }}
-                                        <GenericTime :value="not.readAt" :ago="true" />
+                                        <GenericTime :value="not.readAt" ago />
                                     </p>
                                 </template>
                                 <template v-else>

@@ -82,6 +82,9 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tDocumentShort.Closed,
 			tDocumentShort.Public,
 			tDocumentShort.TemplateID,
+			tWorkflow.DocumentID,
+			tWorkflow.AutoCloseTime,
+			tWorkflow.NextReminderTime,
 		}
 
 		if userInfo.SuperUser {
@@ -119,6 +122,9 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			).
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tWorkflow,
+				tWorkflow.DocumentID.EQ(tDocumentShort.ID),
 			)
 	} else {
 		tables = tDocumentShort.
@@ -127,6 +133,9 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			).
 			LEFT_JOIN(tCreator,
 				tDocumentShort.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tWorkflow,
+				tWorkflow.DocumentID.EQ(tDocumentShort.ID),
 			)
 	}
 
@@ -202,6 +211,13 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			tDocument.Public,
 			tDocument.TemplateID,
 			tDPins.State.AS("document.pinned"),
+			tWorkflow.DocumentID,
+			tWorkflow.AutoCloseTime,
+			tWorkflow.NextReminderTime,
+			tUserWorkflow.DocumentID,
+			tUserWorkflow.UserID,
+			tUserWorkflow.ManualReminderTime,
+			tUserWorkflow.ManualReminderMessage,
 		}
 
 		if withContent {
@@ -249,6 +265,13 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			).
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),
+			).
+			LEFT_JOIN(tWorkflow,
+				tWorkflow.DocumentID.EQ(tDocument.ID),
+			).
+			LEFT_JOIN(tUserWorkflow,
+				tUserWorkflow.DocumentID.EQ(tDocument.ID).
+					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
 		tables = tDocument.
@@ -260,6 +283,13 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			).
 			LEFT_JOIN(tDPins,
 				tDPins.DocumentID.EQ(tDocument.ID),
+			).
+			LEFT_JOIN(tWorkflow,
+				tWorkflow.DocumentID.EQ(tDocument.ID),
+			).
+			LEFT_JOIN(tUserWorkflow,
+				tUserWorkflow.DocumentID.EQ(tDocument.ID).
+					AND(tUserWorkflow.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
 

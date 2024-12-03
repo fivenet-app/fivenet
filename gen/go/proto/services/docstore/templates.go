@@ -166,6 +166,10 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 		return nil, err
 	}
 
+	if dest.Id <= 0 {
+		return nil, nil
+	}
+
 	return &dest, nil
 }
 

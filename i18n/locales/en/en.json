@@ -521,7 +521,9 @@
         "show": "View",
         "selected_no": "{0} selected",
         "required": "Required",
-        "reminder": "Reminder | Reminders"
+        "reminder": "Reminder | Reminders",
+        "workflow": "Workflow",
+        "auto_close": "Auto Close"
     },
     "components": {
         "partials": {
@@ -598,10 +600,6 @@
                 },
                 "templates_modal": {
                     "no_template": "Without Template"
-                },
-                "TemplateWorkflowEditor": {
-                    "workflow": "Workflow",
-                    "auto_close": "Auto Close"
                 }
             },
             "activity_list": {
@@ -1888,6 +1886,10 @@
             "ToggleDocumentPin": {
                 "key": "Pin or upnin document",
                 "description": "Allows to pin or upin documents for the whole faction."
+            },
+            "SetDocumentReminder": {
+                "key": "Set own reminders on documents",
+                "description": "Allows to set own reminders for documents."
             }
         },
         "LivemapperService": {

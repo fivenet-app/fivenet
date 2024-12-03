@@ -55,6 +55,7 @@ const (
 	DocStoreService_DeleteCategory_FullMethodName          = "/services.docstore.DocStoreService/DeleteCategory"
 	DocStoreService_ListDocumentPins_FullMethodName        = "/services.docstore.DocStoreService/ListDocumentPins"
 	DocStoreService_ToggleDocumentPin_FullMethodName       = "/services.docstore.DocStoreService/ToggleDocumentPin"
+	DocStoreService_SetDocumentReminder_FullMethodName     = "/services.docstore.DocStoreService/SetDocumentReminder"
 )
 
 // DocStoreServiceClient is the client API for DocStoreService service.
@@ -133,6 +134,8 @@ type DocStoreServiceClient interface {
 	ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error)
 	// @perm
 	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
+	// @perm
+	SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error)
 }
 
 type docStoreServiceClient struct {
@@ -467,6 +470,15 @@ func (c *docStoreServiceClient) ToggleDocumentPin(ctx context.Context, in *Toggl
 	return out, nil
 }
 
+func (c *docStoreServiceClient) SetDocumentReminder(ctx context.Context, in *SetDocumentReminderRequest, opts ...grpc.CallOption) (*SetDocumentReminderResponse, error) {
+	out := new(SetDocumentReminderResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_SetDocumentReminder_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocStoreServiceServer is the server API for DocStoreService service.
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
@@ -543,6 +555,8 @@ type DocStoreServiceServer interface {
 	ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error)
 	// @perm
 	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
+	// @perm
+	SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }
 
@@ -657,6 +671,9 @@ func (UnimplementedDocStoreServiceServer) ListDocumentPins(context.Context, *Lis
 }
 func (UnimplementedDocStoreServiceServer) ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ToggleDocumentPin not implemented")
+}
+func (UnimplementedDocStoreServiceServer) SetDocumentReminder(context.Context, *SetDocumentReminderRequest) (*SetDocumentReminderResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetDocumentReminder not implemented")
 }
 func (UnimplementedDocStoreServiceServer) mustEmbedUnimplementedDocStoreServiceServer() {}
 
@@ -1319,6 +1336,24 @@ func _DocStoreService_ToggleDocumentPin_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocStoreService_SetDocumentReminder_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetDocumentReminderRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).SetDocumentReminder(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_SetDocumentReminder_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).SetDocumentReminder(ctx, req.(*SetDocumentReminderRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DocStoreService_ServiceDesc is the grpc.ServiceDesc for DocStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1469,6 +1504,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ToggleDocumentPin",
 			Handler:    _DocStoreService_ToggleDocumentPin_Handler,
+		},
+		{
+			MethodName: "SetDocumentReminder",
+			Handler:    _DocStoreService_SetDocumentReminder_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -10,7 +10,7 @@ export const zWorkflow = z.object({
     reminders: z.union([
         z.object({
             reminder: z.literal(false),
-            reminders: z.object({
+            reminderSettings: z.object({
                 reminders: z
                     .object({
                         duration: z.number().max(60).positive().optional(),
@@ -23,7 +23,7 @@ export const zWorkflow = z.object({
 
         z.object({
             reminder: z.literal(true),
-            reminders: z.object({
+            reminderSettings: z.object({
                 reminders: z
                     .object({
                         duration: z.number().max(60).positive(),

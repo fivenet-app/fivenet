@@ -375,6 +375,17 @@ message ToggleDocumentPinResponse {
   bool state = 1;
 }
 
+// Reminders ==================================================================
+
+message SetDocumentReminderRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp reminder_time = 2;
+  // @sanitize: method=StripTags
+  optional string message = 3 [(validate.rules).string.max_bytes = 1024];
+}
+
+message SetDocumentReminderResponse {}
+
 service DocStoreService {
   // @perm
   rpc ListTemplates(ListTemplatesRequest) returns (ListTemplatesResponse);
@@ -459,4 +470,7 @@ service DocStoreService {
   rpc ListDocumentPins(ListDocumentPinsRequest) returns (ListDocumentPinsResponse);
   // @perm
   rpc ToggleDocumentPin(ToggleDocumentPinRequest) returns (ToggleDocumentPinResponse);
+
+  // @perm
+  rpc SetDocumentReminder(SetDocumentReminderRequest) returns (SetDocumentReminderResponse);
 }

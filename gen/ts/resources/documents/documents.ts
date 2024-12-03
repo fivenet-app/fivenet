@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Workflow } from "./workflow";
 import { UserShort } from "../users/users";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";
@@ -101,6 +102,14 @@ export interface Document {
      * @generated from protobuf field: bool pinned = 19;
      */
     pinned: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 20;
+     */
+    workflowState?: WorkflowState;
+    /**
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 21;
+     */
+    workflowUser?: WorkflowUserState;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -176,6 +185,14 @@ export interface DocumentShort {
      * @generated from protobuf field: bool public = 16;
      */
     public: boolean;
+    /**
+     * @generated from protobuf field: optional resources.documents.WorkflowState workflow_state = 20;
+     */
+    workflowState?: WorkflowState;
+    /**
+     * @generated from protobuf field: optional resources.documents.WorkflowUserState workflow_user = 21;
+     */
+    workflowUser?: WorkflowUserState;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -258,6 +275,64 @@ export interface DocumentRelation {
      * @generated from protobuf field: optional resources.users.UserShort target_user = 9;
      */
     targetUser?: UserShort; // @gotags: alias:"target_user"
+}
+/**
+ * @generated from protobuf message resources.documents.WorkflowState
+ */
+export interface WorkflowState {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp next_reminder_time = 2;
+     */
+    nextReminderTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional int32 next_reminder_count = 3;
+     */
+    nextReminderCount?: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp auto_close_time = 4;
+     */
+    autoCloseTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 5;
+     */
+    workflow?: Workflow; // @gotags: alias:"workflow"
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 6;
+     */
+    document?: DocumentShort;
+}
+/**
+ * @generated from protobuf message resources.documents.WorkflowUserState
+ */
+export interface WorkflowUserState {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp manual_reminder_time = 3;
+     */
+    manualReminderTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string manual_reminder_message = 4;
+     */
+    manualReminderMessage?: string;
+    /**
+     * @generated from protobuf field: optional resources.documents.Workflow workflow = 5;
+     */
+    workflow?: Workflow; // @gotags: alias:"workflow"
+    /**
+     * @generated from protobuf field: optional resources.documents.DocumentShort document = 6;
+     */
+    document?: DocumentShort;
 }
 /**
  * @generated from protobuf enum resources.documents.DocContentType
@@ -344,7 +419,9 @@ class Document$Type extends MessageType<Document> {
             { no: 16, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 18, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 19, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 19, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 20, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 21, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -424,6 +501,12 @@ class Document$Type extends MessageType<Document> {
                 case /* bool pinned */ 19:
                     message.pinned = reader.bool();
                     break;
+                case /* optional resources.documents.WorkflowState workflow_state */ 20:
+                    message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
+                    break;
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 21:
+                    message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -493,6 +576,12 @@ class Document$Type extends MessageType<Document> {
         /* bool pinned = 19; */
         if (message.pinned !== false)
             writer.tag(19, WireType.Varint).bool(message.pinned);
+        /* optional resources.documents.WorkflowState workflow_state = 20; */
+        if (message.workflowState)
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 21; */
+        if (message.workflowUser)
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -522,7 +611,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 13, name: "creator_job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 20, name: "workflow_state", kind: "message", T: () => WorkflowState },
+            { no: 21, name: "workflow_user", kind: "message", T: () => WorkflowUserState }
         ]);
     }
     create(value?: PartialMessage<DocumentShort>): DocumentShort {
@@ -592,6 +683,12 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* bool public */ 16:
                     message.public = reader.bool();
                     break;
+                case /* optional resources.documents.WorkflowState workflow_state */ 20:
+                    message.workflowState = WorkflowState.internalBinaryRead(reader, reader.uint32(), options, message.workflowState);
+                    break;
+                case /* optional resources.documents.WorkflowUserState workflow_user */ 21:
+                    message.workflowUser = WorkflowUserState.internalBinaryRead(reader, reader.uint32(), options, message.workflowUser);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -652,6 +749,12 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* bool public = 16; */
         if (message.public !== false)
             writer.tag(16, WireType.Varint).bool(message.public);
+        /* optional resources.documents.WorkflowState workflow_state = 20; */
+        if (message.workflowState)
+            WorkflowState.internalBinaryWrite(message.workflowState, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.WorkflowUserState workflow_user = 21; */
+        if (message.workflowUser)
+            WorkflowUserState.internalBinaryWrite(message.workflowUser, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -873,3 +976,168 @@ class DocumentRelation$Type extends MessageType<DocumentRelation> {
  * @generated MessageType for protobuf message resources.documents.DocumentRelation
  */
 export const DocumentRelation = new DocumentRelation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WorkflowState$Type extends MessageType<WorkflowState> {
+    constructor() {
+        super("resources.documents.WorkflowState", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "next_reminder_time", kind: "message", T: () => Timestamp },
+            { no: 3, name: "next_reminder_count", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "auto_close_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 6, name: "document", kind: "message", T: () => DocumentShort }
+        ]);
+    }
+    create(value?: PartialMessage<WorkflowState>): WorkflowState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<WorkflowState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowState): WorkflowState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp next_reminder_time */ 2:
+                    message.nextReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.nextReminderTime);
+                    break;
+                case /* optional int32 next_reminder_count */ 3:
+                    message.nextReminderCount = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp auto_close_time */ 4:
+                    message.autoCloseTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.autoCloseTime);
+                    break;
+                case /* optional resources.documents.Workflow workflow */ 5:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
+                case /* optional resources.documents.DocumentShort document */ 6:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WorkflowState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* optional resources.timestamp.Timestamp next_reminder_time = 2; */
+        if (message.nextReminderTime)
+            Timestamp.internalBinaryWrite(message.nextReminderTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 next_reminder_count = 3; */
+        if (message.nextReminderCount !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.nextReminderCount);
+        /* optional resources.timestamp.Timestamp auto_close_time = 4; */
+        if (message.autoCloseTime)
+            Timestamp.internalBinaryWrite(message.autoCloseTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.Workflow workflow = 5; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 6; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.WorkflowState
+ */
+export const WorkflowState = new WorkflowState$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class WorkflowUserState$Type extends MessageType<WorkflowUserState> {
+    constructor() {
+        super("resources.documents.WorkflowUserState", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 3, name: "manual_reminder_time", kind: "message", T: () => Timestamp },
+            { no: 4, name: "manual_reminder_message", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 5, name: "workflow", kind: "message", T: () => Workflow },
+            { no: 6, name: "document", kind: "message", T: () => DocumentShort }
+        ]);
+    }
+    create(value?: PartialMessage<WorkflowUserState>): WorkflowUserState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<WorkflowUserState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WorkflowUserState): WorkflowUserState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp manual_reminder_time */ 3:
+                    message.manualReminderTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.manualReminderTime);
+                    break;
+                case /* optional string manual_reminder_message */ 4:
+                    message.manualReminderMessage = reader.string();
+                    break;
+                case /* optional resources.documents.Workflow workflow */ 5:
+                    message.workflow = Workflow.internalBinaryRead(reader, reader.uint32(), options, message.workflow);
+                    break;
+                case /* optional resources.documents.DocumentShort document */ 6:
+                    message.document = DocumentShort.internalBinaryRead(reader, reader.uint32(), options, message.document);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: WorkflowUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* optional resources.timestamp.Timestamp manual_reminder_time = 3; */
+        if (message.manualReminderTime)
+            Timestamp.internalBinaryWrite(message.manualReminderTime, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional string manual_reminder_message = 4; */
+        if (message.manualReminderMessage !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.manualReminderMessage);
+        /* optional resources.documents.Workflow workflow = 5; */
+        if (message.workflow)
+            Workflow.internalBinaryWrite(message.workflow, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.documents.DocumentShort document = 6; */
+        if (message.document)
+            DocumentShort.internalBinaryWrite(message.document, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.documents.WorkflowUserState
+ */
+export const WorkflowUserState = new WorkflowUserState$Type();

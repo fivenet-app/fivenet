@@ -83,7 +83,7 @@ const state = reactive<Schema>({
 
         reminders: {
             reminder: false,
-            reminders: {
+            reminderSettings: {
                 reminders: [],
             },
         },
@@ -162,8 +162,8 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             creatorJob: '',
             workflow: {
                 reminder: values.workflow.reminders.reminder,
-                reminders: {
-                    reminders: values.workflow.reminders.reminders.reminders
+                reminderSettings: {
+                    reminders: values.workflow.reminders.reminderSettings.reminders
                         .filter((r) => r.duration !== undefined)
                         .map((r) => ({
                             duration: toDuration((r.duration ? r.duration : 0) * 24 * 60 * 60),
@@ -173,12 +173,21 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
 
                 autoClose: values.workflow.autoClose.autoClose,
                 autoCloseSettings: {
-                    duration: toDuration(values.workflow.autoClose.autoCloseSettings.duration * 24 * 60 * 60),
+                    duration: toDuration(
+                        (values.workflow.autoClose.autoCloseSettings.duration > 0
+                            ? values.workflow.autoClose.autoCloseSettings.duration
+                            : 1) *
+                            24 *
+                            60 *
+                            60,
+                    ),
                     message: values.workflow.autoClose.autoCloseSettings.message ?? '',
                 },
             },
         },
     };
+
+    console.log('req', req);
 
     try {
         if (templateId === undefined) {
@@ -246,12 +255,12 @@ function setValuesFromTemplate(tpl: Template): void {
     state.workflow = {
         reminders: {
             reminder: tpl.workflow?.reminder ?? false,
-            reminders: {
+            reminderSettings: {
                 reminders:
-                    tpl.workflow?.reminders?.reminders.map((r) => {
+                    tpl.workflow?.reminderSettings?.reminders.map((r) => {
                         const dur = fromDuration(r.duration);
                         return {
-                            duration: (dur > 0 ? dur : 604800) / 24 / 60 / 60,
+                            duration: dur > 0 ? dur / 24 / 60 / 60 : 7,
                             message: r.message ?? '',
                         };
                     }) ?? [],
@@ -262,7 +271,7 @@ function setValuesFromTemplate(tpl: Template): void {
             autoClose: tpl.workflow?.autoClose ?? false,
             autoCloseSettings: {
                 message: tpl.workflow?.autoCloseSettings?.message ?? '',
-                duration: (autoCloseDuration > 0 ? autoCloseDuration : 604800) / 24 / 60 / 60,
+                duration: autoCloseDuration > 0 ? autoCloseDuration / 24 / 60 / 60 : 7,
             },
         },
     };
@@ -280,7 +289,7 @@ function setValuesFromTemplate(tpl: Template): void {
     schemaEditor.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
 }
 
-onMounted(async () => {
+onBeforeMount(async () => {
     if (props.templateId) {
         try {
             const call = getGRPCDocStoreClient().getTemplate({
@@ -503,7 +512,7 @@ const categoriesLoading = ref(false);
                                     { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
                                     {
                                         slot: 'workflow',
-                                        label: $t('components.documents.templates.TemplateWorkflowEditor.workflow'),
+                                        label: $t('common.workflow'),
                                         icon: 'i-mdi-reminder',
                                     },
                                 ]"

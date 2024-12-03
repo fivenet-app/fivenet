@@ -15,7 +15,7 @@ const workflow = useVModel(props, 'modelValue', emit);
 <template>
     <div class="flex flex-col gap-1">
         <!-- Auto Close -->
-        <UFormGroup name="workflow.autoClose" :label="$t('components.documents.templates.TemplateWorkflowEditor.auto_close')">
+        <UFormGroup name="workflow.autoClose" :label="$t('common.auto_close')">
             <UToggle v-model="workflow.autoClose.autoClose" />
         </UFormGroup>
 
@@ -59,7 +59,11 @@ const workflow = useVModel(props, 'modelValue', emit);
 
         <UFormGroup name="workflow.reminders.reminders" :label="$t('common.reminder', 2)">
             <div class="flex flex-col gap-1">
-                <div v-for="(_, idx) in workflow.reminders.reminders.reminders" :key="idx" class="flex items-center gap-1">
+                <div
+                    v-for="(_, idx) in workflow.reminders.reminderSettings.reminders"
+                    :key="idx"
+                    class="flex items-center gap-1"
+                >
                     <UFormGroup
                         :name="`workflow.reminders.reminders.${idx}.duration`"
                         :label="$t('common.time_ago.day', 2)"
@@ -67,7 +71,7 @@ const workflow = useVModel(props, 'modelValue', emit);
                         :ui="{ container: '' }"
                     >
                         <UInput
-                            v-model="workflow.reminders.reminders.reminders[idx]!.duration"
+                            v-model="workflow.reminders.reminderSettings.reminders[idx]!.duration"
                             type="number"
                             :min="1"
                             :max="60"
@@ -87,7 +91,7 @@ const workflow = useVModel(props, 'modelValue', emit);
                         :ui="{ container: '' }"
                     >
                         <UInput
-                            v-model="workflow.reminders.reminders.reminders[idx]!.message"
+                            v-model="workflow.reminders.reminderSettings.reminders[idx]!.message"
                             type="text"
                             class="w-full flex-1"
                             :placeholder="$t('common.message')"
@@ -98,7 +102,7 @@ const workflow = useVModel(props, 'modelValue', emit);
                         <UButton
                             :ui="{ rounded: 'rounded-full' }"
                             icon="i-mdi-close"
-                            @click="workflow.reminders.reminders.reminders.splice(idx, 1)"
+                            @click="workflow.reminders.reminderSettings.reminders.splice(idx, 1)"
                         />
                     </UFormGroup>
                 </div>
@@ -107,10 +111,10 @@ const workflow = useVModel(props, 'modelValue', emit);
             <UButton
                 :ui="{ rounded: 'rounded-full' }"
                 icon="i-mdi-plus"
-                :disabled="workflow.reminders.reminders.reminders.length >= 3"
-                :class="workflow.reminders.reminders.reminders.length ? 'mt-2' : ''"
+                :disabled="workflow.reminders.reminderSettings.reminders.length >= 3"
+                :class="workflow.reminders.reminderSettings.reminders.length ? 'mt-2' : ''"
                 @click="
-                    workflow.reminders.reminders.reminders.push({
+                    workflow.reminders.reminderSettings.reminders.push({
                         duration: 7,
                         message: '',
                     })

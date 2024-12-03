@@ -159,11 +159,6 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	groupBys := []jet.GroupByClause{tPageShort.ID}
-	if req.RootOnly != nil && *req.RootOnly {
-		groupBys = []jet.GroupByClause{tPageShort.Job}
-	}
-
 	condition := jet.Bool(true)
 	if req.Search != nil && *req.Search != "" {
 		*req.Search = strings.TrimRight(*req.Search, "*") + "*"
@@ -178,6 +173,11 @@ func (s *Server) ListPages(ctx context.Context, req *ListPagesRequest) (*ListPag
 					jet.RawArgs{"$search": *req.Search}),
 			),
 		)
+	}
+
+	groupBys := []jet.GroupByClause{tPageShort.ID}
+	if req.RootOnly != nil && *req.RootOnly {
+		groupBys = []jet.GroupByClause{tPageShort.Job}
 	}
 
 	if !userInfo.SuperUser {

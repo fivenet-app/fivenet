@@ -367,7 +367,7 @@ function removeReference(id: string): void {
                                                         <CitizenInfoPopover :user="document.creator" :trailing="false" />
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <GenericTime :value="document.createdAt" :ago="true" />
+                                                        <GenericTime :value="document.createdAt" ago />
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">

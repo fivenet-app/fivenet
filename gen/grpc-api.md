@@ -121,6 +121,8 @@
     - [DocumentReference](#resources-documents-DocumentReference)
     - [DocumentRelation](#resources-documents-DocumentRelation)
     - [DocumentShort](#resources-documents-DocumentShort)
+    - [WorkflowState](#resources-documents-WorkflowState)
+    - [WorkflowUserState](#resources-documents-WorkflowUserState)
   
     - [DocContentType](#resources-documents-DocContentType)
     - [DocReference](#resources-documents-DocReference)
@@ -137,13 +139,11 @@
     - [AccessLevel](#resources-documents-AccessLevel)
   
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
-    - [AutoClose](#resources-documents-AutoClose)
+    - [AutoCloseSettings](#resources-documents-AutoCloseSettings)
     - [Reminder](#resources-documents-Reminder)
-    - [Reminders](#resources-documents-Reminders)
+    - [ReminderSettings](#resources-documents-ReminderSettings)
     - [Workflow](#resources-documents-Workflow)
     - [WorkflowCronData](#resources-documents-WorkflowCronData)
-    - [WorkflowState](#resources-documents-WorkflowState)
-    - [WorkflowUserState](#resources-documents-WorkflowUserState)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -401,9 +401,6 @@
 - [resources/internet/search.proto](#resources_internet_search-proto)
     - [SearchResult](#resources-internet-SearchResult)
   
-- [resources/duration/duration.proto](#resources_duration_duration-proto)
-    - [Duration](#resources-duration-Duration)
-  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -572,6 +569,8 @@
     - [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse)
     - [SetDocumentAccessRequest](#services-docstore-SetDocumentAccessRequest)
     - [SetDocumentAccessResponse](#services-docstore-SetDocumentAccessResponse)
+    - [SetDocumentReminderRequest](#services-docstore-SetDocumentReminderRequest)
+    - [SetDocumentReminderResponse](#services-docstore-SetDocumentReminderResponse)
     - [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest)
     - [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse)
     - [ToggleDocumentRequest](#services-docstore-ToggleDocumentRequest)
@@ -2491,6 +2490,8 @@ Dummy - DO NOT USE!
 | public | [bool](#bool) |  |  |
 | template_id | [uint64](#uint64) | optional |  |
 | pinned | [bool](#bool) |  |  |
+| workflow_state | [WorkflowState](#resources-documents-WorkflowState) | optional |  |
+| workflow_user | [WorkflowUserState](#resources-documents-WorkflowUserState) | optional |  |
 
 
 
@@ -2569,6 +2570,48 @@ Dummy - DO NOT USE!
 @gotags: alias:"state" |
 | closed | [bool](#bool) |  |  |
 | public | [bool](#bool) |  |  |
+| workflow_state | [WorkflowState](#resources-documents-WorkflowState) | optional |  |
+| workflow_user | [WorkflowUserState](#resources-documents-WorkflowUserState) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowState"></a>
+
+### WorkflowState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| next_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| next_reminder_count | [int32](#int32) | optional |  |
+| auto_close_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
+| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowUserState"></a>
+
+### WorkflowUserState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| manual_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| manual_reminder_message | [string](#string) | optional |  |
+| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
+| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
 
 
 
@@ -2762,9 +2805,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-documents-AutoClose"></a>
+<a name="resources-documents-AutoCloseSettings"></a>
 
-### AutoClose
+### AutoCloseSettings
 
 
 
@@ -2794,9 +2837,9 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-documents-Reminders"></a>
+<a name="resources-documents-ReminderSettings"></a>
 
-### Reminders
+### ReminderSettings
 
 
 
@@ -2818,9 +2861,9 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | reminder | [bool](#bool) |  |  |
-| reminders | [Reminders](#resources-documents-Reminders) |  |  |
+| reminder_settings | [ReminderSettings](#resources-documents-ReminderSettings) |  |  |
 | auto_close | [bool](#bool) |  |  |
-| auto_close_settings | [AutoClose](#resources-documents-AutoClose) |  |  |
+| auto_close_settings | [AutoCloseSettings](#resources-documents-AutoCloseSettings) |  |  |
 
 
 
@@ -2836,46 +2879,6 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | last_doc_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-WorkflowState"></a>
-
-### WorkflowState
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| document_id | [uint64](#uint64) |  |  |
-| next_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| next_reminder_count | [int32](#int32) | optional |  |
-| auto_close_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
-| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-WorkflowUserState"></a>
-
-### WorkflowUserState
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| document_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| manual_reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| manual_reminder_message | [string](#string) | optional |  |
-| workflow | [Workflow](#resources-documents-Workflow) | optional | @gotags: alias:"workflow" |
-| document | [DocumentShort](#resources-documents-DocumentShort) | optional |  |
 
 
 
@@ -6520,37 +6523,6 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
-<a name="resources_duration_duration-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/duration/duration.proto
-
-
-
-<a name="resources-duration-Duration"></a>
-
-### Duration
-Duration for storage messages. We've defined a new local type wrapper of google.protobuf.Duration so we can implement sql.Scanner and sql.Valuer interfaces. See: https://golang.org/pkg/database/sql/#Scanner https://golang.org/pkg/database/sql/driver/#Valuer
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| duration | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="services_auth_auth-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -8914,6 +8886,33 @@ Duration for storage messages. We've defined a new local type wrapper of google.
 
 
 
+<a name="services-docstore-SetDocumentReminderRequest"></a>
+
+### SetDocumentReminderRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| reminder_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| message | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="services-docstore-SetDocumentReminderResponse"></a>
+
+### SetDocumentReminderResponse
+
+
+
+
+
+
+
 <a name="services-docstore-ToggleDocumentPinRequest"></a>
 
 ### ToggleDocumentPinRequest
@@ -9154,6 +9153,7 @@ Duration for storage messages. We've defined a new local type wrapper of google.
 | DeleteCategory | [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse) | @perm |
 | ListDocumentPins | [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
 | ToggleDocumentPin | [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse) | @perm |
+| SetDocumentReminder | [SetDocumentReminderRequest](#services-docstore-SetDocumentReminderRequest) | [SetDocumentReminderResponse](#services-docstore-SetDocumentReminderResponse) | @perm |
 
  <!-- end services -->
 

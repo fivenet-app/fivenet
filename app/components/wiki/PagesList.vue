@@ -2,12 +2,15 @@
 import type { NavItem } from '@nuxt/content';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
-function mapNavItemToNavItem(p: PageShort): NavItem {
+const { t } = useI18n();
+
+function mapNavItemToNavItem(page: PageShort): NavItem {
     return {
-        title: p.title,
-        _path: `/wiki/${p.job}/${p.id}/${p.slug ?? ''}`,
-        children: p.children.map((p) => mapNavItemToNavItem(p)),
-        icon: p.deletedAt !== undefined ? 'i-mdi-trash-can' : undefined,
+        _id: page.id,
+        title: page.title !== '' ? page.title : `${page?.jobLabel ? page?.jobLabel + ': ' : ''}${t('common.wiki')}`,
+        _path: `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`,
+        children: page.children.map((p) => mapNavItemToNavItem(p)),
+        icon: page.deletedAt !== undefined ? 'i-mdi-trash-can' : undefined,
     };
 }
 

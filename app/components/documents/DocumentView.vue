@@ -22,9 +22,11 @@ import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
+import DocumentReminderModal from './DocumentReminderModal.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -198,6 +200,21 @@ async function togglePin(documentId: string, state: boolean): Promise<ToggleDocu
     }
 }
 
+function updateReminderTime(reminderTime?: Timestamp): void {
+    if (!doc.value) {
+        return;
+    }
+
+    if (!doc.value.workflowUser) {
+        doc.value.workflowUser = {
+            documentId: props.documentId,
+            userId: activeChar.value!.userId,
+        };
+    }
+
+    doc.value.workflowUser.manualReminderTime = reminderTime;
+}
+
 const accordionItems = computed(() =>
     [
         { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
@@ -292,6 +309,7 @@ defineShortcuts({
                     >
                         <UButton
                             block
+                            class="flex-1 flex-col"
                             :icon="doc.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
                             :ui="{ icon: { base: doc.closed ? 'text-success-500' : 'text-success-500' } }"
                             @click="toggleDocument(documentId, !doc.closed)"
@@ -316,6 +334,7 @@ defineShortcuts({
                     >
                         <UButton
                             block
+                            class="flex-1 flex-col"
                             :to="{
                                 name: 'documents-id-edit',
                                 params: { id: doc.id },
@@ -349,10 +368,31 @@ defineShortcuts({
                         :text="$t('common.request', 2)"
                         :shortcuts="['D', 'R']"
                     >
-                        <UButton class="flex-1" block icon="i-mdi-frequently-asked-questions" @click="openRequestsModal">
+                        <UButton
+                            class="flex-1 flex-col"
+                            block
+                            icon="i-mdi-frequently-asked-questions"
+                            @click="openRequestsModal"
+                        >
                             {{ $t('common.request', 2) }}
                         </UButton>
                     </UTooltip>
+
+                    <UButton
+                        v-if="can('DocStoreService.SetDocumentReminder').value"
+                        class="flex-1 flex-col"
+                        block
+                        icon="i-mdi-reminder"
+                        @click="
+                            modal.open(DocumentReminderModal, {
+                                documentId: documentId,
+                                reminderTime: doc.workflowUser?.manualReminderTime ?? undefined,
+                                'onUpdate:reminderTime': () => updateReminderTime($event),
+                            })
+                        "
+                    >
+                        {{ $t('common.reminder') }}
+                    </UButton>
 
                     <UButton
                         v-if="
@@ -360,7 +400,7 @@ defineShortcuts({
                             can('DocStoreService.ChangeDocumentOwner').value &&
                             checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
                         "
-                        class="flex-1"
+                        class="flex-1 flex-col"
                         block
                         :disabled="doc?.creatorId === activeChar?.userId"
                         icon="i-mdi-creation"
@@ -378,7 +418,7 @@ defineShortcuts({
                             can('DocStoreService.DeleteDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                         "
-                        class="flex-1"
+                        class="flex-1 flex-col"
                         block
                         :color="!doc.deletedAt ? 'red' : undefined"
                         :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
@@ -453,6 +493,21 @@ defineShortcuts({
                         <span>
                             {{ $t('common.updated_at') }}
                             <GenericTime :value="doc.updatedAt" type="long" />
+                        </span>
+                    </UBadge>
+
+                    <UBadge v-if="doc.workflowState?.autoCloseTime" color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                        <span>
+                            {{ $t('common.auto_close', 2) }}
+                            <GenericTime :value="doc.workflowState.autoCloseTime" ago />
+                        </span>
+                    </UBadge>
+                    <UBadge v-else-if="doc.workflowState?.nextReminderTime" color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                        <span>
+                            {{ $t('common.reminder') }}
+                            <GenericTime :value="doc.workflowState.nextReminderTime" ago />
                         </span>
                     </UBadge>
 

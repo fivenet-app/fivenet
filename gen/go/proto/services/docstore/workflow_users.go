@@ -93,7 +93,7 @@ func (w *Workflow) handleWorkflowUserState(ctx context.Context, state *documents
 			return err
 		}
 
-		if err := w.deleteWorkflowUserState(ctx, state); err != nil {
+		if err := deleteWorkflowUserState(ctx, w.db, state); err != nil {
 			return err
 		}
 	}
@@ -101,7 +101,7 @@ func (w *Workflow) handleWorkflowUserState(ctx context.Context, state *documents
 	return nil
 }
 
-func (w *Workflow) updateWorkflowUserState(ctx context.Context, state *documents.WorkflowUserState) error {
+func updateWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
 	stmt := tUserWorkflow.
 		UPDATE(
 			tUserWorkflow.ManualReminderTime,
@@ -113,16 +113,17 @@ func (w *Workflow) updateWorkflowUserState(ctx context.Context, state *documents
 		).
 		WHERE(jet.AND(
 			tUserWorkflow.DocumentID.EQ(jet.Uint64(state.DocumentId)),
+			tUserWorkflow.UserID.EQ(jet.Int32(state.UserId)),
 		))
 
-	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (w *Workflow) deleteWorkflowUserState(ctx context.Context, state *documents.WorkflowUserState) error {
+func deleteWorkflowUserState(ctx context.Context, tx qrm.DB, state *documents.WorkflowUserState) error {
 	stmt := tUserWorkflow.
 		DELETE().
 		WHERE(jet.AND(
@@ -131,7 +132,7 @@ func (w *Workflow) deleteWorkflowUserState(ctx context.Context, state *documents
 		)).
 		LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, w.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

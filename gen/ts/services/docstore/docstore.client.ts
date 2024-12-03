@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { DocStoreService } from "./docstore";
+import type { SetDocumentReminderResponse } from "./docstore";
+import type { SetDocumentReminderRequest } from "./docstore";
 import type { ToggleDocumentPinResponse } from "./docstore";
 import type { ToggleDocumentPinRequest } from "./docstore";
 import type { ListDocumentPinsResponse } from "./docstore";
@@ -299,6 +301,12 @@ export interface IDocStoreServiceClient {
      * @generated from protobuf rpc: ToggleDocumentPin(services.docstore.ToggleDocumentPinRequest) returns (services.docstore.ToggleDocumentPinResponse);
      */
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: SetDocumentReminder(services.docstore.SetDocumentReminderRequest) returns (services.docstore.SetDocumentReminderResponse);
+     */
+    setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse>;
 }
 /**
  * @generated from protobuf service services.docstore.DocStoreService
@@ -632,5 +640,14 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
     toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse> {
         const method = this.methods[35], opt = this._transport.mergeOptions(options);
         return stackIntercept<ToggleDocumentPinRequest, ToggleDocumentPinResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: SetDocumentReminder(services.docstore.SetDocumentReminderRequest) returns (services.docstore.SetDocumentReminderResponse);
+     */
+    setDocumentReminder(input: SetDocumentReminderRequest, options?: RpcOptions): UnaryCall<SetDocumentReminderRequest, SetDocumentReminderResponse> {
+        const method = this.methods[36], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetDocumentReminderRequest, SetDocumentReminderResponse>("unary", this._transport, method, opt, input);
     }
 }

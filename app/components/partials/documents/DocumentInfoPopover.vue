@@ -143,7 +143,7 @@ watchOnce(opened, async () => {
 
                         <div v-if="document.updatedAt" class="flex flex-row items-center gap-1 text-sm">
                             <span>{{ $t('common.updated') }}:</span>
-                            <GenericTime :value="document.updatedAt" :ago="true" />
+                            <GenericTime :value="document.updatedAt" ago />
                         </div>
 
                         <div v-if="document.deletedAt" class="flex flex-row items-center gap-1 font-bold">

@@ -157,6 +157,11 @@ func init() {
 		},
 		{
 			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceSetDocumentReminderPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: permkeys.DocStoreServicePerm,
 			Name:     permkeys.DocStoreServiceToggleDocumentPerm,
 			Attrs: []perms.Attr{
 				{

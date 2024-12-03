@@ -22,7 +22,6 @@
 // source: resources/documents/requests.proto
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
-// source: resources/duration/duration.proto
 // source: resources/filestore/file.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/search.proto
@@ -200,6 +199,7 @@ export const grpcMethods = [
 	'DocStoreService/DeleteCategory',
 	'DocStoreService/ListDocumentPins',
 	'DocStoreService/ToggleDocumentPin',
+	'DocStoreService/SetDocumentReminder',
 	'InternetService/Search',
 	'JobsConductService/ListConductEntries',
 	'JobsConductService/CreateConductEntry',

@@ -220,9 +220,10 @@ class WebsocketChannelStream {
         writeUInt32BE(output, msgBytes.length, 1);
         output.set(msgBytes, 5);
 
-        const body = Body.create();
-        body.data = output;
-        body.complete = !!complete;
+        const body = Body.create({
+            data: output,
+            complete: !!complete,
+        });
 
         this.wsChannel.sendToWebsocket(
             this.opts,

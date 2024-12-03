@@ -114,7 +114,7 @@ const version = APP_VERSION;
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                <GenericTime :value="getAccessTokenExpiration" :ago="true" />
+                <GenericTime :value="getAccessTokenExpiration" ago />
                 (<GenericTime :value="getAccessTokenExpiration" type="long" />)
             </UFormGroup>
 

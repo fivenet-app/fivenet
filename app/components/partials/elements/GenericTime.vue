@@ -32,7 +32,7 @@ if (props.updateCallback) {
 </script>
 
 <template>
-    <UTooltip :text="$d(date, 'long')">
+    <UTooltip :text="$d(date, type)">
         <time v-bind="$attrs" :datetime="date.toLocaleTimeString()" :class="timeClass">
             {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
         </time>

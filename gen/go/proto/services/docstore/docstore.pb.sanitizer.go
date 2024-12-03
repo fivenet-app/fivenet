@@ -27,6 +27,15 @@ func (m *CreateDocumentRequest) Sanitize() error {
 	return nil
 }
 
+func (m *SetDocumentReminderRequest) Sanitize() error {
+
+	if m.Message != nil {
+		*m.Message = htmlsanitizer.StripTags(*m.Message)
+	}
+
+	return nil
+}
+
 func (m *UpdateDocumentReqRequest) Sanitize() error {
 
 	if m.Reason != nil {

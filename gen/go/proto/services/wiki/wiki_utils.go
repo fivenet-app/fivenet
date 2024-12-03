@@ -1,6 +1,8 @@
 package wiki
 
-import "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
+import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
+)
 
 func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 	if len(pages) == 0 {
@@ -23,16 +25,27 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 		}
 	}
 
+	// If no root page is found, use "dummy"
 	if root == nil {
-		root = pages[0]
+		firstPage := pages[0]
+		root = &wiki.PageShort{
+			Id:       0,
+			Title:    "",
+			Job:      firstPage.Job,
+			JobLabel: firstPage.JobLabel,
+			Children: []*wiki.PageShort{},
+		}
 	}
 
 	for _, page := range mapping {
 		if page.ParentId != nil {
 			// Only delete pages for which we have the parent,
 			// cause it might be a singular page from a "different" wiki
+			// that we add to the root page
 			if _, ok := mapping[*page.ParentId]; ok {
 				delete(mapping, page.Id)
+			} else {
+				root.Children = append(root.Children, page)
 			}
 		}
 
@@ -52,7 +65,7 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 	}
 
 	rootTitle := root.Title
-	if root.JobLabel != nil {
+	if root.JobLabel != nil && rootTitle != "" {
 		rootTitle = *root.JobLabel + ": " + root.Title
 	}
 	result := map[uint64]*wiki.PageShort{
@@ -63,20 +76,23 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 			Slug:        root.Slug,
 			Title:       rootTitle,
 			Description: root.Description,
-			// Make sure to prepend root page
-			Children: append([]*wiki.PageShort{
-				{
-					Id:          root.Id,
-					ParentId:    root.ParentId,
-					Job:         root.Job,
-					JobLabel:    root.JobLabel,
-					Slug:        root.Slug,
-					Title:       root.Title,
-					Description: root.Description,
-					Children:    nil,
-				},
-			}, root.Children...),
+			Children:    root.Children,
 		},
+	}
+	// Make sure to prepend root page (if it isn't our dummy)
+	if root.Id != 0 {
+		root.Children = append([]*wiki.PageShort{
+			{
+				Id:          root.Id,
+				ParentId:    root.ParentId,
+				Job:         root.Job,
+				JobLabel:    root.JobLabel,
+				Slug:        root.Slug,
+				Title:       root.Title,
+				Description: root.Description,
+				Children:    root.Children,
+			},
+		}, root.Children...)
 	}
 
 	return result

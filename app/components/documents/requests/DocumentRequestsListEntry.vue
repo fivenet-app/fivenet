@@ -104,11 +104,11 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 </div>
                 <div>
                     {{ $t('common.created') }}
-                    <GenericTime :value="request.createdAt" :ago="true" />
+                    <GenericTime :value="request.createdAt" ago />
                 </div>
                 <div v-if="request.updatedAt">
                     {{ $t('common.updated') }}
-                    <GenericTime :value="request.updatedAt" :ago="true" />
+                    <GenericTime :value="request.updatedAt" ago />
                 </div>
             </div>
             <div class="flex items-center gap-2">
