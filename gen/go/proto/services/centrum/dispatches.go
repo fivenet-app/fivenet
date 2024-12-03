@@ -546,7 +546,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tDispatchStatus.

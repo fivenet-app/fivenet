@@ -565,7 +565,7 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.
@@ -624,7 +624,7 @@ func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, 
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.

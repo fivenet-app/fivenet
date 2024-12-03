@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
-	tUsers := tUsers.AS("user")
+	tUsers := tUsers.AS("colleague")
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -28,7 +28,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tUsers.
@@ -90,7 +90,7 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*jo
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tUsers.
@@ -109,7 +109,7 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*jo
 
 	dest := []*jobs.Colleague{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, fmt.Errorf("failed to resolve usershorts by ids %+v: %w", u, err)
+		return nil, fmt.Errorf("failed to resolve colleagues by ids %+v: %w", u, err)
 	}
 
 	for i := 0; i < len(dest); i++ {

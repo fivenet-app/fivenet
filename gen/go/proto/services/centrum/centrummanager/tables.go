@@ -6,7 +6,7 @@ var (
 	tUnits           = table.FivenetCentrumUnits.AS("unit")
 	tUnitStatus      = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUnitUser        = table.FivenetCentrumUnitsUsers.AS("unitassignment")
-	tUsers           = table.Users.AS("usershort")
+	tUsers           = table.Users.AS("colleague")
 	tUserProps       = table.FivenetUserProps
 	tJobsUserProps   = table.FivenetJobsUserProps.AS("jobs_user_props")
 	tCentrumSettings = table.FivenetCentrumSettings

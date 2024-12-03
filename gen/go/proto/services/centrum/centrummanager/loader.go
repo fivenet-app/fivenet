@@ -94,7 +94,7 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tCentrumUsers.

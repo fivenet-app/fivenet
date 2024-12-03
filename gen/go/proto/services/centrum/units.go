@@ -25,7 +25,7 @@ import (
 
 var (
 	tUnitStatus    = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUsers         = table.Users.AS("usershort")
+	tUsers         = table.Users.AS("colleague")
 	tUserProps     = table.FivenetUserProps
 	tUnits         = table.FivenetCentrumUnits.AS("unit")
 	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
@@ -392,7 +392,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("usershort.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 		).
 		FROM(
 			tUnitStatus.
