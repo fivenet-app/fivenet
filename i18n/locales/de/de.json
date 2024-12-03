@@ -2038,7 +2038,8 @@
                     "Any": "Egal",
                     "Note": "Notiz",
                     "AbsenceDate": "Abwesenheitsdatum",
-                    "Labels": "Labels"
+                    "Labels": "Labels",
+                    "Name": "Name"
                 },
                 "attrs_types": {
                     "Access": "Zugriff auf Kollegen Eigenschaften",
@@ -2055,7 +2056,8 @@
                     "DEMOTED": "Degradiert",
                     "ABSENCE_DATE": "Abwesenheitsdatum",
                     "NOTE": "Notiz",
-                    "LABELS": "Labels"
+                    "LABELS": "Labels",
+                    "NAME": "Name"
                 },
                 "attrs_types": {
                     "Types": "Aktivitäts-Arten"
@@ -2578,7 +2580,8 @@
                 "PROMOTED": "Befördert",
                 "DEMOTED": "Degradiert",
                 "NOTE": "Notiz aktualisiert",
-                "LABELS": "Labels aktualisiert"
+                "LABELS": "Labels aktualisiert",
+                "NAME": "Name Präfix/Suffix aktualisiert"
             }
         },
         "qualifications": {
