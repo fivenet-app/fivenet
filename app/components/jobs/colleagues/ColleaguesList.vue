@@ -33,7 +33,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = useRouteQueryReactive<Schema>('search', {
+const query = reactive<Schema>({
     name: '',
     absent: false,
     labels: [],
@@ -395,35 +395,43 @@ defineShortcuts({
 
             <template #actions-data="{ row: colleague }">
                 <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
-                    <UButton
+                    <UTooltip
                         v-if="
                             can('JobsService.SetJobsUserProps').value &&
                             (colleague.userId === activeChar!.userId ||
                                 attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                             checkIfCanAccessColleague(colleague, 'JobsService.SetJobsUserProps')
                         "
-                        variant="link"
-                        icon="i-mdi-island"
-                        @click="
-                            modal.open(SelfServicePropsAbsenceDateModal, {
-                                userId: colleague.userId,
-                                'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                            })
-                        "
-                    />
+                        :text="$t('components.jobs.self_service.set_absence_date')"
+                    >
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-island"
+                            @click="
+                                modal.open(SelfServicePropsAbsenceDateModal, {
+                                    userId: colleague.userId,
+                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                })
+                            "
+                        />
+                    </UTooltip>
 
-                    <UButton
+                    <UTooltip
                         v-if="
                             can('JobsService.GetColleague').value &&
                             checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')
                         "
-                        variant="link"
-                        icon="i-mdi-eye"
-                        :to="{
-                            name: 'jobs-colleagues-id-info',
-                            params: { id: colleague.userId ?? 0 },
-                        }"
-                    />
+                        :text="$t('common.show')"
+                    >
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :to="{
+                                name: 'jobs-colleagues-id-info',
+                                params: { id: colleague.userId ?? 0 },
+                            }"
+                        />
+                    </UTooltip>
                 </div>
             </template>
         </UTable>

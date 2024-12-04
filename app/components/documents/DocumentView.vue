@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useRouteHash } from '@vueuse/router';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
 import DocumentComments from '~/components/documents/DocumentComments.vue';

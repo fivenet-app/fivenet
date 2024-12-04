@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { ButtonColor } from '#ui/types';
-import { useRouteQuery } from '@vueuse/router';
 import { isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';

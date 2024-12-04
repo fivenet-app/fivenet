@@ -1,48 +1,24 @@
-import type { UnwrapNestedRefs, WritableComputedRef } from 'vue';
-
-const _useRouteQueryObject = <T extends object>(key: string, def: T): WritableComputedRef<T> => {
-    const query = useRouteQuery(key, JSON.stringify(def));
-
-    const value = computed({
-        get() {
-            try {
-                const parsed = JSON.parse(query.value as string) as T;
-                return {
-                    ...def,
-                    ...parsed,
-                };
-            } catch (_) {
-                return def;
-            }
-        },
-        set(val) {
-            query.value = JSON.stringify(val);
+const _useRouteQueryObject = <T extends object>(key: string, def: T): Ref<T> => {
+    const query = useRouteQuery<string, T>(key, JSON.stringify(def), {
+        transform: {
+            get(val) {
+                try {
+                    const parsed = JSON.parse(val) as T;
+                    return {
+                        ...def,
+                        ...parsed,
+                    };
+                } catch (_) {
+                    return def;
+                }
+            },
+            set(val) {
+                return JSON.stringify(val);
+            },
         },
     });
 
-    return value;
+    return query;
 };
 
-export const useRouteQueryObject = createSharedComposable(_useRouteQueryObject);
-
-const _useRouteQueryReactive = <T extends object>(key: string, def: T): UnwrapNestedRefs<T> => {
-    const query = useRouteQuery(key, JSON.stringify(def));
-
-    const value = reactiveComputed(() => {
-        try {
-            const parsed = JSON.parse(query.value as string) as T;
-            return {
-                ...def,
-                ...parsed,
-            };
-        } catch (_) {
-            return def;
-        }
-    });
-
-    watch(value, () => (query.value = JSON.stringify(value)), { deep: true, flush: 'sync' });
-
-    return value;
-};
-
-export const useRouteQueryReactive = createSharedComposable(_useRouteQueryReactive);
+export const useRouteQueryObject = _useRouteQueryObject;

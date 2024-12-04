@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import { useRouteHash } from '@vueuse/router';
 import type L from 'leaflet';
 import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet-contextmenu';
