@@ -159,6 +159,11 @@
                 "timeclock_tracked": "Dienstzeit erfasst",
                 "citizens_total": "Bürgerakten geführt"
             }
+        },
+        "mailer": {
+            "manage": {
+                "title": "E-Mails verwalten"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
@@ -526,7 +531,8 @@
         "auto_close": "Automatisches Schließen | Automatische Schließung",
         "prefix": "Präfix",
         "suffix": "Suffix",
-        "grade": "Benoten"
+        "grade": "Benoten",
+        "sort_direction": "Sortierrichtung"
     },
     "components": {
         "partials": {
@@ -620,6 +626,14 @@
                 "title": "Sie haben keinen Zugriff auf das Dokument",
                 "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
                 "callback_message": "Hier Zugriff beanfragen"
+            },
+            "TemplateWorkflowEditor": {
+                "reminder": {
+                    "description": "Description here"
+                },
+                "auto_close": {
+                    "description": "Description here"
+                }
             }
         },
         "livemap": {
