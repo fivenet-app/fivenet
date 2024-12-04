@@ -425,7 +425,7 @@ logger.info(
         class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
-        <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+        <UDashboardNavbar :title="documentId ? $t('pages.documents.edit.title') : $t('pages.documents.create.title')">
             <template #right>
                 <PartialsBackButton
                     :fallback-to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
