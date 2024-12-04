@@ -35,8 +35,8 @@ const { can } = useAuth();
             :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
             @click="$emit('selected', index)"
         >
-            <template v-if="showIcon" #icon>
-                <template v-if="!module.icon?.startsWith('i-')">
+            <template v-if="showIcon && module.icon" #icon>
+                <template v-if="!module.icon.startsWith('i-')">
                     <component
                         :is="markerIcons.find((item) => item.name === module.icon) ?? markerFallbackIcon"
                         v-if="module.icon"

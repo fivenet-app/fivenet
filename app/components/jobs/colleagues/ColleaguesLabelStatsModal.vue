@@ -31,10 +31,13 @@ const items = computed(
         })) ?? [],
 );
 const color = (d: LabelCount) => d.label?.color ?? 'gray';
+
+const bodyRef = useTemplateRef('bodyRef');
+const { height, width } = useElementSize(bodyRef);
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" fullscreen>
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -46,15 +49,26 @@ const color = (d: LabelCount) => d.label?.color ?? 'gray';
                 </div>
             </template>
 
-            <div class="h-96 max-h-96">
-                <VisSingleContainer
-                    :data="stats?.count ?? []"
-                    :padding="{ top: 2, left: 2, right: 2, bottom: 2 }"
-                    :height="340"
-                >
-                    <VisDonut :value="value" :color="color" :central-label="`${$t('common.total_count')}: ${totalCount}`" />
-                    <VisBulletLegend :items="items" orientation="vertical" />
-                </VisSingleContainer>
+            <div
+                ref="bodyRef"
+                class="max-h-[calc(98dvh-(2*var(--header-height)))] min-h-[calc(98dvh-(2*var(--header-height)))]"
+            >
+                <ClientOnly>
+                    <VisSingleContainer
+                        :data="stats?.count ?? []"
+                        :padding="{ top: 2, left: 2, right: 2, bottom: 2 }"
+                        :height="height - 64"
+                        :width="width"
+                    >
+                        <VisDonut
+                            :value="value"
+                            :color="color"
+                            :arc-width="30"
+                            :central-label="`${$t('common.total_count')}: ${totalCount}`"
+                        />
+                        <VisBulletLegend :items="items" orientation="horizontal" />
+                    </VisSingleContainer>
+                </ClientOnly>
             </div>
 
             <template #footer>

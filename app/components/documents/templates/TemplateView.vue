@@ -7,6 +7,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -220,10 +221,7 @@ const contentAccessTypes: AccessType[] = [
                                 {{ $t('common.category') }}
                             </h3>
                             <div class="my-2">
-                                <p class="text-sm leading-6 text-gray-100">
-                                    {{ template.category?.name }} ({{ $t('common.description') }}:
-                                    {{ template.category?.description }})
-                                </p>
+                                <DocumentCategoryBadge :category="template.category" />
                             </div>
                         </div>
 

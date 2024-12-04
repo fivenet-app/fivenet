@@ -2,6 +2,7 @@
 import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
 import EmailList from '~/components/mailer/EmailList.vue';
 import { canAccess } from '~/components/mailer/helpers';
+import BackButton from '~/components/partials/BackButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -11,10 +12,10 @@ import type { PaginationResponse } from '~~/gen/ts/resources/common/database/dat
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 
 useHead({
-    title: 'common.mail',
+    title: 'pages.mailer.manage.title',
 });
 definePageMeta({
-    title: 'common.mail',
+    title: 'pages.mailer.manage.title',
     requiresAuth: true,
     permission: 'MailerService.ListEmails',
 });
@@ -82,7 +83,7 @@ const creating = ref(false);
 <template>
     <UDashboardPage>
         <UDashboardPanel v-if="emails.length === 0 || !hasPrivateEmail" id="maileremaillist" grow>
-            <UDashboardNavbar :title="$t('common.mail')" />
+            <UDashboardNavbar :title="$t('pages.mailer.manage.title')" />
 
             <UDashboardPanelContent>
                 <DataErrorBlock
@@ -120,7 +121,7 @@ const creating = ref(false);
 
         <template v-else>
             <UDashboardPanel id="maileremailslist" :width="450" :resizable="{ min: 325, max: 550 }">
-                <UDashboardNavbar :title="$t('common.mail')">
+                <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                     <template #right>
                         <UButton
                             v-if="canCreate"
@@ -146,7 +147,7 @@ const creating = ref(false);
 
             <UDashboardPanel id="maileremailsview" v-model="isMailerPanelOpen" collapsible grow side="right">
                 <template v-if="creating">
-                    <UDashboardNavbar :title="$t('common.mail')">
+                    <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                         <template #right>
                             <UButton
                                 :label="$t('common.back')"
@@ -224,14 +225,9 @@ const creating = ref(false);
                 </template>
 
                 <template v-else>
-                    <UDashboardNavbar :title="$t('common.mail')">
+                    <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                         <template #right>
-                            <UButton
-                                :label="$t('common.back')"
-                                icon="i-mdi-arrow-back"
-                                color="black"
-                                @click="creating = false"
-                            />
+                            <BackButton to="/mail" />
                         </template>
                     </UDashboardNavbar>
 

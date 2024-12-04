@@ -28,8 +28,8 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    signature: '',
-    emails: [],
+    signature: selectedEmail.value?.settings?.signature ?? '',
+    emails: selectedEmail.value?.settings?.blockedEmails ?? [],
 });
 
 const canManage = computed(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.MANAGE));
@@ -71,12 +71,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div class="flex flex-col gap-2">
-                    <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
-                        <ClientOnly>
-                            <DocEditor v-model="state.signature" :disabled="disabled || !canManage" :min-height="200" />
-                        </ClientOnly>
-                    </UFormGroup>
-
                     <UFormGroup name="emails" class="flex-1" :label="$t('common.blocklist')">
                         <div class="flex flex-col gap-1">
                             <div v-for="(_, idx) in state.emails" :key="idx" class="flex items-center gap-1">
@@ -115,6 +109,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             icon="i-mdi-bookmark-remove"
                             @click="addressBook.length = 0"
                         />
+                    </UFormGroup>
+
+                    <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
+                        <ClientOnly>
+                            <DocEditor v-model="state.signature" :disabled="disabled || !canManage" :min-height="200" />
+                        </ClientOnly>
                     </UFormGroup>
                 </div>
 

@@ -427,13 +427,9 @@ logger.info(
     >
         <UDashboardNavbar :title="$t('pages.documents.edit.title')">
             <template #right>
-                <UButton
-                    color="black"
-                    icon="i-mdi-arrow-left"
-                    :to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
-                >
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton
+                    :fallback-to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
+                />
 
                 <UButtonGroup class="inline-flex">
                     <UButton

@@ -159,6 +159,11 @@
                 "timeclock_tracked": "Service time tracked",
                 "citizens_total": "Citizen files maintained"
             }
+        },
+        "mailer": {
+            "manage": {
+                "title": "Manage E-Mails"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt All rights reserved.",
@@ -526,7 +531,8 @@
         "auto_close": "Auto Close",
         "prefix": "Prefix",
         "suffix": "Suffix",
-        "grade": "Grade"
+        "grade": "Grade",
+        "sort_direction": "Sort Direction"
     },
     "components": {
         "partials": {

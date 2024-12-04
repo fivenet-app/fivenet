@@ -2,9 +2,13 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
 
 const schema = z.object({
     labels: z
@@ -43,6 +47,12 @@ async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLab
         });
 
         state.labels = response.labels;
+
+        notifications.add({
+            title: { key: 'notifications.templates.deleted.title', parameters: {} },
+            description: { key: 'notifications.templates.deleted.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         isOpen.value = false;
 

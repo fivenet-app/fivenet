@@ -1,10 +1,24 @@
 <script lang="ts" setup>
-defineProps<{
+import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
+
+const props = defineProps<{
     title?: string;
     message?: string;
+    error?: Error;
     retry?: () => Promise<unknown>;
     retryMessage?: string;
 }>();
+
+const err = ref<CommonError | undefined>();
+
+function setFromProps(): void {
+    if (props.error) {
+        err.value = parseError(props.error);
+    }
+}
+
+setFromProps();
+watch(props, setFromProps);
 
 const disabled = ref(true);
 
@@ -16,8 +30,16 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
         color="red"
         icon="i-mdi-close-circle"
         class="relative my-2 block w-full min-w-60"
-        :title="title ?? $t('components.partials.data_error_block.default_title')"
-        :description="message ?? $t('components.partials.data_error_block.default_message')"
+        :title="
+            err?.title
+                ? $t(err.title.key, err.title.parameters)
+                : (title ?? $t('components.partials.data_error_block.default_title'))
+        "
+        :description="
+            err?.content
+                ? $t(err.content.key, err.content.parameters)
+                : (message ?? $t('components.partials.data_error_block.default_message'))
+        "
         :actions="
             retry !== undefined
                 ? [

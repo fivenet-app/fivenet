@@ -119,7 +119,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex w-full flex-col gap-2">
                         <div class="flex flex-1 flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
-                                <UInput type="text" :model-value="selectedEmail?.email ?? 'N/A'" />
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="selectedEmail"
@@ -203,7 +202,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         trailing
                                         searchable
-                                        :options="[...state.recipients, ...addressBook]"
+                                        :options="[
+                                            ...state.recipients,
+                                            ...addressBook.filter((r) => !state.recipients.includes(r)),
+                                        ]"
                                         :searchable-placeholder="$t('common.mail', 1)"
                                         creatable
                                         :disabled="!canSubmit"
@@ -224,17 +226,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </USelectMenu>
                                 </ClientOnly>
 
-                                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                                <div class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
                                     <UButtonGroup
                                         v-for="(recipient, idx) in state.recipients"
                                         :key="idx"
                                         size="sm"
                                         orientation="horizontal"
                                     >
-                                        <UButton variant="link" :padded="false" :label="recipient.label" />
+                                        <UButton variant="solid" color="gray" :label="recipient.label" />
 
                                         <UButton
-                                            variant="link"
+                                            variant="outline"
                                             icon="i-mdi-close"
                                             color="red"
                                             @click="state.recipients.splice(idx, 1)"

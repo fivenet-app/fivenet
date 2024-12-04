@@ -146,7 +146,7 @@ const isOpen = ref(false);
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"
-                    :message="$t(error.message)"
+                    :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="!user" />

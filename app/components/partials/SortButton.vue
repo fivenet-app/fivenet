@@ -60,13 +60,15 @@ function changeColumn(col: string): void {
             </USelectMenu>
         </ClientOnly>
 
-        <UButton
-            square
-            trailing
-            :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
-            color="gray"
-            variant="ghost"
-            @click="toggleDirection"
-        />
+        <UTooltip :text="$t('common.sort_direction')">
+            <UButton
+                square
+                trailing
+                :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
+                color="gray"
+                variant="ghost"
+                @click="toggleDirection"
+            />
+        </UTooltip>
     </div>
 </template>

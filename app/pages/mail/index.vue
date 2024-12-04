@@ -249,17 +249,27 @@ onBeforeMount(async () => {
 
                 <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                     <template #left>
-                        <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(EmailSettingsModal, {})">
-                            <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
-                        </UButton>
+                        <UTooltip :text="$t('common.settings')">
+                            <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(EmailSettingsModal, {})">
+                                <span class="hidden truncate md:block"> {{ $t('common.settings') }} </span>
+                            </UButton>
+                        </UTooltip>
 
-                        <UButton icon="i-mdi-email-plus" color="gray" to="/mail/manage" />
+                        <UTooltip :text="$t('pages.mailer.manage.title')">
+                            <UButton icon="i-mdi-email-plus" color="gray" to="/mail/manage" />
+                        </UTooltip>
                     </template>
 
                     <template #right>
-                        <UButton color="gray" trailing-icon="i-mdi-file-outline" @click="() => modal.open(TemplatesModal, {})">
-                            <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
-                        </UButton>
+                        <UTooltip :text="$t('common.template', 2)">
+                            <UButton
+                                color="gray"
+                                trailing-icon="i-mdi-file-outline"
+                                @click="() => modal.open(TemplatesModal, {})"
+                            >
+                                <span class="hidden truncate md:block">{{ $t('common.template', 2) }}</span>
+                            </UButton>
+                        </UTooltip>
                     </template>
                 </UDashboardToolbar>
             </template>
