@@ -171,14 +171,15 @@ const columns = [
         </template>
         <template #actions-data="{ row: colleague }">
             <div :key="colleague.id">
-                <ULink
-                    v-if="checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')"
-                    icon="i-mdi-eye"
-                    :to="{
-                        name: 'jobs-colleagues-id-info',
-                        params: { id: colleague.userId ?? 0 },
-                    }"
-                />
+                <UTooltip v-if="checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')" :text="$t('common.show')">
+                    <ULink
+                        icon="i-mdi-eye"
+                        :to="{
+                            name: 'jobs-colleagues-id-info',
+                            params: { id: colleague.userId ?? 0 },
+                        }"
+                    />
+                </UTooltip>
             </div>
         </template>
     </UTable>

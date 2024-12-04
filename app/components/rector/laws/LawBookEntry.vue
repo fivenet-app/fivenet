@@ -276,17 +276,18 @@ const editing = ref(props.startInEdit);
             </template>
 
             <template #actions-data="{ row: law }">
-                <UButton
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    color="red"
-                    :title="$t('common.delete')"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteLaw(law.id),
-                        })
-                    "
-                />
+                <UTooltip :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        color="red"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteLaw(law.id),
+                            })
+                        "
+                    />
+                </UTooltip>
             </template>
 
             <template #crime-data="{ row: law }">

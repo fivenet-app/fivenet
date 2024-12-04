@@ -240,17 +240,20 @@ defineShortcuts({
 
         <template #actions-data="{ row: vehicle }">
             <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
-                <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
+                <UTooltip v-if="!hideCopy" :text="$t('components.clipboard.clipboard_button.add')">
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
+                </UTooltip>
 
-                <UButton
-                    v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens').value"
-                    variant="link"
-                    icon="i-mdi-account-eye"
-                    :to="{
-                        name: 'citizens-id',
-                        params: { id: vehicle.owner?.userId ?? 0 },
-                    }"
-                />
+                <UTooltip v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens').value" :text="$t('common.show')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-account-eye"
+                        :to="{
+                            name: 'citizens-id',
+                            params: { id: vehicle.owner?.userId ?? 0 },
+                        }"
+                    />
+                </UTooltip>
             </div>
         </template>
     </UTable>

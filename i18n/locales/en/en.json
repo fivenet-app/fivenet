@@ -525,7 +525,8 @@
         "workflow": "Workflow",
         "auto_close": "Auto Close",
         "prefix": "Prefix",
-        "suffix": "Suffix"
+        "suffix": "Suffix",
+        "grade": "Grade"
     },
     "components": {
         "partials": {

@@ -90,19 +90,17 @@ const columns = [
             >
                 <template #actions-data="{ row: marker }">
                     <div :key="marker.id">
-                        <UButtonGroup class="inline-flex w-full">
+                        <UTooltip :text="$t('common.mark')">
                             <UButton
                                 variant="link"
                                 icon="i-mdi-map-marker"
-                                :title="$t('common.mark')"
                                 @click="goto({ x: marker.info!.x, y: marker.info!.y })"
-                            >
-                                <span class="sr-only">{{ $t('common.mark') }}</span>
-                            </UButton>
+                            />
+                        </UTooltip>
 
+                        <UTooltip :text="$t('common.delete')">
                             <UButton
                                 v-if="can('LivemapperService.DeleteMarker').value"
-                                :title="$t('common.delete')"
                                 variant="link"
                                 icon="i-mdi-trash-can"
                                 color="red"
@@ -111,32 +109,36 @@ const columns = [
                                         confirm: async () => deleteMarker(marker.info!.id),
                                     })
                                 "
-                            >
-                                <span class="sr-only">{{ $t('common.delete') }}</span>
-                            </UButton>
-                        </UButtonGroup>
+                            />
+                        </UTooltip>
                     </div>
                 </template>
+
                 <template #createdAt-data="{ row: marker }">
                     <GenericTime :value="marker.info?.createdAt" type="compact" />
                 </template>
+
                 <template #expiresAt-data="{ row: marker }">
                     <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" type="compact" />
                     <span v-else>
                         {{ $t('common.na') }}
                     </span>
                 </template>
+
                 <template #name-data="{ row: marker }">
                     {{ marker.info!.name }}
                 </template>
+
                 <template #type-data="{ row: marker }">
                     {{ $t(`enums.livemap.MarkerType.${MarkerType[marker.type]}`) }}
                 </template>
+
                 <template #description-data="{ row: marker }">
                     <p class="max-h-14 overflow-y-scroll break-words">
                         {{ marker.info?.description ?? $t('common.na') }}
                     </p>
                 </template>
+
                 <template #creator-data="{ row: marker }">
                     <span v-if="marker.creator">
                         <CitizenInfoPopover :user="marker.creator" :trailing="false" />
@@ -145,6 +147,7 @@ const columns = [
                         {{ $t('common.unknown') }}
                     </span>
                 </template>
+
                 <template #job-data="{ row: marker }">
                     {{ marker.creator?.jobLabel ?? $t('common.na') }}
                 </template>

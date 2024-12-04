@@ -351,7 +351,7 @@ const columns = [
 
         <template #actions-data="{ row: conduct }">
             <div :key="conduct.id">
-                <UButtonGroup class="inline-flex">
+                <UTooltip :text="$t('common.show')">
                     <UButton
                         variant="link"
                         icon="i-mdi-eye"
@@ -361,9 +361,10 @@ const columns = [
                             })
                         "
                     />
+                </UTooltip>
 
+                <UTooltip v-if="can('JobsConductService.UpdateConductEntry').value" :text="$t('common.update')">
                     <UButton
-                        v-if="can('JobsConductService.UpdateConductEntry').value"
                         variant="link"
                         icon="i-mdi-pencil"
                         @click="
@@ -375,9 +376,10 @@ const columns = [
                             })
                         "
                     />
+                </UTooltip>
 
+                <UTooltip v-if="can('JobsConductService.DeleteConductEntry').value" :text="$t('common.delete')">
                     <UButton
-                        v-if="can('JobsConductService.DeleteConductEntry').value"
                         variant="link"
                         icon="i-mdi-trash-can"
                         color="red"
@@ -387,7 +389,7 @@ const columns = [
                             })
                         "
                     />
-                </UButtonGroup>
+                </UTooltip>
             </div>
         </template>
     </UTable>

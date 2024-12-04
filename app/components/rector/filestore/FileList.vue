@@ -147,23 +147,28 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             class="flex-1"
         >
             <template #actions-data="{ row: file }">
-                <UButton
-                    variant="link"
-                    icon="i-mdi-link-variant"
-                    :external="true"
-                    target="_blank"
-                    :to="`/api/filestore/${file.name}`"
-                />
-                <UButton
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    color="red"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteFile(file.name),
-                        })
-                    "
-                />
+                <UTooltip :text="$t('common.show')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-link-variant"
+                        :external="true"
+                        target="_blank"
+                        :to="`/api/filestore/${file.name}`"
+                    />
+                </UTooltip>
+
+                <UTooltip :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        color="red"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteFile(file.name),
+                            })
+                        "
+                    />
+                </UTooltip>
             </template>
             <template #name-data="{ row: file }">
                 <span class="text-gray-900 dark:text-white">

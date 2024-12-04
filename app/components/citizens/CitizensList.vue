@@ -352,16 +352,20 @@ defineShortcuts({
 
         <template v-if="can('CitizenStoreService.GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
-                <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
+                <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
+                    <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
+                </UTooltip>
 
-                <UButton
-                    variant="link"
-                    icon="i-mdi-eye"
-                    :to="{
-                        name: 'citizens-id',
-                        params: { id: citizen.userId ?? 0 },
-                    }"
-                />
+                <UTooltip :text="$t('common.show')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-eye"
+                        :to="{
+                            name: 'citizens-id',
+                            params: { id: citizen.userId ?? 0 },
+                        }"
+                    />
+                </UTooltip>
             </div>
         </template>
     </UTable>

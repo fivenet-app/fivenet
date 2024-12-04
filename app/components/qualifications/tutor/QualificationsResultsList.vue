@@ -186,51 +186,57 @@ defineExpose({
                     </template>
                     <template #actions-data="{ row: result }">
                         <div :key="result.id">
-                            <UButton
-                                v-if="result.status === ResultStatus.PENDING"
-                                variant="link"
-                                icon="i-mdi-star"
-                                color="amber"
-                                @click="
-                                    modal.open(ExamViewResultModal, {
-                                        qualificationId: result.qualificationId,
-                                        userId: result.userId,
-                                        resultId: result.id,
-                                        examMode: examMode,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
+                            <UTooltip v-if="result.status === ResultStatus.PENDING" :text="$t('common.grade')">
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-star"
+                                    color="amber"
+                                    @click="
+                                        modal.open(ExamViewResultModal, {
+                                            qualificationId: result.qualificationId,
+                                            userId: result.userId,
+                                            resultId: result.id,
+                                            examMode: examMode,
+                                            onRefresh: onRefresh,
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
-                                v-if="examMode > QualificationExamMode.DISABLED"
-                                variant="link"
-                                icon="i-mdi-star"
-                                color="amber"
-                                @click="
-                                    modal.open(ExamViewResultModal, {
-                                        qualificationId: result.qualificationId,
-                                        userId: result.userId,
-                                        resultId: result.id,
-                                        examMode: examMode,
-                                        viewOnly: true,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
+                            <UTooltip v-if="examMode > QualificationExamMode.DISABLED" :text="$t('common.show')">
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-star"
+                                    color="amber"
+                                    @click="
+                                        modal.open(ExamViewResultModal, {
+                                            qualificationId: result.qualificationId,
+                                            userId: result.userId,
+                                            resultId: result.id,
+                                            examMode: examMode,
+                                            viewOnly: true,
+                                            onRefresh: onRefresh,
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
+                            <UTooltip
                                 v-if="can('QualificationsService.DeleteQualificationResult').value"
-                                class="flex-initial"
-                                variant="link"
-                                icon="i-mdi-trash-can"
-                                color="red"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () => deleteQualificationResult(result.id),
-                                    })
-                                "
-                            />
+                                :text="$t('common.delete')"
+                            >
+                                <UButton
+                                    class="flex-initial"
+                                    variant="link"
+                                    icon="i-mdi-trash-can"
+                                    color="red"
+                                    @click="
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () => deleteQualificationResult(result.id),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
                         </div>
                     </template>
                 </UTable>

@@ -525,7 +525,8 @@
         "workflow": "Workflow",
         "auto_close": "Automatisches Schließen | Automatische Schließung",
         "prefix": "Präfix",
-        "suffix": "Suffix"
+        "suffix": "Suffix",
+        "grade": "Benoten"
     },
     "components": {
         "partials": {

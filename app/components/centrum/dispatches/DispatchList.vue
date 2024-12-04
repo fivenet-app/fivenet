@@ -141,12 +141,10 @@ const columns = [
                 >
                     <template #actions-data="{ row: dispatch }">
                         <div :key="dispatch.id">
-                            <UButtonGroup class="inline-flex w-full">
+                            <UTooltip v-if="!hideActions" :text="$t('common.assign')">
                                 <UButton
-                                    v-if="!hideActions"
                                     variant="link"
                                     icon="i-mdi-account-multiple-plus"
-                                    :title="$t('common.assign')"
                                     @click="
                                         () =>
                                             modal.open(DispatchAssignModal, {
@@ -154,19 +152,20 @@ const columns = [
                                             })
                                     "
                                 />
+                            </UTooltip>
 
+                            <UTooltip :text="$t('common.go_to_location')">
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-map-marker"
-                                    :title="$t('common.go_to_location')"
                                     @click="() => goto({ x: dispatch.x, y: dispatch.y })"
                                 />
+                            </UTooltip>
 
+                            <UTooltip v-if="!hideActions" :text="$t('common.status')">
                                 <UButton
-                                    v-if="!hideActions"
                                     variant="link"
                                     icon="i-mdi-close-octagon"
-                                    :title="$t('common.status')"
                                     @click="
                                         () =>
                                             modal.open(DispatchStatusUpdateModal, {
@@ -174,11 +173,12 @@ const columns = [
                                             })
                                     "
                                 />
+                            </UTooltip>
 
+                            <UTooltip :text="$t('common.detail', 2)">
                                 <UButton
                                     variant="link"
                                     icon="i-mdi-dots-vertical"
-                                    :title="$t('common.detail', 2)"
                                     @click="
                                         () =>
                                             slideover.open(DispatchDetailsByIDSlideover, {
@@ -186,7 +186,7 @@ const columns = [
                                             })
                                     "
                                 />
-                            </UButtonGroup>
+                            </UTooltip>
                         </div>
                     </template>
                     <template #createdAt-data="{ row: dispatch }">

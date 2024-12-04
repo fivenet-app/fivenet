@@ -161,6 +161,7 @@ defineExpose({
                     <template #citizen-data="{ row: request }">
                         <CitizenInfoPopover :user="request.user" />
                     </template>
+
                     <template #status-data="{ row: request }">
                         <span class="font-medium" :class="requestStatusToTextColor(request.status)">
                             <span class="font-semibold">{{
@@ -168,83 +169,100 @@ defineExpose({
                             }}</span>
                         </span>
                     </template>
+
                     <template #createdAt-data="{ row: request }">
                         <GenericTime :value="request.createdAt" />
                     </template>
+
                     <template #approvedAt-data="{ row: request }">
                         <GenericTime :value="request.approvedAt" />
                     </template>
+
                     <template #approver-data="{ row: request }">
                         <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
                     </template>
+
                     <template #actions-data="{ row: request }">
                         <div :key="`${request.userId}-${request.approverId}-${request.status}`">
-                            <UButton
-                                v-if="request.status !== RequestStatus.DENIED"
-                                variant="link"
-                                icon="i-mdi-close-thick"
-                                color="orange"
-                                @click="
-                                    modal.open(QualificationRequestTutorModal, {
-                                        request: request,
-                                        status: RequestStatus.DENIED,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
+                            <UTooltip v-if="request.status !== RequestStatus.DENIED" :text="$t('common.decline')">
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-close-thick"
+                                    color="orange"
+                                    @click="
+                                        modal.open(QualificationRequestTutorModal, {
+                                            request: request,
+                                            status: RequestStatus.DENIED,
+                                            onRefresh: onRefresh,
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
+                            <UTooltip
                                 v-if="
                                     request.status !== RequestStatus.ACCEPTED &&
                                     request.status !== RequestStatus.EXAM_STARTED &&
                                     request.status !== RequestStatus.EXAM_GRADING
                                 "
-                                variant="link"
-                                icon="i-mdi-check-bold"
-                                color="green"
-                                @click="
-                                    modal.open(QualificationRequestTutorModal, {
-                                        request: request,
-                                        status: RequestStatus.ACCEPTED,
-                                        onRefresh: onRefresh,
-                                    })
-                                "
-                            />
+                                :text="$t('common.accept')"
+                            >
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-check-bold"
+                                    color="green"
+                                    @click="
+                                        modal.open(QualificationRequestTutorModal, {
+                                            request: request,
+                                            status: RequestStatus.ACCEPTED,
+                                            onRefresh: onRefresh,
+                                        })
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
+                            <UTooltip
                                 v-if="
                                     request.status === RequestStatus.ACCEPTED || request.status === RequestStatus.EXAM_GRADING
                                 "
-                                variant="link"
-                                icon="i-mdi-star"
-                                color="amber"
-                                @click="
-                                    modal.open(
-                                        request.status === RequestStatus.EXAM_GRADING
-                                            ? ExamViewResultModal
-                                            : QualificationResultTutorModal,
-                                        {
-                                            qualificationId: request.qualificationId,
-                                            examMode: examMode,
-                                            userId: request.userId,
-                                            onRefresh: onRefresh,
-                                        },
-                                    )
-                                "
-                            />
+                                :text="$t('common.grade')"
+                            >
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-star"
+                                    color="amber"
+                                    @click="
+                                        modal.open(
+                                            request.status === RequestStatus.EXAM_GRADING
+                                                ? ExamViewResultModal
+                                                : QualificationResultTutorModal,
+                                            {
+                                                qualificationId: request.qualificationId,
+                                                examMode: examMode,
+                                                userId: request.userId,
+                                                onRefresh: onRefresh,
+                                            },
+                                        )
+                                    "
+                                />
+                            </UTooltip>
 
-                            <UButton
+                            <UTooltip
                                 v-if="can('QualificationsService.DeleteQualificationReq').value"
-                                variant="link"
-                                icon="i-mdi-trash-can"
-                                color="red"
-                                @click="
-                                    modal.open(ConfirmModal, {
-                                        confirm: async () =>
-                                            deleteQualificationRequest(request.qualificationId, request.userId),
-                                    })
-                                "
-                            />
+                                :text="$t('common.delete')"
+                            >
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-trash-can"
+                                    color="red"
+                                    @click="
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () =>
+                                                deleteQualificationRequest(request.qualificationId, request.userId),
+                                        })
+                                    "
+                                />
+                            </UTooltip>
                         </div>
                     </template>
                 </UTable>

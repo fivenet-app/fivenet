@@ -306,12 +306,9 @@ const expand = ref({
         }"
     >
         <template #actions-data="{ row }">
-            <UButton
-                variant="link"
-                icon="i-mdi-content-copy"
-                :title="$t('components.clipboard.clipboard_button.add')"
-                @click="addToClipboard(row)"
-            />
+            <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
+                <UButton variant="link" icon="i-mdi-content-copy" @click="addToClipboard(row)" />
+            </UTooltip>
         </template>
 
         <template #createdAt-data="{ row }">

@@ -128,28 +128,31 @@ const columns = [
 
         <template #actions-data="{ row: unit }">
             <div .key="unit.id" class="flex items-center">
-                <UButton
-                    v-if="can('CentrumService.CreateOrUpdateUnit').value"
-                    variant="link"
-                    icon="i-mdi-pencil"
-                    @click="
-                        modal.open(UnitCreateOrUpdateModal, {
-                            unit: unit,
-                            onUpdated: async () => refresh(),
-                        })
-                    "
-                />
-                <UButton
-                    v-if="can('CentrumService.DeleteUnit').value"
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    color="red"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteUnit(unit.id),
-                        })
-                    "
-                />
+                <UTooltip v-if="can('CentrumService.CreateOrUpdateUnit').value" :text="$t('common.update')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            modal.open(UnitCreateOrUpdateModal, {
+                                unit: unit,
+                                onUpdated: async () => refresh(),
+                            })
+                        "
+                    />
+                </UTooltip>
+
+                <UTooltip v-if="can('CentrumService.DeleteUnit').value" :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        color="red"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteUnit(unit.id),
+                            })
+                        "
+                    />
+                </UTooltip>
             </div>
         </template>
     </UTable>

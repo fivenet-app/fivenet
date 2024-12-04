@@ -181,7 +181,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                                 <template #actions-data="{ row: role }">
                                     <div class="text-right">
-                                        <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                        <UTooltip :text="$t('common.show')">
+                                            <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                        </UTooltip>
                                     </div>
                                 </template>
                             </UTable>
