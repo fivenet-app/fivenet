@@ -23,10 +23,6 @@ const labels = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
 
-const canDo = computed(() => ({
-    set: can('JobsService.SetJobsUserProps').value && attr('JobsService.SetJobsUserProps', 'Types', 'Labels').value,
-}));
-
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
         const { response } = await getGRPCJobsClient().getColleagueLabels({
@@ -119,24 +115,24 @@ const editing = ref(false);
 
 <template>
     <UForm :schema="schema" :state="state" class="flex flex-1 flex-col gap-2" @submit="onSubmitThrottle">
-        <p v-if="!state.labels.length" class="text-sm leading-6">
-            {{ $t('common.none', [$t('common.label', 2)]) }}
-        </p>
-        <template v-else>
-            <div>
-                <UButton v-if="!editing" icon="i-mdi-pencil" @click="editing = true" />
-                <UButton
-                    v-else
-                    icon="i-mdi-cancel"
-                    color="red"
-                    @click="
-                        state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
-                        editing = false;
-                    "
-                />
-            </div>
+        <div>
+            <UButton v-if="!editing" icon="i-mdi-pencil" @click="editing = true" />
+            <UButton
+                v-else
+                icon="i-mdi-cancel"
+                color="red"
+                @click="
+                    state.labels = labels?.list.map((l) => ({ ...l, selected: true })) ?? [];
+                    editing = false;
+                "
+            />
+        </div>
 
-            <div class="flex max-w-72 flex-row flex-wrap gap-1">
+        <div class="flex max-w-72 flex-row flex-wrap gap-1">
+            <p v-if="!state.labels.length" class="text-sm leading-6">
+                {{ $t('common.none', [$t('common.label', 2)]) }}
+            </p>
+            <template v-else>
                 <UBadge
                     v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
@@ -150,7 +146,7 @@ const editing = ref(false);
                     </span>
 
                     <UButton
-                        v-if="canDo.set && editing"
+                        v-if="editing"
                         variant="link"
                         icon="i-mdi-close"
                         :padded="false"
@@ -166,8 +162,8 @@ const editing = ref(false);
                         "
                     />
                 </UBadge>
-            </div>
-        </template>
+            </template>
+        </div>
 
         <UFormGroup v-if="editing" name="labels">
             <ClientOnly>

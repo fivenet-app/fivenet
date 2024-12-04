@@ -121,7 +121,7 @@ service JobsService {
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
   // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE", "LABELS", "NAME"}
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note", "Labels", "Name"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
   // @perm: Name=SetJobsUserProps
   rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse);
