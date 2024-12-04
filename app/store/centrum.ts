@@ -23,7 +23,7 @@ const initialReconnectBackoffTime = 0.75;
 export interface CentrumState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
-    cleanupIntervalId: NodeJS.Timeout | undefined;
+    cleanupIntervalId: ReturnType<typeof setInterval> | undefined;
     reconnecting: boolean;
     reconnectBackoffTime: number;
 
@@ -47,6 +47,7 @@ export const useCentrumStore = defineStore('centrum', {
         ({
             error: undefined,
             abort: undefined,
+            cleanupIntervalId: undefined,
             reconnecting: false,
             reconnectBackoffTime: initialReconnectBackoffTime,
 

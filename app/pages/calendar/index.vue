@@ -35,7 +35,7 @@ const { activeCalendarIds, currentDate, view, calendars, entries } = storeToRefs
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() =>
     calendarsData.value?.pagination?.pageSize ? calendarsData.value?.pagination?.pageSize * (page.value - 1) : 0,
 );

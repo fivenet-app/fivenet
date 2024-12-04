@@ -51,7 +51,7 @@ watch(selectedEmail, () => {
     }
 });
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (pagination.value?.pageSize ?? 20) * (page.value - 1));
 const pagination = ref<PaginationResponse | undefined>();
 

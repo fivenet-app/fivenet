@@ -33,7 +33,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = reactive<Schema>({
+const query = useRouteQueryReactive<Schema>('search', {
     name: '',
     absent: false,
     labels: [],
@@ -44,10 +44,10 @@ const query = reactive<Schema>({
 const settingsStore = useSettingsStore();
 const { jobsService } = storeToRefs(settingsStore);
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const sort = ref<TableSortable>({
+const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'rank',
     direction: 'asc',
 });
@@ -58,10 +58,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-colleagues-${sort.value.column}:${sort.value.direction}-${page.value}-${query.name}-${query.absent}`,
+    `jobs-colleagues-${sort.value.column}:${sort.value.direction}-${page.value}-${query.name}-${query.absent}-${query.labels.join(',')}-${query.namePrefix}-${query.nameSuffix}`,
     () => listColleagues(),
     {
-        transform: (input) => ({ ...input, entries: wrapRows(input?.colleagues, columns) }),
+        transform: (input) => ({ pagination: input.pagination, colleagues: wrapRows(input?.colleagues, columns) }),
         watch: [sort],
     },
 );
@@ -232,6 +232,7 @@ defineShortcuts({
                 <template #search>
                     <div class="flex flex-row flex-wrap gap-2">
                         <UFormGroup
+                            v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value"
                             name="labels"
                             :label="$t('common.label', 2)"
                             class="flex flex-1 flex-col"

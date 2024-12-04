@@ -56,7 +56,7 @@ const thread = useDexieLiveQueryWithDeps([() => props.threadId], ([threadId]: [s
         .then((thread) => (thread.length > 0 ? thread[0] : undefined)),
 );
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const messages = useDexieLiveQueryWithDeps(

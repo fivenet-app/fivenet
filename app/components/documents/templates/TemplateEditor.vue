@@ -187,8 +187,6 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
         },
     };
 
-    console.log('req', req);
-
     try {
         if (templateId === undefined) {
             const call = getGRPCDocStoreClient().createTemplate(req);

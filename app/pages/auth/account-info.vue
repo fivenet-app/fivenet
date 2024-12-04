@@ -55,9 +55,7 @@ onBeforeMount(async () => {
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/overview">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/overview" />
                 </template>
             </UDashboardNavbar>
 

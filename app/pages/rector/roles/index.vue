@@ -16,9 +16,7 @@ definePageMeta({
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.rector.roles.title')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/rector" />
                 </template>
             </UDashboardNavbar>
 

@@ -78,9 +78,7 @@ const columns = [
 <template>
     <UDashboardNavbar :title="$t('common.unit')">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" to="/centrum">
-                {{ $t('common.back') }}
-            </UButton>
+            <PartialsBackButton fallback-to="/centrum" />
 
             <UButton v-if="can('CentrumService.Stream').value" icon="i-mdi-settings" to="/centrum/settings">
                 {{ $t('common.setting', 2) }}

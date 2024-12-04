@@ -32,12 +32,10 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-console.log('livemapStore', livemapStore);
 const { startStream } = livemapStore;
 const { error, abort, reconnecting, initiated, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
-console.log('centrumStore', centrumStore);
 const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
 
 const mapOptions = {

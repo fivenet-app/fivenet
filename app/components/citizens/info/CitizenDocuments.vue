@@ -28,9 +28,9 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({});
+const query = reactive<Schema>({});
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
@@ -48,7 +48,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             },
             userId: props.userId,
             relations: [],
-            closed: query.value.closed,
+            closed: query.closed,
         });
         const { response } = await call;
 
@@ -60,7 +60,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const columns = [
     {

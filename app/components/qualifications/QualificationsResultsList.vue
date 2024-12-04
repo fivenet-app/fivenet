@@ -21,10 +21,10 @@ const props = withDefaults(
     },
 );
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const sort = ref<TableSortable>({
+const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'abbreviation',
     direction: 'desc',
 });

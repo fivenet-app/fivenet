@@ -126,9 +126,7 @@ const isOpen = ref(false);
         >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/citizens" />
 
                     <UButtonGroup class="inline-flex lg:hidden">
                         <IDCopyBadge
@@ -222,9 +220,7 @@ const isOpen = ref(false);
         <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
             <UDashboardNavbar>
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens" class="md:hidden">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/citizens" />
 
                     <UButtonGroup class="hidden lg:inline-flex">
                         <IDCopyBadge

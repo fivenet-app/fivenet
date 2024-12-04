@@ -79,9 +79,7 @@ const contentAccessTypes: AccessType[] = [
 <template>
     <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" to="/documents/templates">
-                {{ $t('common.back') }}
-            </UButton>
+            <PartialsBackButton fallback-to="/documents/templates" />
 
             <UButtonGroup v-if="template" class="inline-flex">
                 <UButton
@@ -278,6 +276,67 @@ const contentAccessTypes: AccessType[] = [
                                     :disabled="true"
                                     :show-required="true"
                                 />
+                            </div>
+                        </div>
+
+                        <div v-if="!template.workflow">
+                            {{ $t('common.none', [$t('common.workflow')]) }}
+                        </div>
+                        <div v-else>
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.auto_close') }}
+                            </h3>
+
+                            <div class="my-2">
+                                <div class="flex gap-2">
+                                    <span
+                                        ><span class="font-semibold">{{ $t('common.enabled') }}:</span>
+                                        {{ $t(template.workflow?.autoClose ? 'common.yes' : 'common.no') }}</span
+                                    >
+
+                                    <span v-if="template.workflow?.autoCloseSettings?.duration">
+                                        <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
+                                        {{
+                                            (template.workflow.autoCloseSettings.duration.seconds / 24 / 60 / 60).toFixed(0)
+                                        }}</span
+                                    >
+                                </div>
+
+                                <span v-if="template.workflow?.autoCloseSettings?.message">
+                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                    "{{ template.workflow.autoCloseSettings.message }}"</span
+                                >
+                            </div>
+
+                            <h3 class="block text-base font-medium leading-6 text-gray-100">
+                                {{ $t('common.reminder', 2) }}
+                            </h3>
+
+                            <div class="my-2">
+                                <span
+                                    >{{ $t('common.enabled') }}:
+                                    {{ $t(template.workflow?.reminder ? 'common.yes' : 'common.no') }}</span
+                                >
+
+                                <ol class="list-inside list-decimal">
+                                    <li
+                                        v-for="(reminder, idx) in template.workflow?.reminderSettings?.reminders"
+                                        :key="idx"
+                                        class="gap-2"
+                                    >
+                                        <div class="inline-flex gap-2">
+                                            <span>
+                                                <span class="font-semibold">{{ $t('common.time_ago.day', 2) }}:</span>
+                                                {{ ((reminder?.duration?.seconds ?? 0) / 24 / 60 / 60).toFixed(0) }}
+                                            </span>
+
+                                            <span>
+                                                <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                                "{{ reminder.message }}"</span
+                                            >
+                                        </div>
+                                    </li>
+                                </ol>
                             </div>
                         </div>
                     </div>

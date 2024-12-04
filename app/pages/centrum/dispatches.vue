@@ -34,7 +34,7 @@ const query = reactive<Schema>({
     id: '',
 });
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending: loading, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
@@ -98,9 +98,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.dispatches')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/centrum">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/centrum" />
                 </template>
             </UDashboardNavbar>
 
@@ -108,11 +106,11 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                 <Splitpanes v-if="mount" class="relative">
                     <Pane :min-size="25">
                         <ClientOnly>
-                            <LazyLivemapBaseMap :map-options="{ zoomControl: false }">
+                            <LivemapBaseMap :map-options="{ zoomControl: false }">
                                 <template #default>
                                     <LazyLivemapMapTempMarker />
                                 </template>
-                            </LazyLivemapBaseMap>
+                            </LivemapBaseMap>
                         </ClientOnly>
                     </Pane>
 

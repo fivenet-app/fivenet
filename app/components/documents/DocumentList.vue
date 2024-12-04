@@ -46,7 +46,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({
+const query = reactive<Schema>({
     title: '',
     date: undefined,
     creators: [],
@@ -55,10 +55,10 @@ const query = ref<Schema>({
 
 const usersLoading = ref(false);
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const sort = ref<TableSortable>({
+const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'createdAt',
     direction: 'desc',
 });
@@ -78,28 +78,28 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
             offset: offset.value,
         },
         sort: sort.value,
-        search: query.value.title ?? '',
-        categoryIds: query.value.categories.map((c) => c.id),
-        creatorIds: query.value.creators.map((c) => c.userId),
+        search: query.title ?? '',
+        categoryIds: query.categories.map((c) => c.id),
+        creatorIds: query.creators.map((c) => c.userId),
         documentIds: [],
     };
 
-    if (query.value.documentIds) {
-        const id = query.value.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
+    if (query.documentIds) {
+        const id = query.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
         if (id.length > 0) {
             req.documentIds.push(id);
         }
     }
-    if (query.value.date) {
+    if (query.date) {
         req.from = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.date.start),
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.start),
         };
         req.to = {
-            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.date.end),
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.end),
         };
     }
-    if (query.value.closed !== undefined) {
-        req.closed = query.value.closed;
+    if (query.closed !== undefined) {
+        req.closed = query.closed;
     }
 
     try {
@@ -114,7 +114,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const categoriesLoading = ref(false);
 

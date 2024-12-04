@@ -155,21 +155,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('components.centrum.settings.title')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/centrum">
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton fallback-to="/centrum" />
 
-                <UButtonGroup class="inline-flex">
-                    <UButton
-                        v-if="!!settings"
-                        type="submit"
-                        trailing-icon="i-mdi-content-save"
-                        :disabled="!canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </UButton>
-                </UButtonGroup>
+                <UButton
+                    v-if="!!settings"
+                    type="submit"
+                    trailing-icon="i-mdi-content-save"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                >
+                    {{ $t('common.save', 1) }}
+                </UButton>
             </template>
         </UDashboardNavbar>
 

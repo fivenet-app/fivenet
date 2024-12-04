@@ -21,7 +21,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({
+const query = reactive<Schema>({
     user: undefined,
 });
 

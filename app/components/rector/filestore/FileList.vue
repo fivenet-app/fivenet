@@ -15,7 +15,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const prefix = ref('');
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending: loading, refresh, error } = useLazyAsyncData(`files-${page.value}`, () => listFiles(prefix.value));
@@ -106,9 +106,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
     <template v-if="streamerMode">
         <UDashboardNavbar :title="$t('pages.rector.settings.title')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton fallback-to="/rector" />
             </template>
         </UDashboardNavbar>
 
@@ -119,9 +117,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
     <template v-else>
         <UDashboardNavbar :title="$t('pages.rector.filestore.title')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton fallback-to="/rector" />
 
                 <UButton
                     trailing-icon="i-mdi-upload"

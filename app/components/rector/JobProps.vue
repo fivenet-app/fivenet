@@ -250,9 +250,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     <template v-if="streamerMode">
         <UDashboardNavbar :title="$t('pages.rector.settings.title')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton fallback-to="/rector" />
             </template>
         </UDashboardNavbar>
 
@@ -269,9 +267,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     >
         <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
             <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                    {{ $t('common.back') }}
-                </UButton>
+                <PartialsBackButton fallback-to="/rector" />
 
                 <UButton
                     v-if="!!jobProps"

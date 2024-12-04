@@ -50,9 +50,7 @@ function updateLaw(event: { id: string; law: Law }): void {
 <template>
     <UDashboardNavbar :title="$t('pages.rector.laws.title')">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
-                {{ $t('common.back') }}
-            </UButton>
+            <PartialsBackButton fallback-to="/rector" />
 
             <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLawBook">
                 {{ $t('pages.rector.laws.add_new_law_book') }}

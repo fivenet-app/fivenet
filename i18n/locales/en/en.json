@@ -619,6 +619,14 @@
                 "title": "You don't have access to this document",
                 "message": "But you can request access to this document using the button below.",
                 "callback_message": "Request Access here"
+            },
+            "TemplateWorkflowEditor": {
+                "reminder": {
+                    "description": "Description here"
+                },
+                "auto_close": {
+                    "description": "Description here"
+                }
             }
         },
         "livemap": {

@@ -26,12 +26,12 @@ type Schema = z.output<typeof schema>;
 
 const { attr, can } = useAuth();
 
-const query = ref<Schema>({});
+const query = reactive<Schema>({});
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const sort = ref<TableSortable>({
+const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'name',
     direction: 'asc',
 });
@@ -42,7 +42,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `citizens-${sort.value.column}:${sort.value.direction}-${page.value}-${JSON.stringify(query.value)}`,
+    `citizens-${sort.value.column}:${sort.value.direction}-${page.value}-${JSON.stringify(query)}`,
     () => listCitizens(),
     {
         transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
@@ -57,22 +57,22 @@ async function listCitizens(): Promise<ListCitizensResponse> {
                 offset: offset.value,
             },
             sort: sort.value,
-            search: query.value.name ?? '',
+            search: query.name ?? '',
         };
-        if (query.value.wanted) {
-            req.wanted = query.value.wanted;
+        if (query.wanted) {
+            req.wanted = query.wanted;
         }
-        if (query.value.phoneNumber) {
-            req.phoneNumber = query.value.phoneNumber;
+        if (query.phoneNumber) {
+            req.phoneNumber = query.phoneNumber;
         }
-        if (query.value.trafficInfractionPoints) {
-            req.trafficInfractionPoints = query.value.trafficInfractionPoints ?? 0;
+        if (query.trafficInfractionPoints) {
+            req.trafficInfractionPoints = query.trafficInfractionPoints ?? 0;
         }
-        if (query.value.openFines) {
-            req.openFines = query.value.openFines ?? 0;
+        if (query.openFines) {
+            req.openFines = query.openFines ?? 0;
         }
-        if (query.value.dateofbirth) {
-            req.dateofbirth = query.value.dateofbirth;
+        if (query.dateofbirth) {
+            req.dateofbirth = query.dateofbirth;
         }
 
         const call = getGRPCCitizenStoreClient().listCitizens(req);
@@ -86,7 +86,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();

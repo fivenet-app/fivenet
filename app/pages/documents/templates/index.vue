@@ -27,9 +27,7 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                        {{ $t('common.back') }}
-                    </UButton>
+                    <PartialsBackButton fallback-to="/documents" />
 
                     <UButtonGroup class="inline-flex">
                         <UButton

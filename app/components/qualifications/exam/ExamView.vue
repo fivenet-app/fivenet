@@ -65,9 +65,7 @@ watch(data, async () => {
 <template>
     <UDashboardNavbar :title="$t('pages.qualifications.single.exam.title')">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" :to="`/qualifications/${qualificationId}`">
-                {{ $t('common.back') }}
-            </UButton>
+            <PartialsBackButton :fallback-to="`/qualifications/${qualificationId}`" />
         </template>
     </UDashboardNavbar>
 

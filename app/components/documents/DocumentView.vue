@@ -24,6 +24,7 @@ import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
+import BackButton from '../partials/BackButton.vue';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
@@ -270,9 +271,7 @@ defineShortcuts({
 <template>
     <UDashboardNavbar :title="$t('pages.documents.id.title')" class="print:hidden">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                {{ $t('common.back') }}
-            </UButton>
+            <BackButton fallback-to="/documents" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge

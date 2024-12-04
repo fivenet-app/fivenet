@@ -1,5 +1,9 @@
+<script lang="ts" setup>
+import CentrumSidebar from '../centrum/livemap/CentrumSidebar.vue';
+</script>
+
 <template>
     <ClientOnly>
-        <LazyCentrumLivemapCentrumSidebar />
+        <CentrumSidebar />
     </ClientOnly>
 </template>

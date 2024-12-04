@@ -58,9 +58,7 @@ const { attr, can, activeChar } = useAuth();
         </div>
 
         <div class="inline-flex flex-initial flex-col gap-1 sm:flex-row">
-            <UButton color="black" icon="i-mdi-arrow-back" to="/jobs/colleagues">
-                {{ $t('common.back') }}
-            </UButton>
+            <PartialsBackButton fallback-to="/jobs/colleagues" />
 
             <UButton
                 v-if="

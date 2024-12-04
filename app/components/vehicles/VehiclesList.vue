@@ -38,15 +38,15 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({
+const query = reactive<Schema>({
     licensePlate: '',
     userId: props.userId,
 });
 
-const page = ref(1);
+const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const sort = ref<TableSortable>({
+const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'plate',
     direction: 'asc',
 });
@@ -69,9 +69,9 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
                 offset: offset.value,
             },
             sort: sort.value,
-            licensePlate: query.value.licensePlate,
-            model: query.value.model,
-            userId: query.value.userId,
+            licensePlate: query.licensePlate,
+            model: query.model,
+            userId: query.userId,
         });
         const { response } = await call;
 
@@ -92,10 +92,10 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
 
 const usersLoading = ref(false);
 const selectedUser = ref<undefined | UserShort>();
-watch(selectedUser, () => (query.value.userId = selectedUser.value?.userId));
+watch(selectedUser, () => (query.userId = selectedUser.value?.userId));
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), {
+watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,
 });
