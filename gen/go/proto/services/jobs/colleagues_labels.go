@@ -4,6 +4,7 @@ import (
 	context "context"
 	"errors"
 	"slices"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
@@ -52,6 +53,18 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *GetColleagueLabels
 		return resp, nil
 	}
 
+	condition := tJobLabels.Job.EQ(jet.String(userInfo.Job))
+
+	if req.Search != nil && *req.Search != "" {
+		*req.Search = strings.TrimSpace(*req.Search)
+		*req.Search = strings.ReplaceAll(*req.Search, "%", "")
+		*req.Search = strings.ReplaceAll(*req.Search, " ", "%")
+		*req.Search = "%" + *req.Search + "%"
+		condition = condition.AND(jet.OR(
+			tJobLabels.Name.LIKE(jet.String(*req.Search)),
+		))
+	}
+
 	stmt := tJobLabels.
 		SELECT(
 			tJobLabels.ID,
@@ -60,9 +73,7 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *GetColleagueLabels
 			tJobLabels.Color,
 		).
 		FROM(tJobLabels).
-		WHERE(
-			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
-		)
+		WHERE(condition)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

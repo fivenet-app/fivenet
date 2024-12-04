@@ -150,7 +150,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 
 func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*CompleteJobsResponse, error) {
 	var search string
-	if req.Search != nil {
+	if req.Search != nil && *req.Search != "" {
 		search = *req.Search
 	}
 	if req.CurrentJob != nil && *req.CurrentJob {

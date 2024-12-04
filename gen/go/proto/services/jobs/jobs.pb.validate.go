@@ -1568,6 +1568,10 @@ func (m *GetColleagueLabelsRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.Search != nil {
+		// no validation rules for Search
+	}
+
 	if len(errors) > 0 {
 		return GetColleagueLabelsRequestMultiError(errors)
 	}

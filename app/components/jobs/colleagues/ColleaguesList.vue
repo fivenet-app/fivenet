@@ -88,9 +88,11 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
     }
 }
 
-async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
+async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabels({});
+        const { response } = await getGRPCJobsClient().getColleagueLabels({
+            search: search,
+        });
 
         return response;
     } catch (e) {
@@ -244,8 +246,8 @@ defineShortcuts({
                                     class="flex-1"
                                     multiple
                                     :searchable="
-                                        async (_: string) => {
-                                            return (await getColleagueLabels()).labels;
+                                        async (q: string) => {
+                                            return (await getColleagueLabels(q)).labels;
                                         }
                                     "
                                     searchable-lazy

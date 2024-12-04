@@ -70,7 +70,9 @@ message SetJobsUserPropsResponse {
   resources.jobs.JobsUserProps props = 1;
 }
 
-message GetColleagueLabelsRequest {}
+message GetColleagueLabelsRequest {
+  optional string search = 1;
+}
 
 message GetColleagueLabelsResponse {
   repeated resources.jobs.Label labels = 1;

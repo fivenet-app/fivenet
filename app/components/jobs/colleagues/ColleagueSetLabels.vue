@@ -27,9 +27,11 @@ const canDo = computed(() => ({
     set: can('JobsService.SetJobsUserProps').value && attr('JobsService.SetJobsUserProps', 'Types', 'Labels').value,
 }));
 
-async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
+async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabels({});
+        const { response } = await getGRPCJobsClient().getColleagueLabels({
+            search: search,
+        });
 
         return response;
     } catch (e) {
@@ -173,8 +175,8 @@ const editing = ref(false);
                     v-model="state.labels"
                     multiple
                     :searchable="
-                        async (_: string) => {
-                            return (await getColleagueLabels()).labels;
+                        async (q: string) => {
+                            return (await getColleagueLabels(q)).labels;
                         }
                     "
                     searchable-lazy

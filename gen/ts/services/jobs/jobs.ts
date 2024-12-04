@@ -174,6 +174,10 @@ export interface SetJobsUserPropsResponse {
  * @generated from protobuf message services.jobs.GetColleagueLabelsRequest
  */
 export interface GetColleagueLabelsRequest {
+    /**
+     * @generated from protobuf field: optional string search = 1;
+     */
+    search?: string;
 }
 /**
  * @generated from protobuf message services.jobs.GetColleagueLabelsResponse
@@ -828,7 +832,9 @@ export const SetJobsUserPropsResponse = new SetJobsUserPropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetColleagueLabelsRequest$Type extends MessageType<GetColleagueLabelsRequest> {
     constructor() {
-        super("services.jobs.GetColleagueLabelsRequest", []);
+        super("services.jobs.GetColleagueLabelsRequest", [
+            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<GetColleagueLabelsRequest>): GetColleagueLabelsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -837,9 +843,28 @@ class GetColleagueLabelsRequest$Type extends MessageType<GetColleagueLabelsReque
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetColleagueLabelsRequest): GetColleagueLabelsRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string search */ 1:
+                    message.search = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: GetColleagueLabelsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string search = 1; */
+        if (message.search !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.search);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
