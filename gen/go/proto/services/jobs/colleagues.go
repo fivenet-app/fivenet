@@ -284,7 +284,10 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			WHERE(jet.AND(
 				tJobLabels.Job.EQ(jet.String(userInfo.Job)),
 				tUserLabels.UserID.IN(userIds...),
-			))
+			)).
+			ORDER_BY(
+				tJobLabels.Order.ASC(),
+			)
 
 		labels := []*struct {
 			UserId int32 `sql:"primary_key" alias:"userId"`

@@ -235,6 +235,8 @@ func (m *Label) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Order
+
 	if m.Job != nil {
 
 		if utf8.RuneCountInString(m.GetJob()) > 20 {

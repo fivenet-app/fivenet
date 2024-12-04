@@ -3315,6 +3315,7 @@ Dummy - DO NOT USE!
 | job | [string](#string) | optional |  |
 | name | [string](#string) |  |  |
 | color | [string](#string) |  | @sanitize: method=StripTags |
+| order | [int32](#int32) |  |  |
 
 
 

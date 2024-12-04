@@ -17,8 +17,6 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { attr, can } = useAuth();
-
 const labels = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
@@ -45,6 +43,7 @@ const schema = z.object({
             id: z.string(),
             name: z.string().min(1),
             color: z.string().length(7),
+            order: z.number().nonnegative().default(0),
         })
         .array()
         .max(10),

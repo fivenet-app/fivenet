@@ -41,6 +41,10 @@ export interface Label {
      * @generated from protobuf field: string color = 4;
      */
     color: string;
+    /**
+     * @generated from protobuf field: int32 order = 5;
+     */
+    order: number;
 }
 /**
  * @generated from protobuf message resources.jobs.LabelCount
@@ -109,7 +113,8 @@ class Label$Type extends MessageType<Label> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 5, name: "order", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Label>): Label {
@@ -117,6 +122,7 @@ class Label$Type extends MessageType<Label> {
         message.id = "0";
         message.name = "";
         message.color = "";
+        message.order = 0;
         if (value !== undefined)
             reflectionMergePartial<Label>(this, message, value);
         return message;
@@ -137,6 +143,9 @@ class Label$Type extends MessageType<Label> {
                     break;
                 case /* string color */ 4:
                     message.color = reader.string();
+                    break;
+                case /* int32 order */ 5:
+                    message.order = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -162,6 +171,9 @@ class Label$Type extends MessageType<Label> {
         /* string color = 4; */
         if (message.color !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.color);
+        /* int32 order = 5; */
+        if (message.order !== 0)
+            writer.tag(5, WireType.Varint).int32(message.order);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

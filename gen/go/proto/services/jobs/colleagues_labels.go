@@ -71,9 +71,13 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *GetColleagueLabels
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
-		WHERE(condition)
+		WHERE(condition).
+		ORDER_BY(
+			tJobLabels.Order.ASC(),
+		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -106,6 +110,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Order,
 		).
 		FROM(tJobLabels).
 		WHERE(
@@ -125,6 +130,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 
 	for i := 0; i < len(req.Labels); i++ {
 		req.Labels[i].Job = &userInfo.Job
+		req.Labels[i].Order = int32(i)
 	}
 
 	tJobLabels := table.FivenetJobsLabels
@@ -133,12 +139,14 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 			tJobLabels.Job,
 			tJobLabels.Name,
 			tJobLabels.Color,
+			tJobLabels.Order,
 		).
 		MODELS(req.Labels).
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobLabels.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
 			tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
 			tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+			tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
 		)
 
 	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
@@ -228,7 +236,10 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 		WHERE(jet.AND(
 			tUserLabels.UserID.EQ(jet.Int32(userId)),
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
-		))
+		)).
+		ORDER_BY(
+			tJobLabels.Order.ASC(),
+		)
 
 	list := &jobs.Labels{
 		List: []*jobs.Label{},
@@ -334,7 +345,10 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *GetColleagueL
 			tUserLabels.Job.EQ(jet.String(userInfo.Job)),
 			tUser.Job.EQ(jet.String(userInfo.Job)),
 		)).
-		GROUP_BY(tJobLabels.ID)
+		GROUP_BY(tJobLabels.ID).
+		ORDER_BY(
+			tJobLabels.Order.ASC(),
+		)
 
 	dest := []*jobs.LabelCount{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

@@ -5,9 +5,11 @@ CREATE TABLE `fivenet_jobs_labels` (
   `job` varchar(20) NOT NULL,
   `name` varchar(32) NOT NULL,
   `color` char(7) DEFAULT '#5c7aff',
+  `order` mediumint(4) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_jobs_labels_unique` (`job`, `name`),
-  KEY `idx_fivenet_jobs_labels_name` (`name`)
+  KEY `idx_fivenet_jobs_labels_name` (`name`),
+  KEY `idx_fivenet_jobs_labels_order` (`order`),
 ) ENGINE=InnoDB;
 
 CREATE TABLE `fivenet_jobs_labels_users` (

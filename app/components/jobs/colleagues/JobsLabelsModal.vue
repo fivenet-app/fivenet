@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useNotificatorStore } from '~/store/notificator';
@@ -16,6 +17,7 @@ const schema = z.object({
             id: z.string(),
             name: z.string().min(1).max(64),
             color: z.string().length(7),
+            order: z.number().nonnegative().default(0),
         })
         .array()
         .max(15),
@@ -49,8 +51,8 @@ async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLab
         state.labels = response.labels;
 
         notifications.add({
-            title: { key: 'notifications.templates.deleted.title', parameters: {} },
-            description: { key: 'notifications.templates.deleted.content', parameters: {} },
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
@@ -88,28 +90,36 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
 
                 <UFormGroup name="list" class="grid items-center gap-2" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
-                        <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
-                            <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
-                                <UInput
-                                    v-model="state.labels[idx]!.name"
-                                    :name="`labels.${idx}.name`"
-                                    type="text"
-                                    class="w-full flex-1"
-                                    :placeholder="$t('common.label', 1)"
+                        <VueDraggable v-model="state.labels" class="flex flex-col gap-2">
+                            <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
+                                <UIcon name="i-mdi-drag-horizontal" class="size-6" />
+
+                                <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
+                                    <UInput
+                                        v-model="state.labels[idx]!.name"
+                                        :name="`labels.${idx}.name`"
+                                        type="text"
+                                        class="w-full flex-1"
+                                        :placeholder="$t('common.label', 1)"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup :name="`${idx}.color`">
+                                    <ColorPickerClient
+                                        v-model="state.labels[idx]!.color"
+                                        :name="`${idx}.color`"
+                                        class="min-w-16"
+                                    />
+                                </UFormGroup>
+
+                                <UButton
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    :disabled="!canSubmit"
+                                    icon="i-mdi-close"
+                                    @click="state.labels.splice(idx, 1)"
                                 />
-                            </UFormGroup>
-
-                            <UFormGroup :name="`${idx}.color`">
-                                <ColorPickerClient v-model="state.labels[idx]!.color" :name="`${idx}.color`" class="min-w-16" />
-                            </UFormGroup>
-
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-close"
-                                @click="state.labels.splice(idx, 1)"
-                            />
-                        </div>
+                            </div>
+                        </VueDraggable>
                     </div>
 
                     <UButton
@@ -117,7 +127,7 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         :class="state.labels.length ? 'mt-2' : ''"
-                        @click="state.labels.push({ id: '0', name: '', color: '#ffffff' })"
+                        @click="state.labels.push({ id: '0', name: '', color: '#ffffff', order: 0 })"
                     />
                 </UFormGroup>
 

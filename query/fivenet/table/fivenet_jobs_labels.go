@@ -21,6 +21,7 @@ type fivenetJobsLabelsTable struct {
 	Job   mysql.ColumnString
 	Name  mysql.ColumnString
 	Color mysql.ColumnString
+	Order mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -65,8 +66,9 @@ func newFivenetJobsLabelsTableImpl(schemaName, tableName, alias string) fivenetJ
 		JobColumn      = mysql.StringColumn("job")
 		NameColumn     = mysql.StringColumn("name")
 		ColorColumn    = mysql.StringColumn("color")
-		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, ColorColumn}
-		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, ColorColumn}
+		OrderColumn    = mysql.IntegerColumn("order")
+		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, ColorColumn, OrderColumn}
+		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, ColorColumn, OrderColumn}
 	)
 
 	return fivenetJobsLabelsTable{
@@ -77,6 +79,7 @@ func newFivenetJobsLabelsTableImpl(schemaName, tableName, alias string) fivenetJ
 		Job:   JobColumn,
 		Name:  NameColumn,
 		Color: ColorColumn,
+		Order: OrderColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

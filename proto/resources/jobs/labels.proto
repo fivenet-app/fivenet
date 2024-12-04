@@ -19,6 +19,7 @@ message Label {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",
   }];
+  int32 order = 5;
 }
 
 message LabelCount {
