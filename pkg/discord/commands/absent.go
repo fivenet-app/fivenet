@@ -20,7 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	timeutils "github.com/fivenet-app/fivenet/pkg/utils/time"
+	"github.com/fivenet-app/fivenet/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"

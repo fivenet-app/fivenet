@@ -2,11 +2,10 @@ package auth
 
 import (
 	"context"
-	"slices"
+	"net/http"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/http"
 	grpc_auth "github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/auth"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )
@@ -26,14 +25,18 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 	val := metadata.ExtractIncoming(ctx)
 	cookie := val.Get("cookie")
 	if cookie != "" {
-		cookies, err := utils.ParseCookies(cookie)
-		if err != nil {
-			return "", ErrNoToken
-		}
-		if idx := slices.IndexFunc(cookies, func(a *http.Cookie) bool {
-			return a.Name == TokenCookieName
-		}); idx > -1 {
-			return cookies[idx].Value, nil
+		for _, line := range strings.Split(cookie, "; ") {
+			cs, err := http.ParseCookie(line)
+			if err != nil {
+				continue
+			}
+			if len(cs) == 0 {
+				continue
+			}
+
+			if cs[0].Name == TokenCookieName {
+				return cs[0].Value, nil
+			}
 		}
 	}
 
