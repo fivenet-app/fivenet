@@ -270,3 +270,205 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SearchResponseValidationError{}
+
+// Validate checks the field values on GetPageRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetPageRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPageRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetPageRequestMultiError,
+// or nil if none found.
+func (m *GetPageRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPageRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Url
+
+	if len(errors) > 0 {
+		return GetPageRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPageRequestMultiError is an error wrapping multiple validation errors
+// returned by GetPageRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetPageRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPageRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPageRequestMultiError) AllErrors() []error { return m }
+
+// GetPageRequestValidationError is the validation error returned by
+// GetPageRequest.Validate if the designated constraints aren't met.
+type GetPageRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPageRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPageRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPageRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPageRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPageRequestValidationError) ErrorName() string { return "GetPageRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetPageRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPageRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPageRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPageRequestValidationError{}
+
+// Validate checks the field values on GetPageResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetPageResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetPageResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetPageResponseMultiError, or nil if none found.
+func (m *GetPageResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetPageResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetPageResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetPageResponseMultiError is an error wrapping multiple validation errors
+// returned by GetPageResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetPageResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetPageResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetPageResponseMultiError) AllErrors() []error { return m }
+
+// GetPageResponseValidationError is the validation error returned by
+// GetPageResponse.Validate if the designated constraints aren't met.
+type GetPageResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetPageResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetPageResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetPageResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetPageResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetPageResponseValidationError) ErrorName() string { return "GetPageResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetPageResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetPageResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetPageResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetPageResponseValidationError{}

@@ -1,8 +1,10 @@
 package internet
 
 import (
+	"context"
 	"database/sql"
 
+	errorsinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet/errors"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -31,4 +33,10 @@ func NewServer(p Params) *Server {
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterInternetServiceServer(srv, s)
 	RegisterAdsServiceServer(srv, s)
+}
+
+func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResponse, error) {
+	// TODO
+
+	return nil, errorsinternet.ErrDomainNotFound
 }

@@ -14,7 +14,16 @@ message SearchResponse {
   repeated resources.internet.SearchResult results = 1;
 }
 
+message GetPageRequest {
+  string url = 1;
+}
+
+message GetPageResponse {}
+
 service InternetService {
   // @perm: Name=Any
   rpc Search(SearchRequest) returns (SearchResponse);
+
+  // @perm: Name=Any
+  rpc GetPage(GetPageRequest) returns (GetPageResponse);
 }

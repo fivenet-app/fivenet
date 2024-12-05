@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { InternetService } from "./internet";
+import type { GetPageResponse } from "./internet";
+import type { GetPageRequest } from "./internet";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { SearchResponse } from "./internet";
 import type { SearchRequest } from "./internet";
@@ -19,6 +21,12 @@ export interface IInternetServiceClient {
      * @generated from protobuf rpc: Search(services.internet.SearchRequest) returns (services.internet.SearchResponse);
      */
     search(input: SearchRequest, options?: RpcOptions): UnaryCall<SearchRequest, SearchResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: GetPage(services.internet.GetPageRequest) returns (services.internet.GetPageResponse);
+     */
+    getPage(input: GetPageRequest, options?: RpcOptions): UnaryCall<GetPageRequest, GetPageResponse>;
 }
 /**
  * @generated from protobuf service services.internet.InternetService
@@ -37,5 +45,14 @@ export class InternetServiceClient implements IInternetServiceClient, ServiceInf
     search(input: SearchRequest, options?: RpcOptions): UnaryCall<SearchRequest, SearchResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<SearchRequest, SearchResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: GetPage(services.internet.GetPageRequest) returns (services.internet.GetPageResponse);
+     */
+    getPage(input: GetPageRequest, options?: RpcOptions): UnaryCall<GetPageRequest, GetPageResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetPageRequest, GetPageResponse>("unary", this._transport, method, opt, input);
     }
 }

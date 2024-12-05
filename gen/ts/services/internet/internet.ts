@@ -30,6 +30,20 @@ export interface SearchResponse {
      */
     results: SearchResult[];
 }
+/**
+ * @generated from protobuf message services.internet.GetPageRequest
+ */
+export interface GetPageRequest {
+    /**
+     * @generated from protobuf field: string url = 1;
+     */
+    url: string;
+}
+/**
+ * @generated from protobuf message services.internet.GetPageResponse
+ */
+export interface GetPageResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class SearchRequest$Type extends MessageType<SearchRequest> {
     constructor() {
@@ -124,9 +138,82 @@ class SearchResponse$Type extends MessageType<SearchResponse> {
  * @generated MessageType for protobuf message services.internet.SearchResponse
  */
 export const SearchResponse = new SearchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetPageRequest$Type extends MessageType<GetPageRequest> {
+    constructor() {
+        super("services.internet.GetPageRequest", [
+            { no: 1, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetPageRequest>): GetPageRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.url = "";
+        if (value !== undefined)
+            reflectionMergePartial<GetPageRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageRequest): GetPageRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string url */ 1:
+                    message.url = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetPageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string url = 1; */
+        if (message.url !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.url);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.internet.GetPageRequest
+ */
+export const GetPageRequest = new GetPageRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetPageResponse$Type extends MessageType<GetPageResponse> {
+    constructor() {
+        super("services.internet.GetPageResponse", []);
+    }
+    create(value?: PartialMessage<GetPageResponse>): GetPageResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetPageResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageResponse): GetPageResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: GetPageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.internet.GetPageResponse
+ */
+export const GetPageResponse = new GetPageResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.internet.InternetService
  */
 export const InternetService = new ServiceType("services.internet.InternetService", [
-    { name: "Search", options: {}, I: SearchRequest, O: SearchResponse }
+    { name: "Search", options: {}, I: SearchRequest, O: SearchResponse },
+    { name: "GetPage", options: {}, I: GetPageRequest, O: GetPageResponse }
 ]);

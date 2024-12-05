@@ -404,6 +404,10 @@
 - [resources/internet/search.proto](#resources_internet_search-proto)
     - [SearchResult](#resources-internet-SearchResult)
   
+- [resources/internet/internet.proto](#resources_internet_internet-proto)
+    - [Domain](#resources-internet-Domain)
+    - [Website](#resources-internet-Website)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -856,6 +860,8 @@
     - [MailerService](#services-mailer-MailerService)
   
 - [services/internet/internet.proto](#services_internet_internet-proto)
+    - [GetPageRequest](#services-internet-GetPageRequest)
+    - [GetPageResponse](#services-internet-GetPageResponse)
     - [SearchRequest](#services-internet-SearchRequest)
     - [SearchResponse](#services-internet-SearchResponse)
   
@@ -6565,6 +6571,42 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | title | [string](#string) |  |  |
 | description | [string](#string) |  |  |
 | url | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_internet_internet-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/internet.proto
+
+
+
+<a name="resources-internet-Domain"></a>
+
+### Domain
+
+
+
+
+
+
+
+<a name="resources-internet-Website"></a>
+
+### Website
+
 
 
 
@@ -12830,6 +12872,31 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
+<a name="services-internet-GetPageRequest"></a>
+
+### GetPageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| url | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-internet-GetPageResponse"></a>
+
+### GetPageResponse
+
+
+
+
+
+
+
 <a name="services-internet-SearchRequest"></a>
 
 ### SearchRequest
@@ -12874,6 +12941,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | Search | [SearchRequest](#services-internet-SearchRequest) | [SearchResponse](#services-internet-SearchResponse) | @perm: Name=Any |
+| GetPage | [GetPageRequest](#services-internet-GetPageRequest) | [GetPageResponse](#services-internet-GetPageResponse) | @perm: Name=Any |
 
  <!-- end services -->
 

@@ -14,7 +14,8 @@ var PermsRemap = map[string]string{
 	"AdsService/GetAds": "Any",
 
 	// Service: InternetService
-	"InternetService/Search": "Any",
+	"InternetService/GetPage": "Any",
+	"InternetService/Search":  "Any",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

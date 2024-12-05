@@ -115,7 +115,9 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                     <UButton variant="ghost" color="white" icon="i-mdi-refresh" />
 
                     <ClientOnly>
-                        <UInputMenu v-model="tab.url" class="mx-1 flex-1" />
+                        <UForm :state="{}" class="flex-1">
+                            <UInput v-model="tab.url" type="text" class="mx-1 flex-1" />
+                        </UForm>
                     </ClientOnly>
                 </div>
             </UDashboardToolbar>
@@ -124,7 +126,13 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                 <UTabs
                     v-model="selectedTab"
                     :items="tabs"
-                    :ui="{ wrapper: 'space-y-0', list: { base: 'hidden' }, padding: 'p-0' }"
+                    :ui="{
+                        wrapper: 'space-y-0 h-full',
+                        list: { base: 'hidden' },
+                        padding: 'p-0',
+                        container: 'h-full',
+                        base: 'h-full',
+                    }"
                 >
                     <template #item="{ item }">
                         <Suspense>
