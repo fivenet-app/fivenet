@@ -14,6 +14,8 @@ const err = ref<CommonError | undefined>();
 function setFromProps(): void {
     if (props.error) {
         err.value = parseError(props.error);
+    } else {
+        err.value = undefined;
     }
 }
 
