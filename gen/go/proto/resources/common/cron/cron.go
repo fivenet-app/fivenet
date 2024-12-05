@@ -35,7 +35,11 @@ func (x *Cronjob) GetRunTimeout() time.Duration {
 }
 
 func (x *CronjobData) Merge(in *CronjobData) *CronjobData {
-	x.Data = in.Data
+	if x == nil {
+		x = in
+	} else {
+		x.Data = in.Data
+	}
 
 	return x
 }
