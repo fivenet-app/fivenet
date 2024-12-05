@@ -22,6 +22,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 const (
@@ -93,6 +94,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
 			Schedule: "@everysecond", // Every second
+			Timeout:  durationpb.New(3 * time.Second),
 		}); err != nil {
 			return err
 		}
@@ -100,7 +102,8 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.dispatch_deduplication",
-			Schedule: "*/2 * * * * *", // Every 2 seconds
+			Schedule: "*/2 * * * * * *", // Every 2 seconds
+			Timeout:  durationpb.New(5 * time.Second),
 		}); err != nil {
 			return err
 		}
@@ -108,7 +111,17 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		p.CronHandlers.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cleanup_units",
-			Schedule: "*/5 * * * * *", // Every 5 seconds
+			Schedule: "*/5 * * * * * *", // Every 5 seconds
+			Timeout:  durationpb.New(10 * time.Second),
+		}); err != nil {
+			return err
+		}
+
+		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
+			Schedule: "*/15 * * * * * *", // Every 15 seconds
+			Timeout:  durationpb.New(20 * time.Second),
 		}); err != nil {
 			return err
 		}
@@ -117,14 +130,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
 			Schedule: "*/4 * * * *", // Every 4 minutes
-		}); err != nil {
-			return err
-		}
-
-		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
-		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
-			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
-			Schedule: "*/15 * * * * *", // Every 15 seconds
+			Timeout:  durationpb.New(15 * time.Second),
 		}); err != nil {
 			return err
 		}
