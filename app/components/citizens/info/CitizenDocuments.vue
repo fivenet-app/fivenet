@@ -113,6 +113,7 @@ const columns = [
     <DataErrorBlock
         v-if="error"
         :title="$t('common.unable_to_load', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
+        :error="error"
         :retry="refresh"
     />
     <UTable

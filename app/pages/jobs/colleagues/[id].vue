@@ -115,7 +115,7 @@ const links = computed(() =>
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
-                    :message="$t(error.message)"
+                    :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />

@@ -200,7 +200,8 @@ const columns = [
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
                 <DataErrorBlock
                     v-else-if="error"
-                    :title="$t('common.not_found', [$t('common.law', 2)])"
+                    :title="$t('common.unable_to_load', [$t('common.law', 2)])"
+                    :error="error"
                     :retry="refresh"
                     class="mt-5"
                 />

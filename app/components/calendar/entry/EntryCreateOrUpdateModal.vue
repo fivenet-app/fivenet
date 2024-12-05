@@ -167,6 +167,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <DataErrorBlock
                         v-else-if="props.entryId && error"
                         :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                        :error="error"
                         :retry="refresh"
                     />
                     <DataNoDataBlock

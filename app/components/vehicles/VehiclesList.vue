@@ -214,7 +214,12 @@ defineShortcuts({
         </template>
     </UDashboardToolbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])" :retry="refresh" />
+    <DataErrorBlock
+        v-if="error"
+        :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])"
+        :error="error"
+        :retry="refresh"
+    />
 
     <UTable
         v-else

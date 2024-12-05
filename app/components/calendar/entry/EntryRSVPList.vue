@@ -189,6 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     <DataErrorBlock
                         v-else-if="error"
                         :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                        :error="error"
                         :retry="refresh"
                     />
                     <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />

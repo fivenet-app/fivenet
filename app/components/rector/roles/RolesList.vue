@@ -161,6 +161,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <DataErrorBlock
                                 v-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                                :error="error"
                                 :retry="refresh"
                             />
                             <UTable

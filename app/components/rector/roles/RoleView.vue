@@ -257,7 +257,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
     <div class="w-full">
         <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role', 2)])" />
-            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
             <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
 
             <template v-else>

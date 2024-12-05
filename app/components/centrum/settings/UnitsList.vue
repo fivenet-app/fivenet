@@ -100,7 +100,7 @@ const columns = [
         </template>
     </UDashboardNavbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :retry="refresh" />
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :error="error" :retry="refresh" />
     <UTable
         v-else
         :loading="loading"

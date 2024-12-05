@@ -79,7 +79,12 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
 
             <div>
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar')])" />
-                <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.calendar')])" :retry="refresh" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.not_found', [$t('common.calendar')])"
+                    :error="error"
+                    :retry="refresh"
+                />
                 <DataNoDataBlock
                     v-else-if="!data?.calendars || data?.calendars.length === 0"
                     :type="`${$t('common.calendar')} ${$t('common.calendar')}`"

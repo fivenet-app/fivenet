@@ -73,6 +73,7 @@ watch(offset, async () => refresh());
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
+            :error="error"
             :retry="refresh"
         />
         <DataNoDataBlock

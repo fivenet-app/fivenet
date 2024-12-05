@@ -87,7 +87,8 @@ watch(pages, async () => {
                 <DataNoDataBlock
                     v-else-if="!pages || pages.length === 0"
                     icon="i-mdi-file-search"
-                    :message="$t('common.not_found', [$t('common.wiki', 2)])"
+                    :title="$t('common.unable_to_load', [$t('common.wiki', 2)])"
+                    :error="error"
                     :retry="refresh"
                 />
 

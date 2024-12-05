@@ -164,6 +164,7 @@ const canSubmit = ref(true);
         <DataErrorBlock
             v-else-if="error"
             :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
+            :error="error"
             :retry="refresh"
         />
         <DataNoDataBlock v-else-if="data?.notifications.length === 0" :type="$t('common.notification', 2)" icon="i-mdi-bell" />

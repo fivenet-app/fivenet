@@ -81,6 +81,7 @@ const editing = ref(false);
                     <DataErrorBlock
                         v-else-if="error"
                         :title="$t('common.unable_to_load', [$t('common.template')])"
+                        :error="error"
                         :retry="refresh"
                     />
                     <DataNoDataBlock

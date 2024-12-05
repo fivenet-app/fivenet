@@ -186,6 +186,7 @@ watchDebounced(query, async () => refresh(), {
         <DataErrorBlock
             v-if="error"
             :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
+            :error="error"
             :retry="refresh"
             class="w-full"
         />

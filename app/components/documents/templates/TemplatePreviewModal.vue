@@ -65,6 +65,7 @@ async function getTemplate(): Promise<Template> {
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+                    :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />

@@ -324,6 +324,7 @@ function removeReference(id: string): void {
                                         <DataErrorBlock
                                             v-else-if="error"
                                             :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                                            :error="error"
                                             :retry="refresh"
                                         />
                                         <DataNoDataBlock

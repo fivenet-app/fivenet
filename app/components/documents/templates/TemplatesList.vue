@@ -67,7 +67,12 @@ function selected(idx: number): TemplateShort | undefined {
         </UPageGrid>
     </div>
 
-    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+    <DataErrorBlock
+        v-else-if="error"
+        :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+        :error="error"
+        :retry="refresh"
+    />
     <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 
     <div v-else class="flex justify-center">

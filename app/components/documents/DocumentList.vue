@@ -347,7 +347,12 @@ defineShortcuts({
     </UDashboardToolbar>
 
     <UDashboardPanelContent class="p-0">
-        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+        <DataErrorBlock
+            v-if="error"
+            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
 
         <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">

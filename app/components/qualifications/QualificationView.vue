@@ -164,7 +164,12 @@ const accordionItems = computed(() =>
     </UDashboardNavbar>
 
     <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualifications', 1)])" />
-    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.qualifications', 1)])" :retry="refresh" />
+    <DataErrorBlock
+        v-else-if="error"
+        :title="$t('common.unable_to_load', [$t('common.qualifications', 1)])"
+        :error="error"
+        :retry="refresh"
+    />
     <DataNoDataBlock
         v-else-if="!qualification"
         icon="i-mdi-account-school"

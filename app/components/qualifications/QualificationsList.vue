@@ -65,6 +65,7 @@ watch(offset, async () => refresh());
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
+                :error="error"
                 :retry="refresh"
             />
             <DataNoDataBlock

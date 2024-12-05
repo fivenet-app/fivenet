@@ -324,7 +324,12 @@ defineShortcuts({
         </UForm>
     </UDashboardToolbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
+    <DataErrorBlock
+        v-if="error"
+        :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+        :error="error"
+        :retry="refresh"
+    />
     <template v-else>
         <UTable
             v-if="!jobsService.cardView"

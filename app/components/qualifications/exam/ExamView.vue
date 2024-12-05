@@ -70,7 +70,12 @@ watch(data, async () => {
     </UDashboardNavbar>
 
     <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.exam', 1)])" />
-    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.exam', 1)])" :retry="refresh" />
+    <DataErrorBlock
+        v-else-if="error"
+        :title="$t('common.unable_to_load', [$t('common.exam', 1)])"
+        :error="error"
+        :retry="refresh"
+    />
     <DataNoDataBlock
         v-else-if="!data"
         icon="i-mdi-account-school"

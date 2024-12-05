@@ -134,7 +134,8 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
 
         <DataErrorBlock
             v-if="error"
-            :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
+            :title="$t('common.unable_to_load', [$t('common.file', 2)])"
+            :error="error"
             :retry="refresh"
         />
 

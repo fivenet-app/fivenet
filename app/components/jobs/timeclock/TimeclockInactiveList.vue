@@ -134,7 +134,12 @@ const columns = [
         </template>
     </UDashboardToolbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
+    <DataErrorBlock
+        v-if="error"
+        :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+        :error="error"
+        :retry="refresh"
+    />
     <UTable
         v-else
         v-model:sort="sort"

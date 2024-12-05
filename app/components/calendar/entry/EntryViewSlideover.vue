@@ -128,6 +128,7 @@ const canDo = computed(() => ({
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                    :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />

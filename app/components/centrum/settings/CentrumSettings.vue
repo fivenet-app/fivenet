@@ -170,7 +170,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UDashboardNavbar>
 
         <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.settings')])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.settings')])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.settings')])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock v-else-if="!settings" icon="i-mdi-tune" :type="$t('common.settings')" />
 
         <template v-else>

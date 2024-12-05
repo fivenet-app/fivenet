@@ -9,14 +9,14 @@ const props = withDefaults(
         stats?: TimeclockStats | null;
         weekly?: TimeclockWeeklyStats[];
         hideHeader?: boolean;
-        failed?: boolean;
+        error?: Error;
         loading?: boolean;
     }>(),
     {
         stats: null,
         weekly: undefined,
         hideHeader: false,
-        failed: false,
+        error: undefined,
         loading: false,
     },
 );
@@ -110,7 +110,7 @@ watchDebounced(
                         <p
                             class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                         >
-                            <UIcon v-if="failed" name="i-mdi-alert-circle" class="size-5" />
+                            <UIcon v-if="error" name="i-mdi-alert-circle" class="size-5" />
                             <USkeleton v-else-if="stat.value === undefined" class="h-8 w-[175px]" />
                             <template v-else>
                                 {{
@@ -130,7 +130,7 @@ watchDebounced(
                     {{ $t('components.jobs.timeclock.Stats.weekly') }}
                 </h3>
 
-                <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
+                <DataErrorBlock v-if="error" :error="error" :retry="async () => $emit('refresh')" />
                 <DataNoDataBlock v-else-if="weekly === undefined" />
 
                 <ClientOnly v-else>

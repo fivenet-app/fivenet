@@ -48,6 +48,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                             <DataErrorBlock
                                 v-if="error"
                                 :title="$t('components.centrum.dispatch_center.failed_datastream')"
+                                :error="error"
                                 :retry="startStream"
                             />
                             <DataPendingBlock

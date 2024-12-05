@@ -77,7 +77,12 @@ const columns = computed(() =>
 <template>
     <div>
         <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.relation', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.relation', 2)])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.relation', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock
             v-if="!relations || relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"

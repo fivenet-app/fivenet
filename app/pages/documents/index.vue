@@ -141,6 +141,7 @@ const isOpen = ref(false);
                             <DataErrorBlock
                                 v-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
+                                :error="error"
                                 :retry="refresh"
                             />
                             <DataNoDataBlock

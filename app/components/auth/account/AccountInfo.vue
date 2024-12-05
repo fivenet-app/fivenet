@@ -87,6 +87,7 @@ const selectedTab = computed({
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
+                :error="error"
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />

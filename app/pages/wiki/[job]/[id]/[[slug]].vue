@@ -90,7 +90,7 @@ const editing = ref(false);
                 @edit="editing = !editing"
             >
                 <template #left>
-                    <DataErrorBlock v-if="pagesError" :retry="pagesRefresh" />
+                    <DataErrorBlock v-if="pagesError" :error="pagesError" :retry="pagesRefresh" />
                     <ClientOnly v-else>
                         <PagesList :pages="pages ?? []" />
 

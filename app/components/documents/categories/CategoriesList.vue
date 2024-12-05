@@ -87,7 +87,12 @@ const modal = useModal();
                 </UPageCard>
             </UPageGrid>
         </div>
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.category', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
 
         <div v-else class="flex justify-center">

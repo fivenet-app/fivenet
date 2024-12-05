@@ -95,7 +95,12 @@ const correctCount = ref(0);
         >
             <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.exam')])" />
-                <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.exam')])" :retry="refresh" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.exam')])"
+                    :error="error"
+                    :retry="refresh"
+                />
                 <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
                 <ExamViewResult

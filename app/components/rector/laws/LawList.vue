@@ -60,7 +60,12 @@ function updateLaw(event: { id: string; law: Law }): void {
 
     <UDashboardPanelContent>
         <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.law', 2)])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.law', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock v-else-if="!lawBooks || lawBooks.length === 0" icon="i-mdi-gavel" :type="$t('common.law', 2)" />
 
         <template v-else>

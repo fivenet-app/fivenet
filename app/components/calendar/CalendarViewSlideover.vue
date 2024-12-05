@@ -95,6 +95,7 @@ const calendar = computed(() => data.value?.calendar);
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.calendar')])"
+                    :error="error"
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />

@@ -105,7 +105,12 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
             v-if="!!error || !initiated || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
         >
-            <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('components.livemap.failed_datastream')"
+                :error="error"
+                :retry="startStream"
+            />
             <DataPendingBlock
                 v-else-if="!initiated || (abort === undefined && !reconnectingDebounced)"
                 :message="$t('components.livemap.starting_datastream')"

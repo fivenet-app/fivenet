@@ -172,7 +172,12 @@ const accordionItems = computed(() =>
             <UBreadcrumb class="pb-2 pt-4" :links="breadcrumbs" />
 
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
-            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.page')])" :retry="refresh" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.page')])"
+                :error="error"
+                :retry="refresh"
+            />
             <template v-else-if="!page">
                 <ULandingHero
                     :title="$t('pages.notfound.page_not_found')"

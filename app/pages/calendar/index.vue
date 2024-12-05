@@ -331,7 +331,8 @@ const isOpen = ref(false);
                                     />
                                     <DataErrorBlock
                                         v-else-if="calendarsError"
-                                        :title="$t('common.not_found', [$t('common.calendar')])"
+                                        :title="$t('common.unable_to_load', [$t('common.calendar')])"
+                                        :error="calendarsError"
                                         :retry="calendarsRefresh"
                                     />
 
@@ -377,7 +378,7 @@ const isOpen = ref(false);
                 </template>
             </UDashboardToolbar>
 
-            <DataErrorBlock v-if="error" :retry="refresh" />
+            <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
 
             <div v-else class="relative flex flex-1 overflow-x-auto">
                 <MonthCalendarClient
@@ -398,7 +399,12 @@ const isOpen = ref(false);
                 />
 
                 <UContainer v-else class="flex flex-1 flex-col py-2">
-                    <DataErrorBlock v-if="error" :title="$t('common.not_found', [$t('common.entry', 2)])" :retry="refresh" />
+                    <DataErrorBlock
+                        v-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.entry', 2)])"
+                        :error="error"
+                        :retry="refresh"
+                    />
 
                     <template v-else>
                         <template v-for="calendarEntries in groupedCalendarEntries" :key="calendarEntries.key">
@@ -581,7 +587,8 @@ const isOpen = ref(false);
                     <DataPendingBlock v-if="calendarsLoading" :message="$t('common.loading', [$t('common.calendar')])" />
                     <DataErrorBlock
                         v-else-if="calendarsError"
-                        :title="$t('common.not_found', [$t('common.calendar', 1)])"
+                        :title="$t('common.unable_to_load', [$t('common.calendar', 1)])"
+                        :error="calendarsError"
                         :retry="calendarsRefresh"
                     />
 

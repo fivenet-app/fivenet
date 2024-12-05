@@ -134,7 +134,11 @@ watchOnce(opened, async () => {
                 </UButtonGroup>
 
                 <div v-if="error">
-                    <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
+                    <DataErrorBlock
+                        :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+                        :error="error"
+                        :retry="refresh"
+                    />
                 </div>
 
                 <div v-else-if="loading && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">

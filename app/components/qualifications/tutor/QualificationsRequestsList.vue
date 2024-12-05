@@ -147,7 +147,12 @@ defineExpose({
 <template>
     <div class="overflow-hidden">
         <div class="px-1 sm:px-2">
-            <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.request', 2)])" :retry="refresh" />
+            <DataErrorBlock
+                v-if="error"
+                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
 
             <template v-else>
                 <UTable

@@ -89,6 +89,7 @@ const creating = ref(false);
                 <DataErrorBlock
                     v-if="error"
                     :title="$t('common.unable_to_load', [$t('common.mail', 2)])"
+                    :error="error"
                     :retry="async () => await listEmails()"
                 />
                 <DataPendingBlock v-else-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />

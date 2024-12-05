@@ -87,7 +87,12 @@ watch(offset, async () => refresh());
 
         <div>
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.result', 2)])" />
-            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.result', 2)])" :retry="refresh" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.result', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
             <DataNoDataBlock
                 v-else-if="data?.results.length === 0"
                 :message="$t('common.not_found', [$t('common.result', 2)])"

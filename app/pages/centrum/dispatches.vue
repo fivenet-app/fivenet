@@ -148,6 +148,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                             <DataErrorBlock
                                 v-else-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                                :error="error"
                                 :retry="refresh"
                             />
                             <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />

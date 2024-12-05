@@ -285,6 +285,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <DataErrorBlock
                 v-if="error"
                 :title="$t('common.unable_to_load', [$t('components.rector.job_props.job_properties')])"
+                :error="error"
                 :retry="refresh"
             />
             <DataNoDataBlock v-else-if="!jobProps" icon="i-mdi-tune" :type="$t('components.rector.job_props.job_properties')" />

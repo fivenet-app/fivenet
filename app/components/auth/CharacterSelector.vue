@@ -45,7 +45,12 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             v-if="loading"
             :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])"
         />
-        <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.not_found', [$t('common.character', 2)])"
+            :error="error"
+            :retry="refresh"
+        />
         <DataNoDataBlock v-else-if="!chars || chars.length === 0" :type="$t('common.character', 2)" />
 
         <UCarousel
