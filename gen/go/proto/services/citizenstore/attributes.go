@@ -70,21 +70,58 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 	}
 
 	tJobCitizenAttributes := table.FivenetJobCitizenAttributes
-	insertStmt := tJobCitizenAttributes.
-		INSERT(
-			tJobCitizenAttributes.Job,
-			tJobCitizenAttributes.Name,
-			tJobCitizenAttributes.Color,
-		).
-		MODELS(req.Attributes).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobCitizenAttributes.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tJobCitizenAttributes.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-			tJobCitizenAttributes.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
-		)
 
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+	if len(req.Attributes) > 0 {
+		toCreate := []*users.CitizenAttribute{}
+		toUpdate := []*users.CitizenAttribute{}
+
+		for _, attribute := range req.Attributes {
+			if attribute.Id == 0 {
+				toCreate = append(toCreate, attribute)
+			} else {
+				toUpdate = append(toUpdate, attribute)
+			}
+		}
+
+		if len(toCreate) > 0 {
+			insertStmt := tJobCitizenAttributes.
+				INSERT(
+					tJobCitizenAttributes.Job,
+					tJobCitizenAttributes.Name,
+					tJobCitizenAttributes.Color,
+				).
+				MODELS(toCreate).
+				ON_DUPLICATE_KEY_UPDATE(
+					tJobCitizenAttributes.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
+					tJobCitizenAttributes.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+				)
+
+			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			}
+		}
+
+		if len(toUpdate) > 0 {
+			for _, attribute := range toUpdate {
+				updateStmt := tJobCitizenAttributes.
+					UPDATE(
+						tJobCitizenAttributes.Name,
+						tJobCitizenAttributes.Color,
+					).
+					SET(
+						tJobCitizenAttributes.Name.SET(jet.String(attribute.Name)),
+						tJobCitizenAttributes.Color.SET(jet.String(attribute.Color)),
+					).
+					WHERE(jet.AND(
+						tJobCitizenAttributes.ID.EQ(jet.Uint64(attribute.Id)),
+						tJobCitizenAttributes.Job.EQ(jet.String(*attribute.Job)),
+					))
+
+				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
+					return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+				}
+			}
+		}
 	}
 
 	if len(removed) > 0 {

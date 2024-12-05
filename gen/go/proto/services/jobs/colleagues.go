@@ -668,8 +668,8 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		}
 
 		added, _ := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
-			func(in *jobs.Label) string {
-				return in.Name
+			func(in *jobs.Label) uint64 {
+				return in.Id
 			})
 
 		valid, err := s.validateLabels(ctx, userInfo, added)
@@ -740,8 +740,8 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) {
 		added, removed := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
-			func(in *jobs.Label) string {
-				return in.Name
+			func(in *jobs.Label) uint64 {
+				return in.Id
 			})
 
 		valid, err := s.validateLabels(ctx, userInfo, added)

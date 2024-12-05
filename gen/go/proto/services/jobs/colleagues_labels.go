@@ -100,10 +100,6 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	resp := &ManageColleagueLabelsResponse{
-		Labels: []*jobs.Label{},
-	}
-
 	stmt := tJobLabels.
 		SELECT(
 			tJobLabels.ID,
@@ -117,15 +113,16 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 			tJobLabels.Job.EQ(jet.String(userInfo.Job)),
 		)
 
-	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
+	labels := []*jobs.Label{}
+	if err := stmt.QueryContext(ctx, s.db, &labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 
-	_, removed := utils.SlicesDifferenceFunc(resp.Labels, req.Labels,
-		func(in *jobs.Label) string {
-			return in.Name
+	_, removed := utils.SlicesDifferenceFunc(labels, req.Labels,
+		func(in *jobs.Label) uint64 {
+			return in.Id
 		})
 
 	for i := 0; i < len(req.Labels); i++ {
@@ -135,23 +132,59 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 
 	tJobLabels := table.FivenetJobsLabels
 	if len(req.Labels) > 0 {
-		insertStmt := tJobLabels.
-			INSERT(
-				tJobLabels.Job,
-				tJobLabels.Name,
-				tJobLabels.Color,
-				tJobLabels.Order,
-			).
-			MODELS(req.Labels).
-			ON_DUPLICATE_KEY_UPDATE(
-				tJobLabels.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-				tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-				tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
-				tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
-			)
+		toCreate := []*jobs.Label{}
+		toUpdate := []*jobs.Label{}
 
-		if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		for _, label := range req.Labels {
+			if label.Id == 0 {
+				toCreate = append(toCreate, label)
+			} else {
+				toUpdate = append(toUpdate, label)
+			}
+		}
+
+		if len(toCreate) > 0 {
+			insertStmt := tJobLabels.
+				INSERT(
+					tJobLabels.Job,
+					tJobLabels.Name,
+					tJobLabels.Color,
+					tJobLabels.Order,
+				).
+				MODELS(toCreate).
+				ON_DUPLICATE_KEY_UPDATE(
+					tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
+					tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+					tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
+				)
+
+			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+			}
+		}
+
+		if len(toUpdate) > 0 {
+			for _, label := range toUpdate {
+				updateStmt := tJobLabels.
+					UPDATE(
+						tJobLabels.Name,
+						tJobLabels.Color,
+						tJobLabels.Order,
+					).
+					SET(
+						tJobLabels.Name.SET(jet.String(label.Name)),
+						tJobLabels.Color.SET(jet.String(label.Color)),
+						tJobLabels.Order.SET(jet.Int32(label.Order)),
+					).
+					WHERE(jet.AND(
+						tJobLabels.ID.EQ(jet.Uint64(label.Id)),
+						tJobLabels.Job.EQ(jet.String(*label.Job)),
+					))
+
+				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
+					return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+				}
+			}
 		}
 	}
 
@@ -175,7 +208,9 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 		}
 	}
 
-	resp.Labels = []*jobs.Label{}
+	resp := &ManageColleagueLabelsResponse{
+		Labels: []*jobs.Label{},
+	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)

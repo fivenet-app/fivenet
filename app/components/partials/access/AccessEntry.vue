@@ -198,7 +198,7 @@ watch(props, () => setFromProps());
             </UFormGroup>
         </template>
 
-        <template v-if="entry.type === 'qualification'">
+        <template v-else-if="entry.type === 'qualification'">
             <UFormGroup name="qualificationId" class="flex-1">
                 <ClientOnly>
                     <USelectMenu

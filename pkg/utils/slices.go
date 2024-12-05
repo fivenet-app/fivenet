@@ -42,9 +42,9 @@ func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
 	return added, removed
 }
 
-func SlicesDifferenceFunc[T comparable](a, b []T, keyFn func(in T) string) ([]T, []T) {
-	temp := map[string]int{}
-	vals := map[string]T{}
+func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T) S) (added []T, removed []T) {
+	temp := map[S]int{}
+	vals := map[S]T{}
 	for _, i := range a {
 		s := keyFn(i)
 		if _, ok := temp[s]; !ok {
@@ -62,7 +62,6 @@ func SlicesDifferenceFunc[T comparable](a, b []T, keyFn func(in T) string) ([]T,
 		}
 	}
 
-	added, removed := []T{}, []T{}
 	for s, v := range temp {
 		if v == 0 {
 			removed = append(removed, vals[s])
@@ -71,5 +70,5 @@ func SlicesDifferenceFunc[T comparable](a, b []T, keyFn func(in T) string) ([]T,
 		}
 	}
 
-	return added, removed
+	return
 }

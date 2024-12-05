@@ -768,8 +768,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		})
 
 		added, _ := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
-			func(in *users.CitizenAttribute) string {
-				return in.Name
+			func(in *users.CitizenAttribute) uint64 {
+				return in.Id
 			})
 
 		valid, err := s.validateCitizenAttributes(ctx, userInfo, added)
@@ -858,8 +858,8 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if !proto.Equal(req.Props.Attributes, props.Attributes) {
 		added, removed := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
-			func(in *users.CitizenAttribute) string {
-				return in.Name
+			func(in *users.CitizenAttribute) uint64 {
+				return in.Id
 			})
 
 		if err := s.updateCitizenAttributes(ctx, tx, req.Props.UserId, added, removed); err != nil {

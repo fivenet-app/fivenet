@@ -87,7 +87,7 @@ func (a *Users[U, T, AccessLevel]) UpdateEntry(ctx context.Context, tx qrm.DB, t
 	return nil
 }
 
-func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, id uint64, targetId uint64) error {
+func (a *Users[U, T, AccessLevel]) DeleteEntry(ctx context.Context, tx qrm.DB, targetId uint64, id uint64) error {
 	stmt := a.table.
 		DELETE().
 		WHERE(jet.AND(
