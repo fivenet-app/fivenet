@@ -153,6 +153,12 @@ func (s *Scheduler) start(ctx context.Context) {
 						return true
 					}
 
+					// Check if the cron job is already/still running and under the timeout check
+					if job.StartedTime != nil && (job.State == cron.CronjobState_CRONJOB_STATE_RUNNING &&
+						time.Since(job.StartedTime.AsTime()) <= job.GetRunTimeout()) {
+						return true
+					}
+
 					ok, err := s.gron.IsDue(job.Schedule, t)
 					if err != nil {
 						s.logger.Error("failed to chek cron job due time", zap.String("job_name", key), zap.String("schedule", job.Schedule))
@@ -165,8 +171,21 @@ func (s *Scheduler) start(ctx context.Context) {
 					wg.Add(1)
 					go func() {
 						defer wg.Done()
+
 						if err := s.runCronjob(ctx, job); err != nil {
 							s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
+						}
+
+						if err := s.store.ComputeUpdate(ctx, key, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
+							if existing == nil {
+								return existing, false, nil
+							}
+
+							existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
+
+							return existing, true, nil
+						}); err != nil {
+							s.logger.Error("failed to update status of cron job", zap.String("job_name", job.Name))
 						}
 					}()
 
@@ -238,13 +257,14 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 			return existing, false, nil
 		}
 
+		existing.State = cron.CronjobState_CRONJOB_STATE_PENDING
+
 		nextTime, err := gronx.NextTick(existing.Schedule, false)
 		if err != nil {
 			return existing, false, err
 		}
-
-		existing.LastAttemptTime = timestamp.New(time.Now())
 		existing.NextScheduleTime = timestamp.New(nextTime)
+		existing.LastAttemptTime = timestamp.New(time.Now())
 
 		existing.Data.Merge(job.Data)
 

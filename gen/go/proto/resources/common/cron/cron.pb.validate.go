@@ -92,35 +92,6 @@ func (m *Cronjob) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetLastAttemptTime()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CronjobValidationError{
-					field:  "LastAttemptTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CronjobValidationError{
-					field:  "LastAttemptTime",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetLastAttemptTime()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CronjobValidationError{
-				field:  "LastAttemptTime",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetData()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -147,6 +118,105 @@ func (m *Cronjob) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.LastAttemptTime != nil {
+
+		if all {
+			switch v := interface{}(m.GetLastAttemptTime()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "LastAttemptTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "LastAttemptTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLastAttemptTime()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CronjobValidationError{
+					field:  "LastAttemptTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.StartedTime != nil {
+
+		if all {
+			switch v := interface{}(m.GetStartedTime()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "StartedTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "StartedTime",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetStartedTime()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CronjobValidationError{
+					field:  "StartedTime",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Timeout != nil {
+
+		if all {
+			switch v := interface{}(m.GetTimeout()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "Timeout",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CronjobValidationError{
+						field:  "Timeout",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTimeout()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CronjobValidationError{
+					field:  "Timeout",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -847,3 +917,105 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CronjobCompletedEventValidationError{}
+
+// Validate checks the field values on GenericCronData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GenericCronData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GenericCronData with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GenericCronDataMultiError, or nil if none found.
+func (m *GenericCronData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GenericCronData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Attributes
+
+	if len(errors) > 0 {
+		return GenericCronDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// GenericCronDataMultiError is an error wrapping multiple validation errors
+// returned by GenericCronData.ValidateAll() if the designated constraints
+// aren't met.
+type GenericCronDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GenericCronDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GenericCronDataMultiError) AllErrors() []error { return m }
+
+// GenericCronDataValidationError is the validation error returned by
+// GenericCronData.Validate if the designated constraints aren't met.
+type GenericCronDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GenericCronDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GenericCronDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GenericCronDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GenericCronDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GenericCronDataValidationError) ErrorName() string { return "GenericCronDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GenericCronDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGenericCronData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GenericCronDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GenericCronDataValidationError{}

@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -32,6 +33,20 @@ var (
 
 	tUserProps = table.FivenetUserProps
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCalendar,
+		TimestampColumn: table.FivenetCalendar.DeletedAt,
+		MinDays:         60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCalendarEntries,
+		TimestampColumn: table.FivenetCalendarEntries.DeletedAt,
+		MinDays:         60,
+	})
+}
 
 type Server struct {
 	CalendarServiceServer

@@ -1,5 +1,9 @@
 package cron
 
+import "time"
+
+const DefaultCronTimeout = 10 * time.Second
+
 func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 	x.Schedule = in.Schedule
 
@@ -20,6 +24,14 @@ func (x *Cronjob) Merge(in *Cronjob) *Cronjob {
 	}
 
 	return x
+}
+
+func (x *Cronjob) GetRunTimeout() time.Duration {
+	if x.Timeout == nil {
+		return DefaultCronTimeout
+	}
+
+	return x.Timeout.AsDuration()
 }
 
 func (x *CronjobData) Merge(in *CronjobData) *CronjobData {

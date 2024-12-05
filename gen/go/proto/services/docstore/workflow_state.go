@@ -59,7 +59,7 @@ type WorkflowParams struct {
 
 func NewWorkflow(p WorkflowParams) *Workflow {
 	w := &Workflow{
-		logger: p.Logger,
+		logger: p.Logger.Named("docstore.workflow"),
 		tracer: p.TP.Tracer("docstore_workflow"),
 		db:     p.DB,
 		notif:  p.Notif,
@@ -71,7 +71,7 @@ func NewWorkflow(p WorkflowParams) *Workflow {
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "docstore.workflow_run",
-			Schedule: "*/15 * * * * *", // Every minute
+			Schedule: "@always", // Every minute
 		}); err != nil {
 			return err
 		}

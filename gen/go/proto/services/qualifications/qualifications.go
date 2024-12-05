@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -38,6 +39,32 @@ const (
 
 	QualificationsLabelDefaultFormat = "%abbr%: %name%"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetQualifications,
+		TimestampColumn: table.FivenetQualifications.DeletedAt,
+		MinDays:         30,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetQualificationsExamUsers,
+		TimestampColumn: table.FivenetQualificationsExamUsers.EndsAt,
+		MinDays:         30,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetQualificationsRequests,
+		TimestampColumn: table.FivenetQualificationsRequests.DeletedAt,
+		MinDays:         30,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetQualificationsResults,
+		TimestampColumn: table.FivenetQualificationsResults.DeletedAt,
+		MinDays:         30,
+	})
+}
 
 var tQuali = table.FivenetQualifications.AS("qualification")
 

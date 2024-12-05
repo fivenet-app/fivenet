@@ -79,6 +79,8 @@
     - [CronjobData](#resources-common-cron-CronjobData)
     - [CronjobLockOwnerState](#resources-common-cron-CronjobLockOwnerState)
     - [CronjobSchedulerEvent](#resources-common-cron-CronjobSchedulerEvent)
+    - [GenericCronData](#resources-common-cron-GenericCronData)
+    - [GenericCronData.AttributesEntry](#resources-common-cron-GenericCronData-AttributesEntry)
   
     - [CronjobState](#resources-common-cron-CronjobState)
   
@@ -1855,7 +1857,9 @@
 | schedule | [string](#string) |  |  |
 | state | [CronjobState](#resources-common-cron-CronjobState) |  |  |
 | next_schedule_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| started_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| timeout | [google.protobuf.Duration](#google-protobuf-Duration) | optional |  |
 | data | [CronjobData](#resources-common-cron-CronjobData) |  |  |
 
 
@@ -1923,6 +1927,37 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | cronjob | [Cronjob](#resources-common-cron-Cronjob) |  |  |
+
+
+
+
+
+
+<a name="resources-common-cron-GenericCronData"></a>
+
+### GenericCronData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| attributes | [GenericCronData.AttributesEntry](#resources-common-cron-GenericCronData-AttributesEntry) | repeated |  |
+
+
+
+
+
+
+<a name="resources-common-cron-GenericCronData-AttributesEntry"></a>
+
+### GenericCronData.AttributesEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [string](#string) |  |  |
 
 
 

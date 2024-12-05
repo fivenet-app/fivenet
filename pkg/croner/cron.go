@@ -11,6 +11,7 @@ import (
 
 	"github.com/adhocore/gronx"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/locks"
@@ -121,12 +122,23 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return fmt.Errorf("failed to load existing cron job %s. %w", job.Name, err)
 	}
-
 	if cj != nil {
 		// Merge with existing cronjob data
 		cj.Merge(job)
 	} else {
 		cj = job
+	}
+
+	if cj.State == cron.CronjobState_CRONJOB_STATE_UNSPECIFIED {
+		cj.State = cron.CronjobState_CRONJOB_STATE_PENDING
+	}
+
+	if cj.NextScheduleTime == nil {
+		nextTime, err := gronx.NextTick(cj.Schedule, false)
+		if err != nil {
+			return err
+		}
+		cj.NextScheduleTime = timestamp.New(nextTime)
 	}
 
 	if cj.Data == nil {

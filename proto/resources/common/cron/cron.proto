@@ -14,9 +14,12 @@ message Cronjob {
   CronjobState state = 3;
 
   resources.timestamp.Timestamp next_schedule_time = 4;
-  resources.timestamp.Timestamp last_attempt_time = 5;
+  optional resources.timestamp.Timestamp last_attempt_time = 5;
+  optional resources.timestamp.Timestamp started_time = 6;
 
-  CronjobData data = 6;
+  optional google.protobuf.Duration timeout = 7;
+
+  CronjobData data = 8;
 }
 
 enum CronjobState {
@@ -47,4 +50,8 @@ message CronjobCompletedEvent {
   google.protobuf.Duration elapsed = 4;
 
   optional CronjobData data = 5;
+}
+
+message GenericCronData {
+  map<string, string> attributes = 1;
 }

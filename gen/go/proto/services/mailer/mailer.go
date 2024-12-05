@@ -6,6 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/pkg/access"
 	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
@@ -13,6 +14,32 @@ import (
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetMailerEmails,
+		TimestampColumn: table.FivenetMailerEmails.DeletedAt,
+		MinDays:         60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetMailerThreads,
+		TimestampColumn: table.FivenetMailerThreads.DeletedAt,
+		MinDays:         60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetMailerMessages,
+		TimestampColumn: table.FivenetMailerMessages.DeletedAt,
+		MinDays:         60,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetMailerTemplates,
+		TimestampColumn: table.FivenetMailerTemplates.DeletedAt,
+		MinDays:         60,
+	})
+}
 
 type Server struct {
 	MailerServiceServer

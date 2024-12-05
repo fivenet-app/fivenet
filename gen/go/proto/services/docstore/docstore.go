@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
@@ -38,6 +39,8 @@ import (
 const (
 	DocsDefaultPageSize   = 16
 	DocShortContentLength = 128
+
+	housekeeperMinDays = 60
 )
 
 var (
@@ -49,6 +52,37 @@ var (
 	tDJobAccess    = table.FivenetDocumentsJobAccess.AS("job_access")
 	tDUserAccess   = table.FivenetDocumentsUserAccess.AS("user_access")
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocuments,
+		TimestampColumn: table.FivenetDocuments.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsTemplates,
+		TimestampColumn: table.FivenetDocumentsTemplates.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsComments,
+		TimestampColumn: table.FivenetDocumentsComments.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsReferences,
+		TimestampColumn: table.FivenetDocumentsReferences.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetDocumentsRelations,
+		TimestampColumn: table.FivenetDocumentsRelations.DeletedAt,
+		MinDays:         housekeeperMinDays,
+	})
+}
 
 type Server struct {
 	DocStoreServiceServer

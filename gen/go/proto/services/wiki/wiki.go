@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -35,6 +36,14 @@ import (
 )
 
 const defaultWikiUpperLimit = 250
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetWikiPages,
+		TimestampColumn: table.FivenetWikiPages.DeletedAt,
+		MinDays:         60,
+	})
+}
 
 var (
 	tPage        = table.FivenetWikiPages.AS("page")

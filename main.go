@@ -43,6 +43,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/lang"
@@ -90,6 +91,7 @@ type WorkerCmd struct {
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
 	ModuleJobsTimeclock      bool `help:"Start Jobs timeclock housekeeper module" default:"true"`
 	ModuleDocsWorkflow       bool `help:"Start Docstore Workflow module" default:"true"`
+	ModuleHousekeeper        bool `help:"Start Housekeepr module" default:"true"`
 }
 
 func (c *WorkerCmd) Run(ctx *Context) error {
@@ -112,6 +114,9 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 	}
 	if c.ModuleDocsWorkflow {
 		fxOpts = append(fxOpts, fx.Invoke(func(*pbdocstore.Workflow) {}))
+	}
+	if c.ModuleHousekeeper {
+		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
 	}
 
 	// Only run cron agent in worker
@@ -186,6 +191,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		server.HTTPServerModule,
 		centrumstate.StateModule,
 		storage.Module,
+		housekeeper.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
