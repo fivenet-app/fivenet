@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
-	tUsers := tUsers.AS("colleague")
+	tUsers := tUsers.AS("user")
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -28,7 +28,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tUserProps.Avatar.AS("colleague.avatar"),
+			tUserProps.Avatar.AS("user.avatar"),
 		).
 		FROM(
 			tUsers.
@@ -51,6 +51,10 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 			return nil, fmt.Errorf("failed to resolve user by id %d: %w", u, err)
 		}
 
+		return nil, nil
+	}
+
+	if dest.UserId == 0 {
 		return nil, nil
 	}
 

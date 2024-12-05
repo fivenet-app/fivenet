@@ -134,23 +134,25 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *ManageColleague
 	}
 
 	tJobLabels := table.FivenetJobsLabels
-	insertStmt := tJobLabels.
-		INSERT(
-			tJobLabels.Job,
-			tJobLabels.Name,
-			tJobLabels.Color,
-			tJobLabels.Order,
-		).
-		MODELS(req.Labels).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobLabels.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-			tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
-			tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
-		)
+	if len(req.Labels) > 0 {
+		insertStmt := tJobLabels.
+			INSERT(
+				tJobLabels.Job,
+				tJobLabels.Name,
+				tJobLabels.Color,
+				tJobLabels.Order,
+			).
+			MODELS(req.Labels).
+			ON_DUPLICATE_KEY_UPDATE(
+				tJobLabels.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+				tJobLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
+				tJobLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+				tJobLabels.Order.SET(jet.IntExp(jet.Raw("VALUES(`order`)"))),
+			)
 
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
 	}
 
 	if len(removed) > 0 {

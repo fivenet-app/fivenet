@@ -117,6 +117,7 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                     <ClientOnly>
                         <UForm :state="{}" class="flex-1">
                             <UInput v-model="tab.url" type="text" class="mx-1 flex-1" />
+                            <!-- Confirm via enter or button -->
                         </UForm>
                     </ClientOnly>
                 </div>

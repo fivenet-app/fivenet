@@ -67,7 +67,7 @@ async function getCitizen(id: number): Promise<User | undefined> {
     }
 }
 
-const user = computed(() => (data.value || props.user) as User);
+const user = computed(() => ({ ...data.value, ...props.user }) as User);
 
 const { game } = useAppConfig();
 

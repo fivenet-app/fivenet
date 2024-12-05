@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strings"
+	"sync"
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
@@ -14,12 +15,15 @@ import (
 type Searcher struct {
 	cache *Cache
 
+	mu   sync.Mutex
 	jobs bleve.Index
 }
 
 func NewSearcher(cache *Cache) (*Searcher, error) {
 	s := &Searcher{
 		cache: cache,
+
+		mu: sync.Mutex{},
 	}
 
 	jobs, err := s.newJobsIndex()
@@ -43,6 +47,9 @@ func (s *Searcher) newJobsIndex() (bleve.Index, error) {
 }
 
 func (s *Searcher) addDataToIndex(ctx context.Context) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	errs := multierr.Combine()
 
 	batch := s.jobs.NewBatch()
