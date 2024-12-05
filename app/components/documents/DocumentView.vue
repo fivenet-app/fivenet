@@ -502,7 +502,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
                     <UBadge v-else-if="doc.workflowState?.nextReminderTime" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                        <UIcon name="i-mdi-reminder" class="size-5" />
                         <span>
                             {{ $t('common.reminder') }}
                             <GenericTime :value="doc.workflowState.nextReminderTime" ago />
@@ -510,7 +510,7 @@ defineShortcuts({
                     </UBadge>
 
                     <UBadge v-if="doc.workflowUser?.manualReminderTime" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-clock" class="size-5" />
+                        <UIcon name="i-mdi-reminder" class="size-5" />
                         <span>
                             {{ $t('common.reminder') }}
                             <GenericTime :value="doc.workflowUser.manualReminderTime" type="short" />
