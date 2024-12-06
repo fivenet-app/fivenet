@@ -177,12 +177,13 @@ function scrollToMessage(messageId: number): void {
     }
 }
 
-const messageId = useRouteQuery('message', '0', { transform: Number });
-watch(messageId, () => scrollToMessage(messageId.value));
+const selectedMessageId = useRouteQuery('msg', '0', { transform: Number });
+const selectedMessage = computed(() => selectedMessageId.value.toString());
+watch(selectedMessageId, () => scrollToMessage(selectedMessageId.value));
 
 watch(data, () => {
-    if (messageId.value > 0) {
-        scrollToMessage(messageId.value);
+    if (selectedMessageId.value !== 0) {
+        scrollToMessage(selectedMessageId.value);
     }
 });
 
@@ -252,6 +253,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         }
                     "
                     class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
+                    :class="selectedMessage === message.id && '!border-primary-500'"
+                    @click="selectedMessageId = parseInt(message.id)"
                 >
                     <UDivider class="relative">
                         <GenericTime :value="message.createdAt" type="short" />
