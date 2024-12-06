@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import type { Notification } from '~/composables/notifications';
-import { useAuthStore } from '~/store/auth';
 import { useCalendarStore } from '~/store/calendar';
+import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 
@@ -10,8 +10,7 @@ const { t } = useI18n();
 
 const { timeouts } = useAppConfig();
 
-const authStore = useAuthStore();
-const { username, activeChar } = storeToRefs(authStore);
+const { can, username, activeChar } = useAuth();
 
 const notificatorStore = useNotificatorStore();
 const { abort, notifications } = storeToRefs(notificatorStore);
@@ -21,6 +20,7 @@ const settingsStore = useSettingsStore();
 const { calendar } = storeToRefs(settingsStore);
 
 const calendarStore = useCalendarStore();
+const mailerStore = useMailerStore();
 
 async function checkAppointments(): Promise<void> {
     await calendarStore.checkAppointments();
@@ -42,9 +42,14 @@ async function toggleStream(): Promise<void> {
             useTimeoutFn(
                 async () => {
                     await checkAppointments();
+
+                    if (can('MailerService.ListEmails').value) {
+                        await mailerStore.checkEmails();
+                    }
+
                     resume();
                 },
-                randomNumber(2, 7) * 1000,
+                randomNumber(1, 7) * 1000,
             );
         }
 

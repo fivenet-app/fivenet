@@ -189,6 +189,25 @@ export const useMailerStore = defineStore('mailer', {
             }
         },
 
+        async checkEmails(): Promise<void> {
+            try {
+                if (this.emails.length === 0) {
+                    await this.listEmails();
+                }
+
+                if (this.emails.length > 0) {
+                    this.listThreads({
+                        pagination: {
+                            offset: 0,
+                        },
+                        emailIds: this.emails.map((e) => e.id),
+                    });
+                }
+            } catch (_) {
+                /* empty */
+            }
+        },
+
         // Emails
         async listEmails(all?: boolean, offset?: number): Promise<ListEmailsResponse> {
             this.error = undefined;
@@ -309,10 +328,6 @@ export const useMailerStore = defineStore('mailer', {
 
         // Thread
         async listThreads(req: ListThreadsRequest): Promise<Thread[] | undefined> {
-            if (!this.selectedEmail) {
-                return;
-            }
-
             try {
                 const call = getGRPCMailerClient().listThreads(req);
                 const { response } = await call;

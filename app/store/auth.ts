@@ -12,9 +12,12 @@ import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 export const logger = useLogger('🔑 Auth');
 
 export interface AuthState {
+    // Persisted
     accessTokenExpiration: null | Date;
     username: null | string;
     lastCharID: undefined | number;
+
+    // Temporary
     activeChar: null | User;
     loggingIn: boolean;
     loginError: null | TranslateItem;
@@ -25,11 +28,10 @@ export interface AuthState {
 export const useAuthStore = defineStore('auth', {
     state: () =>
         ({
-            // Persisted
             accessTokenExpiration: null,
-            lastCharID: 0,
             username: null,
-            // Temporary
+            lastCharID: 0,
+
             activeChar: null,
             loggingIn: false,
             loginError: null,
