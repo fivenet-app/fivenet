@@ -44,6 +44,22 @@ class WebsocketChannelImpl implements WebsocketChannel {
         this.logger = logger;
         this.ws = ws;
         watch(ws.data, async (val) => this.onMessage(val));
+        watchThrottled(
+            ws.status,
+            () => {
+                if (ws.status.value === 'CLOSED') {
+                    this.activeStreams.forEach((as) => {
+                        as[1].cancel();
+                        as[1].closed = true;
+
+                        this.activeStreams.delete(as[1].streamId);
+                    });
+                }
+            },
+            {
+                throttle: 500,
+            },
+        );
     }
 
     close() {
@@ -67,7 +83,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
         if (stream) {
             switch (frame.payload.oneofKind) {
                 case 'header': {
-                    stream[0].debug && this.logger.debug('Received header for stream', streamId);
+                    stream[0].debug &&
+                        this.logger.debug('Received header for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                     const header = frame.payload.header;
                     if (header === null) {
@@ -85,7 +102,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'body': {
-                    stream[0].debug && this.logger.debug('Received body for stream', streamId);
+                    stream[0].debug &&
+                        this.logger.debug('Received body for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                     const body = frame.payload.body;
                     if (body === null) {
@@ -97,7 +115,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'complete': {
-                    stream[0].debug && this.logger.debug('Received complete for stream', streamId);
+                    stream[0].debug &&
+                        this.logger.debug('Received complete for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                     stream[0].onEnd();
                     stream[1].closed = true;
@@ -117,6 +136,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                         this.logger.debug(
                             'Received failure for stream',
                             streamId,
+                            `${stream[1].service}/${stream[1].method}`,
                             'status:',
                             failure.errorStatus,
                             'msg:',
@@ -129,7 +149,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'cancel': {
-                    stream[0].debug && this.logger.debug('Received cancel for stream', streamId);
+                    stream[0].debug &&
+                        this.logger.debug('Received cancel for stream', streamId, `${stream[1].service}/${stream[1].method}`);
 
                     stream[0].onEnd(errCancelled);
                     break;
@@ -137,7 +158,12 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
                 default:
                     stream[0].debug &&
-                        this.logger.debug('Received unknown message type for stream', streamId, frame.payload.oneofKind);
+                        this.logger.debug(
+                            'Received unknown message type for stream',
+                            streamId,
+                            frame.payload.oneofKind,
+                            `${stream[1].service}/${stream[1].method}`,
+                        );
                     break;
             }
         } else {
@@ -145,17 +171,17 @@ class WebsocketChannelImpl implements WebsocketChannel {
         }
     }
 
-    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame): Promise<void> {
+    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usignBuffer: boolean = true): Promise<boolean> {
         if (!this.activeStreams.has(toSend.streamId)) {
             opts.debug && this.logger.debug('Stream does not exist', toSend.streamId);
-            return;
+            return false;
         }
 
         if (this.ws.status.value === 'CLOSED') {
             throw errUnavailable;
         }
 
-        this.ws.send(GrpcFrame.toBinary(toSend), true);
+        return this.ws.send(GrpcFrame.toBinary(toSend), usignBuffer);
     }
 
     getStream(opts: TransportOptions): GrpcStream {
@@ -213,7 +239,7 @@ class WebsocketChannelStream {
     }
 
     async sendMessage(msgBytes: Uint8Array, complete?: boolean) {
-        this.opts.debug && this.logger.debug('Stream send', this.streamId);
+        this.opts.debug && this.logger.debug('Stream send', this.streamId, `${this.service}/${this.method}`);
 
         const output = new Uint8Array(msgBytes.length + 5);
         output[0] = 0; // Compression none
@@ -238,7 +264,7 @@ class WebsocketChannelStream {
     }
 
     async finishSend() {
-        this.opts.debug && this.logger.debug('Stream complete', this.streamId);
+        this.opts.debug && this.logger.debug('Stream complete', this.streamId, `${this.service}/${this.method}`);
 
         this.wsChannel.sendToWebsocket(
             this.opts,
@@ -252,14 +278,14 @@ class WebsocketChannelStream {
         );
     }
 
-    async cancel() {
+    async cancel(err?: Error) {
         if (this.closed) {
             return;
         }
 
-        this.opts.debug && this.logger.debug('Stream cancel', this.streamId);
+        this.opts.debug && this.logger.debug('Stream cancel', this.streamId, `${this.service}/${this.method}`);
 
-        this.opts.onEnd(errCancelled);
+        this.opts.onEnd(err ?? errCancelled);
 
         this.wsChannel.sendToWebsocket(
             this.opts,

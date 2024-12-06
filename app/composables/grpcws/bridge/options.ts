@@ -4,4 +4,5 @@ export interface GrpcWSOptions extends RpcOptions {
     debug?: boolean;
     wsUrl: string;
     timeout?: number;
+    reconnect?: boolean;
 }

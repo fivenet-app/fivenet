@@ -366,7 +366,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.cleanupIntervalId = setInterval(() => this.cleanup(), cleanupInterval);
             }
 
-            logger.debug('Starting Data Stream');
+            logger.debug('Starting Stream');
 
             const { activeChar } = useAuth();
             const notifications = useNotificatorStore();
@@ -606,7 +606,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (error) {
                     // Only restart when not cancelled and abort is still valid
                     if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                        logger.error('Data Stream Failed', error.code, error.message, error.cause);
+                        logger.error('Stream failed', error.code, error.message, error.cause);
 
                         // Only set error if we don't need to restart
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
@@ -620,14 +620,14 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             }
 
-            logger.debug('Data Stream Ended');
+            logger.debug('Stream ended');
         },
         async stopStream(): Promise<void> {
             if (this.abort !== undefined) {
                 this.abort.abort();
                 this.abort = undefined;
 
-                logger.debug('Stopping Data Stream');
+                logger.debug('Stopping Stream');
             }
 
             if (!this.reconnecting) {

@@ -4,7 +4,7 @@ import type { Metadata } from '../metadata';
 export interface Transport {
     sendMessage(msgBytes: Uint8Array, complete?: boolean): Promise<void>;
     finishSend(): Promise<void>;
-    cancel(): Promise<void>;
+    cancel(err?: Error): Promise<void>;
     start(metadata: Metadata): void;
 }
 

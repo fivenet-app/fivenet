@@ -86,7 +86,7 @@ const { resume } = watchPausable(
 
 useTimeoutFn(() => {
     resume();
-}, 3000);
+}, 2750);
 </script>
 
 <template>

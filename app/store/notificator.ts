@@ -11,8 +11,8 @@ import { useMailerStore } from './mailer';
 const logger = useLogger('📣 Notificator');
 
 // In seconds
+const maxBackoffTime = 30;
 const initialReconnectBackoffTime = 2;
-const maxBackoffTime = 40;
 
 export interface NotificationsState {
     notifications: Notification[];
@@ -55,7 +55,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
-            logger.debug('Starting Data Stream');
+            logger.debug('Starting Stream');
 
             this.abort = new AbortController();
             this.reconnecting = false;
@@ -64,8 +64,6 @@ export const useNotificatorStore = defineStore('notifications', {
             const { can } = useAuth();
 
             try {
-                this.abort = new AbortController();
-
                 const call = getGRPCNotificatorClient().stream(
                     {},
                     {
@@ -166,7 +164,7 @@ export const useNotificatorStore = defineStore('notifications', {
                         this.stopStream();
                         useGRPCWebsocketTransport().close();
                         this.restartStream();
-                        break;
+                        return;
                     }
                 }
             } catch (e) {
@@ -181,7 +179,7 @@ export const useNotificatorStore = defineStore('notifications', {
                         this.restartStream();
                     }
                 } else {
-                    this.restartStream();
+                    await this.restartStream();
                 }
             }
 
@@ -195,7 +193,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
             this.abort.abort();
             this.abort = undefined;
-            logger.debug('Stopping Data Stream');
+            logger.debug('Stopping Stream');
         },
 
         async restartStream(): Promise<void> {

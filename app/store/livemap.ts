@@ -8,6 +8,7 @@ import { useSettingsStore } from './settings';
 const logger = useLogger('🗺️ Livemap');
 
 // In seconds
+const maxBackOffTime = 10;
 const initialReconnectBackoffTime = 1.75;
 
 export interface LivemapState {
@@ -62,7 +63,7 @@ export const useLivemapStore = defineStore('livemap', {
                 return;
             }
 
-            logger.debug('Starting Data Stream');
+            logger.debug('Starting Stream');
 
             const settingsStore = useSettingsStore();
             const { livemap } = storeToRefs(settingsStore);
@@ -147,24 +148,27 @@ export const useLivemapStore = defineStore('livemap', {
                 }
             } catch (e) {
                 const error = e as RpcError;
-                if (error) {
-                    // Only restart when not cancelled and abort is still valid
-                    if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                        logger.error('Data Stream Failed', error.code, error.message, error.cause);
+                // Only restart when not cancelled and abort is still valid
+                if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
+                    logger.error('Stream failed', error.code, error.message, error.cause);
 
-                        // Only set error if we don't need to restart
-                        if (this.abort !== undefined && !this.abort?.signal.aborted) {
-                            this.restartStream();
-                        } else {
-                            this.error = error;
-                        }
+                    // Only set error if we don't need to restart
+                    if (this.abort !== undefined && !this.abort?.signal.aborted) {
+                        this.restartStream();
                     } else {
-                        this.error = undefined;
+                        this.error = error;
+                    }
+                } else {
+                    this.error = undefined;
+
+                    // Only restart stream when not aborted
+                    if (!this.abort?.signal.aborted) {
+                        await this.restartStream();
                     }
                 }
             }
 
-            logger.debug('Data Stream Ended');
+            logger.debug('Stream ended');
         },
 
         async stopStream(): Promise<void> {
@@ -174,14 +178,14 @@ export const useLivemapStore = defineStore('livemap', {
 
             this.abort.abort();
             this.abort = undefined;
-            logger.debug('Stopping Data Stream');
+            logger.debug('Stopping Stream');
         },
 
         async restartStream(): Promise<void> {
             this.reconnecting = true;
 
             // Reset back off time when over 10 seconds
-            if (this.reconnectBackoffTime > 10) {
+            if (this.reconnectBackoffTime > maxBackOffTime) {
                 this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;

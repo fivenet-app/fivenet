@@ -590,8 +590,11 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         checkIfEmailBlocked(email: string): boolean {
-            this.emails.find((e) => email);
-            return false;
+            if (!this.selectedEmail?.settings?.blockedEmails) {
+                return false;
+            }
+
+            return this.selectedEmail.settings.blockedEmails.includes(email.toLowerCase());
         },
 
         getNotificationActions(threadId?: string): NotificationActionI18n[] {

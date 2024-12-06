@@ -266,7 +266,7 @@ func (s *Server) getEmail(ctx context.Context, emailId uint64, withAccess bool, 
 	}
 
 	if withSettings {
-		settings, err := s.getEmailSettings(ctx, emailId)
+		settings, err := s.getEmailSettings(ctx, s.db, emailId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}

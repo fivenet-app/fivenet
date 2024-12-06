@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"slices"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -32,7 +34,7 @@ func (s *Server) GetEmailSettings(ctx context.Context, req *GetEmailSettingsRequ
 		return nil, errorsmailer.ErrNoPerms
 	}
 
-	settings, err := s.getEmailSettings(ctx, req.EmailId)
+	settings, err := s.getEmailSettings(ctx, s.db, req.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -42,7 +44,7 @@ func (s *Server) GetEmailSettings(ctx context.Context, req *GetEmailSettingsRequ
 	}, nil
 }
 
-func (s *Server) getEmailSettings(ctx context.Context, emailId uint64) (*mailer.EmailSettings, error) {
+func (s *Server) getEmailSettings(ctx context.Context, tx qrm.DB, emailId uint64) (*mailer.EmailSettings, error) {
 	tSettings := tSettings.AS("email_settings")
 	stmt := tSettings.
 		SELECT(
@@ -64,7 +66,7 @@ func (s *Server) getEmailSettings(ctx context.Context, emailId uint64) (*mailer.
 	dest := &mailer.EmailSettings{
 		EmailId: emailId,
 	}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -93,10 +95,32 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 		return nil, errorsmailer.ErrNoPerms
 	}
 
+	email, err := s.getEmail(ctx, req.Settings.EmailId, false, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
 	signature := jet.StringExp(jet.NULL)
 	if req.Settings.Signature != nil {
 		signature = jet.String(*req.Settings.Signature)
 	}
+
+	// Make all emails lowercase, remove own email, and remove duplicates
+	for idx := range req.Settings.BlockedEmails {
+		req.Settings.BlockedEmails[idx] = strings.ToLower(req.Settings.BlockedEmails[idx])
+	}
+	req.Settings.BlockedEmails = slices.DeleteFunc(req.Settings.BlockedEmails, func(e string) bool {
+		return e == email.Email
+	})
+	utils.RemoveSliceDuplicates(req.Settings.BlockedEmails)
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	stmt := tSettings.
 		INSERT(
@@ -111,11 +135,11 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 			tSettings.Signature.SET(signature),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
-	settings, err := s.getEmailSettings(ctx, req.Settings.EmailId)
+	settings, err := s.getEmailSettings(ctx, tx, req.Settings.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
@@ -127,7 +151,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 				DELETE().
 				WHERE(tSettingsBlocks.EmailID.EQ(jet.Int32(userInfo.UserId)))
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
@@ -166,7 +190,7 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 					)
 			}
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
@@ -181,13 +205,18 @@ func (s *Server) SetEmailSettings(ctx context.Context, req *SetEmailSettingsRequ
 					tSettingsBlocks.TargetEmail.IN(targets...),
 				))
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 			}
 		}
 	}
 
-	settings, err = s.getEmailSettings(ctx, req.Settings.EmailId)
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	settings, err = s.getEmailSettings(ctx, s.db, req.Settings.EmailId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
