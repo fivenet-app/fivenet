@@ -116,8 +116,8 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 			tMessages.Content,
 			tMessages.Data,
 			tMessages.CreatorID,
-			tEmails.ID,
-			tEmails.Email,
+			tMessages.SenderID.AS("sender.id"),
+			tMessages.CreatorEmail.AS("sender.email"),
 		).
 		FROM(
 			tMessages.
