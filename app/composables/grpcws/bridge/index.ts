@@ -122,10 +122,6 @@ export class GrpcWSTransport implements RpcTransport {
             },
         });
 
-        if (this.webSocket.status.value !== 'OPEN') {
-            throw errUnavailable;
-        }
-
         transport.start(new Metadata());
         transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
 
