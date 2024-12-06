@@ -83,6 +83,16 @@ async function loadThreads(): Promise<void> {
     });
 }
 
+const selectedThreadId = useRouteQuery('thread', '', { transform: Number });
+watch(selectedThreadId, async () => {
+    if (selectedThreadId.value <= 0) {
+        return;
+    }
+
+    const thread = await mailerStore.getThread(selectedThreadId.value.toString());
+    selectedThread.value = thread;
+});
+
 const threads = useDexieLiveQuery(
     () =>
         mailerDB.threads
@@ -142,13 +152,13 @@ function updateQuery(): void {
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
         router.replace({
-            query: { ...route.query, email: selectedEmail.value?.id ?? '0', thread: selectedThread.value.id },
+            query: { ...route.query, thread: selectedThread.value.id },
             hash: '#',
         });
     }
 }
 
-watch(selectedThread, updateQuery);
+watch(selectedThread, () => updateQuery());
 
 onBeforeMount(async () => {
     await mailerStore.listEmails();

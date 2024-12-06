@@ -10,7 +10,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
-import { canAccess } from './helpers';
+import { canAccess, generateResponseTitle } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 
 const props = withDefaults(
@@ -95,7 +95,7 @@ const {
 
         if (selectedThread.value) {
             if (state.value.title === '') {
-                state.value.title = 'RE: ' + selectedThread.value.title;
+                state.value.title = generateResponseTitle(selectedThread.value);
             }
 
             if ((!state.value.content || state.value.content === '<p><br></p>') && !!selectedEmail.value?.settings?.signature) {
@@ -382,7 +382,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         variant="link"
                                         icon="i-mdi-close"
                                         :padded="false"
-                                        @click="state.title = ''"
+                                        @click="state.title = generateResponseTitle(selectedThread)"
                                     />
                                 </template>
                             </UInput>

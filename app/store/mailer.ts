@@ -41,6 +41,7 @@ export interface MailerState {
     };
 
     emails: Email[];
+    selectedEmailId: string | undefined;
     selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
 
@@ -60,6 +61,7 @@ export const useMailerStore = defineStore('mailer', {
             },
 
             emails: [],
+            selectedEmailId: undefined,
             selectedEmail: undefined,
             selectedThread: undefined,
 
@@ -253,12 +255,18 @@ export const useMailerStore = defineStore('mailer', {
                             hash: '#',
                         });
                     }
-                } else if (this.emails[0]) {
-                    if (this.emails[0].settings === undefined) {
+                } else if (this.emails.length > 0) {
+                    // Check if previously selected email is available
+                    const previousEmail = this.emails.find((e) => e.id === this.selectedEmailId);
+                    if (previousEmail) {
+                        this.selectedEmail = previousEmail;
+                    } else if (this.emails[0] && this.emails[0].settings === undefined) {
                         this.selectedEmail = await this.getEmail(this.emails[0].id);
                     } else {
                         this.selectedEmail = this.emails[0];
                     }
+
+                    this.selectedEmailId = this.selectedEmail?.id;
                 }
 
                 this.loaded = true;

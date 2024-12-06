@@ -39,19 +39,6 @@ const isMailerPanelOpen = computed({
     },
 });
 
-// Set email as query param for persistence between reloads
-const route = useRoute();
-const router = useRouter();
-
-watch(selectedEmail, () => {
-    if (!selectedEmail.value) {
-        router.replace({ query: {} });
-    } else {
-        // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { email: selectedEmail.value.id }, hash: '#' });
-    }
-});
-
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (pagination.value?.pageSize ?? 20) * (page.value - 1));
 const pagination = ref<PaginationResponse | undefined>();
@@ -63,6 +50,8 @@ async function listEmails(): Promise<void> {
 
 watch(offset, async () => await listEmails());
 
+const route = useRoute();
+
 onBeforeMount(async () => {
     await listEmails();
 
@@ -71,12 +60,6 @@ onBeforeMount(async () => {
             return;
         }
     }
-
-    if (!route.query.email) {
-        return;
-    }
-
-    selectedEmail.value = await mailerStore.getEmail(route.query.email as string);
 });
 
 const canCreate = computed(
