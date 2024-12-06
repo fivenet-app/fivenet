@@ -55,7 +55,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
@@ -82,7 +82,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
@@ -109,7 +109,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
@@ -136,7 +136,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
@@ -163,7 +163,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
@@ -190,7 +190,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
@@ -217,7 +217,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
@@ -243,7 +243,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
@@ -270,7 +270,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
@@ -297,7 +297,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
@@ -324,7 +324,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
@@ -351,7 +351,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else>
@@ -378,7 +378,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
     </li>

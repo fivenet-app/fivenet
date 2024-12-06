@@ -223,8 +223,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
                     >
                         <UDivider class="relative">
-                            <span>{{ message.id }}&nbsp;&nbsp;</span>
-                            <GenericTime :value="message.createdAt" :type="'short'" />
+                            <GenericTime :value="message.createdAt" type="short" />
 
                             <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
                                 <UButton
