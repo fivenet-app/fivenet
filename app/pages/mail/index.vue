@@ -31,15 +31,35 @@ const { emails, selectedEmail, selectedThread, draft } = storeToRefs(mailerStore
 const tabItems = [
     {
         label: t('common.all'),
+        slot: 'all',
     },
     {
         label: t('common.unread'),
+        slot: 'unread',
     },
     {
         label: t('common.archive'),
+        slot: 'archive',
     },
 ];
-const selectedTab = ref(0);
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = tabItems.findIndex((item) => item.slot === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { ...route.query, tab: tabItems[value]?.slot }, hash: '#' });
+    },
+});
 
 watch(selectedEmail, async () => await loadThreads());
 
@@ -109,15 +129,21 @@ watch(filteredThreads, () => {
 });
 
 // Set thread as query param for persistence between reloads
-const route = useRoute();
-const router = useRouter();
-
 function updateQuery(): void {
     if (!selectedThread.value || !selectedEmail.value) {
-        router.replace({ query: {} });
+        router.replace({
+            query: route.query.tab
+                ? {
+                      tab: route.query.tab,
+                  }
+                : {},
+        });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { email: selectedEmail.value?.id ?? '0', thread: selectedThread.value.id }, hash: '#' });
+        router.replace({
+            query: { ...route.query, email: selectedEmail.value?.id ?? '0', thread: selectedThread.value.id },
+            hash: '#',
+        });
     }
 }
 
@@ -173,7 +199,21 @@ onBeforeMount(async () => {
                 }"
             >
                 <ClientOnly>
+                    <UInput
+                        v-if="emails.length === 1"
+                        type="text"
+                        disabled
+                        :model-value="
+                            (selectedEmail?.label && selectedEmail?.label !== ''
+                                ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                                : undefined) ??
+                            selectedEmail?.email ??
+                            $t('common.none')
+                        "
+                        class="pt-1"
+                    />
                     <USelectMenu
+                        v-else
                         v-model="selectedEmail"
                         :options="emails"
                         :placeholder="$t('common.mail')"

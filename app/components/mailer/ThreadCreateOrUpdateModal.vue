@@ -120,7 +120,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <div class="flex flex-1 flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
                                 <ClientOnly>
+                                    <UInput
+                                        v-if="emails.length === 1"
+                                        type="text"
+                                        disabled
+                                        :model-value="
+                                            (selectedEmail?.label && selectedEmail?.label !== ''
+                                                ? selectedEmail?.label + ' (' + selectedEmail.email + ')'
+                                                : undefined) ??
+                                            selectedEmail?.email ??
+                                            $t('common.none')
+                                        "
+                                        class="pt-1"
+                                    />
                                     <USelectMenu
+                                        v-else
                                         v-model="selectedEmail"
                                         :options="emails"
                                         :placeholder="$t('common.mail')"

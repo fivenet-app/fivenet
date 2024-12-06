@@ -63,7 +63,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
             </div>
         </template>
 
-        <VisXYContainer :key="width" :data="data" :padding="{ top: 10, left: 2, right: 2 }" class="h-80" :width="width">
+        <VisXYContainer :data="data" :padding="{ top: 10, left: 2, right: 2 }" class="h-80" :width="width">
             <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
             <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
 
@@ -100,7 +100,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
 
         --vis-axis-grid-color: rgb(var(--color-gray-800));
         --vis-axis-tick-color: rgb(var(--color-gray-800));
-        --vis-axis-tick-label-color: rgb(var(--color-gray-500));
+        --vis-axis-tick-label-color: rgb(var(--color-gray-400));
 
         --vis-tooltip-background-color: rgb(var(--color-gray-900));
         --vis-tooltip-border-color: rgb(var(--color-gray-800));
