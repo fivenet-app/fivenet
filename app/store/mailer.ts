@@ -192,7 +192,7 @@ export const useMailerStore = defineStore('mailer', {
         async checkEmails(): Promise<void> {
             try {
                 if (this.emails.length === 0) {
-                    await this.listEmails();
+                    await this.listEmails(true, 0, false);
                 }
 
                 if (this.emails.length > 0) {
@@ -209,7 +209,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Emails
-        async listEmails(all?: boolean, offset?: number): Promise<ListEmailsResponse> {
+        async listEmails(all?: boolean, offset?: number, redirect: boolean = true): Promise<ListEmailsResponse> {
             this.error = undefined;
 
             if (this.addressBook.length > 30) {
@@ -227,13 +227,15 @@ export const useMailerStore = defineStore('mailer', {
 
                 this.emails = response.emails;
                 if (this.emails.length === 0 || !this.hasPrivateEmail) {
-                    await navigateTo({
-                        name: 'mail-manage',
-                        query: {
-                            tab: 'new',
-                        },
-                        hash: '#',
-                    });
+                    if (redirect) {
+                        await navigateTo({
+                            name: 'mail-manage',
+                            query: {
+                                tab: 'new',
+                            },
+                            hash: '#',
+                        });
+                    }
                 } else if (this.emails[0]) {
                     if (this.emails[0].settings === undefined) {
                         this.selectedEmail = await this.getEmail(this.emails[0].id);

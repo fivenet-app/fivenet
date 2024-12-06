@@ -17,7 +17,7 @@ import {
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
-import { errInternal, errTimeout } from '../errors';
+import { errInternal, errTimeout, errUnavailable } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
 import { createGrpcStatus, createGrpcTrailers } from './utils';
@@ -122,6 +122,10 @@ export class GrpcWSTransport implements RpcTransport {
             },
         });
 
+        if (this.webSocket.status.value !== 'OPEN') {
+            throw errUnavailable;
+        }
+
         transport.start(new Metadata());
         transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
 
@@ -196,6 +200,10 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
+        if (this.webSocket.status.value !== 'OPEN') {
+            throw errUnavailable;
+        }
+
         transport.start(new Metadata());
         transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
 
@@ -261,6 +269,10 @@ export class GrpcWSTransport implements RpcTransport {
             });
         }
 
+        if (this.webSocket.status.value !== 'OPEN') {
+            throw errUnavailable;
+        }
+
         transport.start(new Metadata());
 
         return call;
@@ -324,6 +336,10 @@ export class GrpcWSTransport implements RpcTransport {
             opt.abort.addEventListener('abort', (_) => {
                 transport.cancel();
             });
+        }
+
+        if (this.webSocket.status.value !== 'OPEN') {
+            throw errUnavailable;
         }
 
         transport.start(new Metadata());
