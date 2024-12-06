@@ -204,7 +204,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="font-semibold"
                                     :placeholder="$t('common.title')"
                                     :disabled="!canSubmit"
-                                />
+                                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                                >
+                                    <template #trailing>
+                                        <UButton
+                                            v-show="state.title !== ''"
+                                            color="gray"
+                                            variant="link"
+                                            icon="i-mdi-close"
+                                            :padded="false"
+                                            @click="state.title = ''"
+                                        />
+                                    </template>
+                                </UInput>
                             </UFormGroup>
 
                             <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.recipient', 2)">

@@ -6,6 +6,7 @@ import TemplatesModal from '~/components/mailer/TemplatesModal.vue';
 import ThreadCreateOrUpdateModal from '~/components/mailer/ThreadCreateOrUpdateModal.vue';
 import ThreadList from '~/components/mailer/ThreadList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DashboardPanel from '~/components/partials/DashboardPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { mailerDB, useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
@@ -315,7 +316,7 @@ onBeforeMount(async () => {
             </template>
         </UDashboardPanel>
 
-        <UDashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen" collapsible grow side="right">
+        <DashboardPanel v-if="selectedEmail" id="mailerthreadview" v-model="isMailerPanelOpen" collapsible grow side="right">
             <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>
@@ -455,6 +456,6 @@ onBeforeMount(async () => {
                 <UIcon name="i-mdi-email-multiple" class="h-32 w-32" />
                 <p>{{ $t('common.none_selected', [$t('common.mail')]) }}</p>
             </div>
-        </UDashboardPanel>
+        </DashboardPanel>
     </UDashboardPage>
 </template>

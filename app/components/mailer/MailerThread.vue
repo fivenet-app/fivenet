@@ -350,7 +350,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 class="w-full font-semibold text-gray-900 dark:text-white"
                                 :placeholder="$t('common.title')"
                                 :disabled="!canSubmit"
-                            />
+                                :ui="{ icon: { trailing: { pointer: '' } } }"
+                            >
+                                <template #trailing>
+                                    <UButton
+                                        v-show="state.title !== ''"
+                                        color="gray"
+                                        variant="link"
+                                        icon="i-mdi-close"
+                                        :padded="false"
+                                        @click="state.title = ''"
+                                    />
+                                </template>
+                            </UInput>
 
                             <TemplateSelector v-model="state.content" size="lg" class="ml-auto" />
                         </div>
