@@ -101,6 +101,7 @@ export const useMailerStore = defineStore('mailer', {
                     // Make sure to set thread state accordingly (locally)
                     await this.setThreadState(
                         {
+                            threadId: event.data.threadUpdate.id,
                             archived: true,
                             muted: true,
                         },
@@ -108,6 +109,18 @@ export const useMailerStore = defineStore('mailer', {
                     );
                     return;
                 }
+
+                if (event.data.threadUpdate.creatorEmailId === this.selectedEmail?.id) {
+                    return;
+                }
+
+                await this.setThreadState(
+                    {
+                        threadId: event.data.threadUpdate.id,
+                        unread: true,
+                    },
+                    true,
+                );
 
                 useNotificatorStore().add({
                     title: { key: 'notifications.mailer.new_email.title', parameters: {} },
@@ -121,6 +134,7 @@ export const useMailerStore = defineStore('mailer', {
                     type: NotificationType.INFO,
                     actions: this.getNotificationActions(event.data.threadUpdate.id),
                 });
+                useSound().play({ name: 'notification' });
             } else if (event.data.oneofKind === 'threadDelete') {
                 await mailerDB.threads.delete(event.data.threadDelete);
             } else if (event.data.oneofKind === 'messageUpdate') {
@@ -139,6 +153,7 @@ export const useMailerStore = defineStore('mailer', {
                     // Make sure to set thread state accordingly (locally)
                     await this.setThreadState(
                         {
+                            threadId: event.data.messageUpdate.threadId,
                             archived: true,
                             muted: true,
                         },
@@ -150,6 +165,8 @@ export const useMailerStore = defineStore('mailer', {
                 if (event.data.messageUpdate.senderId === this.selectedEmail?.id) {
                     return;
                 }
+
+                console.log('MessageUpdate', event.data.messageUpdate);
 
                 // Only set unread state when message isn't from same email and the user isn't active on that thread
                 if (event.data.messageUpdate.threadId !== this.selectedThread?.id) {
@@ -663,7 +680,7 @@ class MailerDexie extends Dexie {
 
     constructor() {
         super('mailer');
-        this.version(1).stores({
+        this.version(2).stores({
             threads: 'id, creatorEmailId',
             messages: 'id, threadId',
         });

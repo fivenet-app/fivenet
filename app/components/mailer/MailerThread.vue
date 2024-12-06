@@ -65,10 +65,10 @@ const messages = useDexieLiveQueryWithDeps(
         mailerDB.messages
             .where('threadId')
             .equals(threadId)
-            .offset(offset.value ?? 0)
-            .limit(16)
             .reverse()
-            .toArray()
+            .offset(offset.value ?? 0)
+            .limit(20)
+            .sortBy('id')
             .then((messages) => ({ messages: messages, loaded: true })),
     {
         initialValue: { messages: [], loaded: false },
@@ -196,11 +196,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-gray-500 dark:text-gray-400">
                         <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
-                        <template v-for="(recipient, idx) in thread.recipients" :key="recipient.emailId">
-                            <UButton variant="link" :padded="false" :label="recipient.email?.email" />
-
-                            <span v-if="thread.recipients.length - 1 !== idx">, </span>
-                        </template>
+                        <UButton
+                            v-for="recipient in thread.recipients"
+                            :key="recipient.emailId"
+                            variant="solid"
+                            color="gray"
+                            :label="recipient.email?.email"
+                        />
                     </div>
                 </div>
             </div>
@@ -221,6 +223,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
                     >
                         <UDivider class="relative">
+                            <span>{{ message.id }}&nbsp;&nbsp;</span>
                             <GenericTime :value="message.createdAt" :type="'short'" />
 
                             <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
@@ -313,17 +316,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </USelectMenu>
                         </ClientOnly>
 
-                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
+                        <div class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
                             <UButtonGroup
                                 v-for="(recipient, idx) in state.recipients"
                                 :key="idx"
                                 size="sm"
                                 orientation="horizontal"
                             >
-                                <UButton variant="link" :padded="false" :label="recipient.label" />
+                                <UButton variant="solid" color="gray" :label="recipient.label" />
 
                                 <UButton
-                                    variant="link"
+                                    variant="outline"
                                     icon="i-mdi-close"
                                     color="red"
                                     @click="state.recipients.splice(idx, 1)"

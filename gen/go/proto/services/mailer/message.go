@@ -18,6 +18,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
+const MessagesDefaultPageSize = 20
+
 var tMessages = table.FivenetMailerMessages.AS("message")
 
 func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error) {
@@ -46,7 +48,7 @@ func (s *Server) ListThreadMessages(ctx context.Context, req *ListThreadMessages
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ThreadsDefaultPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, MessagesDefaultPageSize)
 	resp := &ListThreadMessagesResponse{
 		Pagination: pag,
 		Messages:   []*mailer.Message{},
@@ -119,19 +121,14 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 			tMessages.SenderID.AS("sender.id"),
 			tMessages.CreatorEmail.AS("sender.email"),
 		).
-		FROM(
-			tMessages.
-				LEFT_JOIN(tEmails,
-					tEmails.ID.EQ(tMessages.SenderID),
-				),
-		).
+		FROM(tMessages).
 		WHERE(
 			tMessages.ID.EQ(jet.Uint64(messageId)),
 		).
 		LIMIT(1)
 
-	var message mailer.Message
-	if err := stmt.QueryContext(ctx, s.db, &message); err != nil {
+	message := &mailer.Message{}
+	if err := stmt.QueryContext(ctx, s.db, message); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
@@ -141,7 +138,7 @@ func (s *Server) getMessage(ctx context.Context, messageId uint64) (*mailer.Mess
 		return nil, nil
 	}
 
-	return &message, nil
+	return message, nil
 }
 
 func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*PostMessageResponse, error) {
