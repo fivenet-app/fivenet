@@ -38,7 +38,7 @@ const { activeChar, isSuperuser } = useAuth();
 const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
-const { selectedEmail } = storeToRefs(mailerStore);
+const { selectedEmail, emails } = storeToRefs(mailerStore);
 
 const { data: proposals, refresh: refreshProposabls } = useLazyAsyncData(`emails-proposals`, () => getEmailProposals());
 
@@ -128,6 +128,8 @@ setFromProps();
 watch(props, setFromProps);
 
 async function createOrUpdateEmail(values: Schema): Promise<undefined> {
+    const redirectToMail = emails.value.length === 0;
+
     const response = await mailerStore.createOrUpdateEmail({
         email: {
             id: props.modelValue?.id ?? '0',
@@ -141,18 +143,22 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
         },
     });
 
-    if (response.email) {
-        emit('update:modelValue', response.email);
-
-        // Restart notificator stream
-        notifications.restartStream();
-    }
-
     notifications.add({
         title: { key: 'notifications.action_successfull.title', parameters: {} },
         description: { key: 'notifications.action_successfull.content', parameters: {} },
         type: NotificationType.SUCCESS,
     });
+
+    if (redirectToMail) {
+        await navigateTo({ name: 'mail' });
+    }
+
+    if (response.email) {
+        emit('update:modelValue', response.email);
+
+        // Restart notificator stream
+        await notifications.restartStream();
+    }
 
     emit('refresh');
 }

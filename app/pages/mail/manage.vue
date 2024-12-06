@@ -66,6 +66,12 @@ watch(offset, async () => await listEmails());
 onBeforeMount(async () => {
     await listEmails();
 
+    if (route.query?.tab === 'new') {
+        if (emails.value.length === 0 || !hasPrivateEmail.value) {
+            return;
+        }
+    }
+
     if (!route.query.email) {
         return;
     }
@@ -82,7 +88,7 @@ const creating = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel v-if="emails.length === 0 || !hasPrivateEmail" id="maileremaillist" grow>
+        <UDashboardPanel v-if="route.query?.tab === 'new'" id="maileremaillist" grow>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')" />
 
             <UDashboardPanelContent>
@@ -109,12 +115,7 @@ const creating = ref(false);
                             <p class="text-bas">{{ $t('components.mailer.manage.subtitle') }}</p>
                         </div>
 
-                        <EmailCreateForm
-                            v-if="can('MailerService.CreateOrUpdateEmail').value"
-                            personal-email
-                            hide-label
-                            @refresh="async () => await navigateTo({ name: 'mail' })"
-                        />
+                        <EmailCreateForm v-if="can('MailerService.CreateOrUpdateEmail').value" personal-email hide-label />
                     </div>
                 </div>
             </UDashboardPanelContent>

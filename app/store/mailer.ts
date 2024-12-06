@@ -229,6 +229,10 @@ export const useMailerStore = defineStore('mailer', {
                 if (this.emails.length === 0 || !this.hasPrivateEmail) {
                     await navigateTo({
                         name: 'mail-manage',
+                        query: {
+                            tab: 'new',
+                        },
+                        hash: '#',
                     });
                 } else if (this.emails[0]) {
                     if (this.emails[0].settings === undefined) {
