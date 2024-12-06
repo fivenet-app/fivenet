@@ -120,7 +120,14 @@ const { start } = useTimeoutFn(
     { immediate: false },
 );
 
-onMounted(() => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) && start());
+watchDebounced(
+    selectedThread,
+    () => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) && start(),
+    {
+        debounce: 2500,
+        maxWait: 6000,
+    },
+);
 
 async function postMessage(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) {
