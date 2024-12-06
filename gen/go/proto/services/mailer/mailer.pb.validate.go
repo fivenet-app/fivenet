@@ -4334,6 +4334,335 @@ var _ interface {
 	ErrorName() string
 } = SetEmailSettingsResponseValidationError{}
 
+// Validate checks the field values on SearchThreadsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchThreadsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchThreadsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchThreadsRequestMultiError, or nil if none found.
+func (m *SearchThreadsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchThreadsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := SearchThreadsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchThreadsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchThreadsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchThreadsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetSearch()) > 64 {
+		err := SearchThreadsRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return SearchThreadsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchThreadsRequestMultiError is an error wrapping multiple validation
+// errors returned by SearchThreadsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type SearchThreadsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchThreadsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchThreadsRequestMultiError) AllErrors() []error { return m }
+
+// SearchThreadsRequestValidationError is the validation error returned by
+// SearchThreadsRequest.Validate if the designated constraints aren't met.
+type SearchThreadsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchThreadsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchThreadsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchThreadsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchThreadsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchThreadsRequestValidationError) ErrorName() string {
+	return "SearchThreadsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchThreadsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchThreadsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchThreadsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchThreadsRequestValidationError{}
+
+// Validate checks the field values on SearchThreadsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SearchThreadsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SearchThreadsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SearchThreadsResponseMultiError, or nil if none found.
+func (m *SearchThreadsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SearchThreadsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := SearchThreadsResponseValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SearchThreadsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SearchThreadsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SearchThreadsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetMessages() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SearchThreadsResponseValidationError{
+						field:  fmt.Sprintf("Messages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SearchThreadsResponseValidationError{
+						field:  fmt.Sprintf("Messages[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SearchThreadsResponseValidationError{
+					field:  fmt.Sprintf("Messages[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SearchThreadsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SearchThreadsResponseMultiError is an error wrapping multiple validation
+// errors returned by SearchThreadsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SearchThreadsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SearchThreadsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SearchThreadsResponseMultiError) AllErrors() []error { return m }
+
+// SearchThreadsResponseValidationError is the validation error returned by
+// SearchThreadsResponse.Validate if the designated constraints aren't met.
+type SearchThreadsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SearchThreadsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SearchThreadsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SearchThreadsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SearchThreadsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SearchThreadsResponseValidationError) ErrorName() string {
+	return "SearchThreadsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SearchThreadsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSearchThreadsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SearchThreadsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SearchThreadsResponseValidationError{}
+
 // Validate checks the field values on ListThreadMessagesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -4418,33 +4747,37 @@ func (m *ListThreadMessagesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetAfter()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListThreadMessagesRequestValidationError{
-					field:  "After",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.After != nil {
+
+		if all {
+			switch v := interface{}(m.GetAfter()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListThreadMessagesRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListThreadMessagesRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetAfter()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListThreadMessagesRequestValidationError{
+				return ListThreadMessagesRequestValidationError{
 					field:  "After",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetAfter()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ListThreadMessagesRequestValidationError{
-				field:  "After",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {

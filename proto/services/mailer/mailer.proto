@@ -169,11 +169,22 @@ message SetEmailSettingsResponse {
 
 // Messages
 
+message SearchThreadsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+  string search = 2 [(validate.rules).string.max_len = 64];
+}
+
+message SearchThreadsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.mailer.Message messages = 2;
+}
+
 message ListThreadMessagesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 email_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
   uint64 thread_id = 3 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
-  resources.timestamp.Timestamp after = 4;
+  optional resources.timestamp.Timestamp after = 4;
 }
 
 message ListThreadMessagesResponse {
@@ -233,6 +244,8 @@ service MailerService {
   // @perm: Name=ListEmails
   rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse);
 
+  // @perm: Name=ListEmails
+  rpc SearchThreads(SearchThreadsRequest) returns (SearchThreadsResponse);
   // @perm: Name=ListEmails
   rpc ListThreadMessages(ListThreadMessagesRequest) returns (ListThreadMessagesResponse);
   // @perm: Name=ListEmails

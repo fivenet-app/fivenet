@@ -833,7 +833,7 @@ export const SetJobsUserPropsResponse = new SetJobsUserPropsResponse$Type();
 class GetColleagueLabelsRequest$Type extends MessageType<GetColleagueLabelsRequest> {
     constructor() {
         super("services.jobs.GetColleagueLabelsRequest", [
-            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } }
         ]);
     }
     create(value?: PartialMessage<GetColleagueLabelsRequest>): GetColleagueLabelsRequest {

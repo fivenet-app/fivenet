@@ -365,6 +365,34 @@ export interface SetEmailSettingsResponse {
 // Messages
 
 /**
+ * @generated from protobuf message services.mailer.SearchThreadsRequest
+ */
+export interface SearchThreadsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: string search = 2;
+     */
+    search: string;
+}
+/**
+ * @generated from protobuf message services.mailer.SearchThreadsResponse
+ */
+export interface SearchThreadsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.mailer.Message messages = 2;
+     */
+    messages: Message[];
+}
+/**
  * @generated from protobuf message services.mailer.ListThreadMessagesRequest
  */
 export interface ListThreadMessagesRequest {
@@ -381,7 +409,7 @@ export interface ListThreadMessagesRequest {
      */
     threadId: string;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp after = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 4;
      */
     after?: Timestamp;
 }
@@ -1978,6 +2006,114 @@ class SetEmailSettingsResponse$Type extends MessageType<SetEmailSettingsResponse
  */
 export const SetEmailSettingsResponse = new SetEmailSettingsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class SearchThreadsRequest$Type extends MessageType<SearchThreadsRequest> {
+    constructor() {
+        super("services.mailer.SearchThreadsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SearchThreadsRequest>): SearchThreadsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.search = "";
+        if (value !== undefined)
+            reflectionMergePartial<SearchThreadsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SearchThreadsRequest): SearchThreadsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* string search */ 2:
+                    message.search = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SearchThreadsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string search = 2; */
+        if (message.search !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.search);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.SearchThreadsRequest
+ */
+export const SearchThreadsRequest = new SearchThreadsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SearchThreadsResponse$Type extends MessageType<SearchThreadsResponse> {
+    constructor() {
+        super("services.mailer.SearchThreadsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Message }
+        ]);
+    }
+    create(value?: PartialMessage<SearchThreadsResponse>): SearchThreadsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.messages = [];
+        if (value !== undefined)
+            reflectionMergePartial<SearchThreadsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SearchThreadsResponse): SearchThreadsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.mailer.Message messages */ 2:
+                    message.messages.push(Message.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SearchThreadsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.Message messages = 2; */
+        for (let i = 0; i < message.messages.length; i++)
+            Message.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.SearchThreadsResponse
+ */
+export const SearchThreadsResponse = new SearchThreadsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesRequest> {
     constructor() {
         super("services.mailer.ListThreadMessagesRequest", [
@@ -2009,7 +2145,7 @@ class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesReque
                 case /* uint64 thread_id = 3 [jstype = JS_STRING];*/ 3:
                     message.threadId = reader.uint64().toString();
                     break;
-                case /* resources.timestamp.Timestamp after */ 4:
+                case /* optional resources.timestamp.Timestamp after */ 4:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
                     break;
                 default:
@@ -2033,7 +2169,7 @@ class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesReque
         /* uint64 thread_id = 3 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.threadId);
-        /* resources.timestamp.Timestamp after = 4; */
+        /* optional resources.timestamp.Timestamp after = 4; */
         if (message.after)
             Timestamp.internalBinaryWrite(message.after, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -2306,6 +2442,7 @@ export const MailerService = new ServiceType("services.mailer.MailerService", [
     { name: "CreateThread", options: {}, I: CreateThreadRequest, O: CreateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
     { name: "SetThreadState", options: {}, I: SetThreadStateRequest, O: SetThreadStateResponse },
+    { name: "SearchThreads", options: {}, I: SearchThreadsRequest, O: SearchThreadsResponse },
     { name: "ListThreadMessages", options: {}, I: ListThreadMessagesRequest, O: ListThreadMessagesResponse },
     { name: "PostMessage", options: {}, I: PostMessageRequest, O: PostMessageResponse },
     { name: "DeleteMessage", options: {}, I: DeleteMessageRequest, O: DeleteMessageResponse },

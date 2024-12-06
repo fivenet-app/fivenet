@@ -168,6 +168,24 @@ watch(
         )),
 );
 
+const messageRefs = ref<Element[]>([]);
+
+function scrollToMessage(messageId: number): void {
+    const ref = messageRefs.value[messageId];
+    if (ref) {
+        ref.scrollIntoView({ block: 'start' });
+    }
+}
+
+const messageId = useRouteQuery('message', '0', { transform: Number });
+watch(messageId, () => scrollToMessage(messageId.value));
+
+watch(data, () => {
+    if (messageId.value > 0) {
+        scrollToMessage(messageId.value);
+    }
+});
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     if (!selectedEmail.value?.id) {
@@ -225,55 +243,60 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
 
             <template v-else>
-                <template v-for="message in messages?.messages" :key="message.id">
-                    <div
-                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
-                    >
-                        <UDivider class="relative">
-                            <GenericTime :value="message.createdAt" type="short" />
+                <div
+                    v-for="message in messages?.messages"
+                    :key="message.id"
+                    :ref="
+                        (el) => {
+                            messageRefs[parseInt(message.id)] = el as Element;
+                        }
+                    "
+                    class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
+                >
+                    <UDivider class="relative">
+                        <GenericTime :value="message.createdAt" type="short" />
 
-                            <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
-                                <UButton
-                                    icon="i-mdi-trash-can-outline"
-                                    color="gray"
-                                    variant="ghost"
-                                    size="xs"
-                                    @click="
-                                        modal.open(ConfirmModal, {
-                                            confirm: async () =>
-                                                selectedEmail?.id &&
-                                                selectedThread &&
-                                                (await mailerStore.deleteMessage({
-                                                    emailId: selectedEmail.id,
-                                                    threadId: selectedThread.id,
-                                                    messageId: message.id,
-                                                })) &&
-                                                (await refreshMessages()),
-                                        })
-                                    "
-                                />
-                            </UTooltip>
-                        </UDivider>
+                        <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
+                            <UButton
+                                icon="i-mdi-trash-can-outline"
+                                color="gray"
+                                variant="ghost"
+                                size="xs"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () =>
+                                            selectedEmail?.id &&
+                                            selectedThread &&
+                                            (await mailerStore.deleteMessage({
+                                                emailId: selectedEmail.id,
+                                                threadId: selectedThread.id,
+                                                messageId: message.id,
+                                            })) &&
+                                            (await refreshMessages()),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </UDivider>
 
-                        <div class="flex flex-col gap-1">
-                            <div class="inline-flex items-center gap-1 text-sm">
-                                <span class="font-semibold">{{ $t('common.from') }}:</span>
+                    <div class="flex flex-col gap-1">
+                        <div class="inline-flex items-center gap-1 text-sm">
+                            <span class="font-semibold">{{ $t('common.from') }}:</span>
 
-                                <div class="flex justify-between">{{ message.sender?.email ?? $t('common.unknown') }}</div>
-                            </div>
-
-                            <div class="inline-flex items-center gap-1">
-                                <span class="text-sm font-semibold">{{ $t('common.title') }}:</span>
-                                <h3 class="truncate text-xl font-bold">{{ message.title }}</h3>
-                            </div>
+                            <div class="flex justify-between">{{ message.sender?.email ?? $t('common.unknown') }}</div>
                         </div>
 
-                        <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                            <!-- eslint-disable vue/no-v-html -->
-                            <div class="prose dark:prose-invert min-w-full px-4 py-2" v-html="message.content"></div>
+                        <div class="inline-flex items-center gap-1">
+                            <span class="text-sm font-semibold">{{ $t('common.title') }}:</span>
+                            <h3 class="truncate text-xl font-bold">{{ message.title }}</h3>
                         </div>
                     </div>
-                </template>
+
+                    <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                        <!-- eslint-disable vue/no-v-html -->
+                        <div class="prose dark:prose-invert min-w-full px-4 py-2" v-html="message.content"></div>
+                    </div>
+                </div>
             </template>
         </div>
 

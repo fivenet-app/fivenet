@@ -237,6 +237,7 @@ export const grpcMethods = [
 	'MailerService/CreateThread',
 	'MailerService/DeleteThread',
 	'MailerService/SetThreadState',
+	'MailerService/SearchThreads',
 	'MailerService/ListThreadMessages',
 	'MailerService/PostMessage',
 	'MailerService/DeleteMessage',

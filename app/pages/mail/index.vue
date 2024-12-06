@@ -175,6 +175,10 @@ onBeforeMount(async () => {
     <UDashboardPage>
         <UDashboardPanel id="mailerthreadlist" :width="450" :resizable="{ min: 325, max: 550 }">
             <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
+                <template #center>
+                    <!-- <MessagesSearch /> -->
+                </template>
+
                 <template #right>
                     <UButton
                         v-if="

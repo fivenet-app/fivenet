@@ -33,6 +33,7 @@ const (
 	MailerService_CreateThread_FullMethodName           = "/services.mailer.MailerService/CreateThread"
 	MailerService_DeleteThread_FullMethodName           = "/services.mailer.MailerService/DeleteThread"
 	MailerService_SetThreadState_FullMethodName         = "/services.mailer.MailerService/SetThreadState"
+	MailerService_SearchThreads_FullMethodName          = "/services.mailer.MailerService/SearchThreads"
 	MailerService_ListThreadMessages_FullMethodName     = "/services.mailer.MailerService/ListThreadMessages"
 	MailerService_PostMessage_FullMethodName            = "/services.mailer.MailerService/PostMessage"
 	MailerService_DeleteMessage_FullMethodName          = "/services.mailer.MailerService/DeleteMessage"
@@ -72,6 +73,8 @@ type MailerServiceClient interface {
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
 	// @perm: Name=ListEmails
 	SetThreadState(ctx context.Context, in *SetThreadStateRequest, opts ...grpc.CallOption) (*SetThreadStateResponse, error)
+	// @perm: Name=ListEmails
+	SearchThreads(ctx context.Context, in *SearchThreadsRequest, opts ...grpc.CallOption) (*SearchThreadsResponse, error)
 	// @perm: Name=ListEmails
 	ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error)
 	// @perm: Name=ListEmails
@@ -218,6 +221,15 @@ func (c *mailerServiceClient) SetThreadState(ctx context.Context, in *SetThreadS
 	return out, nil
 }
 
+func (c *mailerServiceClient) SearchThreads(ctx context.Context, in *SearchThreadsRequest, opts ...grpc.CallOption) (*SearchThreadsResponse, error) {
+	out := new(SearchThreadsResponse)
+	err := c.cc.Invoke(ctx, MailerService_SearchThreads_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mailerServiceClient) ListThreadMessages(ctx context.Context, in *ListThreadMessagesRequest, opts ...grpc.CallOption) (*ListThreadMessagesResponse, error) {
 	out := new(ListThreadMessagesResponse)
 	err := c.cc.Invoke(ctx, MailerService_ListThreadMessages_FullMethodName, in, out, opts...)
@@ -296,6 +308,8 @@ type MailerServiceServer interface {
 	// @perm: Name=ListEmails
 	SetThreadState(context.Context, *SetThreadStateRequest) (*SetThreadStateResponse, error)
 	// @perm: Name=ListEmails
+	SearchThreads(context.Context, *SearchThreadsRequest) (*SearchThreadsResponse, error)
+	// @perm: Name=ListEmails
 	ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error)
 	// @perm: Name=ListEmails
 	PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error)
@@ -353,6 +367,9 @@ func (UnimplementedMailerServiceServer) DeleteThread(context.Context, *DeleteThr
 }
 func (UnimplementedMailerServiceServer) SetThreadState(context.Context, *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetThreadState not implemented")
+}
+func (UnimplementedMailerServiceServer) SearchThreads(context.Context, *SearchThreadsRequest) (*SearchThreadsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SearchThreads not implemented")
 }
 func (UnimplementedMailerServiceServer) ListThreadMessages(context.Context, *ListThreadMessagesRequest) (*ListThreadMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListThreadMessages not implemented")
@@ -634,6 +651,24 @@ func _MailerService_SetThreadState_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MailerService_SearchThreads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchThreadsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MailerServiceServer).SearchThreads(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MailerService_SearchThreads_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MailerServiceServer).SearchThreads(ctx, req.(*SearchThreadsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MailerService_ListThreadMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListThreadMessagesRequest)
 	if err := dec(in); err != nil {
@@ -786,6 +821,10 @@ var MailerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetThreadState",
 			Handler:    _MailerService_SetThreadState_Handler,
+		},
+		{
+			MethodName: "SearchThreads",
+			Handler:    _MailerService_SearchThreads_Handler,
 		},
 		{
 			MethodName: "ListThreadMessages",

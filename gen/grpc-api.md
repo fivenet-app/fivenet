@@ -852,6 +852,8 @@
     - [ListThreadsResponse](#services-mailer-ListThreadsResponse)
     - [PostMessageRequest](#services-mailer-PostMessageRequest)
     - [PostMessageResponse](#services-mailer-PostMessageResponse)
+    - [SearchThreadsRequest](#services-mailer-SearchThreadsRequest)
+    - [SearchThreadsResponse](#services-mailer-SearchThreadsResponse)
     - [SetEmailSettingsRequest](#services-mailer-SetEmailSettingsRequest)
     - [SetEmailSettingsResponse](#services-mailer-SetEmailSettingsResponse)
     - [SetThreadStateRequest](#services-mailer-SetThreadStateRequest)
@@ -12681,7 +12683,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | email_id | [uint64](#uint64) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
-| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 
 
 
@@ -12762,6 +12764,38 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
+
+
+
+
+
+
+<a name="services-mailer-SearchThreadsRequest"></a>
+
+### SearchThreadsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| search | [string](#string) |  | Search params |
+
+
+
+
+
+
+<a name="services-mailer-SearchThreadsResponse"></a>
+
+### SearchThreadsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| messages | [resources.mailer.Message](#resources-mailer-Message) | repeated |  |
 
 
 
@@ -12855,6 +12889,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | CreateThread | [CreateThreadRequest](#services-mailer-CreateThreadRequest) | [CreateThreadResponse](#services-mailer-CreateThreadResponse) | @perm: Name=ListEmails |
 | DeleteThread | [DeleteThreadRequest](#services-mailer-DeleteThreadRequest) | [DeleteThreadResponse](#services-mailer-DeleteThreadResponse) | @perm: Name=SuperUser |
 | SetThreadState | [SetThreadStateRequest](#services-mailer-SetThreadStateRequest) | [SetThreadStateResponse](#services-mailer-SetThreadStateResponse) | @perm: Name=ListEmails |
+| SearchThreads | [SearchThreadsRequest](#services-mailer-SearchThreadsRequest) | [SearchThreadsResponse](#services-mailer-SearchThreadsResponse) | @perm: Name=ListEmails |
 | ListThreadMessages | [ListThreadMessagesRequest](#services-mailer-ListThreadMessagesRequest) | [ListThreadMessagesResponse](#services-mailer-ListThreadMessagesResponse) | @perm: Name=ListEmails |
 | PostMessage | [PostMessageRequest](#services-mailer-PostMessageRequest) | [PostMessageResponse](#services-mailer-PostMessageResponse) | @perm: Name=ListEmails |
 | DeleteMessage | [DeleteMessageRequest](#services-mailer-DeleteMessageRequest) | [DeleteMessageResponse](#services-mailer-DeleteMessageResponse) | @perm: Name=SuperUser |

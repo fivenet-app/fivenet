@@ -71,7 +71,7 @@ message SetJobsUserPropsResponse {
 }
 
 message GetColleagueLabelsRequest {
-  optional string search = 1;
+  optional string search = 1 [(validate.rules).string.max_len = 32];
 }
 
 message GetColleagueLabelsResponse {
