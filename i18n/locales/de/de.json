@@ -629,10 +629,10 @@
             },
             "TemplateWorkflowEditor": {
                 "reminder": {
-                    "description": "Description here"
+                    "description": "Dokumenten-Erinnerungen, werden nur an den Besitzer/Ersteller des Dokumentes geschickt. Die Erinnerungen werden in Reihenfolge verschickt, jeweils aufbauend auf der vorherigen Erinnerung. E.g., Erinnerung 1 (3 Tage) wird 3 Tage nach Dokumenten-Erstellung/letzter Aktualisierung verschickt, Erinnerung 2 (2 Tage) wird so gesehen erst in 5 Tagen verschickt.\nDie Erinnerungen starten wieder bei der Ersten sollte das zwischendurch Dokument aktualisiert worden sein."
                 },
                 "auto_close": {
-                    "description": "Description here"
+                    "description": "Automatisches Schließen des Dokumentes nach der Anzahl der Tagen. Die Anzahl der Tage wird mit dem Dokumenten-Erstellungs- oder Änderungszeitpunkt plus gerechnet."
                 }
             }
         },
@@ -1302,6 +1302,14 @@
             "link_copied": {
                 "title": "Link in die Zwischenablage kopiert",
                 "content": "Link wurde in die Zwischenablage ihres Computers kopiert."
+            },
+            "copied": {
+                "title": "Daten kopiert",
+                "content": "Daten wurden in die Zwischenablage kopiert."
+            },
+            "email_address_copied": {
+                "title": "E-Mail Adresse kopiert",
+                "content": "E-Mail Adresse wurde in die Zwischenablage kopiert."
             }
         },
         "action_successfull": {
@@ -1482,7 +1490,7 @@
         },
         "citizen_info": {
             "copy_citizen_id": {
-                "title": "Bürger-ID",
+                "title": "Bürger-ID kopiert",
                 "content": "Bürger-ID in die Zwischenablage kopiert."
             }
         },
