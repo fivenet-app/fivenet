@@ -1302,6 +1302,14 @@
             "link_copied": {
                 "title": "Link copied to clipboard",
                 "content": "Link has been copied to your computer's clipboard."
+            },
+            "copied": {
+                "title": "Copied to clipboard",
+                "content": "Data has been copied to your clipboard."
+            },
+            "email_address_copied": {
+                "title": "E-Mail address copied",
+                "content": "E-Mail address has been copied to your clipboard."
             }
         },
         "action_successfull": {

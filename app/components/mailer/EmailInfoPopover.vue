@@ -1,9 +1,11 @@
 <script lang="ts" setup>
 import type { ButtonColor, ButtonVariant } from '#ui/types';
+import { useNotificatorStore } from '~/store/notificator';
 import type { ClassProp } from '~/typings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import EmailBlock from '../partials/citizens/EmailBlock.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         email: string | undefined;
         textClass?: ClassProp;
@@ -20,6 +22,23 @@ withDefaults(
         hideNaText: false,
     },
 );
+
+const notifications = useNotificatorStore();
+
+function copyEmail(): void {
+    if (!props.email) {
+        return;
+    }
+
+    copyToClipboardWrapper(props.email);
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.email_address_copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.email_address_copied.content', parameters: {} },
+        timeout: 3250,
+        type: NotificationType.INFO,
+    });
+}
 </script>
 
 <template>
@@ -40,12 +59,7 @@ withDefaults(
                 <div class="grid w-full grid-cols-2 gap-2">
                     <EmailBlock :email="email" hide-email />
 
-                    <UButton
-                        icon="i-mdi-content-copy"
-                        :label="$t('common.copy')"
-                        variant="link"
-                        @click="copyToClipboardWrapper(email)"
-                    />
+                    <UButton icon="i-mdi-content-copy" :label="$t('common.copy')" variant="link" @click="copyEmail" />
                 </div>
 
                 <div class="flex flex-col gap-2 text-gray-900 dark:text-white">

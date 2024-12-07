@@ -111,7 +111,7 @@ function calculate(e: SelectedPenalty): void {
     state.value.count = state.value.count + count;
 }
 
-async function copyToClipboard(): Promise<void> {
+async function copySummary(): Promise<void> {
     let text =
         t('components.penaltycalculator.title') +
         ` (` +
@@ -320,7 +320,7 @@ const columns = [
 
         <UButtonGroup class="mt-2 inline-flex w-full">
             <UButtonGroup class="inline-flex w-full">
-                <UButton icon="i-mdi-content-copy" class="flex-1" @click="copyToClipboard()">
+                <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
                     {{ $t('common.copy') }}
                 </UButton>
                 <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">

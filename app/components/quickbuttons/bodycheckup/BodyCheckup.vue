@@ -49,7 +49,7 @@ function removePin(idx: number): void {
     pins.value.splice(idx, 1);
 }
 
-async function copyToClipboard(): Promise<void> {
+async function copySummary(): Promise<void> {
     let text = t('components.bodycheckup.title') + `\n`;
 
     pins.value.forEach((p, idx) => {
@@ -199,7 +199,7 @@ function reset(): void {
 
             <div class="my-2 flow-root">
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton icon="i-mdi-content-copy" class="flex-1" @click="copyToClipboard()">
+                    <UButton icon="i-mdi-content-copy" class="flex-1" @click="copySummary()">
                         {{ $t('common.copy') }}
                     </UButton>
                     <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">

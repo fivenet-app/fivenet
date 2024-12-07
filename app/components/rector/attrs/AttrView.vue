@@ -235,6 +235,13 @@ async function copyRole(): Promise<void> {
             attrStates: attrStates.value,
         }),
     );
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
+        timeout: 3250,
+        type: NotificationType.INFO,
+    });
 }
 
 const schema = z.object({
