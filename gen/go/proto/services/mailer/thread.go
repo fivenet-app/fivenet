@@ -325,6 +325,11 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	if err != nil {
 		return nil, err
 	}
+	// Set dummy thread state to make client-side handling easier
+	thread.State = &mailer.ThreadState{
+		ThreadId: thread.Id,
+		Unread:   true,
+	}
 
 	if len(thread.Recipients) > 0 {
 		emailIds := []uint64{}

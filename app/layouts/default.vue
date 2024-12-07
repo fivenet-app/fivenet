@@ -22,7 +22,7 @@ const modal = useModal();
 
 const { website } = useAppConfig();
 
-const unreadThreadCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.state?.unread).count(), {
+const unreadThreadsCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.state?.unread).count(), {
     initialValue: 0,
 });
 
@@ -41,7 +41,7 @@ const links = computed(() =>
             label: t('common.mail'),
             icon: 'i-mdi-inbox-full-outline',
             to: '/mail',
-            badge: unreadThreadCount.value > 0 ? unreadThreadCount.value.toString() : undefined,
+            badge: unreadThreadsCount.value > 0 ? unreadThreadsCount.value.toString() : undefined,
             tooltip: {
                 text: t('common.mail'),
                 shortcuts: ['G', 'E'],
