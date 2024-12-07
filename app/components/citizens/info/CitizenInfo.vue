@@ -220,8 +220,6 @@ const isOpen = ref(false);
         <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
             <UDashboardNavbar>
                 <template #right>
-                    <PartialsBackButton fallback-to="/citizens" />
-
                     <UButtonGroup class="hidden lg:inline-flex">
                         <IDCopyBadge
                             :id="userId"

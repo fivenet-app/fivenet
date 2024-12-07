@@ -1,6 +1,6 @@
 <script lang="ts" setup>
+import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
-import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import type { User } from '~~/gen/ts/resources/users/users';
 
@@ -157,7 +157,7 @@ const { attr } = useAuth();
                         {{ $t('common.mail', 1) }}
                     </dt>
                     <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
-                        <EmailBlock :email="user?.props?.email" />
+                        <EmailInfoPopover :email="user?.props?.email" />
                     </dd>
                 </div>
 

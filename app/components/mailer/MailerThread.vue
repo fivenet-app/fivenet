@@ -10,6 +10,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import ConfirmModal from '../partials/ConfirmModal.vue';
 import DocEditor from '../partials/DocEditor.vue';
 import Pagination from '../partials/Pagination.vue';
+import EmailInfoPopover from './EmailInfoPopover.vue';
 import { canAccess, generateResponseTitle } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
 
@@ -222,12 +223,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-gray-500 dark:text-gray-400">
                         <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
-                        <UButton
+                        <EmailInfoPopover
                             v-for="recipient in thread.recipients"
                             :key="recipient.emailId"
-                            variant="solid"
-                            color="gray"
-                            :label="recipient.email?.email"
+                            :email="recipient.email?.email"
                         />
                     </div>
                 </div>

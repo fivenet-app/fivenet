@@ -3,7 +3,7 @@ import type { TypedRouteFromName } from '@typed-router';
 import ColleagueSetLabels from '~/components/jobs/colleagues/ColleagueSetLabels.vue';
 import ColleagueSetName from '~/components/jobs/colleagues/ColleagueSetName.vue';
 import ColleagueSetNote from '~/components/jobs/colleagues/ColleagueSetNote.vue';
-import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
+import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
@@ -63,7 +63,7 @@ const { attr, can } = useAuth();
                             {{ $t('common.mail') }}
                         </dt>
                         <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
-                            <EmailBlock :email="colleague.email" />
+                            <EmailInfoPopover :email="colleague.email" />
                         </dd>
                     </div>
 

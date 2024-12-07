@@ -2,7 +2,7 @@
 import { isFuture } from 'date-fns';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
+import EmailInfoPopover from '~/components/mailer/EmailInfoPopover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -395,7 +395,15 @@ defineShortcuts({
             </template>
 
             <template #email-data="{ row: colleague }">
-                <EmailBlock :email="colleague.email" hide-icon hide-na-text />
+                <EmailInfoPopover
+                    :email="colleague.email"
+                    variant="link"
+                    color="primary"
+                    truncate
+                    :trailing="false"
+                    :padded="false"
+                    hide-na-text
+                />
             </template>
 
             <template #actions-data="{ row: colleague }">
@@ -481,7 +489,17 @@ defineShortcuts({
                                 <span>{{ colleague.dateofbirth.value }}</span>
                             </span>
 
-                            <EmailBlock :email="colleague.email" />
+                            <span class="inline-flex items-center gap-1">
+                                <UIcon name="i-mdi-email" class="h-5 w-5" />
+
+                                <EmailInfoPopover
+                                    :email="colleague.email"
+                                    variant="link"
+                                    truncate
+                                    :trailing="false"
+                                    :padded="false"
+                                />
+                            </span>
 
                             <div v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value" class="flex flex-row gap-1">
                                 <UIcon name="i-mdi-tag" class="h-5 w-5 shrink-0" />
