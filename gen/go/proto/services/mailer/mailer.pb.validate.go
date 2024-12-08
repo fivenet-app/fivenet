@@ -2469,6 +2469,10 @@ func (m *ListThreadsRequest) validate(all bool) error {
 
 	}
 
+	if m.UnreadOnly != nil {
+		// no validation rules for UnreadOnly
+	}
+
 	if len(errors) > 0 {
 		return ListThreadsRequestMultiError(errors)
 	}

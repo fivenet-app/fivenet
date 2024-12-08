@@ -293,7 +293,9 @@ func (m *GetPageRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Url
+	// no validation rules for Domain
+
+	// no validation rules for Path
 
 	if len(errors) > 0 {
 		return GetPageRequestMultiError(errors)

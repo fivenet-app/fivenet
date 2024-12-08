@@ -35,9 +35,13 @@ export interface SearchResponse {
  */
 export interface GetPageRequest {
     /**
-     * @generated from protobuf field: string url = 1;
+     * @generated from protobuf field: string domain = 1;
      */
-    url: string;
+    domain: string;
+    /**
+     * @generated from protobuf field: string path = 2;
+     */
+    path: string;
 }
 /**
  * @generated from protobuf message services.internet.GetPageResponse
@@ -142,12 +146,14 @@ export const SearchResponse = new SearchResponse$Type();
 class GetPageRequest$Type extends MessageType<GetPageRequest> {
     constructor() {
         super("services.internet.GetPageRequest", [
-            { no: 1, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "domain", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<GetPageRequest>): GetPageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.url = "";
+        message.domain = "";
+        message.path = "";
         if (value !== undefined)
             reflectionMergePartial<GetPageRequest>(this, message, value);
         return message;
@@ -157,8 +163,11 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string url */ 1:
-                    message.url = reader.string();
+                case /* string domain */ 1:
+                    message.domain = reader.string();
+                    break;
+                case /* string path */ 2:
+                    message.path = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -172,9 +181,12 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         return message;
     }
     internalBinaryWrite(message: GetPageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string url = 1; */
-        if (message.url !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.url);
+        /* string domain = 1; */
+        if (message.domain !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.domain);
+        /* string path = 2; */
+        if (message.path !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.path);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

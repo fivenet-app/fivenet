@@ -285,7 +285,19 @@ const expand = ref({
                             block
                             :placeholder="$t('common.search')"
                             leading-icon="i-mdi-search"
-                        />
+                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                        >
+                            <template #trailing>
+                                <UButton
+                                    v-show="query.search !== ''"
+                                    color="gray"
+                                    variant="link"
+                                    icon="i-mdi-close"
+                                    :padded="false"
+                                    @click="query.search = ''"
+                                />
+                            </template>
+                        </UInput>
                     </UFormGroup>
                 </div>
             </UForm>

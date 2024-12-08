@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { urlHomePage } from '~/components/internet/helper';
+import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import { joinURL, splitURL, urlHomePage } from '~/components/internet/helper';
 import InternetTab from '~/components/internet/InternetTab.vue';
 import { useInternetStore } from '~/store/internet';
 
@@ -13,7 +15,7 @@ definePageMeta({
 });
 
 const internetStore = useInternetStore();
-const { selectedTab, tabs } = storeToRefs(internetStore);
+const { activeTab, selectedTab, tabs } = storeToRefs(internetStore);
 
 // Set thread as query param for persistence between reloads
 const router = useRouter();
@@ -29,11 +31,15 @@ function updateQuery(): void {
 
 onMounted(async () => {
     if (tabs.value.length === 0) {
-        await internetStore.newTab(true);
+        internetStore.newTab(true);
     }
 
     if (!selectedTab.value && tabs.value[0]) {
-        await internetStore.selectTab(tabs.value[0].id);
+        internetStore.selectTab(tabs.value[0].id);
+    }
+
+    if (activeTab.value) {
+        state.url = joinURL(activeTab.value.domain, activeTab.value.path);
     }
 
     updateQuery();
@@ -41,7 +47,34 @@ onMounted(async () => {
 
 watch(selectedTab, updateQuery, { deep: true });
 
-const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
+function goToPage(domain: string, path?: string): void {
+    state.url = domain + (path && path !== '' ? path : '');
+
+    internetStore.goTo(domain, path);
+}
+
+const schema = z.object({
+    url: z.string().max(128),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    url: '',
+});
+
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (!activeTab.value) {
+        return;
+    }
+
+    const split = splitURL(event.data.url);
+    if (!split) {
+        return;
+    }
+
+    goToPage(split.domain, split.path);
+}, 500);
 </script>
 
 <template>
@@ -95,31 +128,42 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
             </UDashboardToolbar>
 
             <UDashboardToolbar
-                v-if="tab"
-                :ui="{ wrapper: 'bg-gray-100 dark:bg-gray-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0' }"
+                v-if="activeTab"
+                :ui="{ wrapper: 'bg-gray-100 dark:bg-gray-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0 mx-1' }"
             >
                 <div class="flex flex-1 items-center gap-1">
-                    <UButtonGroup>
-                        <UButton variant="ghost" color="white" icon="i-mdi-chevron-left" />
-                        <UButton variant="ghost" color="white" icon="i-mdi-chevron-right" />
-                    </UButtonGroup>
+                    <UButton
+                        variant="ghost"
+                        color="white"
+                        icon="i-mdi-chevron-left"
+                        :disabled="activeTab.history.length === 0"
+                        @click="internetStore.back()"
+                    />
 
                     <UButton
-                        :disabled="tab.url.startsWith(urlHomePage)"
+                        :disabled="activeTab.domain === urlHomePage"
                         variant="ghost"
                         color="white"
                         icon="i-mdi-home"
-                        @click="tab && (tab.url = urlHomePage)"
+                        @click="goToPage(urlHomePage)"
                     />
 
                     <UButton variant="ghost" color="white" icon="i-mdi-refresh" />
 
-                    <ClientOnly>
-                        <UForm :state="{}" class="flex-1">
-                            <UInput v-model="tab.url" type="text" class="mx-1 flex-1" />
-                            <!-- Confirm via enter or button -->
-                        </UForm>
-                    </ClientOnly>
+                    <UForm :schema="schema" :state="state" class="flex flex-1 items-center gap-1" @submit="onSubmitThrottle">
+                        <UInput v-model="state.url" type="text" class="flex-1" :ui="{ icon: { trailing: { pointer: '' } } }">
+                            <template #trailing>
+                                <UButton
+                                    v-show="state.url !== ''"
+                                    color="gray"
+                                    variant="link"
+                                    icon="i-mdi-close"
+                                    :padded="false"
+                                    @click="state.url = ''"
+                                />
+                            </template>
+                        </UInput>
+                    </UForm>
                 </div>
             </UDashboardToolbar>
 
@@ -137,7 +181,7 @@ const tab = computed(() => tabs.value.find((t) => t.id === selectedTab.value));
                 >
                     <template #item="{ item }">
                         <Suspense>
-                            <InternetTab :tab-id="item.id" />
+                            <InternetTab :tab-id="item.id" @url-change="goToPage($event.domain, $event.path ?? '')" />
                         </Suspense>
                     </template>
                 </UTabs>

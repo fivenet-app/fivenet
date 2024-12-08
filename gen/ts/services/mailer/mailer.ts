@@ -228,6 +228,10 @@ export interface ListThreadsRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp after = 3;
      */
     after?: Timestamp;
+    /**
+     * @generated from protobuf field: optional bool unread_only = 4;
+     */
+    unreadOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.mailer.ListThreadsResponse
@@ -1323,7 +1327,8 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { uint64: { gt: "0" } } } } } },
-            { no: 3, name: "after", kind: "message", T: () => Timestamp }
+            { no: 3, name: "after", kind: "message", T: () => Timestamp },
+            { no: 4, name: "unread_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListThreadsRequest>): ListThreadsRequest {
@@ -1351,6 +1356,9 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
                 case /* optional resources.timestamp.Timestamp after */ 3:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
                     break;
+                case /* optional bool unread_only */ 4:
+                    message.unreadOnly = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1376,6 +1384,9 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
         /* optional resources.timestamp.Timestamp after = 3; */
         if (message.after)
             Timestamp.internalBinaryWrite(message.after, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool unread_only = 4; */
+        if (message.unreadOnly !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.unreadOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -406,7 +406,7 @@
   
 - [resources/internet/internet.proto](#resources_internet_internet-proto)
     - [Domain](#resources-internet-Domain)
-    - [Website](#resources-internet-Website)
+    - [WebPage](#resources-internet-WebPage)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -6601,14 +6601,27 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| domain | [string](#string) |  |  |
 
 
 
 
-<a name="resources-internet-Website"></a>
 
-### Website
 
+<a name="resources-internet-WebPage"></a>
+
+### WebPage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| domain_id | [uint64](#uint64) |  |  |
+| url | [string](#string) |  |  |
 
 
 
@@ -12717,6 +12730,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | email_ids | [uint64](#uint64) | repeated | Search params |
 | after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| unread_only | [bool](#bool) | optional |  |
 
 
 
@@ -12915,7 +12929,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| url | [string](#string) |  |  |
+| domain | [string](#string) |  |  |
+| path | [string](#string) |  |  |
 
 
 

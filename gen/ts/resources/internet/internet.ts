@@ -3,9 +3,10 @@
 // @ts-nocheck
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -13,27 +14,77 @@ import { MessageType } from "@protobuf-ts/runtime";
  * @generated from protobuf message resources.internet.Domain
  */
 export interface Domain {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string domain = 2;
+     */
+    domain: string;
 }
 /**
- * @generated from protobuf message resources.internet.Website
+ * @generated from protobuf message resources.internet.WebPage
  */
-export interface Website {
+export interface WebPage {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: uint64 domain_id = 2 [jstype = JS_STRING];
+     */
+    domainId: string;
+    /**
+     * @generated from protobuf field: string url = 3;
+     */
+    url: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Domain$Type extends MessageType<Domain> {
     constructor() {
-        super("resources.internet.Domain", []);
+        super("resources.internet.Domain", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "domain", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
     create(value?: PartialMessage<Domain>): Domain {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.domain = "";
         if (value !== undefined)
             reflectionMergePartial<Domain>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Domain): Domain {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* string domain */ 2:
+                    message.domain = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: Domain, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* string domain = 2; */
+        if (message.domain !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.domain);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -45,20 +96,58 @@ class Domain$Type extends MessageType<Domain> {
  */
 export const Domain = new Domain$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Website$Type extends MessageType<Website> {
+class WebPage$Type extends MessageType<WebPage> {
     constructor() {
-        super("resources.internet.Website", []);
+        super("resources.internet.WebPage", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
-    create(value?: PartialMessage<Website>): Website {
+    create(value?: PartialMessage<WebPage>): WebPage {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.domainId = "0";
+        message.url = "";
         if (value !== undefined)
-            reflectionMergePartial<Website>(this, message, value);
+            reflectionMergePartial<WebPage>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Website): Website {
-        return target ?? this.create();
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: WebPage): WebPage {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* uint64 domain_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.domainId = reader.uint64().toString();
+                    break;
+                case /* string url */ 3:
+                    message.url = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
-    internalBinaryWrite(message: Website, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: WebPage, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* uint64 domain_id = 2 [jstype = JS_STRING]; */
+        if (message.domainId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.domainId);
+        /* string url = 3; */
+        if (message.url !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.url);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -66,6 +155,6 @@ class Website$Type extends MessageType<Website> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.internet.Website
+ * @generated MessageType for protobuf message resources.internet.WebPage
  */
-export const Website = new Website$Type();
+export const WebPage = new WebPage$Type();

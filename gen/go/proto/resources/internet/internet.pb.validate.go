@@ -56,6 +56,10 @@ func (m *Domain) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
+	// no validation rules for Domain
+
 	if len(errors) > 0 {
 		return DomainMultiError(errors)
 	}
@@ -133,40 +137,46 @@ var _ interface {
 	ErrorName() string
 } = DomainValidationError{}
 
-// Validate checks the field values on Website with the rules defined in the
+// Validate checks the field values on WebPage with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Website) Validate() error {
+func (m *WebPage) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Website with the rules defined in the
+// ValidateAll checks the field values on WebPage with the rules defined in the
 // proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in WebsiteMultiError, or nil if none found.
-func (m *Website) ValidateAll() error {
+// a list of violation errors wrapped in WebPageMultiError, or nil if none found.
+func (m *WebPage) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Website) validate(all bool) error {
+func (m *WebPage) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Id
+
+	// no validation rules for DomainId
+
+	// no validation rules for Url
+
 	if len(errors) > 0 {
-		return WebsiteMultiError(errors)
+		return WebPageMultiError(errors)
 	}
 
 	return nil
 }
 
-// WebsiteMultiError is an error wrapping multiple validation errors returned
-// by Website.ValidateAll() if the designated constraints aren't met.
-type WebsiteMultiError []error
+// WebPageMultiError is an error wrapping multiple validation errors returned
+// by WebPage.ValidateAll() if the designated constraints aren't met.
+type WebPageMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m WebsiteMultiError) Error() string {
+func (m WebPageMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -175,11 +185,11 @@ func (m WebsiteMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m WebsiteMultiError) AllErrors() []error { return m }
+func (m WebPageMultiError) AllErrors() []error { return m }
 
-// WebsiteValidationError is the validation error returned by Website.Validate
+// WebPageValidationError is the validation error returned by WebPage.Validate
 // if the designated constraints aren't met.
-type WebsiteValidationError struct {
+type WebPageValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -187,22 +197,22 @@ type WebsiteValidationError struct {
 }
 
 // Field function returns field value.
-func (e WebsiteValidationError) Field() string { return e.field }
+func (e WebPageValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e WebsiteValidationError) Reason() string { return e.reason }
+func (e WebPageValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e WebsiteValidationError) Cause() error { return e.cause }
+func (e WebPageValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e WebsiteValidationError) Key() bool { return e.key }
+func (e WebPageValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e WebsiteValidationError) ErrorName() string { return "WebsiteValidationError" }
+func (e WebPageValidationError) ErrorName() string { return "WebPageValidationError" }
 
 // Error satisfies the builtin error interface
-func (e WebsiteValidationError) Error() string {
+func (e WebPageValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -214,14 +224,14 @@ func (e WebsiteValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sWebsite.%s: %s%s",
+		"invalid %sWebPage.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = WebsiteValidationError{}
+var _ error = WebPageValidationError{}
 
 var _ interface {
 	Field() string
@@ -229,4 +239,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = WebsiteValidationError{}
+} = WebPageValidationError{}

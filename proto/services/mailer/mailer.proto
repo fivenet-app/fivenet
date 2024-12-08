@@ -106,6 +106,7 @@ message ListThreadsRequest {
     items: { uint64: { gt: 0 } },
   }];
   optional resources.timestamp.Timestamp after = 3;
+  optional bool unread_only = 4;
 }
 
 message ListThreadsResponse {

@@ -2,13 +2,37 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { getGRPCInternetClient } from '~/composables/grpc';
-import { useInternetStore } from '~/store/internet';
+import { useInternetStore, type Tab } from '~/store/internet';
 import { AdType } from '~~/gen/ts/resources/internet/ads';
 import type { SearchResponse } from '~~/gen/ts/services/internet/internet';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import SponsoredAdCard from './ads/SponsoredAdCard.vue';
+import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';
+import SponsoredAdCard from '../ads/SponsoredAdCard.vue';
+
+const props = defineProps<{
+    modelValue?: Tab;
+}>();
+
+const emit = defineEmits<{
+    (e: 'update:modelValue', value: Tab): void;
+}>();
+
+const { t } = useI18n();
+
+const tab = useVModel(props, 'modelValue', emit);
 
 const internetStore = useInternetStore();
+
+function updateTabInfo(): void {
+    if (!tab.value) {
+        return;
+    }
+
+    tab.value.label = t('components.internet.pages.homepage.title');
+    tab.value.icon = 'i-mdi-home';
+}
+
+updateTabInfo();
+watch(tab, () => updateTabInfo());
 
 const schema = z.object({
     search: z.string().max(40),

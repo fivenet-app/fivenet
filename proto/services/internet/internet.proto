@@ -15,7 +15,8 @@ message SearchResponse {
 }
 
 message GetPageRequest {
-  string url = 1;
+  string domain = 1;
+  string path = 2;
 }
 
 message GetPageResponse {}

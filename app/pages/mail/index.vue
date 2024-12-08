@@ -81,6 +81,7 @@ async function loadThreads(): Promise<void> {
         },
         emailIds: [selectedEmail.value.id],
         after: count > 0 ? undefined : toTimestamp(),
+        unreadOnly: selectedTab.value === 1,
     });
 }
 
@@ -118,6 +119,15 @@ const filteredThreads = computed(() => {
     }
 
     return threads.value.threads.filter((thread) => !thread.state?.archived);
+});
+
+// Refresh threads when unread tab is selected
+watch(selectedTab, async () => {
+    if (selectedTab.value !== 1) {
+        return;
+    }
+
+    loadThreads();
 });
 
 const threadState = computed(() => selectedThread.value?.state);

@@ -4,6 +4,13 @@ package resources.internet;
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
 
-message Domain {}
+message Domain {
+  uint64 id = 1 [jstype = JS_STRING];
+  string domain = 2;
+}
 
-message Website {}
+message WebPage {
+  uint64 id = 1 [jstype = JS_STRING];
+  uint64 domain_id = 2 [jstype = JS_STRING];
+  string url = 3;
+}

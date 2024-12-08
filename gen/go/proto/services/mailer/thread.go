@@ -62,6 +62,10 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		wheres = append(wheres, tThreads.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
 	}
 
+	if req.UnreadOnly != nil && *req.UnreadOnly {
+		wheres = append(wheres, tThreadsState.Unread.IS_NOT_NULL().AND(tThreadsState.Unread.IS_TRUE()))
+	}
+
 	countStmt := tThreads.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tThreads.ID)).AS("datacount.totalcount"),
@@ -70,6 +74,9 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			tThreads.
 				INNER_JOIN(tThreadsRecipients,
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
+				).
+				LEFT_JOIN(tThreadsState,
+					tThreadsState.ThreadID.EQ(tThreads.ID),
 				),
 		).
 		WHERE(jet.AND(

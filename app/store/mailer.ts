@@ -220,6 +220,7 @@ export const useMailerStore = defineStore('mailer', {
                             offset: 0,
                         },
                         emailIds: this.emails.map((e) => e.id),
+                        unreadOnly: true,
                     });
                 }
             } catch (_) {
