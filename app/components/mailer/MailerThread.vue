@@ -111,22 +111,17 @@ const {
 
 watch(offset, async () => refreshMessages());
 
-const { start } = useTimeoutFn(
+watchDebounced(
+    selectedThread,
     async () =>
+        canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) &&
         mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
         }),
-    1250,
-    { immediate: false },
-);
-
-watchDebounced(
-    selectedThread,
-    () => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) && start(),
     {
         debounce: 1150,
-        maxWait: 3000,
+        maxWait: 3250,
     },
 );
 
