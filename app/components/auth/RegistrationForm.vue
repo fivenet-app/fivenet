@@ -124,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UForm>
 
         <div class="mt-6">
-            <UButton block color="gray" :to="{ name: 'auth-login' }">
+            <UButton block color="gray" :to="{ name: 'auth-login' }" :disabled="!canSubmit">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
         </div>

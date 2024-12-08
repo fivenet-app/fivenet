@@ -6,9 +6,16 @@ import { useNotificatorStore } from '~/store/notificator';
 import { getErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const props = defineProps<{
+    modelValue: boolean;
+}>();
+
 const emit = defineEmits<{
+    (e: 'update:modelValue', val: boolean): void;
     (e: 'toggle'): void;
 }>();
+
+const canSubmit = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
 
@@ -55,7 +62,6 @@ function togglePasswordVisibility() {
     passwordVisibility.value = !passwordVisibility.value;
 }
 
-const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await forgotPassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

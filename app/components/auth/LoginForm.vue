@@ -5,6 +5,16 @@ import { useAuthStore } from '~/store/auth';
 import { useCookiesStore } from '~/store/cookies';
 import { useSettingsStore } from '~/store/settings';
 
+const props = defineProps<{
+    modelValue: boolean;
+}>();
+
+const emit = defineEmits<{
+    (e: 'update:modelValue', val: boolean): void;
+}>();
+
+const canSubmit = useVModel(props, 'modelValue', emit);
+
 const { login } = useAppConfig();
 
 const authStore = useAuthStore();
@@ -33,7 +43,6 @@ const state = reactive<Schema>({
     password: '',
 });
 
-const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
     await doLogin(event.data.username, event.data.password).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));

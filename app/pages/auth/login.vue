@@ -83,6 +83,8 @@ onMounted(async () => {
         });
     }
 });
+
+const canSubmit = ref(true);
 </script>
 
 <template>
@@ -92,17 +94,17 @@ onMounted(async () => {
 
             <UTabs v-model="selectedTab" :items="items" class="w-full">
                 <template #login>
-                    <LoginForm />
+                    <LoginForm v-model="canSubmit" />
                 </template>
                 <template #forgotPassword>
-                    <ForgotPasswordForm @toggle="selectedTab = 0" />
+                    <ForgotPasswordForm v-model="canSubmit" @toggle="selectedTab = 0" />
                 </template>
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
                 <UDivider orientation="horizontal" />
 
-                <UButton block color="gray" :to="{ name: 'auth-registration' }">
+                <UButton block color="gray" :to="{ name: 'auth-registration' }" :disabled="!canSubmit">
                     {{ $t('components.auth.LoginForm.register_account') }}
                 </UButton>
             </div>
