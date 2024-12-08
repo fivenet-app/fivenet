@@ -113,6 +113,13 @@ export const useMailerStore = defineStore('mailer', {
                 }
 
                 if (event.data.threadUpdate.creatorEmailId === this.selectedEmail?.id) {
+                    await this.setThreadState(
+                        {
+                            threadId: event.data.threadUpdate.id,
+                            unread: false,
+                        },
+                        true,
+                    );
                     return;
                 }
 
@@ -144,7 +151,7 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Update thread updated at time
                 await mailerDB.threads.update(event.data.messageUpdate.threadId, {
-                    updatedAt: event.data.messageUpdate.updatedAt,
+                    updatedAt: event.data.messageUpdate.updatedAt ?? event.data.messageUpdate.createdAt,
                 });
 
                 // Handle email sent by blocked email
@@ -168,21 +175,18 @@ export const useMailerStore = defineStore('mailer', {
                     return;
                 }
 
-                console.log('MessageUpdate', event.data.messageUpdate);
+                console.log('messageUpdate', event.data.messageUpdate);
 
                 // Only set unread state when message isn't from same email and the user isn't active on that thread
-                if (event.data.messageUpdate.threadId !== this.selectedThread?.id) {
-                    await this.setThreadState(
-                        {
-                            threadId: event.data.messageUpdate.threadId,
-                            unread: true,
-                        },
-                        true,
-                    );
-                }
+                const state = await this.setThreadState(
+                    {
+                        threadId: event.data.messageUpdate.threadId,
+                        unread: event.data.messageUpdate.threadId !== this.selectedThread?.id,
+                    },
+                    true,
+                );
 
-                const threadState = await this.getThreadState(event.data.messageUpdate.threadId);
-                if (threadState?.muted) {
+                if (state?.muted) {
                     return;
                 }
 
