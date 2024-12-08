@@ -529,6 +529,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             v-model="state.jobInfo.publicJobs"
                                             multiple
                                             :options="jobs ?? []"
+                                            searchable
                                             value-attribute="name"
                                             :searchable-placeholder="$t('common.search_field')"
                                         >
@@ -560,6 +561,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             v-model="state.jobInfo.hiddenJobs"
                                             multiple
                                             :options="jobs ?? []"
+                                            searchable
                                             value-attribute="name"
                                             :searchable-placeholder="$t('common.search_field')"
                                         >
@@ -639,6 +641,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 v-model="state.userTracker.livemapJobs"
                                                 multiple
                                                 :options="jobs ?? []"
+                                                searchable
                                                 value-attribute="name"
                                                 :searchable-placeholder="$t('common.search_field')"
                                             >
@@ -728,6 +731,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             v-model="state.discord.ignoredJobs"
                                             multiple
                                             :options="jobs ?? []"
+                                            searchable
                                             value-attribute="name"
                                             :searchable-placeholder="$t('common.search_field')"
                                         >

@@ -95,6 +95,8 @@ export const useMailerStore = defineStore('mailer', {
             } else if (event.data.oneofKind === 'threadUpdate') {
                 await mailerDB.threads.put(event.data.threadUpdate);
 
+                console.log('threadUpdate', event.data.threadUpdate);
+
                 // Handle email sent by blocked email
                 if (
                     event.data.threadUpdate.creatorEmail?.email &&
@@ -694,7 +696,7 @@ class MailerDexie extends Dexie {
     constructor() {
         super('mailer');
         this.version(2).stores({
-            threads: 'id, creatorEmailId',
+            threads: 'id, creatorEmailId, [createdAt+updatedAt]',
             messages: 'id, threadId',
         });
     }

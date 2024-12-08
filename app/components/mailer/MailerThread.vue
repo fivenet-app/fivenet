@@ -253,7 +253,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
                         <UButton
                             icon="i-mdi-trash-can-outline"
-                            color="gray"
+                            color="red"
                             variant="ghost"
                             size="xs"
                             @click="
@@ -277,7 +277,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="inline-flex items-center gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.from') }}:</span>
 
-                        <div class="truncate">{{ message.sender?.email ?? $t('common.unknown') }}</div>
+                        <EmailInfoPopover
+                            :email="message.sender?.email"
+                            variant="link"
+                            truncate
+                            :trailing="false"
+                            :padded="false"
+                        />
                     </div>
 
                     <div class="inline-flex items-center gap-1">

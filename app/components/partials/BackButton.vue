@@ -13,8 +13,12 @@ function goBack(): void {
         return;
     }
 
-    if (history.length === 0 && props.fallbackTo) {
-        navigateTo(props.fallbackTo);
+    if (history.length === 0) {
+        if (props.fallbackTo) {
+            navigateTo(props.fallbackTo);
+            return;
+        }
+
         return;
     }
 

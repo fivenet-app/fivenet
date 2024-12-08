@@ -99,7 +99,7 @@ const threads = useDexieLiveQuery(
     () =>
         mailerDB.threads
             .orderBy('id')
-            .sortBy('updatedAt')
+            .sortBy('[createdAt+updatedAt]')
             .then((threads) => ({ threads: threads, loaded: true })),
     {
         initialValue: { threads: [], loaded: false },
