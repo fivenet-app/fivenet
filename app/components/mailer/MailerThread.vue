@@ -115,10 +115,10 @@ watchDebounced(
     selectedThread,
     async () =>
         canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) &&
-        mailerStore.setThreadState({
+        (await mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
-        }),
+        })),
     {
         debounce: 1150,
         maxWait: 3250,
@@ -234,7 +234,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <USkeleton class="h-32 w-full" />
         </div>
 
-        <div v-else class="flex flex-1 shrink-0 flex-col">
+        <div v-else class="flex flex-1 shrink-0 flex-col overflow-y-auto">
             <div
                 v-for="message in messages?.messages"
                 :key="message.id"

@@ -321,6 +321,14 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	emailIds := []uint64{}
+	for _, recipient := range emails {
+		emailIds = append(emailIds, recipient.EmailId)
+	}
+	if err := s.setUnreadState(ctx, tx, req.Thread.Id, emailIds); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

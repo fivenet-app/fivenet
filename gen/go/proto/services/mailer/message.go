@@ -228,15 +228,15 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 			emailIds = append(emailIds, ua.EmailId)
 		}
 
+		if err := s.setUnreadState(ctx, s.db, message.ThreadId, emailIds); err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
 		s.sendUpdate(ctx, &mailer.MailerEvent{
 			Data: &mailer.MailerEvent_MessageUpdate{
 				MessageUpdate: message,
 			},
 		}, emailIds...)
-
-		if err := s.setUnreadState(ctx, message.ThreadId, emailIds); err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
 	}
 
 	return &PostMessageResponse{

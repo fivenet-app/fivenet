@@ -103,7 +103,7 @@ func (s *Server) getThreadState(ctx context.Context, threadId uint64, emaildId u
 	return dest, nil
 }
 
-func (s *Server) setUnreadState(ctx context.Context, threadId uint64, emailIds []uint64) error {
+func (s *Server) setUnreadState(ctx context.Context, tx qrm.DB, threadId uint64, emailIds []uint64) error {
 	if len(emailIds) == 0 {
 		return nil
 	}
@@ -128,7 +128,7 @@ func (s *Server) setUnreadState(ctx context.Context, threadId uint64, emailIds [
 		tThreadsUserState.Unread.SET(jet.RawBool("VALUES(`unread`)")),
 	)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return err
 	}
 

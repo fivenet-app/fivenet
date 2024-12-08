@@ -414,6 +414,7 @@ export const useMailerStore = defineStore('mailer', {
                 const error = e as RpcError;
                 handleGRPCError(error);
 
+                // Remove inaccessible threads and their messages
                 if (error?.message?.includes('.ErrThreadAccessDenied')) {
                     await Promise.all([
                         mailerDB.threads.delete(threadId),
@@ -430,6 +431,12 @@ export const useMailerStore = defineStore('mailer', {
 
                 if (response.thread) {
                     await mailerDB.threads.put(response.thread);
+
+                    await this.setThreadState({
+                        threadId: response.thread.id,
+                        emailId: this.selectedEmail?.id,
+                        unread: false,
+                    });
 
                     req.recipients.forEach((r) => this.addToAddressBook(r));
                 }
@@ -490,36 +497,36 @@ export const useMailerStore = defineStore('mailer', {
                     muted: false,
                     archived: false,
                 };
-            } else {
-                if (state.lastRead !== undefined && thread.state.lastRead?.timestamp !== state.lastRead.timestamp) {
-                    update = true;
-                    thread.state.lastRead = state.lastRead;
-                }
-                if (state.unread !== undefined && thread.state.unread !== state.unread) {
-                    update = true;
-                    thread.state.unread = state.unread;
-                    thread.state.lastRead = toTimestamp();
-                }
-                if (state.important !== undefined && thread.state.important !== state.important) {
-                    update = true;
-                    thread.state.important = state.important;
-                }
-                if (state.favorite !== undefined && thread.state.favorite !== state.favorite) {
-                    update = true;
-                    thread.state.favorite = state.favorite;
-                }
-                if (state.muted !== undefined && thread.state.muted !== state.muted) {
-                    update = true;
-                    thread.state.muted = state.muted;
-                }
-                if (state.archived !== undefined && thread.state.archived !== state.archived) {
-                    update = true;
-                    thread.state.archived = state.archived;
-                }
+            }
+
+            if (state.lastRead !== undefined && thread.state.lastRead?.timestamp !== state.lastRead.timestamp) {
+                update = true;
+                thread.state.lastRead = state.lastRead;
+            }
+            if (state.unread !== undefined && thread.state.unread !== state.unread) {
+                update = true;
+                thread.state.unread = state.unread;
+                thread.state.lastRead = toTimestamp();
+            }
+            if (state.important !== undefined && thread.state.important !== state.important) {
+                update = true;
+                thread.state.important = state.important;
+            }
+            if (state.favorite !== undefined && thread.state.favorite !== state.favorite) {
+                update = true;
+                thread.state.favorite = state.favorite;
+            }
+            if (state.muted !== undefined && thread.state.muted !== state.muted) {
+                update = true;
+                thread.state.muted = state.muted;
+            }
+            if (state.archived !== undefined && thread.state.archived !== state.archived) {
+                update = true;
+                thread.state.archived = state.archived;
             }
 
             if (update) {
-                await mailerDB.threads.put(thread, thread.id);
+                await mailerDB.threads.put(thread, thread.state.threadId);
 
                 if (!local) {
                     await getGRPCMailerClient().setThreadState({
@@ -556,6 +563,7 @@ export const useMailerStore = defineStore('mailer', {
                 const error = e as RpcError;
                 await handleGRPCError(error);
 
+                // Remove inaccessible threads and their messages
                 if (error?.message?.includes('.ErrThreadAccessDenied')) {
                     await Promise.all([
                         mailerDB.threads.delete(req.threadId),

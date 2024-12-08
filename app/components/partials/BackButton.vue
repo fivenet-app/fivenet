@@ -8,14 +8,14 @@ const props = defineProps<{
 
 const router = useRouter();
 
-function goBack(): void {
+async function goBack(): Promise<void> {
     if (props.to) {
         return;
     }
 
     if (history.length === 0) {
         if (props.fallbackTo) {
-            navigateTo(props.fallbackTo);
+            await navigateTo(props.fallbackTo);
             return;
         }
 
