@@ -42,9 +42,7 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 			// Only delete pages for which we have the parent,
 			// cause it might be a singular page from a "different" wiki
 			// that we add to the root page
-			if _, ok := mapping[*page.ParentId]; ok {
-				delete(mapping, page.Id)
-			} else {
+			if _, ok := mapping[*page.ParentId]; !ok {
 				root.Children = append(root.Children, page)
 			}
 		}
@@ -66,19 +64,9 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 
 	rootTitle := root.Title
 	if root.JobLabel != nil && rootTitle != "" {
-		rootTitle = *root.JobLabel + ": " + root.Title
+		rootTitle = *root.JobLabel + ": " + rootTitle
 	}
-	result := map[uint64]*wiki.PageShort{
-		root.Id: {
-			Id:          root.Id,
-			Job:         root.Job,
-			JobLabel:    root.JobLabel,
-			Slug:        root.Slug,
-			Title:       rootTitle,
-			Description: root.Description,
-			Children:    root.Children,
-		},
-	}
+
 	// Make sure to prepend root page (if it isn't our dummy)
 	if root.Id != 0 {
 		root.Children = append([]*wiki.PageShort{
@@ -90,10 +78,20 @@ func mapPagesToNavItems(pages []*wiki.PageShort) map[uint64]*wiki.PageShort {
 				Slug:        root.Slug,
 				Title:       root.Title,
 				Description: root.Description,
-				Children:    root.Children,
+				Children:    nil,
 			},
 		}, root.Children...)
 	}
 
-	return result
+	return map[uint64]*wiki.PageShort{
+		root.Id: {
+			Id:          root.Id,
+			Job:         root.Job,
+			JobLabel:    root.JobLabel,
+			Slug:        root.Slug,
+			Title:       rootTitle,
+			Description: root.Description,
+			Children:    root.Children,
+		},
+	}
 }
