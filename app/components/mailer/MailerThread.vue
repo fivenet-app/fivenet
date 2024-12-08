@@ -392,7 +392,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <UFormGroup name="message">
                             <ClientOnly>
-                                <DocEditor v-model="state.content" :disabled="!canSubmit" :min-height="200" />
+                                <DocEditor
+                                    v-model="state.content"
+                                    :disabled="!canSubmit"
+                                    :min-height="200"
+                                    :config="{ allowResizeX: false, allowResizeY: true }"
+                                />
                             </ClientOnly>
                         </UFormGroup>
 

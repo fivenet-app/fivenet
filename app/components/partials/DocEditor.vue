@@ -38,6 +38,7 @@ const { design: theme, locale } = storeToRefs(settingsStore);
 const config = {
     readOnly: props.disabled,
 
+    height: 0,
     language: locale.value,
     spellcheck: true,
     minHeight: props.minHeight,
