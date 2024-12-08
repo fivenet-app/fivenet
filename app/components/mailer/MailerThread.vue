@@ -213,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </p>
             </div>
 
-            <div class="min-w-0 text-sm">
+            <div class="w-full min-w-0 flex-1 text-sm">
                 <div class="flex snap-x flex-row flex-wrap gap-1 overflow-x-auto text-gray-500 dark:text-gray-400">
                     <span class="text-sm font-semibold">{{ $t('common.participant', 2) }}:</span>
 
