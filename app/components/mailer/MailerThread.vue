@@ -125,8 +125,8 @@ watchDebounced(
     selectedThread,
     () => canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) && start(),
     {
-        debounce: 1250,
-        maxWait: 4000,
+        debounce: 1150,
+        maxWait: 3000,
     },
 );
 
