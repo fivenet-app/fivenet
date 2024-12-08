@@ -35,10 +35,7 @@ async function listPages(): Promise<PageShort[]> {
 
 <template>
     <UDashboardPage class="h-full">
-        <UDashboardPanel
-            class="h-full flex-shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800"
-            grow
-        >
+        <UDashboardPanel class="h-full shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
             <PageEditor :model-value="undefined" :pages="pages ?? []" />
         </UDashboardPanel>
     </UDashboardPage>

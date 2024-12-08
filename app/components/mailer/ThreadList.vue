@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { format, isToday } from 'date-fns';
+import { isToday } from 'date-fns';
 import type { Thread } from '~~/gen/ts/resources/mailer/thread';
 
 const props = withDefaults(
@@ -83,8 +83,8 @@ defineShortcuts({
                     ]"
                     @click="selectedThread = thread"
                 >
-                    <div class="flex items-center justify-between" :class="[thread.state?.unread && 'font-semibold']">
-                        <div class="flex items-center gap-3 font-semibold">
+                    <div class="flex items-center justify-between gap-1" :class="[thread.state?.unread && 'font-semibold']">
+                        <div class="flex items-center gap-3 truncate font-semibold">
                             <span class="truncate">
                                 {{ thread.title }}
                             </span>
@@ -92,11 +92,13 @@ defineShortcuts({
                             <UChip v-if="thread.state?.unread" />
                         </div>
 
-                        <span>{{
-                            isToday(toDate(thread.updatedAt ?? thread.createdAt))
-                                ? format(toDate(thread.updatedAt ?? thread.createdAt), 'HH:mm')
-                                : format(toDate(thread.updatedAt ?? thread.createdAt), 'dd MMM')
-                        }}</span>
+                        <UTooltip :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')" class="shrink-0">
+                            {{
+                                isToday(toDate(thread.updatedAt ?? thread.createdAt))
+                                    ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')
+                                    : $d(toDate(thread.updatedAt ?? thread.createdAt), 'date')
+                            }}
+                        </UTooltip>
                     </div>
                     <div class="flex items-center justify-between">
                         <p>{{ thread.creatorEmail?.email }}</p>

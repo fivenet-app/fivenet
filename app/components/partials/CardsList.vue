@@ -40,14 +40,14 @@ const { can } = useAuth();
                     <component
                         :is="markerIcons.find((item) => item.name === module.icon) ?? markerFallbackIcon"
                         v-if="module.icon"
-                        class="text-primary h-10 w-10 flex-shrink-0"
+                        class="text-primary h-10 w-10 shrink-0"
                         :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"
                     />
                 </template>
                 <template v-else>
                     <UIcon
                         :name="module.icon"
-                        class="text-primary h-10 w-10 flex-shrink-0"
+                        class="text-primary h-10 w-10 shrink-0"
                         :class="`text-${module.color}-500 dark:text-${module.color}-400`"
                     />
                 </template>

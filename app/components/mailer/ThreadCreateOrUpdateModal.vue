@@ -239,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #label>&nbsp;</template>
 
                                         <template #option-create="{ option }">
-                                            <span class="flex-shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
+                                            <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
                                         </template>
 
                                         <template #option-empty="{ query: search }">

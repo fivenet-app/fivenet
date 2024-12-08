@@ -93,7 +93,7 @@ defineShortcuts({
                         <UBadge v-if="email.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
                     </div>
                     <div class="flex items-center justify-between">
-                        <p>{{ $t('common.label') }}: {{ email.label ?? $t('common.na') }}</p>
+                        <p>{{ $t('common.label', 1) }}: {{ email.label ?? $t('common.na') }}</p>
                     </div>
                 </div>
 
