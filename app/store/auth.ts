@@ -148,8 +148,8 @@ export const useAuthStore = defineStore('auth', {
 
             try {
                 await getGRPCAuthClient().logout({});
-                this.clearAuthInfo();
             } catch (e) {
+                this.clearAuthInfo();
                 handleGRPCError(e as RpcError);
 
                 useNotificatorStore().add({
@@ -160,10 +160,10 @@ export const useAuthStore = defineStore('auth', {
                     },
                     type: NotificationType.ERROR,
                 });
-                this.clearAuthInfo();
 
                 throw e;
             } finally {
+                this.clearAuthInfo();
                 this.loginStop(null);
             }
         },

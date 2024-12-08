@@ -39,6 +39,7 @@ async function changeUsername(values: Schema): Promise<void> {
             new: values.newUsername,
         });
         await call;
+        isOpen.value = false;
 
         notifications.add({
             title: { key: 'notifications.auth.change_username.title', parameters: {} },
@@ -46,8 +47,7 @@ async function changeUsername(values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        clearAuthInfo();
-        await navigateTo({ name: 'auth-logout' });
+        await navigateTo({ name: 'auth-logout', query: { redirect: '/auth/login' } });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -62,19 +62,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.auth.ChangeUsernameModal.change_username') }}
-                    </h3>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :prevent-close="!canSubmit">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" @error="console.log($event)">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.auth.ChangeUsernameModal.change_username') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UFormGroup name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
                     <UInput
                         v-model="state.currentUsername"
@@ -92,19 +92,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
                     />
                 </UFormGroup>
-            </UForm>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
 
-                    <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                        {{ $t('components.auth.ChangeUsernameModal.change_username') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('components.auth.ChangeUsernameModal.change_username') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

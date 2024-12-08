@@ -32,6 +32,7 @@ async function changePassword(values: Schema): Promise<void> {
             new: values.newPassword,
         });
         const { response } = await call;
+        isOpen.value = false;
 
         setAccessTokenExpiration(toDate(response.expires));
 
@@ -66,7 +67,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :prevent-close="!canSubmit">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
