@@ -152,7 +152,6 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 			tAccounts.Password,
 			tAccounts.License,
 			tAccounts.RegToken,
-			tAccounts.LastChar,
 			tAccounts.OverrideJob,
 			tAccounts.OverrideJobGrade,
 			tAccounts.Superuser,
@@ -664,7 +663,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
-	// If char lock is active, make sure that the user is choosing the correct char
+	// If char lock is active, make sure that the user is choosing the active char
 	if !isSuperUser &&
 		s.appCfg.Get().Auth.LastCharLock &&
 		account.LastChar != nil &&

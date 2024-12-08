@@ -10,9 +10,9 @@ const authStore = useAuthStore();
 
 const { chooseCharacter } = authStore;
 
-const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
+const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
 
-async function fetchCharacters(): Promise<Character[]> {
+async function getCharacters(): Promise<Character[]> {
     try {
         const call = getGRPCAuthClient().getCharacters({});
         const { response } = await call;
@@ -31,10 +31,13 @@ watch(chars, async () => {
     }
 });
 
+const charLockActive = computed(() => chars.value?.find((c) => c.available === false));
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (charId: number) => {
     canSubmit.value = false;
 
+    console.log('choose character', charId);
     await chooseCharacter(charId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
@@ -77,7 +80,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             />
         </UCarousel>
 
-        <UContainer v-if="chars?.find((c) => c.available === false)" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
+        <UContainer v-if="charLockActive" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
             <UAlert
                 :ui="{ wrapper: 'relative overflow-hidden' }"
                 icon="i-mdi-information-slab-circle"

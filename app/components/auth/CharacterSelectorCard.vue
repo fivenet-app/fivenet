@@ -86,7 +86,10 @@ const { game } = useAppConfig();
                 :disabled="unavailable || !canSubmit"
                 :loading="!canSubmit"
                 :icon="unavailable ? 'i-mdi-lock' : undefined"
-                @click="$emit('selected', char.userId)"
+                @click="
+                    console.log('char selected', char.userId);
+                    $emit('selected', char.userId);
+                "
             >
                 {{ !unavailable ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char') }}
             </UButton>
