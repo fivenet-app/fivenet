@@ -24,7 +24,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.20.3
+FROM docker.io/library/alpine:3.21.0
 WORKDIR /app
 RUN apk --no-cache add ca-certificates tini tzdata && \
     mkdir -p ./.output/public

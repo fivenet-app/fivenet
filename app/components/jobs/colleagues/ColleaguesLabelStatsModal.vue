@@ -24,19 +24,11 @@ async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsRespons
 
 const { data: stats } = useLazyAsyncData('jobs-colleagues-labels-stats', () => getColleagueLabelsStats());
 
-//const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.count + stat, 0));
+const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.count + stat, 0));
 
 const x = (_: LabelCount, i: number) => i;
 const y = [(d: LabelCount) => d.count];
 const color = (d: LabelCount) => d.label?.color ?? 'gray';
-
-const items = computed(
-    () =>
-        stats.value?.count?.map((d) => ({
-            name: d.label?.name ? `${d.label?.name}: ${d.count}` : '',
-            color: d.label?.color ?? 'gray',
-        })) ?? [],
-);
 
 const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.name}: ${d.count}` : '');
 </script>
@@ -64,7 +56,7 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.label', 2) }}
+                        {{ $t('common.label', 2) }} - {{ $t('common.total_count') }}: {{ totalCount }}
                     </h3>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />

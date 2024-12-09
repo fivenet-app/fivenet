@@ -1,14 +1,10 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { isOpen } = useModal();
-
-const authStore = useAuthStore();
-const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
 

@@ -42,6 +42,7 @@ export const useInternetStore = defineStore('internet', {
         },
         addTab(tab: Partial<Tab>): number {
             const id = this.tabs.length === 0 ? 1 : this.tabs.length + 1;
+            logger.debug('tab added, label:', tab.label, 'domain:', tab.domain, 'path:', tab.path);
             this.tabs.push({
                 id: id,
                 label: tab.label ?? '',
@@ -64,9 +65,11 @@ export const useInternetStore = defineStore('internet', {
                 return;
             }
 
+            logger.debug('close tab, id:', id);
             this.tabs.splice(idx, 1);
         },
         selectTab(id?: number): void {
+            logger.debug('select tab, id:', id);
             this.selectedTab = id;
 
             this.tabs.forEach((t) => (t.active = t.id === id));
@@ -78,6 +81,8 @@ export const useInternetStore = defineStore('internet', {
             if (!tab) {
                 return;
             }
+
+            logger.debug('goto, domain:', tab.domain, 'path:', tab.path);
 
             if (!disableHistory) {
                 tab.history.push(joinURL(tab.domain, tab.path));
@@ -93,6 +98,7 @@ export const useInternetStore = defineStore('internet', {
             }
 
             const url = tab.history.pop();
+            logger.debug('back, url:', url);
             if (url) {
                 const split = splitURL(url);
                 if (!split) {
