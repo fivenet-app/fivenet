@@ -44,7 +44,7 @@ const dateLowerLimit = new Date(2022, 1, 1);
 const schema = z.object({
     userMode: z.nativeEnum(TimeclockUserMode),
     mode: z.nativeEnum(TimeclockMode),
-    users: z.custom<Colleague>().array().max(5).optional(),
+    users: z.custom<Colleague>().array().max(5),
     date: z.object({
         start: z.date(),
         end: z.date(),
@@ -89,8 +89,8 @@ function setFromProps(): void {
     ];
 }
 
-watch(props, setFromProps);
 setFromProps();
+watch(props, setFromProps);
 
 const usersLoading = ref(false);
 
@@ -108,7 +108,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${sort.value.column}:${sort.value.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${sort.value.column}:${sort.value.direction}-${query.date.start.toDateString()}-${query.date.end.toDateString()}-${query.perDay}-${query.users.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
     {
         watch: [sort],
@@ -140,7 +140,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.date.end),
                 },
             },
-            userIds: query.users?.map((u) => u.userId) ?? [],
+            userIds: query.users.map((u) => u.userId) ?? [],
             perDay: query.perDay,
         };
 
@@ -461,9 +461,9 @@ const itemsAll = computed(() =>
                                         by="userId"
                                         leading-icon="i-mdi-search"
                                     >
-                                        <template #label>
-                                            <span v-if="query.users?.length" class="truncate">
-                                                {{ usersToLabel(query.users) }}
+                                        <template v-if="query.users.length > 0" #label>
+                                            <span class="truncate">
+                                                {{ usersToLabel(query.users ?? []) }}
                                             </span>
                                         </template>
                                         <template #option="{ option: user }">
