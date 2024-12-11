@@ -162,7 +162,7 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 	p.AddGeneratorTemplateFile(constPath, p.constTpl, data)
 }
 
-func (p *PermifyModule) parseComment(service string, method string, comment string) (*Perm, error) {
+func (p *PermifyModule) parseComment(_ string, method string, comment string) (*Perm, error) {
 	comment = strings.TrimPrefix(comment, "@perm: ")
 	comment = strings.TrimPrefix(comment, "@perm")
 
