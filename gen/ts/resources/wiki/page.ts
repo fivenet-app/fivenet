@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { File } from "../filestore/file";
+import { ContentType } from "../common/content/content";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 import { PageAccess } from "./access";
@@ -94,7 +95,7 @@ export interface PageMeta {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: resources.wiki.ContentType content_type = 9;
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 9;
      */
     contentType: ContentType;
     /**
@@ -165,23 +166,6 @@ export interface PageRootInfo {
      * @generated from protobuf field: optional resources.filestore.File logo = 1;
      */
     logo?: File;
-}
-/**
- * @generated from protobuf enum resources.wiki.ContentType
- */
-export enum ContentType {
-    /**
-     * @generated from protobuf enum value: CONTENT_TYPE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: CONTENT_TYPE_HTML = 1;
-     */
-    HTML = 1,
-    /**
-     * @generated from protobuf enum value: CONTENT_TYPE_MARKDOWN = 2;
-     */
-    MARKDOWN = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Page$Type extends MessageType<Page> {
@@ -286,7 +270,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
             { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
-            { no: 9, name: "content_type", kind: "enum", T: () => ["resources.wiki.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 10, name: "tags", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "toc", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -332,7 +316,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
                 case /* optional resources.users.UserShort creator */ 8:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* resources.wiki.ContentType content_type */ 9:
+                case /* resources.common.content.ContentType content_type */ 9:
                     message.contentType = reader.int32();
                     break;
                 case /* repeated string tags */ 10:
@@ -380,7 +364,7 @@ class PageMeta$Type extends MessageType<PageMeta> {
         /* optional resources.users.UserShort creator = 8; */
         if (message.creator)
             UserShort.internalBinaryWrite(message.creator, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* resources.wiki.ContentType content_type = 9; */
+        /* resources.common.content.ContentType content_type = 9; */
         if (message.contentType !== 0)
             writer.tag(9, WireType.Varint).int32(message.contentType);
         /* repeated string tags = 10; */

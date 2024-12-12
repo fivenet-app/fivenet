@@ -9,11 +9,12 @@ import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { DocumentJobAccess, DocumentUserAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
-import { DocContentType, DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
@@ -260,7 +261,7 @@ async function createDocument(values: Schema): Promise<void> {
     const req: CreateDocumentRequest = {
         title: values.title,
         content: values.content,
-        contentType: DocContentType.HTML,
+        contentType: ContentType.HTML,
         closed: values.closed,
         state: values.state,
         public: values.public,
@@ -321,7 +322,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         documentId: id,
         title: values.title,
         content: values.content,
-        contentType: DocContentType.HTML,
+        contentType: ContentType.HTML,
         closed: values.closed,
         state: values.state,
         public: values.public,

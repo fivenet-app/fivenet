@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.docstore;
 
+import "resources/common/content/content.proto";
 import "resources/common/database/database.proto";
 import "resources/documents/access.proto";
 import "resources/documents/activity.proto";
@@ -200,7 +201,7 @@ message CreateDocumentRequest {
     min_len: 20,
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
-  resources.documents.DocContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.common.content.ContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
   }]; // @gotags: alias:"data"
@@ -229,7 +230,7 @@ message UpdateDocumentRequest {
     min_len: 20,
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
-  resources.documents.DocContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
   }]; // @gotags: alias:"data"

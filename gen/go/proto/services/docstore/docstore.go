@@ -6,6 +6,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -509,7 +510,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			req.Title,
 			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
 			req.Content,
-			documents.DocContentType_DOC_CONTENT_TYPE_HTML,
+			content.ContentType_CONTENT_TYPE_HTML,
 			req.Data,
 			userInfo.UserId,
 			userInfo.Job,

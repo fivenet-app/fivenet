@@ -18,6 +18,8 @@ import (
 
 	"google.golang.org/protobuf/types/known/anypb"
 
+	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
+
 	documents "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 )
 
@@ -36,7 +38,9 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = documents.DocContentType(0)
+	_ = content.ContentType(0)
+
+	_ = documents.DocActivityType(0)
 )
 
 // Validate checks the field values on ListTemplatesRequest with the rules
@@ -5242,7 +5246,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := documents.DocContentType_name[int32(m.GetContentType())]; !ok {
+	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := CreateDocumentRequestValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",
@@ -5565,7 +5569,7 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := documents.DocContentType_name[int32(m.GetContentType())]; !ok {
+	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := UpdateDocumentRequestValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",

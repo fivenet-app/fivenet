@@ -17,7 +17,7 @@ import { DocActivityData } from "../../resources/documents/activity";
 import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
-import { DocContentType } from "../../resources/documents/documents";
+import { ContentType } from "../../resources/common/content/content";
 import { Comment } from "../../resources/documents/comment";
 import { DocumentRelation } from "../../resources/documents/documents";
 import { DocumentReference } from "../../resources/documents/documents";
@@ -469,9 +469,9 @@ export interface CreateDocumentRequest {
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 4;
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 4;
      */
-    contentType: DocContentType; // @gotags: alias:"content_type"
+    contentType: ContentType; // @gotags: alias:"content_type"
     /**
      * @generated from protobuf field: optional string data = 5;
      */
@@ -533,9 +533,9 @@ export interface UpdateDocumentRequest {
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 5;
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 5;
      */
-    contentType: DocContentType; // @gotags: alias:"content_type"
+    contentType: ContentType; // @gotags: alias:"content_type"
     /**
      * @generated from protobuf field: optional string data = 6;
      */
@@ -2808,7 +2808,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
             { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -2843,7 +2843,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
                 case /* string content */ 3:
                     message.content = reader.string();
                     break;
-                case /* resources.documents.DocContentType content_type */ 4:
+                case /* resources.common.content.ContentType content_type */ 4:
                     message.contentType = reader.int32();
                     break;
                 case /* optional string data */ 5:
@@ -2885,7 +2885,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         /* string content = 3; */
         if (message.content !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.content);
-        /* resources.documents.DocContentType content_type = 4; */
+        /* resources.common.content.ContentType content_type = 4; */
         if (message.contentType !== 0)
             writer.tag(4, WireType.Varint).int32(message.contentType);
         /* optional string data = 5; */
@@ -2971,7 +2971,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -3009,7 +3009,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* string content */ 4:
                     message.content = reader.string();
                     break;
-                case /* resources.documents.DocContentType content_type */ 5:
+                case /* resources.common.content.ContentType content_type */ 5:
                     message.contentType = reader.int32();
                     break;
                 case /* optional string data */ 6:
@@ -3051,7 +3051,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* string content = 4; */
         if (message.content !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.content);
-        /* resources.documents.DocContentType content_type = 5; */
+        /* resources.common.content.ContentType content_type = 5; */
         if (message.contentType !== 0)
             writer.tag(5, WireType.Varint).int32(message.contentType);
         /* optional string data = 6; */

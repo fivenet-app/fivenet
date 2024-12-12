@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resources.common.content;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content;content";
+
+enum ContentType {
+  CONTENT_TYPE_UNSPECIFIED = 0;
+  CONTENT_TYPE_HTML = 1;
+  CONTENT_TYPE_PLAIN = 2;
+}

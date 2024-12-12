@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Workflow } from "./workflow";
 import { UserShort } from "../users/users";
+import { ContentType } from "../common/content/content";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -49,9 +50,9 @@ export interface Document {
      */
     title: string;
     /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 8;
      */
-    contentType: DocContentType; // @gotags: alias:"content_type"
+    contentType: ContentType; // @gotags: alias:"content_type"
     /**
      * @sanitize
      *
@@ -146,9 +147,9 @@ export interface DocumentShort {
      */
     title: string;
     /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
+     * @generated from protobuf field: resources.common.content.ContentType content_type = 8;
      */
-    contentType: DocContentType; // @gotags: alias:"content_type"
+    contentType: ContentType; // @gotags: alias:"content_type"
     /**
      * @sanitize
      *
@@ -335,23 +336,6 @@ export interface WorkflowUserState {
     document?: DocumentShort;
 }
 /**
- * @generated from protobuf enum resources.documents.DocContentType
- */
-export enum DocContentType {
-    /**
-     * @generated from protobuf enum value: DOC_CONTENT_TYPE_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: DOC_CONTENT_TYPE_HTML = 1;
-     */
-    HTML = 1,
-    /**
-     * @generated from protobuf enum value: DOC_CONTENT_TYPE_PLAIN = 2;
-     */
-    PLAIN = 2
-}
-/**
  * @generated from protobuf enum resources.documents.DocReference
  */
 export enum DocReference {
@@ -408,7 +392,7 @@ class Document$Type extends MessageType<Document> {
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
@@ -465,7 +449,7 @@ class Document$Type extends MessageType<Document> {
                 case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* resources.documents.DocContentType content_type */ 8:
+                case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
                     break;
                 case /* string content */ 9:
@@ -540,7 +524,7 @@ class Document$Type extends MessageType<Document> {
         /* string title = 7; */
         if (message.title !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.title);
-        /* resources.documents.DocContentType content_type = 8; */
+        /* resources.common.content.ContentType content_type = 8; */
         if (message.contentType !== 0)
             writer.tag(8, WireType.Varint).int32(message.contentType);
         /* string content = 9; */
@@ -603,7 +587,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
@@ -656,7 +640,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* string title */ 7:
                     message.title = reader.string();
                     break;
-                case /* resources.documents.DocContentType content_type */ 8:
+                case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
                     break;
                 case /* string content */ 9:
@@ -722,7 +706,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* string title = 7; */
         if (message.title !== "")
             writer.tag(7, WireType.LengthDelimited).string(message.title);
-        /* resources.documents.DocContentType content_type = 8; */
+        /* resources.common.content.ContentType content_type = 8; */
         if (message.contentType !== 0)
             writer.tag(8, WireType.Varint).int32(message.contentType);
         /* string content = 9; */

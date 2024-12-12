@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
+import { ContentType } from '~~/gen/ts/resources/common/content';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import { DocContentType } from '~~/gen/ts/resources/documents/documents';
 import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
@@ -263,7 +263,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         categoryId: obj.category && obj.category.id ? obj.category.id : '0',
         category: obj.category,
         title: obj.title,
-        contentType: DocContentType.HTML,
+        contentType: ContentType.HTML,
         content: '',
         creatorId: user.userId,
         creator: user,

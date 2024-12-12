@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = content.ContentType(0)
 )
 
 // Validate checks the field values on Page with the rules defined in the proto
@@ -320,7 +324,7 @@ func (m *PageMeta) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := ContentType_name[int32(m.GetContentType())]; !ok {
+	if _, ok := content.ContentType_name[int32(m.GetContentType())]; !ok {
 		err := PageMetaValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",

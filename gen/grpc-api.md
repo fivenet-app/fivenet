@@ -90,6 +90,9 @@
 - [resources/common/error.proto](#resources_common_error-proto)
     - [Error](#resources-common-Error)
   
+- [resources/common/content/content.proto](#resources_common_content_content-proto)
+    - [ContentType](#resources-common-content-ContentType)
+  
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
     - [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
@@ -126,7 +129,6 @@
     - [WorkflowState](#resources-documents-WorkflowState)
     - [WorkflowUserState](#resources-documents-WorkflowUserState)
   
-    - [DocContentType](#resources-documents-DocContentType)
     - [DocReference](#resources-documents-DocReference)
     - [DocRelation](#resources-documents-DocRelation)
   
@@ -353,8 +355,6 @@
     - [PageMeta](#resources-wiki-PageMeta)
     - [PageRootInfo](#resources-wiki-PageRootInfo)
     - [PageShort](#resources-wiki-PageShort)
-  
-    - [ContentType](#resources-wiki-ContentType)
   
 - [resources/wiki/activity.proto](#resources_wiki_activity-proto)
     - [PageAccessJobsDiff](#resources-wiki-PageAccessJobsDiff)
@@ -2058,6 +2058,35 @@
 
 
 
+<a name="resources_common_content_content-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/content/content.proto
+
+
+ <!-- end messages -->
+
+
+<a name="resources-common-content-ContentType"></a>
+
+### ContentType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONTENT_TYPE_UNSPECIFIED | 0 |  |
+| CONTENT_TYPE_HTML | 1 |  |
+| CONTENT_TYPE_PLAIN | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_documents_activity-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2520,7 +2549,7 @@ Dummy - DO NOT USE!
 | category_id | [uint64](#uint64) | optional |  |
 | category | [Category](#resources-documents-Category) | optional | @gotags: alias:"category" |
 | title | [string](#string) |  | @sanitize |
-| content_type | [DocContentType](#resources-documents-DocContentType) |  | @gotags: alias:"content_type" |
+| content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | content | [string](#string) |  | @sanitize |
 | data | [string](#string) | optional | @sanitize
 
@@ -2603,7 +2632,7 @@ Dummy - DO NOT USE!
 | category_id | [uint64](#uint64) | optional |  |
 | category | [Category](#resources-documents-Category) | optional | @gotags: alias:"category" |
 | title | [string](#string) |  | @sanitize |
-| content_type | [DocContentType](#resources-documents-DocContentType) |  | @gotags: alias:"content_type" |
+| content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | content | [string](#string) |  | @sanitize |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
@@ -2662,19 +2691,6 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
-
-
-<a name="resources-documents-DocContentType"></a>
-
-### DocContentType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| DOC_CONTENT_TYPE_UNSPECIFIED | 0 |  |
-| DOC_CONTENT_TYPE_HTML | 1 |  |
-| DOC_CONTENT_TYPE_PLAIN | 2 |  |
-
 
 
 <a name="resources-documents-DocReference"></a>
@@ -5877,7 +5893,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | description | [string](#string) |  | @sanitize: method=StripTags |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
-| content_type | [ContentType](#resources-wiki-ContentType) |  |  |
+| content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
 | tags | [string](#string) | repeated |  |
 | toc | [bool](#bool) | optional |  |
 | public | [bool](#bool) |  |  |
@@ -5926,19 +5942,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
-
-<a name="resources-wiki-ContentType"></a>
-
-### ContentType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CONTENT_TYPE_UNSPECIFIED | 0 |  |
-| CONTENT_TYPE_HTML | 1 |  |
-| CONTENT_TYPE_MARKDOWN | 2 |  |
-
 
  <!-- end enums -->
 
@@ -8273,7 +8276,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | content | [string](#string) |  | @sanitize
 
 @gotags: alias:"content" |
-| content_type | [resources.documents.DocContentType](#resources-documents-DocContentType) |  | @gotags: alias:"content_type" |
+| content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | data | [string](#string) | optional | @gotags: alias:"data" |
 | state | [string](#string) |  | @sanitize
 
@@ -9159,7 +9162,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | content | [string](#string) |  | @sanitize
 
 @gotags: alias:"content" |
-| content_type | [resources.documents.DocContentType](#resources-documents-DocContentType) |  | @gotags: alias:"content_type" |
+| content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | data | [string](#string) | optional | @gotags: alias:"data" |
 | state | [string](#string) |  | @sanitize
 

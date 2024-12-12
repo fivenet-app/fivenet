@@ -11,6 +11,7 @@
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto
+// source: resources/common/content/content.proto
 // source: resources/common/cron/cron.proto
 // source: resources/common/database/database.proto
 // source: resources/common/grpcws/grpcws.proto
