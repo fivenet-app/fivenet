@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ContentType } from '~~/gen/ts/resources/common/content';
+import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';

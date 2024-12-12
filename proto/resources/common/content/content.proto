@@ -9,3 +9,5 @@ enum ContentType {
   CONTENT_TYPE_HTML = 1;
   CONTENT_TYPE_PLAIN = 2;
 }
+
+// TODO Define structure for storing HTML content (as JSON)
