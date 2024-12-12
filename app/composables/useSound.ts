@@ -1,4 +1,5 @@
 import { useState } from '#imports';
+import { useSettingsStore } from '~/store/settings';
 
 export type SoundBites = 'centrum/attention' | 'centrum/message-incoming' | 'centrum/morse-sos' | 'notification';
 
@@ -12,11 +13,17 @@ export type Sound = {
 export function useSound() {
     const sounds = useState<Sound[]>('sounds', () => []);
 
+    const settingsStore = useSettingsStore();
+    const { audio } = storeToRefs(settingsStore);
+
     function play(sound: Partial<Sound>) {
         const body = {
             id: new Date().getTime().toString(),
             ...sound,
         };
+        if (!sound.volume) {
+            sound.volume = audio.value.notificationsVolume;
+        }
 
         const index = sounds.value.findIndex((s: Sound) => s.id === body.id);
         if (index === -1) {

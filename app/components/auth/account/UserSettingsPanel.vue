@@ -185,6 +185,10 @@ const selectedTab = computed({
                     :title="$t('components.auth.UserSettingsPanel.volumes.title')"
                     :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
                 >
+                    <template #links>
+                        <UButton icon="i-mdi-play" @click="useSound().play({ name: 'notification' })" />
+                    </template>
+
                     <UFormGroup
                         name="notificationsVolume"
                         :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
