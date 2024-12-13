@@ -13,3 +13,7 @@
         font-style: italic;
     }
 }
+
+html {
+    scroll-behavior: smooth;
+}

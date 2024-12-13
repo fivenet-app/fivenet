@@ -2,13 +2,13 @@
 import type { TocLink } from '@nuxt/content';
 import { emojiBlast } from 'emoji-blast';
 import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
-import slug from '~/utils/slugify';
+import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
+import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
@@ -36,9 +36,6 @@ const { can } = useAuth();
 const modal = useModal();
 
 const notifications = useNotificatorStore();
-
-const settings = useSettingsStore();
-const { isNUIAvailable } = storeToRefs(settings);
 
 const breadcrumbs = computed(() => [
     {
@@ -75,68 +72,24 @@ async function deletePage(id: string): Promise<void> {
     }
 }
 
-function walk(nodes: ChildNode[]) {
+function walk(nodes: JSONNode): TocLink[] {
     const headers: TocLink[] = [];
-    nodes.forEach((n, idx) => {
-        const node = n as HTMLElement;
-
-        if (/h[1-6]/i.test(node.tagName)) {
-            if (node.id === '') {
-                node.id = 'h' + slug(node.textContent?.substring(0, 64) ?? `${node.tagName}-${idx}`);
-            }
+    nodes.children.forEach((n) => {
+        if (/h[1-6]/i.test(n.tag)) {
             headers.push({
-                id: node.id,
-                depth: parseInt(node.tagName.replace('H', '')),
-                text: node.innerText,
+                id: n.id,
+                depth: parseInt(n.tag.replace('h', '')),
+                text: n.children[0]?.text ?? n.text,
             });
         }
 
-        const sub = Array.from(node.childNodes);
-        if (sub.length) {
-            headers.push(...walk(sub));
-        }
+        n.children.forEach((c) => headers.push(...walk(c)));
     });
+
     return headers;
 }
 
-const pageContainerRef = useTemplateRef('pageContainerRef');
-
-const route = useRoute();
-watch(
-    () => route.hash,
-    () => handleHashChange(route.hash),
-);
-
-const handleHashChange = (hash: string) => {
-    if (hash) {
-        try {
-            const targetElement = document.querySelector(hash); // Find element with id
-
-            if (targetElement) {
-                if (isNUIAvailable.value) {
-                    pageContainerRef.value?.scrollTo({
-                        top: targetElement.scrollTop,
-                    });
-                } else {
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                        inline: 'start',
-                    }); // Smooth scroll to the element
-                }
-            }
-        } catch (e) {
-            console.warn('Query Selector exception', e);
-        }
-    }
-};
-
-const contentRef = useTemplateRef('contentRef');
-const tocLinks = computedAsync(async () => walk(Array.from(Array.from(contentRef.value?.childNodes ?? []))));
-watchOnce(tocLinks, async () => {
-    await nextTick();
-    handleHashChange(route.hash);
-});
+const tocLinks = computedAsync(async () => props.page?.content?.content && walk(props.page?.content?.content));
 
 const accordionItems = computed(() =>
     [
@@ -163,8 +116,8 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <div ref="pageContainerRef" class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
-        <UPage>
+    <UDashboardPanelContent class="p-0">
+        <UPage class="px-8 py-2 pt-4">
             <template #left>
                 <slot name="left" />
             </template>
@@ -280,13 +233,12 @@ const accordionItems = computed(() =>
                             </UBadge>
                         </div>
 
-                        <p>{{ page.meta.description }}</p>
+                        <p v-if="page.meta.description" class="mt-4">{{ page.meta.description }}</p>
                     </template>
                 </UPageHeader>
 
-                <UPageBody prose class="pb-8">
-                    <!-- eslint-disable vue/no-v-html -->
-                    <div ref="contentRef" class="prose dark:prose-invert max-w-fit" v-html="page.content" />
+                <UPageBody v-if="page.content?.content" prose class="pb-8">
+                    <HTMLContentRenderer :value="page.content.content" />
                 </UPageBody>
 
                 <UDivider class="mb-4" />
@@ -324,5 +276,5 @@ const accordionItems = computed(() =>
                 <UContentToc :title="$t('common.toc')" :links="tocLinks" />
             </template>
         </UPage>
-    </div>
+    </UDashboardPanelContent>
 </template>

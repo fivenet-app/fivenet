@@ -15,6 +15,7 @@ import { ContentType } from "../common/content/content";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 import { PageAccess } from "./access";
+import { Content } from "../common/content/content";
 /**
  * @generated from protobuf message resources.wiki.Page
  */
@@ -44,9 +45,9 @@ export interface Page {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 6;
+     * @generated from protobuf field: resources.common.content.Content content = 6;
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: resources.wiki.PageAccess access = 7;
      */
@@ -176,7 +177,7 @@ class Page$Type extends MessageType<Page> {
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "validate.rules": { message: { required: true } } } },
-            { no: 6, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -184,7 +185,6 @@ class Page$Type extends MessageType<Page> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.job = "";
-        message.content = "";
         if (value !== undefined)
             reflectionMergePartial<Page>(this, message, value);
         return message;
@@ -209,8 +209,8 @@ class Page$Type extends MessageType<Page> {
                 case /* resources.wiki.PageMeta meta */ 5:
                     message.meta = PageMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
                     break;
-                case /* string content */ 6:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 6:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* resources.wiki.PageAccess access */ 7:
                     message.access = PageAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
@@ -242,9 +242,9 @@ class Page$Type extends MessageType<Page> {
         /* resources.wiki.PageMeta meta = 5; */
         if (message.meta)
             PageMeta.internalBinaryWrite(message.meta, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* string content = 6; */
-        if (message.content !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 6; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* resources.wiki.PageAccess access = 7; */
         if (message.access)
             PageAccess.internalBinaryWrite(message.access, writer.tag(7, WireType.LengthDelimited).fork(), options).join();

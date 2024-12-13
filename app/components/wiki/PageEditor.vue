@@ -9,7 +9,7 @@ import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
-import DocEditor from '../partials/DocEditor.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = defineProps<{
     modelValue?: Page | undefined;
@@ -38,7 +38,10 @@ const page = computed({
                       description: '',
                       tags: [],
                   },
-                  content: '',
+                  content: {
+                      version: '',
+                      rawContent: '',
+                  },
                   access: {
                       jobs: [
                           {
@@ -98,7 +101,7 @@ const state = reactive<Schema>({
         public: page.value?.meta?.public ?? false,
         toc: page.value?.meta?.toc ?? true,
     },
-    content: page.value?.content ?? '',
+    content: page.value?.content?.rawContent ?? '',
     access: {
         jobs: [],
         users: [],
@@ -122,7 +125,7 @@ function setFromProps(): void {
     state.meta.description = page.value.meta?.description ?? '';
     state.meta.public = page.value.meta?.public ?? false;
     state.meta.toc = page.value.meta?.toc ?? true;
-    state.content = page.value.content;
+    state.content = page.value.content?.rawContent ?? '';
     if (page.value.access) {
         state.access = page.value.access;
     }
@@ -141,7 +144,10 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
             public: values.meta.public,
             tags: [],
         },
-        content: values.content,
+        content: {
+            version: '',
+            rawContent: values.content,
+        },
         parentId: values.parentId,
         access: values.access,
     };
@@ -221,18 +227,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm
+        :schema="schema"
+        :state="state"
+        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        @submit="onSubmitThrottle"
+    >
         <UDashboardNavbar :title="$t('common.wiki')">
             <template #right>
                 <UButton
                     color="black"
                     icon="i-mdi-arrow-left"
+                    :disabled="!canSubmit"
                     @click="createPage ? navigateTo({ name: 'wiki' }) : $emit('close')"
                 >
                     {{ $t('common.back') }}
                 </UButton>
 
-                <UButton type="submit" class="ml-2" trailing-icon="i-mdi-content-save">
+                <UButton type="submit" class="ml-2" trailing-icon="i-mdi-content-save" :disabled="!canSubmit">
                     <span class="hidden truncate sm:block">
                         <template v-if="!page.id">
                             {{ $t('common.create') }}
@@ -245,8 +257,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </UDashboardNavbar>
 
-        <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
-            <UPage>
+        <UDashboardPanelContent class="p-0">
+            <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
                 <div class="flex flex-col gap-2">
                     <UFormGroup
                         v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
@@ -288,7 +300,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="content" :label="$t('common.content')">
                         <ClientOnly>
-                            <DocEditor v-model="state.content" />
+                            <TiptapEditor v-model="state.content" />
                         </ClientOnly>
                     </UFormGroup>
 
@@ -313,7 +325,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
                     </div>
                 </div>
-            </UPage>
-        </div>
+            </div>
+        </UDashboardPanelContent>
     </UForm>
 </template>

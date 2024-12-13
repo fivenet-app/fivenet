@@ -141,9 +141,6 @@ export default defineAppConfig({
         },
         // Nuxt UI Pro
         dashboard: {
-            page: {
-                wrapper: 'flex w-full min-h-screen min-w-screen max-w-full overflow-y-auto',
-            },
             panel: {
                 content: {
                     wrapper: 'pb-24 sm:pb-4',

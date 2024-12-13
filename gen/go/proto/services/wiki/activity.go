@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
 	errorswiki "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki/errors"
@@ -168,14 +169,8 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 		}
 	}
 
-	if !strings.EqualFold(old.Content, new.Content) {
-		contentDiff, err := s.htmlDiff.Diff(old.Content, new.Content)
-		if err != nil {
-			return nil, err
-		}
-		if contentDiff != "" {
-			diff.ContentDiff = &contentDiff
-		}
+	if d := content.DiffHTML(*old.Content.RawContent, *new.Content.RawContent); d != "" {
+		diff.ContentDiff = &d
 	}
 
 	return diff, nil

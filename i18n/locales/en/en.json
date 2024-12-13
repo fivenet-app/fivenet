@@ -532,7 +532,8 @@
         "prefix": "Prefix",
         "suffix": "Suffix",
         "grade": "Grade",
-        "sort_direction": "Sort Direction"
+        "sort_direction": "Sort Direction",
+        "font": "Font"
     },
     "components": {
         "partials": {

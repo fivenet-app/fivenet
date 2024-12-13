@@ -272,27 +272,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </UFormGroup>
                         </div>
 
-                        <UDivider class="my-2" />
-
                         <UFormGroup
-                            :label="$t('common.message', 1)"
+                            :label="$t('common.message')"
                             name="content"
-                            :ui="{
-                                wrapper: 'flex flex-1 flex-col',
-                                container: 'flex flex-1 flex-col',
-                                label: { base: 'flex flex-1' },
-                            }"
+                            class="w-full flex-1"
+                            :ui="{ label: { base: 'flex flex-1' } }"
                         >
                             <template #label>
                                 <div class="flex flex-1 flex-col items-center sm:flex-row">
-                                    <span>{{ $t('common.message', 2) }}</span>
+                                    <span class="flex-1">{{ $t('common.message', 1) }}</span>
 
                                     <TemplateSelector v-model="state.content" class="ml-auto" />
                                 </div>
                             </template>
 
                             <ClientOnly>
-                                <DocEditor v-model="state.content" class="h-full w-full flex-1" :disabled="!canSubmit" />
+                                <DocEditor v-model="state.content" class="flex-1" :disabled="!canSubmit" />
                             </ClientOnly>
                         </UFormGroup>
                     </div>

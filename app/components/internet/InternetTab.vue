@@ -48,7 +48,7 @@ const { data: page } = useLazyAsyncData(`internet-page-${tab.value?.domain}:${ta
 </script>
 
 <template>
-    <UDashboardPanelContent class="h-full overflow-x-auto p-0">
+    <UDashboardPanelContent class="p-0">
         <HomePage v-if="tab?.domain === urlHomePage || tab?.domain === ''" v-model="tab" />
         <NotFound v-else-if="!page" v-model="tab" />
         <template v-else>

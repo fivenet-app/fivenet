@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package resources.common.content;
 
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content;content";
 
 enum ContentType {
@@ -10,4 +12,24 @@ enum ContentType {
   CONTENT_TYPE_PLAIN = 2;
 }
 
-// TODO Define structure for storing HTML content (as JSON)
+message Content {
+  optional string version = 1 [(validate.rules).string.max_len = 24];
+  optional JSONNode content = 2;
+  // @sanitize
+  optional string raw_content = 3;
+}
+
+message JSONNode {
+  // @sanitize: method=StripTags
+  string type = 1;
+  // @sanitize: method=StripTags
+  string id = 2;
+  // @sanitize: method=StripTags
+  string tag = 3;
+  map<string, string> attributes = 4;
+  // @sanitize: method=StripTags
+  string class = 5;
+  // @sanitize: method=StripTags
+  string text = 6;
+  repeated JSONNode children = 7;
+}

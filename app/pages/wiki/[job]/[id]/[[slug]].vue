@@ -75,8 +75,8 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UDashboardPage class="h-full">
-        <UDashboardPanel class="h-full shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+    <UDashboardPage>
+        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
             <PageView
                 v-if="!editing"
                 :loading="loading"

@@ -23,18 +23,18 @@ type Differ struct {
 func New() *Differ {
 	return &Differ{
 		htmldiff: &htmldiff.Config{
-			Granularity:  5,
+			Granularity:  6,
 			InsertedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-success-600"}},
 			DeletedSpan:  []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-error-600"}},
 			ReplacedSpan: []htmldiff.Attribute{{Key: "class", Val: "htmldiff bg-info-600"}},
-			CleanTags:    []string{""},
+			CleanTags:    []string{},
 		},
 	}
 }
 
 func (d *Differ) Diff(oldContent string, newContent string) (string, error) {
-	oldContent = brFixer.ReplaceAllString(oldContent, "<br>")
-	newContent = brFixer.ReplaceAllString(newContent, "<br>")
+	oldContent = brFixer.ReplaceAllString(oldContent, "<br/>")
+	newContent = brFixer.ReplaceAllString(newContent, "<br/>")
 	res, err := d.htmldiff.HTMLdiff([]string{oldContent, newContent})
 	if err != nil {
 		// Fallback to the new content
@@ -49,5 +49,3 @@ func (d *Differ) Diff(oldContent string, newContent string) (string, error) {
 
 	return out, nil
 }
-
-// TODO the diff needs to be reduced to the changes 1-2 elements around them to reduce data needs

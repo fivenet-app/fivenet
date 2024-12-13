@@ -22,6 +22,7 @@ export default defineNuxtConfig({
         '@galexrt/nuxt-update',
         '@nuxt/eslint',
         '@nuxt/content',
+        'nuxt-tiptap-editor',
     ],
 
     future: {
@@ -88,9 +89,6 @@ export default defineNuxtConfig({
             charset: 'utf-8',
             viewport: 'width=device-width, initial-scale=1',
             link: [{ rel: 'icon', type: 'image/png', href: '/images/logo.png' }],
-            bodyAttrs: {
-                class: 'h-full',
-            },
         },
         pageTransition: { name: 'page', mode: 'out-in' },
     },
@@ -213,6 +211,8 @@ export default defineNuxtConfig({
             iconifyApiEndpoint: '/api/icons',
         },
     },
+
+    tiptap: {},
 
     $development: {
         icon: {

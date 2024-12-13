@@ -59,10 +59,7 @@ func (c *Config) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 
 func (c *Config) handleMessageFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
-		remoteCtx, err := events.GetJetstreamMsgContext(msg)
-		if err != nil {
-			c.logger.Error("failed to get js msg context", zap.Error(err))
-		}
+		remoteCtx, _ := events.GetJetstreamMsgContext(msg)
 		_, span := c.tracer.Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
 		defer span.End()
 

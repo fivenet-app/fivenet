@@ -9,8 +9,6 @@ import (
 
 func (m *Page) Sanitize() error {
 
-	m.Content = htmlsanitizer.Sanitize(m.Content)
-
 	m.Job = htmlsanitizer.StripTags(m.Job)
 
 	return nil

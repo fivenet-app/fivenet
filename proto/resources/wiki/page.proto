@@ -19,7 +19,7 @@ message Page {
   optional uint64 parent_id = 4 [jstype = JS_STRING];
   PageMeta meta = 5 [(validate.rules).message.required = true];
   // @sanitize
-  string content = 6;
+  resources.common.content.Content content = 6;
   PageAccess access = 7 [(validate.rules).message.required = true];
 }
 

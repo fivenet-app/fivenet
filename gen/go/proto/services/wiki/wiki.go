@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
@@ -414,7 +415,7 @@ func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, w
 	}
 	if withContent {
 		columns = append(columns,
-			tPage.Content,
+			tPage.Content.AS("page.content"),
 			tPage.Data,
 		)
 	}
@@ -585,7 +586,7 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 	req.Page.Id = uint64(lastId)
 
 	if _, err := s.addPageActivity(ctx, tx, &wiki.PageActivity{
-		PageId:       uint64(lastId),
+		PageId:       req.Page.Id,
 		ActivityType: wiki.PageActivityType_PAGE_ACTIVITY_TYPE_CREATED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
@@ -675,8 +676,6 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		req.Page.ParentId = nil
 	}
 
-	tPage := table.FivenetWikiPages
-
 	check, err := s.access.CanUserAccessTarget(ctx, req.Page.Id, userInfo, wiki.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
@@ -690,6 +689,11 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	*req.Page.Content.RawContent, err = content.PrettyHTML(*req.Page.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -698,6 +702,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	tPage := table.FivenetWikiPages
 	stmt := tPage.
 		UPDATE(
 			tPage.ParentID,

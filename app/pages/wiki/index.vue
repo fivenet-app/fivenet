@@ -61,7 +61,7 @@ watch(pages, async () => {
 </script>
 
 <template>
-    <UDashboardPage class="h-full">
+    <UDashboardPage>
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.wiki')">
                 <template #center>

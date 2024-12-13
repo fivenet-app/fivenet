@@ -119,9 +119,9 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPage class="h-full">
+    <UDashboardPage>
         <UDashboardPanel
-            class="h-full shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
+            class="shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
             grow
         >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">

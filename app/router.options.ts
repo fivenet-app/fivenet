@@ -2,20 +2,14 @@
 
 import type { RouterConfig } from '@nuxt/schema';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function findHashPosition(hash: string): { el: any; behavior: ScrollBehavior; top: number } | undefined {
+function findHashPosition(hash: string): undefined {
     try {
         const el = document.querySelector(hash);
-
         // vue-router does not incorporate scroll-margin-top on its own.
         if (el) {
-            const top = Number.parseFloat(getComputedStyle(el).scrollMarginTop);
-
-            return {
-                el: hash,
+            el.scrollIntoView({
                 behavior: 'smooth',
-                top,
-            };
+            });
         }
     } catch (e) {
         console.warn('Query Selector exception', e);
