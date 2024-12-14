@@ -33,7 +33,7 @@ const editorRef = ref<JoditEditor | null>(null);
 const content = useVModel(props, 'modelValue', emit);
 
 const settingsStore = useSettingsStore();
-const { design: theme, locale } = storeToRefs(settingsStore);
+const { locale } = storeToRefs(settingsStore);
 
 const config = {
     readOnly: props.disabled,
@@ -42,8 +42,8 @@ const config = {
     language: locale.value,
     spellcheck: true,
     minHeight: props.minHeight,
-    editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
-    theme: theme.value.documents.editorTheme,
+    editorClassName: 'prose prose-gray',
+    theme: 'default',
     showPlaceholder: false,
 
     defaultMode: props.splitScreen ? '3' : '1',

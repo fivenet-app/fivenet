@@ -28,16 +28,6 @@ watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ??
 
 onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
 
-const darkModeActive = ref(design.value.documents.editorTheme === 'dark');
-
-watch(darkModeActive, async () => {
-    if (darkModeActive.value) {
-        design.value.documents.editorTheme = 'dark';
-    } else {
-        design.value.documents.editorTheme = 'default';
-    }
-});
-
 const designDocumentsListStyle = ref(design.value.documents.listStyle === 'double');
 
 watch(designDocumentsListStyle, async () => {
@@ -126,20 +116,6 @@ const selectedTab = computed({
                         <UToggle v-model="streamerMode" name="streamerMode">
                             <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
                         </UToggle>
-                    </UFormGroup>
-
-                    <UFormGroup
-                        name="darkModeActive"
-                        :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
-                        class="grid grid-cols-2 items-center gap-2"
-                    >
-                        <div class="flex items-center gap-2">
-                            <UToggle v-model="darkModeActive">
-                                <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
-                            </UToggle>
-
-                            <span>{{ $t('components.auth.UserSettingsPanel.editor_theme.dark_mode') }}</span>
-                        </div>
                     </UFormGroup>
 
                     <UFormGroup

@@ -718,6 +718,8 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 
 // Make sure that all users in units are still on duty
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
+	foundUserIds := []int32{}
+
 	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
 		units, ok := s.ListUnits(ctx, job)
 		if !ok {
@@ -749,6 +751,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 				unitId, _ := s.GetUserUnitID(ctx, userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
 				if unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
+					foundUserIds = append(foundUserIds, userId)
 					continue
 				}
 
@@ -767,7 +770,26 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		}
 	}
 
-	return nil
+	userUnitIds, err := s.State.ListUserIdsFromUserIdUnitIds(ctx)
+	if err != nil {
+		return err
+	}
+
+	errs := multierr.Combine()
+	for _, userId := range userUnitIds {
+		// Check if user id with unit mapping is in one of the units
+		if !slices.Contains(foundUserIds, userId) {
+			s.logger.Warn("found invalid user id unit mapping", zap.Int32("user_id", userId))
+
+			// Unset unit id for user when user is not in any unit
+			if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
+				errs = multierr.Append(errs, err)
+				continue
+			}
+		}
+	}
+
+	return errs
 }
 
 func (s *Housekeeper) watchUserChanges() {

@@ -108,7 +108,7 @@ const accordionItems = computed(() =>
         </template>
 
         <template #right>
-            <PartialsBackButton fallback-to="/wiki" :label="$t('common.wiki')" />
+            <PartialsBackButton fallback-to="/wiki" />
 
             <UButton v-if="can('WikiService.CreatePage').value" color="gray" trailing-icon="i-mdi-plus" to="/wiki/create">
                 {{ $t('common.page') }}

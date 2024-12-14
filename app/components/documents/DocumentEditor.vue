@@ -4,7 +4,6 @@ import { z } from 'zod';
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
-import DocEditor from '~/components/partials/DocEditor.vue';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -21,6 +20,7 @@ import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/ser
 import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = defineProps<{
     documentId?: string;
@@ -589,7 +589,11 @@ logger.info(
             <template v-if="canDo.edit">
                 <UFormGroup name="content" class="relative">
                     <ClientOnly>
-                        <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                        <TiptapEditor
+                            v-model="state.content"
+                            :disabled="!canEdit || !canDo.edit"
+                            class="mx-auto max-w-screen-xl"
+                        />
                     </ClientOnly>
 
                     <template v-if="saving">

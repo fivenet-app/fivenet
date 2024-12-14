@@ -533,7 +533,8 @@
         "suffix": "Suffix",
         "grade": "Grade",
         "sort_direction": "Sort Direction",
-        "font": "Font"
+        "font": "Font",
+        "case_sensitive": "Case sensitive"
     },
     "components": {
         "partials": {
@@ -551,6 +552,13 @@
             },
             "table_pagination": {
                 "page_count": "Page {current} of {maxPage} à {size} records (Total {total})"
+            },
+            "TipTapEditor": {
+                "clear": "Clear",
+                "previous": "Previous",
+                "next": "Next",
+                "replace": "Replace",
+                "replace_all": "Replace All"
             }
         },
         "clipboard": {
@@ -1083,10 +1091,6 @@
                 "set_startpage": {
                     "title": "Start Page after character selector",
                     "no_char_selected": "To select a start page you must select a character first."
-                },
-                "editor_theme": {
-                    "title": "Document Editor Theme",
-                    "dark_mode": "Dark Mode"
                 },
                 "app_theme": {
                     "job_default_theme": "Use Job's Theme"

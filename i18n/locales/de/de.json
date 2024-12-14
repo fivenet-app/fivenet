@@ -1083,10 +1083,6 @@
                     "title": "Startseite nach Charakterauswahl",
                     "no_char_selected": "Um eine Startseite auszuwählen, müssen Sie zuerst einen Charakter auswählen."
                 },
-                "editor_theme": {
-                    "title": "Dokumenten-Editor-Design",
-                    "dark_mode": "Dunkler Modus"
-                },
                 "app_theme": {
                     "job_default_theme": "Nutze das durch den Beruf vorgegebene Design"
                 },

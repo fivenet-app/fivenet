@@ -19,7 +19,6 @@ export interface SettingsState {
     startpage: string;
     design: {
         documents: {
-            editorTheme: 'default' | 'dark';
             listStyle: 'single' | 'double';
         };
         ui: {
@@ -61,7 +60,6 @@ export const useSettingsStore = defineStore('settings', {
             startpage: '/overview',
             design: {
                 documents: {
-                    editorTheme: 'default',
                     listStyle: 'single',
                 },
                 ui: {

@@ -2,6 +2,7 @@ package centrumstate
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
@@ -33,4 +34,23 @@ func (s *State) SetUnitForUser(ctx context.Context, job string, userId int32, un
 
 func (s *State) UnsetUnitIDForUser(ctx context.Context, userId int32) error {
 	return s.userIDToUnitID.Delete(ctx, userIdKey(userId))
+}
+
+func (s *State) ListUserIdsFromUserIdUnitIds(ctx context.Context) ([]int32, error) {
+	keys, err := s.userIDToUnitID.Keys(ctx, "")
+	if err != nil {
+		return nil, err
+	}
+
+	ids := make([]int32, len(keys))
+	for idx := range keys {
+		id, err := strconv.Atoi(keys[idx])
+		if err != nil {
+			continue
+		}
+
+		ids[idx] = int32(id)
+	}
+
+	return ids, nil
 }

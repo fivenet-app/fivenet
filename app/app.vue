@@ -73,7 +73,7 @@ const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
 };
 
-function clickListener(event: MouseEvent): void {
+async function clickListener(event: MouseEvent): Promise<void> {
     if (!event.target) {
         return;
     }
@@ -88,7 +88,7 @@ function clickListener(event: MouseEvent): void {
     }
 
     event.preventDefault();
-    navigateTo({
+    await navigateTo({
         name: 'dereferer',
         query: {
             target: href,
