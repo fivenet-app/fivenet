@@ -533,8 +533,7 @@
         "suffix": "Suffix",
         "grade": "Grade",
         "sort_direction": "Sort Direction",
-        "font": "Font",
-        "case_sensitive": "Case sensitive"
+        "font": "Font"
     },
     "components": {
         "partials": {
@@ -552,13 +551,6 @@
             },
             "table_pagination": {
                 "page_count": "Page {current} of {maxPage} à {size} records (Total {total})"
-            },
-            "TipTapEditor": {
-                "clear": "Clear",
-                "previous": "Previous",
-                "next": "Next",
-                "replace": "Replace",
-                "replace_all": "Replace All"
             }
         },
         "clipboard": {
