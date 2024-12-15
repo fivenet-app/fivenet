@@ -552,6 +552,13 @@
             },
             "table_pagination": {
                 "page_count": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
+            },
+            "TipTapEditor": {
+                "clear": "Löschen",
+                "previous": "Vorherige",
+                "next": "Nächste",
+                "replace": "Ersetzen",
+                "replace_all": "Alles ersetzen"
             }
         },
         "clipboard": {
