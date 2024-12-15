@@ -66,6 +66,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
+const { t } = useI18n();
+
 const content = useVModel(props, 'modelValue', emit);
 
 const editor = useEditor({
@@ -161,7 +163,7 @@ const editor = useEditor({
 
 const fonts = [
     {
-        label: 'Default',
+        label: t('common.default'),
         value: 'DM Sans',
     },
     {

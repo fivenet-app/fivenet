@@ -533,7 +533,8 @@
         "suffix": "Suffix",
         "grade": "Benoten",
         "sort_direction": "Sortierrichtung",
-        "font": "Schriftart"
+        "font": "Schriftart",
+        "default": "Standard"
     },
     "components": {
         "partials": {
