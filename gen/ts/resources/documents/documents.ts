@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Workflow } from "./workflow";
 import { UserShort } from "../users/users";
+import { Content } from "../common/content/content";
 import { ContentType } from "../common/content/content";
 import { Category } from "./category";
 import { Timestamp } from "../timestamp/timestamp";
@@ -54,11 +55,9 @@ export interface Document {
      */
     contentType: ContentType; // @gotags: alias:"content_type"
     /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string content = 9;
+     * @generated from protobuf field: resources.common.content.Content content = 9;
      */
-    content: string;
+    content?: Content;
     /**
      * @sanitize
      *
@@ -153,9 +152,9 @@ export interface DocumentShort {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 9;
+     * @generated from protobuf field: resources.common.content.Content content = 9;
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: optional int32 creator_id = 10;
      */
@@ -393,7 +392,7 @@ class Document$Type extends MessageType<Document> {
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
@@ -413,7 +412,6 @@ class Document$Type extends MessageType<Document> {
         message.id = "0";
         message.title = "";
         message.contentType = 0;
-        message.content = "";
         message.creatorJob = "";
         message.state = "";
         message.closed = false;
@@ -452,8 +450,8 @@ class Document$Type extends MessageType<Document> {
                 case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
                     break;
-                case /* string content */ 9:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 9:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional string data */ 10:
                     message.data = reader.string();
@@ -527,9 +525,9 @@ class Document$Type extends MessageType<Document> {
         /* resources.common.content.ContentType content_type = 8; */
         if (message.contentType !== 0)
             writer.tag(8, WireType.Varint).int32(message.contentType);
-        /* string content = 9; */
-        if (message.content !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 9; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* optional string data = 10; */
         if (message.data !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.data);
@@ -588,7 +586,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
+            { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
             { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -605,7 +603,6 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         message.id = "0";
         message.title = "";
         message.contentType = 0;
-        message.content = "";
         message.creatorJob = "";
         message.state = "";
         message.closed = false;
@@ -643,8 +640,8 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
                 case /* resources.common.content.ContentType content_type */ 8:
                     message.contentType = reader.int32();
                     break;
-                case /* string content */ 9:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 9:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional int32 creator_id */ 10:
                     message.creatorId = reader.int32();
@@ -709,9 +706,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
         /* resources.common.content.ContentType content_type = 8; */
         if (message.contentType !== 0)
             writer.tag(8, WireType.Varint).int32(message.contentType);
-        /* string content = 9; */
-        if (message.content !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 9; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 creator_id = 10; */
         if (message.creatorId !== undefined)
             writer.tag(10, WireType.Varint).int32(message.creatorId);

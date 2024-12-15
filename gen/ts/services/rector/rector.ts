@@ -242,10 +242,14 @@ export interface ViewAuditLogRequest {
      */
     to?: Timestamp;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string services = 6;
      */
     services: string[];
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string methods = 7;
      */
     methods: string[];

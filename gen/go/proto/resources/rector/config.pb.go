@@ -273,8 +273,10 @@ type Perm struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Category string `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
-	Name     string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	// @sanitize: method=StripTags
+	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 }
 
 func (x *Perm) Reset() {
@@ -379,8 +381,10 @@ type Links struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	PrivacyPolicy *string `protobuf:"bytes,1,opt,name=privacy_policy,json=privacyPolicy,proto3,oneof" json:"privacy_policy,omitempty"`
-	Imprint       *string `protobuf:"bytes,2,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
+	// @sanitize: method=StripTags
+	Imprint *string `protobuf:"bytes,2,opt,name=imprint,proto3,oneof" json:"imprint,omitempty"`
 }
 
 func (x *Links) Reset() {
@@ -433,8 +437,10 @@ type JobInfo struct {
 	unknownFields protoimpl.UnknownFields
 
 	UnemployedJob *UnemployedJob `protobuf:"bytes,1,opt,name=unemployed_job,json=unemployedJob,proto3" json:"unemployed_job,omitempty"`
-	PublicJobs    []string       `protobuf:"bytes,2,rep,name=public_jobs,json=publicJobs,proto3" json:"public_jobs,omitempty"`
-	HiddenJobs    []string       `protobuf:"bytes,3,rep,name=hidden_jobs,json=hiddenJobs,proto3" json:"hidden_jobs,omitempty"`
+	// @sanitize: method=StripTags
+	PublicJobs []string `protobuf:"bytes,2,rep,name=public_jobs,json=publicJobs,proto3" json:"public_jobs,omitempty"`
+	// @sanitize: method=StripTags
+	HiddenJobs []string `protobuf:"bytes,3,rep,name=hidden_jobs,json=hiddenJobs,proto3" json:"hidden_jobs,omitempty"`
 }
 
 func (x *JobInfo) Reset() {
@@ -548,7 +554,8 @@ type UserTracker struct {
 
 	RefreshTime   *durationpb.Duration `protobuf:"bytes,1,opt,name=refresh_time,json=refreshTime,proto3" json:"refresh_time,omitempty"`
 	DbRefreshTime *durationpb.Duration `protobuf:"bytes,2,opt,name=db_refresh_time,json=dbRefreshTime,proto3" json:"db_refresh_time,omitempty"`
-	LivemapJobs   []string             `protobuf:"bytes,3,rep,name=livemap_jobs,json=livemapJobs,proto3" json:"livemap_jobs,omitempty"`
+	// @sanitize: method=StripTags
+	LivemapJobs []string `protobuf:"bytes,3,rep,name=livemap_jobs,json=livemapJobs,proto3" json:"livemap_jobs,omitempty"`
 }
 
 func (x *UserTracker) Reset() {
@@ -609,9 +616,11 @@ type Discord struct {
 
 	Enabled      bool                 `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
 	SyncInterval *durationpb.Duration `protobuf:"bytes,2,opt,name=sync_interval,json=syncInterval,proto3" json:"sync_interval,omitempty"`
-	InviteUrl    *string              `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
-	IgnoredJobs  []string             `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
-	BotPresence  *DiscordBotPresence  `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
+	// @sanitize: method=StripTags
+	InviteUrl *string `protobuf:"bytes,3,opt,name=invite_url,json=inviteUrl,proto3,oneof" json:"invite_url,omitempty"`
+	// @sanitize: method=StripTags
+	IgnoredJobs []string            `protobuf:"bytes,4,rep,name=ignored_jobs,json=ignoredJobs,proto3" json:"ignored_jobs,omitempty"`
+	BotPresence *DiscordBotPresence `protobuf:"bytes,5,opt,name=bot_presence,json=botPresence,proto3,oneof" json:"bot_presence,omitempty"`
 }
 
 func (x *Discord) Reset() {
@@ -684,9 +693,11 @@ type DiscordBotPresence struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type   DiscordBotPresenceType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.rector.DiscordBotPresenceType" json:"type,omitempty"`
-	Status *string                `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	Url    *string                `protobuf:"bytes,3,opt,name=url,proto3,oneof" json:"url,omitempty"`
+	Type DiscordBotPresenceType `protobuf:"varint,1,opt,name=type,proto3,enum=resources.rector.DiscordBotPresenceType" json:"type,omitempty"`
+	// @sanitize: method=StripTags
+	Status *string `protobuf:"bytes,2,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	// @sanitize: method=StripTags
+	Url *string `protobuf:"bytes,3,opt,name=url,proto3,oneof" json:"url,omitempty"`
 }
 
 func (x *DiscordBotPresence) Reset() {

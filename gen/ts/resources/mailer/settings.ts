@@ -19,10 +19,14 @@ export interface EmailSettings {
      */
     emailId: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string signature = 2;
      */
     signature?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string blocked_emails = 3;
      */
     blockedEmails: string[];

@@ -105,7 +105,18 @@ func (m *Content) validate(all bool) error {
 	}
 
 	if m.RawContent != nil {
-		// no validation rules for RawContent
+
+		if len(m.GetRawContent()) > 2000000 {
+			err := ContentValidationError{
+				field:  "RawContent",
+				reason: "value length must be at most 2000000 bytes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

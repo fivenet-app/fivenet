@@ -548,6 +548,7 @@ type StringList struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Strings []string `protobuf:"bytes,1,rep,name=strings,proto3" json:"strings,omitempty"`
 }
 

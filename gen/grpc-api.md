@@ -1320,7 +1320,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| list | [string](#string) | repeated |  |
+| list | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -1385,8 +1385,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
+| unit_status | [string](#string) | repeated | @sanitize: method=StripTags |
+| dispatch_status | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -1648,8 +1648,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| key | [string](#string) |  |  |
-| parameters | [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry) | repeated |  |
+| key | [string](#string) |  | @sanitize: method=StripTags |
+| parameters | [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -1953,7 +1953,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| attributes | [GenericCronData.AttributesEntry](#resources-common-cron-GenericCronData-AttributesEntry) | repeated |  |
+| attributes | [GenericCronData.AttributesEntry](#resources-common-cron-GenericCronData-AttributesEntry) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -2097,7 +2097,7 @@
 | type | [string](#string) |  | @sanitize: method=StripTags |
 | id | [string](#string) |  | @sanitize: method=StripTags |
 | tag | [string](#string) |  | @sanitize: method=StripTags |
-| attributes | [JSONNode.AttributesEntry](#resources-common-content-JSONNode-AttributesEntry) | repeated |  |
+| attributes | [JSONNode.AttributesEntry](#resources-common-content-JSONNode-AttributesEntry) | repeated | @sanitize: method=StripTags |
 | class | [string](#string) |  | @sanitize: method=StripTags |
 | text | [string](#string) |  | @sanitize: method=StripTags |
 | children | [JSONNode](#resources-common-content-JSONNode) | repeated |  |
@@ -2350,7 +2350,7 @@
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | document_id | [uint64](#uint64) |  |  |
-| comment | [string](#string) |  | @sanitize: method=StripTags |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
 | creator_job | [string](#string) |  |  |
@@ -2608,7 +2608,7 @@ Dummy - DO NOT USE!
 | category | [Category](#resources-documents-Category) | optional | @gotags: alias:"category" |
 | title | [string](#string) |  | @sanitize |
 | content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
-| content | [string](#string) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | data | [string](#string) | optional | @sanitize
 
 @gotags: alias:"data" |
@@ -2691,7 +2691,7 @@ Dummy - DO NOT USE!
 | category | [Category](#resources-documents-Category) | optional | @gotags: alias:"category" |
 | title | [string](#string) |  | @sanitize |
 | content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
-| content | [string](#string) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
 | creator_job | [string](#string) |  | @gotags: alias:"creator_job" |
@@ -4075,7 +4075,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| strings | [string](#string) | repeated |  |
+| strings | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -4180,7 +4180,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| choices | [string](#string) | repeated |  |
+| choices | [string](#string) | repeated | @sanitize: method=StripTags |
 | limit | [int32](#int32) | optional |  |
 
 
@@ -4206,7 +4206,7 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| choices | [string](#string) | repeated |  |
+| choices | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -4434,7 +4434,7 @@ Dummy - DO NOT USE!
 | abbreviation | [string](#string) |  | @sanitize: method=StripTags |
 | title | [string](#string) |  | @sanitize |
 | description | [string](#string) | optional | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
 | creator_job | [string](#string) |  |  |
@@ -4837,8 +4837,8 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | enabled | [bool](#bool) |  |  |
 | sync_interval | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| invite_url | [string](#string) | optional |  |
-| ignored_jobs | [string](#string) | repeated |  |
+| invite_url | [string](#string) | optional | @sanitize: method=StripTags |
+| ignored_jobs | [string](#string) | repeated | @sanitize: method=StripTags |
 | bot_presence | [DiscordBotPresence](#resources-rector-DiscordBotPresence) | optional |  |
 
 
@@ -4855,8 +4855,8 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | type | [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType) |  |  |
-| status | [string](#string) | optional |  |
-| url | [string](#string) | optional |  |
+| status | [string](#string) | optional | @sanitize: method=StripTags |
+| url | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -4872,8 +4872,8 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | unemployed_job | [UnemployedJob](#resources-rector-UnemployedJob) |  |  |
-| public_jobs | [string](#string) | repeated |  |
-| hidden_jobs | [string](#string) | repeated |  |
+| public_jobs | [string](#string) | repeated | @sanitize: method=StripTags |
+| hidden_jobs | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -4888,8 +4888,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| privacy_policy | [string](#string) | optional |  |
-| imprint | [string](#string) | optional |  |
+| privacy_policy | [string](#string) | optional | @sanitize: method=StripTags |
+| imprint | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -4904,8 +4904,8 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| category | [string](#string) |  |  |
-| name | [string](#string) |  |  |
+| category | [string](#string) |  | @sanitize: method=StripTags |
+| name | [string](#string) |  | @sanitize: method=StripTags |
 
 
 
@@ -4953,7 +4953,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | refresh_time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 | db_refresh_time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| livemap_jobs | [string](#string) | repeated |  |
+| livemap_jobs | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -5306,7 +5306,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| ignored_role_ids | [string](#string) | repeated |  |
+| ignored_role_ids | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -5579,7 +5579,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | closed | [bool](#bool) |  |  |
 | rsvp_open | [bool](#bool) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
@@ -6066,7 +6066,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | job_label | [string](#string) | optional |  |
 | parent_id | [uint64](#uint64) | optional |  |
 | meta | [PageMeta](#resources-wiki-PageMeta) |  |  |
-| content | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  |  |
 | access | [PageAccess](#resources-wiki-PageAccess) |  |  |
 
 
@@ -6091,7 +6091,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
 | content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
-| tags | [string](#string) | repeated |  |
+| tags | [string](#string) | repeated | @sanitize: method=StripTags |
 | toc | [bool](#bool) | optional |  |
 | public | [bool](#bool) |  |  |
 
@@ -6363,7 +6363,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
 | data | [MessageData](#resources-mailer-MessageData) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator_job | [string](#string) | optional |  |
@@ -6423,8 +6423,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | email_id | [uint64](#uint64) |  |  |
-| signature | [string](#string) | optional |  |
-| blocked_emails | [string](#string) | repeated |  |
+| signature | [string](#string) | optional | @sanitize |
+| blocked_emails | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -8331,9 +8331,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | title | [string](#string) |  | @sanitize: method=StripTags
 
 @gotags: alias:"title" |
-| content | [string](#string) |  | @sanitize
-
-@gotags: alias:"content" |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
 | content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | data | [string](#string) | optional | @gotags: alias:"data" |
 | state | [string](#string) |  | @sanitize
@@ -9217,9 +9215,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | title | [string](#string) |  | @sanitize: method=StripTags
 
 @gotags: alias:"title" |
-| content | [string](#string) |  | @sanitize
-
-@gotags: alias:"content" |
+| content | [resources.common.content.Content](#resources-common-content-Content) |  | @sanitize |
 | content_type | [resources.common.content.ContentType](#resources-common-content-ContentType) |  | @gotags: alias:"content_type" |
 | data | [string](#string) | optional | @gotags: alias:"data" |
 | state | [string](#string) |  | @sanitize
@@ -11532,8 +11528,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | user_ids | [int32](#int32) | repeated | Search params |
 | from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| services | [string](#string) | repeated |  |
-| methods | [string](#string) | repeated |  |
+| services | [string](#string) | repeated | @sanitize: method=StripTags |
+| methods | [string](#string) | repeated | @sanitize: method=StripTags |
 | search | [string](#string) | optional |  |
 
 
@@ -12403,7 +12399,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | ----- | ---- | ----- | ----------- |
 | thread | [resources.mailer.Thread](#resources-mailer-Thread) |  |  |
 | message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
-| recipients | [string](#string) | repeated |  |
+| recipients | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -12823,7 +12819,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | message | [resources.mailer.Message](#resources-mailer-Message) |  |  |
-| recipients | [string](#string) | repeated |  |
+| recipients | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 

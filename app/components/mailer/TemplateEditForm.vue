@@ -6,7 +6,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
-import DocEditor from '../partials/DocEditor.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = defineProps<{
     template?: Template;
@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <UFormGroup name="content">
                 <ClientOnly>
-                    <DocEditor v-model="state.content" />
+                    <TiptapEditor v-model="state.content" />
                 </ClientOnly>
             </UFormGroup>
         </UForm>

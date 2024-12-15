@@ -44,10 +44,14 @@ export interface Settings {
  */
 export interface PredefinedStatus {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string unit_status = 1;
      */
     unitStatus: string[];
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string dispatch_status = 2;
      */
     dispatchStatus: string[];

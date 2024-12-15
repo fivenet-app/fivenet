@@ -8,8 +8,57 @@ import (
 )
 
 func (m *ConductEntry) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ExpiresAt
+	if m.ExpiresAt != nil {
+		if v, ok := interface{}(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Message
 	m.Message = htmlsanitizer.Sanitize(m.Message)
+
+	// Field: TargetUser
+	if m.TargetUser != nil {
+		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

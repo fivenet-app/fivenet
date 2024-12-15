@@ -1099,9 +1099,10 @@ type CreateThreadRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Thread     *mailer.Thread  `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
-	Message    *mailer.Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
-	Recipients []string        `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	Thread  *mailer.Thread  `protobuf:"bytes,1,opt,name=thread,proto3" json:"thread,omitempty"`
+	Message *mailer.Message `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	// @sanitize: method=StripTags
+	Recipients []string `protobuf:"bytes,3,rep,name=recipients,proto3" json:"recipients,omitempty"`
 }
 
 func (x *CreateThreadRequest) Reset() {
@@ -1793,8 +1794,9 @@ type PostMessageRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Message    *mailer.Message `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-	Recipients []string        `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
+	Message *mailer.Message `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
+	// @sanitize: method=StripTags
+	Recipients []string `protobuf:"bytes,2,rep,name=recipients,proto3" json:"recipients,omitempty"`
 }
 
 func (x *PostMessageRequest) Reset() {

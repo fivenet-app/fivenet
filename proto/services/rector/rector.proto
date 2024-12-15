@@ -97,10 +97,12 @@ message ViewAuditLogRequest {
   repeated int32 user_ids = 3;
   optional resources.timestamp.Timestamp from = 4;
   optional resources.timestamp.Timestamp to = 5;
+  // @sanitize: method=StripTags
   repeated string services = 6 [(validate.rules).repeated = {
     max_items: 10,
     items: { string: { max_len: 64 } }
   }];
+  // @sanitize: method=StripTags
   repeated string methods = 7 [(validate.rules).repeated = {
     max_items: 10,
     items: { string: { max_len: 64 } }

@@ -8,6 +8,20 @@ import (
 )
 
 func (m *Content) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Content
+	if m.Content != nil {
+		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: RawContent
 
 	if m.RawContent != nil {
 		*m.RawContent = htmlsanitizer.Sanitize(*m.RawContent)
@@ -17,15 +31,43 @@ func (m *Content) Sanitize() error {
 }
 
 func (m *JSONNode) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		m.Attributes[idx] = htmlsanitizer.StripTags(m.Attributes[idx])
+
+	}
+
+	// Field: Children
+	for idx, item := range m.Children {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Class
 	m.Class = htmlsanitizer.StripTags(m.Class)
 
+	// Field: Id
 	m.Id = htmlsanitizer.StripTags(m.Id)
 
+	// Field: Tag
 	m.Tag = htmlsanitizer.StripTags(m.Tag)
 
+	// Field: Text
 	m.Text = htmlsanitizer.StripTags(m.Text)
 
+	// Field: Type
 	m.Type = htmlsanitizer.StripTags(m.Type)
 
 	return nil

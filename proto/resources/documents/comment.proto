@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.documents;
 
+import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -14,11 +15,7 @@ message Comment {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   uint64 document_id = 5 [jstype = JS_STRING];
-  // @sanitize: method=StripTags
-  string comment = 6 [(validate.rules).string = {
-    min_len: 3,
-    max_bytes: 2048
-  }];
+  resources.common.content.Content content = 6;
   optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
   string creator_job = 9 [(validate.rules).string.max_len = 20];

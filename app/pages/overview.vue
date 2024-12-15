@@ -87,7 +87,6 @@ const items = [
         title: t('common.internet'),
         description: t('pages.overview.features.internet'),
         to: { name: 'internet' },
-        permission: 'TODOService.TODOMethod',
         icon: 'i-mdi-web',
     },
 ] as CardElements;

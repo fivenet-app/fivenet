@@ -9,7 +9,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/stats;
 message GetStatsRequest {}
 
 message GetStatsResponse {
-  map<string,resources.stats.Stat> stats = 1;
+  map<string, resources.stats.Stat> stats = 1;
 }
 
 service StatsService {

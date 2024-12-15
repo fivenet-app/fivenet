@@ -205,6 +205,8 @@ export interface AttributeValues {
  */
 export interface StringList {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string strings = 1;
      */
     strings: string[];

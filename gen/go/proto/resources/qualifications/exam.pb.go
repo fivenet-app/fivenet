@@ -497,6 +497,7 @@ type ExamQuestionSingleChoice struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Choices []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 }
 
@@ -542,6 +543,7 @@ type ExamQuestionMultipleChoice struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Choices []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 	Limit   *int32   `protobuf:"varint,2,opt,name=limit,proto3,oneof" json:"limit,omitempty"`
 }

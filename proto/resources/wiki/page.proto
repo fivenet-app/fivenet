@@ -18,7 +18,6 @@ message Page {
   optional string job_label = 3 [(validate.rules).string.max_len = 50];
   optional uint64 parent_id = 4 [jstype = JS_STRING];
   PageMeta meta = 5 [(validate.rules).message.required = true];
-  // @sanitize
   resources.common.content.Content content = 6;
   PageAccess access = 7 [(validate.rules).message.required = true];
 }
@@ -39,6 +38,7 @@ message PageMeta {
   optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
   resources.common.content.ContentType content_type = 9 [(validate.rules).enum.defined_only = true];
+  // @sanitize: method=StripTags
   repeated string tags = 10;
   optional bool toc = 11;
   bool public = 12;

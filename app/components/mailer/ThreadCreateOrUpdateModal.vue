@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import DocEditor from '../partials/DocEditor.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 import TemplateSelector from './TemplateSelector.vue';
 import { defaultEmptyContent } from './helpers';
 
@@ -48,7 +48,9 @@ async function createThread(values: Schema): Promise<void> {
             threadId: '0',
             senderId: selectedEmail.value?.id,
             title: values.title,
-            content: values.content,
+            content: {
+                rawContent: values.content,
+            },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
         },
@@ -287,7 +289,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </template>
 
                             <ClientOnly>
-                                <DocEditor v-model="state.content" class="flex-1" :disabled="!canSubmit" />
+                                <TiptapEditor v-model="state.content" class="flex-1" :disabled="!canSubmit" />
                             </ClientOnly>
                         </UFormGroup>
                     </div>

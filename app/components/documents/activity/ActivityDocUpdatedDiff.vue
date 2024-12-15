@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DiffBlock from '~/components/partials/DiffBlock.vue';
 import type { DocUpdated } from '~~/gen/ts/resources/documents/activity';
 
 defineProps<{
@@ -21,19 +22,6 @@ defineProps<{
             </div>
         </div>
 
-        <div v-if="update.contentDiff">
-            <p class="text-base font-semibold">
-                {{ $t('common.content') }} {{ $t('components.documents.activity_list.difference') }}:
-            </p>
-            <div class="my-2 break-words rounded-lg">
-                <span v-if="update.contentDiff?.length === 0">
-                    {{ $t('common.na') }}
-                </span>
-                <!-- eslint-disable vue/no-v-html -->
-                <div v-else class="p-4" v-html="update.contentDiff"></div>
-            </div>
-        </div>
-
         <div v-if="update.stateDiff">
             <p class="text-base font-semibold">
                 {{ $t('common.state') }} {{ $t('components.documents.activity_list.difference') }}:
@@ -44,6 +32,22 @@ defineProps<{
                 </span>
                 <!-- eslint-disable vue/no-v-html -->
                 <div v-else class="p-4" v-html="update.stateDiff"></div>
+            </div>
+        </div>
+
+        <div v-if="update.contentDiff">
+            <p class="text-base font-semibold">
+                {{ $t('common.content') }} {{ $t('components.documents.activity_list.difference') }}:
+            </p>
+            <div class="my-2 break-words rounded-lg">
+                <span v-if="update.contentDiff?.length === 0">
+                    {{ $t('common.na') }}
+                </span>
+                <div v-else-if="update.contentDiff.startsWith('---')" class="p-4">
+                    <DiffBlock :diff="update.contentDiff" />
+                </div>
+                <!-- eslint-disable vue/no-v-html -->
+                <div v-else class="p-4" v-html="update.contentDiff"></div>
             </div>
         </div>
 

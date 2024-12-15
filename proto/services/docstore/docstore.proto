@@ -197,10 +197,7 @@ message CreateDocumentRequest {
     max_len: 255
   }]; // @gotags: alias:"title"
   // @sanitize
-  string content = 3 [(validate.rules).string = {
-    min_len: 20,
-    max_bytes: 1750000 // 1.75 Megabytes
-  }]; // @gotags: alias:"content"
+  resources.common.content.Content content = 3;
   resources.common.content.ContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
@@ -226,10 +223,7 @@ message UpdateDocumentRequest {
     max_len: 255
   }]; // @gotags: alias:"title"
   // @sanitize
-  string content = 4 [(validate.rules).string = {
-    min_len: 20,
-    max_bytes: 1750000 // 1.75 Megabytes
-  }]; // @gotags: alias:"content"
+  resources.common.content.Content content = 4;
   resources.common.content.ContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte

@@ -156,6 +156,8 @@ export interface ExamQuestionText {
  */
 export interface ExamQuestionSingleChoice {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string choices = 1;
      */
     choices: string[];
@@ -165,6 +167,8 @@ export interface ExamQuestionSingleChoice {
  */
 export interface ExamQuestionMultipleChoice {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string choices = 1;
      */
     choices: string[];

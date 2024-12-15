@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	errorsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/errors"
@@ -170,16 +171,6 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 		}
 	}
 
-	if !strings.EqualFold(old.Content, new.Content) {
-		contentDiff, err := s.htmlDiff.Diff(old.Content, new.Content)
-		if err != nil {
-			return nil, err
-		}
-		if contentDiff != "" {
-			diff.ContentDiff = &contentDiff
-		}
-	}
-
 	if !strings.EqualFold(old.State, new.State) {
 		stateDiff, err := s.htmlDiff.Diff(old.State, new.State)
 		if err != nil {
@@ -188,6 +179,10 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 		if stateDiff != "" {
 			diff.StateDiff = &stateDiff
 		}
+	}
+
+	if d := content.DiffHTML(*old.Content.RawContent, *new.Content.RawContent); d != "" {
+		diff.ContentDiff = &d
 	}
 
 	return diff, nil

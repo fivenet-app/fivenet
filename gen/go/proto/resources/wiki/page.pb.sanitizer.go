@@ -8,26 +8,160 @@ import (
 )
 
 func (m *Page) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Content
+	if m.Content != nil {
+		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Job
 	m.Job = htmlsanitizer.StripTags(m.Job)
+
+	// Field: Meta
+	if m.Meta != nil {
+		if v, ok := interface{}(m.GetMeta()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *PageMeta) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 	m.Description = htmlsanitizer.StripTags(m.Description)
+
+	// Field: Slug
 
 	if m.Slug != nil {
 		*m.Slug = htmlsanitizer.StripTags(*m.Slug)
 	}
 
+	// Field: Tags
+	for idx, item := range m.Tags {
+		_, _ = idx, item
+
+		m.Tags[idx] = htmlsanitizer.StripTags(m.Tags[idx])
+
+	}
+
+	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *PageRootInfo) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Logo
+	if m.Logo != nil {
+		if v, ok := interface{}(m.GetLogo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *PageShort) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Children
+	for idx, item := range m.Children {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: RootInfo
+	if m.RootInfo != nil {
+		if v, ok := interface{}(m.GetRootInfo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Slug
 
 	if m.Slug != nil {
 		*m.Slug = htmlsanitizer.StripTags(*m.Slug)

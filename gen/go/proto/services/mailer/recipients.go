@@ -128,7 +128,7 @@ func (s *Server) resolveRecipientsToEmails(ctx context.Context, senderEmail *mai
 		}
 	}
 
-	// TODO check blocklist of receivers
+	// The blocklist of receivers is currently checked client-side..
 
 	return dest, nil
 }

@@ -154,10 +154,10 @@ func (m *Template) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetContent()) > 1500000 {
+	if len(m.GetContent()) > 2000000 {
 		err := TemplateValidationError{
 			field:  "Content",
-			reason: "value length must be at most 1500000 bytes",
+			reason: "value length must be at most 2000000 bytes",
 		}
 		if !all {
 			return err

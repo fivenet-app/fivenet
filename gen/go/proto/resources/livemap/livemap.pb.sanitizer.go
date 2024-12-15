@@ -7,31 +7,192 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
-func (m *IconMarker) Sanitize() error {
+func (m *CircleMarker) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	return nil
+}
+
+func (m *Coords) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *IconMarker) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Icon
 	m.Icon = htmlsanitizer.StripTags(m.Icon)
 
 	return nil
 }
 
+func (m *MarkerData) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Circle
+	if m == nil {
+		return nil
+	}
+
+	switch v := m.Data.(type) {
+
+	case *MarkerData_Circle:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Icon
+	case *MarkerData_Icon:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *MarkerInfo) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Color
 
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
+
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
+
+	// Field: Icon
 
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
 
+	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: Postal
 
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *MarkerMarker) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ExpiresAt
+	if m.ExpiresAt != nil {
+		if v, ok := interface{}(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Info
+	if m.Info != nil {
+		if v, ok := interface{}(m.GetInfo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserMarker) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Info
+	if m.Info != nil {
+		if v, ok := interface{}(m.GetInfo()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

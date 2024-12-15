@@ -7,7 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import DocEditor from '~/components/partials/DocEditor.vue';
+import TiptapEditor from '~/components/partials/TiptapEditor.vue';
 import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
@@ -74,7 +74,9 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
                 title: values.title,
                 startTime: toTimestamp(values.startTime),
                 endTime: toTimestamp(values.endTime),
-                content: values.content,
+                content: {
+                    rawContent: values.content,
+                },
                 closed: values.closed,
                 rsvpOpen: values.rsvpOpen,
                 creatorJob: '',
@@ -104,7 +106,7 @@ function setFromProps(): void {
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
-    state.content = entry.content;
+    state.content = entry.content?.rawContent ?? '';
     state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
 }
@@ -252,7 +254,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
                             <ClientOnly>
-                                <DocEditor v-model="state.content" :min-height="250" />
+                                <TiptapEditor v-model="state.content" />
                             </ClientOnly>
                         </UFormGroup>
 

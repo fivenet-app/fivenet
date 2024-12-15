@@ -8,27 +8,346 @@ import (
 )
 
 func (m *Document) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
-	m.Content = htmlsanitizer.Sanitize(m.Content)
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Content
+	if m.Content != nil {
+		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Data
 
 	if m.Data != nil {
 		*m.Data = htmlsanitizer.Sanitize(*m.Data)
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: State
 	m.State = htmlsanitizer.Sanitize(m.State)
 
+	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: WorkflowState
+	if m.WorkflowState != nil {
+		if v, ok := interface{}(m.GetWorkflowState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: WorkflowUser
+	if m.WorkflowUser != nil {
+		if v, ok := interface{}(m.GetWorkflowUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *DocumentReference) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: SourceDocument
+	if m.SourceDocument != nil {
+		if v, ok := interface{}(m.GetSourceDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: TargetDocument
+	if m.TargetDocument != nil {
+		if v, ok := interface{}(m.GetTargetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *DocumentRelation) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := interface{}(m.GetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := interface{}(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: TargetUser
+	if m.TargetUser != nil {
+		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *DocumentShort) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
-	m.Content = htmlsanitizer.Sanitize(m.Content)
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
+	// Field: Content
+	if m.Content != nil {
+		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: State
 	m.State = htmlsanitizer.Sanitize(m.State)
 
+	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: WorkflowState
+	if m.WorkflowState != nil {
+		if v, ok := interface{}(m.GetWorkflowState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: WorkflowUser
+	if m.WorkflowUser != nil {
+		if v, ok := interface{}(m.GetWorkflowUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *WorkflowState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AutoCloseTime
+	if m.AutoCloseTime != nil {
+		if v, ok := interface{}(m.GetAutoCloseTime()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := interface{}(m.GetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: NextReminderTime
+	if m.NextReminderTime != nil {
+		if v, ok := interface{}(m.GetNextReminderTime()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Workflow
+	if m.Workflow != nil {
+		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *WorkflowUserState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Document
+	if m.Document != nil {
+		if v, ok := interface{}(m.GetDocument()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: ManualReminderTime
+	if m.ManualReminderTime != nil {
+		if v, ok := interface{}(m.GetManualReminderTime()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Workflow
+	if m.Workflow != nil {
+		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

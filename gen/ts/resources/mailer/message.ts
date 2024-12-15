@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 import { Email } from "./email";
 /**
@@ -53,9 +54,9 @@ export interface Message {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 9;
+     * @generated from protobuf field: resources.common.content.Content content = 9;
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: optional resources.mailer.MessageData data = 10;
      */
@@ -97,7 +98,7 @@ class Message$Type extends MessageType<Message> {
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 7, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "8192" } } } },
+            { no: 9, name: "content", kind: "message", T: () => Content },
             { no: 10, name: "data", kind: "message", T: () => MessageData },
             { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -109,7 +110,6 @@ class Message$Type extends MessageType<Message> {
         message.threadId = "0";
         message.senderId = "0";
         message.title = "";
-        message.content = "";
         if (value !== undefined)
             reflectionMergePartial<Message>(this, message, value);
         return message;
@@ -143,8 +143,8 @@ class Message$Type extends MessageType<Message> {
                 case /* string title */ 8:
                     message.title = reader.string();
                     break;
-                case /* string content */ 9:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 9:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional resources.mailer.MessageData data */ 10:
                     message.data = MessageData.internalBinaryRead(reader, reader.uint32(), options, message.data);
@@ -191,9 +191,9 @@ class Message$Type extends MessageType<Message> {
         /* string title = 8; */
         if (message.title !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.title);
-        /* string content = 9; */
-        if (message.content !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 9; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.mailer.MessageData data = 10; */
         if (message.data)
             MessageData.internalBinaryWrite(message.data, writer.tag(10, WireType.LengthDelimited).fork(), options).join();

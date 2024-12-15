@@ -6,8 +6,8 @@ import SingleHint from '~/components/SingleHint.vue';
 import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
 import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
-import DocEditor from '~/components/partials/DocEditor.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
+import TiptapEditor from '~/components/partials/TiptapEditor.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import { useAuthStore } from '~/store/auth';
@@ -499,7 +499,7 @@ const categoriesLoading = ref(false);
 
                             <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
                                 <ClientOnly>
-                                    <DocEditor v-model="state.content" split-screen />
+                                    <TiptapEditor v-model="state.content" split-screen />
                                 </ClientOnly>
                             </UFormGroup>
                         </div>

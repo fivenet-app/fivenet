@@ -5,7 +5,7 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import DocEditor from '../partials/DocEditor.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
@@ -106,10 +106,10 @@ const editing = ref(false);
                                     </UButtonGroup>
 
                                     <ClientOnly>
-                                        <DocEditor
+                                        <TiptapEditor
                                             v-model="templates.templates[index].content"
                                             disabled
-                                            :config="{ toolbar: false }"
+                                            hide-toolbar
                                             split-screen
                                         />
                                     </ClientOnly>

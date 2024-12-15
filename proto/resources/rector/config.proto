@@ -28,7 +28,9 @@ message Perms {
 }
 
 message Perm {
+  // @sanitize: method=StripTags
   string category = 1 [(validate.rules).string.max_len = 128];
+  // @sanitize: method=StripTags
   string name = 2 [(validate.rules).string.max_len = 255];
 }
 
@@ -38,13 +40,17 @@ message Website {
 }
 
 message Links {
+  // @sanitize: method=StripTags
   optional string privacy_policy = 1 [(validate.rules).string.max_len = 255];
+  // @sanitize: method=StripTags
   optional string imprint = 2 [(validate.rules).string.max_len = 255];
 }
 
 message JobInfo {
   UnemployedJob unemployed_job = 1 [(validate.rules).message.required = true];
+  // @sanitize: method=StripTags
   repeated string public_jobs = 2 [(validate.rules).repeated.max_items = 100];
+  // @sanitize: method=StripTags
   repeated string hidden_jobs = 3 [(validate.rules).repeated.max_items = 100];
 }
 
@@ -64,6 +70,7 @@ message UserTracker {
     lt:  {seconds: 60}
     gte: {nanos: 500000000},
   }];
+  // @sanitize: method=StripTags
   repeated string livemap_jobs = 3 [(validate.rules).repeated.max_items = 100];
 }
 
@@ -74,7 +81,9 @@ message Discord {
     lt:  {seconds: 180000000},
     gte: {seconds: 60},
   }];
+  // @sanitize: method=StripTags
   optional string invite_url = 3 [(validate.rules).string.max_len = 255];
+  // @sanitize: method=StripTags
   repeated string ignored_jobs = 4 [(validate.rules).repeated.max_items = 100];
   optional DiscordBotPresence bot_presence = 5;
 }
@@ -89,6 +98,8 @@ enum DiscordBotPresenceType {
 
 message DiscordBotPresence {
   DiscordBotPresenceType type = 1;
+  // @sanitize: method=StripTags
   optional string status = 2;
+  // @sanitize: method=StripTags
   optional string url = 3;
 }

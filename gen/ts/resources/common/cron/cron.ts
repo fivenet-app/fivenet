@@ -115,6 +115,8 @@ export interface CronjobCompletedEvent {
  */
 export interface GenericCronData {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: map<string, string> attributes = 1;
      */
     attributes: {

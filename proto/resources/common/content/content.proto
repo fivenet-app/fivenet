@@ -16,7 +16,9 @@ message Content {
   optional string version = 1 [(validate.rules).string.max_len = 24];
   optional JSONNode content = 2;
   // @sanitize
-  optional string raw_content = 3;
+  optional string raw_content = 3 [(validate.rules).string = {
+    max_bytes: 2000000 // 2 Megabytes
+  }];
 }
 
 message JSONNode {
@@ -26,6 +28,7 @@ message JSONNode {
   string id = 2;
   // @sanitize: method=StripTags
   string tag = 3;
+  // @sanitize: method=StripTags
   map<string, string> attributes = 4;
   // @sanitize: method=StripTags
   string class = 5;

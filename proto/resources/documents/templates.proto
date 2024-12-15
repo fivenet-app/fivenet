@@ -36,7 +36,7 @@ message Template {
   }]; // @gotags: alias:"content_title"
   string content = 11 [(validate.rules).string = {
     min_len: 0,
-    max_bytes: 1500000
+    max_bytes: 2000000 // 2 Megabytes
   }]; // @gotags: alias:"content"
   string state = 12 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
   resources.documents.TemplateSchema schema = 13; // @gotags: alias:"schema"

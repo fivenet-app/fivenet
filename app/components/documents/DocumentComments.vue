@@ -6,8 +6,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -28,6 +31,8 @@ const emit = defineEmits<{
 }>();
 
 const { can } = useAuth();
+
+const notifications = useNotificatorStore();
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -81,13 +86,21 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
     const comment: Comment = {
         id: '0',
         documentId,
-        comment: values.comment,
+        content: {
+            rawContent: values.comment,
+        },
         creatorJob: '',
     };
 
     try {
         const call = getGRPCDocStoreClient().postComment({ comment });
         const { response } = await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         if (response.comment) {
             data.value?.comments.unshift(response.comment);
@@ -140,11 +153,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="min-w-0 flex-1">
                         <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                             <UFormGroup name="comment">
-                                <UTextarea
-                                    v-model="state.comment"
-                                    :rows="3"
-                                    :placeholder="$t('components.documents.document_comments.add_comment')"
-                                />
+                                <ClientOnly>
+                                    <TiptapEditor
+                                        v-model="state.comment"
+                                        :placeholder="$t('components.documents.document_comments.add_comment')"
+                                        wrapper-class="min-h-44"
+                                    />
+                                </ClientOnly>
                             </UFormGroup>
 
                             <div class="mt-2 shrink-0">

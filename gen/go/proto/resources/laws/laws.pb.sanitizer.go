@@ -8,27 +8,89 @@ import (
 )
 
 func (m *Law) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
+
+	// Field: Hint
 
 	if m.Hint != nil {
 		*m.Hint = htmlsanitizer.Sanitize(*m.Hint)
 	}
 
+	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *LawBook) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
+	// Field: Laws
+	for idx, item := range m.Laws {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

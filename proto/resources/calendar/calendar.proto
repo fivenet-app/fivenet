@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.calendar;
 
 import "resources/calendar/access.proto";
+import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -76,11 +77,7 @@ message CalendarEntry {
     min_len: 3,
     max_len: 512
   }];
-  // @sanitize
-  string content = 11 [(validate.rules).string = {
-    min_len: 20,
-    max_bytes: 1000000 // 1 Megabyte
-  }];
+  resources.common.content.Content content = 11;
   bool closed = 12;
   optional bool rsvp_open = 13;
   optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];

@@ -43,8 +43,6 @@ async function getPage(): Promise<GetPageResponse | undefined> {
 }
 
 const { data: page } = useLazyAsyncData(`internet-page-${tab.value?.domain}:${tab.value?.path}`, () => getPage());
-
-// TODO load page from server
 </script>
 
 <template>
@@ -52,8 +50,10 @@ const { data: page } = useLazyAsyncData(`internet-page-${tab.value?.domain}:${ta
         <HomePage v-if="tab?.domain === urlHomePage || tab?.domain === ''" v-model="tab" />
         <NotFound v-else-if="!page" v-model="tab" />
         <template v-else>
-            <span>Tab: {{ tab }}</span>
-            <span>Page: {{ page }}</span>
+            <template v-if="import.meta.dev">
+                <span>Tab: {{ tab }}</span>
+                <span>Page: {{ page }}</span>
+            </template>
         </template>
     </UDashboardPanelContent>
 </template>

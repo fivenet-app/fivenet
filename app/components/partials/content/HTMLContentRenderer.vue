@@ -5,7 +5,7 @@ const props = defineProps<{
     value: JSONNode;
 }>();
 
-// TODO load custom components
+// TODO load any allowed custom components
 </script>
 
 <template>

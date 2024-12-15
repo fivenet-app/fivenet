@@ -196,7 +196,8 @@ const contentAccessTypes: AccessType[] = [
                                     name="contentTitle"
                                     class="w-full whitespace-pre-wrap"
                                     disabled
-                                    :rows="4"
+                                    resize
+                                    :rows="3"
                                     :value="template.contentTitle"
                                 />
                             </div>
@@ -235,6 +236,7 @@ const contentAccessTypes: AccessType[] = [
                                     name="content"
                                     class="w-full whitespace-pre-wrap"
                                     disabled
+                                    resize
                                     :rows="4"
                                     :value="template.content"
                                 />

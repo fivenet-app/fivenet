@@ -18,6 +18,7 @@ import { DocRequest } from "../../resources/documents/requests";
 import { DocActivity } from "../../resources/documents/activity";
 import { DocActivityType } from "../../resources/documents/activity";
 import { ContentType } from "../../resources/common/content/content";
+import { Content } from "../../resources/common/content/content";
 import { Comment } from "../../resources/documents/comment";
 import { DocumentRelation } from "../../resources/documents/documents";
 import { DocumentReference } from "../../resources/documents/documents";
@@ -465,9 +466,9 @@ export interface CreateDocumentRequest {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 3;
+     * @generated from protobuf field: resources.common.content.Content content = 3;
      */
-    content: string; // @gotags: alias:"content"
+    content?: Content;
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 4;
      */
@@ -529,9 +530,9 @@ export interface UpdateDocumentRequest {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 4;
+     * @generated from protobuf field: resources.common.content.Content content = 4;
      */
-    content: string; // @gotags: alias:"content"
+    content?: Content;
     /**
      * @generated from protobuf field: resources.common.content.ContentType content_type = 5;
      */
@@ -2807,7 +2808,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         super("services.docstore.CreateDocumentRequest", [
             { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 3, name: "content", kind: "message", T: () => Content },
             { no: 4, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
@@ -2820,7 +2821,6 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
     create(value?: PartialMessage<CreateDocumentRequest>): CreateDocumentRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.title = "";
-        message.content = "";
         message.contentType = 0;
         message.state = "";
         message.closed = false;
@@ -2840,8 +2840,8 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
                 case /* string title */ 2:
                     message.title = reader.string();
                     break;
-                case /* string content */ 3:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 3:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* resources.common.content.ContentType content_type */ 4:
                     message.contentType = reader.int32();
@@ -2882,9 +2882,9 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         /* string title = 2; */
         if (message.title !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.title);
-        /* string content = 3; */
-        if (message.content !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 3; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         /* resources.common.content.ContentType content_type = 4; */
         if (message.contentType !== 0)
             writer.tag(4, WireType.Varint).int32(message.contentType);
@@ -2970,7 +2970,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 4, name: "content", kind: "message", T: () => Content },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.common.content.ContentType", ContentType, "CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
@@ -2983,7 +2983,6 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.documentId = "0";
         message.title = "";
-        message.content = "";
         message.contentType = 0;
         message.state = "";
         message.closed = false;
@@ -3006,8 +3005,8 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
                 case /* string title */ 3:
                     message.title = reader.string();
                     break;
-                case /* string content */ 4:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 4:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* resources.common.content.ContentType content_type */ 5:
                     message.contentType = reader.int32();
@@ -3048,9 +3047,9 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
         /* string title = 3; */
         if (message.title !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.title);
-        /* string content = 4; */
-        if (message.content !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 4; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* resources.common.content.ContentType content_type = 5; */
         if (message.contentType !== 0)
             writer.tag(5, WireType.Varint).int32(message.contentType);

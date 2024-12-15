@@ -537,6 +537,11 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 		req.Page.Meta.Public = false
 	}
 
+	*req.Page.Content.RawContent, err = content.PrettyHTML(*req.Page.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

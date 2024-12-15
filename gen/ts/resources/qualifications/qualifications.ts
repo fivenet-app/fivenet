@@ -14,6 +14,7 @@ import { Duration } from "../../google/protobuf/duration";
 import { ExamQuestions } from "./exam";
 import { QualificationAccess } from "./access";
 import { UserShort } from "../users/users";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.qualifications.Qualification
@@ -66,11 +67,9 @@ export interface Qualification {
      */
     description?: string;
     /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string content = 11;
+     * @generated from protobuf field: resources.common.content.Content content = 11;
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: optional int32 creator_id = 12;
      */
@@ -465,7 +464,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "750000" } } } },
+            { no: 11, name: "content", kind: "message", T: () => Content },
             { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -490,7 +489,6 @@ class Qualification$Type extends MessageType<Qualification> {
         message.closed = false;
         message.abbreviation = "";
         message.title = "";
-        message.content = "";
         message.creatorJob = "";
         message.requirements = [];
         message.discordSyncEnabled = false;
@@ -535,8 +533,8 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* optional string description */ 10:
                     message.description = reader.string();
                     break;
-                case /* string content */ 11:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 11:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional int32 creator_id */ 12:
                     message.creatorId = reader.int32();
@@ -622,9 +620,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* optional string description = 10; */
         if (message.description !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* string content = 11; */
-        if (message.content !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 11; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 creator_id = 12; */
         if (message.creatorId !== undefined)
             writer.tag(12, WireType.Varint).int32(message.creatorId);

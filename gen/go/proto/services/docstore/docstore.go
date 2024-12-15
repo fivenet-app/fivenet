@@ -4,7 +4,6 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -19,12 +18,10 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/html/htmldiffer"
-	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -38,8 +35,8 @@ import (
 )
 
 const (
-	DocsDefaultPageSize   = 16
-	DocShortContentLength = 128
+	DocsDefaultPageSize = 16
+	DocSummaryLength    = 128
 
 	housekeeperMinDays = 60
 )
@@ -481,6 +478,12 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		}
 	}
 
+	var err error
+	*req.Content.RawContent, err = content.PrettyHTML(*req.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -508,7 +511,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		VALUES(
 			req.CategoryId,
 			req.Title,
-			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
+			req.Content.GetSummary(DocSummaryLength),
 			req.Content,
 			content.ContentType_CONTENT_TYPE_HTML,
 			req.Data,
@@ -628,6 +631,11 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		}
 	}
 
+	*req.Content.RawContent, err = content.PrettyHTML(*req.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -635,9 +643,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if !onlyUpdateAccess {
-		doc.Content = strings.TrimSuffix(doc.Content, "<br>")
-		req.Content = strings.TrimSuffix(req.Content, "<br>")
-
 		tDocument := table.FivenetDocuments
 		stmt := tDocument.
 			UPDATE(
@@ -653,7 +658,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 			SET(
 				req.CategoryId,
 				req.Title,
-				utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
+				req.Content.GetSummary(DocSummaryLength),
 				req.Content,
 				jet.NULL,
 				req.State,

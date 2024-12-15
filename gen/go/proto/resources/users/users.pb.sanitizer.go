@@ -8,25 +8,194 @@ import (
 )
 
 func (m *CitizenAttribute) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
 
 	return nil
 }
 
-func (m *UserActivity) Sanitize() error {
+func (m *CitizenAttributes) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: List
+	for idx, item := range m.List {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *License) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *User) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Avatar
+	if m.Avatar != nil {
+		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Licenses
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserActivity) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Key
 	m.Key = htmlsanitizer.Sanitize(m.Key)
 
+	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := interface{}(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: TargetUser
+	if m.TargetUser != nil {
+		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *UserProps) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	if m.Attributes != nil {
+		if v, ok := interface{}(m.GetAttributes()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Email
 
 	if m.Email != nil {
 		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	// Field: Job
+	if m.Job != nil {
+		if v, ok := interface{}(m.GetJob()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: JobGrade
+	if m.JobGrade != nil {
+		if v, ok := interface{}(m.GetJobGrade()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: MugShot
+	if m.MugShot != nil {
+		if v, ok := interface{}(m.GetMugShot()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserShort) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Avatar
+	if m.Avatar != nil {
+		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

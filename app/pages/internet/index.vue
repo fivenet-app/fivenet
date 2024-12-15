@@ -11,7 +11,6 @@ useHead({
 definePageMeta({
     title: 'common.internet',
     requiresAuth: true,
-    permission: 'TODOService.TODOMethod',
 });
 
 const internetStore = useInternetStore();

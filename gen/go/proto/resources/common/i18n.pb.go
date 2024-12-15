@@ -25,7 +25,9 @@ type TranslateItem struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Key        string            `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// @sanitize: method=StripTags
+	Key string `protobuf:"bytes,1,opt,name=key,proto3" json:"key,omitempty"`
+	// @sanitize: method=StripTags
 	Parameters map[string]string `protobuf:"bytes,2,rep,name=parameters,proto3" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 

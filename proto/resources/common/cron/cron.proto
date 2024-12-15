@@ -53,5 +53,6 @@ message CronjobCompletedEvent {
 }
 
 message GenericCronData {
+  // @sanitize: method=StripTags
   map<string, string> attributes = 1;
 }

@@ -8,22 +8,239 @@ import (
 )
 
 func (m *Colleague) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Avatar
+	if m.Avatar != nil {
+		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Email
 
 	if m.Email != nil {
 		*m.Email = htmlsanitizer.StripTags(*m.Email)
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ColleagueAbsenceDate) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AbsenceBegin
+	if m.AbsenceBegin != nil {
+		if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: AbsenceEnd
+	if m.AbsenceEnd != nil {
+		if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ColleagueGradeChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *ColleagueLabelsChange) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Added
+	for idx, item := range m.Added {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Removed
+	for idx, item := range m.Removed {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ColleagueNameChange) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil
 }
 
 func (m *JobsUserActivity) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Data
+	if m.Data != nil {
+		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+
+	// Field: SourceUser
+	if m.SourceUser != nil {
+		if v, ok := interface{}(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: TargetUser
+	if m.TargetUser != nil {
+		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *JobsUserActivityData) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AbsenceDate
+	if m == nil {
+		return nil
+	}
+
+	switch v := m.Data.(type) {
+
+	case *JobsUserActivityData_AbsenceDate:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: GradeChange
+	case *JobsUserActivityData_GradeChange:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: LabelsChange
+	case *JobsUserActivityData_LabelsChange:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: NameChange
+	case *JobsUserActivityData_NameChange:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	return nil
 }
 
 func (m *JobsUserProps) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: AbsenceBegin
+	if m.AbsenceBegin != nil {
+		if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: AbsenceEnd
+	if m.AbsenceEnd != nil {
+		if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Labels
+	if m.Labels != nil {
+		if v, ok := interface{}(m.GetLabels()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Note
 
 	if m.Note != nil {
 		*m.Note = htmlsanitizer.StripTags(*m.Note)

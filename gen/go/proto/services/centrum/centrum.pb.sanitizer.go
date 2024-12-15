@@ -7,20 +7,646 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
+func (m *AssignDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *AssignDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *AssignUnitRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *AssignUnitResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *CreateDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateOrUpdateUnitRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *CreateOrUpdateUnitResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *DeleteDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteUnitRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteUnitResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *GetSettingsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetSettingsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *JoinUnitRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *JoinUnitResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *LatestState) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatches
+	for idx, item := range m.Dispatches {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Disponents
+	for idx, item := range m.Disponents {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: ServerTime
+	if m.ServerTime != nil {
+		if v, ok := interface{}(m.GetServerTime()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Units
+	for idx, item := range m.Units {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ListDispatchActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListDispatchActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListDispatchesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: NotStatus
+	for idx, item := range m.NotStatus {
+		_, _ = idx, item
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Status
+	for idx, item := range m.Status {
+		_, _ = idx, item
+
+	}
+
+	return nil
+}
+
+func (m *ListDispatchesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatches
+	for idx, item := range m.Dispatches {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListUnitActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListUnitActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListUnitsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Status
+	for idx, item := range m.Status {
+		_, _ = idx, item
+
+	}
+
+	return nil
+}
+
+func (m *ListUnitsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Units
+	for idx, item := range m.Units {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *StreamRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *StreamResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: DispatchCreated
+	if m == nil {
+		return nil
+	}
+
+	switch v := m.Change.(type) {
+
+	case *StreamResponse_DispatchCreated:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: DispatchDeleted
+	case *StreamResponse_DispatchDeleted:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: DispatchStatus
+	case *StreamResponse_DispatchStatus:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: DispatchUpdated
+	case *StreamResponse_DispatchUpdated:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Disponents
+	case *StreamResponse_Disponents:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: LatestState
+	case *StreamResponse_LatestState:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Settings
+	case *StreamResponse_Settings:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UnitCreated
+	case *StreamResponse_UnitCreated:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UnitDeleted
+	case *StreamResponse_UnitDeleted:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UnitStatus
+	case *StreamResponse_UnitStatus:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UnitUpdated
+	case *StreamResponse_UnitUpdated:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TakeControlRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *TakeControlResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *TakeDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Reason
 
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
+	return nil
+}
+
+func (m *TakeDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *UpdateDispatchRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Dispatch
+	if m.Dispatch != nil {
+		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UpdateDispatchResponse) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil
 }
 
 func (m *UpdateDispatchStatusRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Code
 
 	if m.Code != nil {
 		*m.Code = htmlsanitizer.Sanitize(*m.Code)
 	}
+
+	// Field: Reason
 
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
@@ -29,14 +655,71 @@ func (m *UpdateDispatchStatusRequest) Sanitize() error {
 	return nil
 }
 
+func (m *UpdateDispatchStatusResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *UpdateSettingsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UpdateSettingsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *UpdateUnitStatusRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Code
 
 	if m.Code != nil {
 		*m.Code = htmlsanitizer.Sanitize(*m.Code)
 	}
 
+	// Field: Reason
+
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
+	return nil
+}
+
+func (m *UpdateUnitStatusResponse) Sanitize() error {
+	if m == nil {
+		return nil
 	}
 
 	return nil

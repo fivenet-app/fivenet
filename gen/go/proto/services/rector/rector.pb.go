@@ -934,12 +934,14 @@ type ViewAuditLogRequest struct {
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	Sort       *database.Sort              `protobuf:"bytes,2,opt,name=sort,proto3,oneof" json:"sort,omitempty"`
 	// Search params
-	UserIds  []int32              `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
-	From     *timestamp.Timestamp `protobuf:"bytes,4,opt,name=from,proto3,oneof" json:"from,omitempty"`
-	To       *timestamp.Timestamp `protobuf:"bytes,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
-	Services []string             `protobuf:"bytes,6,rep,name=services,proto3" json:"services,omitempty"`
-	Methods  []string             `protobuf:"bytes,7,rep,name=methods,proto3" json:"methods,omitempty"`
-	Search   *string              `protobuf:"bytes,8,opt,name=search,proto3,oneof" json:"search,omitempty"`
+	UserIds []int32              `protobuf:"varint,3,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	From    *timestamp.Timestamp `protobuf:"bytes,4,opt,name=from,proto3,oneof" json:"from,omitempty"`
+	To      *timestamp.Timestamp `protobuf:"bytes,5,opt,name=to,proto3,oneof" json:"to,omitempty"`
+	// @sanitize: method=StripTags
+	Services []string `protobuf:"bytes,6,rep,name=services,proto3" json:"services,omitempty"`
+	// @sanitize: method=StripTags
+	Methods []string `protobuf:"bytes,7,rep,name=methods,proto3" json:"methods,omitempty"`
+	Search  *string  `protobuf:"bytes,8,opt,name=search,proto3,oneof" json:"search,omitempty"`
 }
 
 func (x *ViewAuditLogRequest) Reset() {

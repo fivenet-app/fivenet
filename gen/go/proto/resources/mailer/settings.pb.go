@@ -26,8 +26,10 @@ type EmailSettings struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	EmailId       uint64   `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
-	Signature     *string  `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
+	EmailId uint64 `protobuf:"varint,1,opt,name=email_id,json=emailId,proto3" json:"email_id,omitempty"`
+	// @sanitize
+	Signature *string `protobuf:"bytes,2,opt,name=signature,proto3,oneof" json:"signature,omitempty"`
+	// @sanitize: method=StripTags
 	BlockedEmails []string `protobuf:"bytes,3,rep,name=blocked_emails,json=blockedEmails,proto3" json:"blocked_emails,omitempty"`
 }
 

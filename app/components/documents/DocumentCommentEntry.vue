@@ -7,6 +7,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = defineProps<{
     modelValue?: Comment;
@@ -43,9 +45,17 @@ async function editComment(documentId: string, commentId: string, values: Schema
             comment: {
                 id: commentId,
                 documentId,
-                comment: values.comment,
+                content: {
+                    rawContent: values.comment,
+                },
                 creatorJob: '',
             },
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
         });
 
         editing.value = false;
@@ -86,7 +96,7 @@ function resetForm(): void {
         return;
     }
 
-    state.comment = comment.value.comment;
+    state.comment = comment.value.content?.rawContent ?? '';
 }
 
 onMounted(() => resetForm());
@@ -145,33 +155,30 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <p class="whitespace-pre-line break-words text-sm">
-                    {{ comment.comment }}
-                </p>
+                <div class="whitespace-pre-line break-words text-sm">
+                    <div v-if="comment.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
+                        <HTMLContentRenderer :value="comment.content.content" />
+                    </div>
+                </div>
             </div>
         </div>
 
-        <template v-else>
-            <div v-if="can('DocStoreService.PostComment').value" class="flex items-start space-x-4">
-                <div class="min-w-0 flex-1">
-                    <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
-                        <UFormGroup name="comment">
-                            <UTextarea
-                                ref="commentInput"
-                                v-model="state.comment"
-                                :rows="5"
-                                :placeholder="$t('components.documents.document_comments.add_comment')"
-                            />
-                        </UFormGroup>
+        <div v-else-if="can('DocStoreService.PostComment').value" class="flex items-start space-x-4">
+            <div class="min-w-0 flex-1">
+                <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                    <UFormGroup name="comment">
+                        <ClientOnly>
+                            <TiptapEditor v-model="state.comment" wrapper-class="min-h-44" />
+                        </ClientOnly>
+                    </UFormGroup>
 
-                        <div class="mt-2 shrink-0">
-                            <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
-                                {{ $t('common.edit') }}
-                            </UButton>
-                        </div>
-                    </UForm>
-                </div>
+                    <div class="mt-2 shrink-0">
+                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.edit') }}
+                        </UButton>
+                    </div>
+                </UForm>
             </div>
-        </template>
+        </div>
     </li>
 </template>

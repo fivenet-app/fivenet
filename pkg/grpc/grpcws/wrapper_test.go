@@ -321,7 +321,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInHeaders() {
 
 	assert.Equal(s.T(), 0, len(responses), "PingError is an unary response that has no payload")
 	s.assertHeadersGrpcCode(headers, codes.Unimplemented, "Not implemented PingError")
-	// s.assertHeadersContainMetadata(headers, expectedHeaders) // TODO(mwitkow): There is a bug in gRPC where headers don't get added if no payload exists.
+	// s.assertHeadersContainMetadata(headers, expectedHeaders) // (mwitkow): There is a bug in gRPC where headers don't get added if no payload exists.
 	s.assertHeadersContainMetadata(headers, expectedTrailers)
 	s.assertHeadersContainCorsExpectedHeaders(headers, expectedTrailers)
 	s.assertContentTypeSet(headers, grpcWebContentType)

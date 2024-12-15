@@ -7,9 +7,248 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
-func (m *SetUserPropsRequest) Sanitize() error {
+func (m *GetUserRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	return nil
+}
+
+func (m *GetUserResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListCitizensRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListCitizensResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ListUserActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListUserActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ManageCitizenAttributesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ManageCitizenAttributesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attributes
+	for idx, item := range m.Attributes {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SetProfilePictureRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Avatar
+	if m.Avatar != nil {
+		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SetProfilePictureResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Avatar
+	if m.Avatar != nil {
+		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SetUserPropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
+
+	return nil
+}
+
+func (m *SetUserPropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }

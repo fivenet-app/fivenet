@@ -25,6 +25,7 @@ func (p *SanitizerModule) InitContext(c pgs.BuildContext) {
 	tpl := template.New("sanitizer").Funcs(map[string]interface{}{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
+		"fType":   p.ctx.Type,
 	})
 
 	p.tpl = template.Must(tpl.Parse(sanitizerTpl))
@@ -58,7 +59,8 @@ func (p *SanitizerModule) generate(f pgs.File) {
 		data.FMap[string(m.Name())] = map[string]*Sanitize{}
 
 		for _, f := range m.Fields() {
-			if f.Type().ProtoType() != pgs.StringT {
+			// Skip numeric and enum fields
+			if f.Type().ProtoType().IsNumeric() || f.Type().IsEnum() || f.Type().ProtoType() == pgs.BoolT {
 				continue
 			}
 
@@ -66,11 +68,7 @@ func (p *SanitizerModule) generate(f pgs.File) {
 			comment = strings.TrimLeft(comment, " ")
 			comment = strings.TrimRight(comment, "\n")
 
-			if f.Type().ProtoType().IsNumeric() ||
-				f.Type().IsMap() || f.Type().IsRepeated() {
-				continue
-			}
-
+			// Skip string fields without the sanitize comment
 			if f.Type().ProtoType() == pgs.StringT {
 				if !strings.HasPrefix(comment, "@sanitize") {
 					continue
@@ -83,10 +81,6 @@ func (p *SanitizerModule) generate(f pgs.File) {
 			}
 
 			data.FMap[string(m.Name())][string(f.Name().UpperCamelCase())] = s
-		}
-
-		if len(data.FMap[string(m.Name())]) == 0 {
-			delete(data.FMap, string(m.Name()))
 		}
 	}
 
@@ -101,17 +95,11 @@ func (p *SanitizerModule) parseComment(field pgs.Field, comment string) (*Saniti
 	comment = strings.TrimPrefix(comment, "@sanitize")
 
 	s := &Sanitize{
-		Name:     field.Name().UpperCamelCase().String(),
-		Method:   "Sanitize",
-		Optional: field.HasOptionalKeyword(),
-		Deeper:   true,
+		Name:   field.Name().UpperCamelCase().String(),
+		Method: "Sanitize",
+		F:      field,
 	}
 
-	if field.Type().ProtoType() != pgs.StringT {
-		return s, nil
-	}
-
-	s.Deeper = false
 	split := strings.Split(comment, ";")
 
 	for i := 0; i < len(split); i++ {
@@ -141,25 +129,94 @@ import (
 
 {{ range $key, $fields := .FMap }}
 func (m *{{ $key }}) Sanitize() error {
-    {{ range $f := $fields }}
-        {{ if $f.Deeper }}
-    if v, ok := interface{}(m.Get{{ $f.Name }}()).(interface{ Sanitize() error }); ok {
-        if err := v.Sanitize(); err != nil {
-            return err
-        }
-    }
-        {{ else }}
+    if m == nil {
+		return nil
+	}
 
-            {{ if $f.Optional }}
-    if m.{{ $f.Name }} != nil {
+    {{- $lastOneOf := "" }}
+    {{ range $f := $fields }}
+        {{- if and (ne $lastOneOf "") (or (not $f.F.InRealOneOf) (ne $lastOneOf $f.F.OneOf.Message.Name)) }}
+        }
+        {{- $lastOneOf = "" }}
+        {{ end }}
+
+        // Field: {{ $f.Name }}
+        {{- $fType := fType $f.F }}
+        {{- if $f.F.Type.IsRepeated }}
+        for idx, item := range m.{{ $f.Name }} {
+            _, _ = idx, item
+
+            {{ if eq $fType.Element "string" }}
+            m.{{ $f.Name }}[idx] = htmlsanitizer.{{ $f.Method }}(m.{{ $f.Name }}[idx])
+            {{ else if $f.F.Type.Element.IsEmbed }}
+            if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+                if err := v.Sanitize(); err != nil {
+                    return err
+                }
+            }
+            {{ else if not (and $f.F.Type.Element (or $f.F.Type.Element.IsEnum $f.F.Type.Element.ProtoType.IsNumeric)) }}
+            // TODO Repeated: Not a string nor embed :( {{ $fType }}
+            {{ end }}
+        }
+        {{ else if $f.F.Type.IsMap }}
+         for idx, item := range m.{{ $f.Name }} {
+            _, _ = idx, item
+
+            {{ if eq $fType.Element "string" }}
+            m.{{ $f.Name }}[idx] = htmlsanitizer.{{ $f.Method }}(m.{{ $f.Name }}[idx])
+            {{ else if $f.F.Type.Element.IsEmbed }}
+            if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+                if err := v.Sanitize(); err != nil {
+                    return err
+                }
+            }
+            {{ else if not (and $f.F.Type.Element (or $f.F.Type.Element.IsEnum $f.F.Type.Element.ProtoType.IsNumeric)) }}
+            // TODO Map: Not a string nor embed :( {{ $fType }} ({{ $f.F.Type.Element.ProtoType.IsNumeric }})
+            {{ end }}
+        }
+        {{ else if $f.F.InRealOneOf }}
+            {{- if ne $lastOneOf $f.F.OneOf.Message.Name }}
+            if m == nil {
+                return nil
+	        }
+
+	        switch v := m.{{ $f.F.OneOf.Name.UpperCamelCase }}.(type) {
+            {{ end }}
+                case *{{ $key }}_{{ $f.Name }}:
+                    if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+                        if err := v.Sanitize(); err != nil {
+                            return err
+                        }
+                    }
+
+            {{- $lastOneOf = $f.F.OneOf.Message.Name }}
+        {{ else if $f.F.Type.IsEmbed }}
+        if m.{{ $f.Name }} != nil {
+            if v, ok := interface{}(m.Get{{ $f.Name }}()).(interface{ Sanitize() error }); ok {
+                if err := v.Sanitize(); err != nil {
+                    return err
+                }
+            }
+        }
+        {{ else if or (eq $fType "string") (eq $fType "*string") }}
+            {{ if $f.F.HasOptionalKeyword }}
+            if m.{{ $f.Name }} != nil {
             {{ end -}}
-        {{ if $f.Optional }}*{{ end }}m.{{ $f.Name }} = htmlsanitizer.{{ $f.Method }}({{ if $f.Optional }}*{{ end }}m.{{ $f.Name }})
-            {{- if $f.Optional  }}
-    }
+            {{ if $f.F.HasOptionalKeyword }}*{{ end }}m.{{ $f.Name }} = htmlsanitizer.{{ $f.Method }}({{ if $f.F.HasOptionalKeyword }}*{{ end }}m.{{ $f.Name }})
+            {{- if $f.F.HasOptionalKeyword }}
+            }
             {{- end }}
+        {{ else if or $f.F.Type.IsEnum (and $f.F.Type.Element $f.F.Type.Element.IsEnum) }}
+         {{/* Skip (repeated) enums */}}
+        {{ else if and (not $f.F.Type.ProtoType.IsNumeric) (and $f.F.Type.Element (not $f.F.Type.Element.ProtoType.IsNumeric)) }}
+        // Unhandled Type: {{ $fType }} - {{ $f.F.HasOptionalKeyword }}
 
         {{ end }}
 
+    {{ end }}
+
+    {{- if ne $lastOneOf "" }}
+    }
     {{ end }}
 
 	return nil
@@ -168,9 +225,8 @@ func (m *{{ $key }}) Sanitize() error {
 `
 
 type Sanitize struct {
-	Name     string
-	Method   string
-	Optional bool
+	Name   string
+	Method string
 
-	Deeper bool
+	F pgs.Field
 }

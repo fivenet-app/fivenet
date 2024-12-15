@@ -281,6 +281,8 @@ export interface CreateThreadRequest {
      */
     message?: Message;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string recipients = 3;
      */
     recipients: string[];
@@ -439,6 +441,8 @@ export interface PostMessageRequest {
      */
     message?: Message;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string recipients = 2;
      */
     recipients: string[];

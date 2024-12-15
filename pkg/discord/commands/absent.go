@@ -289,7 +289,6 @@ func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job stri
 }
 
 func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, job string, absenceBegin time.Time, absenceEnd time.Time, reason string) (bool, error) {
-	// TODO check if user has already been set absent
 	checkStmt := tJobsUserProps.
 		SELECT(
 			tJobsUserProps.AbsenceBegin,
@@ -313,7 +312,7 @@ func (c *AbsentCommand) createAbsenceForUser(ctx context.Context, charId int32, 
 		begin := props.AbsenceBegin.AsTime()
 		end := props.AbsenceEnd.AsTime()
 
-		// Check if current absence is equal to requested one
+		// Check if current absence is equal to the requested one
 		if begin.Equal(absenceBegin) && end.Equal(absenceEnd) {
 			return true, nil
 		}

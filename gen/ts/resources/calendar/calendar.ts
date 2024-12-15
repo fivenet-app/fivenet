@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Content } from "../common/content/content";
 import { CalendarAccess } from "./access";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
@@ -205,11 +206,9 @@ export interface CalendarEntry {
      */
     title: string;
     /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string content = 11;
+     * @generated from protobuf field: resources.common.content.Content content = 11;
      */
-    content: string;
+    content?: Content;
     /**
      * @generated from protobuf field: bool closed = 12;
      */
@@ -659,7 +658,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 8, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "end_time", kind: "message", T: () => Timestamp },
             { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
-            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
+            { no: 11, name: "content", kind: "message", T: () => Content },
             { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 13, name: "rsvp_open", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
@@ -674,7 +673,6 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         message.id = "0";
         message.calendarId = "0";
         message.title = "";
-        message.content = "";
         message.closed = false;
         message.creatorJob = "";
         if (value !== undefined)
@@ -716,8 +714,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* string title */ 10:
                     message.title = reader.string();
                     break;
-                case /* string content */ 11:
-                    message.content = reader.string();
+                case /* resources.common.content.Content content */ 11:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* bool closed */ 12:
                     message.closed = reader.bool();
@@ -782,9 +780,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* string title = 10; */
         if (message.title !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.title);
-        /* string content = 11; */
-        if (message.content !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.content);
+        /* resources.common.content.Content content = 11; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         /* bool closed = 12; */
         if (message.closed !== false)
             writer.tag(12, WireType.Varint).bool(message.closed);

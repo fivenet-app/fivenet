@@ -7,36 +7,303 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
+func (m *ObjectSpecs) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *Template) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Color
 
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
 
+	// Field: ContentAccess
+	if m.ContentAccess != nil {
+		if v, ok := interface{}(m.GetContentAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 	m.Description = htmlsanitizer.Sanitize(m.Description)
+
+	// Field: Icon
 
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
 
+	// Field: JobAccess
+	for idx, item := range m.JobAccess {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Schema
+	if m.Schema != nil {
+		if v, ok := interface{}(m.GetSchema()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Workflow
+	if m.Workflow != nil {
+		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateData) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ActiveChar
+	if m.ActiveChar != nil {
+		if v, ok := interface{}(m.GetActiveChar()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Documents
+	for idx, item := range m.Documents {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Vehicles
+	for idx, item := range m.Vehicles {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *TemplateJobAccess) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateRequirements) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Documents
+	if m.Documents != nil {
+		if v, ok := interface{}(m.GetDocuments()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Users
+	if m.Users != nil {
+		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Vehicles
+	if m.Vehicles != nil {
+		if v, ok := interface{}(m.GetVehicles()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateSchema) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Requirements
+	if m.Requirements != nil {
+		if v, ok := interface{}(m.GetRequirements()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
 
 	return nil
 }
 
 func (m *TemplateShort) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Category
+	if m.Category != nil {
+		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Color
 
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 	m.Description = htmlsanitizer.Sanitize(m.Description)
+
+	// Field: Icon
 
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
 
+	// Field: Schema
+	if m.Schema != nil {
+		if v, ok := interface{}(m.GetSchema()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Title
 	m.Title = htmlsanitizer.Sanitize(m.Title)
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Workflow
+	if m.Workflow != nil {
+		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *TemplateUserAccess) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
 	return nil
 }

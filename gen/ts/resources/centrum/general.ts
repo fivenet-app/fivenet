@@ -17,6 +17,8 @@ import { Colleague } from "../jobs/colleagues";
  */
 export interface Attributes {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string list = 1;
      */
     list: string[];

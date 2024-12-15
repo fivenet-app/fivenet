@@ -52,6 +52,8 @@ export interface JSONNode {
      */
     tag: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: map<string, string> attributes = 4;
      */
     attributes: {
@@ -97,7 +99,7 @@ class Content$Type extends MessageType<Content> {
         super("resources.common.content.Content", [
             { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 2, name: "content", kind: "message", T: () => JSONNode },
-            { no: 3, name: "raw_content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "raw_content", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "2000000" } } } }
         ]);
     }
     create(value?: PartialMessage<Content>): Content {

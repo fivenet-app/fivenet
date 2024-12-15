@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import DocEditor from '~/components/partials/DocEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -22,6 +21,7 @@ import type {
 } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '../partials/access/helpers';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{
@@ -124,7 +124,7 @@ async function getQualification(qualificationId: string): Promise<void> {
             state.abbreviation = qualification.abbreviation;
             state.title = qualification.title;
             state.description = qualification.description;
-            state.content = qualification.content;
+            state.content = qualification.content?.rawContent ?? '';
             state.closed = qualification.closed;
             state.abbreviation = qualification.abbreviation;
             state.discordSyncEnabled = qualification.discordSyncEnabled;
@@ -178,7 +178,9 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
-            content: values.content,
+            content: {
+                rawContent: values.content,
+            },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
@@ -219,7 +221,9 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
-            content: values.content,
+            content: {
+                rawContent: values.content,
+            },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             requirements: qualiRequirements.value,
@@ -429,7 +433,7 @@ const selectedTab = computed({
                         <template v-if="canDo.edit">
                             <UFormGroup name="content">
                                 <ClientOnly>
-                                    <DocEditor v-model="state.content" :disabled="!canDo.edit" />
+                                    <TiptapEditor v-model="state.content" :disabled="!canDo.edit" />
                                 </ClientOnly>
                             </UFormGroup>
                         </template>

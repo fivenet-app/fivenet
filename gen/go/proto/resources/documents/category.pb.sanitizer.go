@@ -8,19 +8,29 @@ import (
 )
 
 func (m *Category) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Color
 
 	if m.Color != nil {
 		*m.Color = htmlsanitizer.StripTags(*m.Color)
 	}
 
+	// Field: Description
+
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
+
+	// Field: Icon
 
 	if m.Icon != nil {
 		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
 	}
 
+	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
 
 	return nil

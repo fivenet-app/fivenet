@@ -43,8 +43,6 @@ export interface Page {
      */
     meta?: PageMeta;
     /**
-     * @sanitize
-     *
      * @generated from protobuf field: resources.common.content.Content content = 6;
      */
     content?: Content;
@@ -100,6 +98,8 @@ export interface PageMeta {
      */
     contentType: ContentType;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string tags = 10;
      */
     tags: string[];

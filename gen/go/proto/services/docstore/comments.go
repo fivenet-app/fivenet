@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
@@ -89,7 +90,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		tDComments.DocumentID,
 		tDComments.CreatedAt,
 		tDComments.UpdatedAt,
-		tDComments.Comment,
+		tDComments.Comment.AS("comment.content"),
 		tDComments.CreatorID,
 		tCreator.ID,
 		tCreator.Job,
@@ -163,6 +164,11 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
+	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	stmt := tDComments.
 		INSERT(
 			tDComments.DocumentID,
@@ -172,7 +178,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		).
 		VALUES(
 			req.Comment.DocumentId,
-			req.Comment.Comment,
+			req.Comment.Content,
 			userInfo.UserId,
 			userInfo.Job,
 		)
@@ -244,12 +250,17 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
+	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	stmt := tDComments.
 		UPDATE(
 			tDComments.Comment,
 		).
 		SET(
-			tDComments.Comment.SET(jet.String(req.Comment.Comment)),
+			tDComments.Comment.SET(jet.String(*req.Comment.Content.RawContent)),
 		).
 		WHERE(
 			jet.AND(
@@ -262,7 +273,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	comment.Comment = req.Comment.Comment
+	comment.Content = req.Comment.Content
 
 	if _, err := addDocumentActivity(ctx, s.db, &documents.DocActivity{
 		DocumentId:   req.Comment.DocumentId,
@@ -290,7 +301,7 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 			tDComments.CreatedAt,
 			tDComments.UpdatedAt,
 			tDComments.DocumentID,
-			tDComments.Comment,
+			tDComments.Comment.AS("comment.content"),
 			tDComments.CreatorID,
 			tDComments.CreatorJob,
 			tCreator.ID,

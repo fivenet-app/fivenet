@@ -170,7 +170,6 @@ const links = computed(() =>
             tooltip: {
                 text: t('common.internet'),
             },
-            permission: 'TODOService.TODOMethod' as Perms,
         },
         {
             label: t('common.control_panel'),

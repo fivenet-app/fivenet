@@ -32,13 +32,12 @@ type Page struct {
 
 	Id uint64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	// @sanitize: method=StripTags
-	Job      string    `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
-	JobLabel *string   `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
-	ParentId *uint64   `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
-	Meta     *PageMeta `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
-	// @sanitize
-	Content *content.Content `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
-	Access  *PageAccess      `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
+	Job      string           `protobuf:"bytes,2,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel *string          `protobuf:"bytes,3,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	ParentId *uint64          `protobuf:"varint,4,opt,name=parent_id,json=parentId,proto3,oneof" json:"parent_id,omitempty"`
+	Meta     *PageMeta        `protobuf:"bytes,5,opt,name=meta,proto3" json:"meta,omitempty"`
+	Content  *content.Content `protobuf:"bytes,6,opt,name=content,proto3" json:"content,omitempty"`
+	Access   *PageAccess      `protobuf:"bytes,7,opt,name=access,proto3" json:"access,omitempty"`
 }
 
 func (x *Page) Reset() {
@@ -137,9 +136,10 @@ type PageMeta struct {
 	CreatorId   *int32              `protobuf:"varint,7,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
 	Creator     *users.UserShort    `protobuf:"bytes,8,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
 	ContentType content.ContentType `protobuf:"varint,9,opt,name=content_type,json=contentType,proto3,enum=resources.common.content.ContentType" json:"content_type,omitempty"`
-	Tags        []string            `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
-	Toc         *bool               `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
-	Public      bool                `protobuf:"varint,12,opt,name=public,proto3" json:"public,omitempty"`
+	// @sanitize: method=StripTags
+	Tags   []string `protobuf:"bytes,10,rep,name=tags,proto3" json:"tags,omitempty"`
+	Toc    *bool    `protobuf:"varint,11,opt,name=toc,proto3,oneof" json:"toc,omitempty"`
+	Public bool     `protobuf:"varint,12,opt,name=public,proto3" json:"public,omitempty"`
 }
 
 func (x *PageMeta) Reset() {

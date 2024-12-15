@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.mailer;
 
+import "resources/common/content/content.proto";
 import "resources/mailer/email.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -22,10 +23,7 @@ message Message {
     max_len: 255
   }];
   // @sanitize
-  string content = 9 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 8192
-  }];
+  resources.common.content.Content content = 9;
   optional MessageData data = 10;
   optional int32 creator_id = 11;
   optional string creator_job = 12;

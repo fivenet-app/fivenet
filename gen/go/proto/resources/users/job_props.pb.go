@@ -738,6 +738,7 @@ type GroupSyncSettings struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	IgnoredRoleIds []string `protobuf:"bytes,1,rep,name=ignored_role_ids,json=ignoredRoleIds,proto3" json:"ignored_role_ids,omitempty"`
 }
 

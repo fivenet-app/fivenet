@@ -63,6 +63,7 @@ message AttributeValues {
 }
 
 message StringList {
+  // @sanitize: method=StripTags
   repeated string strings = 1;
 }
 

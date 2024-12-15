@@ -7,9 +7,10 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ConfirmModal from '../partials/ConfirmModal.vue';
-import DocEditor from '../partials/DocEditor.vue';
+import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import Pagination from '../partials/Pagination.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 import EmailInfoPopover from './EmailInfoPopover.vue';
 import { canAccess, generateResponseTitle } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
@@ -136,7 +137,9 @@ async function postMessage(values: Schema): Promise<void> {
             senderId: selectedEmail.value.id,
             threadId: props.threadId,
             title: values.title,
-            content: values.content,
+            content: {
+                rawContent: values.content,
+            },
             data: {
                 entry: [],
             },
@@ -293,8 +296,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
 
                 <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-base-900">
-                    <!-- eslint-disable vue/no-v-html -->
-                    <div class="prose dark:prose-invert min-w-full px-4 py-2" v-html="message.content"></div>
+                    <div v-if="message.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
+                        <HTMLContentRenderer :value="message.content.content" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -392,12 +396,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <UFormGroup name="message">
                             <ClientOnly>
-                                <DocEditor
-                                    v-model="state.content"
-                                    :disabled="!canSubmit"
-                                    :min-height="200"
-                                    :config="{ allowResizeX: false, allowResizeY: true }"
-                                />
+                                <TiptapEditor v-model="state.content" :disabled="!canSubmit" />
                             </ClientOnly>
                         </UFormGroup>
 

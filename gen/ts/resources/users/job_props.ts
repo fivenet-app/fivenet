@@ -226,6 +226,8 @@ export interface JobsAbsenceSettings {
  */
 export interface GroupSyncSettings {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string ignored_role_ids = 1;
      */
     ignoredRoleIds: string[];

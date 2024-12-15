@@ -25,6 +25,7 @@ import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
 import BackButton from '../partials/BackButton.vue';
 import AccessBadges from '../partials/access/AccessBadges.vue';
+import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
@@ -146,21 +147,6 @@ function addToClipboard(): void {
         type: NotificationType.INFO,
     });
 }
-
-const contentRef = useTemplateRef('contentRef');
-function disableCheckboxes(): void {
-    if (contentRef.value === null) {
-        return;
-    }
-
-    const checkboxes: NodeListOf<HTMLInputElement> = contentRef.value.querySelectorAll('input[type=checkbox]');
-    checkboxes.forEach((el) => {
-        el.setAttribute('disabled', 'disabled');
-        el.classList.add('form-checkbox');
-    });
-}
-
-watchOnce(doc, () => useTimeoutFn(disableCheckboxes, 50));
 
 const hash = useRouteHash();
 if (hash.value !== undefined && hash.value !== null) {
@@ -532,8 +518,9 @@ defineShortcuts({
                     {{ $t('common.content') }}
                 </h2>
                 <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                    <!-- eslint-disable vue/no-v-html -->
-                    <div ref="contentRef" class="prose dark:prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
+                    <div v-if="doc.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
+                        <HTMLContentRenderer :value="doc.content.content" />
+                    </div>
                 </div>
             </div>
 
@@ -594,16 +581,3 @@ defineShortcuts({
         </UCard>
     </template>
 </template>
-
-<style scoped>
-.contentView:deep(.prose) {
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-
-    input[type='checkbox']:checked {
-        opacity: 1;
-    }
-}
-</style>

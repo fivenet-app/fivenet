@@ -8,32 +8,179 @@ import (
 )
 
 func (m *Unit) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Attributes
+	if m.Attributes != nil {
+		if v, ok := interface{}(m.GetAttributes()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
 
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)
 	}
 
+	// Field: Initials
 	m.Initials = htmlsanitizer.Sanitize(m.Initials)
 
+	// Field: Name
 	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: Status
+	if m.Status != nil {
+		if v, ok := interface{}(m.GetStatus()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UnitAssignment) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UnitAssignments) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	return nil
 }
 
 func (m *UnitStatus) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Code
 
 	if m.Code != nil {
 		*m.Code = htmlsanitizer.Sanitize(*m.Code)
 	}
 
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Creator
+	if m.Creator != nil {
+		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Postal
+
 	if m.Postal != nil {
 		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
 	}
 
+	// Field: Reason
+
 	if m.Reason != nil {
 		*m.Reason = htmlsanitizer.Sanitize(*m.Reason)
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

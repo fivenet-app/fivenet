@@ -106,8 +106,13 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
             </template>
         </ULandingHero>
 
-        <ULandingSection v-if="searchResults && searchResults.results.length > 0" :ui="{ wrapper: 'py-6 sm:py-6' }">
-            <!-- TODO show search results -->
+        <ULandingSection v-if="searchResults" :ui="{ wrapper: 'py-6 sm:py-6' }">
+            <template v-if="searchResults.results.length === 0">
+                <span>{{ $t('common.not_found', [$t('common.result', 2)]) }}</span>
+            </template>
+            <template v-else>
+                <!-- TODO show search results -->
+            </template>
         </ULandingSection>
 
         <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">

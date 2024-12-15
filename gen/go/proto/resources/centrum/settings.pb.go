@@ -166,7 +166,9 @@ type PredefinedStatus struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UnitStatus     []string `protobuf:"bytes,1,rep,name=unit_status,json=unitStatus,proto3" json:"unit_status,omitempty"`
+	// @sanitize: method=StripTags
+	UnitStatus []string `protobuf:"bytes,1,rep,name=unit_status,json=unitStatus,proto3" json:"unit_status,omitempty"`
+	// @sanitize: method=StripTags
 	DispatchStatus []string `protobuf:"bytes,2,rep,name=dispatch_status,json=dispatchStatus,proto3" json:"dispatch_status,omitempty"`
 }
 

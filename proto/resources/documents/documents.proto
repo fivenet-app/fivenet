@@ -24,11 +24,7 @@ message Document {
     max_len: 1024
   }];
   resources.common.content.ContentType content_type = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  // @sanitize
-  string content = 9 [(validate.rules).string = {
-    min_len: 20,
-    max_bytes: 1750000 // 1.75 Megabytes
-  }];
+  resources.common.content.Content content = 9;
   // @sanitize
   optional string data = 10 [(validate.rules).string = {
     max_bytes: 1000000 // 1 Megabyte
@@ -61,7 +57,7 @@ message DocumentShort {
   }];
   resources.common.content.ContentType content_type = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   // @sanitize
-  string content = 9 [(validate.rules).string = {max_bytes: 1024}];
+  resources.common.content.Content content = 9;
   optional int32 creator_id = 10 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   string creator_job = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"creator_job"

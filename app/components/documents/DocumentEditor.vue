@@ -142,7 +142,7 @@ onMounted(async () => {
             if (document) {
                 state.title = document.title;
                 state.state = document.state;
-                state.content = document.content;
+                state.content = document.content?.rawContent ?? '';
                 state.category = document.category ?? emptyCategory;
                 state.closed = document.closed;
                 state.public = document.public;
@@ -260,7 +260,9 @@ async function createDocument(values: Schema): Promise<void> {
     // Prepare request
     const req: CreateDocumentRequest = {
         title: values.title,
-        content: values.content,
+        content: {
+            rawContent: values.content,
+        },
         contentType: ContentType.HTML,
         closed: values.closed,
         state: values.state,
@@ -321,7 +323,9 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
-        content: values.content,
+        content: {
+            rawContent: values.content,
+        },
         contentType: ContentType.HTML,
         closed: values.closed,
         state: values.state,

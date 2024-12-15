@@ -71,10 +71,14 @@ export interface Perms {
  */
 export interface Perm {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string category = 1;
      */
     category: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string name = 2;
      */
     name: string;
@@ -97,10 +101,14 @@ export interface Website {
  */
 export interface Links {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string privacy_policy = 1;
      */
     privacyPolicy?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string imprint = 2;
      */
     imprint?: string;
@@ -114,10 +122,14 @@ export interface JobInfo {
      */
     unemployedJob?: UnemployedJob;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string public_jobs = 2;
      */
     publicJobs: string[];
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string hidden_jobs = 3;
      */
     hiddenJobs: string[];
@@ -148,6 +160,8 @@ export interface UserTracker {
      */
     dbRefreshTime?: Duration;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string livemap_jobs = 3;
      */
     livemapJobs: string[];
@@ -165,10 +179,14 @@ export interface Discord {
      */
     syncInterval?: Duration;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string invite_url = 3;
      */
     inviteUrl?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string ignored_jobs = 4;
      */
     ignoredJobs: string[];
@@ -186,10 +204,14 @@ export interface DiscordBotPresence {
      */
     type: DiscordBotPresenceType;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string status = 2;
      */
     status?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string url = 3;
      */
     url?: string;

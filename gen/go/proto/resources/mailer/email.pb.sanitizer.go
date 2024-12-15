@@ -8,11 +8,80 @@ import (
 )
 
 func (m *Email) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Access
+	if m.Access != nil {
+		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: CreatedAt
+	if m.CreatedAt != nil {
+		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Email
 	m.Email = htmlsanitizer.StripTags(m.Email)
+
+	// Field: EmailChanged
+	if m.EmailChanged != nil {
+		if v, ok := interface{}(m.GetEmailChanged()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Label
 
 	if m.Label != nil {
 		*m.Label = htmlsanitizer.StripTags(*m.Label)
+	}
+
+	// Field: Settings
+	if m.Settings != nil {
+		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: User
+	if m.User != nil {
+		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/yosssi/gohtml"
@@ -367,4 +368,12 @@ func PrettyHTML(in string) (string, error) {
 	in = strings.ReplaceAll(in, "\n</body>", "")
 
 	return gohtml.Format(in), nil
+}
+
+func (c *Content) GetSummary(length int) string {
+	if c.RawContent == nil {
+		return ""
+	}
+
+	return utils.StringFirstN(htmlsanitizer.StripTags(*c.RawContent), length)
 }

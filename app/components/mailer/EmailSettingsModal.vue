@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
-import DocEditor from '../partials/DocEditor.vue';
+import TiptapEditor from '../partials/TiptapEditor.vue';
 import { canAccess } from './helpers';
 
 withDefaults(
@@ -113,7 +113,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
                         <ClientOnly>
-                            <DocEditor v-model="state.signature" :disabled="disabled || !canManage" :min-height="200" />
+                            <TiptapEditor v-model="state.signature" :disabled="disabled || !canManage" />
                         </ClientOnly>
                     </UFormGroup>
                 </div>

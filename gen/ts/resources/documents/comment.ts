@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
+import { Content } from "../common/content/content";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.documents.Comment
@@ -37,11 +38,9 @@ export interface Comment {
      */
     documentId: string;
     /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string comment = 6;
+     * @generated from protobuf field: resources.common.content.Content content = 6;
      */
-    comment: string;
+    content?: Content;
     /**
      * @generated from protobuf field: optional int32 creator_id = 7;
      */
@@ -64,7 +63,7 @@ class Comment$Type extends MessageType<Comment> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
+            { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
             { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
@@ -74,7 +73,6 @@ class Comment$Type extends MessageType<Comment> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.documentId = "0";
-        message.comment = "";
         message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Comment>(this, message, value);
@@ -100,8 +98,8 @@ class Comment$Type extends MessageType<Comment> {
                 case /* uint64 document_id = 5 [jstype = JS_STRING];*/ 5:
                     message.documentId = reader.uint64().toString();
                     break;
-                case /* string comment */ 6:
-                    message.comment = reader.string();
+                case /* resources.common.content.Content content */ 6:
+                    message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
                     break;
                 case /* optional int32 creator_id */ 7:
                     message.creatorId = reader.int32();
@@ -139,9 +137,9 @@ class Comment$Type extends MessageType<Comment> {
         /* uint64 document_id = 5 [jstype = JS_STRING]; */
         if (message.documentId !== "0")
             writer.tag(5, WireType.Varint).uint64(message.documentId);
-        /* string comment = 6; */
-        if (message.comment !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.comment);
+        /* resources.common.content.Content content = 6; */
+        if (message.content)
+            Content.internalBinaryWrite(message.content, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* optional int32 creator_id = 7; */
         if (message.creatorId !== undefined)
             writer.tag(7, WireType.Varint).int32(message.creatorId);

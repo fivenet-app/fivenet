@@ -9,6 +9,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrum";
 
 message Attributes {
+  // @sanitize: method=StripTags
   repeated string list = 1;
 }
 

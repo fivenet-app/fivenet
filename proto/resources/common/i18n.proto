@@ -5,6 +5,8 @@ package resources.common;
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common;common";
 
 message TranslateItem {
+  // @sanitize: method=StripTags
   string key = 1;
+  // @sanitize: method=StripTags
   map<string, string> parameters = 2;
 }

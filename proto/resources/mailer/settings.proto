@@ -8,6 +8,8 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/maile
 
 message EmailSettings {
   uint64 email_id = 1 [jstype = JS_STRING];
+  // @sanitize
   optional string signature = 2 [(validate.rules).string.max_len = 1024];
+  // @sanitize: method=StripTags
   repeated string blocked_emails = 3 [(validate.rules).repeated.max_items = 25];
 }

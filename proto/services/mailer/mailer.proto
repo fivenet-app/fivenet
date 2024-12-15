@@ -126,6 +126,7 @@ message GetThreadResponse {
 message CreateThreadRequest {
   resources.mailer.Thread thread = 1 [(validate.rules).message.required = true];
   resources.mailer.Message message = 2 [(validate.rules).message.required = true];
+  // @sanitize: method=StripTags
   repeated string recipients = 3 [(validate.rules).repeated = {
     min_items: 1,
     max_items: 15,
@@ -195,6 +196,7 @@ message ListThreadMessagesResponse {
 
 message PostMessageRequest {
   resources.mailer.Message message = 1 [(validate.rules).message.required = true];
+  // @sanitize: method=StripTags
   repeated string recipients = 2 [(validate.rules).repeated = {
     max_items: 10,
     items: { string: { min_len: 6, max_len: 80 } },

@@ -7,16 +7,336 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
-func (m *SetJobsUserPropsRequest) Sanitize() error {
+func (m *GetColleagueLabelsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	return nil
+}
+
+func (m *GetColleagueLabelsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Labels
+	for idx, item := range m.Labels {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *GetColleagueLabelsStatsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetColleagueLabelsStatsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Count
+	for idx, item := range m.Count {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *GetColleagueRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetColleagueResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Colleague
+	if m.Colleague != nil {
+		if v, ok := interface{}(m.GetColleague()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *GetMOTDRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetMOTDResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetSelfRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetSelfResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Colleague
+	if m.Colleague != nil {
+		if v, ok := interface{}(m.GetColleague()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListColleagueActivityRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: ActivityTypes
+	for idx, item := range m.ActivityTypes {
+		_, _ = idx, item
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListColleagueActivityResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Activity
+	for idx, item := range m.Activity {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListColleaguesRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Sort
+	if m.Sort != nil {
+		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ListColleaguesResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Colleagues
+	for idx, item := range m.Colleagues {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *ManageColleagueLabelsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Labels
+	for idx, item := range m.Labels {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ManageColleagueLabelsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Labels
+	for idx, item := range m.Labels {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *SetJobsUserPropsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Reason
 	m.Reason = htmlsanitizer.Sanitize(m.Reason)
 
 	return nil
 }
 
-func (m *SetMOTDRequest) Sanitize() error {
+func (m *SetJobsUserPropsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SetMOTDRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Motd
 	m.Motd = htmlsanitizer.StripTags(m.Motd)
+
+	return nil
+}
+
+func (m *SetMOTDResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
 	return nil
 }

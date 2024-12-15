@@ -36,7 +36,6 @@ import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
-import { TextIndent } from '~/composables/tiptap/extensions/textIndent';
 // @ts-expect-error project doesn't have types
 import UniqueId from 'tiptap-unique-id';
 
@@ -49,11 +48,17 @@ const props = withDefaults(
         limit?: number;
         disabled?: boolean;
         placeholder?: string;
+        splitScreen?: boolean;
+        hideToolbar?: boolean;
+        wrapperClass?: string;
     }>(),
     {
         limit: undefined,
         disabled: false,
         placeholder: undefined,
+        splitScreen: false,
+        hideToolbar: false,
+        wrapperClass: '',
     },
 );
 
@@ -61,7 +66,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
-const { t } = useI18n();
+const content = useVModel(props, 'modelValue', emit);
 
 const editor = useEditor({
     content: '',
@@ -108,7 +113,6 @@ const editor = useEditor({
         Subscript,
         Superscript,
         Text,
-        TextIndent,
         TextAlign.configure({
             types: ['heading', 'paragraph', 'image'],
         }),
@@ -147,7 +151,7 @@ const editor = useEditor({
             limit: props.limit,
         }),
         Placeholder.configure({
-            placeholder: props.placeholder ?? t('common.message'),
+            placeholder: props.placeholder ?? '',
         }),
     ],
     onUpdate: () => {
@@ -182,13 +186,6 @@ const fonts = [
     },
 ];
 
-/*
-<input
-  type="color"
-  @input="editor.chain().focus().setColor($event.target.value).run()"
-  :value="editor.getAttributes('textStyle').color"
->
-*/
 const fontColors = [
     {
         label: 'White',
@@ -255,20 +252,17 @@ const highlightColors = [
     },
 ];
 
-watch(
-    () => props.modelValue,
-    (value) => {
-        const isSame = unref(editor)?.getHTML() === value;
-        // JSON
-        // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
+watch(content, (value) => {
+    const isSame = unref(editor)?.getHTML() === value;
+    // JSON
+    // const isSame = JSON.stringify(this.editor.getJSON()) === JSON.stringify(value)
 
-        if (isSame) {
-            return;
-        }
+    if (isSame) {
+        return;
+    }
 
-        unref(editor)?.commands.setContent(value, false);
-    },
-);
+    unref(editor)?.commands.setContent(value, false);
+});
 
 watch(
     () => props.disabled,
@@ -327,6 +321,7 @@ const goToSelection = () => {
     const { node } = editor.value.view.domAtPos(editor.value.state.selection.anchor);
     node instanceof HTMLElement && node.scrollIntoView({ behavior: 'smooth', block: 'center' });
 };
+
 watch(
     () => searchAndReplace.search.trim(),
     (val, oldVal) => {
@@ -380,7 +375,7 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="rounded border border-gray-100 dark:border-gray-800">
-        <div v-if="editor" class="flex snap-x flex-wrap gap-1 bg-gray-100 p-0.5 dark:bg-gray-800">
+        <div v-if="editor && !hideToolbar" class="flex snap-x flex-wrap gap-1 bg-gray-100 p-0.5 dark:bg-gray-800">
             <UButtonGroup>
                 <UButton
                     :disabled="!editor.can().chain().focus().toggleBold().run()"
@@ -758,9 +753,17 @@ onBeforeUnmount(() => {
             </UButtonGroup>
         </div>
 
-        <TiptapEditorContent :editor="editor" class="w-full min-w-0 max-w-full" />
+        <TiptapEditorContent :editor="editor" class="w-full min-w-0 max-w-full" :class="wrapperClass" />
+        <UTextarea
+            v-if="splitScreen"
+            v-model="content"
+            :rows="24"
+            autoresize
+            class="border-t-2 border-gray-500"
+            :ui="{ rounded: '' }"
+        />
 
-        <div v-if="editor" class="flex w-full justify-between bg-gray-100 px-0.5 text-center dark:bg-gray-800">
+        <div v-if="editor" class="flex w-full justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
             <div class="flex-1">
                 <slot name="footer" />
             </div>

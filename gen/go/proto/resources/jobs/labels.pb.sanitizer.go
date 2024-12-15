@@ -8,8 +8,49 @@ import (
 )
 
 func (m *Label) Sanitize() error {
+	if m == nil {
+		return nil
+	}
 
+	// Field: Color
 	m.Color = htmlsanitizer.StripTags(m.Color)
+
+	return nil
+}
+
+func (m *LabelCount) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Label
+	if m.Label != nil {
+		if v, ok := interface{}(m.GetLabel()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *Labels) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: List
+	for idx, item := range m.List {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	return nil
 }

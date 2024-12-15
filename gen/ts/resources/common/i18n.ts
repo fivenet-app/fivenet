@@ -15,10 +15,14 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface TranslateItem {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string key = 1;
      */
     key: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: map<string, string> parameters = 2;
      */
     parameters: {
