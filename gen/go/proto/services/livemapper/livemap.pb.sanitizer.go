@@ -119,10 +119,6 @@ func (m *StreamResponse) Sanitize() error {
 	}
 
 	// Field: Jobs
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *StreamResponse_Jobs:

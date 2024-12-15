@@ -166,10 +166,6 @@ func (m *JobsUserActivityData) Sanitize() error {
 	}
 
 	// Field: AbsenceDate
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *JobsUserActivityData_AbsenceDate:

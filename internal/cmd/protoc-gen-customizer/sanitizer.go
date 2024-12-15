@@ -176,10 +176,6 @@ func (m *{{ $key }}) Sanitize() error {
         }
         {{ else if $f.F.InRealOneOf }}
             {{- if ne $lastOneOf $f.F.OneOf.Message.Name }}
-            if m == nil {
-                return nil
-	        }
-
 	        switch v := m.{{ $f.F.OneOf.Name.UpperCamelCase }}.(type) {
             {{ end }}
                 case *{{ $key }}_{{ $f.Name }}:

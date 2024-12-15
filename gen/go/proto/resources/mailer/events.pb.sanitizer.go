@@ -9,10 +9,6 @@ func (m *MailerEvent) Sanitize() error {
 	}
 
 	// Field: EmailSettingsUpdated
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *MailerEvent_EmailSettingsUpdated:

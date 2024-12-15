@@ -136,10 +136,6 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	}
 
 	// Field: Daily
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Daily:
@@ -161,10 +157,6 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	}
 
 	// Field: Range
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Range:
@@ -198,10 +190,6 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	}
 
 	// Field: Weekly
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Weekly:

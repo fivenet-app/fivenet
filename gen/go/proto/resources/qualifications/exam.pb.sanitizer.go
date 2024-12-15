@@ -74,10 +74,6 @@ func (m *ExamQuestionData) Sanitize() error {
 	}
 
 	// Field: FreeText
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *ExamQuestionData_FreeText:
@@ -257,10 +253,6 @@ func (m *ExamResponseData) Sanitize() error {
 	}
 
 	// Field: FreeText
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Response.(type) {
 
 	case *ExamResponseData_FreeText:

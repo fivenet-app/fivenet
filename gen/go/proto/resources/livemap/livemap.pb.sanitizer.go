@@ -40,10 +40,6 @@ func (m *MarkerData) Sanitize() error {
 	}
 
 	// Field: Circle
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *MarkerData_Circle:

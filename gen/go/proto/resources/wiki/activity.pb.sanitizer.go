@@ -158,10 +158,6 @@ func (m *PageActivityData) Sanitize() error {
 	}
 
 	// Field: AccessUpdated
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *PageActivityData_AccessUpdated:

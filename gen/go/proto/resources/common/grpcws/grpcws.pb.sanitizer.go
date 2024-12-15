@@ -55,10 +55,6 @@ func (m *GrpcFrame) Sanitize() error {
 	}
 
 	// Field: Body
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Payload.(type) {
 
 	case *GrpcFrame_Body:

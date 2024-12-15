@@ -13,10 +13,6 @@ func (m *AttributeValues) Sanitize() error {
 	}
 
 	// Field: JobGradeList
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.ValidValues.(type) {
 
 	case *AttributeValues_JobGradeList:

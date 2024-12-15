@@ -166,10 +166,6 @@ func (m *DocActivityData) Sanitize() error {
 	}
 
 	// Field: AccessRequested
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *DocActivityData_AccessRequested:

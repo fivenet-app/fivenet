@@ -474,10 +474,6 @@ func (m *StreamResponse) Sanitize() error {
 	}
 
 	// Field: DispatchCreated
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Change.(type) {
 
 	case *StreamResponse_DispatchCreated:

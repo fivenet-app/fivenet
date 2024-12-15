@@ -9,10 +9,6 @@ func (m *JobEvent) Sanitize() error {
 	}
 
 	// Field: JobProps
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *JobEvent_JobProps:
@@ -49,10 +45,6 @@ func (m *UserEvent) Sanitize() error {
 	}
 
 	// Field: Notification
-	if m == nil {
-		return nil
-	}
-
 	switch v := m.Data.(type) {
 
 	case *UserEvent_Notification:
