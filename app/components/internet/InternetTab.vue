@@ -42,6 +42,8 @@ async function getPage(): Promise<GetPageResponse | undefined> {
     }
 }
 
+const isDev = import.meta.dev;
+
 const { data: page } = useLazyAsyncData(`internet-page-${tab.value?.domain}:${tab.value?.path}`, () => getPage());
 </script>
 
@@ -50,7 +52,7 @@ const { data: page } = useLazyAsyncData(`internet-page-${tab.value?.domain}:${ta
         <HomePage v-if="tab?.domain === urlHomePage || tab?.domain === ''" v-model="tab" />
         <NotFound v-else-if="!page" v-model="tab" />
         <template v-else>
-            <template v-if="import.meta.dev">
+            <template v-if="isDev">
                 <span>Tab: {{ tab }}</span>
                 <span>Page: {{ page }}</span>
             </template>
