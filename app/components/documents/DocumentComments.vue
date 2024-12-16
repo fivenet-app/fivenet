@@ -159,6 +159,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('components.documents.document_comments.add_comment')"
                                         wrapper-class="min-h-36"
                                         disable-images
+                                        comment-mode
+                                        :limit="1250"
                                     />
                                 </ClientOnly>
                             </UFormGroup>

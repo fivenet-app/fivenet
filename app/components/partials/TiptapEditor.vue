@@ -53,6 +53,7 @@ const props = withDefaults(
         hideToolbar?: boolean;
         wrapperClass?: string;
         disableImages?: boolean;
+        commentMode?: boolean;
     }>(),
     {
         limit: undefined,
@@ -62,6 +63,7 @@ const props = withDefaults(
         hideToolbar: false,
         wrapperClass: '',
         disableImages: true,
+        commentMode: false,
     },
 );
 
@@ -455,7 +457,7 @@ onBeforeUnmount(() => {
                 </UButtonGroup>
 
                 <!-- Text Align -->
-                <UButtonGroup>
+                <UButtonGroup v-if="!commentMode">
                     <UButton
                         :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
                         color="white"
@@ -591,7 +593,7 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="flex snap-x flex-wrap gap-1">
-                <UButtonGroup>
+                <UButtonGroup v-if="!commentMode">
                     <UButton
                         :class="{ 'is-active': editor.isActive('highlight') }"
                         color="white"
@@ -647,7 +649,7 @@ onBeforeUnmount(() => {
                     />
                 </UButtonGroup>
 
-                <UButtonGroup>
+                <UButtonGroup v-if="!commentMode">
                     <UButton
                         :class="{ 'is-active': editor.isActive('table') }"
                         color="white"
