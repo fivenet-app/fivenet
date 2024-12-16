@@ -169,7 +169,11 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 		}
 	}
 
-	if d := content.DiffHTML(*old.Content.RawContent, *new.Content.RawContent); d != "" {
+	newRawContent, err := content.PrettyHTML(*new.Content.RawContent)
+	if err != nil {
+		return nil, err
+	}
+	if d := content.DiffHTML(*old.Content.RawContent, newRawContent); d != "" {
 		diff.ContentDiff = &d
 	}
 

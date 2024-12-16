@@ -16,6 +16,7 @@ import GenericTime from '../partials/elements/GenericTime.vue';
 import { checkPageAccess } from './helpers';
 import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 
 const props = defineProps<{
     page: Page | undefined;
@@ -237,8 +238,8 @@ const accordionItems = computed(() =>
                     </template>
                 </UPageHeader>
 
-                <UPageBody v-if="page.content?.content" prose class="pb-8">
-                    <HTMLContentRenderer :value="page.content.content" />
+                <UPageBody v-if="page.content?.content" class="pb-8">
+                    <HTMLContent :value="page.content.content" />
                 </UPageBody>
 
                 <UDivider class="mb-4" />

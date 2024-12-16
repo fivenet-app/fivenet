@@ -478,12 +478,6 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		}
 	}
 
-	var err error
-	*req.Content.RawContent, err = content.PrettyHTML(*req.Content.RawContent)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -629,11 +623,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		if !s.checkAccessAgainstTemplate(tmpl, req.Access) {
 			return nil, errorsdocstore.ErrDocRequiredAccessTemplate
 		}
-	}
-
-	*req.Content.RawContent, err = content.PrettyHTML(*req.Content.RawContent)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	// Begin transaction

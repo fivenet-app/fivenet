@@ -7,7 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 import TiptapEditor from '../partials/TiptapEditor.vue';
 
 const props = defineProps<{
@@ -155,10 +155,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="whitespace-pre-line break-words text-sm">
-                    <div v-if="comment.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
-                        <HTMLContentRenderer :value="comment.content.content" />
-                    </div>
+                <div class="rounded-lg bg-base-900">
+                    <HTMLContent v-if="comment.content?.content" class="px-4 py-2" :value="comment.content.content" />
                 </div>
             </div>
         </div>

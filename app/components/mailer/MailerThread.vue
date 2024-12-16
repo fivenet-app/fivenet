@@ -7,7 +7,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ConfirmModal from '../partials/ConfirmModal.vue';
-import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import Pagination from '../partials/Pagination.vue';
 import TiptapEditor from '../partials/TiptapEditor.vue';
@@ -296,9 +296,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
 
                 <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-base-900">
-                    <div v-if="message.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
-                        <HTMLContentRenderer :value="message.content.content" />
-                    </div>
+                    <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                 </div>
             </div>
         </div>

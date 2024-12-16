@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
@@ -169,11 +168,6 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
-	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-
 	stmt := tDComments.
 		INSERT(
 			tDComments.DocumentID,
@@ -257,11 +251,6 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 
 	if len(*req.Comment.Content.RawContent) > CommentsMaxLength {
 		return nil, errorsdocstore.ErrCommentPostDenied
-	}
-
-	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
 	stmt := tDComments.

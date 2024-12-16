@@ -24,7 +24,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
 import AccessBadges from '../partials/access/AccessBadges.vue';
-import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
@@ -516,10 +516,8 @@ defineShortcuts({
                 <h2 class="sr-only">
                     {{ $t('common.content') }}
                 </h2>
-                <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                    <div v-if="doc.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
-                        <HTMLContentRenderer :value="doc.content.content" />
-                    </div>
+                <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                    <HTMLContent v-if="doc.content?.content" class="px-4 py-2" :value="doc.content.content" />
                 </div>
             </div>
 

@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 
-const props = defineProps<{
+defineProps<{
     value: JSONNode;
 }>();
-
-// TODO load any allowed custom components
 </script>
 
 <template>
     <component
-        :is="props.value.tag === 'body' ? 'div' : props.value.tag"
-        :id="props.value.id !== '' ? props.value.id : undefined"
-        v-bind="props.value.attributes"
+        :is="value.tag === 'body' ? 'div' : value.tag"
+        :id="value.id !== '' ? value.id : undefined"
+        v-bind="value.attributes"
     >
-        {{ props.value.text }}
-        <HTMLContentRenderer v-for="(child, idx) in props.value.children" :key="idx" :value="child" />
+        <template v-if="value.text !== ''">{{ value.text }}</template>
+        <HTMLContentRenderer v-for="(child, idx) in value.children" :key="idx" :value="child" />
     </component>
 </template>

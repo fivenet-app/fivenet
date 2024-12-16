@@ -122,7 +122,7 @@ func (x *Content) Populate() error {
 	return nil
 }
 
-func (n *JSONNode) populateFrom(htmlNode *html.Node) (*JSONNode, error) {
+func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	if htmlNode.Parent == nil {
 		n.Type = string(RootNodeType)
 	} else {
@@ -138,7 +138,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) (*JSONNode, error) {
 		break
 
 	default:
-		return nil, fmt.Errorf("given node needs to be an element or document")
+		return fmt.Errorf("given node needs to be an element or document")
 	}
 
 	if len(htmlNode.Attr) > 0 {
@@ -191,7 +191,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) (*JSONNode, error) {
 		case html.TextNode:
 			n.Type = string(TextNodeType)
 
-			trimmed := strings.TrimSpace(e.Data)
+			trimmed := e.Data
 			if len(trimmed) > 0 {
 				// mimic HTML text normalizing
 				if textBuffer.Len() > 0 {
@@ -206,8 +206,8 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) (*JSONNode, error) {
 			}
 
 			jsonElemNode := &JSONNode{}
-			if _, err := jsonElemNode.populateFrom(e); err != nil {
-				return nil, err
+			if err := jsonElemNode.populateFrom(e); err != nil {
+				return err
 			}
 
 			n.Children = append(n.Children, jsonElemNode)
@@ -230,10 +230,10 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) (*JSONNode, error) {
 		}
 	}
 
-	return n, nil
+	return nil
 }
 
-func (n *JSONNode) populateTo(htmlNode *html.Node) *JSONNode {
+func (n *JSONNode) populateTo(htmlNode *html.Node) {
 	if n.Tag != "" {
 		htmlNode.Data = n.Tag
 		htmlNode.Type = html.ElementNode
@@ -278,8 +278,6 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) *JSONNode {
 		e.populateTo(htmlElem)
 		htmlNode.AppendChild(htmlElem)
 	}
-
-	return n
 }
 
 func ParseHTML(in string) (*html.Node, error) {
@@ -317,7 +315,9 @@ func ParseHTML(in string) (*html.Node, error) {
 // FromHTMLNode
 func FromHTMLNode(node *html.Node) (*JSONNode, error) {
 	jNode := &JSONNode{}
-	jNode.populateFrom(node)
+	if err := jNode.populateFrom(node); err != nil {
+		return nil, err
+	}
 
 	return jNode, nil
 }

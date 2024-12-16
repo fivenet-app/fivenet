@@ -7,7 +7,6 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
@@ -537,11 +536,6 @@ func (s *Server) CreatePage(ctx context.Context, req *CreatePageRequest) (*Creat
 		req.Page.Meta.Public = false
 	}
 
-	*req.Page.Content.RawContent, err = content.PrettyHTML(*req.Page.Content.RawContent)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -690,11 +684,6 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 	}
 
 	page, err := s.getPage(ctx, req.Page.Id, true, true, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
-	}
-
-	*req.Page.Content.RawContent, err = content.PrettyHTML(*req.Page.Content.RawContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}

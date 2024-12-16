@@ -534,7 +534,8 @@
         "grade": "Grade",
         "sort_direction": "Sort Direction",
         "font": "Font",
-        "default": "Default"
+        "default": "Default",
+        "case_sensitive": "Case sensitive"
     },
     "components": {
         "partials": {

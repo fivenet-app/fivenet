@@ -22,7 +22,7 @@ import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessBadges from '../partials/access/AccessBadges.vue';
-import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{
@@ -379,9 +379,11 @@ const accordionItems = computed(() =>
                             </h2>
 
                             <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                                <div v-if="qualification.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
-                                    <HTMLContentRenderer :value="qualification.content.content" />
-                                </div>
+                                <HTMLContent
+                                    v-if="qualification.content?.content"
+                                    class="px-4 py-2"
+                                    :value="qualification.content.content"
+                                />
                                 <p v-else>
                                     {{ $t('components.qualifications.content_unavailable') }}
                                 </p>

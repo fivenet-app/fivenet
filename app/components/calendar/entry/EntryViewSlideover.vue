@@ -5,7 +5,7 @@ import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrU
 import { checkCalendarAccess } from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import HTMLContentRenderer from '~/components/partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -205,10 +205,8 @@ const canDo = computed(() => ({
                         <UDivider />
                     </template>
 
-                    <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                        <div v-if="entry.content?.content" class="prose dark:prose-invert min-w-full px-4 py-2">
-                            <HTMLContentRenderer :value="entry.content.content" />
-                        </div>
+                    <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                        <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
                     </div>
                 </template>
             </div>

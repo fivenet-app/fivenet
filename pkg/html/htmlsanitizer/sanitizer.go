@@ -20,7 +20,14 @@ var (
 	sanitizer     *bluemonday.Policy
 )
 
-var colorRegex = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+var (
+	colorRegex            = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
+
+	boolFalseRegex    = regexp.MustCompile(`(?i)^false$`)
+	boolTrueRegex     = regexp.MustCompile(`(?i)^true$`)
+	inputTypeCheckbox = regexp.MustCompile(`(?i)checkbox`)
+)
 
 var Module = fx.Module("htmlsanitizer",
 	fx.Provide(
@@ -45,16 +52,20 @@ func setupSanitizer() {
 
 	// Style
 	sanitizer.AllowAttrs("style").OnElements("span", "p", "img")
-	// Image centering
+	// Image centering + positioning
 	sanitizer.AllowStyles("display").OnElements("span", "p", "img")
 	sanitizer.AllowStyles("margin-left").OnElements("span", "p", "img")
 	sanitizer.AllowStyles("margin-right").OnElements("span", "p", "img")
+	sanitizer.AllowStyles("width").OnElements("img")
+	sanitizer.AllowStyles("height").OnElements("img")
+
 	// Allow the 'color' property with valid RGB(A) hex values only (on any element allowed a 'style' attribute)
 	sanitizer.AllowStyles("color").Matching(colorRegex).Globally()
 	sanitizer.AllowStyles("text-align").Globally()
 	sanitizer.AllowStyles("font-weight").Globally()
 	sanitizer.AllowStyles("font-size").Globally()
 	sanitizer.AllowStyles("line-height").Globally()
+
 	// Allow the 'text-decoration' property to be set to 'underline', 'line-through' or 'none'
 	// on 'span' and 'p' elements only
 	sanitizer.AllowStyles("text-decoration").MatchingEnum("underline", "line-through", "none").OnElements("span", "p")
@@ -82,9 +93,16 @@ func setupSanitizer() {
 	sanitizer.AllowLists()
 
 	// Checkboxes
-	sanitizer.AllowAttrs("contenteditable").Matching(regexp.MustCompile(`(?i)false`)).OnElements("label")
-	sanitizer.AllowAttrs("type").Matching(regexp.MustCompile(`(?i)checkbox`)).OnElements("input")
-	sanitizer.AllowAttrs("checked").Matching(regexp.MustCompile(`(?i)true`)).OnElements("input")
+	sanitizer.AllowNoAttrs().OnElements("label")
+	sanitizer.AllowAttrs("contenteditable").Matching(boolFalseRegex).OnElements("label")
+	sanitizer.AllowAttrs("type").Matching(inputTypeCheckbox).OnElements("input")
+	sanitizer.AllowAttrs("checked").Matching(boolTrueRegex).OnElements("input")
+
+	// # ProseMirror / Tiptap Editor
+	sanitizer.AllowAttrs("class").Matching(prosemirrorClassRegex).OnElements("br")
+	// ## Checkboxes
+	sanitizer.AllowAttrs("data-checked").OnElements("li")
+	sanitizer.AllowAttrs("data-type").OnElements("ul", "ol")
 }
 
 func New(cfg *config.Config) (*bluemonday.Policy, error) {
