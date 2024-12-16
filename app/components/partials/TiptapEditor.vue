@@ -199,44 +199,74 @@ const fonts = [
     },
 ];
 
-const fontColors = [
-    {
-        label: 'White',
-        value: '#ffffff',
-    },
-    {
-        label: 'Black',
-        value: '#000000',
-    },
-    {
-        label: 'Red',
-        value: '#F98181',
-    },
-    {
-        label: 'Orange',
-        value: '#FBBC88',
-    },
-    {
-        label: 'Yellow',
-        value: '#FAF594',
-    },
-    {
-        label: 'Blue',
-        value: '#70CFF8',
-    },
-    {
-        label: 'Teal',
-        value: '#94FADB',
-    },
-    {
-        label: 'Green',
-        value: '#B9F18D',
-    },
-    {
-        label: 'Purple',
-        value: '#958DF1',
-    },
-];
+const fontColors = {
+    // Color list copied from Jodit editor to keep the same colors for Tiptap Editor now
+    // https://github.com/xdan/jodit/blob/4d5a1b4dee874457e7b82be50693cf70e0cba4d4/src/config.ts#L561
+    greyscale: ['#000000', '#434343', '#666666', '#999999', '#B7B7B7', '#CCCCCC', '#D9D9D9', '#EFEFEF', '#F3F3F3', '#FFFFFF'],
+    palette: ['#980000', '#FF0000', '#FF9900', '#FFFF00', '#00F0F0', '#00FFFF', '#4A86E8', '#0000FF', '#9900FF', '#FF00FF'],
+    full: [
+        '#E6B8AF',
+        '#F4CCCC',
+        '#FCE5CD',
+        '#FFF2CC',
+        '#D9EAD3',
+        '#D0E0E3',
+        '#C9DAF8',
+        '#CFE2F3',
+        '#D9D2E9',
+        '#EAD1DC',
+        '#DD7E6B',
+        '#EA9999',
+        '#F9CB9C',
+        '#FFE599',
+        '#B6D7A8',
+        '#A2C4C9',
+        '#A4C2F4',
+        '#9FC5E8',
+        '#B4A7D6',
+        '#D5A6BD',
+        '#CC4125',
+        '#E06666',
+        '#F6B26B',
+        '#FFD966',
+        '#93C47D',
+        '#76A5AF',
+        '#6D9EEB',
+        '#6FA8DC',
+        '#8E7CC3',
+        '#C27BA0',
+        '#A61C00',
+        '#CC0000',
+        '#E69138',
+        '#F1C232',
+        '#6AA84F',
+        '#45818E',
+        '#3C78D8',
+        '#3D85C6',
+        '#674EA7',
+        '#A64D79',
+        '#85200C',
+        '#990000',
+        '#B45F06',
+        '#BF9000',
+        '#38761D',
+        '#134F5C',
+        '#1155CC',
+        '#0B5394',
+        '#351C75',
+        '#733554',
+        '#5B0F00',
+        '#660000',
+        '#783F04',
+        '#7F6000',
+        '#274E13',
+        '#0C343D',
+        '#1C4587',
+        '#073763',
+        '#20124D',
+        '#4C1130',
+    ],
+};
 
 const highlightColors = [
     {
@@ -285,8 +315,8 @@ watch(
 const selectedFont = ref<(typeof fonts)[0]>(fonts[0]!);
 watch(selectedFont, () => unref(editor)?.chain().focus().setFontFamily(selectedFont.value.value).run());
 
-const selectedFontColor = ref<(typeof fontColors)[0]>(fontColors[0]!);
-watch(selectedFontColor, () => unref(editor)?.chain().focus().setColor(selectedFontColor.value.value).run());
+const selectedFontColor = ref<string>('#FFFFFF');
+watch(selectedFontColor, () => unref(editor)?.chain().focus().setColor(selectedFontColor.value).run());
 
 const selectedHighlightColor = ref<(typeof highlightColors)[0]>(highlightColors[0]!);
 watch(selectedHighlightColor, () =>
@@ -518,22 +548,26 @@ onBeforeUnmount(() => {
                 <UButtonGroup>
                     <UPopover>
                         <UButton
-                            :class="{ 'is-active': editor.isActive('color', { color: selectedFontColor.value }) }"
+                            :class="{ 'is-active': editor.isActive('color', { color: selectedFontColor }) }"
                             color="white"
                             variant="ghost"
-                            :style="{ color: selectedFontColor.value }"
+                            :style="{ color: selectedFontColor }"
                             icon="i-mdi-format-color-text"
                         />
 
                         <template #panel>
-                            <div class="grid grid-cols-6 gap-0.5 p-4">
-                                <UButton
-                                    v-for="(color, idx) in fontColors"
-                                    :key="idx"
-                                    class="size-6 rounded-none border-0"
-                                    :style="{ backgroundColor: color.value }"
-                                    @click="selectedFontColor = color"
-                                />
+                            <div class="inline-flex flex-col gap-1 p-4">
+                                <div v-for="(colors, idx) in fontColors" :key="idx">
+                                    <div class="grid grid-cols-10 gap-0.5">
+                                        <UButton
+                                            v-for="(color, cIdx) in colors"
+                                            :key="cIdx"
+                                            class="size-6 rounded-none border-0"
+                                            :style="{ backgroundColor: color }"
+                                            @click="selectedFontColor = color"
+                                        />
+                                    </div>
+                                </div>
                             </div>
                         </template>
                     </UPopover>

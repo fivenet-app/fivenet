@@ -86,12 +86,6 @@ importers:
       howler:
         specifier: 2.2.4
         version: 2.2.4
-      jodit:
-        specifier: 4.2.47
-        version: 4.2.47
-      jodit-vue:
-        specifier: 3.1.0
-        version: 3.1.0
       leaflet:
         specifier: 1.9.4
         version: 1.9.4
@@ -2669,10 +2663,6 @@ packages:
     resolution: {integrity: sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==}
     engines: {node: '>= 4.0.0'}
 
-  autobind-decorator@2.4.0:
-    resolution: {integrity: sha512-OGYhWUO72V6DafbF8PM8rm3EPbfuyMZcJhtm5/n26IDwO18pohE4eNazLoCGhPiXOCD0gEGmrbU3849QvM8bbw==}
-    engines: {node: '>=8.10', npm: '>=6.4.1'}
-
   autoprefixer@10.4.20:
     resolution: {integrity: sha512-XY25y5xSv/wEoqzDyXXME4AFfkZI0P23z6Fs3YgymDnKJkCGOnkL0iTxCa85UTqaSgfcqyf3UA6+c7wUvx/16g==}
     engines: {node: ^10 || ^12 || >=14}
@@ -2990,9 +2980,6 @@ packages:
 
   core-js-compat@3.39.0:
     resolution: {integrity: sha512-VgEUx3VwlExr5no0tXlBt+silBvhTryPwCXRI2Id1PN8WTKu7MreethvddqOubrYxkFdv/RnYrqlv1sFNAUelw==}
-
-  core-js@3.39.0:
-    resolution: {integrity: sha512-raM0ew0/jJUqkJ0E6e8UDtl+y/7ktFivgWvqw8dNSQeNWoSDLvQ1H/RN3aPXB9tBd4/FhyR4RDPGhsNIMsAn7g==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -4320,15 +4307,6 @@ packages:
   jiti@2.4.1:
     resolution: {integrity: sha512-yPBThwecp1wS9DmoA4x4KR2h3QoslacnDR8ypuFM962kI4/456Iy1oHx2RAgh4jfZNdn0bctsdadceiBUgpU1g==}
     hasBin: true
-
-  jodit-vue@3.1.0:
-    resolution: {integrity: sha512-imK1/C2ruIi38S0KkTzi4Iw6xyw36bnIfL0tQSGIl12qx0mkC9rgNZQUPenfiVnQ9XoxFMKo9couNwc9FxIyxA==}
-
-  jodit@3.24.9:
-    resolution: {integrity: sha512-t2d73v7GFbGI08ZzdCTwrzi8ZtoOG4icGzD6IIN2e+ghlpUKYxcHZ/Rmy6/mc6055172z+tv7QSr9BcOz6IOFQ==}
-
-  jodit@4.2.47:
-    resolution: {integrity: sha512-3dSdV+dUjwbuNKhn2M6hs8F7qkiufBPJFMB6YVJWbja7RqkQHGtrCGkpZJ1PH16chUgET2Yi+LVOonWyf/nV8g==}
 
   js-levenshtein@1.1.6:
     resolution: {integrity: sha512-X2BB11YZtrRqY4EnQcLX5Rh373zbK4alC1FW7D7MBhL2gtcC17cTnr6DmfHZeS0s2rTHjUTMMHfG7gO8SSdw+g==}
@@ -10039,8 +10017,6 @@ snapshots:
 
   at-least-node@1.0.0: {}
 
-  autobind-decorator@2.4.0: {}
-
   autoprefixer@10.4.20(postcss@8.4.49):
     dependencies:
       browserslist: 4.24.2
@@ -10329,8 +10305,6 @@ snapshots:
   core-js-compat@3.39.0:
     dependencies:
       browserslist: 4.24.2
-
-  core-js@3.39.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -11792,19 +11766,6 @@ snapshots:
   jiti@2.4.0: {}
 
   jiti@2.4.1: {}
-
-  jodit-vue@3.1.0:
-    dependencies:
-      jodit: 3.24.9
-
-  jodit@3.24.9:
-    dependencies:
-      autobind-decorator: 2.4.0
-      core-js: 3.39.0
-
-  jodit@4.2.47:
-    dependencies:
-      autobind-decorator: 2.4.0
 
   js-levenshtein@1.1.6: {}
 
