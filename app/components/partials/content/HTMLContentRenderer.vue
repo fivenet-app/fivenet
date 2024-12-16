@@ -7,12 +7,16 @@ defineProps<{
 </script>
 
 <template>
+    <template v-if="value.text">
+        {{ value.text }}
+    </template>
     <component
         :is="value.tag === 'body' ? 'div' : value.tag"
+        v-else
         :id="value.id !== '' ? value.id : undefined"
+        :disabled="value.tag === 'input' ? true : undefined"
         v-bind="value.attributes"
     >
-        <template v-if="value.text !== ''">{{ value.text }}</template>
         <HTMLContentRenderer v-for="(child, idx) in value.children" :key="idx" :value="child" />
     </component>
 </template>

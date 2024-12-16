@@ -35,6 +35,7 @@ import { Text } from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+import FontSize from 'tiptap-extension-font-size';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 // @ts-expect-error project doesn't have types
 import UniqueId from 'tiptap-unique-id';
@@ -94,6 +95,7 @@ const editor = useEditor({
         Document,
         Dropcursor,
         FontFamily,
+        FontSize,
         Gapcursor,
         HardBreak,
         Heading,
@@ -375,115 +377,117 @@ onBeforeUnmount(() => {
 
 <template>
     <div class="rounded border border-gray-100 dark:border-gray-800">
-        <div v-if="editor && !hideToolbar" class="flex snap-x flex-wrap gap-1 bg-gray-100 p-0.5 dark:bg-gray-800">
-            <UButtonGroup>
-                <UButton
-                    :disabled="!editor.can().chain().focus().toggleBold().run()"
-                    :class="{ 'is-active': editor.isActive('bold') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-bold"
-                    @click="editor.chain().focus().toggleBold().run()"
-                />
-                <UButton
-                    :disabled="!editor.can().chain().focus().toggleItalic().run()"
-                    :class="{ 'is-active': editor.isActive('italic') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-italic"
-                    @click="editor.chain().focus().toggleItalic().run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('underline') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-underline"
-                    @click="editor.chain().focus().toggleUnderline().run()"
-                />
-                <UButton
-                    :disabled="!editor.can().chain().focus().toggleStrike().run()"
-                    :class="{ 'is-active': editor.isActive('strike') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-strikethrough"
-                    @click="editor.chain().focus().toggleStrike().run()"
-                />
-                <UButton
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-clear"
-                    @click="editor.chain().focus().unsetAllMarks().run()"
-                />
-                <!-- <UButton color="white" variant="ghost" icon="i-mdi-backspace" @click="editor.chain().focus().clearNodes().run()">clear nodes</UButton> -->
-            </UButtonGroup>
+        <div v-if="editor && !hideToolbar" class="bg-gray-100 p-0.5 dark:bg-gray-800">
+            <div class="flex snap-x flex-wrap gap-1">
+                <UButtonGroup>
+                    <UButton
+                        :disabled="!editor.can().chain().focus().toggleBold().run()"
+                        :class="{ 'is-active': editor.isActive('bold') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-bold"
+                        @click="editor.chain().focus().toggleBold().run()"
+                    />
+                    <UButton
+                        :disabled="!editor.can().chain().focus().toggleItalic().run()"
+                        :class="{ 'is-active': editor.isActive('italic') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-italic"
+                        @click="editor.chain().focus().toggleItalic().run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('underline') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-underline"
+                        @click="editor.chain().focus().toggleUnderline().run()"
+                    />
+                    <UButton
+                        :disabled="!editor.can().chain().focus().toggleStrike().run()"
+                        :class="{ 'is-active': editor.isActive('strike') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-strikethrough"
+                        @click="editor.chain().focus().toggleStrike().run()"
+                    />
+                    <UButton
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-clear"
+                        @click="editor.chain().focus().unsetAllMarks().run()"
+                    />
+                    <!-- <UButton color="white" variant="ghost" icon="i-mdi-backspace" @click="editor.chain().focus().clearNodes().run()">clear nodes</UButton> -->
+                </UButtonGroup>
 
-            <UButtonGroup>
-                <UButton
-                    :class="{ 'is-active': editor.isActive('superscript') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-superscript"
-                    @click="editor.chain().focus().toggleSuperscript().run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('subscript') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-subscript"
-                    @click="editor.chain().focus().toggleSubscript().run()"
-                />
-                <UButton
-                    :disabled="!editor.can().chain().focus().toggleCode().run()"
-                    :class="{ 'is-active': editor.isActive('code') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-code-braces"
-                    @click="editor.chain().focus().toggleCode().run()"
-                />
-            </UButtonGroup>
+                <UButtonGroup>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('superscript') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-superscript"
+                        @click="editor.chain().focus().toggleSuperscript().run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('subscript') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-subscript"
+                        @click="editor.chain().focus().toggleSubscript().run()"
+                    />
+                    <UButton
+                        :disabled="!editor.can().chain().focus().toggleCode().run()"
+                        :class="{ 'is-active': editor.isActive('code') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-code-braces"
+                        @click="editor.chain().focus().toggleCode().run()"
+                    />
+                </UButtonGroup>
 
-            <!-- Text Align -->
-            <UButtonGroup>
-                <UButton
-                    :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-align-left"
-                    @click="editor.chain().focus().setTextAlign('left').run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-align-center"
-                    @click="editor.chain().focus().setTextAlign('center').run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-align-right"
-                    @click="editor.chain().focus().setTextAlign('right').run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-align-justify"
-                    @click="editor.chain().focus().setTextAlign('justify').run()"
-                />
-            </UButtonGroup>
+                <!-- Text Align -->
+                <UButtonGroup>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-align-left"
+                        @click="editor.chain().focus().setTextAlign('left').run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-align-center"
+                        @click="editor.chain().focus().setTextAlign('center').run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-align-right"
+                        @click="editor.chain().focus().setTextAlign('right').run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive({ textAlign: 'justify' }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-align-justify"
+                        @click="editor.chain().focus().setTextAlign('justify').run()"
+                    />
+                </UButtonGroup>
 
-            <UButtonGroup>
                 <!-- Font Family -->
                 <UInputMenu
                     v-model="selectedFont"
+                    name="selectedFont"
                     option-attribute="label"
                     :search-attributes="['label']"
                     :options="fonts"
                     :placeholder="$t('common.font', 1)"
                     search-lazy
                     :search-placeholder="$t('common.search_field')"
+                    class="max-w-40"
                 >
                     <template #label>
                         <span class="truncate" :style="{ fontFamily: selectedFont.value }">{{ selectedFont.label }}</span>
@@ -500,260 +504,299 @@ onBeforeUnmount(() => {
                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>>
                 </UInputMenu>
 
-                <UPopover>
+                <UButtonGroup>
+                    <UPopover>
+                        <UButton
+                            :class="{ 'is-active': editor.isActive('color', { color: selectedFontColor.value }) }"
+                            color="white"
+                            variant="ghost"
+                            :style="{ color: selectedFontColor.value }"
+                            icon="i-mdi-format-color-text"
+                        />
+
+                        <template #panel>
+                            <div class="grid grid-cols-6 gap-0.5 p-4">
+                                <UButton
+                                    v-for="(color, idx) in fontColors"
+                                    :key="idx"
+                                    class="size-6 rounded-none border-0"
+                                    :style="{ backgroundColor: color.value }"
+                                    @click="selectedFontColor = color"
+                                />
+                            </div>
+                        </template>
+                    </UPopover>
+
                     <UButton
-                        :class="{ 'is-active': editor.isActive('color', { color: selectedFontColor.value }) }"
+                        :class="{ 'is-active': editor.isActive('paragraph') }"
                         color="white"
                         variant="ghost"
-                        :style="{ color: selectedFontColor.value }"
-                        icon="i-mdi-format-color-text"
+                        icon="i-mdi-format-paragraph"
+                        @click="editor.chain().focus().setParagraph().run()"
                     />
 
-                    <template #panel>
-                        <div class="grid grid-cols-6 gap-0.5 p-4">
-                            <UButton
-                                v-for="(color, idx) in fontColors"
-                                :key="idx"
-                                class="size-6 rounded-none border-0"
-                                :style="{ backgroundColor: color.value }"
-                                @click="selectedFontColor = color"
-                            />
-                        </div>
-                    </template>
-                </UPopover>
-
-                <UButton
-                    :class="{ 'is-active': editor.isActive('paragraph') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-paragraph"
-                    @click="editor.chain().focus().setParagraph().run()"
-                />
-
-                <!-- Headers -->
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-1"
-                    @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-2"
-                    @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-3"
-                    @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-4"
-                    @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-5"
-                    @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-header-6"
-                    @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
-                />
-            </UButtonGroup>
-
-            <UButtonGroup>
-                <UButton
-                    :class="{ 'is-active': editor.isActive('highlight') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-color-highlight"
-                    @click="editor.chain().focus().toggleHighlight().run()"
-                />
-
-                <UPopover>
+                    <!-- Headers -->
                     <UButton
-                        :class="{ 'is-active': editor.isActive('highlight', { color: selectedHighlightColor.value }) }"
+                        :class="{ 'is-active': editor.isActive('heading', { level: 1 }) }"
                         color="white"
                         variant="ghost"
-                        :style="{ color: selectedHighlightColor.value }"
-                        icon="i-mdi-format-color-fill"
+                        icon="i-mdi-format-header-1"
+                        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('heading', { level: 2 }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-header-2"
+                        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('heading', { level: 3 }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-header-3"
+                        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('heading', { level: 4 }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-header-4"
+                        @click="editor.chain().focus().toggleHeading({ level: 4 }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('heading', { level: 5 }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-header-5"
+                        @click="editor.chain().focus().toggleHeading({ level: 5 }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('heading', { level: 6 }) }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-header-6"
+                        @click="editor.chain().focus().toggleHeading({ level: 6 }).run()"
+                    />
+                </UButtonGroup>
+            </div>
+
+            <div class="flex snap-x flex-wrap gap-1">
+                <UButtonGroup>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('highlight') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-color-highlight"
+                        @click="editor.chain().focus().toggleHighlight().run()"
                     />
 
-                    <template #panel>
-                        <div class="grid grid-cols-6 gap-0.5 p-4">
-                            <UButton
-                                v-for="(color, idx) in highlightColors"
-                                :key="idx"
-                                class="size-6 rounded-none border-0"
-                                :style="{ backgroundColor: color.value }"
-                                @click="selectedHighlightColor = color"
-                            />
-                        </div>
-                    </template>
-                </UPopover>
-            </UButtonGroup>
+                    <UPopover>
+                        <UButton
+                            :class="{ 'is-active': editor.isActive('highlight', { color: selectedHighlightColor.value }) }"
+                            color="white"
+                            variant="ghost"
+                            :style="{ color: selectedHighlightColor.value }"
+                            icon="i-mdi-format-color-fill"
+                        />
 
-            <UButtonGroup>
-                <UButton
-                    :class="{ 'is-active': editor.isActive('bulletList') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-list-bulleted"
-                    @click="editor.chain().focus().toggleBulletList().run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('orderedList') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-list-numbered"
-                    @click="editor.chain().focus().toggleOrderedList().run()"
-                />
-                <UButton
-                    icon="i-mdi-format-list-checks"
-                    color="white"
-                    variant="ghost"
-                    :class="{ 'is-active': editor.isActive('taskList') }"
-                    @click="editor.chain().focus().toggleTaskList().run()"
-                />
-            </UButtonGroup>
+                        <template #panel>
+                            <div class="grid grid-cols-6 gap-0.5 p-4">
+                                <UButton
+                                    v-for="(color, idx) in highlightColors"
+                                    :key="idx"
+                                    class="size-6 rounded-none border-0"
+                                    :style="{ backgroundColor: color.value }"
+                                    @click="selectedHighlightColor = color"
+                                />
+                            </div>
+                        </template>
+                    </UPopover>
+                </UButtonGroup>
 
-            <UButtonGroup>
-                <UButton
-                    :class="{ 'is-active': editor.isActive('table') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-table"
-                    @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('codeBlock') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-code-block-braces"
-                    @click="editor.chain().focus().toggleCodeBlock().run()"
-                />
-                <UButton
-                    :class="{ 'is-active': editor.isActive('blockquote') }"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-quote-open"
-                    @click="editor.chain().focus().toggleBlockquote().run()"
-                />
-                <UButton
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-minus"
-                    @click="editor.chain().focus().setHorizontalRule().run()"
-                />
-                <UButton
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-format-page-break"
-                    @click="editor.chain().focus().setHardBreak().run()"
-                />
-            </UButtonGroup>
+                <UButtonGroup>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('bulletList') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-list-bulleted"
+                        @click="editor.chain().focus().toggleBulletList().run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('orderedList') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-list-numbered"
+                        @click="editor.chain().focus().toggleOrderedList().run()"
+                    />
+                    <UButton
+                        icon="i-mdi-format-list-checks"
+                        color="white"
+                        variant="ghost"
+                        :class="{ 'is-active': editor.isActive('taskList') }"
+                        @click="editor.chain().focus().toggleTaskList().run()"
+                    />
+                </UButtonGroup>
 
-            <UPopover>
-                <UButton color="white" variant="ghost" icon="i-mdi-text-search" />
+                <UButtonGroup>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('table') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-table"
+                        @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('codeBlock') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-code-block-braces"
+                        @click="editor.chain().focus().toggleCodeBlock().run()"
+                    />
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('blockquote') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-quote-open"
+                        @click="editor.chain().focus().toggleBlockquote().run()"
+                    />
+                    <UButton
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-minus"
+                        @click="editor.chain().focus().setHorizontalRule().run()"
+                    />
+                    <UButton
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-format-page-break"
+                        @click="editor.chain().focus().setHardBreak().run()"
+                    />
+                </UButtonGroup>
 
-                <template #panel>
-                    <div class="flex flex-1 gap-0.5 p-4">
-                        <UForm :state="searchAndReplace">
-                            <UFormGroup name="search" :label="$t('common.search')">
-                                <UInput v-model="searchAndReplace.search" />
-                            </UFormGroup>
+                <div class="flex-1"></div>
 
-                            <UFormGroup name="replace" :label="$t('components.partials.TipTapEditor.replace')">
-                                <UInput v-model="searchAndReplace.replace" />
-                            </UFormGroup>
+                <UButtonGroup>
+                    <UPopover>
+                        <UButton color="white" variant="ghost" icon="i-mdi-text-search" />
 
-                            <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
-                                <UToggle v-model="searchAndReplace.caseSensitive" />
-                            </UFormGroup>
+                        <template #panel>
+                            <div class="flex flex-1 gap-0.5 p-4">
+                                <UForm :state="searchAndReplace">
+                                    <UFormGroup name="search" :label="$t('common.search')">
+                                        <UInput v-model="searchAndReplace.search" />
+                                    </UFormGroup>
 
-                            <UFormGroup class="flex flex-col lg:flex-row">
-                                <UButtonGroup>
-                                    <UButton
-                                        color="white"
-                                        variant="outline"
-                                        :label="$t('components.partials.TipTapEditor.clear')"
-                                        @click="clear"
-                                    />
-                                    <UButton
-                                        color="white"
-                                        variant="outline"
-                                        :label="$t('components.partials.TipTapEditor.previous')"
-                                        @click="previous"
-                                    />
-                                    <UButton
-                                        color="white"
-                                        variant="outline"
-                                        :label="$t('components.partials.TipTapEditor.next')"
-                                        @click="next"
-                                    />
-                                    <UButton
-                                        color="white"
-                                        variant="outline"
-                                        :label="$t('components.partials.TipTapEditor.replace')"
-                                        @click="replace"
-                                    />
-                                    <UButton
-                                        color="white"
-                                        variant="outline"
-                                        :label="$t('components.partials.TipTapEditor.replace_all')"
-                                        @click="replaceAll"
-                                    />
-                                </UButtonGroup>
+                                    <UFormGroup name="replace" :label="$t('components.partials.TipTapEditor.replace')">
+                                        <UInput v-model="searchAndReplace.replace" />
+                                    </UFormGroup>
 
-                                <div class="mt-1 block text-sm font-medium">
-                                    {{ $t('common.result', 2) }}:
-                                    {{
-                                        editor?.storage?.searchAndReplace?.resultIndex > 0
-                                            ? editor?.storage?.searchAndReplace?.resultIndex + 1
-                                            : 0
-                                    }}
-                                    /
-                                    {{ editor?.storage?.searchAndReplace?.results.length }}
-                                </div>
-                            </UFormGroup>
-                        </UForm>
-                    </div>
-                </template>
-            </UPopover>
+                                    <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
+                                        <UToggle v-model="searchAndReplace.caseSensitive" />
+                                    </UFormGroup>
 
-            <UButtonGroup>
-                <UButton
-                    :disabled="!editor.can().chain().focus().undo().run()"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-undo"
-                    @click="editor.chain().focus().undo().run()"
-                />
-                <UButton
-                    :disabled="!editor.can().chain().focus().redo().run()"
-                    color="white"
-                    variant="ghost"
-                    icon="i-mdi-redo"
-                    @click="editor.chain().focus().redo().run()"
-                />
-            </UButtonGroup>
+                                    <UFormGroup class="flex flex-col lg:flex-row">
+                                        <UButtonGroup>
+                                            <UButton
+                                                color="white"
+                                                variant="outline"
+                                                :label="$t('components.partials.TipTapEditor.clear')"
+                                                @click="clear"
+                                            />
+                                            <UButton
+                                                color="white"
+                                                variant="outline"
+                                                :label="$t('components.partials.TipTapEditor.previous')"
+                                                @click="previous"
+                                            />
+                                            <UButton
+                                                color="white"
+                                                variant="outline"
+                                                :label="$t('components.partials.TipTapEditor.next')"
+                                                @click="next"
+                                            />
+                                            <UButton
+                                                color="white"
+                                                variant="outline"
+                                                :label="$t('components.partials.TipTapEditor.replace')"
+                                                @click="replace"
+                                            />
+                                            <UButton
+                                                color="white"
+                                                variant="outline"
+                                                :label="$t('components.partials.TipTapEditor.replace_all')"
+                                                @click="replaceAll"
+                                            />
+                                        </UButtonGroup>
+
+                                        <div class="mt-1 block text-sm font-medium">
+                                            {{ $t('common.result', 2) }}:
+                                            {{
+                                                editor?.storage?.searchAndReplace?.resultIndex > 0
+                                                    ? editor?.storage?.searchAndReplace?.resultIndex + 1
+                                                    : 0
+                                            }}
+                                            /
+                                            {{ editor?.storage?.searchAndReplace?.results.length }}
+                                        </div>
+                                    </UFormGroup>
+                                </UForm>
+                            </div>
+                        </template>
+                    </UPopover>
+
+                    <UButton
+                        :disabled="!editor.can().chain().focus().undo().run()"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-undo"
+                        @click="editor.chain().focus().undo().run()"
+                    />
+                    <UButton
+                        :disabled="!editor.can().chain().focus().redo().run()"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-redo"
+                        @click="editor.chain().focus().redo().run()"
+                    />
+                </UButtonGroup>
+            </div>
         </div>
 
-        <TiptapEditorContent :editor="editor" class="w-full min-w-0 max-w-full" :class="wrapperClass" />
+        <TiptapEditorContent
+            :editor="editor"
+            class="w-full min-w-0 max-w-full"
+            :class="[
+                wrapperClass,
+                'prose-headings:my-0.5',
+                'prose-lead:my-0.5',
+                'prose-h1:my-0.5',
+                'prose-h2:my-0.5',
+                'prose-h3:my-0.5',
+                'prose-h4:my-0.5',
+                'prose-p:my-0.5',
+                'prose-a:my-0.5',
+                'prose-blockquote:my-0.5',
+                'prose-figure:my-0.5',
+                'prose-figcaption:my-0.5',
+                'prose-strong:my-0.5',
+                'prose-em:my-0.5',
+                'prose-kbd:my-0.5',
+                'prose-code:my-0.5',
+                'prose-pre:my-0.5',
+                'prose-ol:my-0.5',
+                'prose-ul:my-0.5',
+                'prose-li:my-0.5',
+                'prose-table:my-0.5',
+                'prose-thead:my-0.5',
+                'prose-tr:my-0.5',
+                'prose-th:my-0.5',
+                'prose-td:my-0.5',
+                'prose-img:my-0.5',
+                'prose-video:my-0.5',
+                'prose-hr:my-0.5',
+            ]"
+        />
         <UTextarea
             v-if="splitScreen"
             v-model="content"

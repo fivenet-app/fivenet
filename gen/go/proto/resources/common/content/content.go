@@ -184,20 +184,19 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 		}
 	}
 
-	var textBuffer bytes.Buffer
 	e := htmlNode.FirstChild
 	for e != nil {
 		switch e.Type {
 		case html.TextNode:
 			n.Type = string(TextNodeType)
 
-			trimmed := e.Data
-			if len(trimmed) > 0 {
-				// mimic HTML text normalizing
-				if textBuffer.Len() > 0 {
-					textBuffer.WriteString(" ")
-				}
-				textBuffer.WriteString(trimmed)
+			data := strings.TrimSpace(e.Data)
+			// If text data is not empty after timming spaces
+			if len(data) > 0 {
+				n.Children = append(n.Children, &JSONNode{
+					Type: string(TextNodeType),
+					Text: e.Data,
+				})
 			}
 
 		case html.ElementNode:
@@ -214,10 +213,6 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 		}
 
 		e = e.NextSibling
-	}
-
-	if textBuffer.Len() > 0 {
-		n.Text = textBuffer.String()
 	}
 
 	if strings.HasPrefix(n.Tag, "h") {

@@ -24,6 +24,20 @@ html {
         margin-top: 0;
     }
 
+    input[type='checkbox']:checked {
+        opacity: 1;
+    }
+
+    ol, ol ol, ul, ul ul {
+        li {
+            margin-bottom: 0;
+
+            p {
+                margin-bottom: 0;
+            }
+        }
+    }
+
     /* Task list specific styles */
     ul[data-type='taskList'] {
         list-style: none;
@@ -42,6 +56,10 @@ html {
 
             > div {
                 flex: 1 1 auto;
+
+                p {
+                    margin-bottom: 0;
+                }
             }
         }
 
