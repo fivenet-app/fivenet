@@ -196,7 +196,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </ul>
 
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" disable-border />
+            <Pagination
+                v-if="data?.pagination?.totalCount && data?.pagination?.totalCount > 0"
+                v-model="page"
+                :pagination="data?.pagination"
+                :loading="loading"
+                :refresh="refresh"
+                disable-border
+            />
         </div>
     </div>
 </template>
