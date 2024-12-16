@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <UFormGroup name="content">
                 <ClientOnly>
-                    <TiptapEditor v-model="state.content" />
+                    <TiptapEditor v-model="state.content" wrapper-class="min-h-44" />
                 </ClientOnly>
             </UFormGroup>
         </UForm>

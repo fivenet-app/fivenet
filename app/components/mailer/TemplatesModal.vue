@@ -111,6 +111,7 @@ const editing = ref(false);
                                             disabled
                                             hide-toolbar
                                             split-screen
+                                            wrapper-class="min-h-44"
                                         />
                                     </ClientOnly>
                                 </template>

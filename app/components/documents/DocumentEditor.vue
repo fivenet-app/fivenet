@@ -597,6 +597,7 @@ logger.info(
                             v-model="state.content"
                             :disabled="!canEdit || !canDo.edit"
                             class="mx-auto max-w-screen-xl"
+                            wrapper-class="min-h-72"
                         />
                     </ClientOnly>
 

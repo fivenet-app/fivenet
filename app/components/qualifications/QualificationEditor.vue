@@ -433,7 +433,7 @@ const selectedTab = computed({
                         <template v-if="canDo.edit">
                             <UFormGroup name="content">
                                 <ClientOnly>
-                                    <TiptapEditor v-model="state.content" :disabled="!canDo.edit" />
+                                    <TiptapEditor v-model="state.content" :disabled="!canDo.edit" wrapper-class="min-h-44" />
                                 </ClientOnly>
                             </UFormGroup>
                         </template>

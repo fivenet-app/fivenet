@@ -499,7 +499,7 @@ const categoriesLoading = ref(false);
 
                             <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
                                 <ClientOnly>
-                                    <TiptapEditor v-model="state.content" split-screen />
+                                    <TiptapEditor v-model="state.content" split-screen wrapper-class="min-h-72" />
                                 </ClientOnly>
                             </UFormGroup>
                         </div>

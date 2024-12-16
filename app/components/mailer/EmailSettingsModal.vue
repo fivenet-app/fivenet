@@ -113,7 +113,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="signature" class="flex-1" :label="$t('common.signature')">
                         <ClientOnly>
-                            <TiptapEditor v-model="state.signature" :disabled="disabled || !canManage" />
+                            <TiptapEditor
+                                v-model="state.signature"
+                                :disabled="disabled || !canManage"
+                                wrapper-class="min-h-44"
+                            />
                         </ClientOnly>
                     </UFormGroup>
                 </div>
