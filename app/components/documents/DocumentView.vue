@@ -23,7 +23,6 @@ import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
-import BackButton from '../partials/BackButton.vue';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
 import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
@@ -99,14 +98,14 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
 
         if (!closed) {
             notifications.add({
-                title: { key: `notifications.document_toggled.open.title`, parameters: {} },
-                description: { key: `notifications.document_toggled.open.content`, parameters: {} },
+                title: { key: `notifications.docstore.document_toggled.open.title`, parameters: {} },
+                description: { key: `notifications.docstore.document_toggled.open.content`, parameters: {} },
                 type: NotificationType.SUCCESS,
             });
         } else {
             notifications.add({
-                title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
-                description: { key: `notifications.document_toggled.closed.content`, parameters: {} },
+                title: { key: `notifications.docstore.document_toggled.closed.title`, parameters: {} },
+                description: { key: `notifications.docstore.document_toggled.closed.content`, parameters: {} },
                 type: NotificationType.SUCCESS,
             });
         }
@@ -256,7 +255,7 @@ defineShortcuts({
 <template>
     <UDashboardNavbar :title="$t('pages.documents.id.title')" class="print:hidden">
         <template #right>
-            <BackButton fallback-to="/documents" />
+            <PartialsBackButton to="/documents" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge

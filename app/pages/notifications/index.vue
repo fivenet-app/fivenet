@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import DNBToggle from '~/components/partials/notification/DNBToggle.vue';
 import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
 
 useHead({
@@ -13,7 +14,11 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.notifications.title')" />
+            <UDashboardNavbar :title="$t('components.notifications.title')">
+                <template #right>
+                    <DNBToggle />
+                </template>
+            </UDashboardNavbar>
 
             <NotificationsList />
         </UDashboardPanel>

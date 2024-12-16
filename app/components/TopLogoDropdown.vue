@@ -5,7 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 const { isNotificationsSlideoverOpen } = useDashboard();
 
 const notificatorStore = useNotificatorStore();
-const { notificationsCount } = storeToRefs(notificatorStore);
+const { notificationsCount, doNotDisturb } = storeToRefs(notificatorStore);
 
 const newNotification = ref(false);
 
@@ -42,7 +42,16 @@ watch(notificationsCount, () => {
             size="xl"
         >
             <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
-                <UIcon name="i-mdi-bell-outline" class="size-5" />
+                <UIcon
+                    :name="
+                        doNotDisturb
+                            ? 'i-mdi-notifications-off'
+                            : notificationsCount === 0
+                              ? 'i-mdi-notifications-none'
+                              : 'i-mdi-notifications'
+                    "
+                    class="size-5"
+                />
             </UButton>
         </UChip>
     </UTooltip>

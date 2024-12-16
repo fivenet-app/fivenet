@@ -30,6 +30,7 @@ import (
 
 const (
 	CommentsDefaultPageSize = 8
+	CommentsMaxLength       = 2048
 )
 
 var tDComments = table.FivenetDocumentsComments
@@ -164,6 +165,10 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
+	if len(*req.Comment.Content.RawContent) > CommentsMaxLength {
+		return nil, errorsdocstore.ErrCommentPostDenied
+	}
+
 	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
@@ -248,6 +253,10 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 	}
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
 		return nil, errorsdocstore.ErrCommentEditDenied
+	}
+
+	if len(*req.Comment.Content.RawContent) > CommentsMaxLength {
+		return nil, errorsdocstore.ErrCommentPostDenied
 	}
 
 	*req.Comment.Content.RawContent, err = content.PrettyHTML(*req.Comment.Content.RawContent)

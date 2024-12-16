@@ -15,6 +15,8 @@ const maxBackoffTime = 30;
 const initialReconnectBackoffTime = 2;
 
 export interface NotificationsState {
+    doNotDisturb: boolean;
+
     notifications: Notification[];
     notificationsCount: number;
 
@@ -26,6 +28,8 @@ export interface NotificationsState {
 export const useNotificatorStore = defineStore('notifications', {
     state: () =>
         ({
+            doNotDisturb: false,
+
             notifications: [],
             notificationsCount: 0,
 
@@ -83,6 +87,11 @@ export const useNotificatorStore = defineStore('notifications', {
                             logger.info('Refreshing token...');
                             await authStore.chooseCharacter(undefined);
                         } else if (resp.data.userEvent.data.oneofKind === 'notification') {
+                            // Don't display server notifications when do not disturb is on
+                            if (this.doNotDisturb) {
+                                continue;
+                            }
+
                             const n = resp.data.userEvent.data.notification;
                             const nType: NotificationType =
                                 n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
@@ -92,11 +101,8 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             const not: Notification = {
-                                title: { key: n.title.key, parameters: n.title.parameters },
-                                description: {
-                                    key: n.content.key,
-                                    parameters: n.content.parameters,
-                                },
+                                title: n.title,
+                                description: n.content,
                                 type: nType,
                                 category: n.category,
                                 data: n.data,

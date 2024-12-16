@@ -955,7 +955,8 @@
             "mark_read": "Mark as read",
             "mark_all_read": "Mark all as read",
             "include_read": "Read Notifications",
-            "unread": "Unread"
+            "unread": "Unread",
+            "do_not_disturb": "Do Not Disturb"
         },
         "about": {
             "introduction": {
@@ -1503,16 +1504,6 @@
                 "content": "Citizen ID copied to clipboard."
             }
         },
-        "document_toggled": {
-            "open": {
-                "title": "Document opened!",
-                "content": "Document has been opened."
-            },
-            "closed": {
-                "title": "Document closed!",
-                "content": "Document has been closed."
-            }
-        },
         "centrum": {
             "sidebar": {
                 "no_dispatch_selected": {
@@ -1625,6 +1616,16 @@
             "document_auto_closed": {
                 "title": "Document: DOC-{id} automatically closed",
                 "content": "Document \"{title}\" has been automatically closed, with message: \"{message}\"."
+            },
+            "document_toggled": {
+                "open": {
+                    "title": "Document opened!",
+                    "content": "Document has been opened."
+                },
+                "closed": {
+                    "title": "Document closed!",
+                    "content": "Document has been closed."
+                }
             }
         },
         "superuser_menu": {

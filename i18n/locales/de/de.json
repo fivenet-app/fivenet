@@ -955,7 +955,8 @@
             "mark_read": "Als gelesen markieren",
             "mark_all_read": "Alle als gelesen markieren",
             "include_read": "Gelesene Benachrichtigungen",
-            "unread": "Ungelesen"
+            "unread": "Ungelesen",
+            "do_not_disturb": "Bitte nicht stören"
         },
         "about": {
             "introduction": {
@@ -1503,16 +1504,6 @@
                 "content": "Bürger-ID in die Zwischenablage kopiert."
             }
         },
-        "document_toggled": {
-            "open": {
-                "title": "Dokument geöffnet!",
-                "content": "Dokument wurde geöffnet."
-            },
-            "closed": {
-                "title": "Dokument geschlossen!",
-                "content": "Dokument wurde geschlossen."
-            }
-        },
         "centrum": {
             "sidebar": {
                 "no_dispatch_selected": {
@@ -1625,6 +1616,16 @@
             "document_auto_closed": {
                 "title": "Dokument: DOC-{id} wurde automatisch geschlossen",
                 "content": "Dokument \"{title}\" wurde automatisch geschlossen, mit Nachricht: \"{message}\"."
+            },
+            "document_toggled": {
+                "open": {
+                    "title": "Dokument geöffnet!",
+                    "content": "Dokument wurde geöffnet."
+                },
+                "closed": {
+                    "title": "Dokument geschlossen!",
+                    "content": "Dokument wurde geschlossen."
+                }
             }
         },
         "superuser_menu": {

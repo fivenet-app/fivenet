@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DNBToggle from './partials/notification/DNBToggle.vue';
 import NotificationsList from './partials/notification/NotificationsList.vue';
 
 const { isNotificationsSlideoverOpen } = useDashboard();
@@ -23,6 +24,16 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
                             {{ $t('common.notification', 2) }}
                         </h3>
+
+                        <DNBToggle />
+
+                        <UButton
+                            color="gray"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="isNotificationsSlideoverOpen = false"
+                        />
                     </div>
                 </div>
             </template>

@@ -16,7 +16,7 @@ defineEmits<{
 
 const { t } = useI18n();
 
-const notificator = useNotificatorStore();
+const notifications = useNotificatorStore();
 
 const categories: { mode: NotificationCategory }[] = [
     { mode: NotificationCategory.GENERAL },
@@ -66,7 +66,7 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
 }
 
 async function markAllRead(): Promise<void> {
-    await notificator.markNotifications({
+    await notifications.markNotifications({
         ids: [],
         all: true,
     });
@@ -80,8 +80,8 @@ async function markAllRead(): Promise<void> {
 }
 
 async function markRead(...ids: string[]): Promise<void> {
-    await notificator.markNotifications({
-        ids,
+    await notifications.markNotifications({
+        ids: ids,
     });
 
     const now = toTimestamp(new Date());
@@ -148,6 +148,7 @@ const canSubmit = ref(true);
 
                     <UFormGroup label="&nbsp;" class="flex-initial">
                         <UButton
+                            icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
                             @click="markAllRead().finally(timeoutFn)"
                         >

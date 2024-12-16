@@ -2,7 +2,6 @@
 import EmailCreateForm from '~/components/mailer/EmailCreateForm.vue';
 import EmailList from '~/components/mailer/EmailList.vue';
 import { canAccess } from '~/components/mailer/helpers';
-import BackButton from '~/components/partials/BackButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -212,7 +211,7 @@ const creating = ref(false);
                 <template v-else>
                     <UDashboardNavbar :title="$t('pages.mailer.manage.title')">
                         <template #right>
-                            <BackButton to="/mail" />
+                            <PartialsBackButton to="/mail" />
                         </template>
                     </UDashboardNavbar>
 
