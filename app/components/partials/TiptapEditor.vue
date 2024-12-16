@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { Extensions, Range } from '@tiptap/core';
 import { Blockquote } from '@tiptap/extension-blockquote';
 import { Bold } from '@tiptap/extension-bold';
 import { BulletList } from '@tiptap/extension-bullet-list';
@@ -35,12 +36,11 @@ import { Text } from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
+// @ts-expect-error doesn't have types
 import FontSize from 'tiptap-extension-font-size';
-import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
-// @ts-expect-error project doesn't have types
+// @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';
-
-import type { Range } from '@tiptap/core';
+import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
 
 const props = withDefaults(
@@ -52,6 +52,7 @@ const props = withDefaults(
         splitScreen?: boolean;
         hideToolbar?: boolean;
         wrapperClass?: string;
+        disableImages?: boolean;
     }>(),
     {
         limit: undefined,
@@ -60,6 +61,7 @@ const props = withDefaults(
         splitScreen: false,
         hideToolbar: false,
         wrapperClass: '',
+        disableImages: true,
     },
 );
 
@@ -71,6 +73,91 @@ const { t } = useI18n();
 
 const content = useVModel(props, 'modelValue', emit);
 
+const extensions: Extensions = [
+    UniqueId.configure({
+        attributeName: 'id',
+        types: ['heading'],
+        createId: () => window.crypto.randomUUID(),
+    }),
+    // Basics
+    Blockquote,
+    Bold,
+    BulletList,
+    Code,
+    CodeBlock,
+    Color,
+    Document,
+    Dropcursor,
+    FontFamily,
+    FontSize,
+    Gapcursor,
+    HardBreak,
+    Heading,
+    Highlight.configure({
+        multicolor: true,
+    }),
+    History,
+    HorizontalRule,
+    Italic,
+    Link.configure({
+        openOnClick: false,
+        defaultProtocol: 'https',
+    }),
+    ListItem,
+    ListKeymap,
+    OrderedList,
+    Paragraph,
+    Strike,
+    Subscript,
+    Superscript,
+    Text,
+    TextAlign.configure({
+        types: ['heading', 'paragraph', 'image'],
+    }),
+    TextStyle,
+    Underline,
+    // Table
+    Table.configure({
+        resizable: true,
+        allowTableNodeSelection: true,
+        HTMLAttributes: {
+            class: 'border border-collapse border-solid border-gray-500',
+        },
+    }),
+    TableRow,
+    TableHeader.configure({
+        HTMLAttributes: {
+            class: 'border border-solid border-gray-600 bg-gray-100 dark:bg-gray-800',
+        },
+    }),
+    TableCell.configure({
+        HTMLAttributes: {
+            class: 'border border-solid border-gray-500',
+        },
+    }),
+    // Misc
+    SearchAndReplace,
+    TaskList,
+    TaskItem.configure({
+        nested: true,
+    }),
+    CharacterCount.configure({
+        limit: props.limit,
+    }),
+    Placeholder.configure({
+        placeholder: props.placeholder ?? '',
+    }),
+];
+
+if (!props.disableImages) {
+    extensions.push(
+        ImageResize.configure({
+            inline: true,
+            allowBase64: true,
+        }),
+    );
+}
+
 const editor = useEditor({
     content: '',
     editorProps: {
@@ -79,85 +166,7 @@ const editor = useEditor({
         },
     },
     editable: !props.disabled,
-    extensions: [
-        UniqueId.configure({
-            attributeName: 'id',
-            types: ['heading'],
-            createId: () => window.crypto.randomUUID(),
-        }),
-        // Basics
-        Blockquote,
-        Bold,
-        BulletList,
-        Code,
-        CodeBlock,
-        Color,
-        Document,
-        Dropcursor,
-        FontFamily,
-        FontSize,
-        Gapcursor,
-        HardBreak,
-        Heading,
-        Highlight.configure({
-            multicolor: true,
-        }),
-        History,
-        HorizontalRule,
-        Italic,
-        Link.configure({
-            openOnClick: false,
-            defaultProtocol: 'https',
-        }),
-        ListItem,
-        ListKeymap,
-        OrderedList,
-        Paragraph,
-        Strike,
-        Subscript,
-        Superscript,
-        Text,
-        TextAlign.configure({
-            types: ['heading', 'paragraph', 'image'],
-        }),
-        TextStyle,
-        Underline,
-        // Table
-        Table.configure({
-            resizable: true,
-            allowTableNodeSelection: true,
-            HTMLAttributes: {
-                class: 'border border-collapse border-solid border-gray-500',
-            },
-        }),
-        TableRow,
-        TableHeader.configure({
-            HTMLAttributes: {
-                class: 'border border-solid border-gray-600 bg-gray-100 dark:bg-gray-800',
-            },
-        }),
-        TableCell.configure({
-            HTMLAttributes: {
-                class: 'border border-solid border-gray-500',
-            },
-        }),
-        // Misc
-        ImageResize.configure({
-            inline: true,
-            allowBase64: true,
-        }),
-        SearchAndReplace,
-        TaskList,
-        TaskItem.configure({
-            nested: true,
-        }),
-        CharacterCount.configure({
-            limit: props.limit,
-        }),
-        Placeholder.configure({
-            placeholder: props.placeholder ?? '',
-        }),
-    ],
+    extensions: extensions,
     onUpdate: () => emit('update:modelValue', unref(editor)?.getHTML() ?? ''),
 });
 

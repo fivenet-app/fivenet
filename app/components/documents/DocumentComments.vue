@@ -158,6 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.comment"
                                         :placeholder="$t('components.documents.document_comments.add_comment')"
                                         wrapper-class="min-h-36"
+                                        disable-images
                                     />
                                 </ClientOnly>
                             </UFormGroup>
