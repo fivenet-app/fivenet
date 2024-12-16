@@ -63,7 +63,7 @@ watchDebounced(
                 <I18nT
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"
-                    class="hidden truncate text-sm md:block"
+                    class="@md:block hidden truncate text-sm"
                 >
                     <template #current>
                         <span class="text-neutral font-medium">
