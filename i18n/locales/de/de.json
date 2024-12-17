@@ -538,7 +538,10 @@
         "case_sensitive": "Groß-/Kleinschreibung beachten",
         "rows": "Zeilen",
         "cols": "Spalten",
-        "with_header_row": "Mit Kopfzeile"
+        "with_header_row": "Mit Kopfzeile",
+        "url": "URL",
+        "link": "Verlinken",
+        "unlink": "Auflösen"
     },
     "components": {
         "partials": {

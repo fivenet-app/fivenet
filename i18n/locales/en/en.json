@@ -538,7 +538,10 @@
         "case_sensitive": "Case sensitive",
         "rows": "Rows",
         "cols": "Columns",
-        "with_header_row": "With header row"
+        "with_header_row": "With header row",
+        "url": "URL",
+        "link": "Link",
+        "unlink": "Unlink"
     },
     "components": {
         "partials": {

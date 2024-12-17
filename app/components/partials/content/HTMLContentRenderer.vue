@@ -28,5 +28,6 @@ defineProps<{
         v-bind="value.attrs"
     >
         <HTMLContentRenderer v-for="(child, idx) in value.content" :key="idx" :value="child" />
+        <UIcon v-if="value.tag === 'a' && !value.attrs.href?.startsWith('/')" class="ml-0.5 size-4" name="i-mdi-open-in-new" />
     </component>
 </template>

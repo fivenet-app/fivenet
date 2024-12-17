@@ -45,23 +45,21 @@ import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
 const props = withDefaults(
     defineProps<{
         modelValue: string;
+        wrapperClass?: string;
         limit?: number;
         disabled?: boolean;
         placeholder?: string;
         splitScreen?: boolean;
         hideToolbar?: boolean;
-        wrapperClass?: string;
-        disableImages?: boolean;
         commentMode?: boolean;
     }>(),
     {
+        wrapperClass: '',
         limit: undefined,
         disabled: false,
         placeholder: undefined,
         splitScreen: false,
         hideToolbar: false,
-        wrapperClass: '',
-        disableImages: true,
         commentMode: false,
     },
 );
@@ -103,6 +101,9 @@ const extensions: Extensions = [
     Link.configure({
         openOnClick: false,
         defaultProtocol: 'https',
+        HTMLAttributes: {
+            target: null,
+        },
     }),
     ListItem,
     ListKeymap,
@@ -150,7 +151,7 @@ const extensions: Extensions = [
     }),
 ];
 
-if (!props.disableImages) {
+if (!props.commentMode) {
     extensions.push(
         ImageResize.configure({
             inline: true,
@@ -311,6 +312,32 @@ watch(
     () => unref(editor)?.setEditable(!props.disabled),
 );
 
+const linkState = reactive({
+    url: '',
+});
+
+function setLink(data: typeof linkState): void {
+    const previousUrl = unref(editor)?.getAttributes('link').href;
+    const url = data.url.trim() !== '' ? data.url.trim() : previousUrl;
+
+    // Empty URL
+    if (url === '') {
+        unref(editor)?.chain().focus().extendMarkRange('link').unsetLink().run();
+
+        return;
+    }
+
+    // Update link
+    unref(editor)
+        ?.chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({
+            href: url,
+        })
+        .run();
+}
+
 const selectedFont = ref<(typeof fonts)[0]>(fonts[0]!);
 watch(selectedFont, () => unref(editor)?.chain().focus().setFontFamily(selectedFont.value.value).run());
 
@@ -421,6 +448,24 @@ const clear = () => {
 };
 
 const replaceAll = () => editor.value?.commands.replaceAll();
+
+const contentRef = useTemplateRef('contentRef');
+
+watch(contentRef, () => {
+    if (!contentRef.value || !contentRef.value.$el) {
+        return;
+    }
+
+    const element = contentRef.value.$el as HTMLDivElement;
+    element.addEventListener('click', (event: MouseEvent) => {
+        const element = event.target as HTMLElement;
+        if (element.tagName.toLowerCase() !== 'a' && !element.hasAttribute('href')) {
+            return;
+        }
+
+        event.preventDefault();
+    });
+});
 
 onMounted(() => {
     if (unref(editor)) {
@@ -709,23 +754,59 @@ onBeforeUnmount(() => {
                     />
 
                     <template #panel>
-                        <div class="flex flex-1 gap-0.5 p-4">
+                        <div class="p-4">
                             <UForm :state="{}" @submit="createTable">
                                 <UFormGroup :label="$t('common.rows')">
-                                    <UInput v-model="tableCreation.rows" />
+                                    <UInput v-model="tableCreation.rows" type="text" />
                                 </UFormGroup>
 
                                 <UFormGroup :label="$t('common.cols')">
-                                    <UInput v-model="tableCreation.cols" />
+                                    <UInput v-model="tableCreation.cols" type="text" />
                                 </UFormGroup>
 
                                 <UFormGroup :label="$t('common.with_header_row')">
-                                    <UToggle v-model="tableCreation.withHeaderRow" />
+                                    <UToggle v-model="tableCreation.withHeaderRow" type="text" />
                                 </UFormGroup>
 
                                 <UFormGroup>
                                     <UButton type="submit" :label="$t('common.create')" />
                                 </UFormGroup>
+                            </UForm>
+                        </div>
+                    </template>
+                </UPopover>
+
+                <UPopover>
+                    <UButton
+                        :class="{ 'is-active': editor.isActive('link') }"
+                        color="white"
+                        variant="ghost"
+                        icon="i-mdi-link"
+                    />
+
+                    <template #panel="{ close }">
+                        <div class="p-4">
+                            <UForm :state="linkState" @submit="($event) => setLink($event.data)">
+                                <UFormGroup :label="$t('common.url')">
+                                    <UInput v-model="linkState.url" type="text" />
+                                </UFormGroup>
+
+                                <UButtonGroup class="mt-2 w-full">
+                                    <UButton type="submit" icon="i-mdi-link" class="flex-1" :label="$t('common.link')" />
+
+                                    <UButton
+                                        :disabled="!editor.isActive('link')"
+                                        color="red"
+                                        variant="outline"
+                                        icon="i-mdi-link-off"
+                                        :label="$t('common.unlink')"
+                                        @click="
+                                            close();
+                                            editor.chain().focus().unsetLink().run();
+                                            linkState.url = '';
+                                        "
+                                    />
+                                </UButtonGroup>
                             </UForm>
                         </div>
                     </template>
@@ -850,10 +931,13 @@ onBeforeUnmount(() => {
         </div>
 
         <TiptapEditorContent
+            ref="contentRef"
             :editor="editor"
             class="w-full min-w-0 max-w-full"
             :class="[
                 wrapperClass,
+                'hover:prose-a:text-blue-500',
+                'dark:hover:prose-a:text-blue-300',
                 'prose-headings:my-0.5',
                 'prose-lead:my-0.5',
                 'prose-h1:my-0.5',

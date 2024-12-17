@@ -17,6 +17,8 @@ defineOptions({
         :value="value"
         class="tiptap ProseMirror prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl dark:prose-invert min-w-full max-w-full break-words"
         :class="[
+            'hover:prose-a:text-blue-500',
+            'dark:hover:prose-a:text-blue-300',
             'prose-headings:mt-0.5',
             'prose-lead:mt-0.5',
             'prose-h1:mt-0.5',

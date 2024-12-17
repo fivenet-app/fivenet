@@ -74,7 +74,7 @@ const onBeforeEnter = async () => {
 };
 
 async function clickListener(event: MouseEvent): Promise<void> {
-    if (!event.target) {
+    if (!event.target || event.defaultPrevented) {
         return;
     }
 

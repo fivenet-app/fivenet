@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
     input[type='number']::-webkit-inner-spin-button,
     input[type='number']::-webkit-outer-spin-button {
         -webkit-appearance: none;
@@ -28,7 +29,10 @@ html {
         opacity: 1;
     }
 
-    ol, ol ol, ul, ul ul {
+    ol,
+    ol ol,
+    ul,
+    ul ul {
         li {
             margin-bottom: 0;
 
@@ -48,13 +52,13 @@ html {
             align-items: flex-start;
             display: flex;
 
-            > label {
+            >label {
                 flex: 0 0 auto;
                 margin-right: 0.5rem;
                 user-select: none;
             }
 
-            > div {
+            >div {
                 flex: 1 1 auto;
 
                 p {
@@ -98,7 +102,7 @@ html {
             position: relative;
             vertical-align: top;
 
-            > * {
+            >* {
                 margin-bottom: 0;
             }
         }
