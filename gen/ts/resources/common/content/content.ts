@@ -62,17 +62,11 @@ export interface JSONNode {
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string class = 5;
-     */
-    class: string;
-    /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string text = 6;
+     * @generated from protobuf field: string text = 5;
      */
     text: string;
     /**
-     * @generated from protobuf field: repeated resources.common.content.JSONNode content = 7;
+     * @generated from protobuf field: repeated resources.common.content.JSONNode content = 6;
      */
     content: JSONNode[];
 }
@@ -161,9 +155,8 @@ class JSONNode$Type extends MessageType<JSONNode> {
             { no: 2, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 5, name: "class", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "content", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JSONNode }
+            { no: 5, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "content", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JSONNode }
         ]);
     }
     create(value?: PartialMessage<JSONNode>): JSONNode {
@@ -172,7 +165,6 @@ class JSONNode$Type extends MessageType<JSONNode> {
         message.id = "";
         message.tag = "";
         message.attrs = {};
-        message.class = "";
         message.text = "";
         message.content = [];
         if (value !== undefined)
@@ -196,13 +188,10 @@ class JSONNode$Type extends MessageType<JSONNode> {
                 case /* map<string, string> attrs */ 4:
                     this.binaryReadMap4(message.attrs, reader, options);
                     break;
-                case /* string class */ 5:
-                    message.class = reader.string();
-                    break;
-                case /* string text */ 6:
+                case /* string text */ 5:
                     message.text = reader.string();
                     break;
-                case /* repeated resources.common.content.JSONNode content */ 7:
+                case /* repeated resources.common.content.JSONNode content */ 6:
                     message.content.push(JSONNode.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -245,15 +234,12 @@ class JSONNode$Type extends MessageType<JSONNode> {
         /* map<string, string> attrs = 4; */
         for (let k of globalThis.Object.keys(message.attrs))
             writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.attrs[k]).join();
-        /* string class = 5; */
-        if (message.class !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.class);
-        /* string text = 6; */
+        /* string text = 5; */
         if (message.text !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.text);
-        /* repeated resources.common.content.JSONNode content = 7; */
+            writer.tag(5, WireType.LengthDelimited).string(message.text);
+        /* repeated resources.common.content.JSONNode content = 6; */
         for (let i = 0; i < message.content.length; i++)
-            JSONNode.internalBinaryWrite(message.content[i], writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            JSONNode.internalBinaryWrite(message.content[i], writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

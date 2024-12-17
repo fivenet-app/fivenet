@@ -226,8 +226,6 @@ func (m *JSONNode) validate(all bool) error {
 
 	// no validation rules for Attrs
 
-	// no validation rules for Class
-
 	// no validation rules for Text
 
 	for idx, item := range m.GetContent() {

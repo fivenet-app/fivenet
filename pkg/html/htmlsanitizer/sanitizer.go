@@ -25,7 +25,7 @@ var (
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
 
 	boolFalseRegex    = regexp.MustCompile(`(?i)^false$`)
-	boolTrueRegex     = regexp.MustCompile(`(?i)^true$`)
+	boolTrueRegex     = regexp.MustCompile(`(?i)^(true|checked)$`)
 	inputTypeCheckbox = regexp.MustCompile(`(?i)checkbox`)
 )
 

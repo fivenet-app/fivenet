@@ -2098,7 +2098,6 @@
 | id | [string](#string) |  | @sanitize: method=StripTags |
 | tag | [string](#string) |  | @sanitize: method=StripTags |
 | attrs | [JSONNode.AttrsEntry](#resources-common-content-JSONNode-AttrsEntry) | repeated | @sanitize: method=StripTags |
-| class | [string](#string) |  | @sanitize: method=StripTags |
 | text | [string](#string) |  | @sanitize: method=StripTags |
 | content | [JSONNode](#resources-common-content-JSONNode) | repeated |  |
 

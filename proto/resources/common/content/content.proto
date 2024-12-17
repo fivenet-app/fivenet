@@ -31,8 +31,6 @@ message JSONNode {
   // @sanitize: method=StripTags
   map<string, string> attrs = 4;
   // @sanitize: method=StripTags
-  string class = 5;
-  // @sanitize: method=StripTags
-  string text = 6;
-  repeated JSONNode content = 7;
+  string text = 5;
+  repeated JSONNode content = 6;
 }

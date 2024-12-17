@@ -155,16 +155,8 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 
 				n.Id = a.Val
 
-			case "class":
-				// Skip empty class attribute
-				if strings.TrimSpace(a.Val) == "" {
-					continue
-				}
-
-				n.Class = a.Val
-
 			case "style":
-				// Skip empty class attribute
+				// Skip empty style attribute
 				if strings.TrimSpace(a.Val) == "" {
 					continue
 				}
@@ -176,6 +168,14 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 				}
 
 				n.Attrs[key] = val
+
+			case "class":
+				// Skip empty class attribute
+				if strings.TrimSpace(a.Val) == "" {
+					continue
+				}
+
+				fallthrough
 
 			default:
 				// Don't skip empty valued attributes as they might have a meaning on the frontend-side
@@ -201,7 +201,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 
 		case html.ElementNode:
 			if n.Content == nil {
-				n.Content = make([]*JSONNode, 1)
+				n.Content = make([]*JSONNode, 0)
 			}
 
 			jsonElemNode := &JSONNode{}
@@ -216,10 +216,10 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	}
 
 	if strings.HasPrefix(n.Tag, "h") {
-		if n.Id == "" && (len(n.Content) > 0 || n.Text != "") {
+		if n.Id == "" {
 			if n.Text != "" {
 				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
-			} else {
+			} else if len(n.Content) > 0 {
 				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Content[0].Text))
 			}
 		}
@@ -236,12 +236,6 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 		htmlNode.Type = html.DocumentNode
 	}
 
-	if n.Class != "" {
-		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
-			Key: "class",
-			Val: n.Class,
-		})
-	}
 	if n.Id != "" {
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: "id",

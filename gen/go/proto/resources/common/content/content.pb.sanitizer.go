@@ -43,9 +43,6 @@ func (m *JSONNode) Sanitize() error {
 
 	}
 
-	// Field: Class
-	m.Class = htmlsanitizer.StripTags(m.Class)
-
 	// Field: Content
 	for idx, item := range m.Content {
 		_, _ = idx, item
