@@ -37,7 +37,9 @@ export const useNotificatorStore = defineStore('notifications', {
             reconnecting: false,
             reconnectBackoffTime: 0,
         }) as NotificationsState,
-    persist: false,
+    persist: {
+        pick: ['doNotDisturb'],
+    },
     actions: {
         remove(id: string): void {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
