@@ -36,7 +36,6 @@ import { Text } from '@tiptap/extension-text';
 import TextAlign from '@tiptap/extension-text-align';
 import TextStyle from '@tiptap/extension-text-style';
 import Underline from '@tiptap/extension-underline';
-// @ts-expect-error doesn't have types
 import FontSize from 'tiptap-extension-font-size';
 // @ts-expect-error doesn't have types
 import UniqueId from 'tiptap-unique-id';

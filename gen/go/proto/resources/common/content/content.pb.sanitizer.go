@@ -35,16 +35,19 @@ func (m *JSONNode) Sanitize() error {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
+	// Field: Attrs
+	for idx, item := range m.Attrs {
 		_, _ = idx, item
 
-		m.Attributes[idx] = htmlsanitizer.StripTags(m.Attributes[idx])
+		m.Attrs[idx] = htmlsanitizer.StripTags(m.Attrs[idx])
 
 	}
 
-	// Field: Children
-	for idx, item := range m.Children {
+	// Field: Class
+	m.Class = htmlsanitizer.StripTags(m.Class)
+
+	// Field: Content
+	for idx, item := range m.Content {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
@@ -54,9 +57,6 @@ func (m *JSONNode) Sanitize() error {
 		}
 
 	}
-
-	// Field: Class
-	m.Class = htmlsanitizer.StripTags(m.Class)
 
 	// Field: Id
 	m.Id = htmlsanitizer.StripTags(m.Id)

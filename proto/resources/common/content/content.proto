@@ -29,10 +29,10 @@ message JSONNode {
   // @sanitize: method=StripTags
   string tag = 3;
   // @sanitize: method=StripTags
-  map<string, string> attributes = 4;
+  map<string, string> attrs = 4;
   // @sanitize: method=StripTags
   string class = 5;
   // @sanitize: method=StripTags
   string text = 6;
-  repeated JSONNode children = 7;
+  repeated JSONNode content = 7;
 }

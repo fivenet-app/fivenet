@@ -20,7 +20,7 @@ type NodeType string
 const (
 	Version_v0 = "v0"
 
-	RootNodeType NodeType = "root"
+	DocNodeType NodeType = "doc"
 
 	ElementNodeType NodeType = "element"
 	TextNodeType    NodeType = "text"
@@ -124,7 +124,7 @@ func (x *Content) Populate() error {
 
 func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	if htmlNode.Parent == nil {
-		n.Type = string(RootNodeType)
+		n.Type = string(DocNodeType)
 	} else {
 		n.Type = string(ElementNodeType)
 	}
@@ -142,7 +142,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	}
 
 	if len(htmlNode.Attr) > 0 {
-		n.Attributes = make(map[string]string)
+		n.Attrs = make(map[string]string)
 		var a html.Attribute
 		for _, a = range htmlNode.Attr {
 			key := strings.ToLower(a.Key)
@@ -175,11 +175,11 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 					val += ";"
 				}
 
-				n.Attributes[key] = val
+				n.Attrs[key] = val
 
 			default:
 				// Don't skip empty valued attributes as they might have a meaning on the frontend-side
-				n.Attributes[key] = a.Val
+				n.Attrs[key] = a.Val
 			}
 		}
 	}
@@ -193,15 +193,15 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 			data := strings.TrimSpace(e.Data)
 			// If text data is not empty after timming spaces
 			if len(data) > 0 {
-				n.Children = append(n.Children, &JSONNode{
+				n.Content = append(n.Content, &JSONNode{
 					Type: string(TextNodeType),
 					Text: e.Data,
 				})
 			}
 
 		case html.ElementNode:
-			if n.Children == nil {
-				n.Children = make([]*JSONNode, 0)
+			if n.Content == nil {
+				n.Content = make([]*JSONNode, 1)
 			}
 
 			jsonElemNode := &JSONNode{}
@@ -209,18 +209,18 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 				return err
 			}
 
-			n.Children = append(n.Children, jsonElemNode)
+			n.Content = append(n.Content, jsonElemNode)
 		}
 
 		e = e.NextSibling
 	}
 
 	if strings.HasPrefix(n.Tag, "h") {
-		if n.Id == "" && (len(n.Children) > 0 || n.Text != "") {
+		if n.Id == "" && (len(n.Content) > 0 || n.Text != "") {
 			if n.Text != "" {
 				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
 			} else {
-				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Children[0].Text))
+				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Content[0].Text))
 			}
 		}
 	}
@@ -249,15 +249,15 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 		})
 	}
 
-	keys := make([]string, 0, len(n.Attributes))
-	for k := range n.Attributes {
+	keys := make([]string, 0, len(n.Attrs))
+	for k := range n.Attrs {
 		keys = append(keys, k)
 	}
 	slices.Sort(keys)
 	for _, k := range keys {
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: k,
-			Val: n.Attributes[k],
+			Val: n.Attrs[k],
 		})
 	}
 
@@ -268,7 +268,7 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 		})
 	}
 
-	for _, e := range n.Children {
+	for _, e := range n.Content {
 		htmlElem := &html.Node{}
 		e.populateTo(htmlElem)
 		htmlNode.AppendChild(htmlElem)

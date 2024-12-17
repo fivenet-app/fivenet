@@ -224,13 +224,13 @@ func (m *JSONNode) validate(all bool) error {
 
 	// no validation rules for Tag
 
-	// no validation rules for Attributes
+	// no validation rules for Attrs
 
 	// no validation rules for Class
 
 	// no validation rules for Text
 
-	for idx, item := range m.GetChildren() {
+	for idx, item := range m.GetContent() {
 		_, _ = idx, item
 
 		if all {
@@ -238,7 +238,7 @@ func (m *JSONNode) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, JSONNodeValidationError{
-						field:  fmt.Sprintf("Children[%v]", idx),
+						field:  fmt.Sprintf("Content[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -246,7 +246,7 @@ func (m *JSONNode) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, JSONNodeValidationError{
-						field:  fmt.Sprintf("Children[%v]", idx),
+						field:  fmt.Sprintf("Content[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -255,7 +255,7 @@ func (m *JSONNode) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return JSONNodeValidationError{
-					field:  fmt.Sprintf("Children[%v]", idx),
+					field:  fmt.Sprintf("Content[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

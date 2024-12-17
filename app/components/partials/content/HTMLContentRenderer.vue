@@ -15,8 +15,8 @@ defineProps<{
         v-else
         :id="value.id !== '' ? value.id : undefined"
         :disabled="value.tag === 'input' ? true : undefined"
-        v-bind="value.attributes"
+        v-bind="value.attrs"
     >
-        <HTMLContentRenderer v-for="(child, idx) in value.children" :key="idx" :value="child" />
+        <HTMLContentRenderer v-for="(child, idx) in value.content" :key="idx" :value="child" />
     </component>
 </template>
