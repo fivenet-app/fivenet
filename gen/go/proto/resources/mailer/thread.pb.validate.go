@@ -602,16 +602,6 @@ func (m *ThreadState) validate(all bool) error {
 
 	// no validation rules for EmailId
 
-	// no validation rules for Unread
-
-	// no validation rules for Important
-
-	// no validation rules for Favorite
-
-	// no validation rules for Muted
-
-	// no validation rules for Archived
-
 	if m.LastRead != nil {
 
 		if all {
@@ -643,6 +633,26 @@ func (m *ThreadState) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.Unread != nil {
+		// no validation rules for Unread
+	}
+
+	if m.Important != nil {
+		// no validation rules for Important
+	}
+
+	if m.Favorite != nil {
+		// no validation rules for Favorite
+	}
+
+	if m.Muted != nil {
+		// no validation rules for Muted
+	}
+
+	if m.Archived != nil {
+		// no validation rules for Archived
 	}
 
 	if len(errors) > 0 {

@@ -22,6 +22,7 @@ var PermsRemap = map[string]string{
 	"MailerService/GetEmailSettings":       "MailerService/ListEmails",
 	"MailerService/GetTemplate":            "MailerService/ListEmails",
 	"MailerService/GetThread":              "MailerService/ListEmails",
+	"MailerService/GetThreadState":         "MailerService/ListEmails",
 	"MailerService/ListTemplates":          "MailerService/ListEmails",
 	"MailerService/ListThreadMessages":     "MailerService/ListEmails",
 	"MailerService/ListThreads":            "MailerService/ListEmails",

@@ -9,8 +9,10 @@ import ThreadList from '~/components/mailer/ThreadList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DashboardPanel from '~/components/partials/DashboardPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { mailerDB, useMailerStore } from '~/store/mailer';
+import Pagination from '~/components/partials/Pagination.vue';
+import { useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import type { ListThreadsResponse } from '~~/gen/ts/services/mailer/mailer';
 
 useHead({
     title: 'common.mail',
@@ -63,9 +65,20 @@ const selectedTab = computed({
     },
 });
 
-watch(selectedEmail, async () => await loadThreads());
+const page = useRouteQuery('page', '1', { transform: Number });
+const offset = computed(() =>
+    threads.value?.pagination?.pageSize ? threads.value?.pagination?.pageSize * (page.value - 1) : 0,
+);
 
-async function loadThreads(): Promise<void> {
+const {
+    data: threads,
+    pending: loading,
+    refresh: refresh,
+} = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
+    immediate: false,
+});
+
+async function loadThreads(): Promise<ListThreadsResponse | undefined> {
     if (!selectedEmail.value?.id) {
         return;
     }
@@ -74,16 +87,33 @@ async function loadThreads(): Promise<void> {
         await mailerStore.getEmail(selectedEmail.value.id);
     }
 
-    const count = await mailerDB.threads.count();
-    await mailerStore.listThreads({
+    const resp = await mailerStore.listThreads({
         pagination: {
-            offset: 0,
+            offset: offset.value,
         },
         emailIds: [selectedEmail.value.id],
-        after: count > 0 ? undefined : toTimestamp(),
-        unreadOnly: selectedTab.value === 1,
+        unread: selectedTab.value === 1,
+        archived: selectedTab.value === 2,
     });
+
+    if (selectedThread.value) {
+        const thread = resp?.threads.filter((t) => t.id === selectedThread.value?.id);
+        if (!thread) {
+            resp?.threads.unshift(selectedThread.value);
+        }
+    }
+
+    return resp;
 }
+
+watch(selectedEmail, async () => await refresh());
+
+// Reset selected thread if it's not in the filtered mails
+watch(threads, () => {
+    if (!threads.value?.threads.find((thread) => thread.id === selectedThread.value?.id)) {
+        selectedThread.value = undefined;
+    }
+});
 
 const selectedThreadId = useRouteQuery('thread', '', { transform: Number });
 watch(selectedThreadId, async () => {
@@ -95,38 +125,13 @@ watch(selectedThreadId, async () => {
     selectedThread.value = thread;
 });
 
-const threads = useDexieLiveQuery(
-    () =>
-        mailerDB.threads
-            .orderBy('id')
-            .sortBy('[createdAt+updatedAt]')
-            .then((threads) => ({ threads: threads, loaded: true })),
-    {
-        initialValue: { threads: [], loaded: false },
-    },
-);
-
-// Filter mails based on the selected tab
-const filteredThreads = computed(() => {
-    if (selectedTab.value === 1) {
-        return threads.value.threads.filter(
-            // Show unread and keep the current selected thread in the list
-            (thread) => !thread.state?.archived && (!!thread.state?.unread || selectedThread.value?.id === thread.id),
-        );
-    } else if (selectedTab.value === 2) {
-        return threads.value.threads.filter((thread) => !!thread.state?.archived);
-    }
-
-    return threads.value.threads.filter((thread) => !thread.state?.archived);
-});
-
 // Refresh threads when unread tab is selected
 watch(selectedTab, async () => {
     if (selectedTab.value !== 1) {
         return;
     }
 
-    loadThreads();
+    await refresh();
 });
 
 const threadState = computed(() => selectedThread.value?.state);
@@ -140,13 +145,6 @@ const isMailerPanelOpen = computed({
             selectedThread.value = undefined;
         }
     },
-});
-
-// Reset selected mail if it's not in the filtered mails
-watch(filteredThreads, () => {
-    if (!filteredThreads.value.find((thread) => thread.id === selectedThread.value?.id)) {
-        selectedThread.value = undefined;
-    }
 });
 
 // Set thread as query param for persistence between reloads
@@ -194,7 +192,7 @@ onBeforeMount(async () => {
 <template>
     <UDashboardPage>
         <UDashboardPanel id="mailerthreadlist" :width="450" :resizable="{ min: 325, max: 550 }">
-            <UDashboardNavbar :title="$t('common.mail')" :badge="filteredThreads.length">
+            <UDashboardNavbar :title="$t('common.mail')" :badge="threads?.pagination?.totalCount ?? 0">
                 <template #center>
                     <MessagesSearch />
                 </template>
@@ -302,14 +300,25 @@ onBeforeMount(async () => {
             </UDashboardToolbar>
 
             <template v-if="selectedEmail">
-                <div class="relative flex-1 overflow-x-auto">
+                <div class="relative flex flex-1 overflow-x-auto">
                     <DataErrorBlock
                         v-if="selectedEmail.deactivated"
                         :title="$t('errors.MailerService.ErrEmailDisabled.title')"
                         :message="$t('errors.MailerService.ErrEmailDisabled.content')"
                     />
 
-                    <ThreadList v-else v-model="selectedThread" :threads="filteredThreads" :loaded="threads.loaded" />
+                    <ThreadList v-else v-model="selectedThread" :threads="threads?.threads ?? []" :loaded="true">
+                        <template #after>
+                            <div class="flex-1" />
+
+                            <Pagination
+                                v-model="page"
+                                :pagination="threads?.pagination"
+                                :loading="loading"
+                                :refresh="refresh"
+                            />
+                        </template>
+                    </ThreadList>
                 </div>
 
                 <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
@@ -362,7 +371,6 @@ onBeforeMount(async () => {
                                                 threadId: selectedThread!.id,
                                                 unread: !threadState?.unread,
                                             },
-                                            false,
                                             true,
                                         ))
                                 "
@@ -381,7 +389,6 @@ onBeforeMount(async () => {
                                                 threadId: selectedThread!.id,
                                                 important: !threadState?.important,
                                             },
-                                            false,
                                             true,
                                         ))
                                 "
@@ -402,7 +409,6 @@ onBeforeMount(async () => {
                                                 threadId: selectedThread!.id,
                                                 favorite: !threadState?.favorite,
                                             },
-                                            false,
                                             true,
                                         ))
                                 "
@@ -421,7 +427,6 @@ onBeforeMount(async () => {
                                                 threadId: selectedThread!.id,
                                                 muted: !threadState?.muted,
                                             },
-                                            false,
                                             true,
                                         ))
                                 "
@@ -441,7 +446,6 @@ onBeforeMount(async () => {
                                                     threadId: selectedThread!.id,
                                                     archived: !threadState?.archived,
                                                 },
-                                                false,
                                                 true,
                                             )),
                                     })

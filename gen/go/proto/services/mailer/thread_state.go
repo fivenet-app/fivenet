@@ -13,11 +13,48 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+func (s *Server) GetThreadState(ctx context.Context, req *GetThreadStateRequest) (*GetThreadStateResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.ThreadId, req.EmailId, mailer.AccessLevel_ACCESS_LEVEL_READ); err != nil {
+		return nil, err
+	}
+
+	state, err := s.getThreadState(ctx, req.ThreadId, req.EmailId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	return &GetThreadStateResponse{
+		State: state,
+	}, nil
+}
+
 func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest) (*SetThreadStateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if err := s.checkIfEmailPartOfThread(ctx, userInfo, req.State.ThreadId, req.State.EmailId, mailer.AccessLevel_ACCESS_LEVEL_WRITE); err != nil {
 		return nil, err
+	}
+
+	updateSets := []jet.ColumnAssigment{}
+	if req.State.Unread != nil {
+		updateSets = append(updateSets, tThreadsState.Unread.SET(jet.RawBool("VALUES(`unread`)")))
+	}
+	if req.State.LastRead != nil {
+		updateSets = append(updateSets, tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")))
+	}
+	if req.State.Important != nil {
+		updateSets = append(updateSets, tThreadsState.Important.SET(jet.RawBool("VALUES(`important`)")))
+	}
+	if req.State.Favorite != nil {
+		updateSets = append(updateSets, tThreadsState.Favorite.SET(jet.RawBool("VALUES(`favorite`)")))
+	}
+	if req.State.Muted != nil {
+		updateSets = append(updateSets, tThreadsState.Muted.SET(jet.RawBool("VALUES(`muted`)")))
+	}
+	if req.State.Archived != nil {
+		updateSets = append(updateSets, tThreadsState.Archived.SET(jet.RawBool("VALUES(`archived`)")))
 	}
 
 	tThreadsState := table.FivenetMailerThreadsState
@@ -42,14 +79,7 @@ func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest)
 			req.State.Muted,
 			req.State.Archived,
 		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tThreadsState.Unread.SET(jet.Bool(req.State.Unread)),
-			tThreadsState.LastRead.SET(jet.RawTimestamp("VALUES(`last_read`)")),
-			tThreadsState.Important.SET(jet.Bool(req.State.Important)),
-			tThreadsState.Favorite.SET(jet.Bool(req.State.Favorite)),
-			tThreadsState.Muted.SET(jet.Bool(req.State.Muted)),
-			tThreadsState.Archived.SET(jet.Bool(req.State.Archived)),
-		)
+		ON_DUPLICATE_KEY_UPDATE(updateSets...)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

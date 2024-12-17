@@ -306,6 +306,31 @@ func (m *GetThreadResponse) Sanitize() error {
 	return nil
 }
 
+func (m *GetThreadStateRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetThreadStateResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: State
+	if m.State != nil {
+		if v, ok := interface{}(m.GetState()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *ListEmailsRequest) Sanitize() error {
 	if m == nil {
 		return nil
@@ -438,15 +463,6 @@ func (m *ListThreadMessagesResponse) Sanitize() error {
 func (m *ListThreadsRequest) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: After
-	if m.After != nil {
-		if v, ok := interface{}(m.GetAfter()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	// Field: Pagination

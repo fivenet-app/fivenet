@@ -58,12 +58,11 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		}
 	}
 
-	if req.After != nil {
-		wheres = append(wheres, tThreads.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
-	}
-
-	if req.UnreadOnly != nil && *req.UnreadOnly {
+	if req.Unread != nil && *req.Unread {
 		wheres = append(wheres, tThreadsState.Unread.IS_NOT_NULL().AND(tThreadsState.Unread.IS_TRUE()))
+	}
+	if req.Archived != nil && *req.Archived {
+		wheres = append(wheres, tThreadsState.Archived.IS_NOT_NULL().AND(tThreadsState.Archived.IS_TRUE()))
 	}
 
 	countStmt := tThreads.
@@ -341,9 +340,10 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 		return nil, err
 	}
 	// Set dummy thread state to make client-side handling easier
+	boolTrue := true
 	thread.State = &mailer.ThreadState{
 		ThreadId: thread.Id,
-		Unread:   true,
+		Unread:   &boolTrue,
 	}
 
 	if len(thread.Recipients) > 0 {

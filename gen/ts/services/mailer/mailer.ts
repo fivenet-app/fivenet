@@ -11,11 +11,11 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { EmailSettings } from "../../resources/mailer/settings";
 import { ThreadState } from "../../resources/mailer/thread";
 import { Message } from "../../resources/mailer/message";
 import { Thread } from "../../resources/mailer/thread";
-import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Template } from "../../resources/mailer/template";
 import { Email } from "../../resources/mailer/email";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -225,13 +225,13 @@ export interface ListThreadsRequest {
      */
     emailIds: string[];
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 3;
+     * @generated from protobuf field: optional bool unread = 4;
      */
-    after?: Timestamp;
+    unread?: boolean;
     /**
-     * @generated from protobuf field: optional bool unread_only = 4;
+     * @generated from protobuf field: optional bool archived = 5;
      */
-    unreadOnly?: boolean;
+    archived?: boolean;
 }
 /**
  * @generated from protobuf message services.mailer.ListThreadsResponse
@@ -313,6 +313,28 @@ export interface DeleteThreadRequest {
  * @generated from protobuf message services.mailer.DeleteThreadResponse
  */
 export interface DeleteThreadResponse {
+}
+/**
+ * @generated from protobuf message services.mailer.GetThreadStateRequest
+ */
+export interface GetThreadStateRequest {
+    /**
+     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     */
+    emailId: string;
+    /**
+     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     */
+    threadId: string;
+}
+/**
+ * @generated from protobuf message services.mailer.GetThreadStateResponse
+ */
+export interface GetThreadStateResponse {
+    /**
+     * @generated from protobuf field: resources.mailer.ThreadState state = 1;
+     */
+    state?: ThreadState;
 }
 /**
  * @generated from protobuf message services.mailer.SetThreadStateRequest
@@ -1331,8 +1353,8 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { uint64: { gt: "0" } } } } } },
-            { no: 3, name: "after", kind: "message", T: () => Timestamp },
-            { no: 4, name: "unread_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "unread", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "archived", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListThreadsRequest>): ListThreadsRequest {
@@ -1357,11 +1379,11 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
                     else
                         message.emailIds.push(reader.uint64().toString());
                     break;
-                case /* optional resources.timestamp.Timestamp after */ 3:
-                    message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
+                case /* optional bool unread */ 4:
+                    message.unread = reader.bool();
                     break;
-                case /* optional bool unread_only */ 4:
-                    message.unreadOnly = reader.bool();
+                case /* optional bool archived */ 5:
+                    message.archived = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1385,12 +1407,12 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
                 writer.uint64(message.emailIds[i]);
             writer.join();
         }
-        /* optional resources.timestamp.Timestamp after = 3; */
-        if (message.after)
-            Timestamp.internalBinaryWrite(message.after, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool unread_only = 4; */
-        if (message.unreadOnly !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.unreadOnly);
+        /* optional bool unread = 4; */
+        if (message.unread !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.unread);
+        /* optional bool archived = 5; */
+        if (message.archived !== undefined)
+            writer.tag(5, WireType.Varint).bool(message.archived);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1743,6 +1765,107 @@ class DeleteThreadResponse$Type extends MessageType<DeleteThreadResponse> {
  * @generated MessageType for protobuf message services.mailer.DeleteThreadResponse
  */
 export const DeleteThreadResponse = new DeleteThreadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetThreadStateRequest$Type extends MessageType<GetThreadStateRequest> {
+    constructor() {
+        super("services.mailer.GetThreadStateRequest", [
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GetThreadStateRequest>): GetThreadStateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.emailId = "0";
+        message.threadId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetThreadStateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadStateRequest): GetThreadStateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.emailId = reader.uint64().toString();
+                    break;
+                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetThreadStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 email_id = 1 [jstype = JS_STRING]; */
+        if (message.emailId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.emailId);
+        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.threadId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetThreadStateRequest
+ */
+export const GetThreadStateRequest = new GetThreadStateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetThreadStateResponse$Type extends MessageType<GetThreadStateResponse> {
+    constructor() {
+        super("services.mailer.GetThreadStateResponse", [
+            { no: 1, name: "state", kind: "message", T: () => ThreadState }
+        ]);
+    }
+    create(value?: PartialMessage<GetThreadStateResponse>): GetThreadStateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetThreadStateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadStateResponse): GetThreadStateResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.mailer.ThreadState state */ 1:
+                    message.state = ThreadState.internalBinaryRead(reader, reader.uint32(), options, message.state);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetThreadStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.mailer.ThreadState state = 1; */
+        if (message.state)
+            ThreadState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.mailer.GetThreadStateResponse
+ */
+export const GetThreadStateResponse = new GetThreadStateResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SetThreadStateRequest$Type extends MessageType<SetThreadStateRequest> {
     constructor() {
@@ -2456,6 +2579,7 @@ export const MailerService = new ServiceType("services.mailer.MailerService", [
     { name: "GetThread", options: {}, I: GetThreadRequest, O: GetThreadResponse },
     { name: "CreateThread", options: {}, I: CreateThreadRequest, O: CreateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
+    { name: "GetThreadState", options: {}, I: GetThreadStateRequest, O: GetThreadStateResponse },
     { name: "SetThreadState", options: {}, I: SetThreadStateRequest, O: SetThreadStateResponse },
     { name: "SearchThreads", options: {}, I: SearchThreadsRequest, O: SearchThreadsResponse },
     { name: "ListThreadMessages", options: {}, I: ListThreadMessagesRequest, O: ListThreadMessagesResponse },

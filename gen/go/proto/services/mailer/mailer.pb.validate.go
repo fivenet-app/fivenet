@@ -2436,41 +2436,12 @@ func (m *ListThreadsRequest) validate(all bool) error {
 
 	}
 
-	if m.After != nil {
-
-		if all {
-			switch v := interface{}(m.GetAfter()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListThreadsRequestValidationError{
-						field:  "After",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListThreadsRequestValidationError{
-						field:  "After",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetAfter()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListThreadsRequestValidationError{
-					field:  "After",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+	if m.Unread != nil {
+		// no validation rules for Unread
 	}
 
-	if m.UnreadOnly != nil {
-		// no validation rules for UnreadOnly
+	if m.Archived != nil {
+		// no validation rules for Archived
 	}
 
 	if len(errors) > 0 {
@@ -3547,6 +3518,261 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteThreadResponseValidationError{}
+
+// Validate checks the field values on GetThreadStateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetThreadStateRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetThreadStateRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetThreadStateRequestMultiError, or nil if none found.
+func (m *GetThreadStateRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetThreadStateRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetEmailId() <= 0 {
+		err := GetThreadStateRequestValidationError{
+			field:  "EmailId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetThreadId() <= 0 {
+		err := GetThreadStateRequestValidationError{
+			field:  "ThreadId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GetThreadStateRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetThreadStateRequestMultiError is an error wrapping multiple validation
+// errors returned by GetThreadStateRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetThreadStateRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetThreadStateRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetThreadStateRequestMultiError) AllErrors() []error { return m }
+
+// GetThreadStateRequestValidationError is the validation error returned by
+// GetThreadStateRequest.Validate if the designated constraints aren't met.
+type GetThreadStateRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetThreadStateRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetThreadStateRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetThreadStateRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetThreadStateRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetThreadStateRequestValidationError) ErrorName() string {
+	return "GetThreadStateRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetThreadStateRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetThreadStateRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetThreadStateRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetThreadStateRequestValidationError{}
+
+// Validate checks the field values on GetThreadStateResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetThreadStateResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetThreadStateResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetThreadStateResponseMultiError, or nil if none found.
+func (m *GetThreadStateResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetThreadStateResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetState()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetThreadStateResponseValidationError{
+					field:  "State",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetThreadStateResponseValidationError{
+					field:  "State",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetState()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetThreadStateResponseValidationError{
+				field:  "State",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetThreadStateResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetThreadStateResponseMultiError is an error wrapping multiple validation
+// errors returned by GetThreadStateResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetThreadStateResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetThreadStateResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetThreadStateResponseMultiError) AllErrors() []error { return m }
+
+// GetThreadStateResponseValidationError is the validation error returned by
+// GetThreadStateResponse.Validate if the designated constraints aren't met.
+type GetThreadStateResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetThreadStateResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetThreadStateResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetThreadStateResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetThreadStateResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetThreadStateResponseValidationError) ErrorName() string {
+	return "GetThreadStateResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetThreadStateResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetThreadStateResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetThreadStateResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetThreadStateResponseValidationError{}
 
 // Validate checks the field values on SetThreadStateRequest with the rules
 // defined in the proto definition for this message. If any rules are

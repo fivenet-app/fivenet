@@ -105,8 +105,8 @@ message ListThreadsRequest {
     max_items: 10,
     items: { uint64: { gt: 0 } },
   }];
-  optional resources.timestamp.Timestamp after = 3;
-  optional bool unread_only = 4;
+  optional bool unread = 4;
+  optional bool archived = 5;
 }
 
 message ListThreadsResponse {
@@ -144,6 +144,15 @@ message DeleteThreadRequest {
 }
 
 message DeleteThreadResponse {}
+
+message GetThreadStateRequest {
+  uint64 email_id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 thread_id = 2 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+}
+
+message GetThreadStateResponse {
+  resources.mailer.ThreadState state = 1;
+}
 
 message SetThreadStateRequest {
   resources.mailer.ThreadState state = 1 [(validate.rules).message.required = true];
@@ -244,6 +253,8 @@ service MailerService {
   rpc CreateThread(CreateThreadRequest) returns (CreateThreadResponse);
   // @perm: Name=SuperUser
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
+  // @perm: Name=ListEmails
+  rpc GetThreadState(GetThreadStateRequest) returns (GetThreadStateResponse);
   // @perm: Name=ListEmails
   rpc SetThreadState(SetThreadStateRequest) returns (SetThreadStateResponse);
 

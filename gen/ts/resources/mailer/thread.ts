@@ -106,25 +106,25 @@ export interface ThreadState {
      */
     lastRead?: Timestamp;
     /**
-     * @generated from protobuf field: bool unread = 4;
+     * @generated from protobuf field: optional bool unread = 4;
      */
-    unread: boolean;
+    unread?: boolean;
     /**
-     * @generated from protobuf field: bool important = 5;
+     * @generated from protobuf field: optional bool important = 5;
      */
-    important: boolean;
+    important?: boolean;
     /**
-     * @generated from protobuf field: bool favorite = 6;
+     * @generated from protobuf field: optional bool favorite = 6;
      */
-    favorite: boolean;
+    favorite?: boolean;
     /**
-     * @generated from protobuf field: bool muted = 7;
+     * @generated from protobuf field: optional bool muted = 7;
      */
-    muted: boolean;
+    muted?: boolean;
     /**
-     * @generated from protobuf field: bool archived = 8;
+     * @generated from protobuf field: optional bool archived = 8;
      */
-    archived: boolean;
+    archived?: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Thread$Type extends MessageType<Thread> {
@@ -330,22 +330,17 @@ class ThreadState$Type extends MessageType<ThreadState> {
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "last_read", kind: "message", T: () => Timestamp },
-            { no: 4, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 8, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "unread", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "important", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "favorite", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "muted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "archived", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ThreadState>): ThreadState {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.threadId = "0";
         message.emailId = "0";
-        message.unread = false;
-        message.important = false;
-        message.favorite = false;
-        message.muted = false;
-        message.archived = false;
         if (value !== undefined)
             reflectionMergePartial<ThreadState>(this, message, value);
         return message;
@@ -364,19 +359,19 @@ class ThreadState$Type extends MessageType<ThreadState> {
                 case /* optional resources.timestamp.Timestamp last_read */ 3:
                     message.lastRead = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRead);
                     break;
-                case /* bool unread */ 4:
+                case /* optional bool unread */ 4:
                     message.unread = reader.bool();
                     break;
-                case /* bool important */ 5:
+                case /* optional bool important */ 5:
                     message.important = reader.bool();
                     break;
-                case /* bool favorite */ 6:
+                case /* optional bool favorite */ 6:
                     message.favorite = reader.bool();
                     break;
-                case /* bool muted */ 7:
+                case /* optional bool muted */ 7:
                     message.muted = reader.bool();
                     break;
-                case /* bool archived */ 8:
+                case /* optional bool archived */ 8:
                     message.archived = reader.bool();
                     break;
                 default:
@@ -400,20 +395,20 @@ class ThreadState$Type extends MessageType<ThreadState> {
         /* optional resources.timestamp.Timestamp last_read = 3; */
         if (message.lastRead)
             Timestamp.internalBinaryWrite(message.lastRead, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* bool unread = 4; */
-        if (message.unread !== false)
+        /* optional bool unread = 4; */
+        if (message.unread !== undefined)
             writer.tag(4, WireType.Varint).bool(message.unread);
-        /* bool important = 5; */
-        if (message.important !== false)
+        /* optional bool important = 5; */
+        if (message.important !== undefined)
             writer.tag(5, WireType.Varint).bool(message.important);
-        /* bool favorite = 6; */
-        if (message.favorite !== false)
+        /* optional bool favorite = 6; */
+        if (message.favorite !== undefined)
             writer.tag(6, WireType.Varint).bool(message.favorite);
-        /* bool muted = 7; */
-        if (message.muted !== false)
+        /* optional bool muted = 7; */
+        if (message.muted !== undefined)
             writer.tag(7, WireType.Varint).bool(message.muted);
-        /* bool archived = 8; */
-        if (message.archived !== false)
+        /* optional bool archived = 8; */
+        if (message.archived !== undefined)
             writer.tag(8, WireType.Varint).bool(message.archived);
         let u = options.writeUnknownFields;
         if (u !== false)

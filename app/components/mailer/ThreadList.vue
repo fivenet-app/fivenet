@@ -63,7 +63,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardPanelContent class="p-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <div v-if="!loaded" class="space-y-2">
             <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
             <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
@@ -110,8 +110,10 @@ defineShortcuts({
                     </div>
                 </div>
 
-                <UDivider />
+                <UDivider v-if="index < threads.length" />
             </div>
+
+            <slot name="after" />
         </template>
     </UDashboardPanelContent>
 </template>

@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
-import { mailerDB, useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -45,54 +45,32 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const { pending: loading } = useLazyAsyncData(`mailer-thread:${props.threadId}`, () => mailerStore.getThread(props.threadId), {
+const {
+    data: thread,
+    pending: loading,
+    refresh: refresh,
+} = useLazyAsyncData(`mailer-thread:${props.threadId}`, () => mailerStore.getThread(props.threadId), {
     watch: [() => props.threadId],
 });
 
-const thread = useDexieLiveQueryWithDeps([() => props.threadId], ([threadId]: [string, number]) =>
-    mailerDB.threads
-        .where('id')
-        .equals(threadId)
-        .limit(1)
-        .toArray()
-        .then((thread) => (thread.length > 0 ? thread[0] : undefined)),
-);
-
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
-
-const messages = useDexieLiveQueryWithDeps(
-    [() => props.threadId, page],
-    ([threadId, _]: [string, number]) =>
-        mailerDB.messages
-            .where('threadId')
-            .equals(threadId)
-            .reverse()
-            .offset(offset.value ?? 0)
-            .limit(20)
-            .sortBy('id')
-            .then((messages) => ({ messages: messages, loaded: true })),
-    {
-        initialValue: { messages: [], loaded: false },
-    },
+const offset = computed(() =>
+    messages.value?.pagination?.pageSize ? messages.value?.pagination?.pageSize * (page.value - 1) : 0,
 );
 
 const {
-    data,
+    data: messages,
     pending: messagesLoading,
     refresh: refreshMessages,
 } = useLazyAsyncData(
     `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
-        const count = await mailerDB.threads.count();
-
         const response = await mailerStore.listThreadMessages({
             pagination: {
                 offset: offset.value,
             },
             emailId: selectedEmail.value!.id,
             threadId: props.threadId,
-            after: offset.value === 0 && count > 0 ? undefined : toTimestamp(),
         });
 
         if (selectedThread.value) {
@@ -180,7 +158,7 @@ const selectedMessageId = useRouteQuery('msg', '0', { transform: Number });
 const selectedMessage = computed(() => selectedMessageId.value.toString());
 watch(selectedMessageId, () => scrollToMessage(selectedMessageId.value));
 
-watch(data, () => {
+watch(messages, () => {
     if (selectedMessageId.value !== 0) {
         scrollToMessage(selectedMessageId.value);
     }
@@ -230,7 +208,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
     </UDashboardToolbar>
 
-    <UDashboardPanelContent class="p-0 pb-0">
+    <UDashboardPanelContent class="p-0 sm:pb-0">
         <div v-if="messagesLoading" class="flex-1 space-y-2">
             <USkeleton class="h-32 w-full" />
             <USkeleton class="h-48 w-full" />
@@ -301,18 +279,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
         </div>
 
-        <Pagination
-            v-if="data?.pagination && data?.pagination?.totalCount / data?.pagination?.pageSize > 1"
-            v-model="page"
-            :pagination="data?.pagination"
-        />
+        <Pagination v-if="messages?.pagination" v-model="page" :pagination="messages?.pagination" />
 
-        <UDivider class="mb-2" />
-
-        <div v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)" class="mx-1">
+        <UDashboardToolbar
+            v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
+            class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+        >
             <UAccordion
                 variant="outline"
                 :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
+                :ui="{ default: { class: 'mb-0' } }"
             >
                 <template #compose>
                     <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
@@ -409,6 +385,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UForm>
                 </template>
             </UAccordion>
-        </div>
+        </UDashboardToolbar>
     </UDashboardPanelContent>
 </template>

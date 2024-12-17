@@ -40,9 +40,9 @@ message ThreadState {
   uint64 email_id = 2 [jstype = JS_STRING];
 
   optional resources.timestamp.Timestamp last_read = 3;
-  bool unread = 4;
-  bool important = 5;
-  bool favorite = 6;
-  bool muted = 7;
-  bool archived = 8;
+  optional bool unread = 4;
+  optional bool important = 5;
+  optional bool favorite = 6;
+  optional bool muted = 7;
+  optional bool archived = 8;
 }

@@ -9,7 +9,7 @@ import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCa
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
-import { mailerDB } from '~/store/mailer';
+import { useMailerStore } from '~/store/mailer';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { can, activeChar, jobProps, isSuperuser } = useAuth();
@@ -22,9 +22,8 @@ const modal = useModal();
 
 const { website } = useAppConfig();
 
-const unreadThreadsCount = useDexieLiveQuery(() => mailerDB.threads.filter((t) => !!t.state?.unread).count(), {
-    initialValue: 0,
-});
+const mailerStore = useMailerStore();
+const { unreadCount } = storeToRefs(mailerStore);
 
 const links = computed(() =>
     [
@@ -41,7 +40,7 @@ const links = computed(() =>
             label: t('common.mail'),
             icon: 'i-mdi-inbox-full-outline',
             to: '/mail',
-            badge: unreadThreadsCount.value > 0 ? unreadThreadsCount.value.toString() : undefined,
+            badge: unreadCount.value > 0 ? (unreadCount.value <= 9 ? unreadCount.value.toString() : '9+') : undefined,
             tooltip: {
                 text: t('common.mail'),
                 shortcuts: ['G', 'E'],
