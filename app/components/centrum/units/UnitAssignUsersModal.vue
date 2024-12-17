@@ -122,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 </ClientOnly>
                             </UFormGroup>
 
-                            <div class="mt-2 overflow-hidden rounded-md bg-base-900">
+                            <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
                                 <ul
                                     role="list"
                                     class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"

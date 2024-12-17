@@ -155,7 +155,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="rounded-lg bg-base-900">
+                <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
                     <HTMLContent v-if="comment.content?.content" class="px-4 py-2" :value="comment.content.content" />
                 </div>
             </div>

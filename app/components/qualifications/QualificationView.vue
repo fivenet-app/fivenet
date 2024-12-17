@@ -378,7 +378,7 @@ const accordionItems = computed(() =>
                                 {{ $t('common.content') }}
                             </h2>
 
-                            <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                            <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                                 <HTMLContent
                                     v-if="qualification.content?.content"
                                     class="px-4 py-2"

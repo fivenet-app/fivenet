@@ -246,7 +246,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         messageRefs[parseInt(message.id)] = el as Element;
                     }
                 "
-                class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-base-800 sm:pb-2 dark:border-gray-900"
+                class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900 dark:hover:bg-base-800"
                 :class="selectedMessage === message.id && '!border-primary-500'"
                 @click="selectedMessageId = parseInt(message.id)"
             >
@@ -295,7 +295,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </div>
 
-                <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-base-900">
+                <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                     <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                 </div>
             </div>
