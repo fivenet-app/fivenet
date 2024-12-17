@@ -322,6 +322,24 @@ watch(selectedHighlightColor, () =>
     unref(editor)?.chain().focus().toggleHighlight({ color: selectedHighlightColor.value.value }).run(),
 );
 
+const tableCreation = reactive({
+    rows: 2,
+    cols: 3,
+    withHeaderRow: true,
+});
+
+function createTable(): void {
+    unref(editor)
+        ?.chain()
+        .focus()
+        .insertTable({
+            rows: tableCreation.rows,
+            cols: tableCreation.cols,
+            withHeaderRow: tableCreation.withHeaderRow,
+        })
+        .run();
+}
+
 const searchAndReplace = reactive<{
     search: string;
     replace: string;
@@ -682,14 +700,38 @@ onBeforeUnmount(() => {
                     />
                 </UButtonGroup>
 
-                <UButtonGroup v-if="!commentMode">
+                <UPopover v-if="!commentMode">
                     <UButton
                         :class="{ 'is-active': editor.isActive('table') }"
                         color="white"
                         variant="ghost"
                         icon="i-mdi-table"
-                        @click="editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()"
                     />
+
+                    <template #panel>
+                        <div class="flex flex-1 gap-0.5 p-4">
+                            <UForm :state="{}" @submit="createTable">
+                                <UFormGroup :label="$t('common.rows')">
+                                    <UInput v-model="tableCreation.rows" />
+                                </UFormGroup>
+
+                                <UFormGroup :label="$t('common.cols')">
+                                    <UInput v-model="tableCreation.cols" />
+                                </UFormGroup>
+
+                                <UFormGroup :label="$t('common.with_header_row')">
+                                    <UToggle v-model="tableCreation.withHeaderRow" />
+                                </UFormGroup>
+
+                                <UFormGroup>
+                                    <UButton type="submit" :label="$t('common.create')" />
+                                </UFormGroup>
+                            </UForm>
+                        </div>
+                    </template>
+                </UPopover>
+
+                <UButtonGroup>
                     <UButton
                         :class="{ 'is-active': editor.isActive('codeBlock') }"
                         color="white"
@@ -742,7 +784,7 @@ onBeforeUnmount(() => {
                                     <UFormGroup class="flex flex-col lg:flex-row">
                                         <UButtonGroup>
                                             <UButton
-                                                color="white"
+                                                color="red"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.clear')"
                                                 @click="clear"

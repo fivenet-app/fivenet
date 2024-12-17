@@ -535,7 +535,10 @@
         "sort_direction": "Sort Direction",
         "font": "Font",
         "default": "Default",
-        "case_sensitive": "Case sensitive"
+        "case_sensitive": "Case sensitive",
+        "rows": "Rows",
+        "cols": "Columns",
+        "with_header_row": "With header row"
     },
     "components": {
         "partials": {

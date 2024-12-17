@@ -534,7 +534,11 @@
         "grade": "Benoten",
         "sort_direction": "Sortierrichtung",
         "font": "Schriftart",
-        "default": "Standard"
+        "default": "Standard",
+        "case_sensitive": "Groß-/Kleinschreibung beachten",
+        "rows": "Zeilen",
+        "cols": "Spalten",
+        "with_header_row": "Mit Kopfzeile"
     },
     "components": {
         "partials": {
