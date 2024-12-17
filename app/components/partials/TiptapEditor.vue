@@ -341,8 +341,12 @@ function setLink(data: typeof linkState): void {
 const selectedFont = ref<(typeof fonts)[0]>(fonts[0]!);
 watch(selectedFont, () => unref(editor)?.chain().focus().setFontFamily(selectedFont.value.value).run());
 
-const selectedFontColor = ref<string>('#FFFFFF');
-watch(selectedFontColor, () => unref(editor)?.chain().focus().setColor(selectedFontColor.value).run());
+const selectedFontColor = ref<string | undefined>(undefined);
+watch(selectedFontColor, () =>
+    selectedFontColor.value
+        ? unref(editor)?.chain().focus().setColor(selectedFontColor.value).run()
+        : unref(editor)?.chain().focus().unsetColor().run(),
+);
 
 const selectedHighlightColor = ref<(typeof highlightColors)[0]>(highlightColors[0]!);
 watch(selectedHighlightColor, () =>
@@ -520,10 +524,6 @@ onBeforeUnmount(() => {
                         icon="i-mdi-format-clear"
                         @click="editor.chain().focus().unsetAllMarks().run()"
                     />
-                    <!-- <UButton color="white" variant="ghost" icon="i-mdi-backspace" @click="editor.chain().focus().clearNodes().run()">clear nodes</UButton> -->
-                </UButtonGroup>
-
-                <UButtonGroup>
                     <UButton
                         :class="{ 'is-active': editor.isActive('superscript') }"
                         color="white"
@@ -547,6 +547,8 @@ onBeforeUnmount(() => {
                         @click="editor.chain().focus().toggleCode().run()"
                     />
                 </UButtonGroup>
+
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <!-- Text Align -->
                 <UButtonGroup v-if="!commentMode">
@@ -579,6 +581,8 @@ onBeforeUnmount(() => {
                         @click="editor.chain().focus().setTextAlign('justify').run()"
                     />
                 </UButtonGroup>
+
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <!-- Font Family -->
                 <UInputMenu
@@ -617,8 +621,20 @@ onBeforeUnmount(() => {
                             icon="i-mdi-format-color-text"
                         />
 
-                        <template #panel>
+                        <template #panel="{ close }">
                             <div class="inline-flex flex-col gap-1 p-4">
+                                <UButton
+                                    class="rounded-md"
+                                    color="white"
+                                    variant="outline"
+                                    icon="i-mdi-water-off"
+                                    :label="$t('common.default')"
+                                    @click="
+                                        editor.chain().focus().unsetColor().run();
+                                        close();
+                                    "
+                                />
+
                                 <div v-for="(colors, idx) in fontColors" :key="idx">
                                     <div class="grid grid-cols-10 gap-0.5">
                                         <UButton
@@ -707,19 +723,35 @@ onBeforeUnmount(() => {
                             icon="i-mdi-format-color-fill"
                         />
 
-                        <template #panel>
-                            <div class="grid grid-cols-6 gap-0.5 p-4">
+                        <template #panel="{ close }">
+                            <div class="inline-flex flex-col gap-1 p-4">
                                 <UButton
-                                    v-for="(color, idx) in highlightColors"
-                                    :key="idx"
-                                    class="size-6 rounded-none border-0"
-                                    :style="{ backgroundColor: color.value }"
-                                    @click="selectedHighlightColor = color"
+                                    class="rounded-md"
+                                    color="white"
+                                    variant="outline"
+                                    icon="i-mdi-water-off"
+                                    :label="$t('common.reset')"
+                                    @click="
+                                        editor.chain().focus().unsetHighlight().run();
+                                        close();
+                                    "
                                 />
+
+                                <div class="grid grid-cols-6 gap-0.5">
+                                    <UButton
+                                        v-for="(color, idx) in highlightColors"
+                                        :key="idx"
+                                        class="size-6 rounded-none border-0"
+                                        :style="{ backgroundColor: color.value }"
+                                        @click="selectedHighlightColor = color"
+                                    />
+                                </div>
                             </div>
                         </template>
                     </UPopover>
                 </UButtonGroup>
+
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <UButtonGroup>
                     <UButton
@@ -744,6 +776,8 @@ onBeforeUnmount(() => {
                         @click="editor.chain().focus().toggleTaskList().run()"
                     />
                 </UButtonGroup>
+
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <UPopover v-if="!commentMode">
                     <UButton
@@ -842,6 +876,8 @@ onBeforeUnmount(() => {
                 </UButtonGroup>
 
                 <div class="flex-1"></div>
+
+                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
 
                 <UButtonGroup>
                     <UPopover>
