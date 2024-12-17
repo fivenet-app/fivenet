@@ -867,12 +867,14 @@ onBeforeUnmount(() => {
                         icon="i-mdi-minus"
                         @click="editor.chain().focus().setHorizontalRule().run()"
                     />
+                    <!--
                     <UButton
                         color="white"
                         variant="ghost"
                         icon="i-mdi-format-page-break"
                         @click="editor.chain().focus().setHardBreak().run()"
                     />
+                    -->
                 </UButtonGroup>
 
                 <div class="flex-1"></div>
