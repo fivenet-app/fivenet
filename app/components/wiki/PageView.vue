@@ -8,7 +8,7 @@ import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import AccessBadges from '../partials/access/AccessBadges.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
-import HTMLContentRenderer from '../partials/content/HTMLContentRenderer.vue';
+import HTMLContent from '../partials/content/HTMLContent.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
@@ -16,7 +16,6 @@ import GenericTime from '../partials/elements/GenericTime.vue';
 import { checkPageAccess } from './helpers';
 import PageActivityList from './PageActivityList.vue';
 import PageSearch from './PageSearch.vue';
-import HTMLContent from '../partials/content/HTMLContent.vue';
 
 const props = defineProps<{
     page: Page | undefined;

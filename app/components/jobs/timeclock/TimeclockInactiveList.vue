@@ -8,6 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
+import ColleagueName from '../colleagues/ColleagueName.vue';
 
 const { t } = useI18n();
 
@@ -159,7 +160,7 @@ const columns = [
                     :enable-popup="true"
                 />
 
-                <span> {{ colleague.firstname }} {{ colleague.lastname }} </span>
+                <ColleagueName :colleague="colleague" />
             </div>
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
@@ -168,12 +169,15 @@ const columns = [
                 </dd>
             </dl>
         </template>
+
         <template #rank-data="{ row: colleague }">
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </template>
+
         <template #phoneNumber-data="{ row: colleague }">
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </template>
+
         <template #actions-data="{ row: colleague }">
             <div :key="colleague.id">
                 <UTooltip v-if="checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')" :text="$t('common.show')">
