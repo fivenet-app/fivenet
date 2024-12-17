@@ -23,7 +23,7 @@ func (s *State) ListUnits(ctx context.Context, job string) ([]*centrum.Unit, boo
 
 	for _, id := range ids {
 		unit, err := s.units.GetOrLoad(ctx, id)
-		if err != nil {
+		if unit == nil || err != nil {
 			continue
 		}
 
@@ -48,7 +48,7 @@ func (s *State) FilterUnits(ctx context.Context, job string, statuses []centrum.
 		include := true
 
 		// Include statuses that should be listed
-		if len(statuses) > 0 && !slices.Contains(statuses, units[i].Status.Status) {
+		if len(statuses) > 0 && units[i].Status != nil && !slices.Contains(statuses, units[i].Status.Status) {
 			include = false
 		} else if len(notStatuses) > 0 {
 			// Which statuses to ignore

@@ -129,7 +129,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
 		t, ok := b.lastAssignedUnits[unit.Id]
 		if !ok || time.Now().After(t) {
 			// Double check if unit is still available
-			if unit.Status != nil && unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if unit.Status == nil || unit.Status.Status != centrum.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 
