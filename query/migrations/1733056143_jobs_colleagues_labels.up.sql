@@ -9,7 +9,7 @@ CREATE TABLE `fivenet_jobs_labels` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_jobs_labels_unique` (`job`, `name`),
   KEY `idx_fivenet_jobs_labels_name` (`name`),
-  KEY `idx_fivenet_jobs_labels_order` (`order`),
+  KEY `idx_fivenet_jobs_labels_order` (`order`)
 ) ENGINE=InnoDB;
 
 CREATE TABLE `fivenet_jobs_labels_users` (

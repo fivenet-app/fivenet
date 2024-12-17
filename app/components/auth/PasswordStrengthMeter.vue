@@ -7,7 +7,9 @@ const props = defineProps<{
     showFeedback?: boolean;
 }>();
 
-zxcvbnOptions.setOptions({});
+zxcvbnOptions.setOptions({
+    maxLength: 70,
+});
 
 const percent = ref<number>(0);
 const feedback = ref<string | null>('');
