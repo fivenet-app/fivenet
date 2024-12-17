@@ -117,9 +117,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </template>
 
-                <div class="mx-auto flex w-full max-w-screen-xl">
-                    <div class="flex w-full flex-col gap-2">
-                        <div class="flex flex-1 flex-col items-center justify-between gap-1">
+                <div class="mx-auto flex w-full max-w-screen-xl flex-1">
+                    <div class="flex w-full flex-1 flex-col gap-2">
+                        <div class="flex w-full flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
                                 <ClientOnly>
                                     <UInput
@@ -293,7 +293,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     v-model="state.content"
                                     class="flex-1"
                                     :disabled="!canSubmit"
-                                    wrapper-class="min-h-44"
+                                    wrapper-class="min-h-96"
                                 />
                             </ClientOnly>
                         </UFormGroup>
