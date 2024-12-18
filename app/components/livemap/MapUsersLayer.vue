@@ -40,7 +40,7 @@ onBeforeMount(async () => {
     }, 50);
 });
 
-onBeforeUnmount(async () => stopStream());
+onBeforeUnmount(async () => await stopStream());
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());
