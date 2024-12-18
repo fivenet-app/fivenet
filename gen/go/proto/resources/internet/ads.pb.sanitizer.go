@@ -33,9 +33,9 @@ func (m *Ad) Sanitize() error {
 	// Field: Description
 	m.Description = htmlsanitizer.StripTags(m.Description)
 
-	// Field: ExpiresAt
-	if m.ExpiresAt != nil {
-		if v, ok := interface{}(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+	// Field: EndsAt
+	if m.EndsAt != nil {
+		if v, ok := interface{}(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -45,6 +45,15 @@ func (m *Ad) Sanitize() error {
 	// Field: Image
 	if m.Image != nil {
 		if v, ok := interface{}(m.GetImage()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: StartsAt
+	if m.StartsAt != nil {
+		if v, ok := interface{}(m.GetStartsAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -58,7 +58,110 @@ func (m *Domain) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Domain
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DomainValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DomainValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DomainValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Name
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DomainValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DomainValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorJob != nil {
+		// no validation rules for CreatorJob
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
 
 	if len(errors) > 0 {
 		return DomainMultiError(errors)
@@ -137,21 +240,21 @@ var _ interface {
 	ErrorName() string
 } = DomainValidationError{}
 
-// Validate checks the field values on WebPage with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *WebPage) Validate() error {
+// Validate checks the field values on Page with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Page) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on WebPage with the rules defined in the
+// ValidateAll checks the field values on Page with the rules defined in the
 // proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in WebPageMultiError, or nil if none found.
-func (m *WebPage) ValidateAll() error {
+// a list of violation errors wrapped in PageMultiError, or nil if none found.
+func (m *Page) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *WebPage) validate(all bool) error {
+func (m *Page) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -160,23 +263,168 @@ func (m *WebPage) validate(all bool) error {
 
 	// no validation rules for Id
 
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, PageValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, PageValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return PageValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	// no validation rules for DomainId
 
-	// no validation rules for Url
+	if utf8.RuneCountInString(m.GetPath()) > 128 {
+		err := PageValidationError{
+			field:  "Path",
+			reason: "value length must be at most 128 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 1 || l > 255 {
+		err := PageValidationError{
+			field:  "Title",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 512 {
+		err := PageValidationError{
+			field:  "Description",
+			reason: "value length must be between 3 and 512 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetData()); l < 3 || l > 10240 {
+		err := PageValidationError{
+			field:  "Data",
+			reason: "value length must be between 3 and 10240 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorJob != nil {
+		// no validation rules for CreatorJob
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
 
 	if len(errors) > 0 {
-		return WebPageMultiError(errors)
+		return PageMultiError(errors)
 	}
 
 	return nil
 }
 
-// WebPageMultiError is an error wrapping multiple validation errors returned
-// by WebPage.ValidateAll() if the designated constraints aren't met.
-type WebPageMultiError []error
+// PageMultiError is an error wrapping multiple validation errors returned by
+// Page.ValidateAll() if the designated constraints aren't met.
+type PageMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m WebPageMultiError) Error() string {
+func (m PageMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -185,11 +433,11 @@ func (m WebPageMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m WebPageMultiError) AllErrors() []error { return m }
+func (m PageMultiError) AllErrors() []error { return m }
 
-// WebPageValidationError is the validation error returned by WebPage.Validate
-// if the designated constraints aren't met.
-type WebPageValidationError struct {
+// PageValidationError is the validation error returned by Page.Validate if the
+// designated constraints aren't met.
+type PageValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -197,22 +445,22 @@ type WebPageValidationError struct {
 }
 
 // Field function returns field value.
-func (e WebPageValidationError) Field() string { return e.field }
+func (e PageValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e WebPageValidationError) Reason() string { return e.reason }
+func (e PageValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e WebPageValidationError) Cause() error { return e.cause }
+func (e PageValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e WebPageValidationError) Key() bool { return e.key }
+func (e PageValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e WebPageValidationError) ErrorName() string { return "WebPageValidationError" }
+func (e PageValidationError) ErrorName() string { return "PageValidationError" }
 
 // Error satisfies the builtin error interface
-func (e WebPageValidationError) Error() string {
+func (e PageValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -224,14 +472,14 @@ func (e WebPageValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sWebPage.%s: %s%s",
+		"invalid %sPage.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = WebPageValidationError{}
+var _ error = PageValidationError{}
 
 var _ interface {
 	Field() string
@@ -239,4 +487,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = WebPageValidationError{}
+} = PageValidationError{}

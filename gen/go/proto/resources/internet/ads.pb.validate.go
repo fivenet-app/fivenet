@@ -100,10 +100,10 @@ func (m *Ad) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 128 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := AdValidationError{
 			field:  "Title",
-			reason: "value length must be between 3 and 128 runes, inclusive",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -111,10 +111,10 @@ func (m *Ad) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 2048 {
+	if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 1024 {
 		err := AdValidationError{
 			field:  "Description",
-			reason: "value length must be between 3 and 2048 runes, inclusive",
+			reason: "value length must be between 3 and 1024 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -188,14 +188,14 @@ func (m *Ad) validate(all bool) error {
 
 	}
 
-	if m.ExpiresAt != nil {
+	if m.StartsAt != nil {
 
 		if all {
-			switch v := interface{}(m.GetExpiresAt()).(type) {
+			switch v := interface{}(m.GetStartsAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AdValidationError{
-						field:  "ExpiresAt",
+						field:  "StartsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -203,16 +203,49 @@ func (m *Ad) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AdValidationError{
-						field:  "ExpiresAt",
+						field:  "StartsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetStartsAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AdValidationError{
-					field:  "ExpiresAt",
+					field:  "StartsAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.EndsAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetEndsAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AdValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AdValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AdValidationError{
+					field:  "EndsAt",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -252,6 +285,22 @@ func (m *Ad) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.ApproverId != nil {
+		// no validation rules for ApproverId
+	}
+
+	if m.ApproverJob != nil {
+		// no validation rules for ApproverJob
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
+	if m.CreatorJob != nil {
+		// no validation rules for CreatorJob
 	}
 
 	if len(errors) > 0 {

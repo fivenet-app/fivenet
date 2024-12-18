@@ -24,7 +24,7 @@ function updateQuery(): void {
         router.replace({ query: {} });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: selectedTab.value }, hash: '#' });
+        router.replace({ query: { tab: selectedTab.value, url: state.url }, hash: '#' });
     }
 }
 

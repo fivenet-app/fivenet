@@ -324,7 +324,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	for _, recipient := range emails {
 		emailIds = append(emailIds, recipient.EmailId)
 	}
-	if err := s.setUnreadState(ctx, tx, req.Thread.Id, emailIds); err != nil {
+	if err := s.setUnreadState(ctx, tx, req.Thread.Id, senderEmail.Id, emailIds); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 

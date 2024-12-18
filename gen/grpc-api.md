@@ -410,7 +410,7 @@
   
 - [resources/internet/internet.proto](#resources_internet_internet-proto)
     - [Domain](#resources-internet-Domain)
-    - [WebPage](#resources-internet-WebPage)
+    - [Page](#resources-internet-Page)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -6581,12 +6581,17 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | disabled | [bool](#bool) |  |  |
 | ad_type | [AdType](#resources-internet-AdType) |  |  |
+| starts_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| ends_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
 | description | [string](#string) |  | @sanitize: method=StripTags |
 | image | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| approver_id | [int32](#int32) | optional |  |
+| approver_job | [string](#string) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator_job | [string](#string) | optional |  |
 
 
 
@@ -6632,6 +6637,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
 | title | [string](#string) |  |  |
 | description | [string](#string) |  |  |
 | url | [string](#string) |  |  |
@@ -6666,24 +6672,37 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-| domain | [string](#string) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| name | [string](#string) |  |  |
+| creator_job | [string](#string) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
 
 
 
 
 
 
-<a name="resources-internet-WebPage"></a>
+<a name="resources-internet-Page"></a>
 
-### WebPage
+### Page
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | domain_id | [uint64](#uint64) |  |  |
-| url | [string](#string) |  |  |
+| path | [string](#string) |  | @sanitize: method=StripTags |
+| title | [string](#string) |  | @sanitize: method=StripTags |
+| description | [string](#string) |  | @sanitize: method=StripTags |
+| data | [string](#string) |  |  |
+| creator_job | [string](#string) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
 
 
 

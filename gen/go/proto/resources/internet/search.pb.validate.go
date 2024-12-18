@@ -57,6 +57,8 @@ func (m *SearchResult) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	// no validation rules for Title
 
 	// no validation rules for Description

@@ -225,10 +225,15 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 	if len(recipients) > 0 {
 		emailIds := []uint64{}
 		for _, ua := range recipients {
+			// Skip sender email id
+			if ua.EmailId == senderEmail.Id {
+				continue
+			}
+
 			emailIds = append(emailIds, ua.EmailId)
 		}
 
-		if err := s.setUnreadState(ctx, s.db, message.ThreadId, emailIds); err != nil {
+		if err := s.setUnreadState(ctx, s.db, message.ThreadId, senderEmail.Id, emailIds); err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
 

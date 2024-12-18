@@ -33,33 +33,53 @@ export interface Ad {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 5;
-     */
-    expiresAt?: Timestamp;
-    /**
-     * @generated from protobuf field: bool disabled = 6;
+     * @generated from protobuf field: bool disabled = 5;
      */
     disabled: boolean;
     /**
-     * @generated from protobuf field: resources.internet.AdType ad_type = 7;
+     * @generated from protobuf field: resources.internet.AdType ad_type = 6;
      */
     adType: AdType;
     /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp starts_at = 7;
+     */
+    startsAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 8;
+     */
+    endsAt?: Timestamp;
+    /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string title = 8;
+     * @generated from protobuf field: string title = 9;
      */
     title: string;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string description = 9;
+     * @generated from protobuf field: string description = 10;
      */
     description: string;
     /**
-     * @generated from protobuf field: optional resources.filestore.File image = 10;
+     * @generated from protobuf field: optional resources.filestore.File image = 11;
      */
     image?: File;
+    /**
+     * @generated from protobuf field: optional int32 approver_id = 12;
+     */
+    approverId?: number;
+    /**
+     * @generated from protobuf field: optional string approver_job = 13;
+     */
+    approverJob?: string;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 14;
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional string creator_job = 15;
+     */
+    creatorJob?: string;
 }
 /**
  * @generated from protobuf enum resources.internet.AdType
@@ -94,12 +114,17 @@ class Ad$Type extends MessageType<Ad> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "disabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "ad_type", kind: "enum", T: () => ["resources.internet.AdType", AdType, "AD_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
-            { no: 9, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
-            { no: 10, name: "image", kind: "message", T: () => File }
+            { no: 5, name: "disabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "ad_type", kind: "enum", T: () => ["resources.internet.AdType", AdType, "AD_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "starts_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "ends_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 10, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 11, name: "image", kind: "message", T: () => File },
+            { no: 12, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<Ad>): Ad {
@@ -130,23 +155,38 @@ class Ad$Type extends MessageType<Ad> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* optional resources.timestamp.Timestamp expires_at */ 5:
-                    message.expiresAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expiresAt);
-                    break;
-                case /* bool disabled */ 6:
+                case /* bool disabled */ 5:
                     message.disabled = reader.bool();
                     break;
-                case /* resources.internet.AdType ad_type */ 7:
+                case /* resources.internet.AdType ad_type */ 6:
                     message.adType = reader.int32();
                     break;
-                case /* string title */ 8:
+                case /* optional resources.timestamp.Timestamp starts_at */ 7:
+                    message.startsAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startsAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp ends_at */ 8:
+                    message.endsAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endsAt);
+                    break;
+                case /* string title */ 9:
                     message.title = reader.string();
                     break;
-                case /* string description */ 9:
+                case /* string description */ 10:
                     message.description = reader.string();
                     break;
-                case /* optional resources.filestore.File image */ 10:
+                case /* optional resources.filestore.File image */ 11:
                     message.image = File.internalBinaryRead(reader, reader.uint32(), options, message.image);
+                    break;
+                case /* optional int32 approver_id */ 12:
+                    message.approverId = reader.int32();
+                    break;
+                case /* optional string approver_job */ 13:
+                    message.approverJob = reader.string();
+                    break;
+                case /* optional int32 creator_id */ 14:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional string creator_job */ 15:
+                    message.creatorJob = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -172,24 +212,39 @@ class Ad$Type extends MessageType<Ad> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp expires_at = 5; */
-        if (message.expiresAt)
-            Timestamp.internalBinaryWrite(message.expiresAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* bool disabled = 6; */
+        /* bool disabled = 5; */
         if (message.disabled !== false)
-            writer.tag(6, WireType.Varint).bool(message.disabled);
-        /* resources.internet.AdType ad_type = 7; */
+            writer.tag(5, WireType.Varint).bool(message.disabled);
+        /* resources.internet.AdType ad_type = 6; */
         if (message.adType !== 0)
-            writer.tag(7, WireType.Varint).int32(message.adType);
-        /* string title = 8; */
+            writer.tag(6, WireType.Varint).int32(message.adType);
+        /* optional resources.timestamp.Timestamp starts_at = 7; */
+        if (message.startsAt)
+            Timestamp.internalBinaryWrite(message.startsAt, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp ends_at = 8; */
+        if (message.endsAt)
+            Timestamp.internalBinaryWrite(message.endsAt, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* string title = 9; */
         if (message.title !== "")
-            writer.tag(8, WireType.LengthDelimited).string(message.title);
-        /* string description = 9; */
+            writer.tag(9, WireType.LengthDelimited).string(message.title);
+        /* string description = 10; */
         if (message.description !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.description);
-        /* optional resources.filestore.File image = 10; */
+            writer.tag(10, WireType.LengthDelimited).string(message.description);
+        /* optional resources.filestore.File image = 11; */
         if (message.image)
-            File.internalBinaryWrite(message.image, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+            File.internalBinaryWrite(message.image, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 approver_id = 12; */
+        if (message.approverId !== undefined)
+            writer.tag(12, WireType.Varint).int32(message.approverId);
+        /* optional string approver_job = 13; */
+        if (message.approverJob !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
+        /* optional int32 creator_id = 14; */
+        if (message.creatorId !== undefined)
+            writer.tag(14, WireType.Varint).int32(message.creatorId);
+        /* optional string creator_job = 15; */
+        if (message.creatorJob !== undefined)
+            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

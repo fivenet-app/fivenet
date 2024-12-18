@@ -442,7 +442,7 @@ onBeforeMount(async () => {
                         <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
                             <UButton
                                 icon="i-mdi-trash-can-outline"
-                                color="gray"
+                                color="red"
                                 variant="ghost"
                                 @click="
                                     modal.open(ConfirmModal, {

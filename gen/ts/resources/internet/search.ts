@@ -15,15 +15,19 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface SearchResult {
     /**
-     * @generated from protobuf field: string title = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string title = 2;
      */
     title: string;
     /**
-     * @generated from protobuf field: string description = 2;
+     * @generated from protobuf field: string description = 3;
      */
     description: string;
     /**
-     * @generated from protobuf field: string url = 3;
+     * @generated from protobuf field: string url = 4;
      */
     url: string;
 }
@@ -31,13 +35,15 @@ export interface SearchResult {
 class SearchResult$Type extends MessageType<SearchResult> {
     constructor() {
         super("resources.internet.SearchResult", [
-            { no: 1, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<SearchResult>): SearchResult {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
         message.title = "";
         message.description = "";
         message.url = "";
@@ -50,13 +56,16 @@ class SearchResult$Type extends MessageType<SearchResult> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string title */ 1:
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* string title */ 2:
                     message.title = reader.string();
                     break;
-                case /* string description */ 2:
+                case /* string description */ 3:
                     message.description = reader.string();
                     break;
-                case /* string url */ 3:
+                case /* string url */ 4:
                     message.url = reader.string();
                     break;
                 default:
@@ -71,15 +80,18 @@ class SearchResult$Type extends MessageType<SearchResult> {
         return message;
     }
     internalBinaryWrite(message: SearchResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string title = 1; */
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* string title = 2; */
         if (message.title !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.title);
-        /* string description = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.title);
+        /* string description = 3; */
         if (message.description !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.description);
-        /* string url = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* string url = 4; */
         if (message.url !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.url);
+            writer.tag(4, WireType.LengthDelimited).string(message.url);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

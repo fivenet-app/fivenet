@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getGRPCInternetClient } from '~/composables/grpc';
 import { useInternetStore, type Tab } from '~/store/internet';
 import { AdType } from '~~/gen/ts/resources/internet/ads';
@@ -93,6 +94,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                 <UForm :schema="schema" :state="state" class="inline-flex gap-1" @submit="onSubmitThrottle">
                     <UFormGroup name="search">
                         <UInput
+                            v-model="state.search"
                             type="text"
                             class="w-full"
                             size="xl"
@@ -107,11 +109,20 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
         </ULandingHero>
 
         <ULandingSection v-if="searchResults" :ui="{ wrapper: 'py-6 sm:py-6' }">
-            <template v-if="searchResults.results.length === 0">
-                <span>{{ $t('common.not_found', [$t('common.result', 2)]) }}</span>
-            </template>
+            <DataNoDataBlock v-if="searchResults.results.length === 0" :type="$t('common.result', 2)" />
+
             <template v-else>
-                <!-- TODO show search results -->
+                <UCard v-for="result in searchResults.results" :key="result.url">
+                    <template #header>
+                        <h3 class="text-xl font-semibold">{{ result.title }}</h3>
+                    </template>
+
+                    <p class="">{{ result.description }}</p>
+
+                    <template #footer>
+                        <p class="text-sm">{{ result.url }}</p>
+                    </template>
+                </UCard>
             </template>
         </ULandingSection>
 

@@ -133,7 +133,7 @@ func (s *Server) getThreadState(ctx context.Context, threadId uint64, emaildId u
 	return dest, nil
 }
 
-func (s *Server) setUnreadState(ctx context.Context, tx qrm.DB, threadId uint64, emailIds []uint64) error {
+func (s *Server) setUnreadState(ctx context.Context, tx qrm.DB, threadId uint64, senderId uint64, emailIds []uint64) error {
 	if len(emailIds) == 0 {
 		return nil
 	}
@@ -146,11 +146,11 @@ func (s *Server) setUnreadState(ctx context.Context, tx qrm.DB, threadId uint64,
 			tThreadsUserState.Unread,
 		)
 
-	for _, userId := range emailIds {
+	for _, emailId := range emailIds {
 		stmt = stmt.VALUES(
 			threadId,
-			userId,
-			true,
+			emailId,
+			emailId != senderId,
 		)
 	}
 
