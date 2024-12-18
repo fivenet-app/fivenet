@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import type { TocLink } from '@nuxt/content';
 import { emojiBlast } from 'emoji-blast';
 import { useNotificatorStore } from '~/store/notificator';
-import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
+import { jsonNodeToTocLinks } from '~/utils/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
@@ -72,24 +71,7 @@ async function deletePage(id: string): Promise<void> {
     }
 }
 
-function walk(nodes: JSONNode): TocLink[] {
-    const headers: TocLink[] = [];
-    nodes.children.forEach((n) => {
-        if (/h[1-6]/i.test(n.tag)) {
-            headers.push({
-                id: n.id,
-                depth: parseInt(n.tag.replace('h', '')),
-                text: n.children[0]?.text ?? n.text,
-            });
-        }
-
-        n.children.forEach((c) => headers.push(...walk(c)));
-    });
-
-    return headers;
-}
-
-const tocLinks = computedAsync(async () => props.page?.content?.content && walk(props.page?.content?.content));
+const tocLinks = computedAsync(async () => props.page?.content?.content && jsonNodeToTocLinks(props.page?.content?.content));
 
 const accordionItems = computed(() =>
     [
