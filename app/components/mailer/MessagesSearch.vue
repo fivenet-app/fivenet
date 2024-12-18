@@ -29,7 +29,7 @@ const groups = [
                     id: message.id,
                     label: message.title,
                     suffix: `${t('common.sender')}: ${message.sender?.email} - ${t('common.sent_at')}: ${d(toDate(message.createdAt), 'compact')}`,
-                    to: `/mail?email=${selectedEmail.value?.id}&thread=${message.threadId}&message=${message.id}`,
+                    to: `/mail?email=${selectedEmail.value?.id}&thread=${message.threadId}&msg=${message.id}`,
                 }));
             } catch (e) {
                 handleGRPCError(e as RpcError);
