@@ -1,7 +1,6 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
@@ -11,12 +10,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.requiresAuth === false) {
         if ((to.meta.redirectIfAuthed === undefined || to.meta.redirectIfAuthed) && username.value !== null) {
-            const settingsStore = useSettingsStore();
-            const { startpage } = storeToRefs(settingsStore);
-
-            const redirect = from.query.redirect ?? startpage.value ?? '/overview';
-            const path = redirect || '/overview';
-            const url = new URL('https://example.com' + path);
+            const url = getRedirect(from);
 
             // @ts-expect-error route should be valid, as we test it against a valid URL list
             return navigateTo({
@@ -34,7 +28,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         return true;
     }
 
-    const redirect = to.query.redirect ?? to.fullPath;
+    const redirect = getRedirectPath((to.query.redirect ?? to.fullPath) as string);
     // Check if user has access token
     if (username.value !== null) {
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
@@ -45,20 +39,13 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                 try {
                     await authStore.chooseCharacter(authStore.lastCharID);
 
-                    if (redirect !== undefined) {
-                        const path = redirect || '/overview';
-                        const url = new URL('https://example.com' + path);
-                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
-                        return await navigateTo({
-                            path: url.pathname,
-                            query: parseQuery(url.search),
-                            hash: url.hash,
-                        });
-                    } else {
-                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
-                        const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
-                        return await navigateTo(target);
-                    }
+                    const url = parseRedirectURL(redirect);
+                    // @ts-expect-error route should be valid, as we test it against a valid list of URLs
+                    return await navigateTo({
+                        path: url.pathname,
+                        query: parseQuery(url.search),
+                        hash: url.hash,
+                    });
                 } catch (_) {
                     setActiveChar(null);
                     setPermissions([]);

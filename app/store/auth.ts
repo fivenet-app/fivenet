@@ -20,7 +20,7 @@ export interface AuthState {
     // Temporary
     activeChar: null | User;
     loggingIn: boolean;
-    loginError: null | TranslateItem;
+    loginError: null | RpcError;
     permissions: string[];
     jobProps: null | JobProps;
 }
@@ -52,9 +52,9 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = true;
             this.loginError = null;
         },
-        loginStop(errorMessage: null | TranslateItem): void {
+        loginStop(error: null | RpcError): void {
             this.loggingIn = false;
-            this.loginError = errorMessage;
+            this.loginError = error;
         },
         setAccessTokenExpiration(expiration: null | string | Date): void {
             if (typeof expiration === 'string') {
@@ -140,7 +140,6 @@ export const useAuthStore = defineStore('auth', {
                 this.loginStop(e as RpcError);
                 this.setAccessTokenExpiration(null);
                 handleGRPCError(e as RpcError);
-                throw e;
             }
         },
         async doLogout(): Promise<void> {
@@ -160,8 +159,6 @@ export const useAuthStore = defineStore('auth', {
                     },
                     type: NotificationType.ERROR,
                 });
-
-                throw e;
             } finally {
                 this.clearAuthInfo();
                 this.loginStop(null);

@@ -89,7 +89,7 @@ defineShortcuts({
                                 {{ thread.title }}
                             </span>
 
-                            <UChip v-if="thread.state?.unread" />
+                            <UChip v-if="thread.state?.unread" class="mr-1" />
                         </div>
 
                         <UTooltip :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')" class="shrink-0">

@@ -32,7 +32,7 @@ const { isSuperuser } = useAuth();
 const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
-const { draft: state, addressBook, selectedEmail, selectedThread } = storeToRefs(mailerStore);
+const { draft: state, addressBook, messages, selectedEmail, selectedThread } = storeToRefs(mailerStore);
 
 const schema = z.object({
     title: z.string().min(1).max(255),
@@ -45,24 +45,20 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const {
-    data: thread,
-    pending: loading,
-    refresh: refresh,
-} = useLazyAsyncData(`mailer-thread:${props.threadId}`, () => mailerStore.getThread(props.threadId), {
-    watch: [() => props.threadId],
-});
+const { data: thread, pending: loading } = useLazyAsyncData(
+    `mailer-thread:${props.threadId}`,
+    () => mailerStore.getThread(props.threadId),
+    {
+        watch: [() => props.threadId],
+    },
+);
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() =>
     messages.value?.pagination?.pageSize ? messages.value?.pagination?.pageSize * (page.value - 1) : 0,
 );
 
-const {
-    data: messages,
-    pending: messagesLoading,
-    refresh: refreshMessages,
-} = useLazyAsyncData(
+const { pending: messagesLoading, refresh: refreshMessages } = useLazyAsyncData(
     `mailer-thread:${props.threadId}-messages:${page.value}`,
     async () => {
         const response = await mailerStore.listThreadMessages({
@@ -279,7 +275,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </div>
         </div>
 
-        <Pagination v-if="messages?.pagination" v-model="page" :pagination="messages?.pagination" />
+        <Pagination v-if="messages?.pagination" v-model="page" :pagination="messages?.pagination" :refresh="refreshMessages" />
 
         <UDashboardToolbar
             v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"

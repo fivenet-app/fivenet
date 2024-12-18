@@ -58,11 +58,11 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		}
 	}
 
-	if req.Unread != nil && *req.Unread {
-		wheres = append(wheres, tThreadsState.Unread.IS_NOT_NULL().AND(tThreadsState.Unread.IS_TRUE()))
+	if req.Unread != nil {
+		wheres = append(wheres, tThreadsState.Unread.IS_NOT_NULL().AND(tThreadsState.Unread.EQ(jet.Bool(*req.Unread))))
 	}
-	if req.Archived != nil && *req.Archived {
-		wheres = append(wheres, tThreadsState.Archived.IS_NOT_NULL().AND(tThreadsState.Archived.IS_TRUE()))
+	if req.Archived != nil {
+		wheres = append(wheres, tThreadsState.Archived.IS_NOT_NULL().AND(tThreadsState.Archived.EQ(jet.Bool(*req.Archived))))
 	}
 
 	countStmt := tThreads.
@@ -133,7 +133,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		)).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tThreads.ID).
-		ORDER_BY(tThreads.ID.DESC()).
+		ORDER_BY(tThreads.UpdatedAt.DESC(), tThreads.CreatedAt.DESC(), tThreads.ID.DESC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Threads); err != nil {

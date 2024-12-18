@@ -30,7 +30,7 @@ const { isSuperuser } = useAuth();
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { emails, selectedEmail, selectedThread, draft } = storeToRefs(mailerStore);
+const { draft, emails, selectedEmail, selectedThread, threads } = storeToRefs(mailerStore);
 
 const tabItems = [
     {
@@ -70,11 +70,7 @@ const offset = computed(() =>
     threads.value?.pagination?.pageSize ? threads.value?.pagination?.pageSize * (page.value - 1) : 0,
 );
 
-const {
-    data: threads,
-    pending: loading,
-    refresh: refresh,
-} = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
+const { pending: loading, refresh: refresh } = useLazyAsyncData(`mailer-thread:${page.value}`, () => loadThreads(), {
     immediate: false,
 });
 
@@ -92,16 +88,9 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
             offset: offset.value,
         },
         emailIds: [selectedEmail.value.id],
-        unread: selectedTab.value === 1,
-        archived: selectedTab.value === 2,
+        unread: selectedTab.value === 1 ? true : undefined,
+        archived: selectedTab.value === 2 ? true : false,
     });
-
-    if (selectedThread.value) {
-        const thread = resp?.threads.filter((t) => t.id === selectedThread.value?.id);
-        if (!thread) {
-            resp?.threads.unshift(selectedThread.value);
-        }
-    }
 
     return resp;
 }
@@ -126,13 +115,7 @@ watch(selectedThreadId, async () => {
 });
 
 // Refresh threads when unread tab is selected
-watch(selectedTab, async () => {
-    if (selectedTab.value !== 1) {
-        return;
-    }
-
-    await refresh();
-});
+watch(selectedTab, async () => await refresh());
 
 const threadState = computed(() => selectedThread.value?.state);
 
@@ -153,9 +136,12 @@ function updateQuery(): void {
         router.replace({
             query: route.query.tab
                 ? {
+                      ...route.query,
                       tab: route.query.tab,
                   }
-                : {},
+                : {
+                      ...route.query,
+                  },
         });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top

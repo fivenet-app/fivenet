@@ -7,6 +7,7 @@ const props = defineProps<{
     error?: Error;
     retry?: () => Promise<unknown>;
     retryMessage?: string;
+    close?: () => void;
 }>();
 
 const err = ref<CommonError | undefined>();
@@ -58,5 +59,16 @@ const { start } = useTimeoutFn(() => (disabled.value = false), 1250);
                   ]
                 : []
         "
+        :close-button="
+            close !== undefined
+                ? {
+                      icon: 'i-mdi-window-close',
+                      color: 'white',
+                      variant: 'link',
+                      padded: false,
+                  }
+                : undefined
+        "
+        @close="close && close()"
     />
 </template>

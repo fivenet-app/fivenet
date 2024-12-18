@@ -102,6 +102,7 @@ CREATE TABLE
         `creator_email_id` bigint(20) unsigned NOT NULL,
         `creator_id` int(11) DEFAULT NULL,
         PRIMARY KEY (`id`),
+        KEY `idx_fivenet_mailer_threads_updated_at` (`updated_at`),
         KEY `idx_fivenet_mailer_threads_deleted_at` (`deleted_at`),
         CONSTRAINT `fk_fivenet_mailer_threads_creator_email_id` FOREIGN KEY (`creator_email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;

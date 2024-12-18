@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { useAuthStore } from '~/store/auth';
 import { useCookiesStore } from '~/store/cookies';
 import { useSettingsStore } from '~/store/settings';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     modelValue: boolean;
@@ -113,20 +114,12 @@ function togglePasswordVisibility() {
             </template>
         </div>
 
-        <UAlert
+        <DataErrorBlock
             v-if="loginError"
             class="mt-2"
-            icon="i-mdi-alert"
             :title="$t('components.auth.LoginForm.login_error')"
-            :description="$t(loginError.key, loginError.parameters ?? {})"
-            color="red"
-            :close-button="{
-                icon: 'i-mdi-window-close',
-                color: 'gray',
-                variant: 'link',
-                padded: false,
-            }"
-            @close="loginError = null"
+            :error="loginError"
+            :close="() => (loginError = null)"
         />
     </UForm>
 </template>

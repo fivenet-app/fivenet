@@ -1,6 +1,5 @@
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
-import type { Message } from '~~/gen/ts/resources/mailer/message';
 import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
@@ -47,7 +46,8 @@ export interface MailerState {
 
     unreadCount: number;
 
-    messages: Message[];
+    threads: ListThreadsResponse | undefined;
+    messages: ListThreadMessagesResponse | undefined;
 
     addressBook: { label: string; name?: string }[];
 }
@@ -71,7 +71,8 @@ export const useMailerStore = defineStore('mailer', {
 
             unreadCount: 0,
 
-            messages: [],
+            threads: undefined,
+            messages: undefined,
 
             addressBook: [],
         }) as MailerState,
@@ -144,35 +145,45 @@ export const useMailerStore = defineStore('mailer', {
                 });
                 useSound().play({ name: 'notification' });
             } else if (event.data.oneofKind === 'threadDelete') {
-                // TODO
+                const id = event.data.threadDelete;
+                if (this.selectedThread?.id === id) {
+                    this.selectedThread = undefined;
+                }
+
+                // Remove thread if it is currently in our messagess list
+                const idx = this.threads?.threads.findIndex((t) => t.id === id);
+                if (idx !== undefined && idx > -1) {
+                    this.threads?.threads.splice(idx, 1);
+                }
             } else if (event.data.oneofKind === 'messageUpdate') {
-                // TODO
+                const data = event.data.messageUpdate;
                 // Update thread updated at time
+                const thread = this.threads?.threads.find((t) => t.id === data.threadId);
+                if (thread) {
+                    thread.updatedAt = toTimestamp(new Date());
+                }
 
                 // Handle email sent by blocked email
-                if (
-                    event.data.messageUpdate.sender?.email &&
-                    this.checkIfEmailBlocked(event.data.messageUpdate.sender?.email)
-                ) {
+                if (data.sender?.email && this.checkIfEmailBlocked(data.sender?.email)) {
                     // Make sure to set thread state accordingly (locally)
                     await this.setThreadState({
-                        threadId: event.data.messageUpdate.threadId,
+                        threadId: data.threadId,
                         archived: true,
                         muted: true,
                     });
                     return;
                 }
 
-                if (event.data.messageUpdate.senderId === this.selectedEmail?.id) {
+                if (data.senderId === this.selectedEmail?.id) {
                     return;
                 }
 
-                console.log('messageUpdate', event.data.messageUpdate);
+                console.log('messageUpdate', data);
 
                 // Only set unread state when message isn't from same email and the user isn't active on that thread
                 const state = await this.setThreadState({
-                    threadId: event.data.messageUpdate.threadId,
-                    unread: event.data.messageUpdate.threadId !== this.selectedThread?.id,
+                    threadId: data.threadId,
+                    unread: data.threadId !== this.selectedThread?.id,
                 });
                 if (state?.muted) {
                     return;
@@ -183,25 +194,36 @@ export const useMailerStore = defineStore('mailer', {
                     description: {
                         key: 'notifications.mailer.new_email.content',
                         parameters: {
-                            title: event.data.messageUpdate.title,
-                            from: event.data.messageUpdate.sender?.email ?? 'N/A',
+                            title: data.title,
+                            from: data.sender?.email ?? 'N/A',
                         },
                     },
                     type: NotificationType.INFO,
-                    actions: this.getNotificationActions(event.data.messageUpdate.threadId),
+                    actions: this.getNotificationActions(data.threadId),
                 });
                 useSound().play({ name: 'notification' });
             } else if (event.data.oneofKind === 'messageDelete') {
-                // Nothing to do here
+                // Remove message if it is currently in our messagess list
+                const id = event.data.messageDelete;
+                const idx = this.messages?.messages.findIndex((t) => t.id === id);
+                if (idx !== undefined && idx > -1) {
+                    this.messages?.messages.splice(idx, 1);
+                }
             } else if (event.data.oneofKind === 'threadStateUpdate') {
-                if (this.selectedEmail?.id !== event.data.threadStateUpdate.emailId) {
+                const state = event.data.threadStateUpdate;
+                if (this.selectedEmail?.id !== state.emailId) {
                     return;
                 }
-                if (this.selectedThread?.id !== event.data.threadStateUpdate.threadId) {
+                if (this.selectedThread?.id !== state.threadId) {
                     return;
                 }
 
-                this.selectedThread.state = event.data.threadStateUpdate;
+                this.selectedThread.state = state;
+
+                const thread = this.threads?.threads.find((t) => t.id === state.threadId);
+                if (thread) {
+                    thread.state = state;
+                }
             } else {
                 logger.debug('Unknown MailerEvent type received:', event.data.oneofKind);
             }
@@ -214,13 +236,16 @@ export const useMailerStore = defineStore('mailer', {
                 }
 
                 if (this.emails.length > 0) {
-                    this.listThreads({
-                        pagination: {
-                            offset: 0,
+                    this.listThreads(
+                        {
+                            pagination: {
+                                offset: 0,
+                            },
+                            emailIds: this.emails.map((e) => e.id),
+                            unread: true,
                         },
-                        emailIds: this.emails.map((e) => e.id),
-                        unread: true,
-                    });
+                        false,
+                    );
                 }
             } catch (_) {
                 /* empty */
@@ -358,10 +383,22 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Thread
-        async listThreads(req: ListThreadsRequest): Promise<ListThreadsResponse | undefined> {
+        async listThreads(req: ListThreadsRequest, store: boolean = true): Promise<ListThreadsResponse | undefined> {
             try {
                 const call = getGRPCMailerClient().listThreads(req);
                 const { response } = await call;
+
+                if (store) {
+                    this.threads = response;
+
+                    // Add selected thread to list to ensure there is no flickering between tab switches
+                    if (this.selectedThread) {
+                        const thread = response?.threads.filter((t) => t.id === this.selectedThread?.id);
+                        if (!thread) {
+                            response?.threads.unshift(this.selectedThread);
+                        }
+                    }
+                }
 
                 return response;
             } catch (e) {
@@ -481,6 +518,14 @@ export const useMailerStore = defineStore('mailer', {
                 },
             });
 
+            if (this.selectedThread && this.selectedThread?.id === state.threadId) {
+                this.selectedThread.state = response.state;
+            }
+            const thread = this.threads?.threads.find((t) => t.id === state.threadId);
+            if (thread) {
+                thread.state = response.state;
+            }
+
             if (notify) {
                 useNotificatorStore().add({
                     title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -502,7 +547,7 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().listThreadMessages(req);
                 const { response } = await call;
 
-                this.messages = response.messages;
+                this.messages = response;
 
                 return response;
             } catch (e) {
@@ -526,7 +571,7 @@ export const useMailerStore = defineStore('mailer', {
                 if (response.message) {
                     req.recipients.forEach((r) => this.addToAddressBook(r));
 
-                    this.messages.unshift(response.message);
+                    this.messages?.messages?.unshift(response.message);
                 }
 
                 return response;
@@ -602,14 +647,12 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         getNotificationActions(threadId?: string): NotificationActionI18n[] {
-            return useRoute().name !== 'mail'
-                ? [
-                      {
-                          label: { key: 'common.click_here' },
-                          to: threadId ? { name: 'mail', query: { thread: threadId }, hash: '#' } : { name: 'mail' },
-                      },
-                  ]
-                : [];
+            return [
+                {
+                    label: { key: 'common.click_here' },
+                    to: threadId ? { name: 'mail', query: { thread: threadId }, hash: '#' } : { name: 'mail' },
+                },
+            ];
         },
 
         // Address book

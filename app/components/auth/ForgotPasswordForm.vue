@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
-import { getErrorMessage } from '~/utils/errors';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     modelValue: boolean;
@@ -19,7 +19,7 @@ const canSubmit = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
 
-const accountError = ref<TranslateItem | undefined>();
+const accountError = ref<RpcError | undefined>();
 
 const schema = z.object({
     registrationToken: z.string().length(6).trim(),
@@ -50,8 +50,9 @@ async function forgotPassword(values: Schema): Promise<void> {
 
         emit('toggle');
     } catch (e) {
-        accountError.value = getErrorMessage(e as RpcError);
-        handleGRPCError(e as RpcError);
+        const err = e as RpcError;
+        accountError.value = err;
+        handleGRPCError(err);
         throw e;
     }
 }
@@ -117,19 +118,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.ForgotPassword.submit_button') }}
         </UButton>
 
-        <UAlert
+        <DataErrorBlock
             v-if="accountError"
             class="mt-2"
             :title="$t('components.auth.ForgotPassword.create_error')"
-            :description="$t(accountError.key, accountError.parameters ?? {})"
-            color="red"
-            :close-button="{
-                icon: 'i-mdi-window-close',
-                color: 'gray',
-                variant: 'link',
-                padded: false,
-            }"
-            @close="accountError = undefined"
+            :error="accountError"
+            :close="() => (accountError = undefined)"
         />
     </UForm>
 </template>
