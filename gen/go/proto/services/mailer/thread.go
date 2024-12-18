@@ -134,7 +134,7 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 		)).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tThreads.ID).
-		ORDER_BY(tThreads.UpdatedAt.DESC(), tThreads.CreatedAt.DESC(), tThreads.ID.DESC()).
+		ORDER_BY(jet.COALESCE(tThreads.UpdatedAt, tThreads.CreatedAt).DESC(), tThreads.ID.DESC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Threads); err != nil {
