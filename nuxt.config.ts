@@ -154,7 +154,10 @@ export default defineNuxtConfig({
                     proxyTimeout: 60 * 60 * 1000,
                     timeout: 60 * 60 * 1000,
                 },
-                '/api': 'http://localhost:8080',
+                '/api': {
+                    target: 'http://localhost:8080',
+                    changeOrigin: true,
+                },
             },
         },
     },
