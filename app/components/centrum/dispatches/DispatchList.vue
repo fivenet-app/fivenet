@@ -112,11 +112,7 @@ const columns = [
                 {{ $t('common.dispatches') }}
 
                 <UTooltip v-if="showButton" :text="$t('common.dispatches')">
-                    <UButton
-                        :to="{ name: 'centrum-dispatches' }"
-                        icon="i-mdi-archive"
-                        variant="link"
-                    />
+                    <UButton :to="{ name: 'centrum-dispatches' }" icon="i-mdi-archive" variant="link" />
                 </UTooltip>
             </h2>
 
