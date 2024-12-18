@@ -177,31 +177,37 @@ function removeReference(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
-                                                            <UButton
-                                                                :to="{
-                                                                    name: 'documents-id',
-                                                                    params: {
-                                                                        id: reference.targetDocumentId,
-                                                                    },
-                                                                }"
-                                                                target="_blank"
-                                                                :title="
+                                                            <UTooltip
+                                                                :text="
                                                                     $t('components.documents.document_managers.open_document')
                                                                 "
-                                                                variant="link"
-                                                                icon="i-mdi-open-in-new"
-                                                            />
+                                                            >
+                                                                <UButton
+                                                                    :to="{
+                                                                        name: 'documents-id',
+                                                                        params: {
+                                                                            id: reference.targetDocumentId,
+                                                                        },
+                                                                    }"
+                                                                    target="_blank"
+                                                                    variant="link"
+                                                                    icon="i-mdi-open-in-new"
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="
+                                                            <UTooltip
+                                                                :text="
                                                                     $t(
                                                                         'components.documents.document_managers.remove_reference',
                                                                     )
                                                                 "
-                                                                icon="i-mdi-file-document-minus"
-                                                                color="red"
-                                                                @click="removeReference(reference.id!)"
-                                                            />
+                                                            >
+                                                                <UButton
+                                                                    icon="i-mdi-file-document-minus"
+                                                                    color="red"
+                                                                    @click="removeReference(reference.id!)"
+                                                                />
+                                                            </UTooltip>
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -265,35 +271,53 @@ function removeReference(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.links')"
-                                                                color="blue"
-                                                                icon="i-mdi-link"
-                                                                @click="addReferenceClipboard(document, DocReference.LINKED)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.links')"
+                                                            >
+                                                                <UButton
+                                                                    color="blue"
+                                                                    icon="i-mdi-link"
+                                                                    @click="
+                                                                        addReferenceClipboard(document, DocReference.LINKED)
+                                                                    "
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.solves')"
-                                                                color="green"
-                                                                icon="i-mdi-check"
-                                                                @click="addReferenceClipboard(document, DocReference.SOLVES)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.solves')"
+                                                            >
+                                                                <UButton
+                                                                    color="green"
+                                                                    icon="i-mdi-check"
+                                                                    @click="
+                                                                        addReferenceClipboard(document, DocReference.SOLVES)
+                                                                    "
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.closes')"
-                                                                color="red"
-                                                                icon="i-mdi-close-box"
-                                                                @click="addReferenceClipboard(document, DocReference.CLOSES)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.closes')"
+                                                            >
+                                                                <UButton
+                                                                    color="red"
+                                                                    icon="i-mdi-close-box"
+                                                                    @click="
+                                                                        addReferenceClipboard(document, DocReference.CLOSES)
+                                                                    "
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.deprecates')"
-                                                                color="amber"
-                                                                icon="i-mdi-lock-clock"
-                                                                @click="
-                                                                    addReferenceClipboard(document, DocReference.DEPRECATES)
-                                                                "
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.deprecates')"
+                                                            >
+                                                                <UButton
+                                                                    color="amber"
+                                                                    icon="i-mdi-lock-clock"
+                                                                    @click="
+                                                                        addReferenceClipboard(document, DocReference.DEPRECATES)
+                                                                    "
+                                                                />
+                                                            </UTooltip>
                                                         </div>
                                                     </td>
                                                 </tr>

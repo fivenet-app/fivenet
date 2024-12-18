@@ -41,18 +41,19 @@ const dispatchStatusColor = computed(() => dispatchStatusToBGColor(props.status?
         <template #panel>
             <div class="inline-flex min-w-48 flex-col gap-1 p-4">
                 <div class="flex items-center gap-2">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-car-emergency"
-                        :title="$t('common.detail', 2)"
-                        @click="
-                            modal.open(DispatchDetailsByIDSlideover, {
-                                dispatchId: status.dispatchId,
-                            })
-                        "
-                    >
-                        {{ $t('common.detail', 2) }}
-                    </UButton>
+                    <UTooltip :text="$t('common.detail', 2)">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-car-emergency"
+                            @click="
+                                modal.open(DispatchDetailsByIDSlideover, {
+                                    dispatchId: status.dispatchId,
+                                })
+                            "
+                        >
+                            {{ $t('common.detail', 2) }}
+                        </UButton>
+                    </UTooltip>
                 </div>
 
                 <p class="text-base font-semibold leading-none text-gray-900 dark:text-white">DSP-{{ status.dispatchId }}</p>

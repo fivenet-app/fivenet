@@ -98,22 +98,22 @@ watch(dispatch, () => {
                     <div class="inline-flex items-center">
                         <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
 
-                        <p class="max-w-80 truncate" :title="dispatch.message">
+                        <p class="max-w-80 truncate">
                             {{ dispatch.message }}
                         </p>
 
-                        <UButton
-                            v-if="can('CentrumService.DeleteDispatch').value"
-                            variant="link"
-                            icon="i-mdi-trash-can"
-                            color="red"
-                            :title="$t('common.delete')"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
-                                })
-                            "
-                        />
+                        <UTooltip v-if="can('CentrumService.DeleteDispatch').value" :text="$t('common.delete')">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-trash-can"
+                                color="red"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => dispatch && deleteDispatch(dispatch.id),
+                                    })
+                                "
+                            />
+                        </UTooltip>
                     </div>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />

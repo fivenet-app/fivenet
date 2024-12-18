@@ -102,9 +102,11 @@ const modal = useModal();
             <div class="inline-flex items-center gap-4">
                 <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
 
-                <span class="text-left" :title="`ID: ${account.externalId}`">
-                    {{ account.username }}
-                </span>
+                <UTooltip :text="`ID: ${account.externalId}`">
+                    <span class="text-left">
+                        {{ account.username }}
+                    </span>
+                </UTooltip>
             </div>
         </template>
     </UPageCard>

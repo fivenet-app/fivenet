@@ -48,14 +48,11 @@ const grouped = computedAsync(async () => {
     <div class="flex h-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
-                {{ $t('common.unit') }}
-                <UButton
-                    v-if="can('CentrumService.CreateOrUpdateUnit').value"
-                    :to="{ name: 'centrum-units' }"
-                    :title="$t('common.unit')"
-                    icon="i-mdi-cog"
-                    variant="link"
-                />
+                {{ $t('common.unit', 2) }}
+
+                <UTooltip v-if="can('CentrumService.CreateOrUpdateUnit').value" :text="$t('common.unit', 2)">
+                    <UButton :to="{ name: 'centrum-units' }" icon="i-mdi-cog" variant="link" />
+                </UTooltip>
             </h2>
         </div>
         <div class="@container flex-1">

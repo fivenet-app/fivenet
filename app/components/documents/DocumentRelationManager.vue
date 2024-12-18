@@ -161,29 +161,36 @@ function removeRelation(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
-                                                            <UButton
-                                                                :to="{
-                                                                    name: 'citizens-id',
-                                                                    params: {
-                                                                        id: relation.targetUserId,
-                                                                    },
-                                                                }"
-                                                                target="_blank"
-                                                                :title="
+                                                            <UTooltip
+                                                                :text="
                                                                     $t('components.documents.document_managers.open_citizen')
                                                                 "
-                                                                variant="link"
-                                                                icon="i-mdi-open-in-new"
-                                                            />
-                                                            <UButton
-                                                                :title="
+                                                            >
+                                                                <UButton
+                                                                    :to="{
+                                                                        name: 'citizens-id',
+                                                                        params: {
+                                                                            id: relation.targetUserId,
+                                                                        },
+                                                                    }"
+                                                                    target="_blank"
+                                                                    variant="link"
+                                                                    icon="i-mdi-open-in-new"
+                                                                />
+                                                            </UTooltip>
+
+                                                            <UTooltip
+                                                                :text="
                                                                     $t('components.documents.document_managers.remove_relation')
                                                                 "
-                                                                variant="link"
-                                                                icon="i-mdi-account-minus"
-                                                                color="red"
-                                                                @click="removeRelation(relation.id!)"
-                                                            />
+                                                            >
+                                                                <UButton
+                                                                    variant="link"
+                                                                    icon="i-mdi-account-minus"
+                                                                    color="red"
+                                                                    @click="removeRelation(relation.id!)"
+                                                                />
+                                                            </UTooltip>
                                                         </div>
                                                     </td>
                                                 </tr>

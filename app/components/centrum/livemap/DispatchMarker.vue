@@ -82,17 +82,13 @@ const zIndexOffset = computed(() => {
                         </span>
                     </UButton>
 
-                    <UButton
-                        :title="$t('common.detail', 2)"
-                        variant="link"
-                        icon="i-mdi-car-emergency"
-                        :padded="false"
-                        @click="selected(dispatch.id)"
-                    >
-                        <span class="truncate">
-                            {{ $t('common.detail', 2) }}
-                        </span>
-                    </UButton>
+                    <UTooltip :text="$t('common.detail', 2)">
+                        <UButton variant="link" icon="i-mdi-car-emergency" :padded="false" @click="selected(dispatch.id)">
+                            <span class="truncate">
+                                {{ $t('common.detail', 2) }}
+                            </span>
+                        </UButton>
+                    </UTooltip>
                 </div>
 
                 <p class="inline-flex items-center gap-1">
