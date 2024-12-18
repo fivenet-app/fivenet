@@ -111,13 +111,13 @@ const columns = [
             <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">
                 {{ $t('common.dispatches') }}
 
-                <UButton
-                    v-if="showButton"
-                    :to="{ name: 'centrum-dispatches' }"
-                    :title="$t('common.dispatches')"
-                    icon="i-mdi-archive"
-                    variant="link"
-                />
+                <UTooltip v-if="showButton" :text="$t('common.dispatches')">
+                    <UButton
+                        :to="{ name: 'centrum-dispatches' }"
+                        icon="i-mdi-archive"
+                        variant="link"
+                    />
+                </UTooltip>
             </h2>
 
             <DispatchStatusBreakdown v-if="dispatches === undefined" class="font-semibold text-gray-100" />
