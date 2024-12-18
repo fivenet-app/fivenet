@@ -11,7 +11,7 @@ import { useMailerStore } from './mailer';
 const logger = useLogger('📣 Notificator');
 
 // In seconds
-const maxBackoffTime = 30;
+const maxBackoffTime = 20;
 const initialReconnectBackoffTime = 2;
 
 export interface NotificationsState {
@@ -205,6 +205,10 @@ export const useNotificatorStore = defineStore('notifications', {
         },
 
         async restartStream(): Promise<void> {
+            if (this.abort === undefined || this.abort.signal.aborted) {
+                return;
+            }
+
             this.reconnecting = true;
 
             // Reset back off time when over the max back off time

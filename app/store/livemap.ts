@@ -8,7 +8,7 @@ import { useSettingsStore } from './settings';
 const logger = useLogger('🗺️ Livemap');
 
 // In seconds
-const maxBackOffTime = 10;
+const maxBackOffTime = 15;
 const initialReconnectBackoffTime = 1.75;
 
 export interface LivemapState {
@@ -182,6 +182,10 @@ export const useLivemapStore = defineStore('livemap', {
         },
 
         async restartStream(): Promise<void> {
+            if (this.abort === undefined || this.abort.signal.aborted) {
+                return;
+            }
+
             this.reconnecting = true;
 
             // Reset back off time when over 10 seconds

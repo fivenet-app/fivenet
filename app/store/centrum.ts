@@ -18,6 +18,7 @@ const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
 
 // In seconds
+const maxBackOffTime = 7;
 const initialReconnectBackoffTime = 0.75;
 
 export interface CentrumState {
@@ -603,19 +604,22 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             } catch (e) {
                 const error = e as RpcError;
-                if (error) {
-                    // Only restart when not cancelled and abort is still valid
-                    if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                        logger.error('Stream failed', error.code, error.message, error.cause);
+                // Only restart when not cancelled and abort is still valid
+                if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
+                    logger.error('Stream failed', error.code, error.message, error.cause);
 
-                        // Only set error if we don't need to restart
-                        if (this.abort !== undefined && !this.abort?.signal.aborted) {
-                            this.restartStream(isCenter);
-                        } else {
-                            this.error = error;
-                        }
+                    // Only set error if we don't need to restart
+                    if (this.abort !== undefined && !this.abort?.signal.aborted) {
+                        this.restartStream(isCenter);
                     } else {
-                        this.error = undefined;
+                        this.error = error;
+                    }
+                } else {
+                    this.error = undefined;
+
+                    // Only restart stream when not aborted
+                    if (!this.abort?.signal.aborted) {
+                        await this.restartStream();
                     }
                 }
             }
@@ -638,10 +642,14 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         async restartStream(isCenter?: boolean): Promise<void> {
+            if (this.abort === undefined || this.abort.signal.aborted) {
+                return;
+            }
+
             this.reconnecting = true;
 
-            // Reset back off time when over 10 seconds
-            if (this.reconnectBackoffTime > 7) {
+            // Reset back off time when over 7 seconds
+            if (this.reconnectBackoffTime > maxBackOffTime) {
                 this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;

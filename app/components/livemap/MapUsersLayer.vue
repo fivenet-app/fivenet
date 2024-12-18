@@ -40,7 +40,14 @@ onBeforeMount(async () => {
     }, 50);
 });
 
-onBeforeUnmount(async () => await stopStream());
+onBeforeRouteLeave(async (to, _) => {
+    // Don't end stream if user is switching to livemap/centrum page(s)
+    if (to.path.startsWith('/livemap') || to.path.startsWith('/centrum')) {
+        return;
+    }
+
+    await stopStream();
+});
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());
