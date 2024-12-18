@@ -30,7 +30,7 @@ const { isSuperuser } = useAuth();
 const modal = useModal();
 
 const mailerStore = useMailerStore();
-const { draft, emails, selectedEmail, selectedThread, threads } = storeToRefs(mailerStore);
+const { draft, emails, selectedEmail, selectedThread, threads, unreadThreadIds } = storeToRefs(mailerStore);
 
 const tabItems = [
     {
@@ -81,6 +81,7 @@ async function loadThreads(): Promise<ListThreadsResponse | undefined> {
 
     if (selectedEmail.value.settings === undefined) {
         await mailerStore.getEmail(selectedEmail.value.id);
+        unreadThreadIds.value = [];
     }
 
     const resp = await mailerStore.listThreads({

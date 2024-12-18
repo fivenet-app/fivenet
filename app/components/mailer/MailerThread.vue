@@ -45,6 +45,18 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+function resetForm(): void {
+    if (selectedThread.value) {
+        if (state.value.title === '') {
+            state.value.title = generateResponseTitle(selectedThread.value);
+        }
+
+        if ((!state.value.content || state.value.content === '<p><br></p>') && !!selectedEmail.value?.settings?.signature) {
+            state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
+        }
+    }
+}
+
 const { data: thread, pending: loading } = useLazyAsyncData(
     `mailer-thread:${props.threadId}`,
     () => mailerStore.getThread(props.threadId),
@@ -69,15 +81,7 @@ const { pending: messagesLoading, refresh: refreshMessages } = useLazyAsyncData(
             threadId: props.threadId,
         });
 
-        if (selectedThread.value) {
-            if (state.value.title === '') {
-                state.value.title = generateResponseTitle(selectedThread.value);
-            }
-
-            if ((!state.value.content || state.value.content === '<p><br></p>') && !!selectedEmail.value?.settings?.signature) {
-                state.value.content = '<p><br></p><p><br></p>' + selectedEmail.value?.settings?.signature;
-            }
-        }
+        resetForm();
 
         return response;
     },
@@ -88,15 +92,17 @@ watch(offset, async () => refreshMessages());
 
 watchDebounced(
     selectedThread,
-    async () =>
+    async (val) =>
+        props.threadId === val?.id &&
+        thread.value?.state?.unread !== false &&
         canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) &&
         (await mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
         })),
     {
-        debounce: 850,
-        maxWait: 3000,
+        debounce: 500,
+        maxWait: 2500,
     },
 );
 
@@ -128,8 +134,7 @@ async function postMessage(values: Schema): Promise<void> {
     });
 
     // Clear draft data
-    state.value.title = '';
-    state.value.content = '';
+    resetForm();
     state.value.recipients = [];
 }
 
@@ -227,7 +232,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UDivider>
                     <GenericTime :value="message.createdAt" type="short" />
 
-                    <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="absolute right-0">
+                    <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="ml-2">
                         <UButton
                             icon="i-mdi-trash-can-outline"
                             color="red"

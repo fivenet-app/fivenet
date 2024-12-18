@@ -205,6 +205,25 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	recipients, err := s.getThreadRecipients(ctx, tx, req.Message.ThreadId)
+	if err != nil {
+		return nil, errorsmailer.ErrFailedQuery
+	}
+
+	emailIds := []uint64{}
+	for _, ua := range recipients {
+		// Skip sender email id
+		if ua.EmailId == senderEmail.Id {
+			continue
+		}
+
+		emailIds = append(emailIds, ua.EmailId)
+	}
+
+	if err := s.setUnreadState(ctx, tx, req.Message.ThreadId, senderEmail.Id, emailIds); err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -215,34 +234,13 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
+	s.sendUpdate(ctx, &mailer.MailerEvent{
+		Data: &mailer.MailerEvent_MessageUpdate{
+			MessageUpdate: message,
+		},
+	}, emailIds...)
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
-
-	recipients, err := s.getThreadRecipients(ctx, req.Message.ThreadId)
-	if err != nil {
-		return nil, errorsmailer.ErrFailedQuery
-	}
-
-	if len(recipients) > 0 {
-		emailIds := []uint64{}
-		for _, ua := range recipients {
-			// Skip sender email id
-			if ua.EmailId == senderEmail.Id {
-				continue
-			}
-
-			emailIds = append(emailIds, ua.EmailId)
-		}
-
-		if err := s.setUnreadState(ctx, s.db, message.ThreadId, senderEmail.Id, emailIds); err != nil {
-			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
-		}
-
-		s.sendUpdate(ctx, &mailer.MailerEvent{
-			Data: &mailer.MailerEvent_MessageUpdate{
-				MessageUpdate: message,
-			},
-		}, emailIds...)
-	}
 
 	return &PostMessageResponse{
 		Message: message,

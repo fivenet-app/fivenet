@@ -41,7 +41,7 @@ func (s *Server) handleRecipientsChanges(ctx context.Context, tx qrm.DB, threadI
 	return nil
 }
 
-func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*mailer.ThreadRecipientEmail, error) {
+func (s *Server) getThreadRecipients(ctx context.Context, tx qrm.DB, threadId uint64) ([]*mailer.ThreadRecipientEmail, error) {
 	tThreadsRecipients := tThreadsRecipients.AS("thread_recipient_email")
 	stmt := tThreadsRecipients.
 		SELECT(
@@ -65,7 +65,7 @@ func (s *Server) getThreadRecipients(ctx context.Context, threadId uint64) ([]*m
 		))
 
 	recipients := []*mailer.ThreadRecipientEmail{}
-	if err := stmt.QueryContext(ctx, s.db, &recipients); err != nil {
+	if err := stmt.QueryContext(ctx, tx, &recipients); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}

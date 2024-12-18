@@ -205,7 +205,7 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, emailId uint64,
 	}
 
 	if withRecipients {
-		recipients, err := s.getThreadRecipients(ctx, threadId)
+		recipients, err := s.getThreadRecipients(ctx, s.db, threadId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 		}
