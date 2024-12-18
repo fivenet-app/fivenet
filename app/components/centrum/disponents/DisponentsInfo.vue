@@ -35,8 +35,6 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
     await takeControl(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 850));
 }, 1000);
 
-const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));
-
 if (!props.hideJoin) {
     defineShortcuts({
         'c-q': () => onSubmitThrottle(!isDisponent.value),
@@ -46,20 +44,21 @@ if (!props.hideJoin) {
 
 <template>
     <div class="flex w-full items-center justify-items-center gap-2">
-        <UButton
-            :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
-            :color="getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'green'"
-            truncate
-            :title="disponentsNames"
-            @click="modal.open(DisponentsModal, {})"
-        >
-            <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
-                {{ $t('common.disponent', disponents.length) }}
-            </template>
-            <template v-else>
-                {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
-            </template>
-        </UButton>
+        <UTooltip :text="usersToLabel(disponents)">
+            <UButton
+                :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
+                :color="getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'green'"
+                truncate
+                @click="modal.open(DisponentsModal, {})"
+            >
+                <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
+                    {{ $t('common.disponent', disponents.length) }}
+                </template>
+                <template v-else>
+                    {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
+                </template>
+            </UButton>
+        </UTooltip>
 
         <template v-if="!hideJoin">
             <UTooltip :text="`${$t('common.join')}/ ${$t('common.leave')}`" :shortcuts="['C', 'Q']">

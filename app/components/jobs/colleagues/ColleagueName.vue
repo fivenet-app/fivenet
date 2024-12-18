@@ -10,7 +10,7 @@ defineProps<{
 <template>
     <span>
         {{ colleague.props?.namePrefix ? colleague.props?.namePrefix + ' ' : '' }}{{ colleague.firstname }}
-        {{ colleague.lastname }} {{ colleague.props?.nameSuffix ? colleague.props?.nameSuffix + ' ' : '' }}
+        {{ colleague.lastname }}{{ colleague.props?.nameSuffix ? ' ' + colleague.props?.nameSuffix : '' }}
         <template v-if="birthday"> ({{ colleague.dateofbirth }}) </template>
     </span>
 </template>

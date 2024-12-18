@@ -6,7 +6,9 @@
         "moalamri.inline-fold",
         "yoavbls.pretty-ts-errors",
         "lokalise.i18n-ally",
-        "dbaeumer.vscode-eslint"
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "tombonnike.vscode-status-bar-format-toggle"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

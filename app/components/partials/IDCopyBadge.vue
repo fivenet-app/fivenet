@@ -52,17 +52,19 @@ function click(): void {
 </script>
 
 <template>
-    <UButton
-        :ui="{ round: 'rounded-md', base: '' }"
-        :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
-        :variant="variant"
-        :padded="padded"
-        :size="size"
-        class="break-keep"
-        @click="click"
-    >
-        <span class="hidden sm:block">
-            <template v-if="prefix">{{ prefix }}-</template>{{ id }}
-        </span>
-    </UButton>
+    <UTooltip :text="$t('common.copy')">
+        <UButton
+            :ui="{ round: 'rounded-md', base: '' }"
+            :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
+            :variant="variant"
+            :padded="padded"
+            :size="size"
+            class="break-keep"
+            @click="click"
+        >
+            <span class="hidden sm:block">
+                <template v-if="prefix">{{ prefix }}-</template>{{ id }}
+            </span>
+        </UButton>
+    </UTooltip>
 </template>
