@@ -119,10 +119,6 @@ export const useMailerStore = defineStore('mailer', {
                 }
 
                 if (event.data.threadUpdate.creatorEmailId === this.selectedEmail?.id) {
-                    await this.setThreadState({
-                        threadId: event.data.threadUpdate.id,
-                        unread: false,
-                    });
                     return;
                 }
 
@@ -214,11 +210,10 @@ export const useMailerStore = defineStore('mailer', {
                 if (this.selectedEmail?.id !== state.emailId) {
                     return;
                 }
-                if (this.selectedThread?.id !== state.threadId) {
-                    return;
-                }
 
-                this.selectedThread.state = state;
+                if (this.selectedThread?.id === state.threadId) {
+                    this.selectedThread.state = state;
+                }
 
                 const thread = this.threads?.threads.find((t) => t.id === state.threadId);
                 if (thread) {
@@ -235,18 +230,22 @@ export const useMailerStore = defineStore('mailer', {
                     await this.listEmails(true, 0, false);
                 }
 
-                if (this.emails.length > 0) {
-                    this.listThreads(
-                        {
-                            pagination: {
-                                offset: 0,
-                            },
-                            emailIds: this.emails.map((e) => e.id),
-                            unread: true,
-                        },
-                        false,
-                    );
+                if (this.emails.length === 0) {
+                    this.unreadCount = 0;
+                    return;
                 }
+
+                const threads = await this.listThreads(
+                    {
+                        pagination: {
+                            offset: 0,
+                        },
+                        emailIds: this.emails.map((e) => e.id),
+                        unread: true,
+                    },
+                    false,
+                );
+                this.unreadCount = threads?.pagination?.totalCount ?? 0;
             } catch (_) {
                 /* empty */
             }
@@ -388,6 +387,18 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().listThreads(req);
                 const { response } = await call;
 
+                if (response.pagination?.offset === 0) {
+                    let count = 0;
+                    response.threads.forEach((t) => {
+                        if (t.state?.unread !== true) {
+                            return;
+                        }
+
+                        count++;
+                    });
+                    this.unreadCount = count;
+                }
+
                 if (store) {
                     this.threads = response;
 
@@ -451,13 +462,12 @@ export const useMailerStore = defineStore('mailer', {
                 const { response } = await call;
 
                 if (response.thread) {
-                    await this.setThreadState({
-                        threadId: response.thread.id,
-                        emailId: this.selectedEmail?.id,
-                        unread: false,
-                    });
-
                     req.recipients.forEach((r) => this.addToAddressBook(r));
+
+                    this.threads?.threads.unshift(response.thread);
+                    if (this.threads?.pagination) {
+                        this.threads.pagination.totalCount++;
+                    }
                 }
 
                 return response;

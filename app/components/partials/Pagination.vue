@@ -10,12 +10,14 @@ const props = withDefaults(
         disableBorder?: boolean;
         refresh?: () => Promise<void>;
         loading?: boolean;
+        hideText?: boolean;
     }>(),
     {
         infinite: false,
         disableBorder: false,
         refresh: undefined,
         loading: false,
+        hideText: false,
     },
 );
 
@@ -59,7 +61,7 @@ watchDebounced(
             class="@md:flex-row flex justify-between gap-1 px-3 py-3 md:items-center"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
-            <div class="flex flex-col items-center gap-2">
+            <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
                     keypath="components.partials.table_pagination.page_count"
                     tag="p"

@@ -28,7 +28,15 @@ async function checkAppointments(): Promise<void> {
 const { pause, resume } = useIntervalFn(
     async () => {
         pause();
-        checkAppointments();
+
+        if (can('MailerService.ListEmails').value) {
+            await mailerStore.checkEmails();
+        }
+
+        if (calendar.value.reminderTimes.length > 0) {
+            checkAppointments();
+        }
+
         resume();
     },
     (60 + randomNumber(2, 7)) * 1000,
@@ -38,20 +46,20 @@ const { pause, resume } = useIntervalFn(
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
     if (username.value !== null && activeChar.value !== null) {
-        if (calendar.value.reminderTimes.length > 0) {
-            useTimeoutFn(
-                async () => {
+        useTimeoutFn(
+            async () => {
+                if (can('MailerService.ListEmails').value) {
+                    await mailerStore.checkEmails();
+                }
+
+                if (calendar.value.reminderTimes.length > 0) {
                     await checkAppointments();
+                }
 
-                    if (can('MailerService.ListEmails').value) {
-                        await mailerStore.checkEmails();
-                    }
-
-                    resume();
-                },
-                randomNumber(1, 7) * 1000,
-            );
-        }
+                resume();
+            },
+            randomNumber(1, 7) * 1000,
+        );
 
         try {
             startStream();
@@ -59,9 +67,9 @@ async function toggleStream(): Promise<void> {
             logger.error('exception during notification stream', e);
         }
     } else if (abort.value !== undefined) {
+        pause();
         await stopStream();
         notificatorStore.$reset();
-        pause();
     }
 }
 

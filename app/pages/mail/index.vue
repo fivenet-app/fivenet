@@ -302,6 +302,7 @@ onBeforeMount(async () => {
                                 :pagination="threads?.pagination"
                                 :loading="loading"
                                 :refresh="refresh"
+                                hide-text
                             />
                         </template>
                     </ThreadList>

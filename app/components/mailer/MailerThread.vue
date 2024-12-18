@@ -95,8 +95,8 @@ watchDebounced(
             unread: false,
         })),
     {
-        debounce: 1150,
-        maxWait: 3250,
+        debounce: 850,
+        maxWait: 3000,
     },
 );
 

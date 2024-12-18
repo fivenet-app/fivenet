@@ -75,7 +75,8 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 					tThreadsRecipients.ThreadID.EQ(tThreads.ID),
 				).
 				LEFT_JOIN(tThreadsState,
-					tThreadsState.ThreadID.EQ(tThreads.ID),
+					tThreadsState.ThreadID.EQ(tThreads.ID).
+						AND(tThreadsState.EmailID.EQ(jet.Uint64(req.EmailIds[0]))),
 				),
 		).
 		WHERE(jet.AND(
