@@ -300,7 +300,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <div v-if="state.users.length > 0" class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
+                        <div
+                            v-if="state.users.length > 0"
+                            class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900"
+                        >
                             <ul role="list" class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3">
                                 <li
                                     v-for="user in state.users"
