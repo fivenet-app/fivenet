@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@nuxt/ui': 2.19.1
-
 importers:
 
   .:
@@ -1030,8 +1027,8 @@ packages:
     resolution: {integrity: sha512-AFbhEo10DP095/45EauinQJ5hJ3rJUmuuqltGguvc3WsvezZN+g8qNHLGWKu60FHQVizMrQY7VJ+zVlBXlQQkQ==}
     engines: {node: '>= 16'}
 
-  '@intlify/message-compiler@11.0.0-beta.2':
-    resolution: {integrity: sha512-/cJHP1n45Zlf9tbm/hudLrUwXzJZngR9OMTQk32H1S4lBjM2996wzKTHuLbaJJlJZNTTjnfWZUHPb+F6sE6p1Q==}
+  '@intlify/message-compiler@11.0.0-rc.1':
+    resolution: {integrity: sha512-TGw2uBfuTFTegZf/BHtUQBEKxl7Q/dVGLoqRIdw8lFsp9g/53sYn5iD+0HxIzdYjbWL6BTJMXCPUHp9PxDTRPw==}
     engines: {node: '>= 16'}
 
   '@intlify/shared@10.0.4':
@@ -1042,8 +1039,8 @@ packages:
     resolution: {integrity: sha512-bmsP4L2HqBF6i6uaMqJMcFBONVjKt+siGluRq4Ca4C0q7W2eMaVZr8iCgF9dKbcVXutftkC7D6z2SaSMmLiDyA==}
     engines: {node: '>= 16'}
 
-  '@intlify/shared@11.0.0-beta.2':
-    resolution: {integrity: sha512-N6ngJfFaVA0l2iLtx/SymgHOBW4wiS5Pyue7YmY/G+mrGjesi+S+U+u/Xlv6pZa/YIBfeM4QB07lI7rz1YqKLg==}
+  '@intlify/shared@11.0.0-rc.1':
+    resolution: {integrity: sha512-8tR1xe7ZEbkabTuE/tNhzpolygUn9OaYp9yuYAF4MgDNZg06C3Qny80bes2/e9/Wm3aVkPUlCw6WgU7mQd0yEg==}
     engines: {node: '>= 16'}
 
   '@intlify/shared@9.14.1':
@@ -1315,8 +1312,8 @@ packages:
   '@nuxt/ui-pro@1.6.0':
     resolution: {integrity: sha512-+5xF90x6hAgUowYmXQtDX1mIabk+G5qSzA3TsO5w/yo4LotUXA6SYxqSK/LqyfXWh2WNGvEdlHM6/UARbCcK0Q==}
 
-  '@nuxt/ui@2.19.1':
-    resolution: {integrity: sha512-uGTia2Yz5WyswDxvm7wqYV7ec/TiojdwSjkz/Jx7/+iIqem9aqO8AQ0BvXLBg3q7kGSb9HXo/kwx5JpK1S54JA==}
+  '@nuxt/ui@2.20.0':
+    resolution: {integrity: sha512-MfufGNlMAZgqte1C1WiaWTyz2q3Yun1O1ebsUBDSxdnnOAFFjBVQyjX4N4BGuH6KEMQXladSx3i791EFR7wp2w==}
 
   '@nuxt/vite-builder@3.14.1592':
     resolution: {integrity: sha512-GVS7vkBJAGv13ghmjgGrS2QVyzoqxQ5+cAUrMeMjKbY7GnRY7/uOkoLmznYx8E/U9HBUyHQa+wSN2ZfcSiEytQ==}
@@ -2467,8 +2464,8 @@ packages:
     peerDependencies:
       vue: '>=2.7 || >=3'
 
-  '@vueuse/integrations@11.3.0':
-    resolution: {integrity: sha512-5fzRl0apQWrDezmobchoiGTkGw238VWESxZHazfhP3RM7pDSiyXy18QbfYkILoYNTd23HPAfQTJpkUc5QbkwTw==}
+  '@vueuse/integrations@12.0.0':
+    resolution: {integrity: sha512-M16fkVp+i4je75I7uvifMbJKHFrjx2+0LuHEH9++iPJ11zc4SRy5NdRN0z2NR+a54eQ5Gs2Ds7pby5ST96zxCA==}
     peerDependencies:
       async-validator: ^4
       axios: ^1
@@ -2508,8 +2505,8 @@ packages:
       universal-cookie:
         optional: true
 
-  '@vueuse/math@11.3.0':
-    resolution: {integrity: sha512-rgLQGx1ES6gkuf8C4w1jwJa1DDtLYycDVUOjYWu7vYOfezJYjKPCIn5aefVDEQDTybBOqVpOqDovaWh+C+ZwLA==}
+  '@vueuse/math@12.0.0':
+    resolution: {integrity: sha512-Eqeqy2WyTJTdd6eAKYNLD4eK9IGKavX3hyRX9mI6VdNMcWQ7wH7M7Cd/vz95eS8Y/mkHumNJrzsWoLY+P2pOTQ==}
 
   '@vueuse/metadata@11.3.0':
     resolution: {integrity: sha512-pwDnDspTqtTo2HwfLw4Rp6yywuuBdYnPYDq+mO38ZYKGebCUQC/nVj/PXSiK9HX5otxLz8Fn7ECPbjiRz2CC3g==}
@@ -6959,7 +6956,7 @@ snapshots:
 
   '@antfu/install-pkg@0.4.1':
     dependencies:
-      package-manager-detector: 0.2.2
+      package-manager-detector: 0.2.7
       tinyexec: 0.3.1
 
   '@antfu/install-pkg@0.5.0':
@@ -7588,8 +7585,8 @@ snapshots:
 
   '@intlify/bundle-utils@10.0.0(vue-i18n@10.0.4(vue@3.5.13(typescript@5.7.2)))':
     dependencies:
-      '@intlify/message-compiler': 11.0.0-beta.2
-      '@intlify/shared': 11.0.0-beta.2
+      '@intlify/message-compiler': 11.0.0-rc.1
+      '@intlify/shared': 11.0.0-rc.1
       acorn: 8.14.0
       escodegen: 2.1.0
       estree-walker: 2.0.2
@@ -7620,16 +7617,16 @@ snapshots:
       '@intlify/shared': 10.0.4
       source-map-js: 1.2.1
 
-  '@intlify/message-compiler@11.0.0-beta.2':
+  '@intlify/message-compiler@11.0.0-rc.1':
     dependencies:
-      '@intlify/shared': 11.0.0-beta.2
+      '@intlify/shared': 11.0.0-rc.1
       source-map-js: 1.2.1
 
   '@intlify/shared@10.0.4': {}
 
   '@intlify/shared@10.0.5': {}
 
-  '@intlify/shared@11.0.0-beta.2': {}
+  '@intlify/shared@11.0.0-rc.1': {}
 
   '@intlify/shared@9.14.1': {}
 
@@ -8071,7 +8068,7 @@ snapshots:
       '@iconify/types': 2.0.0
       '@iconify/utils': 2.1.33
       '@iconify/vue': 4.2.0(vue@3.5.13(typescript@5.7.2))
-      '@nuxt/devtools-kit': 1.6.3(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))
+      '@nuxt/devtools-kit': 1.6.4(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))
       '@nuxt/kit': 3.14.1592(magicast@0.3.5)(rollup@4.24.4)
       consola: 3.2.3
       local-pkg: 0.5.1
@@ -8215,7 +8212,7 @@ snapshots:
   '@nuxt/ui-pro@1.6.0(change-case@5.4.4)(magicast@0.3.5)(rollup@4.24.4)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@iconify-json/vscode-icons': 1.2.4
-      '@nuxt/ui': 2.19.1(change-case@5.4.4)(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))
+      '@nuxt/ui': 2.20.0(change-case@5.4.4)(magicast@0.3.5)(rollup@4.24.4)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))
       '@vueuse/core': 12.0.0(typescript@5.7.2)
       defu: 6.1.4
       git-url-parse: 16.0.0
@@ -8226,7 +8223,6 @@ snapshots:
       tailwind-merge: 2.5.5
       vue3-smooth-dnd: 0.0.6(vue@3.5.13(typescript@5.7.2))
     transitivePeerDependencies:
-      - '@vue/composition-api'
       - async-validator
       - axios
       - change-case
@@ -8247,7 +8243,7 @@ snapshots:
       - vue
       - webpack-sources
 
-  '@nuxt/ui@2.19.1(change-case@5.4.4)(magicast@0.3.5)(rollup@4.24.4)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))':
+  '@nuxt/ui@2.20.0(change-case@5.4.4)(magicast@0.3.5)(rollup@4.24.4)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue@3.5.13(typescript@5.7.2))':
     dependencies:
       '@headlessui/tailwindcss': 0.2.1(tailwindcss@3.4.17)
       '@headlessui/vue': 1.7.23(vue@3.5.13(typescript@5.7.2))
@@ -8261,9 +8257,9 @@ snapshots:
       '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.4.17)
       '@tailwindcss/forms': 0.5.9(tailwindcss@3.4.17)
       '@tailwindcss/typography': 0.5.15(tailwindcss@3.4.17)
-      '@vueuse/core': 11.3.0(vue@3.5.13(typescript@5.7.2))
-      '@vueuse/integrations': 11.3.0(change-case@5.4.4)(fuse.js@7.0.0)(vue@3.5.13(typescript@5.7.2))
-      '@vueuse/math': 11.3.0(vue@3.5.13(typescript@5.7.2))
+      '@vueuse/core': 12.0.0(typescript@5.7.2)
+      '@vueuse/integrations': 12.0.0(change-case@5.4.4)(fuse.js@7.0.0)(typescript@5.7.2)
+      '@vueuse/math': 12.0.0(typescript@5.7.2)
       defu: 6.1.4
       fuse.js: 7.0.0
       ohash: 1.1.4
@@ -8272,7 +8268,6 @@ snapshots:
       tailwind-merge: 2.5.5
       tailwindcss: 3.4.17
     transitivePeerDependencies:
-      - '@vue/composition-api'
       - async-validator
       - axios
       - change-case
@@ -8287,6 +8282,7 @@ snapshots:
       - sortablejs
       - supports-color
       - ts-node
+      - typescript
       - universal-cookie
       - vite
       - vue
@@ -9817,25 +9813,23 @@ snapshots:
       '@unhead/vue': 1.11.11(vue@3.5.13(typescript@5.7.2))
       vue: 3.5.13(typescript@5.7.2)
 
-  '@vueuse/integrations@11.3.0(change-case@5.4.4)(fuse.js@7.0.0)(vue@3.5.13(typescript@5.7.2))':
+  '@vueuse/integrations@12.0.0(change-case@5.4.4)(fuse.js@7.0.0)(typescript@5.7.2)':
     dependencies:
-      '@vueuse/core': 11.3.0(vue@3.5.13(typescript@5.7.2))
-      '@vueuse/shared': 11.3.0(vue@3.5.13(typescript@5.7.2))
-      vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.2))
+      '@vueuse/core': 12.0.0(typescript@5.7.2)
+      '@vueuse/shared': 12.0.0(typescript@5.7.2)
+      vue: 3.5.13(typescript@5.7.2)
     optionalDependencies:
       change-case: 5.4.4
       fuse.js: 7.0.0
     transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
+      - typescript
 
-  '@vueuse/math@11.3.0(vue@3.5.13(typescript@5.7.2))':
+  '@vueuse/math@12.0.0(typescript@5.7.2)':
     dependencies:
-      '@vueuse/shared': 11.3.0(vue@3.5.13(typescript@5.7.2))
-      vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.2))
+      '@vueuse/shared': 12.0.0(typescript@5.7.2)
+      vue: 3.5.13(typescript@5.7.2)
     transitivePeerDependencies:
-      - '@vue/composition-api'
-      - vue
+      - typescript
 
   '@vueuse/metadata@11.3.0': {}
 
