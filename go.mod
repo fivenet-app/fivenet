@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/XSAM/otelsql v0.35.0
+	github.com/XSAM/otelsql v0.36.0
 	github.com/adhocore/gronx v1.19.5
 	github.com/alecthomas/kong v1.6.0
 	github.com/aymanbagabas/go-udiff v0.2.0
