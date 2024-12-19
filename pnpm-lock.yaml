@@ -262,8 +262,8 @@ importers:
         specifier: 9.32.0
         version: 9.32.0(eslint@9.17.0(jiti@2.4.1))
       nuxi:
-        specifier: 3.17.0
-        version: 3.17.0
+        specifier: 3.17.1
+        version: 3.17.1
       nuxt:
         specifier: 3.14.1592
         version: 3.14.1592(@parcel/watcher@2.5.0)(@types/node@22.10.2)(eslint@9.17.0(jiti@2.4.1))(ioredis@5.4.1)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.24.4)(sass@1.83.0)(terser@5.36.0)(typescript@5.7.2)(vite@5.4.11(@types/node@22.10.2)(sass@1.83.0)(terser@5.36.0))(vue-tsc@2.1.10(typescript@5.7.2))
@@ -4944,8 +4944,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxi@3.17.0:
-    resolution: {integrity: sha512-umfGtKSIPGFDzp0qBSNA0wsigIBXqVe/pbZ5xmk5d+DTYaoPptcTxulfOYFWqMlIwyzsLMsBLrd8a6dIxEiw1g==}
+  nuxi@3.17.1:
+    resolution: {integrity: sha512-Uz3RlQt8IvhvFfA+rQPxG1mRPckMF9TwPzyEh136iZlSW9khcyHvA2uqC++VNlgMRbVyjvhTq8bCpyNPHHZwrA==}
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
@@ -12668,7 +12668,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxi@3.17.0: {}
+  nuxi@3.17.1: {}
 
   nuxt-site-config-kit@3.0.4(magicast@0.3.5)(rollup@4.24.4)(vue@3.5.13(typescript@5.7.2)):
     dependencies:
@@ -12793,7 +12793,7 @@ snapshots:
       mlly: 1.7.3
       nanotar: 0.1.1
       nitropack: 2.10.4(typescript@5.7.2)
-      nuxi: 3.17.0
+      nuxi: 3.17.1
       nypm: 0.3.12
       ofetch: 1.4.1
       ohash: 1.1.4
