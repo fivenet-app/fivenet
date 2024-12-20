@@ -42,4 +42,6 @@ type Users struct {
 	CreatedAt    *time.Time `json:"created_at"`
 	LastSeen     *time.Time `json:"last_seen"`
 	Metadata     *string    `json:"metadata"`
+	Crew         *string    `json:"crew"`
+	CrewLeader   *bool      `json:"crewLeader"`
 }

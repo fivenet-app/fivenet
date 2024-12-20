@@ -21,7 +21,7 @@ function updateTabInfo(): void {
     }
 
     tab.value.label = t('components.internet.not_found.title');
-    tab.value.icon = undefined;
+    tab.value.icon = 'i-mdi-error-outline';
 }
 
 updateTabInfo();

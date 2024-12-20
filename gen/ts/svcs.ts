@@ -25,7 +25,8 @@
 // source: resources/documents/workflow.proto
 // source: resources/filestore/file.proto
 // source: resources/internet/ads.proto
-// source: resources/internet/internet.proto
+// source: resources/internet/domain.proto
+// source: resources/internet/page.proto
 // source: resources/internet/search.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto

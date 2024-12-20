@@ -5,6 +5,7 @@ import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers'
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
@@ -94,6 +95,10 @@ const columns = [
         label: t('common.phone_number'),
     },
     {
+        key: 'absence',
+        label: t('common.absence_date'),
+    },
+    {
         key: 'dateofbirth',
         label: t('common.date_of_birth'),
     },
@@ -178,10 +183,23 @@ const columns = [
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </template>
 
-        <template #actions-data="{ row: colleague }">
+        <template #absence-data="{ row: colleague }">
+            <dl v-if="colleague.props?.absenceEnd" class="font-normal">
+                <dd class="truncate">
+                    {{ $t('common.from') }}:
+                    <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                </dd>
+                <dd class="truncate">
+                    {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                </dd>
+            </dl>
+        </template>
+
+        <template v-if="can('JobsService.GetColleague').value" #actions-data="{ row: colleague }">
             <div :key="colleague.id">
                 <UTooltip v-if="checkIfCanAccessColleague(colleague, 'JobsService.GetColleague')" :text="$t('common.show')">
-                    <ULink
+                    <UButton
+                        variant="link"
                         icon="i-mdi-eye"
                         :to="{
                             name: 'jobs-colleagues-id-info',

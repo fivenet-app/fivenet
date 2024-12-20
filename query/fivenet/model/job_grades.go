@@ -8,11 +8,9 @@
 package model
 
 type JobGrades struct {
-	JobName    string `sql:"primary_key" json:"job_name"`
-	Grade      int32  `sql:"primary_key" json:"grade"`
-	Name       string `json:"name"`
-	Label      string `json:"label"`
-	Salary     int32  `json:"salary"`
-	SkinMale   string `json:"skin_male"`
-	SkinFemale string `json:"skin_female"`
+	JobName string `sql:"primary_key" json:"job_name"`
+	Grade   int32  `sql:"primary_key" json:"grade"`
+	Name    string `json:"name"`
+	Label   string `json:"label"`
+	Salary  int32  `json:"salary"`
 }

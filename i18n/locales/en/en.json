@@ -2486,6 +2486,10 @@
                 "title": "This e-mail address has been disabled!",
                 "content": "Please contact the FiveNet administration for help on this."
             }
+        },
+        "InternetService": {
+            "ErrFailedQuery": "Failed to get internet data!",
+            "ErrFailedSearch": "Failed to search internet!"
         }
     },
     "system": {

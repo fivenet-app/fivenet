@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	errorsinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -36,7 +37,26 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 }
 
 func (s *Server) GetPage(ctx context.Context, req *GetPageRequest) (*GetPageResponse, error) {
-	// TODO
+	domain, err := s.getDomainByName(ctx, req.Domain)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
+	resp := &GetPageResponse{}
 
-	return nil, errorsinternet.ErrDomainNotFound
+	if domain == nil {
+		return resp, nil
+	}
+
+	page, err := s.getPageByDomainAndPath(ctx, domain.Id, req.Path)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
+	resp.Page = page
+
+	if page != nil {
+		page.CreatorJob = nil
+		page.CreatorId = nil
+	}
+
+	return resp, nil
 }

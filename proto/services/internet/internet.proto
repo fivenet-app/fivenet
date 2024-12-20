@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.internet;
 
+import "resources/internet/page.proto";
 import "resources/internet/search.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
@@ -19,7 +20,9 @@ message GetPageRequest {
   string path = 2;
 }
 
-message GetPageResponse {}
+message GetPageResponse {
+  optional resources.internet.Page page = 1;
+}
 
 service InternetService {
   // @perm: Name=Any

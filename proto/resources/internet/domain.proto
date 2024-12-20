@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package resources.internet;
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
+
+message Domain {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string name = 5 [(validate.rules).string.max_len = 128];
+  optional string creator_job = 6;
+  optional int32 creator_id = 7;
+}

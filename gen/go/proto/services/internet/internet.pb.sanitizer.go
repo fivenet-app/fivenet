@@ -16,6 +16,15 @@ func (m *GetPageResponse) Sanitize() error {
 		return nil
 	}
 
+	// Field: Page
+	if m.Page != nil {
+		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

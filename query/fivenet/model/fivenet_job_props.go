@@ -25,4 +25,5 @@ type FivenetJobProps struct {
 	Motd                *string    `json:"motd"`
 	LogoURL             *string    `json:"logo_url"`
 	Settings            *string    `json:"settings"`
+	CitizenAttributes   *string    `json:"citizen_attributes"`
 }

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Page } from "../../resources/internet/page";
 import { SearchResult } from "../../resources/internet/search";
 /**
  * @generated from protobuf message services.internet.SearchRequest
@@ -47,6 +48,10 @@ export interface GetPageRequest {
  * @generated from protobuf message services.internet.GetPageResponse
  */
 export interface GetPageResponse {
+    /**
+     * @generated from protobuf field: optional resources.internet.Page page = 1;
+     */
+    page?: Page;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class SearchRequest$Type extends MessageType<SearchRequest> {
@@ -200,7 +205,9 @@ export const GetPageRequest = new GetPageRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetPageResponse$Type extends MessageType<GetPageResponse> {
     constructor() {
-        super("services.internet.GetPageResponse", []);
+        super("services.internet.GetPageResponse", [
+            { no: 1, name: "page", kind: "message", T: () => Page }
+        ]);
     }
     create(value?: PartialMessage<GetPageResponse>): GetPageResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -209,9 +216,28 @@ class GetPageResponse$Type extends MessageType<GetPageResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetPageResponse): GetPageResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.internet.Page page */ 1:
+                    message.page = Page.internalBinaryRead(reader, reader.uint32(), options, message.page);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: GetPageResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.internet.Page page = 1; */
+        if (message.page)
+            Page.internalBinaryWrite(message.page, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

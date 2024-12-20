@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import type { FormSubmitEvent } from '#ui/types';
-import { z } from 'zod';
-import { joinURL, splitURL, urlHomePage } from '~/components/internet/helper';
+import { joinURL } from '~/components/internet/helper';
 import InternetTab from '~/components/internet/InternetTab.vue';
 import { useInternetStore } from '~/store/internet';
 
@@ -14,17 +12,21 @@ definePageMeta({
 });
 
 const internetStore = useInternetStore();
-const { activeTab, selectedTab, tabs } = storeToRefs(internetStore);
+const { activeTab, tabs } = storeToRefs(internetStore);
 
 // Set thread as query param for persistence between reloads
+const route = useRoute();
 const router = useRouter();
 
 function updateQuery(): void {
-    if (!selectedTab.value) {
+    if (!activeTab.value) {
         router.replace({ query: {} });
     } else {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: selectedTab.value, url: state.url }, hash: '#' });
+        router.replace({
+            query: { tab: activeTab.value.id, url: joinURL(activeTab.value.domain, activeTab.value.path) },
+            hash: '#',
+        });
     }
 }
 
@@ -33,47 +35,30 @@ onMounted(async () => {
         internetStore.newTab(true);
     }
 
-    if (!selectedTab.value && tabs.value[0]) {
+    if (!activeTab.value && tabs.value[0]) {
         internetStore.selectTab(tabs.value[0].id);
-    }
-
-    if (activeTab.value) {
-        state.url = joinURL(activeTab.value.domain, activeTab.value.path);
     }
 
     updateQuery();
 });
 
-watch(selectedTab, updateQuery, { deep: true });
+const selectedTab = computed({
+    get() {
+        const tabId = parseInt(route.query.tab as string);
+        const index = tabs.value.findIndex((item) => item.id === tabId);
+        if (index === -1) {
+            return 0;
+        }
 
-function goToPage(domain: string, path?: string): void {
-    state.url = domain + (path && path !== '' ? path : '');
-
-    internetStore.goTo(domain, path);
-}
-
-const schema = z.object({
-    url: z.string().max(128),
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: tabs.value[value]?.id }, hash: '#' });
+    },
 });
 
-type Schema = z.output<typeof schema>;
-
-const state = reactive<Schema>({
-    url: '',
-});
-
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    if (!activeTab.value) {
-        return;
-    }
-
-    const split = splitURL(event.data.url);
-    if (!split) {
-        return;
-    }
-
-    goToPage(split.domain, split.path);
-}, 500);
+watch(activeTab, () => updateQuery(), { deep: true });
 </script>
 
 <template>
@@ -105,11 +90,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <span
                             class="group-hover:text-primary relative flex-1 truncate text-left"
                             :class="[
-                                link.id === selectedTab &&
+                                link.id === activeTab?.id &&
                                     'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
                             ]"
                         >
-                            <span v-if="link.id === selectedTab" class="sr-only"> Current page: </span>
+                            <span v-if="link.id === activeTab?.id" class="sr-only"> Current page: </span>
                             {{ link.label === '' ? $t('common.home') : link.label }}
                         </span>
                     </template>
@@ -126,46 +111,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </ClientOnly>
             </UDashboardToolbar>
 
-            <UDashboardToolbar
-                v-if="activeTab"
-                :ui="{ wrapper: 'bg-gray-100 dark:bg-gray-800 p-0 gap-x-0', container: 'gap-x-0 gap-y-0 mx-1' }"
-            >
-                <div class="flex flex-1 items-center gap-1">
-                    <UButton
-                        variant="ghost"
-                        color="white"
-                        icon="i-mdi-chevron-left"
-                        :disabled="activeTab.history.length === 0"
-                        @click="internetStore.back()"
-                    />
-
-                    <UButton
-                        :disabled="activeTab.domain === urlHomePage"
-                        variant="ghost"
-                        color="white"
-                        icon="i-mdi-home"
-                        @click="goToPage(urlHomePage)"
-                    />
-
-                    <UButton variant="ghost" color="white" icon="i-mdi-refresh" />
-
-                    <UForm :schema="schema" :state="state" class="flex flex-1 items-center gap-1" @submit="onSubmitThrottle">
-                        <UInput v-model="state.url" type="text" class="flex-1" :ui="{ icon: { trailing: { pointer: '' } } }">
-                            <template #trailing>
-                                <UButton
-                                    v-show="state.url !== ''"
-                                    color="gray"
-                                    variant="link"
-                                    icon="i-mdi-close"
-                                    :padded="false"
-                                    @click="state.url = ''"
-                                />
-                            </template>
-                        </UInput>
-                    </UForm>
-                </div>
-            </UDashboardToolbar>
-
             <UDashboardPanelContent class="p-0">
                 <UTabs
                     v-model="selectedTab"
@@ -177,11 +122,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         container: 'h-full',
                         base: 'h-full',
                     }"
+                    :unmount="false"
                 >
                     <template #item="{ item }">
-                        <Suspense>
-                            <InternetTab :tab-id="item.id" @url-change="goToPage($event.domain, $event.path ?? '')" />
-                        </Suspense>
+                        <InternetTab :tab-id="item.id" />
                     </template>
                 </UTabs>
             </UDashboardPanelContent>

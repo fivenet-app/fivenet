@@ -47,6 +47,8 @@ type usersTable struct {
 	CreatedAt    mysql.ColumnTimestamp
 	LastSeen     mysql.ColumnTimestamp
 	Metadata     mysql.ColumnString
+	Crew         mysql.ColumnString
+	CrewLeader   mysql.ColumnBool
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -117,8 +119,10 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		LastSeenColumn     = mysql.TimestampColumn("last_seen")
 		MetadataColumn     = mysql.StringColumn("metadata")
-		allColumns         = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn}
-		mutableColumns     = mysql.ColumnList{IDColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn}
+		CrewColumn         = mysql.StringColumn("crew")
+		CrewLeaderColumn   = mysql.BoolColumn("crewLeader")
+		allColumns         = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn, CrewColumn, CrewLeaderColumn}
+		mutableColumns     = mysql.ColumnList{IDColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn, CrewColumn, CrewLeaderColumn}
 	)
 
 	return usersTable{
@@ -155,6 +159,8 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		CreatedAt:    CreatedAtColumn,
 		LastSeen:     LastSeenColumn,
 		Metadata:     MetadataColumn,
+		Crew:         CrewColumn,
+		CrewLeader:   CrewLeaderColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

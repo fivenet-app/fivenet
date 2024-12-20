@@ -17,13 +17,11 @@ type jobGradesTable struct {
 	mysql.Table
 
 	// Columns
-	JobName    mysql.ColumnString
-	Grade      mysql.ColumnInteger
-	Name       mysql.ColumnString
-	Label      mysql.ColumnString
-	Salary     mysql.ColumnInteger
-	SkinMale   mysql.ColumnString
-	SkinFemale mysql.ColumnString
+	JobName mysql.ColumnString
+	Grade   mysql.ColumnInteger
+	Name    mysql.ColumnString
+	Label   mysql.ColumnString
+	Salary  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,28 +62,24 @@ func newJobGradesTable(schemaName, tableName, alias string) *JobGradesTable {
 
 func newJobGradesTableImpl(schemaName, tableName, alias string) jobGradesTable {
 	var (
-		JobNameColumn    = mysql.StringColumn("job_name")
-		GradeColumn      = mysql.IntegerColumn("grade")
-		NameColumn       = mysql.StringColumn("name")
-		LabelColumn      = mysql.StringColumn("label")
-		SalaryColumn     = mysql.IntegerColumn("salary")
-		SkinMaleColumn   = mysql.StringColumn("skin_male")
-		SkinFemaleColumn = mysql.StringColumn("skin_female")
-		allColumns       = mysql.ColumnList{JobNameColumn, GradeColumn, NameColumn, LabelColumn, SalaryColumn, SkinMaleColumn, SkinFemaleColumn}
-		mutableColumns   = mysql.ColumnList{NameColumn, LabelColumn, SalaryColumn, SkinMaleColumn, SkinFemaleColumn}
+		JobNameColumn  = mysql.StringColumn("job_name")
+		GradeColumn    = mysql.IntegerColumn("grade")
+		NameColumn     = mysql.StringColumn("name")
+		LabelColumn    = mysql.StringColumn("label")
+		SalaryColumn   = mysql.IntegerColumn("salary")
+		allColumns     = mysql.ColumnList{JobNameColumn, GradeColumn, NameColumn, LabelColumn, SalaryColumn}
+		mutableColumns = mysql.ColumnList{NameColumn, LabelColumn, SalaryColumn}
 	)
 
 	return jobGradesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		JobName:    JobNameColumn,
-		Grade:      GradeColumn,
-		Name:       NameColumn,
-		Label:      LabelColumn,
-		Salary:     SalaryColumn,
-		SkinMale:   SkinMaleColumn,
-		SkinFemale: SkinFemaleColumn,
+		JobName: JobNameColumn,
+		Grade:   GradeColumn,
+		Name:    NameColumn,
+		Label:   LabelColumn,
+		Salary:  SalaryColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

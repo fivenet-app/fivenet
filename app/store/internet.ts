@@ -14,7 +14,6 @@ export type Tab = {
 };
 
 export interface InternetState {
-    selectedTab: number | undefined;
     tabs: Tab[];
 }
 
@@ -25,24 +24,20 @@ export const useInternetStore = defineStore('internet', {
             tabs: [],
         }) as InternetState,
     persist: {
-        pick: ['selectedTab', 'tabs'],
+        pick: ['tabs'],
     },
     actions: {
         // Tabs
         newTab(select?: boolean): void {
-            const id = this.addTab({
+            this.addTab({
                 domain: urlHomePage,
                 icon: 'i-mdi-home',
                 active: select,
             });
-
-            if (select === true) {
-                this.selectTab(id);
-            }
         },
-        addTab(tab: Partial<Tab>): number {
-            const id = this.tabs.length === 0 ? 1 : this.tabs.length + 1;
-            logger.debug('tab added, label:', tab.label, 'domain:', tab.domain, 'path:', tab.path);
+        addTab(tab: Partial<Tab>, select: boolean = true): number {
+            const id = this.tabs.length === 0 ? 1 : this.tabs[this.tabs.length - 1]!.id + 1;
+            logger.debug('tab added, id:', id, 'label:', tab.label, 'domain:', tab.domain, 'path:', tab.path);
             this.tabs.push({
                 id: id,
                 label: tab.label ?? '',
@@ -53,10 +48,14 @@ export const useInternetStore = defineStore('internet', {
                 history: [],
             });
 
+            if (select) {
+                this.selectTab(id);
+            }
+
             return id;
         },
         closeTab(id: number): void {
-            if (this.selectedTab === id) {
+            if (this.activeTab?.id === id) {
                 this.selectTab();
             }
 
@@ -70,7 +69,6 @@ export const useInternetStore = defineStore('internet', {
         },
         selectTab(id?: number): void {
             logger.debug('select tab, id:', id);
-            this.selectedTab = id;
 
             this.tabs.forEach((t) => (t.active = t.id === id));
         },
@@ -82,7 +80,7 @@ export const useInternetStore = defineStore('internet', {
                 return;
             }
 
-            logger.debug('goto, domain:', tab.domain, 'path:', tab.path);
+            logger.debug('goto, domain:', domain, 'path:', path);
 
             if (!disableHistory) {
                 tab.history.push(joinURL(tab.domain, tab.path));
@@ -123,6 +121,6 @@ export const useInternetStore = defineStore('internet', {
         },
     },
     getters: {
-        activeTab: (state) => state.tabs.find((t) => t.id === state.selectedTab),
+        activeTab: (state) => state.tabs.find((t) => t.active),
     },
 });

@@ -11,10 +11,11 @@ export function splitURL(url: string): undefined | { domain: string; path?: stri
     if (split.length === 0) {
         return undefined;
     }
+    const path = '/' + (split[1] ? split.slice(1).join('/') : '');
 
-    return { domain: split[0]!, path: split[1] ? split.slice(1).join('/') : '' };
+    return { domain: split[0]!, path: path };
 }
 
 export function joinURL(domain: string, path?: string): string {
-    return domain + (path && path !== '' ? '/' + path : '');
+    return domain + (path && path !== '' ? path : '/');
 }

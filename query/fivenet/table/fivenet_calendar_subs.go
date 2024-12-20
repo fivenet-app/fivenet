@@ -18,6 +18,7 @@ type fivenetCalendarSubsTable struct {
 
 	// Columns
 	CalendarID mysql.ColumnInteger
+	EntryID    mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
 	Confirmed  mysql.ColumnBool
@@ -63,12 +64,13 @@ func newFivenetCalendarSubsTable(schemaName, tableName, alias string) *FivenetCa
 func newFivenetCalendarSubsTableImpl(schemaName, tableName, alias string) fivenetCalendarSubsTable {
 	var (
 		CalendarIDColumn = mysql.IntegerColumn("calendar_id")
+		EntryIDColumn    = mysql.IntegerColumn("entry_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		ConfirmedColumn  = mysql.BoolColumn("confirmed")
 		MutedColumn      = mysql.BoolColumn("muted")
-		allColumns       = mysql.ColumnList{CalendarIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
-		mutableColumns   = mysql.ColumnList{CalendarIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
+		allColumns       = mysql.ColumnList{CalendarIDColumn, EntryIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
+		mutableColumns   = mysql.ColumnList{CalendarIDColumn, EntryIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
 	)
 
 	return fivenetCalendarSubsTable{
@@ -76,6 +78,7 @@ func newFivenetCalendarSubsTableImpl(schemaName, tableName, alias string) fivene
 
 		//Columns
 		CalendarID: CalendarIDColumn,
+		EntryID:    EntryIDColumn,
 		UserID:     UserIDColumn,
 		CreatedAt:  CreatedAtColumn,
 		Confirmed:  ConfirmedColumn,
