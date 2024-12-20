@@ -70,7 +70,7 @@ const creating = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel v-if="route.query?.tab === 'new'" id="maileremaillist" grow>
+        <UDashboardPanel v-if="route.query?.tab === 'new' && getPrivateEmail?.deactivated" id="maileremaillist" grow>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')" />
 
             <UDashboardPanelContent>
