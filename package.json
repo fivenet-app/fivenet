@@ -36,7 +36,7 @@
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
         "browser-headers": "0.4.1",
-        "consola": "3.2.3",
+        "consola": "3.3.0",
         "date-fns": "4.1.0",
         "dexie": "4.0.10",
         "dexie-observable": "4.0.1-beta.13",
@@ -64,7 +64,7 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "1.6.4",
-        "@nuxt/eslint": "0.7.3",
+        "@nuxt/eslint": "0.7.4",
         "@nuxtjs/fontaine": "0.4.4",
         "@nuxtjs/i18n": "9.1.1",
         "@protobuf-ts/plugin": "2.9.4",
@@ -131,5 +131,5 @@
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.1.10"
     },
-    "packageManager": "pnpm@9.15.0"
+    "packageManager": "pnpm@9.15.1"
 }
