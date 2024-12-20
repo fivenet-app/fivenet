@@ -164,7 +164,7 @@ const editor = useEditor({
     content: '',
     editorProps: {
         attributes: {
-            class: 'prose prose-sm sm:prose-base lg:prose-lg xl:prose-2xl m-5 focus:outline-none dark:prose-invert max-w-full break-words',
+            class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
         },
     },
     editable: !props.disabled,
