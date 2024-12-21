@@ -586,13 +586,6 @@
                 "add_comment": "Füge deinen Kommentar hinzu",
                 "no_comments": "Noch keine Kommentare veröffentlicht"
             },
-            "document_editor": {
-                "add_permission": "Berechtigung hinzufügen",
-                "quill": {
-                    "msg": "Das HTML des Editors kann hier bearbeitet werden, nach Klicken von \"OK\" wird der Inhalt dadurch ersetzt.",
-                    "okText": "Ok"
-                }
-            },
             "document_managers": {
                 "view_current": "Aktuelles anzeigen",
                 "add_new": "Neu hinzufügen",
@@ -1276,6 +1269,10 @@
                 "title": "Server nicht gefunden",
                 "description": "Der Server unter \"{domain}\" kann nicht gefunden werden. Überprüfen Sie die Adresse auf Tippfehler. Wenn Sie keine Seiten laden können, überprüfen Sie Ihre Internetverbindung."
             }
+        },
+        "access": {
+            "add_entry": "Zugriff hinzufügen",
+            "remove_entry": "Zugriff entfernen"
         }
     },
     "notifications": {
@@ -2486,6 +2483,10 @@
                 "title": "Die E-Mail Adresse wurde deaktiviert!",
                 "content": "Bitte kontaktieren Sie die FiveNet Administration für weitere Informationen."
             }
+        },
+        "InternetService": {
+            "ErrFailedQuery": "Fehler beim Laden der Internet Daten!",
+            "ErrFailedSearch": "Fehler beim Durchsuchen des Internet!"
         }
     },
     "system": {
