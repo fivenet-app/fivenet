@@ -219,13 +219,13 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <UButton
-            v-if="!disabled"
-            :disabled="access.length >= maxEntries"
-            :ui="{ rounded: 'rounded-full' }"
-            icon="i-mdi-plus"
-            :title="$t('components.documents.document_editor.add_permission')"
-            @click="addEntry"
-        />
+        <UTooltip v-if="!disabled" :text="$t('components.documents.document_editor.add_permission')">
+            <UButton
+                :disabled="access.length >= maxEntries"
+                :ui="{ rounded: 'rounded-full' }"
+                icon="i-mdi-plus"
+                @click="addEntry"
+            />
+        </UTooltip>
     </div>
 </template>

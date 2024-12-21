@@ -427,7 +427,7 @@ function removeReference(id: string): void {
                                                             </UTooltip>
 
                                                             <UTooltip
-                                                                :title="$t('components.documents.document_managers.deprecates')"
+                                                                :text="$t('components.documents.document_managers.deprecates')"
                                                             >
                                                                 <UButton
                                                                     color="amber"

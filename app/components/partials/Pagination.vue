@@ -90,20 +90,20 @@ watchDebounced(
                 </I18nT>
             </div>
 
-            <UButton
-                v-if="refresh"
-                variant="link"
-                icon="i-mdi-refresh"
-                :title="$t('common.refresh')"
-                :disabled="loading || loadingState"
-                :loading="loading || loadingState"
-                class="p-px"
-                @click="refresh()"
-            >
-                <span class="@md:block hidden">
-                    {{ $t('common.refresh') }}
-                </span>
-            </UButton>
+            <UTooltip v-if="refresh" :text="$t('common.refresh')">
+                <UButton
+                    variant="link"
+                    icon="i-mdi-refresh"
+                    :disabled="loading || loadingState"
+                    :loading="loading || loadingState"
+                    class="p-px"
+                    @click="refresh()"
+                >
+                    <span class="@md:block hidden">
+                        {{ $t('common.refresh') }}
+                    </span>
+                </UButton>
+            </UTooltip>
 
             <UPagination
                 v-model="page"

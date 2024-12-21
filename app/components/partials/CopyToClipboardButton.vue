@@ -21,14 +21,15 @@ function addToClipboard(): void {
 </script>
 
 <template>
-    <UButton
-        icon="i-mdi-clipboard-plus"
-        variant="outline"
-        color="black"
-        size="xs"
-        :ui="{ padding: { xs: '' } }"
-        class="px-1 py-1"
-        :title="$t('components.clipboard.clipboard_button.add')"
-        @click="addToClipboard()"
-    />
+    <UTooltip :text="$t('components.clipboard.clipboard_button.add')">
+        <UButton
+            icon="i-mdi-clipboard-plus"
+            variant="outline"
+            color="black"
+            size="xs"
+            :ui="{ padding: { xs: '' } }"
+            class="px-1 py-1"
+            @click="addToClipboard()"
+        />
+    </UTooltip>
 </template>

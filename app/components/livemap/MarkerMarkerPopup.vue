@@ -49,38 +49,38 @@ async function deleteMarker(id: string): Promise<void> {
                     </span>
                 </UButton>
 
-                <UButton
-                    v-if="can('LivemapperService.CreateOrUpdateMarker').value"
-                    :title="$t('common.edit')"
-                    variant="link"
-                    icon="i-mdi-pencil"
-                    @click="
-                        slideover.open(MarkerCreateOrUpdateSlideover, {
-                            marker: marker,
-                        })
-                    "
-                >
-                    <span class="truncate">
-                        {{ $t('common.edit') }}
-                    </span>
-                </UButton>
+                <UTooltip v-if="can('LivemapperService.CreateOrUpdateMarker').value" :text="$t('common.edit')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            slideover.open(MarkerCreateOrUpdateSlideover, {
+                                marker: marker,
+                            })
+                        "
+                    >
+                        <span class="truncate">
+                            {{ $t('common.edit') }}
+                        </span>
+                    </UButton>
+                </UTooltip>
 
-                <UButton
-                    v-if="can('LivemapperService.DeleteMarker').value"
-                    :title="$t('common.delete')"
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    color="red"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteMarker(marker.info!.id),
-                        })
-                    "
-                >
-                    <span class="truncate">
-                        {{ $t('common.delete') }}
-                    </span>
-                </UButton>
+                <UTooltip v-if="can('LivemapperService.DeleteMarker').value" :text="$t('common.delete')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        color="red"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteMarker(marker.info!.id),
+                            })
+                        "
+                    >
+                        <span class="truncate">
+                            {{ $t('common.delete') }}
+                        </span>
+                    </UButton>
+                </UTooltip>
             </div>
 
             <p class="inline-flex items-center gap-1">

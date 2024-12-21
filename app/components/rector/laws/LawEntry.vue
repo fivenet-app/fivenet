@@ -74,16 +74,20 @@ const editing = ref(props.startInEdit);
         <div class="flex flex-1 flex-row gap-2">
             <UFormGroup class="text-sm font-medium">
                 <UButtonGroup class="inline-flex w-full" orientation="vertical">
-                    <UButton type="submit" variant="link" icon="i-mdi-content-save" :title="$t('common.save')" />
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-cancel"
-                        :title="$t('common.cancel')"
-                        @click="
-                            editing = false;
-                            $emit('close');
-                        "
-                    />
+                    <UTooltip :text="$t('common.save')">
+                        <UButton type="submit" variant="link" icon="i-mdi-content-save" />
+                    </UTooltip>
+
+                    <UTooltip :text="$t('common.cancel')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-cancel"
+                            @click="
+                                editing = false;
+                                $emit('close');
+                            "
+                        />
+                    </UTooltip>
                 </UButtonGroup>
             </UFormGroup>
 

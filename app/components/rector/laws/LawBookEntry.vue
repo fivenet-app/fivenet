@@ -189,19 +189,22 @@ const editing = ref(props.startInEdit);
         <template #header>
             <div v-if="!editing" class="flex items-center gap-x-2">
                 <UButtonGroup class="inline-flex">
-                    <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+                    <UTooltip :text="$t('common.edit')">
+                        <UButton variant="link" icon="i-mdi-pencil" @click="editing = true" />
+                    </UTooltip>
 
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-trash-can"
-                        color="red"
-                        :title="$t('common.delete')"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteLawBook(lawBook!.id),
-                            })
-                        "
-                    />
+                    <UTooltip :text="$t('common.delete')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-trash-can"
+                            color="red"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteLawBook(lawBook!.id),
+                                })
+                            "
+                        />
+                    </UTooltip>
                 </UButtonGroup>
 
                 <div class="inline-flex w-full flex-col">
@@ -221,16 +224,20 @@ const editing = ref(props.startInEdit);
                 class="flex w-full flex-row items-start gap-x-2"
                 @submit="onSubmitThrottle"
             >
-                <UButton type="submit" :title="$t('common.save')" variant="link" icon="i-mdi-content-save" />
-                <UButton
-                    :title="$t('common.cancel')"
-                    variant="link"
-                    icon="i-mdi-cancel"
-                    @click="
-                        editing = false;
-                        parseInt(lawBook.id) < 0 && $emit('deleted', lawBook.id);
-                    "
-                />
+                <UTooltip :text="$t('common.save')">
+                    <UButton type="submit" variant="link" icon="i-mdi-content-save" />
+                </UTooltip>
+
+                <UTooltip :text="$t('common.cancel')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-cancel"
+                        @click="
+                            editing = false;
+                            parseInt(lawBook.id) < 0 && $emit('deleted', lawBook.id);
+                        "
+                    />
+                </UTooltip>
 
                 <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
                     <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />

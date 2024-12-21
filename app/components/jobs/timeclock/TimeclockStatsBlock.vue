@@ -86,16 +86,17 @@ watchDebounced(
             <h2 class="inline-flex w-full items-center justify-between text-lg font-semibold">
                 {{ $t('common.timeclock') }}
 
-                <UButton
-                    variant="link"
-                    icon="i-mdi-refresh"
-                    :title="$t('common.refresh')"
-                    :disabled="loading || loadingState"
-                    :loading="loading || loadingState"
-                    @click="$emit('refresh')"
-                >
-                    {{ $t('common.refresh') }}
-                </UButton>
+                <UTooltip :text="$t('common.refresh')">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-refresh"
+                        :disabled="loading || loadingState"
+                        :loading="loading || loadingState"
+                        @click="$emit('refresh')"
+                    >
+                        {{ $t('common.refresh') }}
+                    </UButton>
+                </UTooltip>
             </h2>
         </template>
 

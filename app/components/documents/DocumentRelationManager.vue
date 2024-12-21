@@ -342,26 +342,35 @@ function removeRelation(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.mentioned')"
-                                                                color="blue"
-                                                                icon="i-mdi-at"
-                                                                @click="addRelation(user, DocRelation.MENTIONED)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.mentioned')"
+                                                            >
+                                                                <UButton
+                                                                    color="blue"
+                                                                    icon="i-mdi-at"
+                                                                    @click="addRelation(user, DocRelation.MENTIONED)"
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.targets')"
-                                                                color="amber"
-                                                                icon="i-mdi-target"
-                                                                @click="addRelation(user, DocRelation.TARGETS)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.targets')"
+                                                            >
+                                                                <UButton
+                                                                    color="amber"
+                                                                    icon="i-mdi-target"
+                                                                    @click="addRelation(user, DocRelation.TARGETS)"
+                                                                />
+                                                            </UTooltip>
 
-                                                            <UButton
-                                                                :title="$t('components.documents.document_managers.caused')"
-                                                                color="red"
-                                                                icon="i-mdi-source-commit-start"
-                                                                @click="addRelation(user, DocRelation.CAUSED)"
-                                                            />
+                                                            <UTooltip
+                                                                :text="$t('components.documents.document_managers.caused')"
+                                                            >
+                                                                <UButton
+                                                                    color="red"
+                                                                    icon="i-mdi-source-commit-start"
+                                                                    @click="addRelation(user, DocRelation.CAUSED)"
+                                                                />
+                                                            </UTooltip>
                                                         </div>
                                                     </td>
                                                 </tr>
