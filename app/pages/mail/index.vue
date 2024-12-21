@@ -309,7 +309,9 @@ onBeforeMount(async () => {
                     </ThreadList>
                 </div>
 
-                <UDashboardToolbar class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+                <UDashboardToolbar
+                    class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                >
                     <template #left>
                         <UTooltip :text="$t('common.settings')">
                             <UButton color="gray" trailing-icon="i-mdi-cog" @click="() => modal.open(EmailSettingsModal, {})">

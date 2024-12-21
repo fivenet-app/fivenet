@@ -322,9 +322,9 @@ onBeforeMount(async () => {
 
 const items = [
     {
-        slot: 'meta',
-        label: t('common.info'),
-        icon: 'i-mdi-information',
+        slot: 'details',
+        label: t('common.detail', 2),
+        icon: 'i-mdi-details',
     },
     {
         slot: 'content',
@@ -381,7 +381,7 @@ const categoriesLoading = ref(false);
 
         <UDashboardPanelContent class="p-0">
             <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
-                <template #meta>
+                <template #details>
                     <UContainer class="w-full">
                         <div>
                             <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
@@ -439,6 +439,40 @@ const categoriesLoading = ref(false);
                                         (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
                                     )
                                 "
+                            />
+                        </div>
+
+                        <div class="my-2">
+                            <UAccordion
+                                :items="[
+                                    { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
+                                    {
+                                        slot: 'workflow',
+                                        label: $t('common.workflow'),
+                                        icon: 'i-mdi-reminder',
+                                    },
+                                ]"
+                            >
+                                <template #schema>
+                                    <TemplateSchemaEditor v-model="schemaEditor" />
+                                </template>
+
+                                <template #workflow>
+                                    <TemplateWorkflowEditor v-model="state.workflow" />
+                                </template>
+                            </UAccordion>
+                        </div>
+
+                        <div class="my-2">
+                            <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+
+                            <AccessManager
+                                v-model:jobs="state.contentAccess.jobs"
+                                v-model:users="state.contentAccess.users"
+                                :target-id="templateId ?? '0'"
+                                :access-types="contentAccessTypes"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                                :show-required="true"
                             />
                         </div>
                     </UContainer>
@@ -502,40 +536,6 @@ const categoriesLoading = ref(false);
                                     <TiptapEditor v-model="state.content" split-screen wrapper-class="min-h-72" />
                                 </ClientOnly>
                             </UFormGroup>
-                        </div>
-
-                        <div class="my-2">
-                            <UAccordion
-                                :items="[
-                                    { slot: 'schema', label: $t('common.requirements', 2), icon: 'i-mdi-asterisk' },
-                                    {
-                                        slot: 'workflow',
-                                        label: $t('common.workflow'),
-                                        icon: 'i-mdi-reminder',
-                                    },
-                                ]"
-                            >
-                                <template #schema>
-                                    <TemplateSchemaEditor v-model="schemaEditor" />
-                                </template>
-
-                                <template #workflow>
-                                    <TemplateWorkflowEditor v-model="state.workflow" />
-                                </template>
-                            </UAccordion>
-                        </div>
-
-                        <div class="my-2">
-                            <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
-
-                            <AccessManager
-                                v-model:jobs="state.contentAccess.jobs"
-                                v-model:users="state.contentAccess.users"
-                                :target-id="templateId ?? '0'"
-                                :access-types="contentAccessTypes"
-                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
-                                :show-required="true"
-                            />
                         </div>
                     </UContainer>
                 </template>

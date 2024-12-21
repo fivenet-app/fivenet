@@ -501,7 +501,7 @@ const isOpen = ref(false);
                 </UContainer>
             </div>
 
-            <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
+            <div class="flex justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
                 <UFormGroup
                     :label="$t('common.view')"
                     :ui="{ container: '', label: { base: 'hidden md:inline-flex' } }"

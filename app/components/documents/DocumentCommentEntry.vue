@@ -166,7 +166,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                     <UFormGroup name="comment">
                         <ClientOnly>
-                            <TiptapEditor v-model="state.comment" wrapper-class="min-h-36" comment-mode :limit="1250" />
+                            <TiptapEditor v-model="state.comment" wrapper-class="min-h-44" comment-mode :limit="1250" />
                         </ClientOnly>
                     </UFormGroup>
 

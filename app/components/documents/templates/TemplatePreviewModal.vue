@@ -48,6 +48,7 @@ async function getTemplate(): Promise<Template> {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <!-- eslint-disable vue/no-v-html -->
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
@@ -92,8 +93,41 @@ async function getTemplate(): Promise<Template> {
                         {{ $t('common.content') }}
                     </label>
                     <div class="mt-4 break-words rounded-lg p-2">
-                        <!-- eslint-disable-next-line vue/no-v-html -->
-                        <p v-html="template?.content"></p>
+                        <div
+                            class="tiptap ProseMirror prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
+                            :class="[
+                                'hover:prose-a:text-blue-500',
+                                'dark:hover:prose-a:text-blue-300',
+                                'prose-headings:mt-0.5',
+                                'prose-lead:mt-0.5',
+                                'prose-h1:mt-0.5',
+                                'prose-h2:mt-0.5',
+                                'prose-h3:mt-0.5',
+                                'prose-h4:mt-0.5',
+                                'prose-p:mt-0.5',
+                                'prose-a:mt-0.5',
+                                'prose-blockquote:mt-0.5',
+                                'prose-figure:mt-0.5',
+                                'prose-figcaption:mt-0.5',
+                                'prose-strong:mt-0.5',
+                                'prose-em:mt-0.5',
+                                'prose-kbd:mt-0.5',
+                                'prose-code:mt-0.5',
+                                'prose-pre:mt-0.5',
+                                'prose-ol:mt-0.5',
+                                'prose-ul:mt-0.5',
+                                'prose-li:mt-0.5',
+                                'prose-table:mt-0.5',
+                                'prose-thead:mt-0.5',
+                                'prose-tr:mt-0.5',
+                                'prose-th:mt-0.5',
+                                'prose-td:mt-0.5',
+                                'prose-img:mt-0.5',
+                                'prose-video:mt-0.5',
+                                'prose-hr:mt-0.5',
+                            ]"
+                            v-html="template?.content"
+                        ></div>
                     </div>
                 </template>
             </div>

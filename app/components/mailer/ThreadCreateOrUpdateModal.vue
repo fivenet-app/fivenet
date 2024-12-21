@@ -117,8 +117,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </template>
 
-                <div class="mx-auto flex w-full max-w-screen-xl flex-1">
-                    <div class="flex w-full flex-1 flex-col gap-2">
+                <div class="mx-auto flex w-full max-w-screen-xl flex-1 overflow-y-hidden">
+                    <div class="flex w-full flex-1 flex-col gap-2 overflow-y-hidden">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
                                 <ClientOnly>
@@ -275,10 +275,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
 
                         <UFormGroup
-                            :label="$t('common.message')"
                             name="content"
-                            class="w-full flex-1"
-                            :ui="{ label: { base: 'flex flex-1' } }"
+                            :label="$t('common.message')"
+                            class="flex flex-1 flex-col"
+                            :ui="{
+                                container: 'flex flex-1',
+                                label: { base: 'flex flex-1' },
+                            }"
                         >
                             <template #label>
                                 <div class="flex flex-1 flex-col items-center sm:flex-row">
@@ -291,7 +294,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <ClientOnly>
                                 <TiptapEditor
                                     v-model="state.content"
-                                    class="flex-1"
+                                    class="flex-1 overflow-y-hidden"
                                     :disabled="!canSubmit"
                                     wrapper-class="min-h-96"
                                 />

@@ -396,6 +396,36 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
     }
 }
 
+const items = [
+    {
+        slot: 'edit',
+        label: t('common.content'),
+        icon: 'i-mdi-pencil',
+    },
+    {
+        slot: 'access',
+        label: t('common.access', 1),
+        icon: 'i-mdi-key',
+    },
+];
+
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.slot === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+    },
+});
+
 const categoriesLoading = ref(false);
 
 const canDo = computed(() => ({
@@ -457,197 +487,221 @@ logger.info(
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0">
-            <UDashboardToolbar>
-                <template #default>
-                    <div class="flex w-full flex-col gap-2">
-                        <UFormGroup name="title" :label="$t('common.title')" required>
-                            <UInput
-                                v-model="state.title"
-                                type="text"
-                                size="xl"
-                                :placeholder="$t('common.title')"
-                                :disabled="!canEdit || !canDo.edit"
-                            />
-                        </UFormGroup>
-
-                        <div class="flex flex-row gap-2">
-                            <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.category"
-                                        option-attribute="name"
-                                        :search-attributes="['name']"
-                                        block
-                                        nullable
-                                        :searchable="
-                                            async (search: string) => {
-                                                try {
-                                                    categoriesLoading = true;
-                                                    const categories = await completorStore.completeDocumentCategories(search);
-                                                    categoriesLoading = false;
-                                                    categories.unshift(emptyCategory);
-                                                    return categories;
-                                                } catch (e) {
-                                                    handleGRPCError(e as RpcError);
-                                                    throw e;
-                                                } finally {
-                                                    categoriesLoading = false;
-                                                }
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <span
-                                                v-if="state.category"
-                                                class="inline-flex gap-1"
-                                                :class="`bg-${state.category.color}-500`"
-                                            >
-                                                <component
-                                                    :is="
-                                                        markerIcons.find((item) => item.name === state.category?.icon) ??
-                                                        markerFallbackIcon
-                                                    "
-                                                    v-if="state.category.icon"
-                                                    class="size-5"
-                                                />
-                                                <span class="truncate">{{ state.category.name }}</span>
-                                            </span>
-                                            <span v-else> &nbsp; </span>
-                                        </template>
-
-                                        <template #option="{ option }">
-                                            <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
-                                                <component
-                                                    :is="
-                                                        markerIcons.find((item) => item.name === option.icon) ??
-                                                        markerFallbackIcon
-                                                    "
-                                                    v-if="option.icon"
-                                                    class="size-5"
-                                                />
-                                                <span class="truncate">{{ option.name }}</span>
-                                            </span>
-                                        </template>
-
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.category', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-
-                            <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
-                                <UInput
-                                    v-model="state.state"
-                                    type="text"
-                                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                                    :disabled="!canEdit || !canDo.edit"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                                <ClientOnly>
-                                    <USelectMenu
-                                        v-model="state.closed"
+            <UTabs
+                v-model="selectedTab"
+                :items="items"
+                class="flex flex-1 flex-col"
+                :ui="{
+                    wrapper: 'space-y-0 overflow-y-hidden',
+                    container: 'flex flex-1 flex-col overflow-y-hidden',
+                    base: 'flex flex-1 flex-col overflow-y-hidden',
+                    list: { rounded: '' },
+                }"
+            >
+                <template #edit>
+                    <UDashboardToolbar>
+                        <template #default>
+                            <div class="flex w-full flex-col gap-2">
+                                <UFormGroup name="title" :label="$t('common.title')" required>
+                                    <UInput
+                                        v-model="state.title"
+                                        type="text"
+                                        size="xl"
+                                        :placeholder="$t('common.title')"
                                         :disabled="!canEdit || !canDo.edit"
-                                        :options="[
-                                            { label: $t('common.open', 2), closed: false },
-                                            { label: $t('common.close', 2), closed: true },
-                                        ]"
-                                        value-attribute="closed"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                        </template>
-                                    </USelectMenu>
-                                </ClientOnly>
-                            </UFormGroup>
-                        </div>
+                                    />
+                                </UFormGroup>
+
+                                <div class="flex flex-row gap-2">
+                                    <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.category"
+                                                option-attribute="name"
+                                                :search-attributes="['name']"
+                                                block
+                                                nullable
+                                                :searchable="
+                                                    async (search: string) => {
+                                                        try {
+                                                            categoriesLoading = true;
+                                                            const categories =
+                                                                await completorStore.completeDocumentCategories(search);
+                                                            categoriesLoading = false;
+                                                            categories.unshift(emptyCategory);
+                                                            return categories;
+                                                        } catch (e) {
+                                                            handleGRPCError(e as RpcError);
+                                                            throw e;
+                                                        } finally {
+                                                            categoriesLoading = false;
+                                                        }
+                                                    }
+                                                "
+                                                searchable-lazy
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #label>
+                                                    <span
+                                                        v-if="state.category"
+                                                        class="inline-flex gap-1"
+                                                        :class="`bg-${state.category.color}-500`"
+                                                    >
+                                                        <component
+                                                            :is="
+                                                                markerIcons.find(
+                                                                    (item) => item.name === state.category?.icon,
+                                                                ) ?? markerFallbackIcon
+                                                            "
+                                                            v-if="state.category.icon"
+                                                            class="size-5"
+                                                        />
+                                                        <span class="truncate">{{ state.category.name }}</span>
+                                                    </span>
+                                                    <span v-else> &nbsp; </span>
+                                                </template>
+
+                                                <template #option="{ option }">
+                                                    <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
+                                                        <component
+                                                            :is="
+                                                                markerIcons.find((item) => item.name === option.icon) ??
+                                                                markerFallbackIcon
+                                                            "
+                                                            v-if="option.icon"
+                                                            class="size-5"
+                                                        />
+                                                        <span class="truncate">{{ option.name }}</span>
+                                                    </span>
+                                                </template>
+
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.category', 2)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormGroup>
+
+                                    <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+                                        <UInput
+                                            v-model="state.state"
+                                            type="text"
+                                            :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                                            :disabled="!canEdit || !canDo.edit"
+                                        />
+                                    </UFormGroup>
+
+                                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.closed"
+                                                :disabled="!canEdit || !canDo.edit"
+                                                :options="[
+                                                    { label: $t('common.open', 2), closed: false },
+                                                    { label: $t('common.close', 2), closed: true },
+                                                ]"
+                                                value-attribute="closed"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormGroup>
+                                </div>
+                            </div>
+                        </template>
+                    </UDashboardToolbar>
+
+                    <DocumentRelationManager
+                        v-model="relationManagerData"
+                        :open="openRelationManager"
+                        :document-id="documentId"
+                        @close="openRelationManager = false"
+                    />
+                    <DocumentReferenceManager
+                        v-model="referenceManagerData"
+                        :open="openReferenceManager"
+                        :document-id="documentId"
+                        @close="openReferenceManager = false"
+                    />
+
+                    <UFormGroup
+                        v-if="canDo.edit"
+                        name="content"
+                        class="flex flex-1 overflow-y-hidden"
+                        :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                        label="&nbsp;"
+                    >
+                        <ClientOnly>
+                            <TiptapEditor
+                                v-model="state.content"
+                                :disabled="!canEdit || !canDo.edit"
+                                class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                                rounded="rounded-none"
+                            >
+                                <template #footer>
+                                    <div v-if="saving" class="place-self-start">
+                                        <UIcon name="i-mdi-content-save" class="h-auto w-4 animate-spin" />
+                                        <span>{{ $t('common.save', 2) }}...</span>
+                                    </div>
+                                </template>
+                            </TiptapEditor>
+                        </ClientOnly>
+                    </UFormGroup>
+
+                    <UDashboardToolbar
+                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                    >
+                        <UButtonGroup v-if="canDo.edit" class="inline-flex w-full">
+                            <UButton
+                                v-if="canDo.relations"
+                                class="flex-1"
+                                block
+                                :disabled="!canEdit || !canDo.edit"
+                                icon="i-mdi-account-multiple"
+                                @click="openRelationManager = true"
+                            >
+                                {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                            </UButton>
+                            <UButton
+                                v-if="canDo.references"
+                                class="flex-1"
+                                block
+                                :disabled="!canEdit || !canDo.edit"
+                                icon="i-mdi-file-document"
+                                @click="openReferenceManager = true"
+                            >
+                                {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                            </UButton>
+                        </UButtonGroup>
+                    </UDashboardToolbar>
+                </template>
+
+                <template #access>
+                    <div class="flex flex-col gap-2 overflow-y-scroll px-2">
+                        <h2 class="text- text-gray-900 dark:text-white">
+                            {{ $t('common.access') }}
+                        </h2>
+
+                        <AccessManager
+                            v-model:jobs="state.access.jobs"
+                            v-model:users="state.access.users"
+                            :target-id="documentId ?? '0'"
+                            :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
+                            :disabled="!canEdit || !canDo.access"
+                        />
                     </div>
                 </template>
-            </UDashboardToolbar>
-
-            <DocumentRelationManager
-                v-model="relationManagerData"
-                :open="openRelationManager"
-                :document-id="documentId"
-                @close="openRelationManager = false"
-            />
-            <DocumentReferenceManager
-                v-model="referenceManagerData"
-                :open="openReferenceManager"
-                :document-id="documentId"
-                @close="openReferenceManager = false"
-            />
-
-            <template v-if="canDo.edit">
-                <UFormGroup name="content" class="relative">
-                    <ClientOnly>
-                        <TiptapEditor
-                            v-model="state.content"
-                            :disabled="!canEdit || !canDo.edit"
-                            class="mx-auto max-w-screen-xl"
-                            wrapper-class="min-h-72"
-                        />
-                    </ClientOnly>
-
-                    <template v-if="saving">
-                        <div class="absolute inset-x-0 bottom-0.5 flex justify-center gap-2 text-xs text-gray-900">
-                            <UIcon name="i-mdi-content-save" class="h-auto w-4 animate-spin" />
-                            <span>{{ $t('common.save', 2) }}...</span>
-                        </div>
-                    </template>
-                </UFormGroup>
-            </template>
-
-            <div class="mt-2 flex flex-col gap-2 px-2">
-                <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
-                    <UButton
-                        v-if="canDo.relations"
-                        class="flex-1"
-                        block
-                        :disabled="!canEdit || !canDo.edit"
-                        icon="i-mdi-account-multiple"
-                        @click="openRelationManager = true"
-                    >
-                        {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                    </UButton>
-                    <UButton
-                        v-if="canDo.references"
-                        class="flex-1"
-                        block
-                        :disabled="!canEdit || !canDo.edit"
-                        icon="i-mdi-file-document"
-                        @click="openReferenceManager = true"
-                    >
-                        {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                    </UButton>
-                </UButtonGroup>
-
-                <div>
-                    <h2 class="text- text-gray-900 dark:text-white">
-                        {{ $t('common.access') }}
-                    </h2>
-
-                    <AccessManager
-                        v-model:jobs="state.access.jobs"
-                        v-model:users="state.access.users"
-                        :target-id="documentId ?? '0'"
-                        :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
-                        :disabled="!canEdit || !canDo.access"
-                    />
-                </div>
-            </div>
+            </UTabs>
         </UDashboardPanelContent>
     </UForm>
 </template>

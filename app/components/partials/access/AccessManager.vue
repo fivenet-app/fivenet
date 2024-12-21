@@ -27,6 +27,7 @@ const props = withDefaults(
         disabled?: boolean;
         showRequired?: boolean;
         defaultAccessType?: AccessEntryType;
+        totalLimit?: number;
     }>(),
     {
         jobs: () => [],
@@ -37,8 +38,13 @@ const props = withDefaults(
         disabled: false,
         showRequired: false,
         defaultAccessType: 'job',
+        totalLimit: undefined,
     },
 );
+
+const { maxAccessEntries } = useAppConfig();
+
+const maxEntries = computed(() => props.totalLimit || maxAccessEntries);
 
 const emit = defineEmits<{
     (e: 'update:jobs', jobs: JobsT[]): void;
@@ -215,6 +221,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
 
         <UButton
             v-if="!disabled"
+            :disabled="access.length >= maxEntries"
             :ui="{ rounded: 'rounded-full' }"
             icon="i-mdi-plus"
             :title="$t('components.documents.document_editor.add_permission')"

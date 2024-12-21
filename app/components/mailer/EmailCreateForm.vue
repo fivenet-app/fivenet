@@ -74,7 +74,7 @@ watch(proposals, () => {
 const schema = z.object({
     email: z
         .string()
-        .min(6)
+        .min(3)
         .max(50)
         .refine((email) => (props.personalEmail ? proposals.value?.emails.includes(email) : true), {
             message: t('errors.MailerService.ErrAddresseInvalid'),

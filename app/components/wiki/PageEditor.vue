@@ -21,6 +21,8 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { t } = useI18n();
+
 const { attr, activeChar } = useAuth();
 
 const page = computed({
@@ -219,6 +221,37 @@ const parentPages = computedAsync(() =>
         .sort((a, b) => a.title.localeCompare(b.title)),
 );
 
+const items = [
+    {
+        slot: 'edit',
+        label: t('common.content'),
+        icon: 'i-mdi-pencil',
+    },
+    {
+        slot: 'access',
+        label: t('common.access', 1),
+        icon: 'i-mdi-key',
+    },
+];
+
+const router = useRouter();
+const route = useRoute();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.slot === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+    },
+});
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -258,53 +291,86 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0">
-            <div class="relative flex flex-1 flex-col overflow-x-auto px-8 py-2 pt-4">
-                <div class="flex flex-col gap-2">
+            <UTabs
+                v-model="selectedTab"
+                :items="items"
+                class="flex flex-1 flex-col"
+                :ui="{
+                    wrapper: 'space-y-0 overflow-y-hidden',
+                    container: 'flex flex-1 flex-col overflow-y-hidden',
+                    base: 'flex flex-1 flex-col overflow-y-hidden',
+                    list: { rounded: '' },
+                }"
+            >
+                <template #edit>
+                    <UDashboardToolbar>
+                        <template #default>
+                            <div class="flex w-full flex-col gap-2">
+                                <UFormGroup
+                                    v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
+                                    name="meta.parentId"
+                                    :label="$t('common.parent_page')"
+                                    class="w-full"
+                                >
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.parentId"
+                                            value-attribute="id"
+                                            searchable-lazy
+                                            :options="parentPages"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">
+                                                    {{
+                                                        state.parentId
+                                                            ? (parentPages?.find((p) => p.id === state.parentId)?.title ??
+                                                              $t('common.na'))
+                                                            : $t('common.none_selected', [$t('common.parent_page')])
+                                                    }}
+                                                </span>
+                                            </template>
+                                            <template #option="{ option: opt }">
+                                                {{ opt.title }}
+                                            </template>
+
+                                            <template #option-empty="{ query: search }">
+                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                            </template>
+
+                                            <template #empty> {{ $t('common.not_found', [$t('common.page', 2)]) }} </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
+                                </UFormGroup>
+
+                                <UFormGroup name="meta.title" :label="$t('common.title')">
+                                    <UInput v-model="state.meta.title" size="xl" />
+                                </UFormGroup>
+
+                                <UFormGroup name="meta.description" :label="$t('common.description')">
+                                    <UTextarea v-model="state.meta.description" />
+                                </UFormGroup>
+                            </div>
+                        </template>
+                    </UDashboardToolbar>
+
                     <UFormGroup
-                        v-if="!(modelValue?.meta?.createdAt && modelValue?.parentId === undefined)"
-                        name="meta.parentId"
-                        :label="$t('common.parent_page')"
-                        class="w-full"
+                        name="content"
+                        class="flex flex-1 overflow-y-hidden"
+                        :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                        label="&nbsp;"
                     >
                         <ClientOnly>
-                            <USelectMenu v-model="state.parentId" value-attribute="id" searchable-lazy :options="parentPages">
-                                <template #label>
-                                    <span class="truncate">
-                                        {{
-                                            state.parentId
-                                                ? (parentPages?.find((p) => p.id === state.parentId)?.title ?? $t('common.na'))
-                                                : $t('common.none_selected', [$t('common.parent_page')])
-                                        }}
-                                    </span>
-                                </template>
-                                <template #option="{ option: opt }">
-                                    {{ opt.title }}
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-
-                                <template #empty> {{ $t('common.not_found', [$t('common.page', 2)]) }} </template>
-                            </USelectMenu>
+                            <TiptapEditor
+                                v-model="state.content"
+                                class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                                rounded="rounded-none"
+                            />
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UFormGroup name="meta.title" :label="$t('common.title')">
-                        <UInput v-model="state.meta.title" size="xl" />
-                    </UFormGroup>
-
-                    <UFormGroup name="meta.description" :label="$t('common.description')">
-                        <UTextarea v-model="state.meta.description" />
-                    </UFormGroup>
-
-                    <UFormGroup name="content" :label="$t('common.content')">
-                        <ClientOnly>
-                            <TiptapEditor v-model="state.content" wrapper-class="min-h-44" />
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <div class="mt-2 flex flex-col gap-2">
+                    <UDashboardToolbar
+                        class="flex shrink-0 justify-between border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+                    >
                         <div class="flex flex-1 gap-2">
                             <UFormGroup name="public" :label="$t('common.public')" class="flex-1">
                                 <UToggle v-model="state.meta.public" :disabled="!canDo.public" />
@@ -314,7 +380,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UToggle v-model="state.meta.toc" />
                             </UFormGroup>
                         </div>
+                    </UDashboardToolbar>
+                </template>
 
+                <template #access>
+                    <div class="flex flex-col gap-2 overflow-y-scroll px-2">
                         <UFormGroup name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
@@ -324,8 +394,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </UFormGroup>
                     </div>
-                </div>
-            </div>
+                </template>
+            </UTabs>
         </UDashboardPanelContent>
     </UForm>
 </template>

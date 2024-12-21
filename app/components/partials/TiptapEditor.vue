@@ -52,6 +52,7 @@ const props = withDefaults(
         splitScreen?: boolean;
         hideToolbar?: boolean;
         commentMode?: boolean;
+        rounded?: string;
     }>(),
     {
         wrapperClass: '',
@@ -61,6 +62,7 @@ const props = withDefaults(
         splitScreen: false,
         hideToolbar: false,
         commentMode: false,
+        rounded: 'rounded',
     },
 );
 
@@ -483,8 +485,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="rounded border border-gray-100 dark:border-gray-800">
-        <div v-if="editor && !hideToolbar" class="bg-gray-100 p-0.5 dark:bg-gray-800">
+    <div class="relative flex flex-col border border-gray-100 dark:border-gray-800" :class="rounded">
+        <div v-if="editor && !hideToolbar" class="shrink-0 bg-gray-100 p-0.5 dark:bg-gray-800">
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup>
                     <UButton
@@ -548,7 +550,11 @@ onBeforeUnmount(() => {
                     />
                 </UButtonGroup>
 
-                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <UDivider
+                    v-if="!commentMode"
+                    orientation="vertical"
+                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
+                />
 
                 <!-- Text Align -->
                 <UButtonGroup v-if="!commentMode">
@@ -751,7 +757,11 @@ onBeforeUnmount(() => {
                     </UPopover>
                 </UButtonGroup>
 
-                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <UDivider
+                    v-if="!commentMode"
+                    orientation="vertical"
+                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
+                />
 
                 <UButtonGroup>
                     <UButton
@@ -971,7 +981,7 @@ onBeforeUnmount(() => {
         <TiptapEditorContent
             ref="contentRef"
             :editor="editor"
-            class="w-full min-w-0 max-w-full"
+            class="min-h-0 w-full min-w-0 max-w-full flex-auto overflow-y-auto"
             :class="[
                 wrapperClass,
                 'hover:prose-a:text-blue-500',
@@ -1014,8 +1024,8 @@ onBeforeUnmount(() => {
             :ui="{ rounded: '' }"
         />
 
-        <div v-if="editor" class="flex w-full justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
-            <div class="flex-1">
+        <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
+            <div class="flex flex-1">
                 <slot name="footer" />
             </div>
 

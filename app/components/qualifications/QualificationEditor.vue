@@ -293,6 +293,11 @@ const items = [
         icon: 'i-mdi-pencil',
     },
     {
+        slot: 'details',
+        label: t('common.detail', 2),
+        icon: 'i-mdi-details',
+    },
+    {
         slot: 'exam',
         label: t('common.exam', 1),
         icon: 'i-mdi-school',
@@ -354,7 +359,17 @@ const selectedTab = computed({
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0">
-            <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+            <UTabs
+                v-model="selectedTab"
+                :items="items"
+                class="flex flex-1 flex-col"
+                :ui="{
+                    wrapper: 'space-y-0 overflow-y-hidden',
+                    container: 'flex flex-1 flex-col overflow-y-hidden',
+                    base: 'flex flex-1 flex-col overflow-y-hidden',
+                    list: { rounded: '' },
+                }"
+            >
                 <template #edit>
                     <div v-if="loading" class="flex flex-col gap-2">
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
@@ -430,199 +445,206 @@ const selectedTab = computed({
                             </template>
                         </UDashboardToolbar>
 
-                        <template v-if="canDo.edit">
-                            <UFormGroup name="content">
-                                <ClientOnly>
-                                    <TiptapEditor v-model="state.content" :disabled="!canDo.edit" wrapper-class="min-h-44" />
-                                </ClientOnly>
-                            </UFormGroup>
-                        </template>
-
-                        <div class="mt-2 flex flex-col gap-2 px-2">
-                            <div>
-                                <h2 class="text- text-gray-900 dark:text-white">
-                                    {{ $t('common.access') }}
-                                </h2>
-
-                                <AccessManager
-                                    v-model:jobs="state.access.jobs"
-                                    :target-id="qualificationId ?? '0'"
-                                    :disabled="!canDo.access"
-                                    :access-types="accessTypes"
-                                    :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
+                        <UFormGroup
+                            v-if="canDo.edit"
+                            name="content"
+                            class="flex flex-1 overflow-y-hidden"
+                            :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                            label="&nbsp;"
+                        >
+                            <ClientOnly>
+                                <TiptapEditor
+                                    v-model="state.content"
+                                    :disabled="!canDo.edit"
+                                    class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                                    rounded="rounded-none"
                                 />
-                            </div>
+                            </ClientOnly>
+                        </UFormGroup>
+                    </template>
+                </template>
 
-                            <div>
-                                <h2 class="text- text-gray-900 dark:text-white">
-                                    {{ $t('common.requirements', 2) }}
-                                </h2>
+                <template #details>
+                    <div class="flex flex-col gap-2 overflow-y-auto px-2">
+                        <div>
+                            <h2 class="text- text-gray-900 dark:text-white">
+                                {{ $t('common.access') }}
+                            </h2>
 
-                                <QualificationRequirementEntry
-                                    v-for="(requirement, idx) in qualiRequirements"
-                                    :key="requirement.id"
-                                    :requirement="requirement"
-                                    @update-qualification="updateQualificationRequirement(idx, $event)"
-                                    @remove="qualiRequirements.splice(idx, 1)"
-                                />
+                            <AccessManager
+                                v-model:jobs="state.access.jobs"
+                                :target-id="qualificationId ?? '0'"
+                                :disabled="!canDo.access"
+                                :access-types="accessTypes"
+                                :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
+                            />
+                        </div>
 
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-plus"
-                                    @click="
-                                        qualiRequirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })
-                                    "
-                                />
-                            </div>
+                        <div>
+                            <h2 class="text- text-gray-900 dark:text-white">
+                                {{ $t('common.requirements', 2) }}
+                            </h2>
 
-                            <div>
-                                <UAccordion
-                                    :items="[
-                                        { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
-                                        { slot: 'label', label: $t('common.label', 1), icon: 'i-mdi-tag' },
-                                    ]"
-                                >
-                                    <template #discord>
-                                        <UContainer>
-                                            <UFormGroup
-                                                name="discordSettings.enabled"
-                                                :label="$t('common.enabled')"
-                                                :ui="{ container: 'inline-flex gap-2' }"
-                                            >
-                                                <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
-                                                    <span class="sr-only">
-                                                        {{ $t('common.enabled') }}
-                                                    </span>
-                                                </UToggle>
-                                                <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
-                                            </UFormGroup>
+                            <QualificationRequirementEntry
+                                v-for="(requirement, idx) in qualiRequirements"
+                                :key="requirement.id"
+                                :requirement="requirement"
+                                @update-qualification="updateQualificationRequirement(idx, $event)"
+                                @remove="qualiRequirements.splice(idx, 1)"
+                            />
 
-                                            <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
-                                                <UInput
-                                                    v-model="state.discordSettings.roleName"
-                                                    name="discordSettings.roleName"
-                                                    type="text"
-                                                    :placeholder="$t('common.role')"
-                                                    :disabled="!canDo.edit"
-                                                />
-                                            </UFormGroup>
+                            <UButton
+                                :ui="{ rounded: 'rounded-full' }"
+                                :disabled="!canSubmit"
+                                icon="i-mdi-plus"
+                                @click="qualiRequirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
+                            />
+                        </div>
 
-                                            <UFormGroup
+                        <div>
+                            <UAccordion
+                                :items="[
+                                    { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
+                                    { slot: 'label', label: $t('common.label', 1), icon: 'i-mdi-tag' },
+                                ]"
+                            >
+                                <template #discord>
+                                    <UContainer>
+                                        <UFormGroup
+                                            name="discordSettings.enabled"
+                                            :label="$t('common.enabled')"
+                                            :ui="{ container: 'inline-flex gap-2' }"
+                                        >
+                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
+                                                <span class="sr-only">
+                                                    {{ $t('common.enabled') }}
+                                                </span>
+                                            </UToggle>
+                                            <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                        </UFormGroup>
+
+                                        <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
+                                            <UInput
+                                                v-model="state.discordSettings.roleName"
+                                                name="discordSettings.roleName"
+                                                type="text"
+                                                :placeholder="$t('common.role')"
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormGroup>
+
+                                        <UFormGroup
+                                            name="discordSettings.roleFormat"
+                                            :label="
+                                                $t(
+                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                )
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.description',
+                                                )
+                                            "
+                                        >
+                                            <UInput
+                                                v-model="state.discordSettings.roleFormat"
                                                 name="discordSettings.roleFormat"
-                                                :label="
+                                                type="text"
+                                                :placeholder="
                                                     $t(
                                                         'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
                                                     )
                                                 "
-                                                :description="
-                                                    $t(
-                                                        'components.rector.job_props.discord_sync_settings.qualifications_role_format.description',
-                                                    )
-                                                "
-                                            >
-                                                <UInput
-                                                    v-model="state.discordSettings.roleFormat"
-                                                    name="discordSettings.roleFormat"
-                                                    type="text"
-                                                    :placeholder="
-                                                        $t(
-                                                            'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
-                                                        )
-                                                    "
-                                                    :disabled="!canDo.edit"
-                                                />
-                                            </UFormGroup>
-                                        </UContainer>
-                                    </template>
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormGroup>
+                                    </UContainer>
+                                </template>
 
-                                    <template #label>
-                                        <UContainer>
-                                            <UFormGroup
-                                                name="labelSyncEnabled"
-                                                :label="$t('common.enabled')"
-                                                :ui="{ container: 'inline-flex gap-2' }"
-                                            >
-                                                <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
-                                                    <span class="sr-only">
-                                                        {{ $t('common.enabled') }}
-                                                    </span>
-                                                </UToggle>
-                                                <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
-                                            </UFormGroup>
+                                <template #label>
+                                    <UContainer>
+                                        <UFormGroup
+                                            name="labelSyncEnabled"
+                                            :label="$t('common.enabled')"
+                                            :ui="{ container: 'inline-flex gap-2' }"
+                                        >
+                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
+                                                <span class="sr-only">
+                                                    {{ $t('common.enabled') }}
+                                                </span>
+                                            </UToggle>
+                                            <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                        </UFormGroup>
 
-                                            <UFormGroup
+                                        <UFormGroup
+                                            name="labelSyncFormat"
+                                            :label="
+                                                $t('components.qualifications.qualification_editor.label_sync_format.label')
+                                            "
+                                            :description="
+                                                $t(
+                                                    'components.qualifications.qualification_editor.label_sync_format.description',
+                                                )
+                                            "
+                                        >
+                                            <UInput
+                                                v-model="state.labelSyncFormat"
                                                 name="labelSyncFormat"
-                                                :label="
+                                                type="text"
+                                                :placeholder="
                                                     $t('components.qualifications.qualification_editor.label_sync_format.label')
                                                 "
-                                                :description="
-                                                    $t(
-                                                        'components.qualifications.qualification_editor.label_sync_format.description',
-                                                    )
-                                                "
-                                            >
-                                                <UInput
-                                                    v-model="state.labelSyncFormat"
-                                                    name="labelSyncFormat"
-                                                    type="text"
-                                                    :placeholder="
-                                                        $t(
-                                                            'components.qualifications.qualification_editor.label_sync_format.label',
-                                                        )
-                                                    "
-                                                    :disabled="!canDo.edit"
-                                                />
-                                            </UFormGroup>
-                                        </UContainer>
-                                    </template>
-                                </UAccordion>
-                            </div>
-
-                            <div>
-                                <h2 class="text- text-gray-900 dark:text-white">
-                                    {{ $t('common.exam', 1) }}
-                                </h2>
-
-                                <UFormGroup name="examMode">
-                                    <ClientOnly>
-                                        <USelectMenu
-                                            v-model="state.examMode"
-                                            :options="examModes"
-                                            value-attribute="mode"
-                                            class="w-40 max-w-40"
-                                        >
-                                            <template #label>
-                                                <span class="truncate">
-                                                    {{
-                                                        $t(
-                                                            `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
-                                                        )
-                                                    }}
-                                                </span>
-                                            </template>
-
-                                            <template #option="{ option }">
-                                                <span class="truncate">
-                                                    {{
-                                                        $t(
-                                                            `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
-                                                        )
-                                                    }}
-                                                </span>
-                                            </template>
-
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
-
-                                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                                        </USelectMenu>
-                                    </ClientOnly>
-                                </UFormGroup>
-                            </div>
+                                                :disabled="!canDo.edit"
+                                            />
+                                        </UFormGroup>
+                                    </UContainer>
+                                </template>
+                            </UAccordion>
                         </div>
-                    </template>
+
+                        <div>
+                            <h2 class="text- text-gray-900 dark:text-white">
+                                {{ $t('common.exam', 1) }}
+                            </h2>
+
+                            <UFormGroup name="examMode">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.examMode"
+                                        :options="examModes"
+                                        value-attribute="mode"
+                                        class="w-40 max-w-40"
+                                    >
+                                        <template #label>
+                                            <span class="truncate">
+                                                {{
+                                                    $t(
+                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
+                                                    )
+                                                }}
+                                            </span>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="truncate">
+                                                {{
+                                                    $t(
+                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
+                                                    )
+                                                }}
+                                            </span>
+                                        </template>
+
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+
+                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+                        </div>
+                    </div>
                 </template>
 
                 <template #exam>
@@ -630,7 +652,12 @@ const selectedTab = computed({
                         <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                     </div>
 
-                    <ExamEditor v-else v-model:settings="state.examSettings" v-model:questions="state.exam" />
+                    <ExamEditor
+                        v-else
+                        v-model:settings="state.examSettings"
+                        v-model:questions="state.exam"
+                        class="overflow-y-auto"
+                    />
                 </template>
             </UTabs>
         </UDashboardPanelContent>

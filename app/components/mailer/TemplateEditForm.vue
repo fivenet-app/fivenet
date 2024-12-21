@@ -79,7 +79,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <div>
-        <UForm :state="state" :schema="schema" class="mx-auto flex max-w-screen-xl flex-col gap-y-2" @submit="onSubmitThrottle">
+        <UForm
+            :state="state"
+            :schema="schema"
+            class="mx-auto flex max-w-screen-xl flex-1 flex-col gap-y-2"
+            @submit="onSubmitThrottle"
+        >
             <UButtonGroup class="mb-2 flex">
                 <UButton type="submit" class="flex-1" icon="i-mdi-pencil" :label="$t('common.save')" />
 
@@ -90,9 +95,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UInput v-model="state.title" type="text" />
             </UFormGroup>
 
-            <UFormGroup name="content">
+            <UFormGroup
+                name="content"
+                class="flex flex-1 overflow-y-hidden"
+                :ui="{ container: 'flex flex-1 mt-0 overflow-y-hidden', label: { wrapper: 'hidden' } }"
+                label="&nbsp;"
+            >
                 <ClientOnly>
-                    <TiptapEditor v-model="state.content" wrapper-class="min-h-44" />
+                    <TiptapEditor
+                        v-model="state.content"
+                        class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                        wrapper-class="min-h-80"
+                    />
                 </ClientOnly>
             </UFormGroup>
         </UForm>

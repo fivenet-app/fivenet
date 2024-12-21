@@ -284,12 +284,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <UDashboardToolbar
             v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
-            class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
+            class="flex justify-between overflow-y-hidden border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
         >
             <UAccordion
                 variant="outline"
                 :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
                 :ui="{ default: { class: 'mb-0' } }"
+                class="max-h-[50vh] overflow-y-auto"
             >
                 <template #compose>
                     <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">

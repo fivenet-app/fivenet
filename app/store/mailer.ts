@@ -263,6 +263,11 @@ export const useMailerStore = defineStore('mailer', {
                     await this.listEmails(true, 0, false);
                 }
 
+                // Still no email addresses?
+                if (this.emails.length === 0) {
+                    return;
+                }
+
                 // Load unread threads for all emails
                 const threads = await this.listThreads(
                     {

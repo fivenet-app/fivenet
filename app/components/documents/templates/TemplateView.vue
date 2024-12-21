@@ -80,7 +80,7 @@ const contentAccessTypes: AccessType[] = [
 <template>
     <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
         <template #right>
-            <PartialsBackButton fallback-to="/documents/templates" />
+            <PartialsBackButton to="/documents/templates" />
 
             <UButtonGroup v-if="template" class="inline-flex">
                 <UButton

@@ -250,7 +250,6 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 	if req.Calendar.Job != nil && !slices.Contains(fields, "Job") {
 		return nil, errorscalendar.ErrFailedQuery
 	}
-
 	if req.Calendar.Color == "" {
 		req.Calendar.Color = "primary"
 	}
@@ -352,7 +351,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				req.Calendar.Closed,
 				req.Calendar.Color,
 				userInfo.UserId,
-				req.Calendar.Job,
+				userInfo.Job,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tCalendar.Name.SET(jet.String(req.Calendar.Name)),
@@ -361,6 +360,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
 				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
 			)
+
 		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
