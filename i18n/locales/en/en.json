@@ -586,13 +586,6 @@
                 "add_comment": "Add your comment",
                 "no_comments": "No comments have been posted yet"
             },
-            "document_editor": {
-                "add_permission": "Add Permission",
-                "quill": {
-                    "msg": "Edit HTML here, when you click \"OK\" the quill editor's contents will be replaced.",
-                    "okText": "Ok"
-                }
-            },
             "document_managers": {
                 "view_current": "View current",
                 "add_new": "Add new",
@@ -1276,6 +1269,10 @@
                 "title": "Server not Found",
                 "description": "Can't find the server at \"{domain}\". Check the address for typing errors. If you are unable to load any pages, check your internet connection."
             }
+        },
+        "access": {
+            "add_entry": "Add Access",
+            "remove_entry": "Remove Access"
         }
     },
     "notifications": {

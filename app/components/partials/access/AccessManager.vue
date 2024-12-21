@@ -219,7 +219,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
             @delete="access?.splice(idx, 1)"
         />
 
-        <UTooltip v-if="!disabled" :text="$t('components.documents.document_editor.add_permission')">
+        <UTooltip v-if="!disabled" :text="$t('components.access.add_entry')">
             <UButton
                 :disabled="access.length >= maxEntries"
                 :ui="{ rounded: 'rounded-full' }"

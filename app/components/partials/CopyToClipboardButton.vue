@@ -12,8 +12,8 @@ function addToClipboard(): void {
     copyToClipboardWrapper(props.value.toString());
 
     notifications.add({
-        title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
-        description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
+        title: { key: 'notifications.clipboard.copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.copied.content', parameters: {} },
         timeout: 3250,
         type: NotificationType.INFO,
     });

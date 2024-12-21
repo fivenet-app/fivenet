@@ -316,12 +316,8 @@ watch(props, () => setFromProps());
             </ClientOnly>
         </UFormGroup>
 
-        <UButton
-            v-if="!disabled"
-            :ui="{ rounded: 'rounded-full' }"
-            class="flex-initial"
-            icon="i-mdi-close"
-            @click="$emit('delete')"
-        />
+        <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
+            <UButton :ui="{ rounded: 'rounded-full' }" class="flex-initial" icon="i-mdi-close" @click="$emit('delete')" />
+        </UTooltip>
     </UForm>
 </template>
