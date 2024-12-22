@@ -220,7 +220,9 @@ const accordionItems = computed(() =>
                 </UPageHeader>
 
                 <UPageBody v-if="page.content?.content" class="pb-8">
-                    <HTMLContent :value="page.content.content" />
+                    <div class="rounded-lg bg-neutral-100 dark:bg-base-900">
+                        <HTMLContent class="px-4 py-2" :value="page.content.content" />
+                    </div>
                 </UPageBody>
 
                 <UDivider class="mb-4" />
