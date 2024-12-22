@@ -179,7 +179,7 @@ watchDebounced(query, async () => refresh(), {
             </UFormGroup>
 
             <UFormGroup label="&nbsp;">
-                <SortButton v-model="sort" :fields="[{ label: 'common.created_at', value: 'createdAt' }]" />
+                <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>

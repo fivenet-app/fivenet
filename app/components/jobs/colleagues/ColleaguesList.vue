@@ -8,6 +8,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { Label } from '~~/gen/ts/resources/jobs/labels';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -213,6 +214,16 @@ defineShortcuts({
                             </span>
                         </UToggle>
                     </div>
+                </UFormGroup>
+
+                <UFormGroup v-if="jobsService.cardView" :label="$t('common.sort_by')">
+                    <SortButton
+                        v-model="sort"
+                        :fields="[
+                            { label: $t('common.rank'), value: 'rank' },
+                            { label: $t('common.name'), value: 'name' },
+                        ]"
+                    />
                 </UFormGroup>
 
                 <UFormGroup label="&nbsp">

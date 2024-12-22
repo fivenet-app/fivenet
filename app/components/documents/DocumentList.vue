@@ -335,8 +335,8 @@ defineShortcuts({
                             <SortButton
                                 v-model="sort"
                                 :fields="[
-                                    { label: 'common.created_at', value: 'createdAt' },
-                                    { label: 'common.title', value: 'title' },
+                                    { label: $t('common.created_at'), value: 'createdAt' },
+                                    { label: $t('common.title'), value: 'title' },
                                 ]"
                             />
                         </UFormGroup>

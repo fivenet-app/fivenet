@@ -88,7 +88,7 @@ watch(offset, async () => refresh());
 
                 <SortButton
                     v-model="sort"
-                    :fields="[{ label: 'common.created_at', value: 'createdAt' }]"
+                    :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
                     class="flex-initial"
                 />
             </div>

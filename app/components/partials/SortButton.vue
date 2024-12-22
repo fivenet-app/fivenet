@@ -51,11 +51,13 @@ function changeColumn(col: string): void {
                 @update:model-value="changeColumn($event)"
             >
                 <template #label>
-                    {{ $t(fields.find((f) => f.value === sort.column)?.label ?? 'common.na') }}
+                    {{ fields.find((f) => f.value === sort.column)?.label ?? $t('common.na') }}
                 </template>
+
                 <template #option="{ option: field }">
-                    {{ $t(field.label) }}
+                    {{ field.label }}
                 </template>
+
                 <template #empty> {{ $t('common.not_found', [$t('common.field', 2)]) }} </template>
             </USelectMenu>
         </ClientOnly>

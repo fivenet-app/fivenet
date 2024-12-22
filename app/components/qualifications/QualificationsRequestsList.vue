@@ -74,7 +74,7 @@ watch(offset, async () => refresh());
                     {{ $t('components.qualifications.user_requests') }}
                 </h3>
 
-                <SortButton v-model="sort" :fields="[{ label: 'common.id', value: 'id' }]" />
+                <SortButton v-model="sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>
         </template>
 
