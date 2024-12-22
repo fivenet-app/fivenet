@@ -380,9 +380,19 @@ const categoriesLoading = ref(false);
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="p-0">
-            <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+            <UTabs
+                v-model="selectedTab"
+                :items="items"
+                class="flex flex-1 flex-col"
+                :ui="{
+                    wrapper: 'space-y-0 overflow-y-hidden',
+                    container: 'flex flex-1 flex-col overflow-y-hidden',
+                    base: 'flex flex-1 flex-col overflow-y-hidden',
+                    list: { rounded: '' },
+                }"
+            >
                 <template #details>
-                    <UContainer class="w-full">
+                    <UContainer class="mt-2 w-full overflow-y-scroll">
                         <div>
                             <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
                                 <UInput
@@ -479,7 +489,7 @@ const categoriesLoading = ref(false);
                 </template>
 
                 <template #content>
-                    <UContainer class="w-full">
+                    <UContainer class="flex w-full flex-1 flex-col overflow-y-hidden">
                         <SingleHint
                             class="my-2"
                             hint-id="template_editor_templating"
@@ -488,55 +498,62 @@ const categoriesLoading = ref(false);
                             link-target="_blank"
                         />
 
-                        <div>
-                            <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                                <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
-                            </UFormGroup>
+                        <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                            <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
+                        </UFormGroup>
 
-                            <UFormGroup name="category" :label="$t('common.category', 1)">
-                                <ClientOnly>
-                                    <UInputMenu
-                                        v-model="state.category"
-                                        option-attribute="name"
-                                        :search-attributes="['name']"
-                                        block
-                                        nullable
-                                        :search="
-                                            async (search: string) => {
-                                                try {
-                                                    categoriesLoading = true;
-                                                    const categories = await completorStore.completeDocumentCategories(search);
-                                                    categoriesLoading = false;
-                                                    return categories;
-                                                } catch (e) {
-                                                    handleGRPCError(e as RpcError);
-                                                    throw e;
-                                                } finally {
-                                                    categoriesLoading = false;
-                                                }
+                        <UFormGroup name="category" :label="$t('common.category', 1)">
+                            <ClientOnly>
+                                <UInputMenu
+                                    v-model="state.category"
+                                    option-attribute="name"
+                                    :search-attributes="['name']"
+                                    block
+                                    nullable
+                                    :search="
+                                        async (search: string) => {
+                                            try {
+                                                categoriesLoading = true;
+                                                const categories = await completorStore.completeDocumentCategories(search);
+                                                categoriesLoading = false;
+                                                return categories;
+                                            } catch (e) {
+                                                handleGRPCError(e as RpcError);
+                                                throw e;
+                                            } finally {
+                                                categoriesLoading = false;
                                             }
-                                        "
-                                        search-lazy
-                                        :search-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                    </UInputMenu>
-                                </ClientOnly>
-                            </UFormGroup>
+                                        }
+                                    "
+                                    search-lazy
+                                    :search-placeholder="$t('common.search_field')"
+                                >
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                </UInputMenu>
+                            </ClientOnly>
+                        </UFormGroup>
 
-                            <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                                <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
-                            </UFormGroup>
+                        <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                            <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
+                        </UFormGroup>
 
-                            <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
-                                <ClientOnly>
-                                    <TiptapEditor v-model="state.content" split-screen wrapper-class="min-h-72" />
-                                </ClientOnly>
-                            </UFormGroup>
-                        </div>
+                        <UFormGroup
+                            name="content"
+                            :label="`${$t('common.content')} ${$t('common.template')}`"
+                            required
+                            class="flex flex-1 flex-col overflow-y-hidden"
+                            :ui="{ container: 'flex flex-1 overflow-y-hidden' }"
+                        >
+                            <ClientOnly>
+                                <TiptapEditor
+                                    v-model="state.content"
+                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                />
+                            </ClientOnly>
+                        </UFormGroup>
                     </UContainer>
                 </template>
             </UTabs>

@@ -645,7 +645,7 @@ logger.info(
                             <TiptapEditor
                                 v-model="state.content"
                                 :disabled="!canEdit || !canDo.edit"
-                                class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                                class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
                             >
                                 <template #footer>

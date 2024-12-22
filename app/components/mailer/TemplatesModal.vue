@@ -110,7 +110,6 @@ const editing = ref(false);
                                             v-model="templates.templates[index].content"
                                             disabled
                                             hide-toolbar
-                                            split-screen
                                             wrapper-class="min-h-44"
                                         />
                                     </ClientOnly>

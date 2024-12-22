@@ -456,7 +456,7 @@ const selectedTab = computed({
                                 <TiptapEditor
                                     v-model="state.content"
                                     :disabled="!canDo.edit"
-                                    class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                     rounded="rounded-none"
                                 />
                             </ClientOnly>

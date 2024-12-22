@@ -541,7 +541,9 @@
         "with_header_row": "With header row",
         "url": "URL",
         "link": "Link",
-        "unlink": "Unlink"
+        "unlink": "Unlink",
+        "editor": "Editor",
+        "source_code": "Source Code"
     },
     "components": {
         "partials": {

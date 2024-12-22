@@ -205,7 +205,7 @@ const canDo = computed(() => ({
                         <UDivider />
                     </template>
 
-                    <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                    <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                         <HTMLContent v-if="entry.content?.content" class="px-4 py-2" :value="entry.content.content" />
                     </div>
                 </template>

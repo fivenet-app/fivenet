@@ -41,6 +41,7 @@ import FontSize from 'tiptap-extension-font-size';
 import UniqueId from 'tiptap-unique-id';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
+import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -49,7 +50,6 @@ const props = withDefaults(
         limit?: number;
         disabled?: boolean;
         placeholder?: string;
-        splitScreen?: boolean;
         hideToolbar?: boolean;
         commentMode?: boolean;
         rounded?: string;
@@ -59,7 +59,6 @@ const props = withDefaults(
         limit: undefined,
         disabled: false,
         placeholder: undefined,
-        splitScreen: false,
         hideToolbar: false,
         commentMode: false,
         rounded: 'rounded',
@@ -71,6 +70,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const modal = useModal();
 
 const content = useVModel(props, 'modelValue', emit);
 
@@ -975,6 +976,24 @@ onBeforeUnmount(() => {
                         @click="editor.chain().focus().redo().run()"
                     />
                 </UButtonGroup>
+
+                <UDivider
+                    v-if="!commentMode"
+                    orientation="vertical"
+                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
+                />
+                <UButton
+                    v-if="!commentMode"
+                    color="white"
+                    variant="ghost"
+                    icon="i-mdi-file-code"
+                    @click="
+                        modal.open(TiptapEditorSourceCodeModal, {
+                            content: content,
+                            'onUpdate:content': ($event) => (content = $event),
+                        })
+                    "
+                />
             </div>
         </div>
 
@@ -1014,14 +1033,6 @@ onBeforeUnmount(() => {
                 'prose-video:my-0.5',
                 'prose-hr:my-0.5',
             ]"
-        />
-        <UTextarea
-            v-if="splitScreen"
-            v-model="content"
-            :rows="24"
-            autoresize
-            class="border-t-2 border-gray-500"
-            :ui="{ rounded: '' }"
         />
 
         <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">

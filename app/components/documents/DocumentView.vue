@@ -516,7 +516,7 @@ defineShortcuts({
                 <h2 class="sr-only">
                     {{ $t('common.content') }}
                 </h2>
-                <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                     <HTMLContent v-if="doc.content?.content" class="px-4 py-2" :value="doc.content.content" />
                 </div>
             </div>

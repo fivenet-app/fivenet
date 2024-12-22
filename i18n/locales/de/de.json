@@ -541,7 +541,9 @@
         "with_header_row": "Mit Kopfzeile",
         "url": "URL",
         "link": "Verlinken",
-        "unlink": "Auflösen"
+        "unlink": "Auflösen",
+        "editor": "Editor",
+        "source_code": "Quellcode"
     },
     "components": {
         "partials": {

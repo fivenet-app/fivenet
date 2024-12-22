@@ -104,7 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <ClientOnly>
                     <TiptapEditor
                         v-model="state.content"
-                        class="mx-auto max-w-screen-xl flex-1 overflow-y-hidden"
+                        class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                         wrapper-class="min-h-80"
                     />
                 </ClientOnly>
