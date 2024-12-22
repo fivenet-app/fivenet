@@ -173,6 +173,8 @@ const editor = useEditor({
     },
     editable: !props.disabled,
     extensions: extensions,
+    onFocus: () => focusTablet(true),
+    onBlur: () => focusTablet(false),
     onUpdate: () => emit('update:modelValue', unref(editor)?.getHTML() ?? ''),
 });
 
