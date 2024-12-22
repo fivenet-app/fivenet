@@ -22,6 +22,7 @@ const { isOpen } = useModal();
 const { attr, activeChar } = useAuth();
 
 const calendarStore = useCalendarStore();
+const { hasPrivateCalendar } = storeToRefs(calendarStore);
 
 const notifications = useNotificatorStore();
 
@@ -50,7 +51,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     description: '',
-    private: true,
+    private: !hasPrivateCalendar,
     public: false,
     closed: false,
     color: 'primary',
@@ -181,7 +182,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                             class="flex-1"
                         >
-                            <UToggle v-model="state.private" :disabled="!canDo.privateCalendar || calendarId !== undefined" />
+                            <UToggle
+                                v-model="state.private"
+                                :disabled="
+                                    !canDo.privateCalendar ||
+                                    calendarId !== undefined ||
+                                    (!props.calendarId && hasPrivateCalendar)
+                                "
+                            />
                         </UFormGroup>
 
                         <UFormGroup v-if="canDo.publicCalendar" name="public" :label="$t('common.public')" class="flex-1">

@@ -359,6 +359,12 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
     },
+    getters: {
+        hasPrivateCalendar: (state) => {
+            const { activeChar } = useAuth();
+            return !!state.calendars.find((c) => c.job === undefined && c.creatorId === activeChar.value?.userId);
+        },
+    },
 });
 
 class CalendarDexie extends Dexie {
