@@ -1,7 +1,4 @@
 import { format } from 'date-fns';
-import Dexie, { type Table } from 'dexie';
-import 'dexie-observable';
-import 'dexie-syncable';
 import { defineStore } from 'pinia';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
@@ -70,9 +67,6 @@ export const useCalendarStore = defineStore('calendar', {
 
                 const now = new Date();
                 response.entries.forEach((entry) => {
-                    calendarDB.entries.add(entry);
-                    calendarDB.entries.delete(entry);
-
                     const startTime = toDate(entry.startTime);
                     const time = startTime.getTime() - now.getTime();
 
@@ -366,22 +360,6 @@ export const useCalendarStore = defineStore('calendar', {
         },
     },
 });
-
-class CalendarDexie extends Dexie {
-    calendars!: Table<Calendar>;
-    entries!: Table<CalendarEntry>;
-
-    constructor() {
-        super('calendar');
-        this.version(1).stores({
-            calendars: 'id',
-            entries: 'id, calendarId',
-            rsvps: 'entry_id, user_id',
-        });
-    }
-}
-
-export const calendarDB = new CalendarDexie();
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCalendarStore, import.meta.hot));

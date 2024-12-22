@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/jinzhu/now"
 )
 
 func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
@@ -68,8 +69,12 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
 	}
 
-	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTime(int(req.Year), time.Month(req.Month), 1, 0, 0, 0))).
-		AND(tCalendarEntry.StartTime.LT(jet.DateTime(int(req.Year), time.Month(req.Month+1), 1, 0, 0, 0)))
+	baseDate := now.New(time.Date(int(req.Year), time.Month(req.Month), 1, 0, 0, 0, 0, time.Local))
+	startDate := baseDate.BeginningOfMonth()
+	endDate := baseDate.EndOfMonth()
+
+	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTimeT(startDate))).
+		AND(tCalendarEntry.StartTime.LT(jet.DateTimeT(endDate)))
 
 	resp := &ListCalendarEntriesResponse{}
 
@@ -132,9 +137,11 @@ func (s *Server) GetUpcomingEntries(ctx context.Context, req *GetUpcomingEntries
 			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 		),
 		tCalendarEntry.StartTime.LT_EQ(
+			// Now plus X seconds
 			jet.CURRENT_TIMESTAMP().ADD(jet.INTERVALd(time.Duration(req.Seconds)*time.Second)),
 		),
 		tCalendarEntry.StartTime.GT_EQ(
+			// Now minus 1 minute
 			jet.CURRENT_TIMESTAMP().SUB(jet.INTERVALd(1*time.Minute)),
 		),
 	)

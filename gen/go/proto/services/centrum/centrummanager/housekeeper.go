@@ -748,9 +748,9 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitId, _ := s.GetUserUnitID(ctx, userId)
+				unitId, found := s.GetUserUnitID(ctx, userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
+				if found && unit.Id == unitId && s.tracker.IsUserOnDuty(userId) {
 					foundUserIds = append(foundUserIds, userId)
 					continue
 				}
@@ -770,23 +770,28 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 		}
 	}
 
-	userUnitIds, err := s.State.ListUserIdsFromUserIdUnitIds(ctx)
+	userUnitIds, err := s.State.ListUserUnitMappings(ctx)
 	if err != nil {
 		return err
 	}
 
 	errs := multierr.Combine()
-	for _, userId := range userUnitIds {
-		// Check if user id with unit mapping is in one of the units
-		if !slices.Contains(foundUserIds, userId) {
-			s.logger.Warn("found invalid user id unit mapping", zap.Int32("user_id", userId))
+	for _, userUnit := range userUnitIds {
+		// Check if user id is part of an unit
+		if slices.Contains(foundUserIds, userUnit.UserId) {
+			continue
+		}
 
+		s.logger.Warn("found user id with unit mapping that isn't in any unit", zap.Int32("user_id", userUnit.UserId), zap.Int32s("users_in_units", foundUserIds), zap.Any("mapping", userUnit))
+
+		// TODO this isn't working as intended at the moment
+		/*
 			// Unset unit id for user when user is not in any unit
 			if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
-		}
+		*/
 	}
 
 	return errs

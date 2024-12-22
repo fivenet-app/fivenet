@@ -79,6 +79,7 @@ const {
 );
 
 watchDebounced(currentDate.value, async () => refresh(), { debounce: 100, maxWait: 1000 });
+watchDebounced(activeCalendarIds, async () => refresh());
 
 function formatStartEndTime(entry: CalendarEntry): string {
     const start = toDate(entry.startTime);
@@ -634,10 +635,11 @@ const isOpen = ref(false);
                     </ClientOnly>
                 </UFormGroup>
 
-                <UTooltip :text="$t('common.refresh')">
+                <UTooltip :text="$t('common.refresh')" class="inline-flex w-full">
                     <UButton
                         icon="i-mdi-refresh"
                         variant="outline"
+                        class="w-full"
                         :disabled="loading || loadingState"
                         :loading="loading || loadingState"
                         @click="refresh()"
