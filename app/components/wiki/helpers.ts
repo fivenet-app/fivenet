@@ -2,6 +2,7 @@
 
 import type { AccessLevel, PageAccess } from '~~/gen/ts/resources/wiki/access';
 import { PageActivityType } from '~~/gen/ts/resources/wiki/activity';
+import { type Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
 export function getPageAtivityIcon(activityType: PageActivityType): string {
     switch (activityType) {
@@ -33,4 +34,14 @@ export function checkPageAccess(access: PageAccess | undefined, creator: UserLik
     }
 
     return checkAccess(activeChar.value, access, creator, level);
+}
+
+export function pageToURL(page: PageShort | Page, fullUrl: boolean = false): string {
+    const base = fullUrl ? `${window.location.protocol}//${window.location.hostname}` : '';
+
+    if (PageShort.is(page)) {
+        return `${base}/wiki/${page.job}/${page.id}/${page?.slug ?? ''}`;
+    } else {
+        return `${base}/wiki/${page.job}/${page.id}/${page?.meta?.slug ?? ''}`;
+    }
 }

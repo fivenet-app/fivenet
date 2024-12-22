@@ -10,6 +10,7 @@ import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
+import { pageToURL } from './helpers';
 
 const props = defineProps<{
     modelValue?: Page | undefined;
@@ -364,7 +365,34 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.content"
                                 class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
                                 rounded="rounded-none"
-                            />
+                            >
+                                <template #linkModal="{ state: linkState }">
+                                    <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-1" />
+
+                                    <UFormGroup name="url" :label="`${$t('common.wiki')} ${$t('common.page')}`" class="w-full">
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                label-attribute="title"
+                                                searchable-lazy
+                                                :options="pages"
+                                                @update:model-value="($event) => (linkState.url = pageToURL($event, true))"
+                                            >
+                                                <template #option="{ option: opt }">
+                                                    {{ opt.title }}
+                                                </template>
+
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.page', 2)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </UFormGroup>
+                                </template>
+                            </TiptapEditor>
                         </ClientOnly>
                     </UFormGroup>
 
