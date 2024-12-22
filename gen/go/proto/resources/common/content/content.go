@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"database/sql/driver"
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -26,6 +27,8 @@ const (
 	TextNodeType    NodeType = "text"
 	CommentNodeType NodeType = "comment"
 )
+
+var headerTagRegex = regexp.MustCompile(`(?i)^h[1-6]$`)
 
 // Scan implements driver.Valuer for protobuf Content.
 func (x *Content) Scan(value any) error {
@@ -215,17 +218,33 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 		e = e.NextSibling
 	}
 
-	if strings.HasPrefix(n.Tag, "h") {
-		if n.Id == "" {
+	if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
+		// Either empty id or "broken" id tag
+		if n.Id == "" || headerTagRegex.MatchString(n.Id) {
 			if n.Text != "" {
 				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
 			} else if len(n.Content) > 0 {
-				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Content[0].Text))
+				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
 			}
 		}
 	}
 
 	return nil
+}
+
+func walkContentForText(ns []*JSONNode) string {
+	text := ""
+	for i := 0; i < len(ns); i++ {
+		element := ns[i]
+		if element.Text == "" {
+			text += walkContentForText(element.Content)
+		} else {
+			text += element.Text
+			break
+		}
+	}
+
+	return text
 }
 
 func (n *JSONNode) populateTo(htmlNode *html.Node) {
@@ -237,6 +256,18 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 	}
 
 	if n.Id != "" {
+		// Make sure that headers have id
+		if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
+			// Either empty id or "broken" id tag
+			if n.Id == "" || headerTagRegex.MatchString(n.Id) {
+				if n.Text != "" {
+					n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
+				} else if len(n.Content) > 0 {
+					n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+				}
+			}
+		}
+
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: "id",
 			Val: n.Id,

@@ -637,6 +637,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 			WHERE(jet.AND(
 				tPage.Job.EQ(jet.String(userInfo.Job)),
 				tPage.DeletedAt.IS_NULL(),
+				tPage.ParentID.IS_NULL(),
 			))
 
 		var ids struct {
@@ -657,7 +658,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *UpdatePageRequest) (*Updat
 			return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 		}
 
-		if p.Job != userInfo.Job {
+		if p.Job != userInfo.Job && !userInfo.SuperUser {
 			return nil, errorswiki.ErrPageDenied
 		}
 
