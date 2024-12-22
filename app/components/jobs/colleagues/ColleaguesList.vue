@@ -461,7 +461,7 @@ defineShortcuts({
                     </template>
 
                     <template #header>
-                        <div class="flex items-center justify-center">
+                        <div class="flex items-center justify-center overflow-hidden">
                             <ProfilePictureImg
                                 :src="colleague?.avatar?.url"
                                 :name="`${colleague.firstname} ${colleague.lastname}`"
