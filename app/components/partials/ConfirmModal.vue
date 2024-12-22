@@ -25,7 +25,7 @@ const { isOpen } = useModal();
         :icon="icon"
         :ui="{
             icon: { base: 'text-red-500 dark:text-red-400' } as any,
-            footer: { base: 'ml-16', padding: 'p-0' },
+            footer: { base: 'ml-16' },
         }"
         @update:model-value="cancel && cancel()"
     >
