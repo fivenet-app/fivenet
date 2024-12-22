@@ -3,7 +3,6 @@ package mailer
 import (
 	"context"
 	"errors"
-	"fmt"
 	"strings"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -453,8 +452,6 @@ func (s *Server) SearchThreads(ctx context.Context, req *SearchThreadsRequest) (
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(tMessages.CreatedAt.DESC()).
 		LIMIT(limit)
-
-	fmt.Println(stmt.DebugSql())
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Messages); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
