@@ -128,7 +128,6 @@ watchDebounced(query, async () => refresh(), {
                         block
                         :placeholder="$t('common.colleague', 2)"
                         trailing
-                        by="userId"
                         leading-icon="i-mdi-search"
                     >
                         <template #label>
@@ -136,13 +135,16 @@ watchDebounced(query, async () => refresh(), {
                                 {{ usersToLabel(query.colleagues) }}
                             </template>
                         </template>
+
                         <template #option="{ option: colleague }">
                             <ColleagueName :colleague="colleague" birthday />
                         </template>
+
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
-                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+
+                        <template #empty> {{ $t('common.not_found', [$t('common.colleague', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
             </UFormGroup>

@@ -9,6 +9,7 @@ import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import ColleagueName from '../colleagues/ColleagueName.vue';
 import { conductTypesToBGColor } from './helpers';
 
 const props = defineProps<{
@@ -156,10 +157,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
                                                 }}</span>
                                             </template>
+
                                             <template #option="{ option }">
                                                 <span class="truncate" :class="conductTypesToBGColor(option.status)">{{
                                                     $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
                                                 }}</span>
+                                            </template>
+
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.type', 2)]) }}
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
@@ -201,12 +207,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     {{ userToLabel(state.targetUser) }}
                                                 </template>
                                             </template>
-                                            <template #option="{ option: user }">
-                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+
+                                            <template #option="{ option: colleague }">
+                                                <ColleagueName :colleague="colleague" birthday class="truncate" />
                                             </template>
+
                                             <template #option-empty="{ query: search }">
                                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                             </template>
+
                                             <template #empty>
                                                 {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                             </template>

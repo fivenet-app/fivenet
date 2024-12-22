@@ -63,14 +63,17 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                                 {{ usersToLabel([query.user]) }}
                             </span>
                         </template>
+
                         <template #option="{ option: user }">
                             <span class="truncate">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </span>
                         </template>
+
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
+
                         <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                     </UInputMenu>
                 </ClientOnly>

@@ -12,6 +12,7 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { TimeclockMode, TimeclockUserMode } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
+import ColleagueName from '../colleagues/ColleagueName.vue';
 import TimeclockStatsBlock from './TimeclockStatsBlock.vue';
 
 const props = withDefaults(
@@ -117,6 +118,7 @@ const {
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
+        console.log('TEST1');
         if (!isBefore(query.date.start, query.date.end)) {
             query.date.start = query.mode > TimeclockMode.DAILY ? subWeeks(query.date.end, 1) : query.date.start;
         }
@@ -146,6 +148,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
 
         const call = getGRPCJobsTimeclockClient().listTimeclock(req);
         const { response } = await call;
+        console.log('TEST2', response);
 
         return response;
     } catch (e) {
@@ -260,20 +263,17 @@ const selectedMode = computed({
     },
 });
 
-const itemsAll = computed(() =>
-    [
-        { label: t('common.time_ago.day'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
-        { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
-        { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
-    ].flatMap((item) => (item !== undefined ? [item] : [])),
-);
+const itemsAll = computed(() => [
+    { label: t('common.time_ago.day'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
+    { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
+    { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
+]);
 </script>
 
 <template>
     <UTabs
         v-model="selectedTab"
         :items="items"
-        :unmount="true"
         :ui="{
             list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
         }"
@@ -415,7 +415,6 @@ const itemsAll = computed(() =>
                         <UTabs
                             v-model="selectedMode"
                             :items="itemsAll"
-                            :unmount="true"
                             :ui="{ wrapper: 'relative space-y-0 flex-1', container: '' }"
                         />
 
@@ -458,22 +457,22 @@ const itemsAll = computed(() =>
                                         :placeholder="$t('common.colleague', 2)"
                                         block
                                         trailing
-                                        by="userId"
                                         leading-icon="i-mdi-search"
                                     >
-                                        <template v-if="query.users.length > 0" #label>
-                                            <span class="truncate">
-                                                {{ usersToLabel(query.users ?? []) }}
+                                        <template #label>
+                                            <span v-if="query?.users?.length > 0" class="truncate">
+                                                {{ usersToLabel(query?.users ?? []) }}
                                             </span>
                                         </template>
-                                        <template #option="{ option: user }">
-                                            <span class="truncate">
-                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                            </span>
+
+                                        <template #option="{ option: colleague }">
+                                            <ColleagueName :colleague="colleague" birthday class="truncate" />
                                         </template>
+
                                         <template #option-empty="{ query: search }">
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
+
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                         </template>
@@ -582,82 +581,85 @@ const itemsAll = computed(() =>
         />
 
         <template v-else>
-            <UTable
-                v-if="query.mode === TimeclockMode.WEEKLY"
-                v-model:sort="sort"
-                :loading="loading"
-                :columns="columns"
-                :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
-                :empty-state="{
-                    icon: 'i-mdi-timeline-clock',
-                    label: $t('common.not_found', [$t('common.entry', 2)]),
-                }"
-                sort-mode="manual"
-                class="flex-1"
-            >
-                <template #caption>
-                    <caption>
-                        <p class="text-right">
-                            <span class="font-semibold">{{ $t('common.sum') }}:</span>
+            <template v-if="query.mode === TimeclockMode.WEEKLY">
+                {{ data?.entries }}
 
+                <UTable
+                    v-model:sort="sort"
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
+                    :empty-state="{
+                        icon: 'i-mdi-timeline-clock',
+                        label: $t('common.not_found', [$t('common.entry', 2)]),
+                    }"
+                    sort-mode="manual"
+                    class="flex-1"
+                >
+                    <template #caption>
+                        <caption>
+                            <p class="text-right">
+                                <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
+                                {{
+                                    fromSecondsToFormattedDuration(
+                                        parseFloat(
+                                            (
+                                                (Math.round(
+                                                    (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100,
+                                                ) /
+                                                    100) *
+                                                60 *
+                                                60
+                                            ).toPrecision(2),
+                                        ),
+                                        { seconds: false },
+                                    )
+                                }}
+                            </p>
+                        </caption>
+                    </template>
+
+                    <template #date-data="{ row: item }">
+                        <div class="text-gray-900 dark:text-white">
+                            {{ $d(toDate(item.date), 'date') }}
+                        </div>
+                    </template>
+
+                    <template #name-data="{ row: item }">
+                        <div class="inline-flex items-center gap-1">
+                            <ProfilePictureImg
+                                :src="item.user?.avatar?.url"
+                                :name="`${item.user?.firstname} ${item.user?.lastname}`"
+                                size="xs"
+                            />
+
+                            <ColleagueInfoPopover :user="item.user" />
+                        </div>
+                    </template>
+
+                    <template #rank-data="{ row: entry }">
+                        {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+                    </template>
+
+                    <template #time-data="{ row: entry }">
+                        <div class="text-right">
                             {{
-                                fromSecondsToFormattedDuration(
-                                    parseFloat(
-                                        (
-                                            (Math.round(
-                                                (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100,
-                                            ) /
-                                                100) *
-                                            60 *
-                                            60
-                                        ).toPrecision(2),
-                                    ),
-                                    { seconds: false },
-                                )
+                                entry.spentTime > 0
+                                    ? fromSecondsToFormattedDuration(
+                                          parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                          { seconds: false },
+                                      )
+                                    : ''
                             }}
-                        </p>
-                    </caption>
-                </template>
 
-                <template #date-data="{ row: item }">
-                    <div class="text-gray-900 dark:text-white">
-                        {{ $d(toDate(item.date), 'date') }}
-                    </div>
-                </template>
-
-                <template #name-data="{ row: item }">
-                    <div class="inline-flex items-center gap-1">
-                        <ProfilePictureImg
-                            :src="item.user?.avatar?.url"
-                            :name="`${item.user?.firstname} ${item.user?.lastname}`"
-                            size="xs"
-                        />
-
-                        <ColleagueInfoPopover :user="item.user" />
-                    </div>
-                </template>
-
-                <template #rank-data="{ row: entry }">
-                    {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-                </template>
-
-                <template #time-data="{ row: entry }">
-                    <div class="text-right">
-                        {{
-                            entry.spentTime > 0
-                                ? fromSecondsToFormattedDuration(
-                                      parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                      { seconds: false },
-                                  )
-                                : ''
-                        }}
-
-                        <UBadge v-if="entry.startTime !== undefined" color="green">
-                            {{ $t('common.active') }}
-                        </UBadge>
-                    </div>
-                </template>
-            </UTable>
+                            <UBadge v-if="entry.startTime !== undefined" color="green">
+                                {{ $t('common.active') }}
+                            </UBadge>
+                        </div>
+                    </template>
+                </UTable>
+            </template>
 
             <UTable
                 v-else
@@ -706,9 +708,9 @@ const itemsAll = computed(() =>
                     </caption>
                 </template>
 
-                <template #date-data="{ row: item }">
+                <template #date-data="{ row }">
                     <div class="text-gray-900 dark:text-white">
-                        {{ $d(toDate(item.date), 'date') }}
+                        {{ $d(toDate(row.date), 'date') }}
                     </div>
                 </template>
 

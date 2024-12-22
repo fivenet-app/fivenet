@@ -515,6 +515,7 @@ const isOpen = ref(false);
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                     class="size-5"
                                 />
+
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 
@@ -624,6 +625,7 @@ const isOpen = ref(false);
                                     :name="viewOptions.find((o) => o.value === view)?.icon ?? 'i-mdi-view-'"
                                     class="size-5"
                                 />
+
                                 {{ viewOptions.find((o) => o.value === view)?.label ?? $t('common.na') }}
                             </template>
 

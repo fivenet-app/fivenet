@@ -7,10 +7,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
-import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
+import ColleagueName from '../colleagues/ColleagueName.vue';
 import ConductViewSlideover from './ConductViewSlideover.vue';
 import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
 
@@ -33,7 +34,7 @@ const schema = z.object({
     id: z.string().max(16).optional(),
     types: z.nativeEnum(ConductType).array().max(10),
     showExpired: z.boolean(),
-    user: z.custom<User>().optional(),
+    user: z.custom<Colleague>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -211,12 +212,20 @@ const columns = [
                                 leading-icon="i-mdi-search"
                                 @keydown.esc="$event.target.blur()"
                             >
-                                <template #option="{ option: user }">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                <template #label>
+                                    <span v-if="query?.user" class="truncate">
+                                        {{ userToLabel(query.user) }}
+                                    </span>
                                 </template>
+
+                                <template #option="{ option: colleague }">
+                                    <ColleagueName :colleague="colleague" birthday class="truncate" />
+                                </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                 </template>
@@ -241,9 +250,11 @@ const columns = [
                                         {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
                                     </span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>

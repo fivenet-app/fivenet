@@ -203,9 +203,11 @@ defineShortcuts({
                             <template #option="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </template>
+
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
+
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
                         </UInputMenu>
                     </ClientOnly>

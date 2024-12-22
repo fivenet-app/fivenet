@@ -169,11 +169,7 @@ const editing = ref(false);
                 <USelectMenu
                     v-model="state.labels"
                     multiple
-                    :searchable="
-                        async (q: string) => {
-                            return (await getColleagueLabels(q)).labels;
-                        }
-                    "
+                    :searchable="async (q: string) => (await getColleagueLabels(q))?.labels ?? []"
                     searchable-lazy
                     :searchable-placeholder="$t('common.search_field')"
                     :search-attributes="['name']"
