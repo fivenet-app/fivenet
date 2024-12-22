@@ -236,16 +236,15 @@ const accordionItems = computed(() =>
 
                     <UButton
                         v-if="can('QualificationsService.DeleteQualification').value && canDo.delete"
-                        icon="i-mdi-trash-can"
-                        color="red"
+                        :color="!qualification.deletedAt ? 'red' : 'green'"
+                        :icon="!qualification.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                        :label="!qualification.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteQualification(qualification!.id),
                             })
                         "
-                    >
-                        {{ $t('common.delete') }}
-                    </UButton>
+                    />
                 </div>
             </template>
         </UDashboardToolbar>

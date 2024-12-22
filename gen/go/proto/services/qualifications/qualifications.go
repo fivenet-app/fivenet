@@ -596,6 +596,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
+	tQuali := table.FivenetQualifications
 	stmt := tQuali.
 		UPDATE(
 			tQuali.DeletedAt,

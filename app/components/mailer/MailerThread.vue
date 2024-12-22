@@ -232,10 +232,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UDivider>
                     <GenericTime :value="message.createdAt" type="short" />
 
-                    <UTooltip v-if="isSuperuser" :text="$t('common.delete')" square class="ml-2">
+                    <UTooltip
+                        v-if="isSuperuser"
+                        :text="!message.deletedAt ? $t('common.delete') : $t('common.restore')"
+                        class="ml-2"
+                    >
                         <UButton
-                            icon="i-mdi-trash-can-outline"
-                            color="red"
+                            :color="!message.deletedAt ? 'red' : 'green'"
+                            :icon="!message.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
                             variant="ghost"
                             size="xs"
                             @click="

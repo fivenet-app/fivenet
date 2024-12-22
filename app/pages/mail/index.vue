@@ -443,10 +443,13 @@ onBeforeMount(async () => {
                             />
                         </UTooltip>
 
-                        <UTooltip v-if="isSuperuser" :text="$t('common.delete')">
+                        <UTooltip
+                            v-if="isSuperuser"
+                            :text="!selectedThread.deletedAt ? $t('common.delete') : $t('common.restore')"
+                        >
                             <UButton
-                                icon="i-mdi-trash-can-outline"
-                                color="red"
+                                :color="!selectedThread.deletedAt ? 'red' : 'green'"
+                                :icon="!selectedThread.deletedAt ? 'i-mdi-trash-can-outline' : 'i-mdi-restore'"
                                 variant="ghost"
                                 @click="
                                     modal.open(ConfirmModal, {

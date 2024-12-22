@@ -312,6 +312,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
+	tMessages := table.FivenetMailerMessages
 	stmt := tMessages.
 		UPDATE(
 			tMessages.DeletedAt,

@@ -118,7 +118,6 @@ const {
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
-        console.log('TEST1');
         if (!isBefore(query.date.start, query.date.end)) {
             query.date.start = query.mode > TimeclockMode.DAILY ? subWeeks(query.date.end, 1) : query.date.start;
         }
@@ -148,7 +147,6 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
 
         const call = getGRPCJobsTimeclockClient().listTimeclock(req);
         const { response } = await call;
-        console.log('TEST2', response);
 
         return response;
     } catch (e) {

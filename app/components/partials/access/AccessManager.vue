@@ -187,7 +187,7 @@ watch(usersAccess, setFromPropsUsers);
 watch(qualificationsAccess, setFromPropsQualifications);
 
 function addEntry(): void {
-    let idx = aTypes.value.findIndex((at) => at.name === props.defaultAccessType);
+    let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
     if (idx === -1) {
         idx = aTypes.value.length - 1;
     }

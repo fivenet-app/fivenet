@@ -626,11 +626,16 @@ func (s *Server) DeleteEmail(ctx context.Context, req *DeleteEmailRequest) (*Del
 		req.Id,
 	)
 
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if email != nil && email.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	tEmails := table.FivenetMailerEmails
 	stmt := tEmails.
 		UPDATE().
 		SET(
-			tEmails.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tEmails.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
 			tEmails.ID.EQ(jet.Uint64(req.Id)),

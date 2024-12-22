@@ -403,21 +403,15 @@ defineShortcuts({
                         "
                         block
                         class="flex-1 flex-col"
-                        :color="!doc.deletedAt ? 'red' : undefined"
+                        :color="!doc.deletedAt ? 'red' : 'green'"
                         :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                        :label="!doc.deletedAt ? $t('common.delete') : $t('common.restore')"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteDocument(documentId),
                             })
                         "
-                    >
-                        <template v-if="!doc.deletedAt">
-                            {{ $t('common.delete') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('common.restore') }}
-                        </template>
-                    </UButton>
+                    />
                 </div>
             </template>
         </UDashboardToolbar>

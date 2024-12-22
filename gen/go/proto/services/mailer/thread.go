@@ -415,6 +415,7 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
+	tThreads := table.FivenetMailerThreads
 	stmt := tThreads.
 		UPDATE(
 			tThreads.DeletedAt,
