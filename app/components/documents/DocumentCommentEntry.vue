@@ -8,7 +8,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import HTMLContent from '../partials/content/HTMLContent.vue';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     modelValue?: Comment;

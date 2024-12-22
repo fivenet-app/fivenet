@@ -7,7 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import TiptapEditor from '~/components/partials/TiptapEditor.vue';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';

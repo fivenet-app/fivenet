@@ -21,7 +21,7 @@ import type {
 } from '~~/gen/ts/services/qualifications/qualifications';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '../partials/access/helpers';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{

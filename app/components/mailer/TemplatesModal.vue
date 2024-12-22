@@ -5,7 +5,7 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 

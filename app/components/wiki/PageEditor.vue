@@ -9,7 +9,7 @@ import { AccessLevel } from '~~/gen/ts/resources/wiki/access';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     modelValue?: Page | undefined;

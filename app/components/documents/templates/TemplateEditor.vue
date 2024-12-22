@@ -7,9 +7,9 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import { zWorkflow, type ObjectSpecsValue } from '~/components/documents/templates/types';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
-import TiptapEditor from '~/components/partials/TiptapEditor.vue';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';

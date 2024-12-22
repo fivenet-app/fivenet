@@ -123,7 +123,7 @@ service JobsService {
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate", "Note", "Labels", "Name"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
-  // @perm: Name=SetJobsUserProps
+  // @perm: Name=GetColleague
   rpc GetColleagueLabels(GetColleagueLabelsRequest) returns (GetColleagueLabelsResponse);
   // @perm
   rpc ManageColleagueLabels(ManageColleagueLabelsRequest) returns (ManageColleagueLabelsResponse);

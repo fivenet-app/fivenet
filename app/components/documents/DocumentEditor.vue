@@ -20,7 +20,7 @@ import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/ser
 import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
 import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     documentId?: string;

@@ -6,7 +6,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateTemplateRequest } from '~~/gen/ts/services/mailer/mailer';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     template?: Template;

@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import TiptapEditor from '../partials/TiptapEditor.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import TemplateSelector from './TemplateSelector.vue';
 import { defaultEmptyContent } from './helpers';
 

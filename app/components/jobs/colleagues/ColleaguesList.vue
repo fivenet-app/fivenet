@@ -123,6 +123,15 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
     }
 }
 
+function toggleLabelInSearch(label: Label): void {
+    const idx = query.labels.findIndex((l) => l.id === label.id);
+    if (idx > -1) {
+        query.labels.splice(idx, 1);
+    } else {
+        query.labels.push(label);
+    }
+}
+
 const columns = [
     {
         key: 'name',
@@ -452,7 +461,7 @@ defineShortcuts({
         <div v-else class="relative flex-1 overflow-x-auto">
             <UPageGrid
                 :ui="{
-                    wrapper: 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4',
+                    wrapper: 'grid grid-cols-1 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6',
                 }"
             >
                 <UPageCard v-for="colleague in data?.colleagues" :key="colleague.userId">
@@ -508,7 +517,7 @@ defineShortcuts({
                                     {{ $t('common.none', [$t('common.label', 2)]) }}
                                 </span>
                                 <div v-else class="flex max-w-full flex-row flex-wrap gap-1">
-                                    <UBadge
+                                    <UButton
                                         v-for="label in colleague.props?.labels?.list"
                                         :key="label.name"
                                         :style="{ backgroundColor: label.color }"
@@ -516,10 +525,12 @@ defineShortcuts({
                                         :class="
                                             isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'
                                         "
-                                        size="sm"
+                                        size="xs"
+                                        :ui="{ padding: { xs: 'px-2 py-1' } }"
+                                        @click="toggleLabelInSearch(label)"
                                     >
                                         {{ label.name }}
-                                    </UBadge>
+                                    </UButton>
                                 </div>
                             </div>
 
@@ -573,6 +584,7 @@ defineShortcuts({
                                     :label="$t('common.show')"
                                     icon="i-mdi-eye"
                                     block
+                                    truncate
                                     :to="{
                                         name: 'jobs-colleagues-id-info',
                                         params: { id: colleague.userId ?? 0 },

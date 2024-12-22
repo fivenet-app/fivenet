@@ -62,7 +62,7 @@ export interface IJobsServiceClient {
      */
     setJobsUserProps(input: SetJobsUserPropsRequest, options?: RpcOptions): UnaryCall<SetJobsUserPropsRequest, SetJobsUserPropsResponse>;
     /**
-     * @perm: Name=SetJobsUserProps
+     * @perm: Name=GetColleague
      *
      * @generated from protobuf rpc: GetColleagueLabels(services.jobs.GetColleagueLabelsRequest) returns (services.jobs.GetColleagueLabelsResponse);
      */
@@ -147,7 +147,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<SetJobsUserPropsRequest, SetJobsUserPropsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=SetJobsUserProps
+     * @perm: Name=GetColleague
      *
      * @generated from protobuf rpc: GetColleagueLabels(services.jobs.GetColleagueLabelsRequest) returns (services.jobs.GetColleagueLabelsResponse);
      */
