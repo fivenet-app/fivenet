@@ -367,12 +367,17 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 		return nil, errorscalendar.ErrNoPerms
 	}
 
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if entry.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tCalendarEntry.
 		UPDATE(
 			tCalendarEntry.DeletedAt,
 		).
 		SET(
-			tCalendarEntry.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tCalendarEntry.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
 			tCalendarEntry.CalendarID.EQ(jet.Uint64(entry.CalendarId)),

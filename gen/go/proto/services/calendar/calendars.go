@@ -417,12 +417,25 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest)
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.CalendarId)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if calendar == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
+
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if calendar != nil && calendar.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tCalendar.
 		UPDATE(
 			tCalendar.DeletedAt,
 		).
 		SET(
-			tCalendar.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tCalendar.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(tCalendar.ID.EQ(jet.Uint64(req.CalendarId)))
 

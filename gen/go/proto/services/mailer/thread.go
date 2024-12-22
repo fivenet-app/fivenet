@@ -410,10 +410,21 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 		return nil, err
 	}
 
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if thread != nil && thread.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tThreads.
-		DELETE().
-		WHERE(tThreads.ID.EQ(jet.Uint64(req.ThreadId))).
-		LIMIT(1)
+		UPDATE(
+			tThreads.DeletedAt,
+		).
+		SET(
+			tThreads.DeletedAt.SET(deletedAtTime),
+		).
+		WHERE(
+			tThreads.ID.EQ(jet.Uint64(req.ThreadId)),
+		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)

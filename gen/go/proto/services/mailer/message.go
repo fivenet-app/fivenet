@@ -302,13 +302,27 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 		return nil, errorsmailer.ErrFailedQuery
 	}
 
+	message, err := s.getMessage(ctx, req.MessageId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+	}
+
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if message != nil && message.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tMessages.
-		DELETE().
+		UPDATE(
+			tMessages.DeletedAt,
+		).
+		SET(
+			tMessages.DeletedAt.SET(deletedAtTime),
+		).
 		WHERE(jet.AND(
 			tMessages.ThreadID.EQ(jet.Uint64(req.ThreadId)),
 			tMessages.ID.EQ(jet.Uint64(req.MessageId)),
-		)).
-		LIMIT(1)
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
@@ -316,7 +330,7 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 
 	thread, err := s.getThread(ctx, req.ThreadId, req.EmailId, userInfo, true)
 	if err != nil {
-		return nil, errorsmailer.ErrFailedQuery
+		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
 	}
 
 	if thread != nil && thread.Recipients != nil && len(thread.Recipients) > 0 {

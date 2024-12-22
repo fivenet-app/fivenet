@@ -591,12 +591,17 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if quali.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tQuali.
 		UPDATE(
 			tQuali.DeletedAt,
 		).
 		SET(
-			tQuali.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tQuali.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(
 			tQuali.ID.EQ(jet.Uint64(req.QualificationId)),

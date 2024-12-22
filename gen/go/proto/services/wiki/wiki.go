@@ -836,12 +836,22 @@ func (s *Server) DeletePage(ctx context.Context, req *DeletePageRequest) (*Delet
 		return nil, errorswiki.ErrPageDenied
 	}
 
+	page, err := s.getPage(ctx, req.Id, false, false, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+
+	deletedAtTime := jet.CURRENT_TIMESTAMP()
+	if page.Meta != nil && page.Meta.DeletedAt != nil && userInfo.SuperUser {
+		deletedAtTime = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tPage.
 		UPDATE(
 			tPage.DeletedAt,
 		).
 		SET(
-			tPage.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+			tPage.DeletedAt.SET(deletedAtTime),
 		).
 		WHERE(jet.AND(
 			tPage.ID.EQ(jet.Uint64(req.Id)),
