@@ -157,12 +157,12 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 
 			case "style":
 				// Skip empty style attribute
-				if strings.TrimSpace(a.Val) == "" {
+				val := strings.TrimSpace(a.Val)
+				if val == "" {
 					continue
 				}
 
 				// Clean style options - maybe sort them in the future?
-				val := strings.Replace(a.Val, " ", "", -1)
 				if !strings.HasSuffix(val, ";") {
 					val += ";"
 				}
