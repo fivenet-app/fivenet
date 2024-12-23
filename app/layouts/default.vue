@@ -159,6 +159,7 @@ const links = computed(() =>
             to: '/wiki',
             tooltip: {
                 text: t('common.wiki'),
+                shortcuts: ['G', 'L'],
             },
             permission: 'WikiService.ListPages' as Perms,
         },
@@ -168,6 +169,7 @@ const links = computed(() =>
             to: '/internet',
             tooltip: {
                 text: t('common.internet'),
+                shortcuts: ['G', 'I'],
             },
             permission: 'TODOService.TODOMethod' as Perms,
         },

@@ -59,14 +59,9 @@ const categories = computed(() => [
             { shortcuts: ['G', 'Q'], name: t('common.goto_item', [t('common.qualification', 2)]) },
             { shortcuts: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
             { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
+            { shortcuts: ['G', 'L'], name: t('common.goto_item', [t('common.wiki')]) },
+            { shortcuts: ['G', 'I'], name: t('common.goto_item', [t('common.internet')]) },
             { shortcuts: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
-        ],
-    },
-    {
-        title: t('common.mail'),
-        items: [
-            { shortcuts: ['↑'], name: t('components.mailer.prev_thread') },
-            { shortcuts: ['↓'], name: t('components.mailer.next_thread') },
         ],
     },
     {
@@ -111,6 +106,13 @@ const categories = computed(() => [
     {
         title: t('common.dispatch_center'),
         items: [{ shortcuts: ['C', 'Q'], name: `${t('common.dispatch_center')}: ${t('common.join')}/ ${t('common.leave')}` }],
+    },
+    {
+        title: t('common.mail'),
+        items: [
+            { shortcuts: ['↑'], name: t('components.mailer.prev_thread') },
+            { shortcuts: ['↓'], name: t('components.mailer.next_thread') },
+        ],
     },
 ]);
 

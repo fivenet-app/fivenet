@@ -17,6 +17,7 @@ const _useDashboard = () => {
         'g-q': () => router.push('/qualifications'),
         'g-m': () => router.push('/livemap'),
         'g-w': () => router.push('/centrum'),
+        'g-l': () => router.push('/wiki'),
         'g-i': () => router.push('/internet'),
         'g-p': () => router.push('/rector'),
         '?': () => (isHelpSlideoverOpen.value = true),
