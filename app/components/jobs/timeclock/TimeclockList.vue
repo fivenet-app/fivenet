@@ -579,85 +579,82 @@ const itemsAll = computed(() => [
         />
 
         <template v-else>
-            <template v-if="query.mode === TimeclockMode.WEEKLY">
-                {{ data?.entries }}
+            <UTable
+                v-if="query.mode === TimeclockMode.WEEKLY"
+                v-model:sort="sort"
+                :loading="loading"
+                :columns="columns"
+                :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
+                :empty-state="{
+                    icon: 'i-mdi-timeline-clock',
+                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                }"
+                sort-mode="manual"
+                class="flex-1"
+            >
+                <template #caption>
+                    <caption>
+                        <p class="text-right">
+                            <span class="font-semibold">{{ $t('common.sum') }}:</span>
 
-                <UTable
-                    v-model:sort="sort"
-                    :loading="loading"
-                    :columns="columns"
-                    :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
-                    :empty-state="{
-                        icon: 'i-mdi-timeline-clock',
-                        label: $t('common.not_found', [$t('common.entry', 2)]),
-                    }"
-                    sort-mode="manual"
-                    class="flex-1"
-                >
-                    <template #caption>
-                        <caption>
-                            <p class="text-right">
-                                <span class="font-semibold">{{ $t('common.sum') }}:</span>
-
-                                {{
-                                    fromSecondsToFormattedDuration(
-                                        parseFloat(
-                                            (
-                                                (Math.round(
-                                                    (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100,
-                                                ) /
-                                                    100) *
-                                                60 *
-                                                60
-                                            ).toPrecision(2),
-                                        ),
-                                        { seconds: false },
-                                    )
-                                }}
-                            </p>
-                        </caption>
-                    </template>
-
-                    <template #date-data="{ row: item }">
-                        <div class="text-gray-900 dark:text-white">
-                            {{ $d(toDate(item.date), 'date') }}
-                        </div>
-                    </template>
-
-                    <template #name-data="{ row: item }">
-                        <div class="inline-flex items-center gap-1">
-                            <ProfilePictureImg
-                                :src="item.user?.avatar?.url"
-                                :name="`${item.user?.firstname} ${item.user?.lastname}`"
-                                size="xs"
-                            />
-
-                            <ColleagueInfoPopover :user="item.user" />
-                        </div>
-                    </template>
-
-                    <template #rank-data="{ row: entry }">
-                        {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-                    </template>
-
-                    <template #time-data="{ row: entry }">
-                        <div class="text-right">
                             {{
-                                entry.spentTime > 0
-                                    ? fromSecondsToFormattedDuration(
-                                          parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                          { seconds: false },
-                                      )
-                                    : ''
+                                fromSecondsToFormattedDuration(
+                                    parseFloat(
+                                        (
+                                            (Math.round(
+                                                (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100,
+                                            ) /
+                                                100) *
+                                            60 *
+                                            60
+                                        ).toPrecision(2),
+                                    ),
+                                    { seconds: false },
+                                )
                             }}
+                        </p>
+                    </caption>
+                </template>
 
-                            <UBadge v-if="entry.startTime !== undefined" color="green">
-                                {{ $t('common.active') }}
-                            </UBadge>
-                        </div>
-                    </template>
-                </UTable>
-            </template>
+                <template #date-data="{ row: item }">
+                    <div class="text-gray-900 dark:text-white">
+                        {{ $d(toDate(item.date), 'date') }}
+                    </div>
+                </template>
+
+                <template #name-data="{ row: item }">
+                    <div class="inline-flex items-center gap-1">
+                        <ProfilePictureImg
+                            :src="item.user?.avatar?.url"
+                            :name="`${item.user?.firstname} ${item.user?.lastname}`"
+                            size="xs"
+                        />
+
+                        <ColleagueInfoPopover :user="item.user" />
+                    </div>
+                </template>
+
+                <template #rank-data="{ row: entry }">
+                    {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+                </template>
+
+                <template #time-data="{ row: entry }">
+                    <div class="text-right">
+                        {{
+                            entry.spentTime > 0
+                                ? fromSecondsToFormattedDuration(
+                                      parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                      { seconds: false },
+                                  )
+                                : ''
+                        }}
+
+                        <UBadge v-if="entry.startTime !== undefined" color="green">
+                            {{ $t('common.active') }}
+                        </UBadge>
+                    </div>
+                </template>
+            </UTable>
 
             <UTable
                 v-else
