@@ -40,6 +40,10 @@ export type Links = {
     privacyPolicy?: string;
 };
 
+export type FeatureGates = {
+    imageProxy: boolean;
+};
+
 export type GameConfig = {
     unemployedJobName: string;
     startJobGrade: number;

@@ -1,6 +1,10 @@
+<script lang="ts" setup>
+const visibility = useDocumentVisibility();
+</script>
+
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="snowflakes">
+    <div v-if="visibility === 'visible'" class="snowflakes">
         <div class="snowflake">
             <div class="inner">❅</div>
         </div>

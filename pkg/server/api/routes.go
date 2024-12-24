@@ -101,7 +101,9 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 			Links:     Links{},
 			StatsPage: appCfg.Website.StatsPage,
 		},
-		FeatureGates: FeatureGates{},
+		FeatureGates: FeatureGates{
+			ImageProxy: r.cfg.ImageProxy.Enabled,
+		},
 		Game: Game{
 			UnemployedJobName: "unemployed",
 			StartJobGrade:     0,

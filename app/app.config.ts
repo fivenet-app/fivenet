@@ -1,4 +1,4 @@
-import type { DiscordConfig, GameConfig, LoginConfig, WebsiteConfig } from '~/typings';
+import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, WebsiteConfig } from '~/typings';
 
 export default defineAppConfig({
     version: '',
@@ -11,6 +11,9 @@ export default defineAppConfig({
         botInviteURL: '',
     } as DiscordConfig,
     website: {} as WebsiteConfig,
+    featureGates: {
+        imageProxy: false,
+    } as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
         startJobGrade: 0,

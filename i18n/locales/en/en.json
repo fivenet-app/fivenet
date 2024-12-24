@@ -543,7 +543,10 @@
         "link": "Link",
         "unlink": "Unlink",
         "editor": "Editor",
-        "source_code": "Source Code"
+        "source_code": "Source Code",
+        "file_click_to_upload": "Choose a file",
+        "file_drag_n_drop": "or drag it here.",
+        "insert": "Insert"
     },
     "components": {
         "partials": {

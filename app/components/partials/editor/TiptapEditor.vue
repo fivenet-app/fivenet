@@ -41,6 +41,7 @@ import FontSize from 'tiptap-extension-font-size';
 import UniqueId from 'tiptap-unique-id';
 import { ImageResize } from '~/composables/tiptap/extensions/imageResize';
 import SearchAndReplace from '~/composables/tiptap/extensions/searchAndReplace';
+import TiptapEditorImageModal from './TiptapEditorImageModal.vue';
 import TiptapEditorSourceCodeModal from './TiptapEditorSourceCodeModal.vue';
 import { fontColors, highlightColors } from './helpers';
 
@@ -696,6 +697,18 @@ onBeforeUnmount(() => {
                 </UButtonGroup>
 
                 <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+
+                <UButton
+                    v-if="!commentMode"
+                    icon="i-mdi-image-plus"
+                    color="white"
+                    variant="ghost"
+                    @click="
+                        modal.open(TiptapEditorImageModal, {
+                            editor: editor,
+                        })
+                    "
+                />
 
                 <UPopover v-if="!commentMode">
                     <UButton

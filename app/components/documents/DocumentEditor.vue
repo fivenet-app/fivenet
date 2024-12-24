@@ -650,7 +650,7 @@ logger.info(
                             >
                                 <template #footer>
                                     <div v-if="saving" class="place-self-start">
-                                        <UIcon name="i-mdi-content-save" class="h-auto w-4 animate-spin" />
+                                        <UIcon name="i-mdi-content-save" class="h-4 w-4 animate-spin" />
                                         <span>{{ $t('common.save', 2) }}...</span>
                                     </div>
                                 </template>

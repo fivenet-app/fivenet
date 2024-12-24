@@ -39,7 +39,9 @@ type Links struct {
 	PrivacyPolicy *string `json:"privacyPolicy"`
 }
 
-type FeatureGates struct{}
+type FeatureGates struct {
+	ImageProxy bool `json:"imageProxy"`
+}
 
 type Game struct {
 	UnemployedJobName string `json:"unemployedJobName"`
