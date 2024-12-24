@@ -226,21 +226,24 @@ defineShortcuts({
                     />
                 </UFormGroup>
 
-                <UFormGroup label="&nbsp">
-                    <UButtonGroup>
-                        <UButton
-                            v-if="can('JobsService.ManageColleagueLabels').value"
-                            :label="$t('common.label', 2)"
-                            icon="i-mdi-tag"
-                            @click="modal.open(JobsLabelsModal, {})"
-                        />
-                        <UButton
-                            v-if="can('JobsService.GetColleague').value"
-                            icon="i-mdi-chart-donut"
-                            color="white"
-                            @click="modal.open(ColleaguesLabelStatsModal, {})"
-                        />
-                    </UButtonGroup>
+                <UFormGroup
+                    v-if="
+                        can('JobsService.ManageColleagueLabels').value ||
+                        attr('JobsService.GetColleague', 'Types', 'Labels').value
+                    "
+                    label="&nbsp"
+                    :ui="{ container: 'inline-flex gap-1' }"
+                >
+                    <UButton
+                        v-if="can('JobsService.ManageColleagueLabels').value"
+                        :label="$t('common.label', 2)"
+                        icon="i-mdi-tag"
+                        @click="modal.open(JobsLabelsModal, {})"
+                    />
+
+                    <UTooltip v-if="attr('JobsService.GetColleague', 'Types', 'Labels').value" :text="$t('common.stats')">
+                        <UButton icon="i-mdi-chart-donut" color="white" @click="modal.open(ColleaguesLabelStatsModal, {})" />
+                    </UTooltip>
                 </UFormGroup>
             </div>
 
