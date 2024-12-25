@@ -111,6 +111,18 @@ func (m *UserEvent) validate(all bool) error {
 			}
 		}
 
+	case *UserEvent_NotificationsReadCount:
+		if v == nil {
+			err := UserEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for NotificationsReadCount
 	default:
 		_ = v // ensures v is used
 	}

@@ -29,12 +29,13 @@ message GetNotificationsResponse {
 }
 
 message MarkNotificationsRequest {
-  repeated uint64 ids = 1 [jstype = JS_STRING, (validate.rules).repeated = {
+  bool unread = 1;
+  repeated uint64 ids = 2 [jstype = JS_STRING, (validate.rules).repeated = {
     ignore_empty: true,
     min_items: 1,
     max_items: 20
   }];
-  optional bool all = 2;
+  optional bool all = 3;
 }
 
 message MarkNotificationsResponse {

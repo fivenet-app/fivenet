@@ -75,7 +75,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}()
 
 	// Update Ticker
-	updateTicker := time.NewTicker(35 * time.Second)
+	updateTicker := time.NewTicker(60 * time.Second)
 	defer updateTicker.Stop()
 
 	// Check user token validity and update if necessary
@@ -84,13 +84,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		return err
 	}
 
-	notsCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
+	notificationCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
 	if err != nil {
 		return errswrap.NewError(err, ErrFailedStream)
 	}
 
 	if err := srv.Send(&StreamResponse{
-		NotificationCount: notsCount,
+		NotificationCount: notificationCount,
 		Data:              data,
 		Restart:           &stop,
 	}); err != nil {
@@ -123,7 +123,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			}
 
 			// Make sure the notification is in sync (again)
-			notsCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
+			notificationCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
 			if err != nil {
 				return errswrap.NewError(err, ErrFailedStream)
 			}
@@ -147,13 +147,20 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				switch dest.Data.(type) {
+				switch d := dest.Data.(type) {
 				case *notifications.UserEvent_Notification:
-					notsCount++
+					notificationCount++
+
+				case *notifications.UserEvent_NotificationsReadCount:
+					if notificationCount-d.NotificationsReadCount <= 0 {
+						notificationCount = 0
+					} else {
+						notificationCount -= d.NotificationsReadCount
+					}
 				}
 
 				resp := &StreamResponse{
-					NotificationCount: notsCount,
+					NotificationCount: notificationCount,
 					Data: &StreamResponse_UserEvent{
 						UserEvent: &dest,
 					},
@@ -170,7 +177,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				}
 
 				resp := &StreamResponse{
-					NotificationCount: notsCount,
+					NotificationCount: notificationCount,
 					Data: &StreamResponse_JobEvent{
 						JobEvent: &dest,
 					},
@@ -198,7 +205,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				}
 
 				resp := &StreamResponse{
-					NotificationCount: notsCount,
+					NotificationCount: notificationCount,
 					Data: &StreamResponse_JobGradeEvent{
 						JobGradeEvent: &dest,
 					},
@@ -218,7 +225,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				}
 
 				resp := &StreamResponse{
-					NotificationCount: notsCount,
+					NotificationCount: notificationCount,
 					Data: &StreamResponse_MailerEvent{
 						MailerEvent: &dest,
 					},

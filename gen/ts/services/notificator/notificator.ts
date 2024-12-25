@@ -55,11 +55,15 @@ export interface GetNotificationsResponse {
  */
 export interface MarkNotificationsRequest {
     /**
-     * @generated from protobuf field: repeated uint64 ids = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: bool unread = 1;
+     */
+    unread: boolean;
+    /**
+     * @generated from protobuf field: repeated uint64 ids = 2 [jstype = JS_STRING];
      */
     ids: string[];
     /**
-     * @generated from protobuf field: optional bool all = 2;
+     * @generated from protobuf field: optional bool all = 3;
      */
     all?: boolean;
 }
@@ -253,12 +257,14 @@ export const GetNotificationsResponse = new GetNotificationsResponse$Type();
 class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest> {
     constructor() {
         super("services.notificator.MarkNotificationsRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
-            { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
+            { no: 3, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<MarkNotificationsRequest>): MarkNotificationsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.unread = false;
         message.ids = [];
         if (value !== undefined)
             reflectionMergePartial<MarkNotificationsRequest>(this, message, value);
@@ -269,14 +275,17 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated uint64 ids = 1 [jstype = JS_STRING];*/ 1:
+                case /* bool unread */ 1:
+                    message.unread = reader.bool();
+                    break;
+                case /* repeated uint64 ids = 2 [jstype = JS_STRING];*/ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.ids.push(reader.uint64().toString());
                     else
                         message.ids.push(reader.uint64().toString());
                     break;
-                case /* optional bool all */ 2:
+                case /* optional bool all */ 3:
                     message.all = reader.bool();
                     break;
                 default:
@@ -291,16 +300,19 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
         return message;
     }
     internalBinaryWrite(message: MarkNotificationsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 ids = 1 [jstype = JS_STRING]; */
+        /* bool unread = 1; */
+        if (message.unread !== false)
+            writer.tag(1, WireType.Varint).bool(message.unread);
+        /* repeated uint64 ids = 2 [jstype = JS_STRING]; */
         if (message.ids.length) {
-            writer.tag(1, WireType.LengthDelimited).fork();
+            writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
                 writer.uint64(message.ids[i]);
             writer.join();
         }
-        /* optional bool all = 2; */
+        /* optional bool all = 3; */
         if (message.all !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.all);
+            writer.tag(3, WireType.Varint).bool(message.all);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -962,7 +962,8 @@
             "mark_all_read": "Mark all as read",
             "include_read": "Read Notifications",
             "unread": "Unread",
-            "do_not_disturb": "Do Not Disturb"
+            "do_not_disturb": "Do Not Disturb",
+            "mark_unread": "Mark as unread"
         },
         "about": {
             "introduction": {

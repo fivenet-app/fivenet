@@ -3793,6 +3793,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | refresh_token | [bool](#bool) |  |  |
 | notification | [Notification](#resources-notifications-Notification) |  | Notifications |
+| notifications_read_count | [int32](#int32) |  |  |
 
 
 
@@ -10272,6 +10273,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| unread | [bool](#bool) |  |  |
 | ids | [uint64](#uint64) | repeated |  |
 | all | [bool](#bool) | optional |  |
 

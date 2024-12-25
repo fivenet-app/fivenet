@@ -65,8 +65,9 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
     }
 }
 
-async function markAllRead(): Promise<void> {
+async function markAll(unread: boolean = false): Promise<void> {
     await notifications.markNotifications({
+        unread: unread,
         ids: [],
         all: true,
     });
@@ -79,8 +80,9 @@ async function markAllRead(): Promise<void> {
     );
 }
 
-async function markRead(...ids: string[]): Promise<void> {
+async function markUnread(unread: boolean, ...ids: string[]): Promise<void> {
     await notifications.markNotifications({
+        unread: unread,
         ids: ids,
     });
 
@@ -106,7 +108,7 @@ const canSubmit = ref(true);
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <UForm :schema="schema" :state="query" class="flex-1" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormGroup
                         name="includeRead"
@@ -150,7 +152,7 @@ const canSubmit = ref(true);
                         <UButton
                             icon="i-mdi-notification-clear-all"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            @click="markAllRead().finally(timeoutFn)"
+                            @click="markAll().finally(timeoutFn)"
                         >
                             {{ $t('components.notifications.mark_all_read') }}
                         </UButton>
@@ -161,34 +163,40 @@ const canSubmit = ref(true);
     </UDashboardToolbar>
 
     <UDashboardPanelContent class="p-0 sm:pb-0">
-        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
-            :error="error"
-            :retry="refresh"
-        />
-        <DataNoDataBlock v-else-if="data?.notifications.length === 0" :type="$t('common.notification', 2)" icon="i-mdi-bell" />
+        <div class="flex-1">
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="data?.notifications.length === 0"
+                :type="$t('common.notification', 2)"
+                icon="i-mdi-bell"
+            />
 
-        <div v-else class="relative h-full overflow-x-auto">
-            <ul role="list" class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+            <ul v-else role="list" class="flex flex-1 flex-col divide-y divide-gray-100 dark:divide-gray-800">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex justify-between gap-x-2 border-white px-4 py-5 sm:px-6 dark:border-gray-900"
+                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 relative flex flex-row items-center justify-between gap-2 border-white px-2 py-3 sm:px-4 dark:border-gray-900"
                 >
+                    <UIcon :name="notificationCategoryToIcon(not.category)" class="size-6" />
+
                     <div class="flex flex-1 gap-x-2">
-                        <div class="min-w-0 flex-auto">
-                            <p class="px-2 py-2 text-sm font-semibold">
+                        <div class="min-w-0 flex-auto gap-y-1">
+                            <h3 class="text-base font-semibold leading-6">
                                 <UButton
                                     v-if="not.data && not.data.link"
                                     variant="link"
                                     :padded="false"
+                                    :color="!not.readAt ? 'primary' : 'gray'"
                                     :to="not.data.link.to"
-                                    :icon="notificationCategoryToIcon(not.category)"
                                     trailing-icon="i-mdi-link-variant"
                                     @click="
-                                        markRead(not.id);
+                                        markUnread(false, not.id);
                                         $emit('clicked');
                                     "
                                 >
@@ -197,21 +205,22 @@ const canSubmit = ref(true);
                                 <span v-else>
                                     {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                 </span>
-                            </p>
+                            </h3>
 
-                            <p class="flex text-sm leading-4 text-gray-200">
+                            <p class="flex text-sm leading-6 text-gray-200">
                                 {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
                             </p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-x-2">
-                        <div class="hidden sm:flex sm:flex-col sm:items-end">
-                            <p class="mt-1 text-xs leading-5">
+                        <div class="hidden gap-y-1 sm:flex sm:flex-col sm:items-end">
+                            <p class="text-xs">
                                 {{ $t('common.received') }}
                                 <GenericTime :value="not.createdAt" ago />
                             </p>
-                            <div class="mt-1 flex items-center gap-x-2">
+
+                            <div class="flex items-center gap-x-2">
                                 <template v-if="not.readAt">
                                     <p class="text-xs leading-5">
                                         {{ $t('common.read') }}
@@ -230,22 +239,30 @@ const canSubmit = ref(true);
                         </div>
                     </div>
 
-                    <div class="-my-5 -mr-6 flex">
+                    <div class="flex">
                         <UButton
                             v-if="!not.readAt"
-                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
                             :disabled="!canSubmit"
                             icon="i-mdi-check"
-                            @click="markRead(not.id).finally(timeoutFn)"
+                            @click="markUnread(false, not.id).finally(timeoutFn)"
                         >
                             <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
                         </UButton>
-                        <span v-else class="size-5"></span>
+                        <UButton
+                            v-else
+                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                            :disabled="!canSubmit"
+                            icon="i-mdi-check-read"
+                            @click="markUnread(true, not.id).finally(timeoutFn)"
+                        >
+                            <span class="sr-only">{{ $t('components.notifications.mark_unread') }}</span>
+                        </UButton>
                     </div>
                 </li>
             </ul>
         </div>
-    </UDashboardPanelContent>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    </UDashboardPanelContent>
 </template>

@@ -4,15 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -155,6 +158,7 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 		jet.Int32(userInfo.UserId)).AND(
 		tNotifications.ReadAt.IS_NULL(),
 	)
+
 	// If not all
 	if len(req.Ids) > 0 {
 		ids := make([]jet.Expression, len(req.Ids))
@@ -166,12 +170,18 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 		return &MarkNotificationsResponse{}, nil
 	}
 
+	readAt := jet.CURRENT_TIMESTAMP()
+	if req.Unread {
+		// Allow users to mark notifications as unread
+		readAt = jet.TimestampExp(jet.NULL)
+	}
+
 	stmt := tNotifications.
 		UPDATE(
 			tNotifications.ReadAt,
 		).
 		SET(
-			tNotifications.ReadAt.SET(jet.CURRENT_TIMESTAMP()),
+			tNotifications.ReadAt.SET(readAt),
 		).
 		WHERE(condition)
 
@@ -180,13 +190,27 @@ func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRe
 		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
-	rows, err := res.RowsAffected()
+	affected, err := res.RowsAffected()
 	if err != nil {
 		return nil, errswrap.NewError(err, ErrFailedRequest)
 	}
 
+	if affected > 0 {
+		if req.Unread {
+			affected = -affected
+		}
+
+		s.js.PublishProto(ctx, fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
+			&notifications.UserEvent{
+				Data: &notifications.UserEvent_NotificationsReadCount{
+					NotificationsReadCount: int32(affected),
+				},
+			},
+		)
+	}
+
 	return &MarkNotificationsResponse{
-		Updated: uint64(rows),
+		Updated: uint64(affected),
 	}, nil
 }
 

@@ -399,6 +399,8 @@ func (m *MarkNotificationsRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Unread
+
 	if len(m.GetIds()) > 0 {
 
 		if l := len(m.GetIds()); l < 1 || l > 20 {

@@ -11,7 +11,7 @@ const { isNotificationsSlideoverOpen } = useDashboard();
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
                     padding: '',
                 },
                 ring: '',
@@ -38,7 +38,7 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                 </div>
             </template>
 
-            <div class="flex h-full flex-1 flex-col">
+            <div class="flex flex-1 flex-col">
                 <NotificationsList @clicked="isNotificationsSlideoverOpen = false" />
             </div>
 

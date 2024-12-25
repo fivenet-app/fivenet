@@ -962,7 +962,8 @@
             "mark_all_read": "Alle als gelesen markieren",
             "include_read": "Gelesene Benachrichtigungen",
             "unread": "Ungelesen",
-            "do_not_disturb": "Bitte nicht stören"
+            "do_not_disturb": "Bitte nicht stören",
+            "mark_unread": "Als ungelesen markieren"
         },
         "about": {
             "introduction": {
