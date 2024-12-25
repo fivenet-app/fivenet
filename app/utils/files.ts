@@ -11,23 +11,31 @@ export async function blobToBase64(blob: Blob): Promise<string | undefined> {
     });
 }
 
+export interface UseFileSelectionOptions {
+    allowedDataTypes?: MaybeRef<readonly string[]> | ((types: readonly string[]) => boolean);
+    dropzone: MaybeRefOrGetter<HTMLElement | null | undefined>;
+    multiple: boolean;
+    onFiles: (files: File[]) => void;
+}
+
 /**
  * File selection composable
  * Copied from <https://github.com/vueuse/vueuse/issues/4085#issuecomment-2221179677>
  */
-export function useFileSelection(options) {
-    //Extract options
-    const { dropzone, allowMultiple, allowedFileTypes, onFiles } = options;
+export function useFileSelection(options: UseFileSelectionOptions) {
+    // Extract options
+    const { dropzone, multiple, allowedDataTypes, onFiles } = options;
 
     // Data types computed ref
     const dataTypes = computed(() => {
-        if (allowedFileTypes.value) {
-            if (!Array.isArray(allowedFileTypes.value)) {
-                return [allowedFileTypes.value];
+        if (allowedDataTypes) {
+            const dataTypes = unref(allowedDataTypes);
+            if (typeof dataTypes === 'string') {
+                return [dataTypes];
             }
-            return allowedFileTypes.value;
+            return dataTypes;
         }
-        return null;
+        return undefined;
     });
 
     // Accept string computed ref
@@ -46,17 +54,17 @@ export function useFileSelection(options) {
         if (files instanceof FileList) {
             files = Array.from(files);
         }
-        if (files.length > 1 && !allowMultiple.value) {
+        if (files.length > 1 && !multiple) {
             files = [files[0]!];
         }
         onFiles(files);
     };
 
     //Setup dropzone and file dialog composables
-    const { isOverDropZone } = useDropZone(dropzone, { dataTypes, onDrop });
+    const { isOverDropZone } = useDropZone(dropzone, { dataTypes: allowedDataTypes, onDrop });
     const { onChange, open } = useFileDialog({
         accept: accept.value,
-        multiple: allowMultiple.value,
+        multiple: multiple,
     });
 
     // Use onChange handler

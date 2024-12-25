@@ -66,19 +66,13 @@ async function onFilesHandler(files: FileList | File[] | null): Promise<void> {
 
 const dropZoneRef = useTemplateRef('dropZoneRef');
 
-useDropZone(dropZoneRef, {
-    onDrop: onFilesHandler,
+const { chooseFiles } = useFileSelection({
+    dropzone: dropZoneRef,
+    onFiles: onFilesHandler,
     // Specify the types of data to be received.
-    dataTypes: fileUpload.types.images,
+    allowedDataTypes: fileUpload.types.images,
     multiple: false,
 });
-
-const { open, onChange } = useFileDialog({
-    accept: fileUpload.types.images.join(','),
-    multiple: false,
-});
-
-onChange((files) => onFilesHandler(files));
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -89,7 +83,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UModal>
+    <UModal :prevent-close="!canSubmit">
         <UCard
             :ui="{
                 ring: '',
@@ -117,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UButtonGroup class="mt-2 w-full">
                         <UButton
                             type="submit"
-                            icon="i-mdi-link"
+                            icon="i-mdi-image"
                             class="flex-1"
                             :label="$t('common.insert')"
                             :disabled="!canSubmit"
@@ -128,24 +122,24 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <UDivider :label="$t('common.or')" orientation="horizontal" class="mb-2 mt-2" />
 
-                <div ref="dropZoneRef" class="flex w-full items-center justify-center">
-                    <label
-                        for="dropzone-file"
-                        class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
-                    >
-                        <div class="flex flex-col items-center justify-center pb-6 pt-5">
-                            <UIcon name="i-mdi-file-upload-outline" class="size-10" />
+                <ULink class="w-full" @click="chooseFiles">
+                    <div ref="dropZoneRef" class="flex w-full items-center justify-center">
+                        <label
+                            for="dropzone-file"
+                            class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                        >
+                            <div class="flex flex-col items-center justify-center pb-6 pt-5">
+                                <UIcon :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'" class="size-14" />
 
-                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
-                                {{ $t('common.file_drag_n_drop') }}
-                            </p>
-                            <p class="text-xs text-gray-500 dark:text-gray-400">PNG or JPG (MAX. 2000x1500px)</p>
-                        </div>
-
-                        <input id="dropzone-file" type="file" class="hidden" />
-                    </label>
-                </div>
+                                <p class="mb-2 text-base text-gray-500 dark:text-gray-400">
+                                    <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
+                                    {{ $t('common.file_drag_n_drop') }}
+                                </p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">PNG, JPG (MAX. 2000x1500px)</p>
+                            </div>
+                        </label>
+                    </div>
+                </ULink>
             </div>
 
             <template #footer>
