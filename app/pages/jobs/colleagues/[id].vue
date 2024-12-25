@@ -23,7 +23,7 @@ definePageMeta({
         if (typeof route.params.id !== 'string') {
             return false;
         }
-        return idParamRegex.test(route.params.id as string);
+        return !!(route.params.id && !isNaN(Number(route.params.id))) && Number(route.params.id) > -1;
     },
 });
 
