@@ -129,13 +129,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             class="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-100 hover:bg-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:hover:border-gray-600 dark:hover:bg-gray-700"
                         >
                             <div class="flex flex-col items-center justify-center pb-6 pt-5">
-                                <UIcon :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'" class="size-14" />
+                                <UIcon
+                                    :name="canSubmit ? 'i-mdi-file-upload-outline' : 'i-mdi-loading'"
+                                    class="size-14"
+                                    :class="!canSubmit && 'animate-spin'"
+                                />
 
                                 <p class="mb-2 text-base text-gray-500 dark:text-gray-400">
                                     <span class="font-semibold">{{ $t('common.file_click_to_upload') }}</span>
                                     {{ $t('common.file_drag_n_drop') }}
                                 </p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">PNG, JPG (MAX. 2000x1500px)</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400">{{ $t('common.allowed_file_types') }}</p>
                             </div>
                         </label>
                     </div>

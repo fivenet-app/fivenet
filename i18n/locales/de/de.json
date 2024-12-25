@@ -546,7 +546,8 @@
         "source_code": "Quellcode",
         "file_click_to_upload": "Datei auswählen",
         "file_drag_n_drop": "oder ziehen Sie sie hierher.",
-        "insert": "Einfügen"
+        "insert": "Einfügen",
+        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)"
     },
     "components": {
         "partials": {
