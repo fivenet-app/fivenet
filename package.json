@@ -103,7 +103,7 @@
         "eslint-plugin-prettier": "5.2.1",
         "eslint-plugin-vue": "9.32.0",
         "nuxi": "3.17.2",
-        "nuxt": "3.14.1592",
+        "nuxt": "3.15.0",
         "nuxt-tiptap-editor": "2.1.4",
         "nuxt-typed-router": "3.7.2",
         "pinia-plugin-persistedstate": "4.2.0",
