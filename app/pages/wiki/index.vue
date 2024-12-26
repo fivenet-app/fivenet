@@ -85,10 +85,16 @@ watch(pages, async () => {
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.page')])" />
                 <DataErrorBlock v-else-if="error" :retry="refresh" />
                 <DataNoDataBlock
-                    v-else-if="!pages || pages.length === 0"
+                    v-else-if="!pages"
                     icon="i-mdi-file-search"
                     :title="$t('common.unable_to_load', [$t('common.wiki', 2)])"
                     :error="error"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="pages.length === 0"
+                    icon="i-mdi-file-search"
+                    :title="$t('common.not_found', [$t('common.wiki', 2)])"
                     :retry="refresh"
                 />
 

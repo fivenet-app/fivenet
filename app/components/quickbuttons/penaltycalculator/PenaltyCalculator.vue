@@ -208,7 +208,7 @@ const columns = [
                 <DataNoDataBlock
                     v-else-if="lawBooks && lawBooks.length === 0"
                     icon="i-mdi-gavel"
-                    :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
+                    :type="$t('common.law', 2)"
                     class="mt-5"
                 />
 
