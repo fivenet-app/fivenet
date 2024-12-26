@@ -15,7 +15,10 @@ import (
 
 func main() {
 	viper.SetConfigFile("./query/gen/gen.yaml")
-	viper.ReadInConfig()
+	if err := viper.ReadInConfig(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
 	destDir := "./query"
 
@@ -50,7 +53,10 @@ func genTemplate() template.Template {
 						if shouldSkipTable(table.Name) {
 							return template.TableSQLBuilder{Skip: true}
 						}
-						return template.DefaultTableSQLBuilder(table)
+
+						return template.DefaultTableSQLBuilder(table).
+							// TODO skip fields that are not in the includedTable entry list
+							UseColumn(template.DefaultTableSQLBuilderColumn)
 					}),
 				)
 		})
@@ -60,7 +66,7 @@ func shouldSkipTable(table string) bool {
 	table = strings.ToLower(table)
 
 	excludeTables := viper.GetStringSlice("excludeTables")
-	includeTables := viper.GetStringSlice("includeTables")
+	includeTables := viper.GetStringMapStringSlice("includeTables")
 
 	excludeIdx := slices.IndexFunc(excludeTables, func(c string) bool {
 		c = strings.ToLower(c)
@@ -73,7 +79,12 @@ func shouldSkipTable(table string) bool {
 		return true
 	}
 
-	includeIdx := slices.IndexFunc(includeTables, func(c string) bool {
+	includeKeys := []string{}
+	for key := range includeTables {
+		includeKeys = append(includeKeys, key)
+	}
+
+	includeIdx := slices.IndexFunc(includeKeys, func(c string) bool {
 		c = strings.ToLower(c)
 		if strings.HasSuffix(c, "*") {
 			return strings.HasPrefix(table, c[:len(c)-1])
@@ -82,4 +93,19 @@ func shouldSkipTable(table string) bool {
 	})
 
 	return includeIdx == -1
+}
+
+func shouldSkipField(table string, field string) bool {
+	includeTables := viper.GetStringMapStringSlice("includeTables")
+
+	fields, ok := includeTables[table]
+	if !ok {
+		return false
+	}
+
+	if len(fields) == 0 || fields[0] == "*" {
+		return false
+	}
+
+	return !slices.Contains(fields, field)
 }

@@ -3,12 +3,39 @@ dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?charset=utf8mb4&parseTime=Tru
 excludeTables:
   - "fivenet_zschema_migrations"
 includeTables:
-  - "fivenet_*"
-  - "gksphone_job_message"
-  - "gksphone_settings"
-  - "job_grades"
-  - "jobs"
-  - "licenses"
-  - "owned_vehicles"
-  - "user_licenses"
-  - "users"
+  "fivenet_*": ["*"]
+  "gksphone_job_message": ["*"]
+  "gksphone_settings": ["*"]
+  "job_grades":
+    - job_name
+    - grade
+    - name
+    - label
+  "jobs":
+    - name
+    - label
+  "licenses":
+    - type
+    - label
+  "owned_vehicles":
+    - owner
+    - plate
+    - type
+    - model
+  "user_licenses":
+    - type
+    - owner
+  "users":
+    - id
+    - identifier
+    - group
+    - firstname
+    - lastname
+    - dateofbirth
+    - job
+    - job_grade
+    - sex
+    - height
+    - phone_number
+    - visum
+    - playtime

@@ -1,42 +1,35 @@
 BEGIN;
 
--- Table: job_grades - Should already exist
+-- Table: `job_grades` - Should already exist! This is the bare minimum structure required by FiveNet (column order doesn't matter).
 -- CREATE TABLE IF NOT EXISTS `job_grades` (
 --   `job_name` varchar(50) NOT NULL,
 --   `grade` int(11) NOT NULL,
 --   `name` varchar(50) NOT NULL,
 --   `label` varchar(50) NOT NULL,
---   `salary` int(11) NOT NULL,
---   `skin_male` longtext NOT NULL,
---   `skin_female` longtext NOT NULL,
 --   PRIMARY KEY (`job_name`,`grade`)
 -- ) ENGINE=InnoDB;
 
--- Table: jobs - Should already exist
+-- Table: `jobs` - Should already exist
 -- CREATE TABLE IF NOT EXISTS `jobs` (
 --   `name` varchar(50) NOT NULL,
 --   `label` varchar(50) DEFAULT NULL,
 --   PRIMARY KEY (`name`)
 -- ) ENGINE=InnoDB;
 
--- Table: owned_vehicles -- Should already exist
+-- Table: `owned_vehicles` -- Should already exist! This is the bare minimum structure required by FiveNet (column order doesn't matter).
 -- CREATE TABLE IF NOT EXISTS `owned_vehicles` (
 --   `owner` varchar(64) DEFAULT NULL,
 --   `plate` varchar(12) NOT NULL,
---   `model` varchar(60) NOT NULL,
---   `vehicle` longtext DEFAULT NULL,
---   `type` varchar(20) NOT NULL, -- (Optional)
---   `stored` tinyint(1) NOT NULL DEFAULT 0,
---   `carseller` int(11) DEFAULT 0,
---   `owners` longtext DEFAULT NULL,
---   `trunk` longtext DEFAULT NULL,
+--   `model` varchar(60) NOT NULL, -- Optional
+--   `type` varchar(20) NOT NULL,
 --   PRIMARY KEY (`plate`),
 --   UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`),
 --   KEY `IDX_OWNED_VEHICLES_OWNER` (`owner`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
---   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
+--   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`) -- Optional
 -- ) ENGINE=InnoDB;
--- Add indexes for better sorting performance
+
+-- Table: owned_vehicles - Add indexes for better sorting performance
 set @x := (
   select
 	1
@@ -60,7 +53,7 @@ set @sql := if( @x > 0, 'select ''owned_vehicles type index exists.''', 'ALTER T
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
--- Table: user_licenses - Should already exist
+-- Table: `user_licenses` - Should already exist! This is the bare minimum structure required by FiveNet (column order doesn't matter).
 -- CREATE TABLE IF NOT EXISTS `user_licenses` (
 --   `type` varchar(60) NOT NULL,
 --   `owner` varchar(64) NOT NULL,
@@ -68,20 +61,41 @@ EXECUTE stmt;
 --   KEY `idx_user_licenses_owner` (`owner`)
 -- ) ENGINE=InnoDB;
 
--- Table: users - Should already exist
--- Add firstname + lastname fulltext index
+-- Table: `users` - Should already exist! This is the bare minimum structure required by FiveNet (column order doesn't matter).
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(64) NOT NULL,
+  `group` varchar(50) DEFAULT NULL,
+  `job` varchar(20) DEFAULT 'unemployed',
+  `job_grade` int(11) DEFAULT 1,
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `dateofbirth` varchar(25) DEFAULT NULL,
+  `sex` varchar(10) DEFAULT NULL,
+  `height` varchar(5) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `visum` int(11) DEFAULT NULL, -- Optional
+  `playtime` int(11) DEFAULT NULL, -- Optional
+  PRIMARY KEY (`identifier`),
+  UNIQUE KEY `id` (`id`),
+  KEY `idx_users_job` (`job`),
+  KEY `idx_users_dateofbirth` (`dateofbirth`),
+  FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`)
+) ENGINE = InnoDB AUTO_INCREMENT = 1;
+
+-- Table: `users` - Add `firstname` + `lastname` fulltext index
 set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_firstname_lastname_fulltext' and table_schema = database());
 set @sql := if( @x > 0, 'select ''users name fulltext index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
--- Add dateofbirth index
+-- Table: `users` - Add `dateofbirth` column index
 set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_dateofbirth' and table_schema = database());
 set @sql := if( @x > 0, 'select ''users dateofbirth index exists.''', 'ALTER TABLE users ADD KEY `idx_users_dateofbirth` (`dateofbirth`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
--- Add job index
+-- Table: `users` - Add `job` column index
 set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_job' and table_schema = database());
 set @sql := if( @x > 0, 'select ''users job index exists.''', 'ALTER TABLE users ADD KEY `idx_users_job` (`job`);');
 PREPARE stmt FROM @sql;
