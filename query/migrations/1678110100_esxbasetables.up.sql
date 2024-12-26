@@ -51,7 +51,7 @@ where
 	and stats.index_name = 'idx_owned_vehicles_model'
 	and stats.table_schema = database()
 );
-set @sql := if( @x is null, 'select ''owned_vehicles model colum doesnt exist or index already exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
+set @sql := if( @x is null or @x > 0, 'select ''owned_vehicles model colum doesnt exist or index already exists.''', 'ALTER TABLE owned_vehicles ADD KEY `idx_owned_vehicles_model` (`model`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
