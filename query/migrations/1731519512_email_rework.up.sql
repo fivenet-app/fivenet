@@ -5,6 +5,7 @@ DELETE FROM `fivenet_permissions` WHERE `category` = 'MessengerService';
 -- Remove old messenger tables
 DROP TABLE IF EXISTS `fivenet_msgs_messages`;
 DROP TABLE IF EXISTS `fivenet_msgs_settings_blocks`;
+DROP TABLE IF EXISTS `fivenet_msgs_threads_job_access`;
 DROP TABLE IF EXISTS `fivenet_msgs_threads_user_access`;
 DROP TABLE IF EXISTS `fivenet_msgs_threads_user_state`;
 DROP TABLE IF EXISTS `fivenet_msgs_threads`;
