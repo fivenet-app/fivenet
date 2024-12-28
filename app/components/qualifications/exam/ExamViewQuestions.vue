@@ -210,34 +210,41 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UDashboardToolbar v-if="!responses">
         <template v-if="qualification" #default>
-            <div class="mb-2 flex flex-1 flex-row justify-between gap-2">
-                <div>
-                    <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                        {{ qualification.abbreviation }}: {{ qualification.title }}
-                    </h1>
+            <div class="mb-2 flex flex-1 flex-col justify-between gap-1">
+                <div class="flex flex-1 flex-row justify-between gap-2">
+                    <div>
+                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                            {{ qualification.abbreviation }}: {{ qualification.title }}
+                        </h1>
 
-                    <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
-                        {{ qualification.description }}
-                    </p>
+                        <p v-if="qualification.description" class="break-words px-0.5 py-1 text-base font-bold sm:pl-1">
+                            {{ qualification.description }}
+                        </p>
+                    </div>
+
+                    <div class="inline-flex flex-col items-end gap-2">
+                        <UIcon name="i-mdi-clock" class="size-8" />
+
+                        <span class="font-semibold">
+                            {{
+                                useLocaleTimeAgo(toDate(props.examUser.endsAt), {
+                                    showSecond: true,
+                                    updateInterval: 1_000,
+                                }).value
+                            }}
+                        </span>
+                    </div>
                 </div>
 
-                <div class="inline-flex flex-col items-end gap-2">
-                    <UIcon name="i-mdi-clock" class="size-10" />
-                    <span class="font-semibold">
-                        {{
-                            useLocaleTimeAgo(toDate(props.examUser.endsAt), {
-                                showSecond: true,
-                                updateInterval: 1_000,
-                            }).value
-                        }}
-                    </span>
-                    <UBadge v-if="props.examUser.startedAt">
-                        {{ $t('common.begins_at') }}
-                        {{ $d(toDate(props.examUser.startedAt), 'long') }}
+                <div class="flex gap-1">
+                    <UBadge v-if="props.examUser.startedAt" class="inline-flex gap-1">
+                        <span class="font-semibold">{{ $t('common.begins_at') }}:</span>
+                        <span>{{ $d(toDate(props.examUser.startedAt), 'long') }}</span>
                     </UBadge>
-                    <UBadge v-if="props.examUser.endsAt">
-                        {{ $t('common.ends_at') }}
-                        {{ $d(toDate(props.examUser.endsAt), 'long') }}
+
+                    <UBadge v-if="props.examUser.endsAt" class="inline-flex gap-1">
+                        <span class="font-semibold">{{ $t('common.ends_at') }}:</span>
+                        <span>{{ $d(toDate(props.examUser.endsAt), 'long') }}</span>
                     </UBadge>
                 </div>
             </div>
