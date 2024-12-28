@@ -244,35 +244,37 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
     </UDashboardToolbar>
 
-    <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UCard>
-            <UContainer>
-                <div class="flex flex-col gap-4">
-                    <ExamViewQuestion
-                        v-for="(question, idx) in exam.questions"
-                        :key="question.id"
-                        v-model="state.responses[idx]"
-                        :disabled="disabled"
-                    >
-                        <template #question-after>
-                            <slot name="question-after" :question="{ question }" />
-                        </template>
-                    </ExamViewQuestion>
-                </div>
-            </UContainer>
+    <UDashboardPanelContent class="p-0">
+        <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ rounded: '' }">
+                <UContainer>
+                    <div class="flex flex-col gap-4">
+                        <ExamViewQuestion
+                            v-for="(question, idx) in exam.questions"
+                            :key="question.id"
+                            v-model="state.responses[idx]"
+                            :disabled="disabled"
+                        >
+                            <template #question-after>
+                                <slot name="question-after" :question="{ question }" />
+                            </template>
+                        </ExamViewQuestion>
+                    </div>
+                </UContainer>
 
-            <template v-if="!disabled" #footer>
-                <UButton
-                    type="submit"
-                    icon="i-mdi-save-content"
-                    block
-                    class="w-full"
-                    :disabled="!canSubmit"
-                    :loading="!canSubmit"
-                >
-                    {{ $t('common.submit') }}
-                </UButton>
-            </template>
-        </UCard>
-    </UForm>
+                <template v-if="!disabled" #footer>
+                    <UButton
+                        type="submit"
+                        icon="i-mdi-save-content"
+                        block
+                        class="w-full"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                    >
+                        {{ $t('common.submit') }}
+                    </UButton>
+                </template>
+            </UCard>
+        </UForm>
+    </UDashboardPanelContent>
 </template>
