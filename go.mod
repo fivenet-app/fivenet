@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet
 
-go 1.23.3
+go 1.23.4
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
