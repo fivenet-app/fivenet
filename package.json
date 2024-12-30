@@ -35,7 +35,7 @@
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
         "browser-headers": "0.4.1",
-        "consola": "3.3.1",
+        "consola": "3.3.3",
         "date-fns": "4.1.0",
         "emoji-blast": "0.10.2",
         "google-protobuf": "3.21.4",
@@ -59,7 +59,7 @@
         "zod": "3.24.1"
     },
     "devDependencies": {
-        "@nuxt/devtools": "1.6.4",
+        "@nuxt/devtools": "1.7.0",
         "@nuxt/eslint": "0.7.4",
         "@nuxtjs/fontaine": "0.4.4",
         "@nuxtjs/i18n": "9.1.1",

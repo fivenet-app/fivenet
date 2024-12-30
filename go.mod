@@ -17,10 +17,10 @@ require (
 	github.com/diamondburned/arikawa/v3 v3.4.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.1.0
-	github.com/gin-contrib/cors v1.7.2
+	github.com/gin-contrib/cors v1.7.3
 	github.com/gin-contrib/pprof v1.5.2
-	github.com/gin-contrib/sessions v1.0.1
-	github.com/gin-contrib/static v1.1.2
+	github.com/gin-contrib/sessions v1.0.2
+	github.com/gin-contrib/static v1.1.3
 	github.com/gin-contrib/zap v1.1.4
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-jet/jet/v2 v2.12.0
