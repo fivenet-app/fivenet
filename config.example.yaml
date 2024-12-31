@@ -27,7 +27,7 @@ http:
     cookieSecret: "your_generated_cookie_secret"
     domain: "fivenet.example.com"
 database:
-  # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+  # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
   # For the local test database using `docker-compose`
   #dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
@@ -80,7 +80,7 @@ oauth2:
     - name: "discord"
       label: "Discord"
       homepage: "https://discord.com"
-      #  icon: "i-simple-icons-discord" # or a URL to an image
+      icon: "i-simple-icons-discord" # or an image URL
       #defaultAvatar: ""
       type: "discord"
       redirectURL: "https://localhost:3000/api/oauth2/callback/discord"
@@ -92,7 +92,7 @@ oauth2:
       endpoints:
         authURL: "https://discord.com/api/oauth2/authorize"
         tokenURL: "https://discord.com/api/oauth2/token"
-#postalsFile: ".output/public/data/postals.json"
+postalsFile: ".output/public/data/postals.json"
 auth:
   superuserGroups:
     - projektleiter

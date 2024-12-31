@@ -71,7 +71,7 @@ type Links struct {
 }
 
 type Database struct {
-	// refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
 
 	// Connection options

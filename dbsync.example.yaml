@@ -1,0 +1,75 @@
+enabled: true
+
+source:
+  # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
+  dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
+
+# A query for each "piece of data" FiveNet needs to function
+tables:
+  users:
+    # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
+    # Optional `height`, `visum`, `playtime` columns
+    enabled: true
+    query: |
+      SELECT
+        id,
+        `license` AS `identifier`,
+        'user' AS `group`,
+        `name`,
+        charinfo->>'$.birthdate' AS `dateofbirth`,
+        `job`->>'$.name' AS `job`,
+        `job`->>'$.grade.level' AS `job_grade`,
+        charinfo->>'$.gender' AS `sex`,
+        charinfo->>'$.phone' AS `phone_number`
+      FROM
+        players;
+  jobs:
+    # Must return `name`, `label` columns
+    enabled: true
+    queries:
+      - |
+        SELECT
+          `job` AS `name`,
+          CONCAT(UCASE(LEFT(`job`, 1)), SUBSTRING(`job`, 2)) AS `label`
+        FROM
+          `madmin_jobs`;
+      - |
+        SELECT
+          `faction` AS `name`,
+          CONCAT(UCASE(LEFT(`faction`, 1)), SUBSTRING(`faction`, 2)) AS `label`
+        FROM
+          `madmin_factions`;
+  jobGrades:
+    # Must return `job_name`, `grade`, `name`, `label` columns
+    enabled: true
+    query: |
+      # TODO
+  licenses:
+    # Must return `type`, `label` columns
+    enabled: true
+    query: |
+      SELECT
+        `type`,
+        `label`
+      FROM
+        `licenses`;
+  userLicenses:
+    # Must return `type`, `owner` columns
+    enabled: true
+    query: |
+      SELECT
+        `type`,
+        `owner`
+      FROM
+        `user_licenses`;
+  ownedVehicles:
+    # Must return `owner`, `plate`, `type`, `model` columns
+    enabled: true
+    query: |
+      SELECT
+        `owner`,
+        `plate`,
+        `type`,
+        `model`
+      FROM
+        owned_vehicles;

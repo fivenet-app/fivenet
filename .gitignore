@@ -33,12 +33,6 @@ vendor/
 __debug_bin*
 /fivenet
 
-/config.yaml
-/config.*.yaml
-!/config.example.yaml
-/.env
-/*.sql
-
 # Localhost certs
 localhost.*
 
@@ -57,5 +51,17 @@ localhost.*
 # i18next-scanner
 /lang/
 
+# SQL files
+/*.sql
+
 # FiveNet
 .data/
+
+## Exclude Config files
+/config.yaml
+/config.*.yaml
+!/config.example.yaml
+
+/dbsync.yaml
+/dbsync.*.yaml
+!/dbsync.example.yaml

@@ -38,6 +38,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/pkg/croner"
+	"github.com/fivenet-app/fivenet/pkg/dbsync"
 	"github.com/fivenet-app/fivenet/pkg/discord"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc"
@@ -149,7 +150,11 @@ func (c *DiscordCmd) Run(ctx *Context) error {
 type DBSyncCmd struct{}
 
 func (c *DBSyncCmd) Run(ctx *Context) error {
-	// TODO how would a db sync look to make FiveNet multi-framework compatible?
+	fxOpts := getFxBaseOpts(cli.StartTimeout)
+	fxOpts = append(fxOpts, fx.Invoke(func(*dbsync.Sync) {}))
+
+	app := fx.New(fxOpts...)
+	app.Run()
 
 	return nil
 }
@@ -201,6 +206,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		centrumstate.StateModule,
 		storage.Module,
 		housekeeper.Module,
+		dbsync.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
