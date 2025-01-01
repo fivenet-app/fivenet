@@ -2,6 +2,9 @@ import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, WebsiteConfi
 
 export default defineAppConfig({
     version: '',
+
+    defaultLocale: 'en',
+
     login: {
         signupEnabled: true,
         lastCharLock: false,

@@ -128,3 +128,4 @@ discord:
 game:
   # First grade "number/id", some servers start at 0, but I have seen some start at 1
   startJobGrade: 0
+  defaultLocale: "en"

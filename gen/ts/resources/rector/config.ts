@@ -20,6 +20,10 @@ export interface AppConfig {
      */
     version?: string;
     /**
+     * @generated from protobuf field: string default_locale = 8;
+     */
+    defaultLocale: string;
+    /**
      * @generated from protobuf field: resources.rector.Auth auth = 2;
      */
     auth?: Auth;
@@ -246,6 +250,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.rector.AppConfig", [
             { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "default_locale", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "auth", kind: "message", T: () => Auth },
             { no: 3, name: "perms", kind: "message", T: () => Perms },
             { no: 4, name: "website", kind: "message", T: () => Website },
@@ -256,6 +261,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.defaultLocale = "";
         if (value !== undefined)
             reflectionMergePartial<AppConfig>(this, message, value);
         return message;
@@ -267,6 +273,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
             switch (fieldNo) {
                 case /* optional string version */ 1:
                     message.version = reader.string();
+                    break;
+                case /* string default_locale */ 8:
+                    message.defaultLocale = reader.string();
                     break;
                 case /* resources.rector.Auth auth */ 2:
                     message.auth = Auth.internalBinaryRead(reader, reader.uint32(), options, message.auth);
@@ -301,6 +310,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* optional string version = 1; */
         if (message.version !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.version);
+        /* string default_locale = 8; */
+        if (message.defaultLocale !== "")
+            writer.tag(8, WireType.LengthDelimited).string(message.defaultLocale);
         /* resources.rector.Auth auth = 2; */
         if (message.auth)
             Auth.internalBinaryWrite(message.auth, writer.tag(2, WireType.LengthDelimited).fork(), options).join();

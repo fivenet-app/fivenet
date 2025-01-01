@@ -16,6 +16,10 @@ const (
 )
 
 func (x *AppConfig) Default() {
+	if x.DefaultLocale == "" {
+		x.DefaultLocale = "en" // Default to English locale
+	}
+
 	if x.Auth == nil {
 		x.Auth = &Auth{
 			SignupEnabled: true,

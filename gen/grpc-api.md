@@ -5080,6 +5080,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | version | [string](#string) | optional |  |
+| default_locale | [string](#string) |  |  |
 | auth | [Auth](#resources-rector-Auth) |  |  |
 | perms | [Perms](#resources-rector-Perms) |  |  |
 | website | [Website](#resources-rector-Website) |  |  |

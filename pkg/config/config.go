@@ -226,5 +226,6 @@ type DiscordCommands struct {
 }
 
 type Game struct {
-	StartJobGrade int32 `default:"0" yaml:"startJobGrade"`
+	StartJobGrade int32  `default:"0" yaml:"startJobGrade"`
+	DefaultLocale string `default:"en" yaml:"defaultLocale"`
 }

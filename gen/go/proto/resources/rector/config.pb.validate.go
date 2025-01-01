@@ -57,6 +57,17 @@ func (m *AppConfig) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetDefaultLocale()) > 20 {
+		err := AppConfigValidationError{
+			field:  "DefaultLocale",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetAuth()).(type) {
 		case interface{ ValidateAll() error }:

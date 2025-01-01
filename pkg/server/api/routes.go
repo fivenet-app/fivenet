@@ -91,6 +91,9 @@ func (r *Routes) handleAppConfigUpdate(providers []*ProviderConfig, appCfg *appc
 func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfig.Cfg) *ClientConfig {
 	clientCfg := &ClientConfig{
 		Version: version.Version,
+
+		DefaultLocale: appCfg.DefaultLocale,
+
 		Login: LoginConfig{
 			SignupEnabled: appCfg.Auth.SignupEnabled,
 			LastCharLock:  appCfg.Auth.LastCharLock,

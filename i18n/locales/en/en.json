@@ -547,7 +547,8 @@
         "file_click_to_upload": "Choose a file",
         "file_drag_n_drop": "or drag it here.",
         "insert": "Insert",
-        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)"
+        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
+        "default_lang": "Default Language"
     },
     "components": {
         "partials": {

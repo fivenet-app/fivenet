@@ -5,7 +5,10 @@ type Version struct {
 }
 
 type ClientConfig struct {
-	Version      string       `json:"version"`
+	Version string `json:"version"`
+
+	DefaultLocale string `json:"defaultLocale"`
+
 	Login        LoginConfig  `json:"login"`
 	Discord      Discord      `json:"discord"`
 	Website      Website      `json:"website"`

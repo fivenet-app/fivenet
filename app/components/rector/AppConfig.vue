@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import type { LocaleObject } from '@nuxtjs/i18n';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -13,7 +14,7 @@ import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
-const { t } = useI18n();
+const { t, locales } = useI18n();
 
 const { game } = useAppConfig();
 
@@ -42,6 +43,8 @@ const { listJobs } = completorStore;
 const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs());
 
 const schema = z.object({
+    defaultLocale: z.custom<LocaleObject>(),
+
     auth: z.object({
         signupEnabled: z.boolean(),
         lastCharLock: z.boolean(),
@@ -97,6 +100,8 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
+    defaultLocale: locales.value[0]!,
+
     auth: {
         signupEnabled: true,
         lastCharLock: false,
@@ -139,6 +144,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
     }
 
     // Update local version of retrieved config
+    config.value.config.defaultLocale = values.defaultLocale.code;
     config.value.config.auth = values.auth;
     config.value.config.perms = values.perms;
     config.value.config.website = values.website;
@@ -181,6 +187,11 @@ async function updateAppConfig(values: Schema): Promise<void> {
 function setSettingsValues(): void {
     if (!config.value || !config.value.config) {
         return;
+    }
+
+    const locale = locales.value.find((l) => l.code === config.value?.config?.defaultLocale);
+    if (locale) {
+        state.defaultLocale = locale;
     }
 
     if (config.value.config.auth) {
@@ -436,6 +447,41 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :description="$t('components.rector.app_config.website.description')"
                             >
                                 <UFormGroup
+                                    name="defaultLocale"
+                                    :label="$t('common.default_lang')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.defaultLocale"
+                                        :placeholder="$t('common.language', 1)"
+                                        :options="locales"
+                                    >
+                                        <template #label>
+                                            <template v-if="state.defaultLocale">
+                                                <UIcon
+                                                    :name="locales.find((l) => l.code === state.defaultLocale.code)?.icon"
+                                                    class="size-4"
+                                                />
+                                                <span class="truncate">{{
+                                                    state.defaultLocale.name ?? state.defaultLocale.code
+                                                }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="truncate">{{
+                                                    $t('common.none_selected', [$t('common.language')])
+                                                }}</span>
+                                            </template>
+                                        </template>
+
+                                        <template #option="{ option: locale }">
+                                            <UIcon :name="locale.icon" class="size-4" />
+                                            <span class="truncate">{{ locale.name }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </UFormGroup>
+
+                                <UFormGroup
                                     name="website.links.privacyPolicy"
                                     :label="$t('common.privacy_policy')"
                                     class="grid grid-cols-2 items-center gap-2"
@@ -543,6 +589,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}</span>
                                                 </template>
                                             </template>
+
                                             <template #option="{ option: job }">
                                                 <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                             </template>
