@@ -79,6 +79,7 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
+// source: services/rector/sync.proto
 // source: services/stats/stats.proto
 // source: services/wiki/wiki.proto
 
@@ -104,6 +105,7 @@ export const grpcServices = [
     'RectorLawsService',
     'RectorService',
     'StatsService',
+    'SyncService',
     'WikiService',
 ];
 
@@ -285,6 +287,7 @@ export const grpcMethods = [
 	'RectorService/UpdateRoleLimits',
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
+	'SyncService/Sync',
 	'WikiService/ListPages',
 	'WikiService/GetPage',
 	'WikiService/CreatePage',

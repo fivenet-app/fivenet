@@ -23,21 +23,22 @@ type Result struct {
 }
 
 func Load() (Result, error) {
-	// Viper Config reading setup
-	viper.SetEnvPrefix("FIVENET")
-	viper.SetConfigType("yaml")
+	v := viper.New()
+	// Viper config reading setup
+	v.SetEnvPrefix("FIVENET")
+	v.SetConfigType("yaml")
 
 	if configFile := os.Getenv("FIVENET_CONFIG_FILE"); configFile != "" {
-		viper.SetConfigFile(configFile)
+		v.SetConfigFile(configFile)
 	} else {
-		viper.SetConfigName("config")
-		viper.AddConfigPath(".")
-		viper.AddConfigPath("/config")
+		v.SetConfigName("config")
+		v.AddConfigPath(".")
+		v.AddConfigPath("/config")
 	}
 
 	res := Result{}
 	// Find and read the config file
-	if err := viper.ReadInConfig(); err != nil {
+	if err := v.ReadInConfig(); err != nil {
 		return res, fmt.Errorf("fatal error config file: %w", err)
 	}
 
@@ -49,7 +50,7 @@ func Load() (Result, error) {
 
 	res.DiscordConfig = &c.Discord
 
-	if err := viper.Unmarshal(c); err != nil {
+	if err := v.Unmarshal(c); err != nil {
 		return res, fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 

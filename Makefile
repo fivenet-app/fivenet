@@ -24,6 +24,13 @@ ifeq (, $(shell which buf))
 	$(GO) install github.com/bufbuild/buf/cmd/buf@v1.26.1
 endif
 
+protoc-gen-go:
+	$(GO) install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
+protoc-gen-go-grpc:
+	$(GO) install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest
+
 protoc-gen-validate: build_dir
 	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
 		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
@@ -106,7 +113,7 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper protoc-gen-doc
+gen-proto: protoc-gen-go protoc-gen-go-grpc protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper protoc-gen-doc
 	mkdir -p ./gen/go/proto
 	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
 	$(PROTOC) \

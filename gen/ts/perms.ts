@@ -79,6 +79,7 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
+// source: services/rector/sync.proto
 // source: services/stats/stats.proto
 // source: services/wiki/wiki.proto
 

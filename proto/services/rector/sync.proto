@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package services.rector;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/rector;rector";
+
+message SyncRequest {
+  oneof data {
+    bool test = 1;
+    // TODO create per table message and add oneof entry
+  }
+}
+
+message SyncResponse {
+  int64 affected_rows = 1;
+}
+
+service SyncService {
+  rpc Sync(SyncRequest) returns (SyncResponse);
+}

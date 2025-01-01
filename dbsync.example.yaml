@@ -4,6 +4,10 @@ source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"
 
+destination:
+  url: "https://example.fivenet.app/"
+  token: "YOUR_SYNC_API_TOKEN"
+
 # A query for each "piece of data" FiveNet needs to function
 tables:
   users:

@@ -3,6 +3,7 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
+// source: services/rector/sync.proto
 
 package rector
 

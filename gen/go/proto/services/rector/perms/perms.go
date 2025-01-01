@@ -3,6 +3,7 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
+// source: services/rector/sync.proto
 
 package permsrector
 
@@ -15,6 +16,7 @@ const (
 	RectorFilestoreServicePerm perms.Category = "RectorFilestoreService"
 	RectorLawsServicePerm      perms.Category = "RectorLawsService"
 	RectorServicePerm          perms.Category = "RectorService"
+	SyncServicePerm            perms.Category = "SyncService"
 
 	RectorServiceCreateRolePerm      perms.Name = "CreateRole"
 	RectorServiceDeleteRolePerm      perms.Name = "DeleteRole"

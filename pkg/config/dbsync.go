@@ -9,7 +9,14 @@ type DBSyncSource struct {
 	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
 
+	Destination DBSyncDestination `yaml:"destination"`
+
 	Tables DBSyncSourceTables `yaml:"tables"`
+}
+
+type DBSyncDestination struct {
+	URL   string `yaml:"url"`
+	Token string `yaml:"token"`
 }
 
 type DBSyncSourceTables struct {

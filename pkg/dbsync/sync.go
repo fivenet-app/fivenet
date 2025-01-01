@@ -3,7 +3,14 @@ package dbsync
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"sync"
 
+	"github.com/XSAM/otelsql"
+	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
 )
 
@@ -14,21 +21,53 @@ var Module = fx.Module("dbsync",
 )
 
 type Sync struct {
+	wg *sync.WaitGroup
 	db *sql.DB
+
+	cfg *config.DBSync
 }
 
 type Params struct {
 	fx.In
 
 	LC fx.Lifecycle
-
-	DB *sql.DB
 }
 
 func New(p Params) (*Sync, error) {
 	s := &Sync{
-		db: p.DB,
+		wg: &sync.WaitGroup{},
 	}
+
+	if err := s.loadConfig(); err != nil {
+		return nil, err
+	}
+
+	if !s.cfg.Enabled {
+		return nil, fmt.Errorf("dbsync is disabled in config")
+	}
+
+	// Connect to source database
+	db, err := otelsql.Open("mysql", s.cfg.Source.DSN,
+		otelsql.WithAttributes(
+			semconv.DBSystemMySQL,
+		),
+		otelsql.WithSpanOptions(otelsql.SpanOptions{
+			DisableErrSkip: true,
+		}),
+	)
+	if err != nil {
+		return nil, err
+	}
+	s.db = db
+
+	if err := otelsql.RegisterDBStatsMetrics(db, otelsql.WithAttributes(
+		semconv.DBSystemMySQL,
+	)); err != nil {
+		return nil, err
+	}
+
+	// Setup SQL Prometheus metrics collector
+	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -41,12 +80,12 @@ func New(p Params) (*Sync, error) {
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		cancel()
 
-		return nil
+		return db.Close()
 	}))
 
 	return s, nil
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	// TODO
+	// TODO run one loop per source table
 }
