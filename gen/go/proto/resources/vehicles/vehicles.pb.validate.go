@@ -56,9 +56,27 @@ func (m *Vehicle) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Plate
+	if utf8.RuneCountInString(m.GetPlate()) > 32 {
+		err := VehicleValidationError{
+			field:  "Plate",
+			reason: "value length must be at most 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Type
+	if utf8.RuneCountInString(m.GetType()) > 32 {
+		err := VehicleValidationError{
+			field:  "Type",
+			reason: "value length must be at most 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetOwner()).(type) {
@@ -90,7 +108,18 @@ func (m *Vehicle) validate(all bool) error {
 	}
 
 	if m.Model != nil {
-		// no validation rules for Model
+
+		if utf8.RuneCountInString(m.GetModel()) > 64 {
+			err := VehicleValidationError{
+				field:  "Model",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

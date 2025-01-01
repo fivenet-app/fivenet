@@ -287,6 +287,7 @@ export const grpcMethods = [
 	'RectorService/UpdateRoleLimits',
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
+	'SyncService/GetStatus',
 	'SyncService/Sync',
 	'WikiService/ListPages',
 	'WikiService/GetPage',

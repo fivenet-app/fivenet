@@ -3,9 +3,185 @@
 
 package rector
 
+func (m *DataJobs) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	for idx, item := range m.Jobs {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DataLicenses) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Licenses
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DataStatus) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DataUsers) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DataVehicles) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Vehicles
+	for idx, item := range m.Vehicles {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *GetStatusRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *GetStatusResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Jobs
+	if m.Jobs != nil {
+		if v, ok := interface{}(m.GetJobs()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Licenses
+	if m.Licenses != nil {
+		if v, ok := interface{}(m.GetLicenses()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Users
+	if m.Users != nil {
+		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Vehicles
+	if m.Vehicles != nil {
+		if v, ok := interface{}(m.GetVehicles()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *SyncRequest) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Jobs
+	switch v := m.Data.(type) {
+
+	case *SyncRequest_Jobs:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Licenses
+	case *SyncRequest_Licenses:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Users
+	case *SyncRequest_Users:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Vehicles
+	case *SyncRequest_Vehicles:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

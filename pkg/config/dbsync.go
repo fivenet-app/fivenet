@@ -30,6 +30,5 @@ type DBSyncSourceTables struct {
 
 type DBSyncTable struct {
 	Enabled bool     `yaml:"enabled"`
-	Query   string   `yaml:"query"`
 	Queries []string `yaml:"queries"`
 }

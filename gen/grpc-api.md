@@ -804,6 +804,13 @@
     - [RectorService](#services-rector-RectorService)
   
 - [services/rector/sync.proto](#services_rector_sync-proto)
+    - [DataJobs](#services-rector-DataJobs)
+    - [DataLicenses](#services-rector-DataLicenses)
+    - [DataStatus](#services-rector-DataStatus)
+    - [DataUsers](#services-rector-DataUsers)
+    - [DataVehicles](#services-rector-DataVehicles)
+    - [GetStatusRequest](#services-rector-GetStatusRequest)
+    - [GetStatusResponse](#services-rector-GetStatusResponse)
     - [SyncRequest](#services-rector-SyncRequest)
     - [SyncResponse](#services-rector-SyncResponse)
   
@@ -12120,6 +12127,110 @@ TODO
 
 
 
+<a name="services-rector-DataJobs"></a>
+
+### DataJobs
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [resources.users.Job](#resources-users-Job) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-DataLicenses"></a>
+
+### DataLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| licenses | [resources.users.License](#resources-users-License) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-DataStatus"></a>
+
+### DataStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| total_count | [uint64](#uint64) |  |  |
+| last_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-rector-DataUsers"></a>
+
+### DataUsers
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [resources.users.User](#resources-users-User) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-DataVehicles"></a>
+
+### DataVehicles
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="services-rector-GetStatusRequest"></a>
+
+### GetStatusRequest
+
+
+
+
+
+
+
+<a name="services-rector-GetStatusResponse"></a>
+
+### GetStatusResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [DataStatus](#services-rector-DataStatus) |  |  |
+| jobs | [DataStatus](#services-rector-DataStatus) |  |  |
+| licenses | [DataStatus](#services-rector-DataStatus) |  |  |
+| vehicles | [DataStatus](#services-rector-DataStatus) |  |  |
+
+
+
+
+
+
 <a name="services-rector-SyncRequest"></a>
 
 ### SyncRequest
@@ -12128,7 +12239,10 @@ TODO
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| test | [bool](#bool) |  | TODO create per table message and add oneof entry |
+| users | [DataUsers](#services-rector-DataUsers) |  |  |
+| jobs | [DataJobs](#services-rector-DataJobs) |  |  |
+| licenses | [DataLicenses](#services-rector-DataLicenses) |  |  |
+| vehicles | [DataVehicles](#services-rector-DataVehicles) |  |  |
 
 
 
@@ -12163,6 +12277,7 @@ TODO
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
+| GetStatus | [GetStatusRequest](#services-rector-GetStatusRequest) | [GetStatusResponse](#services-rector-GetStatusResponse) |  |
 | Sync | [SyncRequest](#services-rector-SyncRequest) | [SyncResponse](#services-rector-SyncResponse) |  |
 
  <!-- end services -->

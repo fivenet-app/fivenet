@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package resources.users;
+
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";

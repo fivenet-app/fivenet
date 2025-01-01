@@ -166,7 +166,7 @@ var cli struct {
 	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
 	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`
 	Discord DiscordCmd `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync  DBSyncCmd  `cmd:"" hidden:"" help:"Run FiveNet database sync."`
+	DBSync  DBSyncCmd  `cmd:"" help:"Run FiveNet database sync."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration) []fx.Option {

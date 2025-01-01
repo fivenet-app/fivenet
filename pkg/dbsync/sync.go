@@ -87,5 +87,22 @@ func New(p Params) (*Sync, error) {
 }
 
 func (s *Sync) Run(ctx context.Context) {
+	s.syncUsers(ctx)
 	// TODO run one loop per source table
+}
+
+func (s *Sync) syncUsers(ctx context.Context) error {
+	if !s.cfg.Source.Tables.Users.Enabled {
+		return nil
+	}
+
+	query := s.cfg.Source.Tables.Users.Queries[0]
+	rows, err := s.db.QueryContext(ctx, query)
+	if err != nil {
+		return err
+	}
+
+	_ = rows
+
+	return nil
 }

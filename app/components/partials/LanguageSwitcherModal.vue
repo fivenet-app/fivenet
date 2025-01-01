@@ -33,18 +33,18 @@ onMounted(async () => {
 const preventClose = ref(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
-    if (locale.value === lang.language) {
+    if (locale.value === lang.code) {
         return;
     }
 
-    useLogger('⚙️ Settings').info('Switching language to:', lang.name);
+    useLogger('⚙️ Settings').info('Switching language to:', lang.code);
     preventClose.value = true;
 
-    userLocale.value = lang.language!;
+    userLocale.value = lang.code;
 
     notifications.add({
         title: { key: 'notifications.language_switched.title', parameters: {} },
-        description: { key: 'notifications.language_switched.content', parameters: { name: lang.name! } },
+        description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
         type: NotificationType.SUCCESS,
         timeout: 1750,
         callback: () => reloadNuxtApp({ persistState: false, force: true }),

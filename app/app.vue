@@ -4,10 +4,10 @@ import CookieControl from '~/components/partials/CookieControl.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useSettingsStore } from '~/store/settings';
+import { logger, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from './store/auth';
 
-const { t, setLocale, finalizePendingLocaleChange } = useI18n();
+const { t, locale, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
@@ -54,7 +54,7 @@ const settings = useSettingsStore();
 const { locale: userLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 if (APP_VERSION !== settings.version) {
-    useLogger('⚙️ Settings').info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
+    logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
 
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
@@ -65,7 +65,9 @@ if (APP_VERSION !== settings.version) {
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
 
+logger.info('Setting user locale to', userLocale.value);
 if (userLocale.value !== null) {
+    locale.value = userLocale.value;
     await setLocale(userLocale.value);
 }
 

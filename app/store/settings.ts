@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia';
 import type { Locale } from 'vue-i18n';
 
+export const logger = useLogger('⚙️ Settings');
+
 export interface SettingsState {
     updateAvailable: false | string;
     version: string;

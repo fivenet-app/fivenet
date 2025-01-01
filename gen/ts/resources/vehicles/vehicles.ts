@@ -36,9 +36,9 @@ export interface Vehicle {
 class Vehicle$Type extends MessageType<Vehicle> {
     constructor() {
         super("resources.vehicles.Vehicle", [
-            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 2, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 4, name: "owner", kind: "message", T: () => UserShort }
         ]);
     }

@@ -41,6 +41,12 @@ const { pause, resume } = useIntervalFn(
 
 const { start, stop } = useTimeoutFn(
     async () => {
+        if (!activeChar.value) {
+            stop();
+            pause();
+            return;
+        }
+
         if (can('MailerService.ListEmails').value) {
             await mailerStore.checkEmails();
         }
@@ -52,6 +58,9 @@ const { start, stop } = useTimeoutFn(
         resume();
     },
     randomNumber(1, 7) * 1000,
+    {
+        immediate: false,
+    },
 );
 
 async function toggleStream(): Promise<void> {
@@ -65,9 +74,9 @@ async function toggleStream(): Promise<void> {
             logger.error('exception during notification stream', e);
         }
     } else if (abort.value !== undefined) {
-        await stopStream();
         pause();
         stop();
+        await stopStream();
 
         notificatorStore.$reset();
     }

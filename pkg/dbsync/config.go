@@ -37,5 +37,7 @@ func (s *Sync) loadConfig() error {
 		return fmt.Errorf("failed to unmarshal config: %w", err)
 	}
 
+	s.cfg = c
+
 	return nil
 }

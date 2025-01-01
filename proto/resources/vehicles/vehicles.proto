@@ -3,12 +3,13 @@ syntax = "proto3";
 package resources.vehicles;
 
 import "resources/users/users.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles;vehicles";
 
 message Vehicle {
-  string plate = 1;
-  optional string model = 2;
-  string type = 3;
+  string plate = 1 [(validate.rules).string.max_len = 32];
+  optional string model = 2 [(validate.rules).string.max_len = 64];
+  string type = 3 [(validate.rules).string.max_len = 32];
   resources.users.UserShort owner = 4;
 }

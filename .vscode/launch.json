@@ -65,6 +65,21 @@
             "dlvFlags": ["--check-go-version=false"]
         },
         {
+            "name": "Launch DBSync",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}",
+            "args": ["db-sync"],
+            "buildFlags": "-race -a -installsuffix cgo",
+            "env": {
+                "CGO_ENABLED": "1",
+                "FIVENET_DBSYNC_FILE": "./dbsync.yaml"
+            },
+            "dlvFlags": ["--check-go-version=false"]
+        },
+        {
             "name": "Launch UI",
             "type": "node",
             "request": "launch",

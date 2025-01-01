@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package resources.users;
+
 import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";

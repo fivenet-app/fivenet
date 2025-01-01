@@ -10,70 +10,95 @@ destination:
 
 # A query for each "piece of data" FiveNet needs to function
 tables:
+  # The example queries here are for the ESX framework
   users:
     # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
     # Optional `height`, `visum`, `playtime` columns
     enabled: true
-    query: |
-      SELECT
-        id,
-        `license` AS `identifier`,
-        'user' AS `group`,
-        `name`,
-        charinfo->>'$.birthdate' AS `dateofbirth`,
-        `job`->>'$.name' AS `job`,
-        `job`->>'$.grade.level' AS `job_grade`,
-        charinfo->>'$.gender' AS `sex`,
-        charinfo->>'$.phone' AS `phone_number`
-      FROM
-        players;
+    queries:
+      - idField: "id"
+        query: |
+          SELECT
+            `id`,
+            `identifier`,
+            `group`,
+            `firstname`,
+            `lastname`,
+            `dateofbirth`,
+            `job`,
+            `job_grade`,
+            `sex`,
+            `phone_number`,
+            `height`,
+            `visum`,
+            `playtime`
+          FROM
+            `users`
+          OFFSET $offset
+          LIMIT $limit;
   jobs:
     # Must return `name`, `label` columns
     enabled: true
     queries:
-      - |
-        SELECT
-          `job` AS `name`,
-          CONCAT(UCASE(LEFT(`job`, 1)), SUBSTRING(`job`, 2)) AS `label`
-        FROM
-          `madmin_jobs`;
-      - |
-        SELECT
-          `faction` AS `name`,
-          CONCAT(UCASE(LEFT(`faction`, 1)), SUBSTRING(`faction`, 2)) AS `label`
-        FROM
-          `madmin_factions`;
+      - idField: "name"
+        query: |
+          SELECT
+            `name`,
+            `label`
+          FROM
+            `jobs`
+          OFFSET $offset
+          LIMIT $limit;
   jobGrades:
     # Must return `job_name`, `grade`, `name`, `label` columns
     enabled: true
-    query: |
-      # TODO
+    queries:
+      - query: |
+          SELECT
+            `job_name`,
+            `grade`,
+            `name`,
+            `label`
+          FROM
+            `job_grades`
+          OFFSET $offset
+          LIMIT $limit;
   licenses:
     # Must return `type`, `label` columns
     enabled: true
-    query: |
-      SELECT
-        `type`,
-        `label`
-      FROM
-        `licenses`;
+    queries:
+      - idField: "type"
+        query: |
+          SELECT
+            `type`,
+            `label`
+          FROM
+            `licenses`
+          OFFSET $offset
+          LIMIT $limit;
   userLicenses:
     # Must return `type`, `owner` columns
     enabled: true
-    query: |
-      SELECT
-        `type`,
-        `owner`
-      FROM
-        `user_licenses`;
+    queries:
+      - query: |
+          SELECT
+            `type`,
+            `owner`
+          FROM
+            `user_licenses`
+          OFFSET $offset
+          LIMIT $limit;
   ownedVehicles:
     # Must return `owner`, `plate`, `type`, `model` columns
     enabled: true
-    query: |
-      SELECT
-        `owner`,
-        `plate`,
-        `type`,
-        `model`
-      FROM
-        owned_vehicles;
+    queries:
+      - query: |
+          SELECT
+            `owner`,
+            `plate`,
+            `type`,
+            `model`
+          FROM
+            `owned_vehicles`
+          OFFSET $offset
+          LIMIT $limit;
