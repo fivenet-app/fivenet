@@ -70,7 +70,7 @@ const creating = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel v-if="route.query?.tab === 'new' && getPrivateEmail?.deactivated" id="maileremaillist" grow>
+        <UDashboardPanel v-if="route.query?.tab === 'new' || getPrivateEmail?.deactivated === true" id="maileremaillist" grow>
             <UDashboardNavbar :title="$t('pages.mailer.manage.title')" />
 
             <UDashboardPanelContent>
@@ -83,7 +83,7 @@ const creating = ref(false);
                 <DataPendingBlock v-else-if="!loaded" :message="$t('common.loading', [$t('common.mail', 2)])" />
 
                 <DataErrorBlock
-                    v-else-if="getPrivateEmail?.deactivated"
+                    v-else-if="getPrivateEmail?.deactivated === true"
                     :title="$t('errors.MailerService.ErrEmailDisabled.title')"
                     :message="$t('errors.MailerService.ErrEmailDisabled.content')"
                 />
