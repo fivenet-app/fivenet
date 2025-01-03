@@ -178,6 +178,8 @@ type OAuth2Mapping struct {
 type Auth struct {
 	SuperuserGroups []string `yaml:"superuserGroups"`
 	SuperuserUsers  []string `yaml:"superuserUsers"`
+
+	SyncAPITokens []string `yaml:"syncAPITokens"`
 }
 
 type DispatchCenter struct {

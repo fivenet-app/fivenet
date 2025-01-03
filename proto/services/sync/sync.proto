@@ -1,0 +1,88 @@
+syntax = "proto3";
+
+package services.sync;
+
+import "resources/jobs/colleagues.proto";
+import "resources/jobs/timeclock.proto";
+import "resources/users/jobs.proto";
+import "resources/users/users.proto";
+import "resources/vehicles/vehicles.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/sync;sync";
+
+message GetStatusRequest {}
+
+message GetStatusResponse {
+  DataStatus users = 1;
+
+  DataStatus jobs = 2;
+
+  DataStatus vehicles = 3;
+
+  DataStatus licenses = 4;
+  DataStatus user_licenses = 5;
+}
+
+message DataStatus {
+  uint64 offset = 1;
+  uint64 last_id = 2;
+}
+
+message SyncDataRequest {
+  oneof data {
+    DataUsers users = 1;
+    DataJobs jobs = 2;
+
+    DataVehicles vehicles = 3;
+
+    DataLicenses licenses = 4;
+    DataUserLicenses user_licenses = 5;
+  }
+}
+
+message DataUsers {
+  repeated resources.users.User users = 1 [(validate.rules).repeated.max_items = 500];
+}
+
+message DataJobs {
+  repeated resources.users.Job jobs = 1 [(validate.rules).repeated.max_items = 150];
+}
+
+message DataVehicles {
+  repeated resources.vehicles.Vehicle vehicles = 1 [(validate.rules).repeated.max_items = 1000];
+}
+
+message DataLicenses {
+  repeated resources.users.License licenses = 1 [(validate.rules).repeated.max_items = 100];
+}
+
+message DataUserLicenses {
+  repeated resources.users.UserLicenses user_licenses = 1 [(validate.rules).repeated.max_items = 1000];
+}
+
+message SyncDataResponse {
+  int64 affected_rows = 1;
+}
+
+message AddActivityRequest {
+  oneof activity {
+    resources.users.UserActivity user_activity = 1;
+    resources.users.UserProps user_props = 2;
+
+    resources.jobs.JobsUserActivity jobs_user_activity = 3;
+    resources.jobs.TimeclockEntry jobs_timeclock = 4;
+  }
+}
+
+message AddActivityResponse {
+  uint64 id = 1;
+}
+
+service SyncService {
+  rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
+
+  rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
+
+  rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
+}

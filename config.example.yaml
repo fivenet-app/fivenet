@@ -98,6 +98,8 @@ auth:
     - projektleiter
     - teamleitung
   superuserUsers: []
+  syncAPITokens: []
+    #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
 dispatchCenter:
   convertJobs: []
     #- police

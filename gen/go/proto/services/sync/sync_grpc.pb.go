@@ -2,9 +2,9 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.20.3
-// source: services/rector/sync.proto
+// source: services/sync/sync.proto
 
-package rector
+package sync
 
 import (
 	context "context"
@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	SyncService_GetStatus_FullMethodName = "/services.rector.SyncService/GetStatus"
-	SyncService_Sync_FullMethodName      = "/services.rector.SyncService/Sync"
+	SyncService_GetStatus_FullMethodName   = "/services.sync.SyncService/GetStatus"
+	SyncService_SyncData_FullMethodName    = "/services.sync.SyncService/SyncData"
+	SyncService_AddActivity_FullMethodName = "/services.sync.SyncService/AddActivity"
 )
 
 // SyncServiceClient is the client API for SyncService service.
@@ -28,7 +29,8 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SyncServiceClient interface {
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
-	Sync(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error)
+	SyncData(ctx context.Context, in *SyncDataRequest, opts ...grpc.CallOption) (*SyncDataResponse, error)
+	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 }
 
 type syncServiceClient struct {
@@ -49,10 +51,20 @@ func (c *syncServiceClient) GetStatus(ctx context.Context, in *GetStatusRequest,
 	return out, nil
 }
 
-func (c *syncServiceClient) Sync(ctx context.Context, in *SyncRequest, opts ...grpc.CallOption) (*SyncResponse, error) {
+func (c *syncServiceClient) SyncData(ctx context.Context, in *SyncDataRequest, opts ...grpc.CallOption) (*SyncDataResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncResponse)
-	err := c.cc.Invoke(ctx, SyncService_Sync_FullMethodName, in, out, cOpts...)
+	out := new(SyncDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SyncData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AddActivityResponse)
+	err := c.cc.Invoke(ctx, SyncService_AddActivity_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +76,8 @@ func (c *syncServiceClient) Sync(ctx context.Context, in *SyncRequest, opts ...g
 // for forward compatibility.
 type SyncServiceServer interface {
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
-	Sync(context.Context, *SyncRequest) (*SyncResponse, error)
+	SyncData(context.Context, *SyncDataRequest) (*SyncDataResponse, error)
+	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
 	mustEmbedUnimplementedSyncServiceServer()
 }
 
@@ -78,8 +91,11 @@ type UnimplementedSyncServiceServer struct{}
 func (UnimplementedSyncServiceServer) GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
-func (UnimplementedSyncServiceServer) Sync(context.Context, *SyncRequest) (*SyncResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Sync not implemented")
+func (UnimplementedSyncServiceServer) SyncData(context.Context, *SyncDataRequest) (*SyncDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
+}
+func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddActivity not implemented")
 }
 func (UnimplementedSyncServiceServer) mustEmbedUnimplementedSyncServiceServer() {}
 func (UnimplementedSyncServiceServer) testEmbeddedByValue()                     {}
@@ -120,20 +136,38 @@ func _SyncService_GetStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_Sync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncRequest)
+func _SyncService_SyncData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SyncDataRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SyncServiceServer).Sync(ctx, in)
+		return srv.(SyncServiceServer).SyncData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: SyncService_Sync_FullMethodName,
+		FullMethod: SyncService_SyncData_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).Sync(ctx, req.(*SyncRequest))
+		return srv.(SyncServiceServer).SyncData(ctx, req.(*SyncDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddActivityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).AddActivity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_AddActivity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).AddActivity(ctx, req.(*AddActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -142,7 +176,7 @@ func _SyncService_Sync_Handler(srv interface{}, ctx context.Context, dec func(in
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var SyncService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.rector.SyncService",
+	ServiceName: "services.sync.SyncService",
 	HandlerType: (*SyncServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
@@ -150,10 +184,14 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyncService_GetStatus_Handler,
 		},
 		{
-			MethodName: "Sync",
-			Handler:    _SyncService_Sync_Handler,
+			MethodName: "SyncData",
+			Handler:    _SyncService_SyncData_Handler,
+		},
+		{
+			MethodName: "AddActivity",
+			Handler:    _SyncService_AddActivity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "services/rector/sync.proto",
+	Metadata: "services/sync/sync.proto",
 }

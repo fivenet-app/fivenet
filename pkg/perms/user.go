@@ -21,8 +21,8 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 		// Fallback to default role
 		roleIds = []uint64{defaultRoleId}
 	} else {
-		// Add default role for default perms
-		roleIds = append(roleIds, defaultRoleId)
+		// Prepend default role to default perms
+		roleIds = append([]uint64{defaultRoleId}, roleIds...)
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
@@ -106,22 +106,19 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 }
 
 func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) (result bool) {
-	if p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId) {
-		return true
+	if check, ok := p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId); ok {
+		return check
 	}
 
 	// Check default role perms
-	return p.checkRoleJob(DefaultRoleJob, p.startJobGrade, permId)
+	check, _ := p.checkRoleJob(DefaultRoleJob, p.startJobGrade, permId)
+	return check
 }
 
-func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
+func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) (bool, bool) {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		// Fallback to default role
-		roleIds, ok = p.lookupRoleIDsForJobUpToGrade(DefaultRoleJob, p.startJobGrade)
-		if !ok {
-			return false
-		}
+		return false, false
 	}
 
 	for i := range slices.Backward(roleIds) {
@@ -133,8 +130,8 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 		if !ok {
 			continue
 		}
-		return val
+		return val, true
 	}
 
-	return false
+	return false, false
 }

@@ -125,6 +125,26 @@ func (m *UserActivity) Sanitize() error {
 	return nil
 }
 
+func (m *UserLicenses) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Licenses
+	for idx, item := range m.Licenses {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *UserProps) Sanitize() error {
 	if m == nil {
 		return nil

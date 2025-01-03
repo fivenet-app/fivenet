@@ -20,9 +20,8 @@ type TableSyncState struct {
 	// Used to track if the last id/strign needs to be reset
 	IDField string `yaml:"idField"`
 
-	Offset       uint64  `yaml:"offset"`
-	LastID       *uint64 `yaml:"lastId"`
-	LastIDString *string `yaml:"lastIdString"`
+	Offset uint64  `yaml:"offset"`
+	LastID *string `yaml:"lastId"`
 }
 
 func (s *DBSyncState) Load() error {

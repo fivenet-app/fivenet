@@ -20,7 +20,6 @@ type Server struct {
 	RectorConfigServiceServer
 	RectorFilestoreServiceServer
 	RectorLawsServiceServer
-	SyncServiceServer
 
 	logger   *zap.Logger
 	db       *sql.DB
@@ -69,5 +68,4 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterRectorConfigServiceServer(srv, s)
 	RegisterRectorFilestoreServiceServer(srv, s)
 	RegisterRectorLawsServiceServer(srv, s)
-	RegisterSyncServiceServer(srv, s)
 }

@@ -79,8 +79,8 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
-// source: services/rector/sync.proto
 // source: services/stats/stats.proto
+// source: services/sync/sync.proto
 // source: services/wiki/wiki.proto
 
 export const grpcServices = [
@@ -288,7 +288,8 @@ export const grpcMethods = [
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
 	'SyncService/GetStatus',
-	'SyncService/Sync',
+	'SyncService/SyncData',
+	'SyncService/AddActivity',
 	'WikiService/ListPages',
 	'WikiService/GetPage',
 	'WikiService/CreatePage',

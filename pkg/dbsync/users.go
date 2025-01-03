@@ -3,6 +3,7 @@ package dbsync
 import (
 	"context"
 	"database/sql"
+	"strconv"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config"
@@ -55,7 +56,7 @@ func (s *usersSync) Sync(ctx context.Context) (*TableSyncState, error) {
 		offset = 0
 	}
 
-	lastUserId := uint64(users[len(users)-1].UserId)
+	lastUserId := strconv.Itoa(int(users[len(users)-1].UserId))
 
 	return &TableSyncState{
 		IDField: s.cfg.Tables.Users.IDField,

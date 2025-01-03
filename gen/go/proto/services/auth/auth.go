@@ -106,7 +106,7 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 	RegisterAuthServiceServer(srv, s)
 }
 
-// AuthFuncOverride is called instead of exampleAuthFunc
+// AuthFuncOverride is called instead of the original auth func
 func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (context.Context, error) {
 	// Skip authentication for the anon accessible endpoints
 	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
