@@ -65,3 +65,5 @@ localhost.*
 /dbsync.yaml
 /dbsync.*.yaml
 !/dbsync.example.yaml
+
+/dbsync.state.yaml

@@ -266,7 +266,7 @@ const isOpen = ref(false);
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
                             }"
-                            :title="$t('common.attributes', 2)"
+                            :title="$t('common.label', 2)"
                         >
                             <CitizenSetAttributes v-model="user.props!.attributes" :user-id="user.userId" />
                         </UDashboardSection>

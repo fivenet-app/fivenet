@@ -120,14 +120,36 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		SELECT(
 			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(
-			tUser.
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
-				),
-		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
+
+	if (slices.Contains(types, "Labels") || userInfo.SuperUser) && len(req.LabelIds) > 0 {
+		countStmt = countStmt.
+			FROM(
+				tUser.
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					).
+					INNER_JOIN(tUserLabels,
+						tUserLabels.UserID.EQ(tUser.ID).
+							AND(tUserLabels.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tJobLabels,
+						tJobLabels.ID.EQ(tUserLabels.LabelID),
+					),
+			)
+	} else {
+		countStmt = countStmt.
+			FROM(
+				tUser.
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					),
+			)
+	}
+
+	countStmt = countStmt.
 		WHERE(condition)
 
 	var count database.DataCount
@@ -191,17 +213,42 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(
-			tUser.
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID).
-						AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
-				),
-		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
+
+	if (slices.Contains(types, "Labels") || userInfo.SuperUser) && len(req.LabelIds) > 0 {
+		stmt = stmt.
+			FROM(
+				tUser.
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
+					).
+					INNER_JOIN(tUserLabels,
+						tUserLabels.UserID.EQ(tUser.ID).
+							AND(tUserLabels.Job.EQ(jet.String(userInfo.Job))),
+					).
+					LEFT_JOIN(tJobLabels,
+						tJobLabels.ID.EQ(tUserLabels.LabelID),
+					),
+			)
+	} else {
+		stmt = stmt.
+			FROM(
+				tUser.
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
+					),
+			)
+	}
+
+	stmt = stmt.
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tUser.ID).

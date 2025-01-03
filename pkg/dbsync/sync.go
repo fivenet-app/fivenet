@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/XSAM/otelsql"
@@ -12,6 +14,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 var Module = fx.Module("dbsync",
@@ -22,20 +25,27 @@ var Module = fx.Module("dbsync",
 
 type Sync struct {
 	wg *sync.WaitGroup
-	db *sql.DB
 
-	cfg *config.DBSync
+	logger *zap.Logger
+	db     *sql.DB
+
+	cfg   *config.DBSync
+	state *DBSyncState
 }
 
 type Params struct {
 	fx.In
 
 	LC fx.Lifecycle
+
+	Logger *zap.Logger
 }
 
 func New(p Params) (*Sync, error) {
 	s := &Sync{
 		wg: &sync.WaitGroup{},
+
+		logger: p.Logger.Named("dbsync"),
 	}
 
 	if err := s.loadConfig(); err != nil {
@@ -44,6 +54,16 @@ func New(p Params) (*Sync, error) {
 
 	if !s.cfg.Enabled {
 		return nil, fmt.Errorf("dbsync is disabled in config")
+	}
+
+	// Load dbsync state from file if exists
+	s.state = &DBSyncState{
+		mu:       sync.Mutex{},
+		filepath: s.cfg.StateFile,
+		States:   map[string]*TableSyncState{},
+	}
+	if err := s.state.Load(); err != nil {
+		return nil, err
 	}
 
 	// Connect to source database
@@ -87,22 +107,21 @@ func New(p Params) (*Sync, error) {
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	s.syncUsers(ctx)
+	us := &usersSync{
+		logger: s.logger,
+		db:     s.db,
+		cfg:    s.cfg,
+	}
+	if _, err := us.Sync(ctx); err != nil {
+		s.logger.Error("error during users sync", zap.Error(err))
+	}
+
 	// TODO run one loop per source table
 }
 
-func (s *Sync) syncUsers(ctx context.Context) error {
-	if !s.cfg.Source.Tables.Users.Enabled {
-		return nil
-	}
+func prepareStringQuery(in string, offset int, limit int) string {
+	offsetStr := strconv.Itoa(offset)
+	limitStr := strconv.Itoa(limit)
 
-	query := s.cfg.Source.Tables.Users.Queries[0]
-	rows, err := s.db.QueryContext(ctx, query)
-	if err != nil {
-		return err
-	}
-
-	_ = rows
-
-	return nil
+	return strings.ReplaceAll(strings.ReplaceAll(in, "$offset", offsetStr), "$limit", limitStr)
 }

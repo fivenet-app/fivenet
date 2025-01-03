@@ -11,14 +11,18 @@ import (
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
+	defaultRoleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
+	if !ok {
+		return nil, fmt.Errorf("failed to fallback to default role")
+	}
+
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.Job, userInfo.JobGrade)
 	if !ok {
 		// Fallback to default role
-		roleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, p.startJobGrade)
-		if !ok {
-			return nil, fmt.Errorf("failed to fallback to default role")
-		}
-		roleIds = []uint64{roleId}
+		roleIds = []uint64{defaultRoleId}
+	} else {
+		// Add default role for default perms
+		roleIds = append(roleIds, defaultRoleId)
 	}
 
 	ps := p.getRolePermissionsFromCache(roleIds)
@@ -102,7 +106,12 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 }
 
 func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) (result bool) {
-	return p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId)
+	if p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId) {
+		return true
+	}
+
+	// Check default role perms
+	return p.checkRoleJob(DefaultRoleJob, p.startJobGrade, permId)
 }
 
 func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {

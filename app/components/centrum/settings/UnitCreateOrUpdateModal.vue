@@ -168,6 +168,7 @@ onMounted(async () => updateUnitInForm());
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                                 </template>

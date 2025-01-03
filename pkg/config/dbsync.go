@@ -1,17 +1,19 @@
 package config
 
 type DBSync struct {
-	Enabled bool         `default:"false" yaml:"enabled"`
-	Source  DBSyncSource `yaml:"source"`
+	Enabled bool `default:"false" yaml:"enabled"`
+
+	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`
+
+	Destination DBSyncDestination `yaml:"destination"`
+	Source      DBSyncSource      `yaml:"source"`
+
+	Tables DBSyncSourceTables `yaml:"tables"`
 }
 
 type DBSyncSource struct {
 	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
-
-	Destination DBSyncDestination `yaml:"destination"`
-
-	Tables DBSyncSourceTables `yaml:"tables"`
 }
 
 type DBSyncDestination struct {
@@ -29,6 +31,7 @@ type DBSyncSourceTables struct {
 }
 
 type DBSyncTable struct {
-	Enabled bool     `yaml:"enabled"`
-	Queries []string `yaml:"queries"`
+	Enabled bool   `yaml:"enabled"`
+	IDField string `yaml:"idField"`
+	Query   string `yaml:"query"`
 }

@@ -83,7 +83,7 @@ export const useSettingsStore = defineStore('settings', {
             streamerMode: false,
             calculatorPosition: 'middle',
             jobsService: {
-                cardView: false,
+                cardView: true,
             },
         } as SettingsState;
     },

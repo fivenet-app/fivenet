@@ -543,7 +543,9 @@ defineShortcuts({
                                         :ui="{ padding: { xs: 'px-2 py-1' } }"
                                         @click="toggleLabelInSearch(label)"
                                     >
-                                        {{ label.name }}
+                                        <span class="truncate">
+                                            {{ label.name }}
+                                        </span>
                                     </UButton>
                                 </div>
                             </div>

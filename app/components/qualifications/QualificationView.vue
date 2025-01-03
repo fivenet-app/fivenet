@@ -148,7 +148,7 @@ const accordionItems = computed(() =>
 <template>
     <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
         <template #right>
-            <PartialsBackButton fallback-to="/qualifications" />
+            <PartialsBackButton to="/qualifications" />
 
             <UButtonGroup class="inline-flex">
                 <IDCopyBadge

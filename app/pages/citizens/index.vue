@@ -23,7 +23,7 @@ const modal = useModal();
                 <template #right>
                     <UButton
                         v-if="can('CitizenStoreService.ManageCitizenAttributes').value"
-                        :label="$t('common.attributes', 2)"
+                        :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
                         @click="modal.open(CitizensAttributesModal, {})"
                     />
