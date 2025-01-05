@@ -75,6 +75,7 @@
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
+                "FIVENET_CONFIG_FILE": "./config.worker.yaml",
                 "FIVENET_DBSYNC_FILE": "./dbsync.yaml"
             },
             "dlvFlags": ["--check-go-version=false"]

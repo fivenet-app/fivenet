@@ -98,8 +98,6 @@ auth:
     - projektleiter
     - teamleitung
   superuserUsers: []
-  syncAPITokens: []
-    #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC
 dispatchCenter:
   convertJobs: []
     #- police
@@ -131,3 +129,7 @@ game:
   # First grade "number/id", some servers start at 0, but I have seen some start at 1
   startJobGrade: 0
   defaultLocale: "en"
+sync:
+  enabled: false
+  apiTokens: []
+    #- LONG_RANDOM_API_TOKEN_FOR_DBSYNC

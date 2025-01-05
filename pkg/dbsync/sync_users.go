@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -20,13 +21,17 @@ type usersSync struct {
 	db     *sql.DB
 
 	cfg *config.DBSync
+
+	cli pbsync.SyncServiceClient
 }
 
-func NewUsersSync(logger *zap.Logger, db *sql.DB, cfg *config.DBSync) (ISyncer, error) {
+func NewUsersSync(logger *zap.Logger, db *sql.DB, cfg *config.DBSync, cli pbsync.SyncServiceClient) (ISyncer, error) {
 	return &usersSync{
 		logger: logger,
 		db:     db,
 		cfg:    cfg,
+
+		cli: cli,
 	}, nil
 }
 
@@ -48,6 +53,18 @@ func (s *usersSync) Sync(ctx context.Context) (*TableSyncState, error) {
 
 	if len(users) == 0 {
 		return &TableSyncState{}, nil
+	}
+
+	if s.cli != nil {
+		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
+			Data: &pbsync.SyncDataRequest_Users{
+				Users: &pbsync.DataUsers{
+					Users: users,
+				},
+			},
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	// If less users than limit are returned, we probably have reached the "end" of the table

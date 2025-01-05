@@ -110,7 +110,6 @@ func (stream *GrpcStream) close() {
 func (stream *GrpcStream) Read(p []byte) (int, error) {
 	// grpclog.Infof("reading from channel %v", stream.id)
 	if stream.remainingBuffer != nil {
-
 		// If the remaining buffer fits completely inside the argument slice then read all of it and return any error
 		// that was retained from the original call
 		if len(stream.remainingBuffer) <= len(p) {

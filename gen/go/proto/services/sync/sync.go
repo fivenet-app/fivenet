@@ -33,12 +33,16 @@ type Params struct {
 }
 
 func NewServer(p Params) *Server {
+	if !p.Config.Sync.Enabled {
+		return nil
+	}
+
 	return &Server{
 		logger: p.Logger,
 		db:     p.DB,
 		auth:   p.Auth,
 
-		tokens: p.Config.Auth.SyncAPITokens,
+		tokens: p.Config.Sync.APITokens,
 	}
 }
 
@@ -67,8 +71,7 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	return ctx, nil
 }
 
-func (s *Server) SyncData(ctx context.Context, req *SyncDataRequest) (*SyncDataResponse, error) {
-	// TODO handle sync data request
-
-	return nil, nil
+func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	// Skip permission check for the sync service
+	return ctx, nil
 }

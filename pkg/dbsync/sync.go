@@ -9,12 +9,15 @@ import (
 	"sync"
 
 	"github.com/XSAM/otelsql"
+	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 var Module = fx.Module("dbsync",
@@ -31,6 +34,8 @@ type Sync struct {
 
 	cfg   *config.DBSync
 	state *DBSyncState
+
+	cli pbsync.SyncServiceClient
 }
 
 type Params struct {
@@ -89,6 +94,20 @@ func New(p Params) (*Sync, error) {
 	// Setup SQL Prometheus metrics collector
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
+	// Create GRPC client for sync if destination is given
+	if s.cfg.Destination.URL != "" {
+		cli, err := grpc.NewClient(s.cfg.Destination.URL,
+			grpc.WithTransportCredentials(insecure.NewCredentials()),
+			grpc.WithPerRPCCredentials(tokenAuth{
+				token: s.cfg.Destination.Token,
+			}),
+		)
+		if err != nil {
+			return nil, err
+		}
+		s.cli = pbsync.NewSyncServiceClient(cli)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -111,6 +130,7 @@ func (s *Sync) Run(ctx context.Context) {
 		logger: s.logger,
 		db:     s.db,
 		cfg:    s.cfg,
+		cli:    s.cli,
 	}
 	if _, err := us.Sync(ctx); err != nil {
 		s.logger.Error("error during users sync", zap.Error(err))

@@ -142,6 +142,10 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	grpclog.SetLoggerV2(zapgrpc.NewLogger(p.Logger))
 
 	for _, service := range p.Services {
+		if service == nil {
+			continue
+		}
+
 		service.RegisterServer(srv)
 	}
 

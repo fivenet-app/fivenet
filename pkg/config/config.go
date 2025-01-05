@@ -29,6 +29,8 @@ type Config struct {
 	Discord Discord `yaml:"discord"`
 
 	Game Game `yaml:"game"`
+
+	Sync Sync `yaml:"sync"`
 }
 
 type TracingExporter string
@@ -178,8 +180,6 @@ type OAuth2Mapping struct {
 type Auth struct {
 	SuperuserGroups []string `yaml:"superuserGroups"`
 	SuperuserUsers  []string `yaml:"superuserUsers"`
-
-	SyncAPITokens []string `yaml:"syncAPITokens"`
 }
 
 type DispatchCenter struct {
@@ -230,4 +230,9 @@ type DiscordCommands struct {
 type Game struct {
 	StartJobGrade int32  `default:"0" yaml:"startJobGrade"`
 	DefaultLocale string `default:"en" yaml:"defaultLocale"`
+}
+
+type Sync struct {
+	Enabled   bool     `yaml:"enabled"`
+	APITokens []string `yaml:"apiTokens"`
 }

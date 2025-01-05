@@ -25,6 +25,8 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"golang.org/x/net/http2"
+	"golang.org/x/net/http2/h2c"
 	"google.golang.org/grpc"
 )
 
@@ -42,9 +44,10 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	Config *config.Config
-	Engine *gin.Engine
+	Logger  *zap.Logger
+	Config  *config.Config
+	Engine  *gin.Engine
+	GRPCSrv *grpc.Server
 }
 
 type Result struct {
@@ -54,16 +57,37 @@ type Result struct {
 }
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("http_server")
+	return log.Named("http")
+}
+
+type handler struct {
+	gin  http.Handler
+	grpc *grpc.Server
+}
+
+func (h *handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if r.ProtoMajor == 2 && strings.HasPrefix(r.Header.Get("Content-Type"), "application/grpc") {
+		h.grpc.ServeHTTP(w, r)
+		return
+	}
+
+	h.gin.ServeHTTP(w, r)
 }
 
 // New builds an HTTP server that will begin serving requests
 // when the Fx application starts.
 func New(p Params) (Result, error) {
-	// Create HTTP Server for graceful shutdown handling
+	// Create HTTP Server for graceful shutdown handling and h2c wrapped handler
 	srv := &http.Server{
-		Addr:    p.Config.HTTP.Listen,
-		Handler: p.Engine,
+		Addr: p.Config.HTTP.Listen,
+		Handler: h2c.NewHandler(
+			&handler{
+				gin:  p.Engine,
+				grpc: p.GRPCSrv,
+			},
+			&http2.Server{},
+		),
+		ErrorLog: zap.NewStdLog(p.Logger),
 	}
 
 	p.LC.Append(fx.Hook{

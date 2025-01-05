@@ -58,6 +58,10 @@ func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerPar
 		)
 
 		for _, service := range p.Services {
+			if service == nil {
+				continue
+			}
+
 			service.RegisterServer(srv)
 		}
 
