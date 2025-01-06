@@ -838,11 +838,11 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 }
 
 func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Job, int32, *users.JobProps, error) {
-	js := tJobs.AS("job")
-	stmt := js.
+	tJobs := tJobs.AS("job")
+	stmt := tJobs.
 		SELECT(
-			js.Name,
-			js.Label,
+			tJobs.Name,
+			tJobs.Label,
 			tJobGrades.Grade.AS("job_grade"),
 			tJobProps.Job,
 			tJobProps.UpdatedAt,
@@ -853,15 +853,15 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Jo
 			tJobProps.LogoURL,
 		).
 		FROM(
-			js.
+			tJobs.
 				INNER_JOIN(tJobGrades,
-					tJobGrades.JobName.EQ(js.Name),
+					tJobGrades.JobName.EQ(tJobs.Name),
 				).
 				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(js.Name)),
+					tJobProps.Job.EQ(tJobs.Name)),
 		).
 		WHERE(
-			js.Name.EQ(jet.String(jobName)),
+			tJobs.Name.EQ(jet.String(jobName)),
 		).
 		ORDER_BY(tJobGrades.Grade.DESC()).
 		LIMIT(1)

@@ -382,252 +382,6 @@ var _ interface {
 	ErrorName() string
 } = GetStatusResponseValidationError{}
 
-// Validate checks the field values on AddActivityRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AddActivityRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on AddActivityRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// AddActivityRequestMultiError, or nil if none found.
-func (m *AddActivityRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *AddActivityRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if m.GetActivity() == nil {
-		err := AddActivityRequestValidationError{
-			field:  "Activity",
-			reason: "value is required",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetActivity()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, AddActivityRequestValidationError{
-					field:  "Activity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, AddActivityRequestValidationError{
-					field:  "Activity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetActivity()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return AddActivityRequestValidationError{
-				field:  "Activity",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return AddActivityRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// AddActivityRequestMultiError is an error wrapping multiple validation errors
-// returned by AddActivityRequest.ValidateAll() if the designated constraints
-// aren't met.
-type AddActivityRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m AddActivityRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m AddActivityRequestMultiError) AllErrors() []error { return m }
-
-// AddActivityRequestValidationError is the validation error returned by
-// AddActivityRequest.Validate if the designated constraints aren't met.
-type AddActivityRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e AddActivityRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e AddActivityRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e AddActivityRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e AddActivityRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e AddActivityRequestValidationError) ErrorName() string {
-	return "AddActivityRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e AddActivityRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sAddActivityRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = AddActivityRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = AddActivityRequestValidationError{}
-
-// Validate checks the field values on AddActivityResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *AddActivityResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on AddActivityResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// AddActivityResponseMultiError, or nil if none found.
-func (m *AddActivityResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *AddActivityResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(errors) > 0 {
-		return AddActivityResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// AddActivityResponseMultiError is an error wrapping multiple validation
-// errors returned by AddActivityResponse.ValidateAll() if the designated
-// constraints aren't met.
-type AddActivityResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m AddActivityResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m AddActivityResponseMultiError) AllErrors() []error { return m }
-
-// AddActivityResponseValidationError is the validation error returned by
-// AddActivityResponse.Validate if the designated constraints aren't met.
-type AddActivityResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e AddActivityResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e AddActivityResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e AddActivityResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e AddActivityResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e AddActivityResponseValidationError) ErrorName() string {
-	return "AddActivityResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e AddActivityResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sAddActivityResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = AddActivityResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = AddActivityResponseValidationError{}
-
 // Validate checks the field values on SyncDataRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -1039,3 +793,249 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SyncDataResponseValidationError{}
+
+// Validate checks the field values on AddActivityRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddActivityRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddActivityRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddActivityRequestMultiError, or nil if none found.
+func (m *AddActivityRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddActivityRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetActivity() == nil {
+		err := AddActivityRequestValidationError{
+			field:  "Activity",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetActivity()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, AddActivityRequestValidationError{
+					field:  "Activity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, AddActivityRequestValidationError{
+					field:  "Activity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetActivity()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return AddActivityRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddActivityRequestMultiError is an error wrapping multiple validation errors
+// returned by AddActivityRequest.ValidateAll() if the designated constraints
+// aren't met.
+type AddActivityRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddActivityRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddActivityRequestMultiError) AllErrors() []error { return m }
+
+// AddActivityRequestValidationError is the validation error returned by
+// AddActivityRequest.Validate if the designated constraints aren't met.
+type AddActivityRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddActivityRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddActivityRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddActivityRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddActivityRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddActivityRequestValidationError) ErrorName() string {
+	return "AddActivityRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddActivityRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddActivityRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddActivityRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddActivityRequestValidationError{}
+
+// Validate checks the field values on AddActivityResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *AddActivityResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on AddActivityResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// AddActivityResponseMultiError, or nil if none found.
+func (m *AddActivityResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *AddActivityResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return AddActivityResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// AddActivityResponseMultiError is an error wrapping multiple validation
+// errors returned by AddActivityResponse.ValidateAll() if the designated
+// constraints aren't met.
+type AddActivityResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m AddActivityResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m AddActivityResponseMultiError) AllErrors() []error { return m }
+
+// AddActivityResponseValidationError is the validation error returned by
+// AddActivityResponse.Validate if the designated constraints aren't met.
+type AddActivityResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e AddActivityResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e AddActivityResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e AddActivityResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e AddActivityResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e AddActivityResponseValidationError) ErrorName() string {
+	return "AddActivityResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e AddActivityResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sAddActivityResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = AddActivityResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = AddActivityResponseValidationError{}

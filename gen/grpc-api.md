@@ -6086,7 +6086,8 @@ TODO
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | PAGE_LAYOUT_TYPE_UNSPECIFIED | 0 |  |
-| PAGE_LAYOUT_TYPE_ | 1 |  |
+| PAGE_LAYOUT_TYPE_LANDING | 1 |  |
+| PAGE_LAYOUT_TYPE_BASIC_PAGE | 2 |  |
 
 
  <!-- end enums -->
@@ -13577,8 +13578,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) |  |
-| AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) |  |
 | SyncData | [SyncDataRequest](#services-sync-SyncDataRequest) | [SyncDataResponse](#services-sync-SyncDataResponse) |  |
+| AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) |  |
 
  <!-- end services -->
 

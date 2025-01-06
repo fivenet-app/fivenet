@@ -18,14 +18,6 @@ message GetStatusResponse {
   resources.sync.DataStatus user_licenses = 5;
 }
 
-message AddActivityRequest {
-  resources.sync.AddActivity activity = 1 [(validate.rules).message.required = true];
-}
-
-message AddActivityResponse {
-  uint64 id = 1;
-}
-
 message SyncDataRequest {
   oneof data {
     resources.sync.DataJobs jobs = 1;
@@ -40,9 +32,17 @@ message SyncDataResponse {
   int64 affected_rows = 1;
 }
 
+message AddActivityRequest {
+  resources.sync.AddActivity activity = 1 [(validate.rules).message.required = true];
+}
+
+message AddActivityResponse {
+  uint64 id = 1;
+}
+
 service SyncService {
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 
-  rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
   rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
+  rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
 }

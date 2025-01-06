@@ -32,7 +32,7 @@ import (
 
 var (
 	tJobs      = table.Jobs.AS("job")
-	tJGrades   = table.JobGrades.AS("jobgrade")
+	tJobGrades = table.JobGrades.AS("jobgrade")
 	tDCategory = table.FivenetDocumentsCategories.AS("category")
 	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
 	tLaws      = table.FivenetLawbooksLaws.AS("law")
@@ -242,18 +242,18 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 		SELECT(
 			tJobs.Name,
 			tJobs.Label,
-			tJGrades.JobName.AS("job_grade.job_name"),
-			tJGrades.Grade,
-			tJGrades.Label,
+			tJobGrades.JobName.AS("job_grade.job_name"),
+			tJobGrades.Grade,
+			tJobGrades.Label,
 		).
 		FROM(tJobs.
-			INNER_JOIN(tJGrades,
-				tJGrades.JobName.EQ(tJobs.Name),
+			INNER_JOIN(tJobGrades,
+				tJobGrades.JobName.EQ(tJobs.Name),
 			),
 		).
 		ORDER_BY(
 			tJobs.Name.ASC(),
-			tJGrades.Grade.ASC(),
+			tJobGrades.Grade.ASC(),
 		)
 
 	var dest []*users.Job

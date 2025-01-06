@@ -238,20 +238,19 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {
-	j := table.Jobs.AS("job")
-	jg := table.JobGrades.AS("jobgrade")
-	stmt := j.
+	tJobs := table.Jobs.AS("job")
+	tJobGrades := table.JobGrades.AS("jobgrade")
+	stmt := tJobs.
 		SELECT(
-			j.Name,
-			j.Label,
-			jg.JobName.AS("jobname"),
-			jg.Grade,
-			jg.Name,
-			jg.Label,
+			tJobs.Name,
+			tJobs.Label,
+			tJobGrades.JobName.AS("jobname"),
+			tJobGrades.Grade,
+			tJobGrades.Label,
 		).
-		FROM(j.
-			INNER_JOIN(jg,
-				jg.JobName.EQ(j.Name),
+		FROM(tJobs.
+			INNER_JOIN(tJobGrades,
+				tJobGrades.JobName.EQ(tJobs.Name),
 			))
 
 	var dest []*users.Job

@@ -11,12 +11,12 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { AddActivity } from "../../resources/sync/activity";
 import { DataUserLicenses } from "../../resources/sync/data";
 import { DataLicenses } from "../../resources/sync/data";
 import { DataVehicles } from "../../resources/sync/data";
 import { DataUsers } from "../../resources/sync/data";
 import { DataJobs } from "../../resources/sync/data";
-import { AddActivity } from "../../resources/sync/activity";
 import { DataStatus } from "../../resources/sync/data";
 /**
  * @generated from protobuf message services.sync.GetStatusRequest
@@ -47,24 +47,6 @@ export interface GetStatusResponse {
      * @generated from protobuf field: resources.sync.DataStatus user_licenses = 5;
      */
     userLicenses?: DataStatus;
-}
-/**
- * @generated from protobuf message services.sync.AddActivityRequest
- */
-export interface AddActivityRequest {
-    /**
-     * @generated from protobuf field: resources.sync.AddActivity activity = 1;
-     */
-    activity?: AddActivity;
-}
-/**
- * @generated from protobuf message services.sync.AddActivityResponse
- */
-export interface AddActivityResponse {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: number;
 }
 /**
  * @generated from protobuf message services.sync.SyncDataRequest
@@ -115,6 +97,24 @@ export interface SyncDataResponse {
      * @generated from protobuf field: int64 affected_rows = 1;
      */
     affectedRows: number;
+}
+/**
+ * @generated from protobuf message services.sync.AddActivityRequest
+ */
+export interface AddActivityRequest {
+    /**
+     * @generated from protobuf field: resources.sync.AddActivity activity = 1;
+     */
+    activity?: AddActivity;
+}
+/**
+ * @generated from protobuf message services.sync.AddActivityResponse
+ */
+export interface AddActivityResponse {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
@@ -215,99 +215,6 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
  * @generated MessageType for protobuf message services.sync.GetStatusResponse
  */
 export const GetStatusResponse = new GetStatusResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
-    constructor() {
-        super("services.sync.AddActivityRequest", [
-            { no: 1, name: "activity", kind: "message", T: () => AddActivity, options: { "validate.rules": { message: { required: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<AddActivityRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityRequest): AddActivityRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.sync.AddActivity activity */ 1:
-                    message.activity = AddActivity.internalBinaryRead(reader, reader.uint32(), options, message.activity);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.AddActivity activity = 1; */
-        if (message.activity)
-            AddActivity.internalBinaryWrite(message.activity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.AddActivityRequest
- */
-export const AddActivityRequest = new AddActivityRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
-    constructor() {
-        super("services.sync.AddActivityResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
-        if (value !== undefined)
-            reflectionMergePartial<AddActivityResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityResponse): AddActivityResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.AddActivityResponse
- */
-export const AddActivityResponse = new AddActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
     constructor() {
@@ -445,11 +352,104 @@ class SyncDataResponse$Type extends MessageType<SyncDataResponse> {
  * @generated MessageType for protobuf message services.sync.SyncDataResponse
  */
 export const SyncDataResponse = new SyncDataResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
+    constructor() {
+        super("services.sync.AddActivityRequest", [
+            { no: 1, name: "activity", kind: "message", T: () => AddActivity, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<AddActivityRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityRequest): AddActivityRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.AddActivity activity */ 1:
+                    message.activity = AddActivity.internalBinaryRead(reader, reader.uint32(), options, message.activity);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.AddActivity activity = 1; */
+        if (message.activity)
+            AddActivity.internalBinaryWrite(message.activity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddActivityRequest
+ */
+export const AddActivityRequest = new AddActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
+    constructor() {
+        super("services.sync.AddActivityResponse", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<AddActivityResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityResponse): AddActivityResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.AddActivityResponse
+ */
+export const AddActivityResponse = new AddActivityResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.sync.SyncService
  */
 export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse },
-    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
-    { name: "SyncData", options: {}, I: SyncDataRequest, O: SyncDataResponse }
+    { name: "SyncData", options: {}, I: SyncDataRequest, O: SyncDataResponse },
+    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse }
 ]);

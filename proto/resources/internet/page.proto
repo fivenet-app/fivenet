@@ -26,7 +26,8 @@ message Page {
 
 enum PageLayoutType {
   PAGE_LAYOUT_TYPE_UNSPECIFIED = 0;
-  PAGE_LAYOUT_TYPE_ = 1;
+  PAGE_LAYOUT_TYPE_LANDING = 1;
+  PAGE_LAYOUT_TYPE_BASIC_PAGE = 2;
 }
 
 message PageData {

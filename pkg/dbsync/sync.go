@@ -111,6 +111,7 @@ func New(p Params) (*Sync, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		// TODO handle error and restart with delay 10 seconds
 		go s.Run(ctx)
 
 		return nil
@@ -125,18 +126,20 @@ func New(p Params) (*Sync, error) {
 	return s, nil
 }
 
-func (s *Sync) Run(ctx context.Context) {
-	us := &usersSync{
-		logger: s.logger,
-		db:     s.db,
-		cfg:    s.cfg,
-		cli:    s.cli,
+func (s *Sync) Run(ctx context.Context) error {
+	// TODO initial sync of jobs and Co., before the main sync loop starts
+	js, err := NewJobsSync(s.logger, s.db, s.cfg, s.cli)
+	if err != nil {
+		return err
 	}
-	if _, err := us.Sync(ctx); err != nil {
+
+	if _, err := js.Sync(ctx); err != nil {
 		s.logger.Error("error during users sync", zap.Error(err))
 	}
 
 	// TODO run one loop per source table
+
+	return nil
 }
 
 func prepareStringQuery(in string, offset int, limit int) string {
