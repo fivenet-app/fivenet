@@ -4,6 +4,8 @@ package services.citizenstore;
 
 import "resources/common/database/database.proto";
 import "resources/filestore/file.proto";
+import "resources/users/activity.proto";
+import "resources/users/attributes.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 

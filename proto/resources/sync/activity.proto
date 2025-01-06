@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package resources.sync;
+
+import "resources/jobs/colleagues.proto";
+import "resources/jobs/timeclock.proto";
+import "resources/users/activity.proto";
+import "resources/users/users.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;sync";
+
+message AddActivity {
+  oneof activity {
+    resources.users.UserActivity user_activity = 1;
+    resources.users.UserProps user_props = 2;
+
+    resources.jobs.JobsUserActivity jobs_user_activity = 3;
+    resources.jobs.TimeclockEntry jobs_timeclock = 4;
+  }
+}

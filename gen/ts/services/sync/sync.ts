@@ -11,15 +11,13 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { TimeclockEntry } from "../../resources/jobs/timeclock";
-import { JobsUserActivity } from "../../resources/jobs/colleagues";
-import { UserProps } from "../../resources/users/users";
-import { UserActivity } from "../../resources/users/users";
-import { UserLicenses } from "../../resources/users/users";
-import { License } from "../../resources/users/users";
-import { Vehicle } from "../../resources/vehicles/vehicles";
-import { Job } from "../../resources/users/jobs";
-import { User } from "../../resources/users/users";
+import { DataUserLicenses } from "../../resources/sync/data";
+import { DataLicenses } from "../../resources/sync/data";
+import { DataVehicles } from "../../resources/sync/data";
+import { DataUsers } from "../../resources/sync/data";
+import { DataJobs } from "../../resources/sync/data";
+import { AddActivity } from "../../resources/sync/activity";
+import { DataStatus } from "../../resources/sync/data";
 /**
  * @generated from protobuf message services.sync.GetStatusRequest
  */
@@ -30,168 +28,34 @@ export interface GetStatusRequest {
  */
 export interface GetStatusResponse {
     /**
-     * @generated from protobuf field: services.sync.DataStatus users = 1;
-     */
-    users?: DataStatus;
-    /**
-     * @generated from protobuf field: services.sync.DataStatus jobs = 2;
+     * @generated from protobuf field: resources.sync.DataStatus jobs = 1;
      */
     jobs?: DataStatus;
     /**
-     * @generated from protobuf field: services.sync.DataStatus vehicles = 3;
+     * @generated from protobuf field: resources.sync.DataStatus users = 2;
+     */
+    users?: DataStatus;
+    /**
+     * @generated from protobuf field: resources.sync.DataStatus vehicles = 3;
      */
     vehicles?: DataStatus;
     /**
-     * @generated from protobuf field: services.sync.DataStatus licenses = 4;
+     * @generated from protobuf field: resources.sync.DataStatus licenses = 4;
      */
     licenses?: DataStatus;
     /**
-     * @generated from protobuf field: services.sync.DataStatus user_licenses = 5;
+     * @generated from protobuf field: resources.sync.DataStatus user_licenses = 5;
      */
     userLicenses?: DataStatus;
-}
-/**
- * @generated from protobuf message services.sync.DataStatus
- */
-export interface DataStatus {
-    /**
-     * @generated from protobuf field: uint64 offset = 1;
-     */
-    offset: number;
-    /**
-     * @generated from protobuf field: uint64 last_id = 2;
-     */
-    lastId: number;
-}
-/**
- * @generated from protobuf message services.sync.SyncDataRequest
- */
-export interface SyncDataRequest {
-    /**
-     * @generated from protobuf oneof: data
-     */
-    data: {
-        oneofKind: "users";
-        /**
-         * @generated from protobuf field: services.sync.DataUsers users = 1;
-         */
-        users: DataUsers;
-    } | {
-        oneofKind: "jobs";
-        /**
-         * @generated from protobuf field: services.sync.DataJobs jobs = 2;
-         */
-        jobs: DataJobs;
-    } | {
-        oneofKind: "vehicles";
-        /**
-         * @generated from protobuf field: services.sync.DataVehicles vehicles = 3;
-         */
-        vehicles: DataVehicles;
-    } | {
-        oneofKind: "licenses";
-        /**
-         * @generated from protobuf field: services.sync.DataLicenses licenses = 4;
-         */
-        licenses: DataLicenses;
-    } | {
-        oneofKind: "userLicenses";
-        /**
-         * @generated from protobuf field: services.sync.DataUserLicenses user_licenses = 5;
-         */
-        userLicenses: DataUserLicenses;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message services.sync.DataUsers
- */
-export interface DataUsers {
-    /**
-     * @generated from protobuf field: repeated resources.users.User users = 1;
-     */
-    users: User[];
-}
-/**
- * @generated from protobuf message services.sync.DataJobs
- */
-export interface DataJobs {
-    /**
-     * @generated from protobuf field: repeated resources.users.Job jobs = 1;
-     */
-    jobs: Job[];
-}
-/**
- * @generated from protobuf message services.sync.DataVehicles
- */
-export interface DataVehicles {
-    /**
-     * @generated from protobuf field: repeated resources.vehicles.Vehicle vehicles = 1;
-     */
-    vehicles: Vehicle[];
-}
-/**
- * @generated from protobuf message services.sync.DataLicenses
- */
-export interface DataLicenses {
-    /**
-     * @generated from protobuf field: repeated resources.users.License licenses = 1;
-     */
-    licenses: License[];
-}
-/**
- * @generated from protobuf message services.sync.DataUserLicenses
- */
-export interface DataUserLicenses {
-    /**
-     * @generated from protobuf field: repeated resources.users.UserLicenses user_licenses = 1;
-     */
-    userLicenses: UserLicenses[];
-}
-/**
- * @generated from protobuf message services.sync.SyncDataResponse
- */
-export interface SyncDataResponse {
-    /**
-     * @generated from protobuf field: int64 affected_rows = 1;
-     */
-    affectedRows: number;
 }
 /**
  * @generated from protobuf message services.sync.AddActivityRequest
  */
 export interface AddActivityRequest {
     /**
-     * @generated from protobuf oneof: activity
+     * @generated from protobuf field: resources.sync.AddActivity activity = 1;
      */
-    activity: {
-        oneofKind: "userActivity";
-        /**
-         * @generated from protobuf field: resources.users.UserActivity user_activity = 1;
-         */
-        userActivity: UserActivity;
-    } | {
-        oneofKind: "userProps";
-        /**
-         * @generated from protobuf field: resources.users.UserProps user_props = 2;
-         */
-        userProps: UserProps;
-    } | {
-        oneofKind: "jobsUserActivity";
-        /**
-         * @generated from protobuf field: resources.jobs.JobsUserActivity jobs_user_activity = 3;
-         */
-        jobsUserActivity: JobsUserActivity;
-    } | {
-        oneofKind: "jobsTimeclock";
-        /**
-         * @generated from protobuf field: resources.jobs.TimeclockEntry jobs_timeclock = 4;
-         */
-        jobsTimeclock: TimeclockEntry;
-    } | {
-        oneofKind: undefined;
-    };
+    activity?: AddActivity;
 }
 /**
  * @generated from protobuf message services.sync.AddActivityResponse
@@ -201,6 +65,56 @@ export interface AddActivityResponse {
      * @generated from protobuf field: uint64 id = 1;
      */
     id: number;
+}
+/**
+ * @generated from protobuf message services.sync.SyncDataRequest
+ */
+export interface SyncDataRequest {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "jobs";
+        /**
+         * @generated from protobuf field: resources.sync.DataJobs jobs = 1;
+         */
+        jobs: DataJobs;
+    } | {
+        oneofKind: "users";
+        /**
+         * @generated from protobuf field: resources.sync.DataUsers users = 2;
+         */
+        users: DataUsers;
+    } | {
+        oneofKind: "vehicles";
+        /**
+         * @generated from protobuf field: resources.sync.DataVehicles vehicles = 3;
+         */
+        vehicles: DataVehicles;
+    } | {
+        oneofKind: "licenses";
+        /**
+         * @generated from protobuf field: resources.sync.DataLicenses licenses = 4;
+         */
+        licenses: DataLicenses;
+    } | {
+        oneofKind: "userLicenses";
+        /**
+         * @generated from protobuf field: resources.sync.DataUserLicenses user_licenses = 5;
+         */
+        userLicenses: DataUserLicenses;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message services.sync.SyncDataResponse
+ */
+export interface SyncDataResponse {
+    /**
+     * @generated from protobuf field: int64 affected_rows = 1;
+     */
+    affectedRows: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetStatusRequest$Type extends MessageType<GetStatusRequest> {
@@ -231,8 +145,8 @@ export const GetStatusRequest = new GetStatusRequest$Type();
 class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
     constructor() {
         super("services.sync.GetStatusResponse", [
-            { no: 1, name: "users", kind: "message", T: () => DataStatus },
-            { no: 2, name: "jobs", kind: "message", T: () => DataStatus },
+            { no: 1, name: "jobs", kind: "message", T: () => DataStatus },
+            { no: 2, name: "users", kind: "message", T: () => DataStatus },
             { no: 3, name: "vehicles", kind: "message", T: () => DataStatus },
             { no: 4, name: "licenses", kind: "message", T: () => DataStatus },
             { no: 5, name: "user_licenses", kind: "message", T: () => DataStatus }
@@ -249,19 +163,19 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* services.sync.DataStatus users */ 1:
-                    message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
-                    break;
-                case /* services.sync.DataStatus jobs */ 2:
+                case /* resources.sync.DataStatus jobs */ 1:
                     message.jobs = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
-                case /* services.sync.DataStatus vehicles */ 3:
+                case /* resources.sync.DataStatus users */ 2:
+                    message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
+                    break;
+                case /* resources.sync.DataStatus vehicles */ 3:
                     message.vehicles = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.vehicles);
                     break;
-                case /* services.sync.DataStatus licenses */ 4:
+                case /* resources.sync.DataStatus licenses */ 4:
                     message.licenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.licenses);
                     break;
-                case /* services.sync.DataStatus user_licenses */ 5:
+                case /* resources.sync.DataStatus user_licenses */ 5:
                     message.userLicenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.userLicenses);
                     break;
                 default:
@@ -276,19 +190,19 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         return message;
     }
     internalBinaryWrite(message: GetStatusResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.sync.DataStatus users = 1; */
-        if (message.users)
-            DataStatus.internalBinaryWrite(message.users, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataStatus jobs = 2; */
+        /* resources.sync.DataStatus jobs = 1; */
         if (message.jobs)
-            DataStatus.internalBinaryWrite(message.jobs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataStatus vehicles = 3; */
+            DataStatus.internalBinaryWrite(message.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataStatus users = 2; */
+        if (message.users)
+            DataStatus.internalBinaryWrite(message.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataStatus vehicles = 3; */
         if (message.vehicles)
             DataStatus.internalBinaryWrite(message.vehicles, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataStatus licenses = 4; */
+        /* resources.sync.DataStatus licenses = 4; */
         if (message.licenses)
             DataStatus.internalBinaryWrite(message.licenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataStatus user_licenses = 5; */
+        /* resources.sync.DataStatus user_licenses = 5; */
         if (message.userLicenses)
             DataStatus.internalBinaryWrite(message.userLicenses, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
@@ -302,445 +216,14 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
  */
 export const GetStatusResponse = new GetStatusResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DataStatus$Type extends MessageType<DataStatus> {
-    constructor() {
-        super("services.sync.DataStatus", [
-            { no: 1, name: "offset", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "last_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<DataStatus>): DataStatus {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.offset = 0;
-        message.lastId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<DataStatus>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataStatus): DataStatus {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 offset */ 1:
-                    message.offset = reader.uint64().toNumber();
-                    break;
-                case /* uint64 last_id */ 2:
-                    message.lastId = reader.uint64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataStatus, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 offset = 1; */
-        if (message.offset !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.offset);
-        /* uint64 last_id = 2; */
-        if (message.lastId !== 0)
-            writer.tag(2, WireType.Varint).uint64(message.lastId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataStatus
- */
-export const DataStatus = new DataStatus$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
-    constructor() {
-        super("services.sync.SyncDataRequest", [
-            { no: 1, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
-            { no: 2, name: "jobs", kind: "message", oneof: "data", T: () => DataJobs },
-            { no: 3, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
-            { no: 4, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
-            { no: 5, name: "user_licenses", kind: "message", oneof: "data", T: () => DataUserLicenses }
-        ]);
-    }
-    create(value?: PartialMessage<SyncDataRequest>): SyncDataRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.data = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<SyncDataRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SyncDataRequest): SyncDataRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* services.sync.DataUsers users */ 1:
-                    message.data = {
-                        oneofKind: "users",
-                        users: DataUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
-                    };
-                    break;
-                case /* services.sync.DataJobs jobs */ 2:
-                    message.data = {
-                        oneofKind: "jobs",
-                        jobs: DataJobs.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobs)
-                    };
-                    break;
-                case /* services.sync.DataVehicles vehicles */ 3:
-                    message.data = {
-                        oneofKind: "vehicles",
-                        vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
-                    };
-                    break;
-                case /* services.sync.DataLicenses licenses */ 4:
-                    message.data = {
-                        oneofKind: "licenses",
-                        licenses: DataLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licenses)
-                    };
-                    break;
-                case /* services.sync.DataUserLicenses user_licenses */ 5:
-                    message.data = {
-                        oneofKind: "userLicenses",
-                        userLicenses: DataUserLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLicenses)
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SyncDataRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* services.sync.DataUsers users = 1; */
-        if (message.data.oneofKind === "users")
-            DataUsers.internalBinaryWrite(message.data.users, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataJobs jobs = 2; */
-        if (message.data.oneofKind === "jobs")
-            DataJobs.internalBinaryWrite(message.data.jobs, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataVehicles vehicles = 3; */
-        if (message.data.oneofKind === "vehicles")
-            DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataLicenses licenses = 4; */
-        if (message.data.oneofKind === "licenses")
-            DataLicenses.internalBinaryWrite(message.data.licenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* services.sync.DataUserLicenses user_licenses = 5; */
-        if (message.data.oneofKind === "userLicenses")
-            DataUserLicenses.internalBinaryWrite(message.data.userLicenses, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.SyncDataRequest
- */
-export const SyncDataRequest = new SyncDataRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataUsers$Type extends MessageType<DataUsers> {
-    constructor() {
-        super("services.sync.DataUsers", [
-            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User, options: { "validate.rules": { repeated: { maxItems: "500" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataUsers>): DataUsers {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.users = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataUsers>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataUsers): DataUsers {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.User users */ 1:
-                    message.users.push(User.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataUsers, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.User users = 1; */
-        for (let i = 0; i < message.users.length; i++)
-            User.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataUsers
- */
-export const DataUsers = new DataUsers$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataJobs$Type extends MessageType<DataJobs> {
-    constructor() {
-        super("services.sync.DataJobs", [
-            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job, options: { "validate.rules": { repeated: { maxItems: "150" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataJobs>): DataJobs {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.jobs = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataJobs>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataJobs): DataJobs {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.Job jobs */ 1:
-                    message.jobs.push(Job.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataJobs, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.Job jobs = 1; */
-        for (let i = 0; i < message.jobs.length; i++)
-            Job.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataJobs
- */
-export const DataJobs = new DataJobs$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataVehicles$Type extends MessageType<DataVehicles> {
-    constructor() {
-        super("services.sync.DataVehicles", [
-            { no: 1, name: "vehicles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Vehicle, options: { "validate.rules": { repeated: { maxItems: "1000" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataVehicles>): DataVehicles {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.vehicles = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataVehicles>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataVehicles): DataVehicles {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.vehicles.Vehicle vehicles */ 1:
-                    message.vehicles.push(Vehicle.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataVehicles, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.vehicles.Vehicle vehicles = 1; */
-        for (let i = 0; i < message.vehicles.length; i++)
-            Vehicle.internalBinaryWrite(message.vehicles[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataVehicles
- */
-export const DataVehicles = new DataVehicles$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataLicenses$Type extends MessageType<DataLicenses> {
-    constructor() {
-        super("services.sync.DataLicenses", [
-            { no: 1, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataLicenses>): DataLicenses {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.licenses = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataLicenses>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataLicenses): DataLicenses {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.License licenses */ 1:
-                    message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.License licenses = 1; */
-        for (let i = 0; i < message.licenses.length; i++)
-            License.internalBinaryWrite(message.licenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataLicenses
- */
-export const DataLicenses = new DataLicenses$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataUserLicenses$Type extends MessageType<DataUserLicenses> {
-    constructor() {
-        super("services.sync.DataUserLicenses", [
-            { no: 1, name: "user_licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserLicenses, options: { "validate.rules": { repeated: { maxItems: "1000" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataUserLicenses>): DataUserLicenses {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.userLicenses = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataUserLicenses>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataUserLicenses): DataUserLicenses {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.UserLicenses user_licenses */ 1:
-                    message.userLicenses.push(UserLicenses.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataUserLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.UserLicenses user_licenses = 1; */
-        for (let i = 0; i < message.userLicenses.length; i++)
-            UserLicenses.internalBinaryWrite(message.userLicenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.DataUserLicenses
- */
-export const DataUserLicenses = new DataUserLicenses$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SyncDataResponse$Type extends MessageType<SyncDataResponse> {
-    constructor() {
-        super("services.sync.SyncDataResponse", [
-            { no: 1, name: "affected_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
-    }
-    create(value?: PartialMessage<SyncDataResponse>): SyncDataResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.affectedRows = 0;
-        if (value !== undefined)
-            reflectionMergePartial<SyncDataResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SyncDataResponse): SyncDataResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* int64 affected_rows */ 1:
-                    message.affectedRows = reader.int64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: SyncDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 affected_rows = 1; */
-        if (message.affectedRows !== 0)
-            writer.tag(1, WireType.Varint).int64(message.affectedRows);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.sync.SyncDataResponse
- */
-export const SyncDataResponse = new SyncDataResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
     constructor() {
         super("services.sync.AddActivityRequest", [
-            { no: 1, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
-            { no: 2, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
-            { no: 3, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
-            { no: 4, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry }
+            { no: 1, name: "activity", kind: "message", T: () => AddActivity, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.activity = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<AddActivityRequest>(this, message, value);
         return message;
@@ -750,29 +233,8 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.users.UserActivity user_activity */ 1:
-                    message.activity = {
-                        oneofKind: "userActivity",
-                        userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
-                    };
-                    break;
-                case /* resources.users.UserProps user_props */ 2:
-                    message.activity = {
-                        oneofKind: "userProps",
-                        userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
-                    };
-                    break;
-                case /* resources.jobs.JobsUserActivity jobs_user_activity */ 3:
-                    message.activity = {
-                        oneofKind: "jobsUserActivity",
-                        jobsUserActivity: JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserActivity)
-                    };
-                    break;
-                case /* resources.jobs.TimeclockEntry jobs_timeclock */ 4:
-                    message.activity = {
-                        oneofKind: "jobsTimeclock",
-                        jobsTimeclock: TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
-                    };
+                case /* resources.sync.AddActivity activity */ 1:
+                    message.activity = AddActivity.internalBinaryRead(reader, reader.uint32(), options, message.activity);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -786,18 +248,9 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         return message;
     }
     internalBinaryWrite(message: AddActivityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.UserActivity user_activity = 1; */
-        if (message.activity.oneofKind === "userActivity")
-            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserProps user_props = 2; */
-        if (message.activity.oneofKind === "userProps")
-            UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobsUserActivity jobs_user_activity = 3; */
-        if (message.activity.oneofKind === "jobsUserActivity")
-            JobsUserActivity.internalBinaryWrite(message.activity.jobsUserActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockEntry jobs_timeclock = 4; */
-        if (message.activity.oneofKind === "jobsTimeclock")
-            TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.AddActivity activity = 1; */
+        if (message.activity)
+            AddActivity.internalBinaryWrite(message.activity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -855,11 +308,148 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
  * @generated MessageType for protobuf message services.sync.AddActivityResponse
  */
 export const AddActivityResponse = new AddActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
+    constructor() {
+        super("services.sync.SyncDataRequest", [
+            { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => DataJobs },
+            { no: 2, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
+            { no: 3, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
+            { no: 4, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
+            { no: 5, name: "user_licenses", kind: "message", oneof: "data", T: () => DataUserLicenses }
+        ]);
+    }
+    create(value?: PartialMessage<SyncDataRequest>): SyncDataRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
+        if (value !== undefined)
+            reflectionMergePartial<SyncDataRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SyncDataRequest): SyncDataRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.sync.DataJobs jobs */ 1:
+                    message.data = {
+                        oneofKind: "jobs",
+                        jobs: DataJobs.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobs)
+                    };
+                    break;
+                case /* resources.sync.DataUsers users */ 2:
+                    message.data = {
+                        oneofKind: "users",
+                        users: DataUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
+                    };
+                    break;
+                case /* resources.sync.DataVehicles vehicles */ 3:
+                    message.data = {
+                        oneofKind: "vehicles",
+                        vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
+                    };
+                    break;
+                case /* resources.sync.DataLicenses licenses */ 4:
+                    message.data = {
+                        oneofKind: "licenses",
+                        licenses: DataLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licenses)
+                    };
+                    break;
+                case /* resources.sync.DataUserLicenses user_licenses */ 5:
+                    message.data = {
+                        oneofKind: "userLicenses",
+                        userLicenses: DataUserLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLicenses)
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SyncDataRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.sync.DataJobs jobs = 1; */
+        if (message.data.oneofKind === "jobs")
+            DataJobs.internalBinaryWrite(message.data.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataUsers users = 2; */
+        if (message.data.oneofKind === "users")
+            DataUsers.internalBinaryWrite(message.data.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataVehicles vehicles = 3; */
+        if (message.data.oneofKind === "vehicles")
+            DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataLicenses licenses = 4; */
+        if (message.data.oneofKind === "licenses")
+            DataLicenses.internalBinaryWrite(message.data.licenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataUserLicenses user_licenses = 5; */
+        if (message.data.oneofKind === "userLicenses")
+            DataUserLicenses.internalBinaryWrite(message.data.userLicenses, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SyncDataRequest
+ */
+export const SyncDataRequest = new SyncDataRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SyncDataResponse$Type extends MessageType<SyncDataResponse> {
+    constructor() {
+        super("services.sync.SyncDataResponse", [
+            { no: 1, name: "affected_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<SyncDataResponse>): SyncDataResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.affectedRows = 0;
+        if (value !== undefined)
+            reflectionMergePartial<SyncDataResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SyncDataResponse): SyncDataResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 affected_rows */ 1:
+                    message.affectedRows = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SyncDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 affected_rows = 1; */
+        if (message.affectedRows !== 0)
+            writer.tag(1, WireType.Varint).int64(message.affectedRows);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.SyncDataResponse
+ */
+export const SyncDataResponse = new SyncDataResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.sync.SyncService
  */
 export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse },
-    { name: "SyncData", options: {}, I: SyncDataRequest, O: SyncDataResponse },
-    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse }
+    { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
+    { name: "SyncData", options: {}, I: SyncDataRequest, O: SyncDataResponse }
 ]);

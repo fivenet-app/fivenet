@@ -3,7 +3,8 @@ enabled: true
 stateFile: "dbsync.state.yaml"
 
 destination:
-  url: "https://example.fivenet.app/"
+  # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs)
+  url: "example.fivenet.app"
   token: "YOUR_SYNC_API_TOKEN"
 
 source:

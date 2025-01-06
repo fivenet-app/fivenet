@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CitizenAttribute } from "../../resources/users/users";
+import { CitizenAttribute } from "../../resources/users/attributes";
 import { LawBook } from "../../resources/laws/laws";
 import { Category } from "../../resources/documents/category";
 import { Job } from "../../resources/users/jobs";

@@ -8,40 +8,13 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: JobsTimeclock
-	switch v := m.Activity.(type) {
-
-	case *AddActivityRequest_JobsTimeclock:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+	// Field: Activity
+	if m.Activity != nil {
+		if v, ok := interface{}(m.GetActivity()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
-
-		// Field: JobsUserActivity
-	case *AddActivityRequest_JobsUserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UserActivity
-	case *AddActivityRequest_UserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UserProps
-	case *AddActivityRequest_UserProps:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -50,114 +23,6 @@ func (m *AddActivityRequest) Sanitize() error {
 func (m *AddActivityResponse) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	return nil
-}
-
-func (m *DataJobs) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Jobs
-	for idx, item := range m.Jobs {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *DataLicenses) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Licenses
-	for idx, item := range m.Licenses {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *DataStatus) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *DataUserLicenses) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UserLicenses
-	for idx, item := range m.UserLicenses {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *DataUsers) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Users
-	for idx, item := range m.Users {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *DataVehicles) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Vehicles
-	for idx, item := range m.Vehicles {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
 	}
 
 	return nil

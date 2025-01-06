@@ -1,21 +1,26 @@
 package sync
 
-import "context"
+import (
+	"context"
+
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
+)
 
 func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*AddActivityResponse, error) {
 	resp := &AddActivityResponse{}
 
-	switch req.Activity.(type) {
-	case *AddActivityRequest_UserActivity:
+	switch d := req.Activity.Activity.(type) {
+	case *sync.AddActivity_UserActivity:
+		_ = d
 		// TODO
 
-	case *AddActivityRequest_UserProps:
+	case *sync.AddActivity_UserProps:
 		// TODO
 
-	case *AddActivityRequest_JobsUserActivity:
+	case *sync.AddActivity_JobsUserActivity:
 		// TODO
 
-	case *AddActivityRequest_JobsTimeclock:
+	case *sync.AddActivity_JobsTimeclock:
 		// TODO
 	}
 

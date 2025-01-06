@@ -295,16 +295,11 @@
     - [Timestamp](#resources-timestamp-Timestamp)
   
 - [resources/users/users.proto](#resources_users_users-proto)
-    - [CitizenAttribute](#resources-users-CitizenAttribute)
-    - [CitizenAttributes](#resources-users-CitizenAttributes)
     - [License](#resources-users-License)
     - [User](#resources-users-User)
-    - [UserActivity](#resources-users-UserActivity)
     - [UserLicenses](#resources-users-UserLicenses)
     - [UserProps](#resources-users-UserProps)
     - [UserShort](#resources-users-UserShort)
-  
-    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/users/job_props.proto](#resources_users_job_props-proto)
     - [DiscordSyncChange](#resources-users-DiscordSyncChange)
@@ -324,6 +319,15 @@
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
+  
+- [resources/users/attributes.proto](#resources_users_attributes-proto)
+    - [CitizenAttribute](#resources-users-CitizenAttribute)
+    - [CitizenAttributes](#resources-users-CitizenAttributes)
+  
+- [resources/users/activity.proto](#resources_users_activity-proto)
+    - [UserActivity](#resources-users-UserActivity)
+  
+    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -417,6 +421,17 @@
     - [PageMeta](#resources-wiki-PageMeta)
     - [PageRootInfo](#resources-wiki-PageRootInfo)
     - [PageShort](#resources-wiki-PageShort)
+  
+- [resources/sync/activity.proto](#resources_sync_activity-proto)
+    - [AddActivity](#resources-sync-AddActivity)
+  
+- [resources/sync/data.proto](#resources_sync_data-proto)
+    - [DataJobs](#resources-sync-DataJobs)
+    - [DataLicenses](#resources-sync-DataLicenses)
+    - [DataStatus](#resources-sync-DataStatus)
+    - [DataUserLicenses](#resources-sync-DataUserLicenses)
+    - [DataUsers](#resources-sync-DataUsers)
+    - [DataVehicles](#resources-sync-DataVehicles)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -890,12 +905,6 @@
 - [services/sync/sync.proto](#services_sync_sync-proto)
     - [AddActivityRequest](#services-sync-AddActivityRequest)
     - [AddActivityResponse](#services-sync-AddActivityResponse)
-    - [DataJobs](#services-sync-DataJobs)
-    - [DataLicenses](#services-sync-DataLicenses)
-    - [DataStatus](#services-sync-DataStatus)
-    - [DataUserLicenses](#services-sync-DataUserLicenses)
-    - [DataUsers](#services-sync-DataUsers)
-    - [DataVehicles](#services-sync-DataVehicles)
     - [GetStatusRequest](#services-sync-GetStatusRequest)
     - [GetStatusResponse](#services-sync-GetStatusResponse)
     - [SyncDataRequest](#services-sync-SyncDataRequest)
@@ -5063,39 +5072,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources-users-CitizenAttribute"></a>
-
-### CitizenAttribute
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-users-CitizenAttributes"></a>
-
-### CitizenAttributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
-
-
-
-
-
-
 <a name="resources-users-License"></a>
 
 ### License
@@ -5137,33 +5113,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
 | licenses | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:"fivenet_user_activity.id" |
-| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"fivenet_user_activity.type" |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"fivenet_user_activity.created_at" |
-| source_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"source_user" |
-| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
-| key | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.key" |
-| old_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.old_value" |
-| new_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.new_value" |
-| reason | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.reason" |
 
 
 
@@ -5238,20 +5187,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
-
-<a name="resources-users-UserActivityType"></a>
-
-### UserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
-| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
-| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
-| USER_ACTIVITY_TYPE_CREATED | 3 |  |
-
 
  <!-- end enums -->
 
@@ -5523,6 +5458,114 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_attributes-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/attributes.proto
+
+
+
+<a name="resources-users-CitizenAttribute"></a>
+
+### CitizenAttribute
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-users-CitizenAttributes"></a>
+
+### CitizenAttributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/activity.proto
+
+
+
+<a name="resources-users-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:"fivenet_user_activity.id" |
+| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"fivenet_user_activity.type" |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"fivenet_user_activity.created_at" |
+| source_user_id | [int32](#int32) | optional | @gotags: alias:"source_user_id" |
+| source_user | [UserShort](#resources-users-UserShort) | optional | @gotags: alias:"source_user" |
+| target_user_id | [int32](#int32) |  | @gotags: alias:"target_user_id" |
+| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
+| key | [string](#string) |  | @sanitize
+
+@gotags: alias:"fivenet_user_activity.key" |
+| old_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.old_value" |
+| new_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.new_value" |
+| reason | [string](#string) |  | @sanitize
+
+@gotags: alias:"fivenet_user_activity.reason" |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-users-UserActivityType"></a>
+
+### UserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
+| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
+| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
+| USER_ACTIVITY_TYPE_CREATED | 3 |  |
+
 
  <!-- end enums -->
 
@@ -6781,6 +6824,146 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | description | [string](#string) |  |  |
 | children | [PageShort](#resources-wiki-PageShort) | repeated |  |
 | root_info | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_sync_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/sync/activity.proto
+
+
+
+<a name="resources-sync-AddActivity"></a>
+
+### AddActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  |  |
+| user_props | [resources.users.UserProps](#resources-users-UserProps) |  |  |
+| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  |  |
+| jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_sync_data-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/sync/data.proto
+
+
+
+<a name="resources-sync-DataJobs"></a>
+
+### DataJobs
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [resources.users.Job](#resources-users-Job) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DataLicenses"></a>
+
+### DataLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| licenses | [resources.users.License](#resources-users-License) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DataStatus"></a>
+
+### DataStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| count | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-DataUserLicenses"></a>
+
+### DataUserLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_licenses | [resources.users.UserLicenses](#resources-users-UserLicenses) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DataUsers"></a>
+
+### DataUsers
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [resources.users.User](#resources-users-User) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DataVehicles"></a>
+
+### DataVehicles
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
 
 
 
@@ -13262,10 +13445,7 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  |  |
-| user_props | [resources.users.UserProps](#resources-users-UserProps) |  |  |
-| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  |  |
-| jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  |  |
+| activity | [resources.sync.AddActivity](#resources-sync-AddActivity) |  |  |
 
 
 
@@ -13281,97 +13461,6 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-sync-DataJobs"></a>
-
-### DataJobs
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [resources.users.Job](#resources-users-Job) | repeated |  |
-
-
-
-
-
-
-<a name="services-sync-DataLicenses"></a>
-
-### DataLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| licenses | [resources.users.License](#resources-users-License) | repeated |  |
-
-
-
-
-
-
-<a name="services-sync-DataStatus"></a>
-
-### DataStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| offset | [uint64](#uint64) |  |  |
-| last_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-sync-DataUserLicenses"></a>
-
-### DataUserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_licenses | [resources.users.UserLicenses](#resources-users-UserLicenses) | repeated |  |
-
-
-
-
-
-
-<a name="services-sync-DataUsers"></a>
-
-### DataUsers
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| users | [resources.users.User](#resources-users-User) | repeated |  |
-
-
-
-
-
-
-<a name="services-sync-DataVehicles"></a>
-
-### DataVehicles
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
 
 
 
@@ -13396,11 +13485,11 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| users | [DataStatus](#services-sync-DataStatus) |  |  |
-| jobs | [DataStatus](#services-sync-DataStatus) |  |  |
-| vehicles | [DataStatus](#services-sync-DataStatus) |  |  |
-| licenses | [DataStatus](#services-sync-DataStatus) |  |  |
-| user_licenses | [DataStatus](#services-sync-DataStatus) |  |  |
+| jobs | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
+| users | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
+| vehicles | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
+| licenses | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
+| user_licenses | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
 
 
 
@@ -13415,11 +13504,11 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| users | [DataUsers](#services-sync-DataUsers) |  |  |
-| jobs | [DataJobs](#services-sync-DataJobs) |  |  |
-| vehicles | [DataVehicles](#services-sync-DataVehicles) |  |  |
-| licenses | [DataLicenses](#services-sync-DataLicenses) |  |  |
-| user_licenses | [DataUserLicenses](#services-sync-DataUserLicenses) |  |  |
+| jobs | [resources.sync.DataJobs](#resources-sync-DataJobs) |  |  |
+| users | [resources.sync.DataUsers](#resources-sync-DataUsers) |  |  |
+| vehicles | [resources.sync.DataVehicles](#resources-sync-DataVehicles) |  |  |
+| licenses | [resources.sync.DataLicenses](#resources-sync-DataLicenses) |  |  |
+| user_licenses | [resources.sync.DataUserLicenses](#resources-sync-DataUserLicenses) |  |  |
 
 
 
@@ -13455,8 +13544,8 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) |  |
-| SyncData | [SyncDataRequest](#services-sync-SyncDataRequest) | [SyncDataResponse](#services-sync-SyncDataResponse) |  |
 | AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) |  |
+| SyncData | [SyncDataRequest](#services-sync-SyncDataRequest) | [SyncDataResponse](#services-sync-SyncDataResponse) |  |
 
  <!-- end services -->
 

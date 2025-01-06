@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package resources.users;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
+
+enum UserActivityType {
+  USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  USER_ACTIVITY_TYPE_CHANGED = 1;
+  USER_ACTIVITY_TYPE_MENTIONED = 2;
+  USER_ACTIVITY_TYPE_CREATED = 3;
+}
+
+message UserActivity {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"fivenet_user_activity.id"
+  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
+  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
+  optional int32 source_user_id = 4; // @gotags: alias:"source_user_id"
+  optional UserShort source_user = 5; // @gotags: alias:"source_user"
+  int32 target_user_id = 6; // @gotags: alias:"target_user_id"
+  UserShort target_user = 7; // @gotags: alias:"target_user"
+  // @sanitize
+  string key = 8 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 64
+  }]; // @gotags: alias:"fivenet_user_activity.key"
+  string old_value = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
+  string new_value = 10 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
+  // @sanitize
+  string reason = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
+}

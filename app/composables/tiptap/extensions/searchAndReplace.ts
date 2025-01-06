@@ -151,7 +151,7 @@ const replace = (replaceTerm: string, results: Range[], { state, dispatch }: { s
 
     if (!firstResult) return;
 
-    const { from, to } = results[0];
+    const { from, to } = results[0]!;
 
     if (dispatch) dispatch(state.tr.insertText(replaceTerm, from, to));
 };
@@ -166,7 +166,7 @@ const rebaseNextResult = (
 
     if (!results[nextIndex]) return null;
 
-    const { from: currentFrom, to: currentTo } = results[index];
+    const { from: currentFrom, to: currentTo } = results[index]!;
 
     const offset = currentTo - currentFrom - replaceTerm.length + lastOffset;
 
@@ -188,7 +188,7 @@ const replaceAll = (replaceTerm: string, results: Range[], { tr, dispatch }: { t
     if (!resultsCopy.length) return;
 
     for (let i = 0; i < resultsCopy.length; i += 1) {
-        const { from, to } = resultsCopy[i];
+        const { from, to } = resultsCopy[i]!;
 
         tr.insertText(replaceTerm, from, to);
 

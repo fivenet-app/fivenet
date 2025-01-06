@@ -4,6 +4,7 @@ package services.completor;
 
 import "resources/documents/category.proto";
 import "resources/laws/laws.proto";
+import "resources/users/attributes.proto";
 import "resources/users/jobs.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";

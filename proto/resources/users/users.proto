@@ -4,6 +4,7 @@ package resources.users;
 
 import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/attributes.proto";
 import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
@@ -87,43 +88,4 @@ message UserProps {
   optional CitizenAttributes attributes = 12;
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
-}
-
-enum UserActivityType {
-  USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
-  USER_ACTIVITY_TYPE_CHANGED = 1;
-  USER_ACTIVITY_TYPE_MENTIONED = 2;
-  USER_ACTIVITY_TYPE_CREATED = 3;
-}
-
-message UserActivity {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"fivenet_user_activity.id"
-  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
-  resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
-  UserShort source_user = 4; // @gotags: alias:"source_user"
-  UserShort target_user = 5; // @gotags: alias:"target_user"
-  // @sanitize
-  string key = 6 [(validate.rules).string = {
-    min_len: 1,
-    max_len: 64
-  }]; // @gotags: alias:"fivenet_user_activity.key"
-  string old_value = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
-  string new_value = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
-  // @sanitize
-  string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
-}
-
-message CitizenAttributes {
-  repeated CitizenAttribute list = 1 [(validate.rules).repeated.max_items = 10];
-}
-
-message CitizenAttribute {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
-  optional string job = 2 [(validate.rules).string.max_len = 20];
-  string name = 3 [(validate.rules).string.max_len = 48];
-  // @sanitize: method=StripTags
-  string color = 4 [(validate.rules).string = {
-    len: 7,
-    pattern: "^#[A-Fa-f0-9]{6}$",
-  }];
 }

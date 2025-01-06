@@ -15,6 +15,7 @@ async function goBack(): Promise<void> {
 
     if (history.length === 0) {
         if (props.fallbackTo) {
+            // @ts-expect-error string can be valid for route paths
             await navigateTo(props.fallbackTo);
             return;
         }

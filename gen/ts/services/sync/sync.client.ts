@@ -4,10 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SyncService } from "./sync";
-import type { AddActivityResponse } from "./sync";
-import type { AddActivityRequest } from "./sync";
 import type { SyncDataResponse } from "./sync";
 import type { SyncDataRequest } from "./sync";
+import type { AddActivityResponse } from "./sync";
+import type { AddActivityRequest } from "./sync";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetStatusResponse } from "./sync";
 import type { GetStatusRequest } from "./sync";
@@ -22,13 +22,13 @@ export interface ISyncServiceClient {
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
     /**
-     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
-     */
-    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse>;
-    /**
      * @generated from protobuf rpc: AddActivity(services.sync.AddActivityRequest) returns (services.sync.AddActivityResponse);
      */
     addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse>;
+    /**
+     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
+     */
+    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse>;
 }
 /**
  * @generated from protobuf service services.sync.SyncService
@@ -47,17 +47,17 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
-     */
-    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SyncDataRequest, SyncDataResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
      * @generated from protobuf rpc: AddActivity(services.sync.AddActivityRequest) returns (services.sync.AddActivityResponse);
      */
     addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<AddActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
+     */
+    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SyncDataRequest, SyncDataResponse>("unary", this._transport, method, opt, input);
     }
 }

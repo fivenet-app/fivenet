@@ -51,7 +51,11 @@
 // source: resources/rector/audit.proto
 // source: resources/rector/config.proto
 // source: resources/stats/stats.proto
+// source: resources/sync/activity.proto
+// source: resources/sync/data.proto
 // source: resources/timestamp/timestamp.proto
+// source: resources/users/activity.proto
+// source: resources/users/attributes.proto
 // source: resources/users/job_props.proto
 // source: resources/users/jobs.proto
 // source: resources/users/users.proto
@@ -288,8 +292,8 @@ export const grpcMethods = [
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
 	'SyncService/GetStatus',
-	'SyncService/SyncData',
 	'SyncService/AddActivity',
+	'SyncService/SyncData',
 	'WikiService/ListPages',
 	'WikiService/GetPage',
 	'WikiService/CreatePage',

@@ -2,8 +2,9 @@ import { defineStore } from 'pinia';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { LawBook } from '~~/gen/ts/resources/laws/laws';
+import type { CitizenAttribute } from '~~/gen/ts/resources/users/attributes';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
-import type { CitizenAttribute, UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 

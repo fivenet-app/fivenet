@@ -264,7 +264,9 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         category: obj.category,
         title: obj.title,
         contentType: ContentType.HTML,
-        content: '',
+        content: {
+            rawContent: '',
+        },
         creatorId: user.userId,
         creator: user,
         creatorJob: user.job,

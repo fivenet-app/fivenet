@@ -2,7 +2,7 @@ import { defineNuxtPlugin } from '#app';
 import type { AppConfig } from 'nuxt/schema';
 
 async function loadConfig(): Promise<void> {
-    // 7.5 seconds should be enough to retrieve the config
+    // 7.5 seconds should be enough to retrieve the config from the server...
     const abort = new AbortController();
     const tId = setTimeout(() => abort.abort(), 7.5 * 1000);
 

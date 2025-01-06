@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"strconv"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/config"
@@ -58,7 +59,7 @@ func (s *usersSync) Sync(ctx context.Context) (*TableSyncState, error) {
 	if s.cli != nil {
 		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
 			Data: &pbsync.SyncDataRequest_Users{
-				Users: &pbsync.DataUsers{
+				Users: &sync.DataUsers{
 					Users: users,
 				},
 			},

@@ -131,5 +131,5 @@
         "@nuxt/ui": "2.19.1",
         "@nuxt/kit": "3.15.1"
     },
-    "packageManager": "pnpm@9.15.2"
+    "packageManager": "pnpm@9.15.3"
 }
