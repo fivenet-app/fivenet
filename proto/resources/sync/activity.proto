@@ -11,10 +11,18 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;
 
 message AddActivity {
   oneof activity {
-    resources.users.UserActivity user_activity = 1;
-    resources.users.UserProps user_props = 2;
-
-    resources.jobs.JobsUserActivity jobs_user_activity = 3;
-    resources.jobs.TimeclockEntry jobs_timeclock = 4;
+    UserActivity user_activity = 1;
+    JobsUserActivity jobs_user_activity = 2;
+    resources.jobs.TimeclockEntry jobs_timeclock = 3;
   }
+}
+
+message UserActivity {
+  resources.users.UserActivity user_activity = 1;
+  optional resources.users.UserProps user_props = 2;
+}
+
+message JobsUserActivity {
+  resources.jobs.JobsUserActivity jobs_user_activity = 1;
+  optional resources.jobs.JobsUserProps jobs_user_props = 2;
 }

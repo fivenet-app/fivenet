@@ -99,47 +99,6 @@ func (m *AddActivity) validate(all bool) error {
 			}
 		}
 
-	case *AddActivity_UserProps:
-		if v == nil {
-			err := AddActivityValidationError{
-				field:  "Activity",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUserProps()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, AddActivityValidationError{
-						field:  "UserProps",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, AddActivityValidationError{
-						field:  "UserProps",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUserProps()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return AddActivityValidationError{
-					field:  "UserProps",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	case *AddActivity_JobsUserActivity:
 		if v == nil {
 			err := AddActivityValidationError{
@@ -302,3 +261,326 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AddActivityValidationError{}
+
+// Validate checks the field values on UserActivity with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserActivity) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserActivity with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserActivityMultiError, or
+// nil if none found.
+func (m *UserActivity) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserActivity) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUserActivity()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "UserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserActivityValidationError{
+					field:  "UserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUserActivity()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserActivityValidationError{
+				field:  "UserActivity",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.UserProps != nil {
+
+		if all {
+			switch v := interface{}(m.GetUserProps()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityValidationError{
+						field:  "UserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityValidationError{
+						field:  "UserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserProps()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityValidationError{
+					field:  "UserProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UserActivityMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserActivityMultiError is an error wrapping multiple validation errors
+// returned by UserActivity.ValidateAll() if the designated constraints aren't met.
+type UserActivityMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserActivityMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserActivityMultiError) AllErrors() []error { return m }
+
+// UserActivityValidationError is the validation error returned by
+// UserActivity.Validate if the designated constraints aren't met.
+type UserActivityValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserActivityValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserActivityValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserActivityValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserActivityValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserActivityValidationError) ErrorName() string { return "UserActivityValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserActivityValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserActivity.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserActivityValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserActivityValidationError{}
+
+// Validate checks the field values on JobsUserActivity with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *JobsUserActivity) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JobsUserActivity with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// JobsUserActivityMultiError, or nil if none found.
+func (m *JobsUserActivity) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JobsUserActivity) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetJobsUserActivity()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, JobsUserActivityValidationError{
+					field:  "JobsUserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, JobsUserActivityValidationError{
+					field:  "JobsUserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetJobsUserActivity()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return JobsUserActivityValidationError{
+				field:  "JobsUserActivity",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.JobsUserProps != nil {
+
+		if all {
+			switch v := interface{}(m.GetJobsUserProps()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobsUserActivityValidationError{
+						field:  "JobsUserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobsUserActivityValidationError{
+						field:  "JobsUserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobsUserProps()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobsUserActivityValidationError{
+					field:  "JobsUserProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return JobsUserActivityMultiError(errors)
+	}
+
+	return nil
+}
+
+// JobsUserActivityMultiError is an error wrapping multiple validation errors
+// returned by JobsUserActivity.ValidateAll() if the designated constraints
+// aren't met.
+type JobsUserActivityMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JobsUserActivityMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JobsUserActivityMultiError) AllErrors() []error { return m }
+
+// JobsUserActivityValidationError is the validation error returned by
+// JobsUserActivity.Validate if the designated constraints aren't met.
+type JobsUserActivityValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JobsUserActivityValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JobsUserActivityValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JobsUserActivityValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JobsUserActivityValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JobsUserActivityValidationError) ErrorName() string { return "JobsUserActivityValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JobsUserActivityValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJobsUserActivity.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JobsUserActivityValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JobsUserActivityValidationError{}

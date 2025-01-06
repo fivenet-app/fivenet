@@ -12,10 +12,7 @@ func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*Add
 	switch d := req.Activity.Activity.(type) {
 	case *sync.AddActivity_UserActivity:
 		_ = d
-		// TODO
-
-	case *sync.AddActivity_UserProps:
-		// TODO
+		// TODO handle traffic points
 
 	case *sync.AddActivity_JobsUserActivity:
 		// TODO

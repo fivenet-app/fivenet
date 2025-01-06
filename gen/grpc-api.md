@@ -424,6 +424,8 @@
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
     - [AddActivity](#resources-sync-AddActivity)
+    - [JobsUserActivity](#resources-sync-JobsUserActivity)
+    - [UserActivity](#resources-sync-UserActivity)
   
 - [resources/sync/data.proto](#resources_sync_data-proto)
     - [DataJobs](#resources-sync-DataJobs)
@@ -6854,10 +6856,41 @@ TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  |  |
-| user_props | [resources.users.UserProps](#resources-users-UserProps) |  |  |
-| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  |  |
+| user_activity | [UserActivity](#resources-sync-UserActivity) |  |  |
+| jobs_user_activity | [JobsUserActivity](#resources-sync-JobsUserActivity) |  |  |
 | jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-JobsUserActivity"></a>
+
+### JobsUserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  |  |
+| jobs_user_props | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) | optional |  |
+
+
+
+
+
+
+<a name="resources-sync-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  |  |
+| user_props | [resources.users.UserProps](#resources-users-UserProps) | optional |  |
 
 
 

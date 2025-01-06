@@ -34,14 +34,58 @@ func (m *AddActivity) Sanitize() error {
 			}
 		}
 
-		// Field: UserProps
-	case *AddActivity_UserProps:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+	}
+
+	return nil
+}
+
+func (m *JobsUserActivity) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: JobsUserActivity
+	if m.JobsUserActivity != nil {
+		if v, ok := interface{}(m.GetJobsUserActivity()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+	}
 
+	// Field: JobsUserProps
+	if m.JobsUserProps != nil {
+		if v, ok := interface{}(m.GetJobsUserProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *UserActivity) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: UserActivity
+	if m.UserActivity != nil {
+		if v, ok := interface{}(m.GetUserActivity()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: UserProps
+	if m.UserProps != nil {
+		if v, ok := interface{}(m.GetUserProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
