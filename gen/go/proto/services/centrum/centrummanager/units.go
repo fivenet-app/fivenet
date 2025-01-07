@@ -79,7 +79,6 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
-			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
@@ -91,7 +90,6 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 			tUnitStatus.CreatorID,
 		).
 		VALUES(
-			jet.CURRENT_TIMESTAMP(),
 			in.UnitId,
 			in.Status,
 			in.Reason,
@@ -105,6 +103,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
+		fmt.Println(stmt.DebugSql())
 		return nil, err
 	}
 
@@ -667,18 +666,6 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 		return errorscentrum.ErrFailedQuery
 	}
 
-	stmt := tUnits.
-		DELETE().
-		WHERE(jet.AND(
-			tUnits.Job.EQ(jet.String(job)),
-			tUnits.ID.EQ(jet.Uint64(id)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
-	}
-
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
@@ -689,6 +676,18 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 	}
 
 	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job), data); err != nil {
+		return err
+	}
+
+	stmt := tUnits.
+		DELETE().
+		WHERE(jet.AND(
+			tUnits.Job.EQ(jet.String(job)),
+			tUnits.ID.EQ(jet.Uint64(id)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err
 	}
 

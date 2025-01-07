@@ -130,7 +130,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		p.CronHandlers.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
-			Schedule: "*/4 * * * *", // Every 4 minutes
+			Schedule: "*/2 * * * *", // Every 2 minutes
 			Timeout:  durationpb.New(15 * time.Second),
 		}); err != nil {
 			return err
@@ -148,6 +148,10 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
+
+			if err := s.runDeleteOldDispatches(ctxCancel, nil); err != nil {
+				s.logger.Error("failed to delete old dispatches on startup")
+			}
 		}()
 
 		return nil
@@ -709,8 +713,8 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 				userId = unit.Status.UserId
 			}
 
-			s.logger.Debug("cleaning up unit status to unavailable because it is empty or static with wrong status",
-				zap.String("job", job), zap.Uint64("unit_id", unit.Id))
+			s.logger.Debug("setting unit status to unavailable it is empty or static attribute (wrong status)",
+				zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32p("user_id", userId))
 			if _, err := s.UpdateUnitStatus(ctx, job, unit.Id, &centrum.UnitStatus{
 				CreatedAt: timestamp.Now(),
 				UnitId:    unit.Id,

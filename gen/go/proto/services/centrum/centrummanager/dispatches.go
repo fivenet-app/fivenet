@@ -377,6 +377,24 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 }
 
 func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
+	dsp, err := s.GetDispatch(ctx, job, id)
+	if err != nil {
+		return nil
+	}
+
+	data, err := proto.Marshal(dsp)
+	if err != nil {
+		return errorscentrum.ErrFailedQuery
+	}
+
+	if err := s.State.DeleteDispatch(ctx, job, id); err != nil {
+		return err
+	}
+
+	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job), data); err != nil {
+		return err
+	}
+
 	if allTheWay {
 		tDispatch := table.FivenetCentrumDispatches
 		stmt := tDispatch.
@@ -390,24 +408,6 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return errorscentrum.ErrFailedQuery
 		}
-	}
-
-	dsp, err := s.GetDispatch(ctx, job, id)
-	if err != nil {
-		return nil
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return errorscentrum.ErrFailedQuery
-	}
-
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job), data); err != nil {
-		return err
-	}
-
-	if err := s.State.DeleteDispatch(ctx, job, id); err != nil {
-		return err
 	}
 
 	return nil
