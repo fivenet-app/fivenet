@@ -14,7 +14,7 @@ message DataStatus {
 }
 
 message DataJobs {
-  repeated resources.users.Job jobs = 1 [(validate.rules).repeated.max_items = 150];
+  repeated resources.users.Job jobs = 1 [(validate.rules).repeated.max_items = 200];
 }
 
 message DataUsers {
@@ -26,7 +26,7 @@ message DataVehicles {
 }
 
 message DataLicenses {
-  repeated resources.users.License licenses = 1 [(validate.rules).repeated.max_items = 100];
+  repeated resources.users.License licenses = 1 [(validate.rules).repeated.max_items = 200];
 }
 
 message DataUserLicenses {

@@ -160,6 +160,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	columns := dbutils.Columns{
 		modelColumn,
 		jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
+		tUsers.ID.AS("vehicle.owner_id"),
 		tUsers.ID,
 		tUsers.Firstname,
 		tUsers.Lastname,

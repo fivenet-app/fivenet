@@ -12,10 +12,10 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { AddActivity } from "../../resources/sync/activity";
-import { DataUserLicenses } from "../../resources/sync/data";
-import { DataLicenses } from "../../resources/sync/data";
 import { DataVehicles } from "../../resources/sync/data";
+import { DataUserLicenses } from "../../resources/sync/data";
 import { DataUsers } from "../../resources/sync/data";
+import { DataLicenses } from "../../resources/sync/data";
 import { DataJobs } from "../../resources/sync/data";
 import { DataStatus } from "../../resources/sync/data";
 /**
@@ -32,21 +32,21 @@ export interface GetStatusResponse {
      */
     jobs?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.DataStatus users = 2;
-     */
-    users?: DataStatus;
-    /**
-     * @generated from protobuf field: resources.sync.DataStatus vehicles = 3;
-     */
-    vehicles?: DataStatus;
-    /**
-     * @generated from protobuf field: resources.sync.DataStatus licenses = 4;
+     * @generated from protobuf field: resources.sync.DataStatus licenses = 2;
      */
     licenses?: DataStatus;
     /**
-     * @generated from protobuf field: resources.sync.DataStatus user_licenses = 5;
+     * @generated from protobuf field: resources.sync.DataStatus users = 3;
+     */
+    users?: DataStatus;
+    /**
+     * @generated from protobuf field: resources.sync.DataStatus user_licenses = 4;
      */
     userLicenses?: DataStatus;
+    /**
+     * @generated from protobuf field: resources.sync.DataStatus vehicles = 5;
+     */
+    vehicles?: DataStatus;
 }
 /**
  * @generated from protobuf message services.sync.SyncDataRequest
@@ -62,29 +62,29 @@ export interface SyncDataRequest {
          */
         jobs: DataJobs;
     } | {
-        oneofKind: "users";
-        /**
-         * @generated from protobuf field: resources.sync.DataUsers users = 2;
-         */
-        users: DataUsers;
-    } | {
-        oneofKind: "vehicles";
-        /**
-         * @generated from protobuf field: resources.sync.DataVehicles vehicles = 3;
-         */
-        vehicles: DataVehicles;
-    } | {
         oneofKind: "licenses";
         /**
-         * @generated from protobuf field: resources.sync.DataLicenses licenses = 4;
+         * @generated from protobuf field: resources.sync.DataLicenses licenses = 2;
          */
         licenses: DataLicenses;
     } | {
+        oneofKind: "users";
+        /**
+         * @generated from protobuf field: resources.sync.DataUsers users = 3;
+         */
+        users: DataUsers;
+    } | {
         oneofKind: "userLicenses";
         /**
-         * @generated from protobuf field: resources.sync.DataUserLicenses user_licenses = 5;
+         * @generated from protobuf field: resources.sync.DataUserLicenses user_licenses = 4;
          */
         userLicenses: DataUserLicenses;
+    } | {
+        oneofKind: "vehicles";
+        /**
+         * @generated from protobuf field: resources.sync.DataVehicles vehicles = 5;
+         */
+        vehicles: DataVehicles;
     } | {
         oneofKind: undefined;
     };
@@ -146,10 +146,10 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
     constructor() {
         super("services.sync.GetStatusResponse", [
             { no: 1, name: "jobs", kind: "message", T: () => DataStatus },
-            { no: 2, name: "users", kind: "message", T: () => DataStatus },
-            { no: 3, name: "vehicles", kind: "message", T: () => DataStatus },
-            { no: 4, name: "licenses", kind: "message", T: () => DataStatus },
-            { no: 5, name: "user_licenses", kind: "message", T: () => DataStatus }
+            { no: 2, name: "licenses", kind: "message", T: () => DataStatus },
+            { no: 3, name: "users", kind: "message", T: () => DataStatus },
+            { no: 4, name: "user_licenses", kind: "message", T: () => DataStatus },
+            { no: 5, name: "vehicles", kind: "message", T: () => DataStatus }
         ]);
     }
     create(value?: PartialMessage<GetStatusResponse>): GetStatusResponse {
@@ -166,17 +166,17 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
                 case /* resources.sync.DataStatus jobs */ 1:
                     message.jobs = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.jobs);
                     break;
-                case /* resources.sync.DataStatus users */ 2:
-                    message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
-                    break;
-                case /* resources.sync.DataStatus vehicles */ 3:
-                    message.vehicles = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.vehicles);
-                    break;
-                case /* resources.sync.DataStatus licenses */ 4:
+                case /* resources.sync.DataStatus licenses */ 2:
                     message.licenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.licenses);
                     break;
-                case /* resources.sync.DataStatus user_licenses */ 5:
+                case /* resources.sync.DataStatus users */ 3:
+                    message.users = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.users);
+                    break;
+                case /* resources.sync.DataStatus user_licenses */ 4:
                     message.userLicenses = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.userLicenses);
+                    break;
+                case /* resources.sync.DataStatus vehicles */ 5:
+                    message.vehicles = DataStatus.internalBinaryRead(reader, reader.uint32(), options, message.vehicles);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -193,18 +193,18 @@ class GetStatusResponse$Type extends MessageType<GetStatusResponse> {
         /* resources.sync.DataStatus jobs = 1; */
         if (message.jobs)
             DataStatus.internalBinaryWrite(message.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus users = 2; */
-        if (message.users)
-            DataStatus.internalBinaryWrite(message.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus vehicles = 3; */
-        if (message.vehicles)
-            DataStatus.internalBinaryWrite(message.vehicles, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus licenses = 4; */
+        /* resources.sync.DataStatus licenses = 2; */
         if (message.licenses)
-            DataStatus.internalBinaryWrite(message.licenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataStatus user_licenses = 5; */
+            DataStatus.internalBinaryWrite(message.licenses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataStatus users = 3; */
+        if (message.users)
+            DataStatus.internalBinaryWrite(message.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataStatus user_licenses = 4; */
         if (message.userLicenses)
-            DataStatus.internalBinaryWrite(message.userLicenses, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            DataStatus.internalBinaryWrite(message.userLicenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataStatus vehicles = 5; */
+        if (message.vehicles)
+            DataStatus.internalBinaryWrite(message.vehicles, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -220,10 +220,10 @@ class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
     constructor() {
         super("services.sync.SyncDataRequest", [
             { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => DataJobs },
-            { no: 2, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
-            { no: 3, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
-            { no: 4, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
-            { no: 5, name: "user_licenses", kind: "message", oneof: "data", T: () => DataUserLicenses }
+            { no: 2, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
+            { no: 3, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
+            { no: 4, name: "user_licenses", kind: "message", oneof: "data", T: () => DataUserLicenses },
+            { no: 5, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles }
         ]);
     }
     create(value?: PartialMessage<SyncDataRequest>): SyncDataRequest {
@@ -244,28 +244,28 @@ class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
                         jobs: DataJobs.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobs)
                     };
                     break;
-                case /* resources.sync.DataUsers users */ 2:
-                    message.data = {
-                        oneofKind: "users",
-                        users: DataUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
-                    };
-                    break;
-                case /* resources.sync.DataVehicles vehicles */ 3:
-                    message.data = {
-                        oneofKind: "vehicles",
-                        vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
-                    };
-                    break;
-                case /* resources.sync.DataLicenses licenses */ 4:
+                case /* resources.sync.DataLicenses licenses */ 2:
                     message.data = {
                         oneofKind: "licenses",
                         licenses: DataLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).licenses)
                     };
                     break;
-                case /* resources.sync.DataUserLicenses user_licenses */ 5:
+                case /* resources.sync.DataUsers users */ 3:
+                    message.data = {
+                        oneofKind: "users",
+                        users: DataUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
+                    };
+                    break;
+                case /* resources.sync.DataUserLicenses user_licenses */ 4:
                     message.data = {
                         oneofKind: "userLicenses",
                         userLicenses: DataUserLicenses.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLicenses)
+                    };
+                    break;
+                case /* resources.sync.DataVehicles vehicles */ 5:
+                    message.data = {
+                        oneofKind: "vehicles",
+                        vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
                     };
                     break;
                 default:
@@ -283,18 +283,18 @@ class SyncDataRequest$Type extends MessageType<SyncDataRequest> {
         /* resources.sync.DataJobs jobs = 1; */
         if (message.data.oneofKind === "jobs")
             DataJobs.internalBinaryWrite(message.data.jobs, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataUsers users = 2; */
-        if (message.data.oneofKind === "users")
-            DataUsers.internalBinaryWrite(message.data.users, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataVehicles vehicles = 3; */
-        if (message.data.oneofKind === "vehicles")
-            DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataLicenses licenses = 4; */
+        /* resources.sync.DataLicenses licenses = 2; */
         if (message.data.oneofKind === "licenses")
-            DataLicenses.internalBinaryWrite(message.data.licenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DataUserLicenses user_licenses = 5; */
+            DataLicenses.internalBinaryWrite(message.data.licenses, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataUsers users = 3; */
+        if (message.data.oneofKind === "users")
+            DataUsers.internalBinaryWrite(message.data.users, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataUserLicenses user_licenses = 4; */
         if (message.data.oneofKind === "userLicenses")
-            DataUserLicenses.internalBinaryWrite(message.data.userLicenses, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            DataUserLicenses.internalBinaryWrite(message.data.userLicenses, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataVehicles vehicles = 5; */
+        if (message.data.oneofKind === "vehicles")
+            DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

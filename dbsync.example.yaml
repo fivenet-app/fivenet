@@ -14,94 +14,90 @@ source:
 # A query for each "piece of data" FiveNet needs to function
 tables:
   # The example queries here are for the ESX framework
-  users:
-    # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
-    # Optional `height`, `visum`, `playtime` columns
-    enabled: true
-    queries:
-      - idField: "id"
-        query: |
-          SELECT
-            `id`,
-            `identifier`,
-            `group`,
-            `firstname`,
-            `lastname`,
-            `dateofbirth`,
-            `job`,
-            `job_grade`,
-            `sex`,
-            `phone_number`,
-            `height`,
-            `visum`,
-            `playtime`
-          FROM
-            `users`
-          LIMIT $limit
-          OFFSET $offset;
   jobs:
     # Must return `name`, `label` columns
     enabled: true
-    queries:
-      - idField: "name"
-        query: |
-          SELECT
-            `name`,
-            `label`
-          FROM
-            `jobs`
-          LIMIT $limit
-          OFFSET $offset;
+    idField: "name"
+    query: |
+      SELECT
+        `name`,
+        `label`
+      FROM
+        `jobs`
+      LIMIT $limit
+      OFFSET $offset;
   jobGrades:
-    # Must return `job_name`, `grade`, `name`, `label` columns
+    # Must return `job_name`, `grade`, `label` columns (with condition for the `job_name`)
     enabled: true
-    queries:
-      - query: |
-          SELECT
-            `job_name`,
-            `grade`,
-            `name`,
-            `label`
-          FROM
-            `job_grades`
-          LIMIT $limit
-          OFFSET $offset;
+    query:
+      SELECT
+        `job_name`,
+        `grade`,
+        `name`,
+        `label`
+      FROM
+        `job_grades`
+      LIMIT $limit
+      OFFSET $offset;
   licenses:
     # Must return `type`, `label` columns
     enabled: true
-    queries:
-      - idField: "type"
-        query: |
-          SELECT
-            `type`,
-            `label`
-          FROM
-            `licenses`
-          LIMIT $limit
-          OFFSET $offset;
+    idField: "type"
+    query: |
+      SELECT
+        `type`,
+        `label`
+      FROM
+        `licenses`
+      LIMIT $limit
+      OFFSET $offset;
+  users:
+    # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
+    # Optional columns: `height`, `visum`, `playtime`
+    enabled: true
+    idField: "id"
+    query: |
+      SELECT
+        `id`,
+        `identifier`,
+        `group`,
+        `firstname`,
+        `lastname`,
+        `dateofbirth`,
+        `job`,
+        `job_grade`,
+        `sex`,
+        `phone_number`,
+        `height`,
+        `visum`,
+        `playtime`
+      FROM
+        `users`
+      $whereCondition
+      LIMIT $limit
+      OFFSET $offset;
+    updatedField: "last_seen"
   userLicenses:
     # Must return `type`, `owner` columns
     enabled: true
-    queries:
-      - query: |
-          SELECT
-            `type`,
-            `owner`
-          FROM
-            `user_licenses`
-          LIMIT $limit
-          OFFSET $offset;
-  ownedVehicles:
+    query: |
+      SELECT
+        `type`,
+        `owner`
+      FROM
+        `user_licenses`
+      LIMIT $limit
+      OFFSET $offset;
+  vehicles:
     # Must return `owner`, `plate`, `type`, `model` columns
     enabled: true
-    queries:
-      - query: |
-          SELECT
-            `owner`,
-            `plate`,
-            `type`,
-            `model`
-          FROM
-            `owned_vehicles`
-          LIMIT $limit
-          OFFSET $offset;
+    query: |
+      SELECT
+        `owner`,
+        `plate`,
+        `type`,
+        `model`
+      FROM
+        `owned_vehicles`
+      LIMIT $limit
+      OFFSET $offset;

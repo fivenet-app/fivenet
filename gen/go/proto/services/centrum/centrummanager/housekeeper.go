@@ -29,6 +29,7 @@ const (
 	MaxCancelledDispatchesPerRun = 6
 
 	DeleteDispatchDays = 14
+	DeleteUnitDays     = 14
 )
 
 var HousekeeperModule = fx.Module("centrum_manager_housekeeper",
@@ -135,24 +136,18 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			return err
 		}
 
+		p.CronHandlers.Add("centrum.manager_housekeeper.load_new_dispatches", s.loadNewDispatches)
+		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.load_new_dispatches",
+			Schedule: "@everysecond", // Every second
+			Timeout:  durationpb.New(5 * time.Second),
+		}); err != nil {
+			return err
+		}
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-
-			for {
-				select {
-				case <-s.ctx.Done():
-					return
-
-				case <-time.After(1 * time.Second):
-				}
-
-				// Load dispatches with null postal field (they are considered "new")
-				if err := s.LoadDispatchesFromDB(s.ctx, tDispatch.Postal.IS_NULL()); err != nil {
-					s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
-					continue
-				}
-			}
 		}()
 
 		return nil
@@ -167,6 +162,15 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 	}))
 
 	return s
+}
+
+func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {
+	// Load dispatches with null postal field (they are considered "new")
+	if err := s.LoadDispatchesFromDB(s.ctx, tDispatch.Postal.IS_NULL()); err != nil {
+		s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
+	}
+
+	return nil
 }
 
 func (s *Housekeeper) runHandleDispatchAssignmentExpiration(ctx context.Context, data *cron.CronjobData) error {
@@ -370,19 +374,21 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		return err
 	}
 
+	errs := multierr.Combine()
 	for _, ds := range dest {
 		if err := s.DeleteDispatch(ctx, ds.Job, ds.DispatchID, true); err != nil {
-			return err
+			errs = multierr.Append(errs, err)
+			continue
 		}
 	}
 
-	return nil
+	return errs
 }
 
 func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	dsps, err := s.State.DispatchesStore().List()
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to list dispatches for old dispatch kv cleanup. %w", err)
 	}
 
 	errs := multierr.Combine()
@@ -391,9 +397,14 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 			continue
 		}
 
-		// Remove nil status and "completed" dispatches with their status being older than 15 minutes
-		if dsp.Status == nil || (centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
-			time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute) {
+		if (
+		// Created dispatches older than the delete dispatch days amount
+		dsp.CreatedAt != nil && time.Since(dsp.CreatedAt.AsTime()) > DeleteDispatchDays*24*time.Hour) ||
+			// Remove nil status
+			dsp.Status == nil ||
+			// "Completed" dispatches with their status being older than 15 minutes
+			(centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
+				time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute) {
 			s.logger.Debug("old dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.Id))
 			if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
 				errs = multierr.Append(errs, err)
@@ -410,7 +421,7 @@ func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
 	stmt := tUnitStatus.
 		DELETE().
 		WHERE(jet.AND(
-			tUnitStatus.CreatedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteDispatchDays, jet.DAY))),
+			tUnitStatus.CreatedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteUnitDays, jet.DAY))),
 		)).
 		LIMIT(1500)
 

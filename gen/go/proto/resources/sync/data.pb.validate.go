@@ -158,10 +158,10 @@ func (m *DataJobs) validate(all bool) error {
 
 	var errors []error
 
-	if len(m.GetJobs()) > 150 {
+	if len(m.GetJobs()) > 200 {
 		err := DataJobsValidationError{
 			field:  "Jobs",
-			reason: "value must contain no more than 150 item(s)",
+			reason: "value must contain no more than 200 item(s)",
 		}
 		if !all {
 			return err
@@ -590,10 +590,10 @@ func (m *DataLicenses) validate(all bool) error {
 
 	var errors []error
 
-	if len(m.GetLicenses()) > 100 {
+	if len(m.GetLicenses()) > 200 {
 		err := DataLicensesValidationError{
 			field:  "Licenses",
-			reason: "value must contain no more than 100 item(s)",
+			reason: "value must contain no more than 200 item(s)",
 		}
 		if !all {
 			return err

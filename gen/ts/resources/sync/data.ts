@@ -120,7 +120,7 @@ export const DataStatus = new DataStatus$Type();
 class DataJobs$Type extends MessageType<DataJobs> {
     constructor() {
         super("resources.sync.DataJobs", [
-            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job, options: { "validate.rules": { repeated: { maxItems: "150" } } } }
+            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job, options: { "validate.rules": { repeated: { maxItems: "200" } } } }
         ]);
     }
     create(value?: PartialMessage<DataJobs>): DataJobs {
@@ -261,7 +261,7 @@ export const DataVehicles = new DataVehicles$Type();
 class DataLicenses$Type extends MessageType<DataLicenses> {
     constructor() {
         super("resources.sync.DataLicenses", [
-            { no: 1, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
+            { no: 1, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License, options: { "validate.rules": { repeated: { maxItems: "200" } } } }
         ]);
     }
     create(value?: PartialMessage<DataLicenses>): DataLicenses {

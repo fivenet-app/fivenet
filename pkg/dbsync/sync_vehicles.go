@@ -1,0 +1,76 @@
+package dbsync
+
+import (
+	"context"
+
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles"
+	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
+	"github.com/go-jet/jet/v2/qrm"
+)
+
+type VehiclesSync struct {
+	*syncer
+
+	state *TableSyncState
+}
+
+func NewVehiclesSync(s *syncer, state *TableSyncState) (ISyncer, error) {
+	return &VehiclesSync{
+		syncer: s,
+		state:  state,
+	}, nil
+}
+
+func (s *VehiclesSync) Sync(ctx context.Context) error {
+	if !s.cfg.Tables.Vehicles.Enabled {
+		return nil
+	}
+
+	limit := 1000
+	var offset uint64
+	if s.state != nil && s.state.Offset > 0 {
+		offset = s.state.Offset
+	}
+
+	sQuery := s.cfg.Tables.Vehicles
+	query := prepareStringQuery(sQuery, s.state, offset, limit)
+
+	vehicles := []*vehicles.Vehicle{}
+	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &vehicles); err != nil {
+		return err
+	}
+
+	if len(vehicles) == 0 {
+		return nil
+	}
+
+	// Sync vehicles to FiveNet server
+	if s.cli != nil {
+		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
+			Data: &pbsync.SyncDataRequest_Vehicles{
+				Vehicles: &sync.DataVehicles{
+					Vehicles: vehicles,
+				},
+			},
+		}); err != nil {
+			return err
+		}
+	}
+
+	// If less vehicles than limit are returned, we probably have reached the "end" of the table
+	// and need to reset the offset to 0
+	if len(vehicles) < limit {
+		offset = 0
+	}
+
+	lastPlate := vehicles[len(vehicles)-1].Plate
+	s.state.Set(
+		s.cfg.Tables.Vehicles.IDField,
+		uint64(limit)+offset,
+		&lastPlate,
+	)
+	s.state.Set(s.cfg.Tables.Vehicles.IDField, 0, nil)
+
+	return nil
+}

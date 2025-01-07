@@ -1,0 +1,60 @@
+package dbsync
+
+import (
+	"context"
+
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
+	"github.com/go-jet/jet/v2/qrm"
+)
+
+type licensesSync struct {
+	*syncer
+
+	state *TableSyncState
+}
+
+func NewLicensesSync(s *syncer, state *TableSyncState) (ISyncer, error) {
+	return &licensesSync{
+		syncer: s,
+		state:  state,
+	}, nil
+}
+
+func (s *licensesSync) Sync(ctx context.Context) error {
+	if !s.cfg.Tables.Licenses.Enabled {
+		return nil
+	}
+
+	limit := 200
+
+	sQuery := s.cfg.Tables.Licenses
+	query := prepareStringQuery(sQuery, s.state, 0, limit)
+
+	licenses := []*users.License{}
+	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &licenses); err != nil {
+		return err
+	}
+
+	if len(licenses) == 0 {
+		return nil
+	}
+
+	// Sync licenses to FiveNet server
+	if s.cli != nil {
+		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
+			Data: &pbsync.SyncDataRequest_Licenses{
+				Licenses: &sync.DataLicenses{
+					Licenses: licenses,
+				},
+			},
+		}); err != nil {
+			return err
+		}
+	}
+
+	s.state.Set(s.cfg.Tables.Licenses.IDField, 0, nil)
+
+	return nil
+}

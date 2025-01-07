@@ -11,5 +11,6 @@ message Vehicle {
   string plate = 1 [(validate.rules).string.max_len = 32];
   optional string model = 2 [(validate.rules).string.max_len = 64];
   string type = 3 [(validate.rules).string.max_len = 32];
-  resources.users.UserShort owner = 4;
+  optional int32 owner_id = 4;
+  resources.users.UserShort owner = 5;
 }

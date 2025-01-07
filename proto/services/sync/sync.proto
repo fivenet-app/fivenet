@@ -12,19 +12,21 @@ message GetStatusRequest {}
 
 message GetStatusResponse {
   resources.sync.DataStatus jobs = 1;
-  resources.sync.DataStatus users = 2;
-  resources.sync.DataStatus vehicles = 3;
-  resources.sync.DataStatus licenses = 4;
-  resources.sync.DataStatus user_licenses = 5;
+  resources.sync.DataStatus licenses = 2;
+
+  resources.sync.DataStatus users = 3;
+  resources.sync.DataStatus user_licenses = 4;
+  resources.sync.DataStatus vehicles = 5;
 }
 
 message SyncDataRequest {
   oneof data {
     resources.sync.DataJobs jobs = 1;
-    resources.sync.DataUsers users = 2;
-    resources.sync.DataVehicles vehicles = 3;
-    resources.sync.DataLicenses licenses = 4;
-    resources.sync.DataUserLicenses user_licenses = 5;
+    resources.sync.DataLicenses licenses = 2;
+
+    resources.sync.DataUsers users = 3;
+    resources.sync.DataUserLicenses user_licenses = 4;
+    resources.sync.DataVehicles vehicles = 5;
   }
 }
 

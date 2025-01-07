@@ -187,64 +187,6 @@ func (m *GetStatusResponse) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetUsers()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetStatusResponseValidationError{
-				field:  "Users",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
-		switch v := interface{}(m.GetVehicles()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "Vehicles",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "Vehicles",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetStatusResponseValidationError{
-				field:  "Vehicles",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetLicenses()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -274,6 +216,35 @@ func (m *GetStatusResponse) validate(all bool) error {
 	}
 
 	if all {
+		switch v := interface{}(m.GetUsers()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetStatusResponseValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetStatusResponseValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetStatusResponseValidationError{
+				field:  "Users",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
 		switch v := interface{}(m.GetUserLicenses()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -296,6 +267,35 @@ func (m *GetStatusResponse) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return GetStatusResponseValidationError{
 				field:  "UserLicenses",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetVehicles()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetStatusResponseValidationError{
+					field:  "Vehicles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetStatusResponseValidationError{
+					field:  "Vehicles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetStatusResponseValidationError{
+				field:  "Vehicles",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -446,88 +446,6 @@ func (m *SyncDataRequest) validate(all bool) error {
 			}
 		}
 
-	case *SyncDataRequest_Users:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUsers()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *SyncDataRequest_Vehicles:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetVehicles()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Vehicles",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Vehicles",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Vehicles",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	case *SyncDataRequest_Licenses:
 		if v == nil {
 			err := SyncDataRequestValidationError{
@@ -569,6 +487,47 @@ func (m *SyncDataRequest) validate(all bool) error {
 			}
 		}
 
+	case *SyncDataRequest_Users:
+		if v == nil {
+			err := SyncDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUsers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncDataRequestValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *SyncDataRequest_UserLicenses:
 		if v == nil {
 			err := SyncDataRequestValidationError{
@@ -604,6 +563,47 @@ func (m *SyncDataRequest) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return SyncDataRequestValidationError{
 					field:  "UserLicenses",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *SyncDataRequest_Vehicles:
+		if v == nil {
+			err := SyncDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetVehicles()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SyncDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SyncDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SyncDataRequestValidationError{
+					field:  "Vehicles",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

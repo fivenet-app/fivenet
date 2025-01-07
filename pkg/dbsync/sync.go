@@ -7,10 +7,12 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/XSAM/otelsql"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -62,11 +64,7 @@ func New(p Params) (*Sync, error) {
 	}
 
 	// Load dbsync state from file if exists
-	s.state = &DBSyncState{
-		mu:       sync.Mutex{},
-		filepath: s.cfg.StateFile,
-		States:   map[string]*TableSyncState{},
-	}
+	s.state = NewDBSyncState(s.logger, s.cfg.StateFile)
 	if err := s.state.Load(); err != nil {
 		return nil, err
 	}
@@ -98,9 +96,7 @@ func New(p Params) (*Sync, error) {
 	if s.cfg.Destination.URL != "" {
 		cli, err := grpc.NewClient(s.cfg.Destination.URL,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
-			grpc.WithPerRPCCredentials(tokenAuth{
-				token: s.cfg.Destination.Token,
-			}),
+			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Destination.Token)),
 		)
 		if err != nil {
 			return nil, err
@@ -111,7 +107,6 @@ func New(p Params) (*Sync, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		// TODO handle error and restart with delay 10 seconds
 		go s.Run(ctx)
 
 		return nil
@@ -120,31 +115,102 @@ func New(p Params) (*Sync, error) {
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		cancel()
 
-		return db.Close()
+		if err := s.state.Save(); err != nil {
+			return err
+		}
+
+		if err := db.Close(); err != nil {
+			return err
+		}
+
+		return nil
 	}))
 
 	return s, nil
 }
 
-func (s *Sync) Run(ctx context.Context) error {
-	// TODO initial sync of jobs and Co., before the main sync loop starts
-	js, err := NewJobsSync(s.logger, s.db, s.cfg, s.cli)
+func (s *Sync) Run(ctx context.Context) {
+	for {
+		if err := s.run(ctx); err != nil {
+			s.logger.Error("error during sync run", zap.Error(err))
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		case <-time.After(10 * time.Second):
+		}
+	}
+}
+
+func (s *Sync) run(ctx context.Context) error {
+	syncer := &syncer{
+		logger: s.logger,
+		db:     s.db,
+		cfg:    s.cfg,
+		cli:    s.cli,
+	}
+
+	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
+	jobs, err := NewJobsSync(syncer, s.state.Jobs)
+	if err != nil {
+		return err
+	}
+	licenses, err := NewLicensesSync(syncer, s.state.Licenses)
+	if err != nil {
+		return err
+	}
+	users, err := NewUsersSync(syncer, s.state.Users)
+	if err != nil {
+		return err
+	}
+	userLicenses, err := NewUserLicensesSync(syncer, s.state.UserLicenses)
 	if err != nil {
 		return err
 	}
 
-	if _, err := js.Sync(ctx); err != nil {
-		s.logger.Error("error during users sync", zap.Error(err))
+	if err := jobs.Sync(ctx); err != nil {
+		s.logger.Error("error during jobs sync", zap.Error(err))
+	}
+	if err := licenses.Sync(ctx); err != nil {
+		s.logger.Error("error during licenses sync", zap.Error(err))
 	}
 
-	// TODO run one loop per source table
+	// User data loop
+	_ = userLicenses
 
-	return nil
+	for {
+		if err := users.Sync(ctx); err != nil {
+			s.logger.Error("error during users sync", zap.Error(err))
+		}
+
+		select {
+		case <-ctx.Done():
+			return nil
+
+		case <-time.After(1 * time.Second):
+		}
+	}
 }
 
-func prepareStringQuery(in string, offset int, limit int) string {
-	offsetStr := strconv.Itoa(offset)
+func prepareStringQuery(query config.DBSyncTable, state *TableSyncState, offset uint64, limit int) string {
+	offsetStr := strconv.Itoa(int(offset))
 	limitStr := strconv.Itoa(limit)
 
-	return strings.ReplaceAll(strings.ReplaceAll(in, "$offset", offsetStr), "$limit", limitStr)
+	q := strings.ReplaceAll(query.Query, "$offset", offsetStr)
+	q = strings.ReplaceAll(q, "$limit", limitStr)
+
+	where := ""
+	if state == nil || (query.UpdatedField == nil || state.LastCheck.IsZero()) {
+		q = strings.ReplaceAll(q, "$whereCondition", "")
+	} else {
+		where = fmt.Sprintf("WHERE `%s` >= '%s'\n",
+			*query.UpdatedField,
+			state.LastCheck.Format("2006-01-02 15:04:05"),
+		)
+	}
+
+	q = strings.ReplaceAll(q, "$whereCondition", where)
+
+	return q
 }

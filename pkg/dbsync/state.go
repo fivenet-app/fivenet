@@ -4,24 +4,64 @@ import (
 	"errors"
 	"os"
 	"sync"
+	"time"
 
+	"go.uber.org/zap"
 	"gopkg.in/yaml.v3"
 )
 
 type DBSyncState struct {
 	mu sync.Mutex
 
+	logger *zap.Logger
+
 	filepath string `yaml:"-"`
 
-	States map[string]*TableSyncState `yaml:"states"`
+	Users         *TableSyncState `yaml:"users"`
+	Jobs          *TableSyncState `yaml:"jobs"`
+	JobGrades     *TableSyncState `yaml:"jobGrades"`
+	Licenses      *TableSyncState `yaml:"licenses"`
+	UserLicenses  *TableSyncState `yaml:"userLicenses"`
+	OwnedVehicles *TableSyncState `yaml:"ownedVehicles"`
 }
 
 type TableSyncState struct {
-	// Used to track if the last id/strign needs to be reset
+	dss *DBSyncState
+
+	// Used to track if the last id/string needs to be reset
 	IDField string `yaml:"idField"`
 
-	Offset uint64  `yaml:"offset"`
-	LastID *string `yaml:"lastId"`
+	LastCheck time.Time `yaml:"lastCheck"`
+	Offset    uint64    `yaml:"offset"`
+	LastID    *string   `yaml:"lastId"`
+}
+
+func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
+	d := &DBSyncState{
+		mu:       sync.Mutex{},
+		filepath: filepath,
+	}
+
+	d.Users = &TableSyncState{
+		dss: d,
+	}
+	d.Jobs = &TableSyncState{
+		dss: d,
+	}
+	d.JobGrades = &TableSyncState{
+		dss: d,
+	}
+	d.Licenses = &TableSyncState{
+		dss: d,
+	}
+	d.UserLicenses = &TableSyncState{
+		dss: d,
+	}
+	d.OwnedVehicles = &TableSyncState{
+		dss: d,
+	}
+
+	return d
 }
 
 func (s *DBSyncState) Load() error {
@@ -58,9 +98,13 @@ func (s *DBSyncState) Save() error {
 	return nil
 }
 
-func (s *DBSyncState) UpdateState(key string, state *TableSyncState) {
-	s.mu.Lock()
-	defer s.mu.Unlock()
+func (s *TableSyncState) Set(idField string, offset uint64, lastId *string) {
+	s.LastCheck = time.Now()
+	s.IDField = idField
+	s.Offset = offset
+	s.LastID = lastId
 
-	s.States[key] = state
+	if err := s.dss.Save(); err != nil {
+		s.dss.logger.Error("failed to save state", zap.Error(err))
+	}
 }

@@ -122,6 +122,10 @@ func (m *Vehicle) validate(all bool) error {
 
 	}
 
+	if m.OwnerId != nil {
+		// no validation rules for OwnerId
+	}
+
 	if len(errors) > 0 {
 		return VehicleMultiError(errors)
 	}

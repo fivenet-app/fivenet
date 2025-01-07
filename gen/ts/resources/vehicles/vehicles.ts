@@ -28,7 +28,11 @@ export interface Vehicle {
      */
     type: string;
     /**
-     * @generated from protobuf field: resources.users.UserShort owner = 4;
+     * @generated from protobuf field: optional int32 owner_id = 4;
+     */
+    ownerId?: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort owner = 5;
      */
     owner?: UserShort;
 }
@@ -39,7 +43,8 @@ class Vehicle$Type extends MessageType<Vehicle> {
             { no: 1, name: "plate", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 2, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 4, name: "owner", kind: "message", T: () => UserShort }
+            { no: 4, name: "owner_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "owner", kind: "message", T: () => UserShort }
         ]);
     }
     create(value?: PartialMessage<Vehicle>): Vehicle {
@@ -64,7 +69,10 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* string type */ 3:
                     message.type = reader.string();
                     break;
-                case /* resources.users.UserShort owner */ 4:
+                case /* optional int32 owner_id */ 4:
+                    message.ownerId = reader.int32();
+                    break;
+                case /* resources.users.UserShort owner */ 5:
                     message.owner = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.owner);
                     break;
                 default:
@@ -88,9 +96,12 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* string type = 3; */
         if (message.type !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.type);
-        /* resources.users.UserShort owner = 4; */
+        /* optional int32 owner_id = 4; */
+        if (message.ownerId !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.ownerId);
+        /* resources.users.UserShort owner = 5; */
         if (message.owner)
-            UserShort.internalBinaryWrite(message.owner, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            UserShort.internalBinaryWrite(message.owner, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

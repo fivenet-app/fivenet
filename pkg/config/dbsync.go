@@ -22,16 +22,18 @@ type DBSyncDestination struct {
 }
 
 type DBSyncSourceTables struct {
-	Users         DBSyncTable `yaml:"users"`
-	Jobs          DBSyncTable `yaml:"jobs"`
-	JobGrades     DBSyncTable `yaml:"jobGrades"`
-	Licenses      DBSyncTable `yaml:"licenses"`
-	UserLicenses  DBSyncTable `yaml:"userLicenses"`
-	OwnedVehicles DBSyncTable `yaml:"ownedVehicles"`
+	Jobs      DBSyncTable `yaml:"jobs"`
+	JobGrades DBSyncTable `yaml:"jobGrades"`
+	Licenses  DBSyncTable `yaml:"licenses"`
+
+	Users        DBSyncTable `yaml:"users"`
+	UserLicenses DBSyncTable `yaml:"userLicenses"`
+	Vehicles     DBSyncTable `yaml:"vehicles"`
 }
 
 type DBSyncTable struct {
-	Enabled bool   `yaml:"enabled"`
-	IDField string `yaml:"idField"`
-	Query   string `yaml:"query"`
+	Enabled      bool    `yaml:"enabled"`
+	IDField      string  `yaml:"idField"`
+	Query        string  `yaml:"query"`
+	UpdatedField *string `yaml:"updatedField"`
 }
