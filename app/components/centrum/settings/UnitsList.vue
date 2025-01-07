@@ -76,7 +76,7 @@ const columns = [
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('common.unit')">
+    <UDashboardNavbar :title="$t('common.unit', 2)">
         <template #right>
             <PartialsBackButton fallback-to="/centrum" />
 

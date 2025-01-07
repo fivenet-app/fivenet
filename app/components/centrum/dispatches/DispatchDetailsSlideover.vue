@@ -195,7 +195,7 @@ watch(dispatch, () => {
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                {{ $t('common.unit') }}
+                                {{ $t('common.unit', 2) }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span v-if="dispatch.units.length === 0" class="block">

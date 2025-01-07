@@ -137,6 +137,7 @@ const zIndexOffset = computed(() => {
                     </li>
                     <li class="inline-flex gap-1">
                         <span class="font-semibold">{{ $t('common.unit') }}:</span>
+
                         <span v-if="dispatch.units.length === 0" class="italic">{{
                             $t('enums.centrum.StatusDispatch.UNASSIGNED')
                         }}</span>

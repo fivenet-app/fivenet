@@ -364,7 +364,7 @@ defineShortcuts({
                                 @click="open = !open"
                             >
                                 <span v-if="!open" class="inline-flex items-center justify-center">
-                                    {{ $t('common.unit') }}
+                                    {{ $t('common.unit', 2) }}
                                 </span>
                             </UButton>
                         </LControl>

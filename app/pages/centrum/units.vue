@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import UnitsList from '~/components/centrum/settings/UnitsList.vue';
 
+const { t } = useI18n();
+
 useHead({
-    title: 'common.unit',
+    title: () => t('common.unit', 2),
 });
 definePageMeta({
     title: 'common.unit',
