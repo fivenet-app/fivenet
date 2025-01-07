@@ -103,7 +103,6 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
-		fmt.Println(stmt.DebugSql())
 		return nil, err
 	}
 
