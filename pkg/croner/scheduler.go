@@ -168,6 +168,7 @@ func (s *Scheduler) start(ctx context.Context) {
 						return true
 					}
 
+					s.logger.Debug("scheduling cron job", zap.String("name", job.Name))
 					wg.Add(1)
 					go func() {
 						defer wg.Done()

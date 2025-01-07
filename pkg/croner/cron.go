@@ -117,7 +117,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		return ErrInvalidCronSyntax
 	}
 
-	c.logger.Debug("registering cronjob", zap.String("job_name", job.Name))
+	c.logger.Debug("registering cronjob", zap.String("name", job.Name))
 	cj, err := c.scheduler.store.GetOrLoad(ctx, job.Name)
 	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 		return fmt.Errorf("failed to load existing cron job %s. %w", job.Name, err)
@@ -153,7 +153,7 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 }
 
 func (c *Cron) UnregisterCronjob(ctx context.Context, name string) error {
-	c.logger.Debug("unregistering cronjob", zap.String("job_name", name))
+	c.logger.Debug("unregistering cronjob", zap.String("name", name))
 	if err := c.scheduler.store.Delete(ctx, name); err != nil {
 		return fmt.Errorf("failed to unregister cron job %s from store. %w", name, err)
 	}

@@ -125,6 +125,8 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		}
 	}
 
+	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name))
+
 	start := time.Now()
 	err := fn(ag.ctx, job.Cronjob.Data)
 	elapsed := time.Since(start)
