@@ -11,8 +11,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tUsers = tables.Users.AS("usershort")
-
 type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]
 
@@ -42,6 +40,8 @@ func NewUsers[U any, T UsersAccessProtoMessage[U, V], V protoutils.ProtoEnum](ta
 }
 
 func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([]T, error) {
+	tUsers := tables.Users().AS("usershort")
+
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,

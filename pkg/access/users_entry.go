@@ -4,11 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id uint64) (T, error) {
+	tUsers := tables.Users().AS("usershort")
+
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,

@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -22,6 +23,8 @@ import (
 
 func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (*ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tCreator := tables.Users().AS("creator")
 
 	subsCondition := tCalendar.ID.IN(tCalendarSubs.
 		SELECT(
@@ -223,6 +226,23 @@ func (s *Server) GetCalendar(ctx context.Context, req *GetCalendarRequest) (*Get
 
 	return &GetCalendarResponse{
 		Calendar: calendar,
+	}, nil
+}
+
+func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.CalendarAccess, error) {
+	jobAccess, err := s.access.Jobs.List(ctx, s.db, calendarId)
+	if err != nil {
+		return nil, err
+	}
+
+	userAccess, err := s.access.Users.List(ctx, s.db, calendarId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &calendar.CalendarAccess{
+		Jobs:  jobAccess,
+		Users: userAccess,
 	}, nil
 }
 
@@ -449,6 +469,8 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest)
 }
 
 func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.Calendar, error) {
+	tCreator := tables.Users().AS("creator")
+
 	stmt := tCalendar.
 		SELECT(
 			tCalendar.ID,

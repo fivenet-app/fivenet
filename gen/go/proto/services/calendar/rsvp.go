@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -36,6 +37,8 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		return nil, errorscalendar.ErrNoPerms
 	}
 
+	tUser := tables.Users().AS("user_short")
+
 	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)).
 		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
 
@@ -44,8 +47,8 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 			jet.COUNT(tCalendarRSVP.UserID).AS("datacount.totalcount"),
 		).
 		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUsers,
-				tCalendarRSVP.UserID.EQ(tUsers.ID),
+			LEFT_JOIN(tUser,
+				tCalendarRSVP.UserID.EQ(tUser.ID),
 			),
 		).
 		WHERE(condition)
@@ -72,21 +75,21 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
 			tCalendarRSVP.Response,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tUser.ID,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("user_short.avatar"),
 		).
 		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUsers,
-				tCalendarRSVP.UserID.EQ(tUsers.ID),
+			LEFT_JOIN(tUser,
+				tCalendarRSVP.UserID.EQ(tUser.ID),
 			).
 			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUsers.ID),
+				tUserProps.UserID.EQ(tUser.ID),
 			),
 		).
 		WHERE(condition).
@@ -187,27 +190,29 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 }
 
 func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {
+	tUser := tables.Users().AS("user_short")
+
 	stmt := tCalendarRSVP.
 		SELECT(
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
 			tCalendarRSVP.Response,
-			tUsers.ID,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
+			tUser.ID,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("user_short.avatar"),
 		).
 		FROM(tCalendarRSVP.
-			LEFT_JOIN(tUsers,
-				tCalendarRSVP.UserID.EQ(tUsers.ID),
+			LEFT_JOIN(tUser,
+				tCalendarRSVP.UserID.EQ(tUser.ID),
 			).
 			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tUsers.ID),
+				tUserProps.UserID.EQ(tUser.ID),
 			),
 		).
 		WHERE(jet.AND(

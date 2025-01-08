@@ -32,8 +32,6 @@ import (
 )
 
 var (
-	tJobs      = tables.Jobs.AS("job")
-	tJobGrades = tables.JobGrades.AS("jobgrade")
 	tDCategory = table.FivenetDocumentsCategories.AS("category")
 	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
 	tLaws      = table.FivenetLawbooksLaws.AS("law")
@@ -239,6 +237,9 @@ func (c *Cache) refreshCategories(ctx context.Context) error {
 }
 
 func (c *Cache) refreshJobs(ctx context.Context) error {
+	tJobs := tables.Jobs().AS("job")
+	tJobGrades := tables.JobGrades().AS("jobgrade")
+
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,

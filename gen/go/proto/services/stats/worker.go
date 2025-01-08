@@ -24,7 +24,6 @@ var (
 	tDispatches      = table.FivenetCentrumDispatches
 	tCitizenActivity = table.FivenetUserActivity
 	tJobsTimeclock   = table.FivenetJobsTimeclock
-	tUsers           = tables.Users
 )
 
 type worker struct {
@@ -94,6 +93,7 @@ func (s *worker) calculateStats(ctx context.Context) {
 func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
+	tUsers := tables.Users()
 	queries := map[string]jet.Statement{
 		"users_registered":   tAccounts.SELECT(jet.COUNT(tAccounts.ID).AS("value")).WHERE(tAccounts.Enabled.IS_TRUE()),
 		"documents_created":  tDocuments.SELECT(jet.COUNT(tDocuments.ID).AS("value")).WHERE(tDocuments.DeletedAt.IS_NULL()),

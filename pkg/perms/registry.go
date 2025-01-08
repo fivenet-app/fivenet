@@ -238,8 +238,9 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {
-	tJobs := tables.Jobs.AS("job")
-	tJobGrades := tables.JobGrades.AS("jobgrade")
+	tJobs := tables.Jobs().AS("job")
+	tJobGrades := tables.JobGrades().AS("jobgrade")
+
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,

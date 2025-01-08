@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -28,7 +29,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tUser.AS("colleague")
+	tUser := tables.Users().AS("colleague")
+
 	condition := jet.AND(tUser.Job.EQ(jet.String(userInfo.Job)))
 	statsCondition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
@@ -434,7 +436,7 @@ func (s *Server) GetTimeclockStats(ctx context.Context, req *GetTimeclockStatsRe
 func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmployeesRequest) (*ListInactiveEmployeesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tUser := tUser.AS("colleague")
+	tUser := tables.Users().AS("colleague")
 
 	condition := jet.AND(
 		tTimeClock.Job.EQ(jet.String(userInfo.Job)),

@@ -4,12 +4,14 @@ import (
 	"context"
 
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductEntry, error) {
-	tUser := tUser.AS("target_user")
+	tUser := tables.Users().AS("target_user")
 	tCreator := tUser.AS("creator")
+
 	stmt := tConduct.
 		SELECT(
 			tConduct.ID,

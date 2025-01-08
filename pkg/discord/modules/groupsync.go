@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -108,6 +109,8 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		serverGroups = append(serverGroups, jet.String(sGroup))
 	}
 
+	tUsers := tables.Users().AS("users")
+
 	stmt := tOauth2Accs.
 		SELECT(
 			tOauth2Accs.ExternalID.AS("groupsyncuser.external_id"),
@@ -187,6 +190,8 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 }
 
 func (g *GroupSync) checkIfUserIsPartOfJob(ctx context.Context, identifier string, job string) (bool, error) {
+	tUsers := tables.Users()
+
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID.AS("id"),

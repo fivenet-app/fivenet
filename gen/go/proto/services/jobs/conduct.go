@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -124,10 +125,11 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		orderBys = append(orderBys, tConduct.ID.DESC())
 	}
 
-	tUser := tUser.AS("target_user")
+	tUser := tables.Users().AS("target_user")
 	tUserUserProps := tUserProps.AS("target_user_props")
 	tCreator := tUser.AS("creator")
 	tCreatorUserProps := tUserProps.AS("creator_props")
+
 	stmt := tConduct.
 		SELECT(
 			tConduct.ID,

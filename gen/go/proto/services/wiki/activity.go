@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -63,6 +64,8 @@ func (s *Server) ListPageActivity(ctx context.Context, req *ListPageActivityRequ
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tCreator := tables.Users().AS("creator")
 
 	stmt := tPActivity.
 		SELECT(

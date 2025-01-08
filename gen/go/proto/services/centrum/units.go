@@ -26,7 +26,6 @@ import (
 
 var (
 	tUnitStatus    = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUsers         = tables.Users.AS("colleague")
 	tUserProps     = table.FivenetUserProps
 	tUnits         = table.FivenetCentrumUnits.AS("unit")
 	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
@@ -367,6 +366,8 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tUsers := tables.Users().AS("colleague")
 
 	stmt := tUnitStatus.
 		SELECT(

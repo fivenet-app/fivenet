@@ -11,11 +11,14 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+	tCreator := tables.Users().AS("creator")
+
 	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
@@ -147,6 +150,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 }
 
 func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, withContent bool) jet.SelectStatement {
+	tCreator := tables.Users().AS("creator")
+
 	var wheres []jet.BoolExpression
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{

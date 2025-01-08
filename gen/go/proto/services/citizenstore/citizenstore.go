@@ -40,10 +40,6 @@ import (
 )
 
 var (
-	tUser         = tables.Users.AS("user")
-	tUserLicenses = tables.UserLicenses
-	tLicenses     = tables.Licenses
-
 	tUserProps    = table.FivenetUserProps
 	tUserActivity = table.FivenetUserActivity
 )
@@ -94,6 +90,8 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*ListCitizensResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tUser := tables.Users().AS("user")
 
 	selectors := dbutils.Columns{
 		tUser.Firstname,
@@ -306,6 +304,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	tUser := tables.Users().AS("user")
+
 	selectors := dbutils.Columns{
 		tUser.Firstname,
 		tUser.Lastname,
@@ -428,6 +428,9 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 	// Check if user can see licenses and fetch them
 	if !infoOnly && slices.Contains(fields, "Licenses") {
+		tLicenses := tables.Licenses()
+		tUserLicenses := tables.UserLicenses()
+
 		stmt := tUser.
 			SELECT(
 				tUserLicenses.Type.AS("license.type"),

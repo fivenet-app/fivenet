@@ -31,7 +31,6 @@ import (
 var (
 	tOauth2Accs       = table.FivenetOauth2Accounts
 	tAccs             = table.FivenetAccounts
-	tUsers            = tables.Users.AS("user")
 	tJobsUserProps    = table.FivenetJobsUserProps
 	tJobsUserActivity = table.FivenetJobsUserActivity
 )
@@ -256,6 +255,8 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 }
 
 func (c *AbsentCommand) getUserIDByJobAndDiscordID(ctx context.Context, job string, discordId discord.UserID) (int32, int32, error) {
+	tUsers := tables.Users().AS("user")
+
 	stmt := tOauth2Accs.
 		SELECT(
 			tUsers.ID.AS("user_id"),

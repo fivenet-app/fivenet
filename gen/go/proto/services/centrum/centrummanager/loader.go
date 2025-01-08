@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -80,6 +81,8 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
+	tUsers := tables.Users().AS("colleague")
+
 	stmt := tCentrumUsers.
 		SELECT(
 			tCentrumUsers.Job,
@@ -274,7 +277,8 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		condition = condition.AND(cond)
 	}
 
-	tUsers := tUsers.AS("user")
+	tUsers := tables.Users().AS("user")
+
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,

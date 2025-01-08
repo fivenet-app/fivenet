@@ -1,15 +1,5 @@
 package userinfo
 
-import (
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
-)
-
-var (
-	tUsers           = tables.Users.AS("userinfo")
-	tFivenetAccounts = table.FivenetAccounts
-)
-
 type UserInfo struct {
 	Enabled   bool
 	AccountId uint64

@@ -8,6 +8,7 @@ import (
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )
@@ -17,6 +18,8 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 		if um, ok := s.tracker.GetUserById(userId); !ok || um.Hidden {
 			return errorscentrum.ErrNotOnDuty
 		}
+
+		tUsers := tables.Users()
 
 		stmt := tCentrumUsers.
 			INSERT(

@@ -54,7 +54,12 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             :error="error"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="!chars || chars.length === 0" :type="$t('common.character', 2)" />
+        <DataNoDataBlock
+            v-else-if="!chars || chars.length === 0"
+            :type="$t('common.character', 2)"
+            :retry="refresh"
+            class="w-full min-w-64"
+        />
 
         <UCarousel
             v-else

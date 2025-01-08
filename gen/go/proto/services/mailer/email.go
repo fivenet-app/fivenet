@@ -19,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -42,7 +41,6 @@ var (
 
 	tQualificationsResults = table.FivenetQualificationsResults
 
-	tUsers     = tables.Users.AS("user_short")
 	tUserProps = table.FivenetUserProps
 )
 

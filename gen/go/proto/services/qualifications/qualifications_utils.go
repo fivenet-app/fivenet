@@ -18,13 +18,13 @@ import (
 )
 
 var (
-	tUser       = tables.Users.AS("user")
-	tCreator    = tables.Users.AS("creator")
 	tQJobAccess = table.FivenetQualificationsJobAccess
 	tQReqs      = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
 )
 
 func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+	tCreator := tables.Users().AS("creator")
+
 	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
 		wheres = append(wheres,
@@ -155,6 +155,8 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 }
 
 func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
+	tCreator := tables.Users().AS("creator")
+
 	wheres := []jet.BoolExpression{jet.Bool(true)}
 	if !userInfo.SuperUser {
 		wheres = append(wheres,

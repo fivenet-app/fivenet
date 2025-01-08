@@ -17,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -68,6 +69,8 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tCreator := tables.Users().AS("creator")
 
 	stmt := tDocRequest.
 		SELECT(
@@ -578,6 +581,8 @@ func (s *Server) getDocumentReqById(ctx context.Context, tx qrm.DB, id uint64) (
 }
 
 func (s *Server) getDocumentReq(ctx context.Context, tx qrm.DB, condition jet.BoolExpression) (*documents.DocRequest, error) {
+	tCreator := tables.Users().AS("creator")
+
 	stmt := tDocRequest.
 		SELECT(
 			tDocRequest.ID,

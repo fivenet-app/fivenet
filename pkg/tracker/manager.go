@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -173,6 +174,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	m.logger.Debug("refreshing user tracker cache")
 
 	tLocs := tLocs.AS("markerInfo")
+	tUsers := tables.Users().AS("user")
+
 	stmt := tLocs.
 		SELECT(
 			tLocs.Identifier,

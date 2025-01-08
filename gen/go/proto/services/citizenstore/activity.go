@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -68,8 +69,8 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		return resp, nil
 	}
 
-	tUTarget := tUser.AS("target_user")
-	tUSource := tUser.AS("source_user")
+	tUTarget := tables.Users().AS("target_user")
+	tUSource := tUTarget.AS("source_user")
 
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}

@@ -26,11 +26,6 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-var (
-	tVehicles = tables.OwnedVehicles.AS("vehicle")
-	tUsers    = tables.Users.AS("usershort")
-)
-
 type Server struct {
 	DMVServiceServer
 
@@ -68,6 +63,9 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	logRequest := false
+
+	tVehicles := tables.OwnedVehicles().AS("vehicle")
+	tUsers := tables.Users().AS("usershort")
 
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)

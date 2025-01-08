@@ -15,6 +15,7 @@ import (
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
 	centrumutils "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -641,6 +642,8 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.DispatchStatus, error) {
+	tUsers := tables.Users().AS("colleague")
+
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.ID,

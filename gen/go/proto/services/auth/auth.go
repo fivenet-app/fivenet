@@ -38,10 +38,7 @@ import (
 
 var (
 	tAccounts  = table.FivenetAccounts
-	tUsers     = tables.Users.AS("user")
 	tUserProps = table.FivenetUserProps.AS("user_props")
-	tJobs      = tables.Jobs
-	tJobGrades = tables.JobGrades
 	tJobProps  = table.FivenetJobProps.AS("jobprops")
 )
 
@@ -486,6 +483,10 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load chars from database
+	tUsers := tables.Users().AS("user")
+	tJobs := tables.Jobs()
+	tJobGrades := tables.JobGrades()
+
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -571,6 +572,10 @@ func buildCharSearchIdentifier(license string) string {
 }
 
 func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {
+	tUsers := tables.Users().AS("user")
+	tJobs := tables.Jobs()
+	tJobGrades := tables.JobGrades()
+
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -839,7 +844,9 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 }
 
 func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Job, int32, *users.JobProps, error) {
-	tJobs := tJobs.AS("job")
+	tJobs := tables.Jobs().AS("job")
+	tJobGrades := tables.JobGrades()
+
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,

@@ -50,7 +50,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		types = typesAttr.([]string)
 	}
 
-	tUser := tUser.AS("colleague")
+	tUser := tables.Users().AS("colleague")
+
 	condition := tUser.Job.EQ(jet.String(userInfo.Job)).
 		AND(s.customDB.Conditions.User.GetFilter(tUser.Alias()))
 
@@ -330,7 +331,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 }
 
 func (s *Server) getColleague(ctx context.Context, userInfo *userinfo.UserInfo, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
-	tUser := tUser.AS("colleague")
+	tUser := tables.Users().AS("colleague")
+
 	columns := []jet.Projection{
 		tUser.Firstname,
 		tUser.Lastname,
@@ -917,8 +919,8 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	}
 
 	tJobsUserActivity := tJobsUserActivity.AS("jobsuseractivity")
-	tTargetUser := tUser.AS("target_user")
-	tSourceUser := tUser.AS("source_user")
+	tTargetUser := tables.Users().AS("target_user")
+	tSourceUser := tTargetUser.AS("source_user")
 
 	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
 

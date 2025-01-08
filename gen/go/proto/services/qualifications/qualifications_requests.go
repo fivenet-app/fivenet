@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -22,10 +23,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tQualiRequests = table.FivenetQualificationsRequests.AS("qualificationrequest")
-	tApprover      = tUser.AS("approver")
-)
+var tQualiRequests = table.FivenetQualificationsRequests.AS("qualificationrequest")
 
 func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualificationRequestsRequest) (*ListQualificationRequestsResponse, error) {
 	if req.QualificationId != nil {
@@ -38,6 +36,8 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tQuali := tQuali.AS("qualificationshort")
+	tUser := tables.Users().AS("user")
+	tApprover := tUser.AS("approver")
 
 	condition := tQualiRequests.DeletedAt.IS_NULL().
 		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
@@ -385,7 +385,8 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 func (s *Server) getQualificationRequest(ctx context.Context, qualificationId uint64, userId int32, userInfo *userinfo.UserInfo) (*qualifications.QualificationRequest, error) {
 	tQuali := tQuali.AS("qualificationshort")
-	tUser := tUser.AS("user")
+	tUser := tables.Users().AS("user")
+	tApprover := tUser.AS("approver")
 
 	stmt := tQualiRequests.
 		SELECT(

@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -27,7 +26,6 @@ import (
 )
 
 var (
-	tUser      = tables.Users.AS("user")
 	tUserProps = table.FivenetUserProps
 	tJobProps  = table.FivenetJobProps
 )

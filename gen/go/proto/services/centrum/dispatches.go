@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -105,6 +106,8 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tUsers := tables.Users().AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -218,6 +221,8 @@ func (s *Server) GetDispatch(ctx context.Context, req *GetDispatchRequest) (*Get
 	resp := &GetDispatchResponse{
 		Dispatch: &centrum.Dispatch{},
 	}
+
+	tUsers := tables.Users().AS("colleague")
 
 	stmt := tDispatch.
 		SELECT(
@@ -521,6 +526,8 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tUsers := tables.Users().AS("colleague")
 
 	stmt := tDispatchStatus.
 		SELECT(

@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -38,6 +39,9 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 	if req.UserId != nil {
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
 	}
+
+	tUser := tables.Users().AS("user")
+	tCreator := tUser.AS("creator")
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -405,7 +409,8 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 }
 
 func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo, userId int32) (*qualifications.QualificationResult, error) {
-	tUser := tUser.AS("user")
+	tUser := tables.Users().AS("user")
+	tCreator := tUser.AS("creator")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
 

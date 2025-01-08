@@ -21,10 +21,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tUsers   = tables.Users.AS("usershort")
-	tMarkers = table.FivenetCentrumMarkers.AS("markermarker")
-)
+var tMarkers = table.FivenetCentrumMarkers.AS("markermarker")
 
 func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error) {
 	if req.Marker != nil && req.Marker.Info != nil && req.Marker.Info.Id < 1 {
@@ -215,6 +212,8 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 }
 
 func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarker, error) {
+	tUsers := tables.Users().AS("user_short")
+
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),
@@ -277,6 +276,8 @@ func (s *Server) getMarkerMarkers(jobs []string) ([]*livemap.MarkerMarker, error
 }
 
 func (s *Server) refreshMarkers(ctx context.Context) error {
+	tUsers := tables.Users().AS("user_short")
+
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),

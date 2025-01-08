@@ -13,6 +13,7 @@ import (
 	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -284,7 +285,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				notFound = append(notFound, toAdd[i])
 			}
 
-			users, err := s.resolveUserShortsByIds(ctx, notFound...)
+			users, err := s.resolveColleagueById(ctx, notFound...)
 			if err != nil {
 				return nil, false, err
 			}
@@ -538,6 +539,8 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 }
 
 func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
+	tUsers := tables.Users().AS("colleague")
+
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,
@@ -597,6 +600,8 @@ func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, 
 }
 
 func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, unitId uint64) (*centrum.UnitStatus, error) {
+	tUsers := tables.Users().AS("colleague")
+
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,

@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/zap"
 )
@@ -23,7 +22,6 @@ import (
 var (
 	tOauth2Accs    = table.FivenetOauth2Accounts
 	tAccs          = table.FivenetAccounts
-	tUsers         = tables.Users.AS("users")
 	tJobsUserProps = table.FivenetJobsUserProps
 )
 

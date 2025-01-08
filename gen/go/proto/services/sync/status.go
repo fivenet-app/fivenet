@@ -9,16 +9,13 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-var (
-	tJobs         = tables.Jobs
-	tUsers        = tables.Users
-	tVehicles     = tables.OwnedVehicles
-	tLicenses     = tables.Licenses
-	tUserLicenses = tables.UserLicenses
-)
-
 func (s *Server) GetStatus(ctx context.Context, req *GetStatusRequest) (*GetStatusResponse, error) {
 	resp := &GetStatusResponse{}
+
+	tJobs := tables.Jobs()
+	tUsers := tables.Users()
+	tVehicles := tables.OwnedVehicles()
+	tLicenses := tables.Licenses()
 
 	// Jobs
 	jobsStmt := tJobs.

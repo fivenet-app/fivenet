@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
@@ -71,6 +72,8 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 		}
 	} else {
 		// User's private email
+		tUsers := tables.Users().AS("user_short")
+
 		stmt := tUsers.
 			SELECT(
 				tUsers.Firstname,

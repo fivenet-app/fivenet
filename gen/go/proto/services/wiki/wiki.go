@@ -51,8 +51,6 @@ var (
 	tPageShort   = table.FivenetWikiPages.AS("pageshort")
 	tPJobAccess  = table.FivenetWikiPageJobAccess.AS("job_access")
 	tPUserAccess = table.FivenetWikiPageUserAccess.AS("user_access")
-	tUsers       = tables.Users
-	tCreator     = tUsers.AS("creator")
 	tJobProps    = table.FivenetJobProps
 )
 
@@ -392,6 +390,8 @@ func (s *Server) getPageAccess(ctx context.Context, userInfo *userinfo.UserInfo,
 }
 
 func (s *Server) getPage(ctx context.Context, pageId uint64, withContent bool, withAccess bool, userInfo *userinfo.UserInfo) (*wiki.Page, error) {
+	tCreator := tables.Users().AS("creator")
+
 	columns := []jet.Projection{
 		tPage.ID,
 		tPage.Job,

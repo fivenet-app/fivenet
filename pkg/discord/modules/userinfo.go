@@ -21,6 +21,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -232,6 +233,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 	for _, job := range g.BaseModule.appCfg.Get().Discord.IgnoredJobs {
 		jobs = append(jobs, jet.String(job))
 	}
+
+	tUsers := tables.Users().AS("users")
 
 	stmt := tOauth2Accs.
 		SELECT(

@@ -25,7 +25,6 @@ import (
 )
 
 var (
-	tUsers                = tables.Users.AS("usershort")
 	tDCategory            = table.FivenetDocumentsCategories.AS("category")
 	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
@@ -73,6 +72,8 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 
 func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	tUsers := tables.Users().AS("usershort")
 
 	condition := s.customDB.Conditions.User.GetFilter(tUsers.Alias())
 

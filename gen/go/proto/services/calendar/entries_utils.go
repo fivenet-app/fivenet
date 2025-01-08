@@ -2,10 +2,13 @@ package calendar
 
 import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo) jet.SelectStatement {
+	tCreator := tables.Users().AS("creator")
+
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,

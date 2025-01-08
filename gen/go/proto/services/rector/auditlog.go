@@ -18,10 +18,7 @@ import (
 
 const AuditLogPageSize = 30
 
-var (
-	tAuditLog = table.FivenetAuditLog.AS("auditentry")
-	tUser     = tables.Users.AS("usershort")
-)
+var tAuditLog = table.FivenetAuditLog.AS("auditentry")
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -125,6 +122,8 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 	} else {
 		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
 	}
+
+	tUser := tables.Users().AS("usershort")
 
 	stmt := tAuditLog.
 		SELECT(

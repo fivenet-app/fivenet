@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -150,6 +151,8 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 }
 
 func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32, entry *calendar.CalendarEntry, targetUsers []int32) error {
+	tUsers := tables.Users().AS("user_short")
+
 	stmt := tUsers.
 		SELECT(
 			tUsers.Firstname,
@@ -164,8 +167,8 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 		).
 		LIMIT(1)
 
-	sourceUser := users.UserShort{}
-	if err := stmt.QueryContext(ctx, s.db, &sourceUser); err != nil {
+	sourceUser := &users.UserShort{}
+	if err := stmt.QueryContext(ctx, s.db, sourceUser); err != nil {
 		return err
 	}
 

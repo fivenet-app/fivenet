@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -102,8 +103,9 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	tSourceDoc := tDocument.AS("source_document")
 	tTargetDoc := tDocument.AS("target_document")
-	tRefCreator := tUsers.AS("ref_creator")
-	tDCreator := tUsers.AS("creator")
+	tCreator := tables.Users().AS("creator")
+	tRefCreator := tCreator.AS("ref_creator")
+
 	stmt := tDocRef.
 		SELECT(
 			tDocRef.ID,
@@ -120,12 +122,12 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 			tSourceDoc.CreatorID,
 			tSourceDoc.State,
 			tSourceDoc.Closed,
-			tDCreator.ID,
-			tDCreator.Job,
-			tDCreator.JobGrade,
-			tDCreator.Firstname,
-			tDCreator.Lastname,
-			tDCreator.Dateofbirth,
+			tCreator.ID,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
 			tTargetDoc.ID,
 			tTargetDoc.CreatedAt,
 			tTargetDoc.UpdatedAt,
@@ -149,8 +151,8 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 				LEFT_JOIN(tTargetDoc,
 					tDocRef.TargetDocumentID.EQ(tTargetDoc.ID),
 				).
-				LEFT_JOIN(tDCreator,
-					tSourceDoc.CreatorID.EQ(tDCreator.ID),
+				LEFT_JOIN(tCreator,
+					tSourceDoc.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tRefCreator,
 					tDocRef.CreatorID.EQ(tRefCreator.ID),
@@ -564,8 +566,9 @@ func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents
 }
 
 func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.UserInfo, documentId uint64) ([]*documents.DocumentRelation, error) {
-	tSourceUser := tUsers.AS("source_user")
-	tTargetUser := tUsers.AS("target_user")
+	tSourceUser := tables.Users().AS("source_user")
+	tTargetUser := tSourceUser.AS("target_user")
+
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,

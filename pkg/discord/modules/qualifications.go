@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -167,6 +168,8 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 	for _, job := range g.BaseModule.appCfg.Get().Discord.IgnoredJobs {
 		jobs = append(jobs, jet.String(job))
 	}
+
+	tUsers := tables.Users().AS("users")
 
 	users := types.Users{}
 	for qualificationId, role := range qualificationRoles {

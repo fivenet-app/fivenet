@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/storage"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
@@ -28,9 +27,6 @@ var (
 
 	tCJobAccess  = table.FivenetCalendarJobAccess.AS("calendar_job_access")
 	tCUserAccess = table.FivenetCalendarUserAccess.AS("calendar_user_access")
-
-	tUsers   = tables.Users.AS("user_short")
-	tCreator = tUsers.AS("creator")
 
 	tUserProps = table.FivenetUserProps
 )

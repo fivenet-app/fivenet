@@ -10,6 +10,7 @@ import (
 	errorsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -134,8 +135,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		rIds[i] = jet.Uint64(dbRelIds[i])
 	}
 
-	tDCreator := tUsers.AS("creator")
-	tASource := tUsers.AS("source_user")
+	tCreator := tables.Users().AS("creator")
+	tASource := tCreator.AS("source_user")
+
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,
@@ -156,12 +158,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDCategory.Description,
 			tDCategory.Color,
 			tDCategory.Icon,
-			tDCreator.ID,
-			tDCreator.Job,
-			tDCreator.JobGrade,
-			tDCreator.Firstname,
-			tDCreator.Lastname,
-			tDCreator.Dateofbirth,
+			tCreator.ID,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
 			tDocRel.SourceUserID,
 			tASource.ID,
 			tASource.Job,
@@ -180,8 +182,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 				LEFT_JOIN(tDCategory,
 					tDocument.CategoryID.EQ(tDCategory.ID),
 				).
-				LEFT_JOIN(tDCreator,
-					tDocument.CreatorID.EQ(tDCreator.ID),
+				LEFT_JOIN(tCreator,
+					tDocument.CreatorID.EQ(tCreator.ID),
 				).
 				LEFT_JOIN(tASource,
 					tASource.ID.EQ(tDocRel.SourceUserID),

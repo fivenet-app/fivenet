@@ -43,9 +43,7 @@ const (
 )
 
 var (
-	tUsers         = tables.Users
 	tUserProps     = table.FivenetUserProps
-	tCreator       = tUsers.AS("creator")
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("documentshort")
 	tDJobAccess    = table.FivenetDocumentsJobAccess.AS("job_access")
@@ -936,8 +934,9 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		return nil, errorsdocstore.ErrDocOwnerFailed
 	}
 
-	tUsers := tUsers.AS("user_short")
-	stmtGetUser := tUsers.
+	tUsers := tables.Users().AS("user_short")
+
+	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
 			tUsers.Firstname,
@@ -950,7 +949,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		LIMIT(1)
 
 	var newOwner users.UserShort
-	if err := stmtGetUser.QueryContext(ctx, s.db, &newOwner); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &newOwner); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -394,6 +395,8 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 }
 
 func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.CalendarEntry, error) {
+	tCreator := tables.Users().AS("creator")
+
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,

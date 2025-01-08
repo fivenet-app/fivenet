@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -360,6 +361,8 @@ func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *GetColleagueL
 	if !slices.Contains(types, "Labels") {
 		return &GetColleagueLabelsStatsResponse{}, nil
 	}
+
+	tUser := tables.Users().AS("user")
 
 	stmt := tUserLabels.
 		SELECT(

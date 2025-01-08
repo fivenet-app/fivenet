@@ -11,6 +11,8 @@ import (
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 )
@@ -18,6 +20,8 @@ import (
 const cacheTTL = 20 * time.Second
 
 var ErrAccountError = fmt.Errorf("failed to retrieve account data")
+
+var tFivenetAccounts = table.FivenetAccounts
 
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error)
@@ -79,6 +83,8 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 		dest = &UserInfo{}
 	}
 
+	tUsers := tables.Users().AS("userinfo")
+
 	stmt := tUsers.
 		SELECT(
 			tFivenetAccounts.ID.AS("userinfo.account_id"),
@@ -128,7 +134,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 }
 
 func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
-	dest := &UserInfo{}
+	tUsers := tables.Users().AS("userinfo")
 
 	stmt := tUsers.
 		SELECT(
@@ -143,6 +149,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 		)).
 		LIMIT(1)
 
+	dest := &UserInfo{}
 	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
 		return nil, errswrap.NewError(err, ErrAccountError)
 	}

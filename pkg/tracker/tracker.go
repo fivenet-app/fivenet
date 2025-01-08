@@ -8,7 +8,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -21,7 +20,6 @@ import (
 
 var (
 	tLocs          = table.FivenetUserLocations
-	tUsers         = tables.Users.AS("user")
 	tJobProps      = table.FivenetJobProps
 	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")
 )

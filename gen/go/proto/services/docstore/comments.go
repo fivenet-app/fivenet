@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -84,6 +85,8 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
+
+	tCreator := tables.Users().AS("creator")
 
 	columns := jet.ProjectionList{
 		tDComments.ID,
@@ -290,9 +293,9 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 }
 
 func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.UserInfo) (*documents.Comment, error) {
-	comment := &documents.Comment{}
-
 	tDComments := tDComments.AS("comment")
+	tCreator := tables.Users().AS("creator")
+
 	stmt := tDComments.
 		SELECT(
 			tDComments.ID,
@@ -324,6 +327,7 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 		).
 		LIMIT(1)
 
+	comment := &documents.Comment{}
 	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {
 		return nil, err
 	}
@@ -423,6 +427,8 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 	if doc == nil || doc.DeletedAt != nil {
 		return nil
 	}
+
+	tCreator := tables.Users().AS("creator")
 
 	// Get the last 3 commentors to send them a notification
 	stmt := tDComments.

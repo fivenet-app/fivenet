@@ -8,12 +8,14 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
-	tUsers := tUsers.AS("user")
+	tUsers := tables.Users().AS("user")
+
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -62,7 +64,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 }
 
 func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*jobs.Colleague, error) {
-	us, err := s.resolveUserShortsByIds(ctx, u)
+	us, err := s.resolveColleagueById(ctx, u)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +72,7 @@ func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*jobs.Coll
 	return us[0], nil
 }
 
-func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*jobs.Colleague, error) {
+func (s *Manager) resolveColleagueById(ctx context.Context, u ...int32) ([]*jobs.Colleague, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -79,6 +81,8 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*jo
 	for i := 0; i < len(u); i++ {
 		userIds[i] = jet.Int32(u[i])
 	}
+
+	tUsers := tables.Users().AS("colleague")
 
 	stmt := tUsers.
 		SELECT(
@@ -135,7 +139,7 @@ func (s *Manager) resolveUsersForUnit(ctx context.Context, u *[]*centrum.UnitAss
 		return nil
 	}
 
-	us, err := s.resolveUserShortsByIds(ctx, userIds...)
+	us, err := s.resolveColleagueById(ctx, userIds...)
 	if err != nil {
 		return err
 	}
