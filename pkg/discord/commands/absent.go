@@ -20,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,7 +31,7 @@ import (
 var (
 	tOauth2Accs       = table.FivenetOauth2Accounts
 	tAccs             = table.FivenetAccounts
-	tUsers            = table.Users.AS("user")
+	tUsers            = tables.Users.AS("user")
 	tJobsUserProps    = table.FivenetJobsUserProps
 	tJobsUserActivity = table.FivenetJobsUserActivity
 )

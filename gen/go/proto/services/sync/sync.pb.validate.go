@@ -245,35 +245,6 @@ func (m *GetStatusResponse) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetUserLicenses()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "UserLicenses",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GetStatusResponseValidationError{
-					field:  "UserLicenses",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUserLicenses()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GetStatusResponseValidationError{
-				field:  "UserLicenses",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetVehicles()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -382,418 +353,6 @@ var _ interface {
 	ErrorName() string
 } = GetStatusResponseValidationError{}
 
-// Validate checks the field values on SyncDataRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *SyncDataRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SyncDataRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SyncDataRequestMultiError, or nil if none found.
-func (m *SyncDataRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SyncDataRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	switch v := m.Data.(type) {
-	case *SyncDataRequest_Jobs:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetJobs()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Jobs",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Jobs",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Jobs",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *SyncDataRequest_Licenses:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetLicenses()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Licenses",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Licenses",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetLicenses()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Licenses",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *SyncDataRequest_Users:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUsers()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Users",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Users",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *SyncDataRequest_UserLicenses:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUserLicenses()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "UserLicenses",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "UserLicenses",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUserLicenses()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "UserLicenses",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	case *SyncDataRequest_Vehicles:
-		if v == nil {
-			err := SyncDataRequestValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetVehicles()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Vehicles",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, SyncDataRequestValidationError{
-						field:  "Vehicles",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return SyncDataRequestValidationError{
-					field:  "Vehicles",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	default:
-		_ = v // ensures v is used
-	}
-
-	if len(errors) > 0 {
-		return SyncDataRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// SyncDataRequestMultiError is an error wrapping multiple validation errors
-// returned by SyncDataRequest.ValidateAll() if the designated constraints
-// aren't met.
-type SyncDataRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SyncDataRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SyncDataRequestMultiError) AllErrors() []error { return m }
-
-// SyncDataRequestValidationError is the validation error returned by
-// SyncDataRequest.Validate if the designated constraints aren't met.
-type SyncDataRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SyncDataRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SyncDataRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SyncDataRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SyncDataRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SyncDataRequestValidationError) ErrorName() string { return "SyncDataRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e SyncDataRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSyncDataRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SyncDataRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SyncDataRequestValidationError{}
-
-// Validate checks the field values on SyncDataResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *SyncDataResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on SyncDataResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// SyncDataResponseMultiError, or nil if none found.
-func (m *SyncDataResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *SyncDataResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for AffectedRows
-
-	if len(errors) > 0 {
-		return SyncDataResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// SyncDataResponseMultiError is an error wrapping multiple validation errors
-// returned by SyncDataResponse.ValidateAll() if the designated constraints
-// aren't met.
-type SyncDataResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m SyncDataResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m SyncDataResponseMultiError) AllErrors() []error { return m }
-
-// SyncDataResponseValidationError is the validation error returned by
-// SyncDataResponse.Validate if the designated constraints aren't met.
-type SyncDataResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e SyncDataResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e SyncDataResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e SyncDataResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e SyncDataResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e SyncDataResponseValidationError) ErrorName() string { return "SyncDataResponseValidationError" }
-
-// Error satisfies the builtin error interface
-func (e SyncDataResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sSyncDataResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = SyncDataResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = SyncDataResponseValidationError{}
-
 // Validate checks the field values on AddActivityRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -816,44 +375,255 @@ func (m *AddActivityRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetActivity() == nil {
-		err := AddActivityRequestValidationError{
-			field:  "Activity",
-			reason: "value is required",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetActivity()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, AddActivityRequestValidationError{
-					field:  "Activity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, AddActivityRequestValidationError{
-					field:  "Activity",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetActivity()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return AddActivityRequestValidationError{
+	switch v := m.Activity.(type) {
+	case *AddActivityRequest_UserOauth2:
+		if v == nil {
+			err := AddActivityRequestValidationError{
 				field:  "Activity",
-				reason: "embedded message failed validation",
-				cause:  err,
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUserOauth2()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserOauth2",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserOauth2",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserOauth2()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "UserOauth2",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
 		}
+
+	case *AddActivityRequest_UserActivity:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUserActivity()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserActivity",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserActivity",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserActivity()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "UserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AddActivityRequest_UserProps:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUserProps()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserProps()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "UserProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AddActivityRequest_JobsUserActivity:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobsUserActivity()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsUserActivity",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsUserActivity",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobsUserActivity()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "JobsUserActivity",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AddActivityRequest_JobsUserProps:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobsUserProps()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsUserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsUserProps",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobsUserProps()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "JobsUserProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *AddActivityRequest_JobsTimeclock:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobsTimeclock()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsTimeclock",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "JobsTimeclock",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobsTimeclock()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "JobsTimeclock",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -1039,3 +809,576 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AddActivityResponseValidationError{}
+
+// Validate checks the field values on SendDataRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SendDataRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendDataRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendDataRequestMultiError, or nil if none found.
+func (m *SendDataRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendDataRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.Data.(type) {
+	case *SendDataRequest_Jobs:
+		if v == nil {
+			err := SendDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetJobs()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Jobs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Jobs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobs()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SendDataRequestValidationError{
+					field:  "Jobs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *SendDataRequest_Licenses:
+		if v == nil {
+			err := SendDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetLicenses()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Licenses",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Licenses",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLicenses()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SendDataRequestValidationError{
+					field:  "Licenses",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *SendDataRequest_Users:
+		if v == nil {
+			err := SendDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUsers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SendDataRequestValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *SendDataRequest_Vehicles:
+		if v == nil {
+			err := SendDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetVehicles()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SendDataRequestValidationError{
+					field:  "Vehicles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return SendDataRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendDataRequestMultiError is an error wrapping multiple validation errors
+// returned by SendDataRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SendDataRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendDataRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendDataRequestMultiError) AllErrors() []error { return m }
+
+// SendDataRequestValidationError is the validation error returned by
+// SendDataRequest.Validate if the designated constraints aren't met.
+type SendDataRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendDataRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendDataRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendDataRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendDataRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendDataRequestValidationError) ErrorName() string { return "SendDataRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SendDataRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendDataRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendDataRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendDataRequestValidationError{}
+
+// Validate checks the field values on SendDataResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SendDataResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SendDataResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SendDataResponseMultiError, or nil if none found.
+func (m *SendDataResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SendDataResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for AffectedRows
+
+	if len(errors) > 0 {
+		return SendDataResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SendDataResponseMultiError is an error wrapping multiple validation errors
+// returned by SendDataResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SendDataResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SendDataResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SendDataResponseMultiError) AllErrors() []error { return m }
+
+// SendDataResponseValidationError is the validation error returned by
+// SendDataResponse.Validate if the designated constraints aren't met.
+type SendDataResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SendDataResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SendDataResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SendDataResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SendDataResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SendDataResponseValidationError) ErrorName() string { return "SendDataResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SendDataResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSendDataResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SendDataResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SendDataResponseValidationError{}
+
+// Validate checks the field values on StreamRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StreamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StreamRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StreamRequestMultiError, or
+// nil if none found.
+func (m *StreamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StreamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return StreamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// StreamRequestMultiError is an error wrapping multiple validation errors
+// returned by StreamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type StreamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StreamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StreamRequestMultiError) AllErrors() []error { return m }
+
+// StreamRequestValidationError is the validation error returned by
+// StreamRequest.Validate if the designated constraints aren't met.
+type StreamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StreamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StreamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StreamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StreamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StreamRequestValidationError) ErrorName() string { return "StreamRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StreamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStreamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StreamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StreamRequestValidationError{}
+
+// Validate checks the field values on StreamResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StreamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on StreamResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StreamResponseMultiError,
+// or nil if none found.
+func (m *StreamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *StreamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UserId
+
+	if len(errors) > 0 {
+		return StreamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// StreamResponseMultiError is an error wrapping multiple validation errors
+// returned by StreamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type StreamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m StreamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m StreamResponseMultiError) AllErrors() []error { return m }
+
+// StreamResponseValidationError is the validation error returned by
+// StreamResponse.Validate if the designated constraints aren't met.
+type StreamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e StreamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e StreamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e StreamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e StreamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e StreamResponseValidationError) ErrorName() string { return "StreamResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e StreamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sStreamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = StreamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = StreamResponseValidationError{}

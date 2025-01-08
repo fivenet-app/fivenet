@@ -2,27 +2,12 @@ syntax = "proto3";
 
 package resources.sync;
 
-import "resources/jobs/colleagues.proto";
-import "resources/jobs/timeclock.proto";
-import "resources/users/activity.proto";
-import "resources/users/users.proto";
-
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;sync";
 
-message AddActivity {
-  oneof activity {
-    UserActivity user_activity = 1;
-    JobsUserActivity jobs_user_activity = 2;
-    resources.jobs.TimeclockEntry jobs_timeclock = 3;
-  }
-}
-
-message UserActivity {
-  resources.users.UserActivity user_activity = 1;
-  optional resources.users.UserProps user_props = 2;
-}
-
-message JobsUserActivity {
-  resources.jobs.JobsUserActivity jobs_user_activity = 1;
-  optional resources.jobs.JobsUserProps jobs_user_props = 2;
+// Connect an identifier/license to the provider with the specified external id
+// (e.g., auto discord social connect on server join)
+message UserOAuth2Conn {
+  string provider_name = 1;
+  string identifier = 2;
+  string external_id = 3;
 }

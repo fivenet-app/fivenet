@@ -18,8 +18,8 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
@@ -27,8 +27,8 @@ import (
 )
 
 var (
-	tVehicles = table.OwnedVehicles.AS("vehicle")
-	tUsers    = table.Users.AS("usershort")
+	tVehicles = tables.OwnedVehicles.AS("vehicle")
+	tUsers    = tables.Users.AS("usershort")
 )
 
 type Server struct {

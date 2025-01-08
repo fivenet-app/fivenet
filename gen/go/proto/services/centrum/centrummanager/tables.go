@@ -1,12 +1,15 @@
 package centrummanager
 
-import "github.com/fivenet-app/fivenet/query/fivenet/table"
+import (
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
+)
 
 var (
 	tUnits           = table.FivenetCentrumUnits.AS("unit")
 	tUnitStatus      = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUnitUser        = table.FivenetCentrumUnitsUsers.AS("unitassignment")
-	tUsers           = table.Users.AS("colleague")
+	tUsers           = tables.Users.AS("colleague")
 	tUserProps       = table.FivenetUserProps
 	tJobsUserProps   = table.FivenetJobsUserProps.AS("jobs_user_props")
 	tCentrumSettings = table.FivenetCentrumSettings

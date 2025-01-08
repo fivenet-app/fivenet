@@ -11,14 +11,15 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
 var (
-	tUser       = table.Users.AS("user")
-	tCreator    = table.Users.AS("creator")
+	tUser       = tables.Users.AS("user")
+	tCreator    = tables.Users.AS("creator")
 	tQJobAccess = table.FivenetQualificationsJobAccess
 	tQReqs      = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
 )

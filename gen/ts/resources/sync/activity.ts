@@ -10,104 +10,57 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobsUserProps } from "../jobs/colleagues";
-import { JobsUserActivity as JobsUserActivity$ } from "../jobs/colleagues";
-import { UserProps } from "../users/users";
-import { UserActivity as UserActivity$ } from "../users/activity";
-import { TimeclockEntry } from "../jobs/timeclock";
 /**
- * @generated from protobuf message resources.sync.AddActivity
+ * Connect an identifier/license to the provider with the specified external id
+ * (e.g., auto discord social connect on server join)
+ *
+ * @generated from protobuf message resources.sync.UserOAuth2Conn
  */
-export interface AddActivity {
+export interface UserOAuth2Conn {
     /**
-     * @generated from protobuf oneof: activity
+     * @generated from protobuf field: string provider_name = 1;
      */
-    activity: {
-        oneofKind: "userActivity";
-        /**
-         * @generated from protobuf field: resources.sync.UserActivity user_activity = 1;
-         */
-        userActivity: UserActivity;
-    } | {
-        oneofKind: "jobsUserActivity";
-        /**
-         * @generated from protobuf field: resources.sync.JobsUserActivity jobs_user_activity = 2;
-         */
-        jobsUserActivity: JobsUserActivity;
-    } | {
-        oneofKind: "jobsTimeclock";
-        /**
-         * @generated from protobuf field: resources.jobs.TimeclockEntry jobs_timeclock = 3;
-         */
-        jobsTimeclock: TimeclockEntry;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message resources.sync.UserActivity
- */
-export interface UserActivity {
+    providerName: string;
     /**
-     * @generated from protobuf field: resources.users.UserActivity user_activity = 1;
+     * @generated from protobuf field: string identifier = 2;
      */
-    userActivity?: UserActivity$;
+    identifier: string;
     /**
-     * @generated from protobuf field: optional resources.users.UserProps user_props = 2;
+     * @generated from protobuf field: string external_id = 3;
      */
-    userProps?: UserProps;
-}
-/**
- * @generated from protobuf message resources.sync.JobsUserActivity
- */
-export interface JobsUserActivity {
-    /**
-     * @generated from protobuf field: resources.jobs.JobsUserActivity jobs_user_activity = 1;
-     */
-    jobsUserActivity?: JobsUserActivity$;
-    /**
-     * @generated from protobuf field: optional resources.jobs.JobsUserProps jobs_user_props = 2;
-     */
-    jobsUserProps?: JobsUserProps;
+    externalId: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class AddActivity$Type extends MessageType<AddActivity> {
+class UserOAuth2Conn$Type extends MessageType<UserOAuth2Conn> {
     constructor() {
-        super("resources.sync.AddActivity", [
-            { no: 1, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
-            { no: 2, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
-            { no: 3, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry }
+        super("resources.sync.UserOAuth2Conn", [
+            { no: 1, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
-    create(value?: PartialMessage<AddActivity>): AddActivity {
+    create(value?: PartialMessage<UserOAuth2Conn>): UserOAuth2Conn {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.activity = { oneofKind: undefined };
+        message.providerName = "";
+        message.identifier = "";
+        message.externalId = "";
         if (value !== undefined)
-            reflectionMergePartial<AddActivity>(this, message, value);
+            reflectionMergePartial<UserOAuth2Conn>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivity): AddActivity {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserOAuth2Conn): UserOAuth2Conn {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.sync.UserActivity user_activity */ 1:
-                    message.activity = {
-                        oneofKind: "userActivity",
-                        userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
-                    };
+                case /* string provider_name */ 1:
+                    message.providerName = reader.string();
                     break;
-                case /* resources.sync.JobsUserActivity jobs_user_activity */ 2:
-                    message.activity = {
-                        oneofKind: "jobsUserActivity",
-                        jobsUserActivity: JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserActivity)
-                    };
+                case /* string identifier */ 2:
+                    message.identifier = reader.string();
                     break;
-                case /* resources.jobs.TimeclockEntry jobs_timeclock */ 3:
-                    message.activity = {
-                        oneofKind: "jobsTimeclock",
-                        jobsTimeclock: TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
-                    };
+                case /* string external_id */ 3:
+                    message.externalId = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -120,16 +73,16 @@ class AddActivity$Type extends MessageType<AddActivity> {
         }
         return message;
     }
-    internalBinaryWrite(message: AddActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.sync.UserActivity user_activity = 1; */
-        if (message.activity.oneofKind === "userActivity")
-            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.JobsUserActivity jobs_user_activity = 2; */
-        if (message.activity.oneofKind === "jobsUserActivity")
-            JobsUserActivity.internalBinaryWrite(message.activity.jobsUserActivity, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockEntry jobs_timeclock = 3; */
-        if (message.activity.oneofKind === "jobsTimeclock")
-            TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+    internalBinaryWrite(message: UserOAuth2Conn, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string provider_name = 1; */
+        if (message.providerName !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.providerName);
+        /* string identifier = 2; */
+        if (message.identifier !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.identifier);
+        /* string external_id = 3; */
+        if (message.externalId !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.externalId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -137,112 +90,6 @@ class AddActivity$Type extends MessageType<AddActivity> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.sync.AddActivity
+ * @generated MessageType for protobuf message resources.sync.UserOAuth2Conn
  */
-export const AddActivity = new AddActivity$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UserActivity$Type extends MessageType<UserActivity> {
-    constructor() {
-        super("resources.sync.UserActivity", [
-            { no: 1, name: "user_activity", kind: "message", T: () => UserActivity$ },
-            { no: 2, name: "user_props", kind: "message", T: () => UserProps }
-        ]);
-    }
-    create(value?: PartialMessage<UserActivity>): UserActivity {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<UserActivity>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserActivity): UserActivity {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.users.UserActivity user_activity */ 1:
-                    message.userActivity = UserActivity$.internalBinaryRead(reader, reader.uint32(), options, message.userActivity);
-                    break;
-                case /* optional resources.users.UserProps user_props */ 2:
-                    message.userProps = UserProps.internalBinaryRead(reader, reader.uint32(), options, message.userProps);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: UserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.UserActivity user_activity = 1; */
-        if (message.userActivity)
-            UserActivity$.internalBinaryWrite(message.userActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.UserProps user_props = 2; */
-        if (message.userProps)
-            UserProps.internalBinaryWrite(message.userProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.sync.UserActivity
- */
-export const UserActivity = new UserActivity$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
-    constructor() {
-        super("resources.sync.JobsUserActivity", [
-            { no: 1, name: "jobs_user_activity", kind: "message", T: () => JobsUserActivity$ },
-            { no: 2, name: "jobs_user_props", kind: "message", T: () => JobsUserProps }
-        ]);
-    }
-    create(value?: PartialMessage<JobsUserActivity>): JobsUserActivity {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<JobsUserActivity>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobsUserActivity): JobsUserActivity {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.jobs.JobsUserActivity jobs_user_activity */ 1:
-                    message.jobsUserActivity = JobsUserActivity$.internalBinaryRead(reader, reader.uint32(), options, message.jobsUserActivity);
-                    break;
-                case /* optional resources.jobs.JobsUserProps jobs_user_props */ 2:
-                    message.jobsUserProps = JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, message.jobsUserProps);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: JobsUserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.jobs.JobsUserActivity jobs_user_activity = 1; */
-        if (message.jobsUserActivity)
-            JobsUserActivity$.internalBinaryWrite(message.jobsUserActivity, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.jobs.JobsUserProps jobs_user_props = 2; */
-        if (message.jobsUserProps)
-            JobsUserProps.internalBinaryWrite(message.jobsUserProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.sync.JobsUserActivity
- */
-export const JobsUserActivity = new JobsUserActivity$Type();
+export const UserOAuth2Conn = new UserOAuth2Conn$Type();

@@ -3,89 +3,9 @@
 
 package sync
 
-func (m *AddActivity) Sanitize() error {
+func (m *UserOAuth2Conn) Sanitize() error {
 	if m == nil {
 		return nil
-	}
-
-	// Field: JobsTimeclock
-	switch v := m.Activity.(type) {
-
-	case *AddActivity_JobsTimeclock:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: JobsUserActivity
-	case *AddActivity_JobsUserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UserActivity
-	case *AddActivity_UserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *JobsUserActivity) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: JobsUserActivity
-	if m.JobsUserActivity != nil {
-		if v, ok := interface{}(m.GetJobsUserActivity()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: JobsUserProps
-	if m.JobsUserProps != nil {
-		if v, ok := interface{}(m.GetJobsUserProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *UserActivity) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UserActivity
-	if m.UserActivity != nil {
-		if v, ok := interface{}(m.GetUserActivity()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: UserProps
-	if m.UserProps != nil {
-		if v, ok := interface{}(m.GetUserProps()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

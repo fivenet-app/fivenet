@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -37,10 +38,10 @@ import (
 
 var (
 	tAccounts  = table.FivenetAccounts
-	tUsers     = table.Users.AS("user")
+	tUsers     = tables.Users.AS("user")
 	tUserProps = table.FivenetUserProps.AS("user_props")
-	tJobs      = table.Jobs
-	tJobGrades = table.JobGrades
+	tJobs      = tables.Jobs
+	tJobGrades = tables.JobGrades
 	tJobProps  = table.FivenetJobProps.AS("jobprops")
 )
 

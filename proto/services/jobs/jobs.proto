@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.jobs;
 
 import "resources/common/database/database.proto";
+import "resources/jobs/activity.proto";
 import "resources/jobs/colleagues.proto";
 import "resources/jobs/labels.proto";
 import "validate/validate.proto";

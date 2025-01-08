@@ -181,15 +181,7 @@
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
-    - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
-    - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
-    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
-    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
-    - [JobsUserActivity](#resources-jobs-JobsUserActivity)
-    - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
     - [JobsUserProps](#resources-jobs-JobsUserProps)
-  
-    - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
   
 - [resources/jobs/labels.proto](#resources_jobs_labels-proto)
     - [Label](#resources-jobs-Label)
@@ -203,6 +195,16 @@
   
     - [TimeclockMode](#resources-jobs-TimeclockMode)
     - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
+  
+- [resources/jobs/activity.proto](#resources_jobs_activity-proto)
+    - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
+    - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
+    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
+    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
+    - [JobsUserActivity](#resources-jobs-JobsUserActivity)
+    - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
+  
+    - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -423,9 +425,7 @@
     - [PageLayoutType](#resources-internet-PageLayoutType)
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
-    - [AddActivity](#resources-sync-AddActivity)
-    - [JobsUserActivity](#resources-sync-JobsUserActivity)
-    - [UserActivity](#resources-sync-UserActivity)
+    - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
   
 - [resources/sync/data.proto](#resources_sync_data-proto)
     - [DataJobs](#resources-sync-DataJobs)
@@ -909,8 +909,10 @@
     - [AddActivityResponse](#services-sync-AddActivityResponse)
     - [GetStatusRequest](#services-sync-GetStatusRequest)
     - [GetStatusResponse](#services-sync-GetStatusResponse)
-    - [SyncDataRequest](#services-sync-SyncDataRequest)
-    - [SyncDataResponse](#services-sync-SyncDataResponse)
+    - [SendDataRequest](#services-sync-SendDataRequest)
+    - [SendDataResponse](#services-sync-SendDataResponse)
+    - [StreamRequest](#services-sync-StreamRequest)
+    - [StreamResponse](#services-sync-StreamResponse)
   
     - [SyncService](#services-sync-SyncService)
   
@@ -3452,112 +3454,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-jobs-ColleagueAbsenceDate"></a>
-
-### ColleagueAbsenceDate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| absence_begin | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueGradeChange"></a>
-
-### ColleagueGradeChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| grade | [int32](#int32) |  |  |
-| grade_label | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueLabelsChange"></a>
-
-### ColleagueLabelsChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| added | [Label](#resources-jobs-Label) | repeated |  |
-| removed | [Label](#resources-jobs-Label) | repeated |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueNameChange"></a>
-
-### ColleagueNameChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| prefix | [string](#string) | optional |  |
-| suffix | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserActivity"></a>
-
-### JobsUserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| source_user_id | [int32](#int32) |  |  |
-| source_user | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"source_user" |
-| target_user_id | [int32](#int32) |  |  |
-| target_user | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
-| activity_type | [JobsUserActivityType](#resources-jobs-JobsUserActivityType) |  |  |
-| reason | [string](#string) |  | @sanitize |
-| data | [JobsUserActivityData](#resources-jobs-JobsUserActivityData) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserActivityData"></a>
-
-### JobsUserActivityData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| absence_date | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
-| grade_change | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
-| labels_change | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
-| name_change | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
-
-
-
-
-
-
 <a name="resources-jobs-JobsUserProps"></a>
 
 ### JobsUserProps
@@ -3580,25 +3476,6 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
-
-
-<a name="resources-jobs-JobsUserActivityType"></a>
-
-### JobsUserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
-| JOBS_USER_ACTIVITY_TYPE_HIRED | 1 |  |
-| JOBS_USER_ACTIVITY_TYPE_FIRED | 2 |  |
-| JOBS_USER_ACTIVITY_TYPE_PROMOTED | 3 |  |
-| JOBS_USER_ACTIVITY_TYPE_DEMOTED | 4 |  |
-| JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
-| JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
-| JOBS_USER_ACTIVITY_TYPE_LABELS | 7 |  |
-| JOBS_USER_ACTIVITY_TYPE_NAME | 8 |  |
-
 
  <!-- end enums -->
 
@@ -3764,6 +3641,147 @@ Dummy - DO NOT USE!
 | TIMECLOCK_USER_MODE_UNSPECIFIED | 0 |  |
 | TIMECLOCK_USER_MODE_SELF | 1 |  |
 | TIMECLOCK_USER_MODE_ALL | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/activity.proto
+
+
+
+<a name="resources-jobs-ColleagueAbsenceDate"></a>
+
+### ColleagueAbsenceDate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| absence_begin | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueGradeChange"></a>
+
+### ColleagueGradeChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| grade | [int32](#int32) |  |  |
+| grade_label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueLabelsChange"></a>
+
+### ColleagueLabelsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [Label](#resources-jobs-Label) | repeated |  |
+| removed | [Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueNameChange"></a>
+
+### ColleagueNameChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| prefix | [string](#string) | optional |  |
+| suffix | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobsUserActivity"></a>
+
+### JobsUserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| source_user_id | [int32](#int32) |  |  |
+| source_user | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"source_user" |
+| target_user_id | [int32](#int32) |  |  |
+| target_user | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
+| activity_type | [JobsUserActivityType](#resources-jobs-JobsUserActivityType) |  |  |
+| reason | [string](#string) |  | @sanitize |
+| data | [JobsUserActivityData](#resources-jobs-JobsUserActivityData) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobsUserActivityData"></a>
+
+### JobsUserActivityData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| absence_date | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
+| grade_change | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
+| labels_change | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
+| name_change | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-jobs-JobsUserActivityType"></a>
+
+### JobsUserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
+| JOBS_USER_ACTIVITY_TYPE_HIRED | 1 |  |
+| JOBS_USER_ACTIVITY_TYPE_FIRED | 2 |  |
+| JOBS_USER_ACTIVITY_TYPE_PROMOTED | 3 |  |
+| JOBS_USER_ACTIVITY_TYPE_DEMOTED | 4 |  |
+| JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
+| JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
+| JOBS_USER_ACTIVITY_TYPE_LABELS | 7 |  |
+| JOBS_USER_ACTIVITY_TYPE_NAME | 8 |  |
 
 
  <!-- end enums -->
@@ -6850,49 +6868,17 @@ TODO
 
 
 
-<a name="resources-sync-AddActivity"></a>
+<a name="resources-sync-UserOAuth2Conn"></a>
 
-### AddActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_activity | [UserActivity](#resources-sync-UserActivity) |  |  |
-| jobs_user_activity | [JobsUserActivity](#resources-sync-JobsUserActivity) |  |  |
-| jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-JobsUserActivity"></a>
-
-### JobsUserActivity
-
+### UserOAuth2Conn
+Connect an identifier/license to the provider with the specified external id (e.g., auto discord social connect on server join)
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  |  |
-| jobs_user_props | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) | optional |  |
-
-
-
-
-
-
-<a name="resources-sync-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  |  |
-| user_props | [resources.users.UserProps](#resources-users-UserProps) | optional |  |
+| provider_name | [string](#string) |  |  |
+| identifier | [string](#string) |  |  |
+| external_id | [string](#string) |  |  |
 
 
 
@@ -13480,7 +13466,12 @@ TODO
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| activity | [resources.sync.AddActivity](#resources-sync-AddActivity) |  |  |
+| user_oauth2 | [resources.sync.UserOAuth2Conn](#resources-sync-UserOAuth2Conn) |  |  |
+| user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  | User activity |
+| user_props | [resources.users.UserProps](#resources-users-UserProps) |  | Setting props will cause activity to be created automtically |
+| jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  | Jobs user activity |
+| jobs_user_props | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  | Setting props will cause activity to be created automtically |
+| jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  | Timeclock |
 
 
 
@@ -13523,7 +13514,6 @@ TODO
 | jobs | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
 | licenses | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
 | users | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
-| user_licenses | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
 | vehicles | [resources.sync.DataStatus](#resources-sync-DataStatus) |  |  |
 
 
@@ -13531,9 +13521,9 @@ TODO
 
 
 
-<a name="services-sync-SyncDataRequest"></a>
+<a name="services-sync-SendDataRequest"></a>
 
-### SyncDataRequest
+### SendDataRequest
 
 
 
@@ -13542,7 +13532,6 @@ TODO
 | jobs | [resources.sync.DataJobs](#resources-sync-DataJobs) |  |  |
 | licenses | [resources.sync.DataLicenses](#resources-sync-DataLicenses) |  |  |
 | users | [resources.sync.DataUsers](#resources-sync-DataUsers) |  |  |
-| user_licenses | [resources.sync.DataUserLicenses](#resources-sync-DataUserLicenses) |  |  |
 | vehicles | [resources.sync.DataVehicles](#resources-sync-DataVehicles) |  |  |
 
 
@@ -13550,15 +13539,40 @@ TODO
 
 
 
-<a name="services-sync-SyncDataResponse"></a>
+<a name="services-sync-SendDataResponse"></a>
 
-### SyncDataResponse
+### SendDataResponse
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | affected_rows | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="services-sync-StreamRequest"></a>
+
+### StreamRequest
+
+
+
+
+
+
+
+<a name="services-sync-StreamResponse"></a>
+
+### StreamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
 
 
 
@@ -13578,9 +13592,10 @@ TODO
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) |  |
-| SyncData | [SyncDataRequest](#services-sync-SyncDataRequest) | [SyncDataResponse](#services-sync-SyncDataResponse) |  |
-| AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) |  |
+| GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) | Get basic "sync state" from server side (currently simply the count of records on the server side). |
+| AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) | For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
+| SendData | [SendDataRequest](#services-sync-SendDataRequest) | [SendDataResponse](#services-sync-SendDataResponse) | DBSync's method of sending (mass) data to the FiveNet server for storing. |
+| Stream | [StreamRequest](#services-sync-StreamRequest) | [StreamResponse](#services-sync-StreamResponse) stream | Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 
  <!-- end services -->
 

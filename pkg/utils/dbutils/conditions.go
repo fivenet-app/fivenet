@@ -1,7 +1,7 @@
 package dbutils
 
 import (
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
@@ -16,7 +16,7 @@ type UserConditions struct {
 func (c *UserConditions) GetFilter(alias string) jet.BoolExpression {
 	condition := jet.Bool(true)
 
-	tUser := table.Users.AS(alias)
+	tUser := tables.Users.AS(alias)
 	if c.FilterEmptyName {
 		condition = condition.AND(jet.AND(
 			tUser.Firstname.NOT_EQ(jet.String("")),

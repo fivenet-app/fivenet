@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -873,7 +874,7 @@ func (s *Server) addJobsUserActivity(ctx context.Context, tx qrm.DB, activity *j
 	return nil
 }
 
-func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserActivityTable, usersTable *table.UsersTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {
+func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserActivityTable, usersTable *tables.FivenetUsersTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {
 	condition := jet.Bool(true)
 	if userInfo.SuperUser {
 		return condition

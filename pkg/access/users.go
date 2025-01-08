@@ -5,13 +5,13 @@ import (
 	"errors"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-var tUsers = table.Users.AS("usershort")
+var tUsers = tables.Users.AS("usershort")
 
 type UsersAccessProtoMessage[T any, V protoutils.ProtoEnum] interface {
 	protoutils.ProtoMessage[T]

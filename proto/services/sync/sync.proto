@@ -2,9 +2,13 @@ syntax = "proto3";
 
 package services.sync;
 
+import "resources/jobs/activity.proto";
+import "resources/jobs/colleagues.proto";
+import "resources/jobs/timeclock.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
-import "validate/validate.proto";
+import "resources/users/activity.proto";
+import "resources/users/users.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/sync;sync";
 
@@ -15,36 +19,60 @@ message GetStatusResponse {
   resources.sync.DataStatus licenses = 2;
 
   resources.sync.DataStatus users = 3;
-  resources.sync.DataStatus user_licenses = 4;
-  resources.sync.DataStatus vehicles = 5;
-}
-
-message SyncDataRequest {
-  oneof data {
-    resources.sync.DataJobs jobs = 1;
-    resources.sync.DataLicenses licenses = 2;
-
-    resources.sync.DataUsers users = 3;
-    resources.sync.DataUserLicenses user_licenses = 4;
-    resources.sync.DataVehicles vehicles = 5;
-  }
-}
-
-message SyncDataResponse {
-  int64 affected_rows = 1;
+  resources.sync.DataStatus vehicles = 4;
 }
 
 message AddActivityRequest {
-  resources.sync.AddActivity activity = 1 [(validate.rules).message.required = true];
+  oneof activity {
+    resources.sync.UserOAuth2Conn user_oauth2 = 1;
+
+    // User activity
+    resources.users.UserActivity user_activity = 2;
+    // Setting props will cause activity to be created automtically
+    resources.users.UserProps user_props = 3;
+
+    // Jobs user activity
+    resources.jobs.JobsUserActivity jobs_user_activity = 4;
+    // Setting props will cause activity to be created automtically
+    resources.jobs.JobsUserProps jobs_user_props = 5;
+    // Timeclock
+    resources.jobs.TimeclockEntry jobs_timeclock = 6;
+  }
 }
 
 message AddActivityResponse {
   uint64 id = 1;
 }
 
+message SendDataRequest {
+  oneof data {
+    resources.sync.DataJobs jobs = 1;
+    resources.sync.DataLicenses licenses = 2;
+
+    resources.sync.DataUsers users = 3;
+    resources.sync.DataVehicles vehicles = 4;
+  }
+}
+
+message SendDataResponse {
+  int64 affected_rows = 1;
+}
+
+message StreamRequest {}
+
+message StreamResponse {
+  int32 user_id = 1;
+}
+
 service SyncService {
+  // Get basic "sync state" from server side (currently simply the count of records on the server side).
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);
 
-  rpc SyncData(SyncDataRequest) returns (SyncDataResponse);
+  // For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
   rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
+
+  // DBSync's method of sending (mass) data to the FiveNet server for storing.
+  rpc SendData(SendDataRequest) returns (SendDataResponse);
+  // Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

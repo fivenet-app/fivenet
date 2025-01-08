@@ -8,13 +8,56 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Activity
-	if m.Activity != nil {
-		if v, ok := interface{}(m.GetActivity()).(interface{ Sanitize() error }); ok {
+	// Field: JobsTimeclock
+	switch v := m.Activity.(type) {
+
+	case *AddActivityRequest_JobsTimeclock:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
+
+		// Field: JobsUserActivity
+	case *AddActivityRequest_JobsUserActivity:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: JobsUserProps
+	case *AddActivityRequest_JobsUserProps:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UserActivity
+	case *AddActivityRequest_UserActivity:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UserOauth2
+	case *AddActivityRequest_UserOauth2:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UserProps
+	case *AddActivityRequest_UserProps:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -59,15 +102,6 @@ func (m *GetStatusResponse) Sanitize() error {
 		}
 	}
 
-	// Field: UserLicenses
-	if m.UserLicenses != nil {
-		if v, ok := interface{}(m.GetUserLicenses()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Users
 	if m.Users != nil {
 		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
@@ -89,7 +123,7 @@ func (m *GetStatusResponse) Sanitize() error {
 	return nil
 }
 
-func (m *SyncDataRequest) Sanitize() error {
+func (m *SendDataRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -97,7 +131,7 @@ func (m *SyncDataRequest) Sanitize() error {
 	// Field: Jobs
 	switch v := m.Data.(type) {
 
-	case *SyncDataRequest_Jobs:
+	case *SendDataRequest_Jobs:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -105,15 +139,7 @@ func (m *SyncDataRequest) Sanitize() error {
 		}
 
 		// Field: Licenses
-	case *SyncDataRequest_Licenses:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-		// Field: UserLicenses
-	case *SyncDataRequest_UserLicenses:
+	case *SendDataRequest_Licenses:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -121,7 +147,7 @@ func (m *SyncDataRequest) Sanitize() error {
 		}
 
 		// Field: Users
-	case *SyncDataRequest_Users:
+	case *SendDataRequest_Users:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -129,7 +155,7 @@ func (m *SyncDataRequest) Sanitize() error {
 		}
 
 		// Field: Vehicles
-	case *SyncDataRequest_Vehicles:
+	case *SendDataRequest_Vehicles:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
@@ -141,7 +167,23 @@ func (m *SyncDataRequest) Sanitize() error {
 	return nil
 }
 
-func (m *SyncDataResponse) Sanitize() error {
+func (m *SendDataResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *StreamRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *StreamResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}

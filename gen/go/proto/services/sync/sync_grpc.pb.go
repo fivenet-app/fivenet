@@ -20,17 +20,23 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	SyncService_GetStatus_FullMethodName   = "/services.sync.SyncService/GetStatus"
-	SyncService_SyncData_FullMethodName    = "/services.sync.SyncService/SyncData"
 	SyncService_AddActivity_FullMethodName = "/services.sync.SyncService/AddActivity"
+	SyncService_SendData_FullMethodName    = "/services.sync.SyncService/SendData"
+	SyncService_Stream_FullMethodName      = "/services.sync.SyncService/Stream"
 )
 
 // SyncServiceClient is the client API for SyncService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SyncServiceClient interface {
+	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
-	SyncData(ctx context.Context, in *SyncDataRequest, opts ...grpc.CallOption) (*SyncDataResponse, error)
+	// For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
+	// DBSync's method of sending (mass) data to the FiveNet server for storing.
+	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
 }
 
 type syncServiceClient struct {
@@ -51,16 +57,6 @@ func (c *syncServiceClient) GetStatus(ctx context.Context, in *GetStatusRequest,
 	return out, nil
 }
 
-func (c *syncServiceClient) SyncData(ctx context.Context, in *SyncDataRequest, opts ...grpc.CallOption) (*SyncDataResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SyncDataResponse)
-	err := c.cc.Invoke(ctx, SyncService_SyncData_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddActivityResponse)
@@ -71,13 +67,47 @@ func (c *syncServiceClient) AddActivity(ctx context.Context, in *AddActivityRequ
 	return out, nil
 }
 
+func (c *syncServiceClient) SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SendDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_SendData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &SyncService_ServiceDesc.Streams[0], SyncService_Stream_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[StreamRequest, StreamResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SyncService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
+
 // SyncServiceServer is the server API for SyncService service.
 // All implementations must embed UnimplementedSyncServiceServer
 // for forward compatibility.
 type SyncServiceServer interface {
+	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)
-	SyncData(context.Context, *SyncDataRequest) (*SyncDataResponse, error)
+	// For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
 	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
+	// DBSync's method of sending (mass) data to the FiveNet server for storing.
+	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
+	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
 	mustEmbedUnimplementedSyncServiceServer()
 }
 
@@ -91,11 +121,14 @@ type UnimplementedSyncServiceServer struct{}
 func (UnimplementedSyncServiceServer) GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStatus not implemented")
 }
-func (UnimplementedSyncServiceServer) SyncData(context.Context, *SyncDataRequest) (*SyncDataResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SyncData not implemented")
-}
 func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddActivity not implemented")
+}
+func (UnimplementedSyncServiceServer) SendData(context.Context, *SendDataRequest) (*SendDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendData not implemented")
+}
+func (UnimplementedSyncServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedSyncServiceServer) mustEmbedUnimplementedSyncServiceServer() {}
 func (UnimplementedSyncServiceServer) testEmbeddedByValue()                     {}
@@ -136,24 +169,6 @@ func _SyncService_GetStatus_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SyncService_SyncData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SyncDataRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SyncServiceServer).SyncData(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: SyncService_SyncData_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SyncServiceServer).SyncData(ctx, req.(*SyncDataRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddActivityRequest)
 	if err := dec(in); err != nil {
@@ -172,6 +187,35 @@ func _SyncService_AddActivity_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncService_SendData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SendDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).SendData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_SendData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).SendData(ctx, req.(*SendDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SyncService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(StreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(SyncServiceServer).Stream(m, &grpc.GenericServerStream[StreamRequest, StreamResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type SyncService_StreamServer = grpc.ServerStreamingServer[StreamResponse]
+
 // SyncService_ServiceDesc is the grpc.ServiceDesc for SyncService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -184,14 +228,20 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SyncService_GetStatus_Handler,
 		},
 		{
-			MethodName: "SyncData",
-			Handler:    _SyncService_SyncData_Handler,
-		},
-		{
 			MethodName: "AddActivity",
 			Handler:    _SyncService_AddActivity_Handler,
 		},
+		{
+			MethodName: "SendData",
+			Handler:    _SyncService_SendData_Handler,
+		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Stream",
+			Handler:       _SyncService_Stream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "services/sync/sync.proto",
 }

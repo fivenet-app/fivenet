@@ -8,6 +8,7 @@ import (
 
 	"github.com/XSAM/otelsql"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
@@ -52,6 +53,11 @@ func SetupDB(p Params) (*sql.DB, error) {
 		semconv.DBSystemMySQL,
 	)); err != nil {
 		return nil, err
+	}
+
+	// Setup tables "helper" vars to work with ESX directly
+	if p.Config.Database.ESXCompat {
+		tables.EnableESXCompat()
 	}
 
 	db.SetMaxOpenConns(p.Config.Database.MaxOpenConns)

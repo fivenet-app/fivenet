@@ -26,6 +26,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,9 +40,9 @@ import (
 )
 
 var (
-	tUser         = table.Users.AS("user")
-	tUserLicenses = table.UserLicenses
-	tLicenses     = table.Licenses
+	tUser         = tables.Users.AS("user")
+	tUserLicenses = tables.UserLicenses
+	tLicenses     = tables.Licenses
 
 	tUserProps    = table.FivenetUserProps
 	tUserActivity = table.FivenetUserActivity

@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -25,7 +26,7 @@ import (
 
 var (
 	tUnitStatus    = table.FivenetCentrumUnitsStatus.AS("unitstatus")
-	tUsers         = table.Users.AS("colleague")
+	tUsers         = tables.Users.AS("colleague")
 	tUserProps     = table.FivenetUserProps
 	tUnits         = table.FivenetCentrumUnits.AS("unit")
 	tJobsUserProps = table.FivenetJobsUserProps.AS("jobs_user_props")

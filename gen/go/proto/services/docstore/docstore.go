@@ -22,6 +22,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -42,7 +43,7 @@ const (
 )
 
 var (
-	tUsers         = table.Users
+	tUsers         = tables.Users
 	tUserProps     = table.FivenetUserProps
 	tCreator       = tUsers.AS("creator")
 	tDocument      = table.FivenetDocuments.AS("document")

@@ -19,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -31,8 +32,8 @@ import (
 )
 
 var (
-	tJobs      = table.Jobs.AS("job")
-	tJobGrades = table.JobGrades.AS("jobgrade")
+	tJobs      = tables.Jobs.AS("job")
+	tJobGrades = tables.JobGrades.AS("jobgrade")
 	tDCategory = table.FivenetDocumentsCategories.AS("category")
 	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
 	tLaws      = table.FivenetLawbooksLaws.AS("law")

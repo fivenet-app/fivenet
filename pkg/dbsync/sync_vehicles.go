@@ -47,8 +47,8 @@ func (s *VehiclesSync) Sync(ctx context.Context) error {
 
 	// Sync vehicles to FiveNet server
 	if s.cli != nil {
-		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
-			Data: &pbsync.SyncDataRequest_Vehicles{
+		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Vehicles{
 				Vehicles: &sync.DataVehicles{
 					Vehicles: vehicles,
 				},

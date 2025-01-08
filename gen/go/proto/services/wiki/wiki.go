@@ -23,6 +23,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -50,7 +51,7 @@ var (
 	tPageShort   = table.FivenetWikiPages.AS("pageshort")
 	tPJobAccess  = table.FivenetWikiPageJobAccess.AS("job_access")
 	tPUserAccess = table.FivenetWikiPageUserAccess.AS("user_access")
-	tUsers       = table.Users
+	tUsers       = tables.Users
 	tCreator     = tUsers.AS("creator")
 	tJobProps    = table.FivenetJobProps
 )

@@ -9,6 +9,7 @@ import (
 	errorsrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -19,7 +20,7 @@ const AuditLogPageSize = 30
 
 var (
 	tAuditLog = table.FivenetAuditLog.AS("auditentry")
-	tUser     = table.Users.AS("usershort")
+	tUser     = tables.Users.AS("usershort")
 )
 
 func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {

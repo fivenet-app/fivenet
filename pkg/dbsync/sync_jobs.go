@@ -53,8 +53,8 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 
 	// Sync jobs to FiveNet server
 	if s.cli != nil {
-		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
-			Data: &pbsync.SyncDataRequest_Jobs{
+		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Jobs{
 				Jobs: &sync.DataJobs{
 					Jobs: jobs,
 				},

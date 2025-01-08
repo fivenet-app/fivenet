@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/pkg/perms/helpers"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
@@ -238,8 +238,8 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 }
 
 func (p *Perms) cleanupRoles(ctx context.Context) error {
-	tJobs := table.Jobs.AS("job")
-	tJobGrades := table.JobGrades.AS("jobgrade")
+	tJobs := tables.Jobs.AS("job")
+	tJobGrades := tables.JobGrades.AS("jobgrade")
 	stmt := tJobs.
 		SELECT(
 			tJobs.Name,

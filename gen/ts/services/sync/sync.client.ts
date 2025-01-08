@@ -4,10 +4,13 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { SyncService } from "./sync";
+import type { StreamResponse } from "./sync";
+import type { StreamRequest } from "./sync";
+import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { SendDataResponse } from "./sync";
+import type { SendDataRequest } from "./sync";
 import type { AddActivityResponse } from "./sync";
 import type { AddActivityRequest } from "./sync";
-import type { SyncDataResponse } from "./sync";
-import type { SyncDataRequest } from "./sync";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetStatusResponse } from "./sync";
 import type { GetStatusRequest } from "./sync";
@@ -18,17 +21,29 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ISyncServiceClient {
     /**
+     * Get basic "sync state" from server side (currently simply the count of records on the server side).
+     *
      * @generated from protobuf rpc: GetStatus(services.sync.GetStatusRequest) returns (services.sync.GetStatusResponse);
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse>;
     /**
-     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
-     */
-    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse>;
-    /**
+     * For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     *
      * @generated from protobuf rpc: AddActivity(services.sync.AddActivityRequest) returns (services.sync.AddActivityResponse);
      */
     addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse>;
+    /**
+     * DBSync's method of sending (mass) data to the FiveNet server for storing.
+     *
+     * @generated from protobuf rpc: SendData(services.sync.SendDataRequest) returns (services.sync.SendDataResponse);
+     */
+    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse>;
+    /**
+     * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+     *
+     * @generated from protobuf rpc: Stream(services.sync.StreamRequest) returns (stream services.sync.StreamResponse);
+     */
+    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
 }
 /**
  * @generated from protobuf service services.sync.SyncService
@@ -40,6 +55,8 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * Get basic "sync state" from server side (currently simply the count of records on the server side).
+     *
      * @generated from protobuf rpc: GetStatus(services.sync.GetStatusRequest) returns (services.sync.GetStatusResponse);
      */
     getStatus(input: GetStatusRequest, options?: RpcOptions): UnaryCall<GetStatusRequest, GetStatusResponse> {
@@ -47,17 +64,30 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<GetStatusRequest, GetStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @generated from protobuf rpc: SyncData(services.sync.SyncDataRequest) returns (services.sync.SyncDataResponse);
-     */
-    syncData(input: SyncDataRequest, options?: RpcOptions): UnaryCall<SyncDataRequest, SyncDataResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SyncDataRequest, SyncDataResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
+     * For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
+     *
      * @generated from protobuf rpc: AddActivity(services.sync.AddActivityRequest) returns (services.sync.AddActivityResponse);
      */
     addActivity(input: AddActivityRequest, options?: RpcOptions): UnaryCall<AddActivityRequest, AddActivityResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<AddActivityRequest, AddActivityResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * DBSync's method of sending (mass) data to the FiveNet server for storing.
+     *
+     * @generated from protobuf rpc: SendData(services.sync.SendDataRequest) returns (services.sync.SendDataResponse);
+     */
+    sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
+     *
+     * @generated from protobuf rpc: Stream(services.sync.StreamRequest) returns (stream services.sync.StreamResponse);
+     */
+    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

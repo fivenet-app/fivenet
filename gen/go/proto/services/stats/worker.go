@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/stats"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -23,7 +24,7 @@ var (
 	tDispatches      = table.FivenetCentrumDispatches
 	tCitizenActivity = table.FivenetUserActivity
 	tJobsTimeclock   = table.FivenetJobsTimeclock
-	tUsers           = table.Users
+	tUsers           = tables.Users
 )
 
 type worker struct {

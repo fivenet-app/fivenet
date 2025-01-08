@@ -1,11 +1,12 @@
 package userinfo
 
 import (
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 )
 
 var (
-	tUsers           = table.Users.AS("userinfo")
+	tUsers           = tables.Users.AS("userinfo")
 	tFivenetAccounts = table.FivenetAccounts
 )
 

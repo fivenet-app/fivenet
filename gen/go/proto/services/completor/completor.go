@@ -16,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -24,7 +25,7 @@ import (
 )
 
 var (
-	tUsers                = table.Users.AS("usershort")
+	tUsers                = tables.Users.AS("usershort")
 	tDCategory            = table.FivenetDocumentsCategories.AS("category")
 	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )

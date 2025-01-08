@@ -28,6 +28,7 @@
 // source: resources/internet/domain.proto
 // source: resources/internet/page.proto
 // source: resources/internet/search.proto
+// source: resources/jobs/activity.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/labels.proto

@@ -2,26 +2,23 @@ package sync
 
 import "context"
 
-func (s *Server) SyncData(ctx context.Context, req *SyncDataRequest) (*SyncDataResponse, error) {
-	resp := &SyncDataResponse{
+func (s *Server) SendData(ctx context.Context, req *SendDataRequest) (*SendDataResponse, error) {
+	resp := &SendDataResponse{
 		AffectedRows: 0,
 	}
 
 	switch d := req.Data.(type) {
-	case *SyncDataRequest_Users:
+	case *SendDataRequest_Users:
 		_ = d
 		// TODO
 
-	case *SyncDataRequest_Jobs:
+	case *SendDataRequest_Jobs:
 		// TODO
 
-	case *SyncDataRequest_Licenses:
+	case *SendDataRequest_Licenses:
 		// TODO
 
-	case *SyncDataRequest_UserLicenses:
-		// TODO
-
-	case *SyncDataRequest_Vehicles:
+	case *SendDataRequest_Vehicles:
 		// TODO
 	}
 

@@ -1,4 +1,4 @@
-import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/colleagues';
+import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/activity';
 
 export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType | undefined): string {
     switch (activityType) {

@@ -28,6 +28,7 @@
 // source: resources/internet/domain.proto
 // source: resources/internet/page.proto
 // source: resources/internet/search.proto
+// source: resources/jobs/activity.proto
 // source: resources/jobs/colleagues.proto
 // source: resources/jobs/conduct.proto
 // source: resources/jobs/labels.proto
@@ -292,8 +293,9 @@ export const grpcMethods = [
 	'RectorService/DeleteFaction',
 	'StatsService/GetStats',
 	'SyncService/GetStatus',
-	'SyncService/SyncData',
 	'SyncService/AddActivity',
+	'SyncService/SendData',
+	'SyncService/Stream',
 	'WikiService/ListPages',
 	'WikiService/GetPage',
 	'WikiService/CreatePage',

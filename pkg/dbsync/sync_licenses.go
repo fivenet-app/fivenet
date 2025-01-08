@@ -43,8 +43,8 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 
 	// Sync licenses to FiveNet server
 	if s.cli != nil {
-		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
-			Data: &pbsync.SyncDataRequest_Licenses{
+		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Licenses{
 				Licenses: &sync.DataLicenses{
 					Licenses: licenses,
 				},

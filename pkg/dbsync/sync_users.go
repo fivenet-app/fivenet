@@ -49,8 +49,8 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	// TODO retrieve licenses and vehicles for each user selected
 
 	if s.cli != nil {
-		if _, err := s.cli.SyncData(ctx, &pbsync.SyncDataRequest{
-			Data: &pbsync.SyncDataRequest_Users{
+		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Users{
 				Users: &sync.DataUsers{
 					Users: users,
 				},
@@ -72,6 +72,12 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		uint64(limit)+offset,
 		&lastUserId,
 	)
+
+	return nil
+}
+
+func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
+	// TODO
 
 	return nil
 }

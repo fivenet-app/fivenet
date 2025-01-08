@@ -5,16 +5,16 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
-	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 var (
-	tJobs         = table.Jobs
-	tUsers        = table.Users
-	tVehicles     = table.OwnedVehicles
-	tLicenses     = table.Licenses
-	tUserLicenses = table.UserLicenses
+	tJobs         = tables.Jobs
+	tUsers        = tables.Users
+	tVehicles     = tables.OwnedVehicles
+	tLicenses     = tables.Licenses
+	tUserLicenses = tables.UserLicenses
 )
 
 func (s *Server) GetStatus(ctx context.Context, req *GetStatusRequest) (*GetStatusResponse, error) {
@@ -78,21 +78,6 @@ func (s *Server) GetStatus(ctx context.Context, req *GetStatusRequest) (*GetStat
 	}
 	resp.Licenses = &sync.DataStatus{
 		Count: licensesCount.TotalCount,
-	}
-
-	// User Licenses
-	userLicensesStmt := tUserLicenses.
-		SELECT(
-			jet.COUNT(tUserLicenses.Type),
-		).
-		FROM(tUserLicenses)
-
-	var userLicensesCount database.DataCount
-	if err := userLicensesStmt.QueryContext(ctx, s.db, &userLicensesCount); err != nil {
-		return nil, err
-	}
-	resp.UserLicenses = &sync.DataStatus{
-		Count: userLicensesCount.TotalCount,
 	}
 
 	return resp, nil

@@ -1,3 +1,4 @@
+#
 # Be sure to checkout the Config file reference: https://fivenet.app/getting-started/configuration/config-reference
 #
 logLevel: "DEBUG"
@@ -13,7 +14,8 @@ tracing:
   timeout: 10s
   environment: "dev"
   ratio: 0.1
-  attributes: {}
+  attributes: []
+  # - service.name=fivenet-server
 http:
   listen: ":8080"
   adminListen: ":7070"
@@ -35,6 +37,8 @@ database:
   maxIdleConns: 5
   connMaxIdleTime: 15m
   connMaxLifetime: 60m
+  # Must be enabled if using a gameserver database (with ESX tables) and not wanting to use the dbsync
+  esxCompat: true
   custom:
     # To disable a column, set it to `"-"`
     columns:

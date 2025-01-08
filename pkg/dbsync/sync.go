@@ -151,7 +151,6 @@ func (s *Sync) run(ctx context.Context) error {
 		cli:    s.cli,
 	}
 
-	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
 	jobs, err := NewJobsSync(syncer, s.state.Jobs)
 	if err != nil {
 		return err
@@ -164,11 +163,8 @@ func (s *Sync) run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	userLicenses, err := NewUserLicensesSync(syncer, s.state.UserLicenses)
-	if err != nil {
-		return err
-	}
 
+	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
 	if err := jobs.Sync(ctx); err != nil {
 		s.logger.Error("error during jobs sync", zap.Error(err))
 	}
@@ -176,9 +172,7 @@ func (s *Sync) run(ctx context.Context) error {
 		s.logger.Error("error during licenses sync", zap.Error(err))
 	}
 
-	// User data loop
-	_ = userLicenses
-
+	// User data sync loop
 	for {
 		if err := users.Sync(ctx); err != nil {
 			s.logger.Error("error during users sync", zap.Error(err))
