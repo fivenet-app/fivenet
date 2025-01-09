@@ -91,7 +91,7 @@ func (s *DBSyncState) Save() error {
 		return err
 	}
 
-	if err := os.WriteFile(s.filepath, out, os.ModePerm); err != nil {
+	if err := os.WriteFile(s.filepath, out, 0o640); err != nil {
 		return err
 	}
 

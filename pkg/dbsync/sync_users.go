@@ -3,11 +3,13 @@ package dbsync
 import (
 	"context"
 	"strconv"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/multierr"
 )
 
 type usersSync struct {
@@ -46,7 +48,26 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		return nil
 	}
 
-	// TODO retrieve licenses and vehicles for each user selected
+	if s.cfg.Tables.UserLicenses.Enabled {
+		// Retrieve user' licenses
+		errs := multierr.Combine()
+		var err error
+		for k := range users {
+			identifier := ""
+			if users[k].Identifier != nil {
+				identifier = *users[k].Identifier
+			}
+
+			users[k].Licenses, err = s.retrieveLicenses(ctx, users[k].UserId, identifier)
+			if err != nil {
+				errs = multierr.Append(errs, err)
+			}
+		}
+
+		if errs != nil {
+			return errs
+		}
+	}
 
 	if s.cli != nil {
 		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
@@ -76,7 +97,33 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	return nil
 }
 
+func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifier string) ([]*users.License, error) {
+	sQuery := s.cfg.Tables.UserLicenses
+	query := prepareStringQuery(sQuery, s.state, 0, 100)
+
+	args := []interface{}{}
+	if strings.Contains(query, "$userId") {
+		query = strings.ReplaceAll(query, "$userId", strconv.Itoa(int(userId)))
+		args = append(args, userId)
+	} else if strings.Contains(query, "$identifier") {
+		query = strings.ReplaceAll(query, "$identifier", identifier)
+		args = append(args, identifier)
+	}
+
+	licenses := []*users.License{}
+	if _, err := qrm.Query(ctx, s.db, query, args, &licenses); err != nil {
+		return nil, err
+	}
+
+	return licenses, nil
+}
+
+// Sync an individual user/char info
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
+	sQuery := s.cfg.Tables.Users
+	query := prepareStringQuery(sQuery, s.state, 0, 1)
+	_ = query
+
 	// TODO
 
 	return nil

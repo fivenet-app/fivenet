@@ -19,7 +19,8 @@ type Server struct {
 	db     *sql.DB
 	auth   *auth.GRPCAuth
 
-	tokens []string
+	esxCompat bool
+	tokens    []string
 }
 
 type Params struct {
@@ -42,7 +43,8 @@ func NewServer(p Params) *Server {
 		db:     p.DB,
 		auth:   p.Auth,
 
-		tokens: p.Config.Sync.APITokens,
+		esxCompat: p.Config.Database.ESXCompat,
+		tokens:    p.Config.Sync.APITokens,
 	}
 }
 
