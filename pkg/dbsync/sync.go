@@ -34,6 +34,7 @@ type Sync struct {
 	logger *zap.Logger
 	db     *sql.DB
 
+	acfg  *config.Config
 	cfg   *config.DBSync
 	state *DBSyncState
 
@@ -46,6 +47,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
+	Config *config.Config
 }
 
 func New(p Params) (*Sync, error) {
@@ -53,6 +55,7 @@ func New(p Params) (*Sync, error) {
 		wg: &sync.WaitGroup{},
 
 		logger: p.Logger.Named("dbsync"),
+		acfg:   p.Config,
 	}
 
 	if err := s.loadConfig(); err != nil {
@@ -96,7 +99,8 @@ func New(p Params) (*Sync, error) {
 	if s.cfg.Destination.URL != "" {
 		cli, err := grpc.NewClient(s.cfg.Destination.URL,
 			grpc.WithTransportCredentials(insecure.NewCredentials()),
-			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Destination.Token)),
+			// Require transport security for release mode
+			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Destination.Token, s.acfg.Mode == "release")),
 		)
 		if err != nil {
 			return nil, err
@@ -163,6 +167,10 @@ func (s *Sync) run(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
+	vehicles, err := NewVehiclesSync(syncer, s.state.OwnedVehicles)
+	if err != nil {
+		return err
+	}
 
 	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
 	if err := jobs.Sync(ctx); err != nil {
@@ -178,11 +186,15 @@ func (s *Sync) run(ctx context.Context) error {
 			s.logger.Error("error during users sync", zap.Error(err))
 		}
 
+		if err := vehicles.Sync(ctx); err != nil {
+			s.logger.Error("error during users sync", zap.Error(err))
+		}
+
 		select {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(1 * time.Second):
+		case <-time.After(5 * time.Second):
 		}
 	}
 }

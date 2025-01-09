@@ -4,21 +4,25 @@ import "context"
 
 type ClientTokenAuth struct {
 	token string
+
+	requireTs bool
 }
 
-func NewClientTokenAuth(token string) *ClientTokenAuth {
+func NewClientTokenAuth(token string, requireTs bool) *ClientTokenAuth {
 	return &ClientTokenAuth{
 		token: token,
+
+		requireTs: requireTs,
 	}
 }
 
 // Return value is mapped to request headers.
-func (t ClientTokenAuth) GetRequestMetadata(ctx context.Context, in ...string) (map[string]string, error) {
+func (t *ClientTokenAuth) GetRequestMetadata(ctx context.Context, in ...string) (map[string]string, error) {
 	return map[string]string{
 		"authorization": "Bearer " + t.token,
 	}, nil
 }
 
-func (ClientTokenAuth) RequireTransportSecurity() bool {
-	return true
+func (t *ClientTokenAuth) RequireTransportSecurity() bool {
+	return t.requireTs
 }

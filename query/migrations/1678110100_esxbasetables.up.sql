@@ -17,17 +17,19 @@ BEGIN;
 -- ) ENGINE=InnoDB;
 
 -- Table: `owned_vehicles` -- Should already exist! This is the bare minimum structure required by FiveNet (column order doesn't matter).
--- CREATE TABLE IF NOT EXISTS `owned_vehicles` (
---   `owner` varchar(64) DEFAULT NULL,
---   `plate` varchar(12) NOT NULL,
---   `model` varchar(60) NOT NULL, -- Optional
---   `type` varchar(20) NOT NULL,
---   PRIMARY KEY (`plate`),
---   UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`),
---   KEY `IDX_OWNED_VEHICLES_OWNER` (`owner`),
---   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
---   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`) -- Optional
--- ) ENGINE=InnoDB;
+CREATE TABLE IF NOT EXISTS `owned_vehicles` (
+  `owner` varchar(64) DEFAULT NULL,
+  `plate` varchar(12) NOT NULL,
+  `model` varchar(60) DEFAULT NULL,
+  `type` varchar(20) NOT NULL,
+  PRIMARY KEY (`plate`),
+  UNIQUE KEY `idx_fivenet_owned_vehicles_ownerplate` (`owner`, `plate`),
+  KEY `idx_fivenet_owned_vehicles_owner` (`owner`),
+  KEY `idx_fivenet_owned_vehicles_owner_type` (`owner`, `type`),
+  KEY `idx_fivenet_owned_vehicles_owner_model_type` (`owner`, `model`, `type`),
+  KEY `idx_fivenet_owned_vehicles_model` (`model`),
+  KEY `idx_fivenet_owned_vehicles_type` (`type`)
+) ENGINE=InnoDB;
 
 -- Table: owned_vehicles - Add indexes for better sorting performance
 set @x := (
@@ -74,8 +76,10 @@ CREATE TABLE IF NOT EXISTS `users` (
   `sex` varchar(10) DEFAULT NULL,
   `height` varchar(5) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
   `visum` int(11) DEFAULT NULL, -- Optional
   `playtime` int(11) DEFAULT NULL, -- Optional
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`identifier`),
   UNIQUE KEY `id` (`id`),
   KEY `idx_users_job` (`job`),

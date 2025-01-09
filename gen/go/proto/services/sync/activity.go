@@ -11,7 +11,7 @@ func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*Add
 	case *AddActivityRequest_UserOauth2:
 		_ = d
 
-		// TODO handle activities
+		// TODO handle each activity type
 	}
 
 	return resp, nil
