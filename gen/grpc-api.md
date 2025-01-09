@@ -431,7 +431,6 @@
     - [DataJobs](#resources-sync-DataJobs)
     - [DataLicenses](#resources-sync-DataLicenses)
     - [DataStatus](#resources-sync-DataStatus)
-    - [DataUserLicenses](#resources-sync-DataUserLicenses)
     - [DataUsers](#resources-sync-DataUsers)
     - [DataVehicles](#resources-sync-DataVehicles)
   
@@ -5773,6 +5772,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
 | licenses | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| group | [string](#string) | optional |  |
 
 
 
@@ -6940,21 +6940,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | count | [int64](#int64) |  |  |
-
-
-
-
-
-
-<a name="resources-sync-DataUserLicenses"></a>
-
-### DataUserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_licenses | [resources.users.UserLicenses](#resources-users-UserLicenses) | repeated |  |
 
 
 

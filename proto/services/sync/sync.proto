@@ -35,7 +35,7 @@ message AddActivityRequest {
     resources.jobs.JobsUserActivity jobs_user_activity = 4;
     // Setting props will cause activity to be created automtically
     resources.jobs.JobsUserProps jobs_user_props = 5;
-    // Timeclock
+    // Timeclock user entry
     resources.jobs.TimeclockEntry jobs_timeclock = 6;
   }
 }

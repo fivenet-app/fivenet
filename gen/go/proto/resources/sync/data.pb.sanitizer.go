@@ -51,26 +51,6 @@ func (m *DataStatus) Sanitize() error {
 	return nil
 }
 
-func (m *DataUserLicenses) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: UserLicenses
-	for idx, item := range m.UserLicenses {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 func (m *DataUsers) Sanitize() error {
 	if m == nil {
 		return nil

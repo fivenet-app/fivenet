@@ -28,7 +28,3 @@ message DataVehicles {
 message DataLicenses {
   repeated resources.users.License licenses = 1 [(validate.rules).repeated.max_items = 200];
 }
-
-message DataUserLicenses {
-  repeated resources.users.UserLicenses user_licenses = 1 [(validate.rules).repeated.max_items = 1000];
-}

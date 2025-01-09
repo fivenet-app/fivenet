@@ -4,6 +4,8 @@ import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrU
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const { t } = useI18n();
@@ -11,6 +13,8 @@ const { t } = useI18n();
 const { can } = useAuth();
 
 const modal = useModal();
+
+const notifications = useNotificatorStore();
 
 const { data: units, pending: loading, refresh, error } = useLazyAsyncData('centrum-units', () => listUnits());
 
@@ -34,6 +38,12 @@ async function deleteUnit(id: string): Promise<void> {
             unitId: id,
         });
         await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

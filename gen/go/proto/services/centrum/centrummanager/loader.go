@@ -45,6 +45,7 @@ func (s *Manager) loadData(ctx context.Context) error {
 
 func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 	tCentrumSettings := tCentrumSettings.AS("settings")
+
 	stmt := tCentrumSettings.
 		SELECT(
 			tCentrumSettings.Job,
@@ -160,7 +161,7 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
-	condition := jet.Bool(true)
+	condition := tUnits.DeletedAt.IS_NULL()
 
 	if id > 0 {
 		condition = condition.AND(

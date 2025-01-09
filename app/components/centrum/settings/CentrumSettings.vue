@@ -4,14 +4,18 @@ import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useNotificatorStore } from '~/store/notificator';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
 
 const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
 
 const {
     data: settings,
@@ -85,6 +89,12 @@ async function updateSettings(values: Schema): Promise<void> {
         await call;
 
         refresh();
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         isOpen.value = false;
     } catch (e) {

@@ -61,6 +61,15 @@ onBeforeMount(async () => {
     }
 });
 
+// Disable create form when email is selected
+watch(selectedEmail, () => {
+    if (!selectedEmail.value) {
+        return;
+    }
+
+    creating.value = false;
+});
+
 const canCreate = computed(
     () => can('MailerService.CreateOrUpdateEmail').value && attr('MailerService.CreateOrUpdateEmail', 'Fields', 'Job').value,
 );
@@ -112,7 +121,10 @@ const creating = ref(false);
                             :label="$t('common.create')"
                             trailing-icon="i-mdi-plus"
                             color="gray"
-                            @click="creating = !creating"
+                            @click="
+                                creating = !creating;
+                                selectedEmail = undefined;
+                            "
                         />
                     </template>
                 </UDashboardNavbar>

@@ -587,6 +587,21 @@ func (m *User) validate(all bool) error {
 
 	}
 
+	if m.Group != nil {
+
+		if utf8.RuneCountInString(m.GetGroup()) > 50 {
+			err := UserValidationError{
+				field:  "Group",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserMultiError(errors)
 	}

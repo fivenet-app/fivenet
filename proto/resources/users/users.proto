@@ -58,6 +58,8 @@ message User {
   UserProps props = 15; // @gotags: alias:"fivenet_user_props"
   repeated License licenses = 16; // @gotags: alias:"user_licenses"
   optional resources.filestore.File avatar = 17;
+
+  optional string group = 18 [(validate.rules).string.max_len = 50];
 }
 
 message License {

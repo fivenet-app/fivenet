@@ -378,7 +378,7 @@ const itemsAll = computed(() => [
                             : ''
                     }}
 
-                    <UBadge v-if="entry.startTime !== undefined" color="green">
+                    <UBadge v-if="!!entry.startTime" color="green">
                         {{ $t('common.active') }}
                     </UBadge>
                 </div>

@@ -26,9 +26,9 @@ type DBSyncSourceTables struct {
 	JobGrades DBSyncTable `yaml:"jobGrades"`
 	Licenses  DBSyncTable `yaml:"licenses"`
 
-	Users        DBSyncTable `yaml:"users"`
-	UserLicenses DBSyncTable `yaml:"userLicenses"`
-	Vehicles     DBSyncTable `yaml:"vehicles"`
+	Users        UsersDBSyncTable `yaml:"users"`
+	UserLicenses DBSyncTable      `yaml:"userLicenses"`
+	Vehicles     DBSyncTable      `yaml:"vehicles"`
 }
 
 type DBSyncTable struct {
@@ -36,4 +36,10 @@ type DBSyncTable struct {
 	IDField      string  `yaml:"idField"`
 	Query        string  `yaml:"query"`
 	UpdatedField *string `yaml:"updatedField"`
+}
+
+type UsersDBSyncTable struct {
+	DBSyncTable `yaml:",inline" mapstructure:",squash"`
+
+	SplitName bool `default:"false" yaml:"splitName"`
 }

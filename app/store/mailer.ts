@@ -118,6 +118,15 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Either creator id or email adress matches
                 if (data.creatorEmailId === this.selectedEmail?.id || data.creatorEmail?.email === this.selectedEmail?.email) {
+                    if (data.state) {
+                        data.state.unread = false;
+                    } else {
+                        data.state = {
+                            emailId: this.selectedEmail?.id ?? '0',
+                            threadId: data.id,
+                            unread: false,
+                        };
+                    }
                     return;
                 }
 

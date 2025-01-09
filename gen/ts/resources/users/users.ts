@@ -136,6 +136,10 @@ export interface User {
      * @generated from protobuf field: optional resources.filestore.File avatar = 17;
      */
     avatar?: File;
+    /**
+     * @generated from protobuf field: optional string group = 18;
+     */
+    group?: string;
 }
 /**
  * @generated from protobuf message resources.users.License
@@ -364,7 +368,8 @@ class User$Type extends MessageType<User> {
             { no: 14, name: "playtime", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 15, name: "props", kind: "message", T: () => UserProps },
             { no: 16, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License },
-            { no: 17, name: "avatar", kind: "message", T: () => File }
+            { no: 17, name: "avatar", kind: "message", T: () => File },
+            { no: 18, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<User>): User {
@@ -436,6 +441,9 @@ class User$Type extends MessageType<User> {
                 case /* optional resources.filestore.File avatar */ 17:
                     message.avatar = File.internalBinaryRead(reader, reader.uint32(), options, message.avatar);
                     break;
+                case /* optional string group */ 18:
+                    message.group = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -499,6 +507,9 @@ class User$Type extends MessageType<User> {
         /* optional resources.filestore.File avatar = 17; */
         if (message.avatar)
             File.internalBinaryWrite(message.avatar, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional string group = 18; */
+        if (message.group !== undefined)
+            writer.tag(18, WireType.LengthDelimited).string(message.group);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

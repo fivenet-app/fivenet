@@ -10,7 +10,6 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserLicenses } from "../users/users";
 import { License } from "../users/users";
 import { Vehicle } from "../vehicles/vehicles";
 import { User } from "../users/users";
@@ -59,15 +58,6 @@ export interface DataLicenses {
      * @generated from protobuf field: repeated resources.users.License licenses = 1;
      */
     licenses: License[];
-}
-/**
- * @generated from protobuf message resources.sync.DataUserLicenses
- */
-export interface DataUserLicenses {
-    /**
-     * @generated from protobuf field: repeated resources.users.UserLicenses user_licenses = 1;
-     */
-    userLicenses: UserLicenses[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
@@ -304,50 +294,3 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
  * @generated MessageType for protobuf message resources.sync.DataLicenses
  */
 export const DataLicenses = new DataLicenses$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DataUserLicenses$Type extends MessageType<DataUserLicenses> {
-    constructor() {
-        super("resources.sync.DataUserLicenses", [
-            { no: 1, name: "user_licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserLicenses, options: { "validate.rules": { repeated: { maxItems: "1000" } } } }
-        ]);
-    }
-    create(value?: PartialMessage<DataUserLicenses>): DataUserLicenses {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.userLicenses = [];
-        if (value !== undefined)
-            reflectionMergePartial<DataUserLicenses>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataUserLicenses): DataUserLicenses {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* repeated resources.users.UserLicenses user_licenses */ 1:
-                    message.userLicenses.push(UserLicenses.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: DataUserLicenses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.UserLicenses user_licenses = 1; */
-        for (let i = 0; i < message.userLicenses.length; i++)
-            UserLicenses.internalBinaryWrite(message.userLicenses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.sync.DataUserLicenses
- */
-export const DataUserLicenses = new DataUserLicenses$Type();

@@ -36,7 +36,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		offset = s.state.Offset
 	}
 
-	sQuery := s.cfg.Tables.Users
+	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, offset, limit)
 
 	users := []*users.User{}
@@ -66,6 +66,17 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 		if errs != nil {
 			return errs
+		}
+	}
+
+	if s.cfg.Tables.Users.SplitName {
+		for k := range users {
+			if users[k].Lastname == "" {
+				ss := strings.Split(users[k].Firstname, " ")
+				users[k].Lastname = ss[len(ss)-1]
+
+				users[k].Firstname = strings.Replace(users[k].Firstname, " "+users[k].Lastname, "", 1)
+			}
 		}
 	}
 
@@ -120,7 +131,7 @@ func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifi
 
 // Sync an individual user/char info
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
-	sQuery := s.cfg.Tables.Users
+	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, 0, 1)
 	_ = query
 

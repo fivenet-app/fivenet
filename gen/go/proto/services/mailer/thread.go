@@ -340,6 +340,7 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	if err != nil {
 		return nil, err
 	}
+
 	// Set dummy thread state to make client-side handling easier
 	boolTrue := true
 	thread.State = &mailer.ThreadState{
@@ -348,10 +349,15 @@ func (s *Server) CreateThread(ctx context.Context, req *CreateThreadRequest) (*C
 	}
 
 	if len(thread.Recipients) > 0 {
-		emailIds := []uint64{}
 		if thread != nil && thread.CreatorId != nil {
-			emailIds = append(emailIds, thread.CreatorEmailId)
+			s.sendUpdate(ctx, &mailer.MailerEvent{
+				Data: &mailer.MailerEvent_ThreadUpdate{
+					ThreadUpdate: thread,
+				},
+			}, thread.CreatorEmailId)
 		}
+
+		emailIds := []uint64{}
 		for _, ua := range thread.Recipients {
 			emailIds = append(emailIds, ua.EmailId)
 		}

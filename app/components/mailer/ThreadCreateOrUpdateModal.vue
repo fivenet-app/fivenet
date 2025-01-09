@@ -117,8 +117,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </div>
                 </template>
 
-                <div class="mx-auto flex w-full max-w-screen-xl flex-1 overflow-y-hidden">
-                    <div class="flex w-full flex-1 flex-col gap-2 overflow-y-hidden">
+                <div class="mx-auto">
+                    <div class="flex w-full max-w-screen-xl flex-1 flex-col">
                         <div class="flex w-full flex-col items-center justify-between gap-1">
                             <UFormGroup name="sender" :label="$t('common.sender')" class="w-full flex-1">
                                 <ClientOnly>
@@ -279,7 +279,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.message')"
                             class="flex flex-1 flex-col"
                             :ui="{
-                                container: 'flex flex-1',
+                                container: 'flex flex-1 flex-col',
                                 label: { base: 'flex flex-1' },
                             }"
                         >
