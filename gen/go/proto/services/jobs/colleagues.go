@@ -79,7 +79,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			))
 	}
 
-	if (slices.Contains(types, "Labels") || userInfo.SuperUser) && len(req.LabelIds) > 0 {
+	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
 		labelIds := []jet.Expression{}
 		for _, labelId := range req.LabelIds {
 			labelIds = append(labelIds, jet.Uint64(labelId))
@@ -90,12 +90,13 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		)
 	}
 
-	if req.NamePrefix != nil {
+	if req.NamePrefix != nil && *req.NamePrefix != "" {
 		*req.NamePrefix = strings.TrimSpace(*req.NamePrefix)
 		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, "%", "")
 		*req.NamePrefix = strings.ReplaceAll(*req.NamePrefix, " ", "%")
 		if *req.NamePrefix != "" {
 			*req.NamePrefix = "%" + *req.NamePrefix + "%"
+
 			condition = condition.AND(jet.AND(
 				tJobsUserProps.NamePrefix.IS_NOT_NULL(),
 				tJobsUserProps.NamePrefix.LIKE(jet.String(*req.NamePrefix)),
@@ -109,6 +110,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		*req.NameSuffix = strings.ReplaceAll(*req.NameSuffix, " ", "%")
 		if *req.NameSuffix != "" {
 			*req.NameSuffix = "%" + *req.NameSuffix + "%"
+
 			condition = condition.AND(jet.AND(
 				tJobsUserProps.NameSuffix.IS_NOT_NULL(),
 				tJobsUserProps.NameSuffix.LIKE(jet.String(*req.NameSuffix)),
@@ -119,17 +121,17 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	// Get total count of values
 	countStmt := tUser.
 		SELECT(
-			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
+			jet.COUNT(jet.DISTINCT(tUser.ID)).AS("datacount.totalcount"),
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if (slices.Contains(types, "Labels") || userInfo.SuperUser) && len(req.LabelIds) > 0 {
+	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
 		countStmt = countStmt.
 			FROM(
 				tUser.
 					LEFT_JOIN(tJobsUserProps,
 						tJobsUserProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+							AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
 					).
 					INNER_JOIN(tUserLabels,
 						tUserLabels.UserID.EQ(tUser.ID).
@@ -145,7 +147,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 				tUser.
 					LEFT_JOIN(tJobsUserProps,
 						tJobsUserProps.UserID.EQ(tUser.ID).
-							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+							AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
 					),
 			)
 	}
@@ -216,7 +218,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext"))
 
-	if (slices.Contains(types, "Labels") || userInfo.SuperUser) && len(req.LabelIds) > 0 {
+	if len(req.LabelIds) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
 		stmt = stmt.
 			FROM(
 				tUser.
