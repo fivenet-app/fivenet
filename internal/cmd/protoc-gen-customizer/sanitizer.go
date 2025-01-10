@@ -155,7 +155,7 @@ func (m *{{ $key }}) Sanitize() error {
                 }
             }
             {{ else if not (and $f.F.Type.Element (or $f.F.Type.Element.IsEnum $f.F.Type.Element.ProtoType.IsNumeric)) }}
-            // TODO Repeated: Not a string nor embed :( {{ $fType }}
+            // ! Repeated: Element type is not a string nor embed type ({{ $fType }})
             {{ end }}
         }
         {{ else if $f.F.Type.IsMap }}
@@ -171,7 +171,7 @@ func (m *{{ $key }}) Sanitize() error {
                 }
             }
             {{ else if not (and $f.F.Type.Element (or $f.F.Type.Element.IsEnum $f.F.Type.Element.ProtoType.IsNumeric)) }}
-            // TODO Map: Not a string nor embed :( {{ $fType }} ({{ $f.F.Type.Element.ProtoType.IsNumeric }})
+            // ! Map: Element type is not a string nor embed type ({{ $fType }})
             {{ end }}
         }
         {{ else if $f.F.InRealOneOf }}

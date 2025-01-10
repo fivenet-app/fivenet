@@ -165,7 +165,27 @@ func (m *UserProps) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Reason
+	if utf8.RuneCountInString(m.GetReason()) > 255 {
+		err := UserPropsValidationError{
+			field:  "Reason",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetProps() == nil {
+		err := UserPropsValidationError{
+			field:  "Props",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {
@@ -295,7 +315,27 @@ func (m *JobsUserProps) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Reason
+	if utf8.RuneCountInString(m.GetReason()) > 255 {
+		err := JobsUserPropsValidationError{
+			field:  "Reason",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetProps() == nil {
+		err := JobsUserPropsValidationError{
+			field:  "Props",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if all {
 		switch v := interface{}(m.GetProps()).(type) {

@@ -33,6 +33,4 @@ message MessageData {
   repeated MessageDataEntry entry = 1 [(validate.rules).repeated.max_items = 3];
 }
 
-message MessageDataEntry {
-  // TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
-}
+message MessageDataEntry {}

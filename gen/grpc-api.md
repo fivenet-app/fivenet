@@ -6108,7 +6108,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-internet-PageData"></a>
 
 ### PageData
-TODO
+
 
 
 
@@ -6380,7 +6380,7 @@ TODO
 <a name="resources-mailer-MessageDataEntry"></a>
 
 ### MessageDataEntry
-TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
+
 
 
 

@@ -799,7 +799,7 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 
 		s.logger.Warn("found user id with unit mapping that isn't in any unit", zap.Int32("user_id", userUnit.UserId), zap.Int32s("users_in_units", foundUserIds), zap.Any("mapping", userUnit))
 
-		// TODO this isn't working as intended at the moment
+		// TODO this isn't working as intended at the moment..
 		/*
 			// Unset unit id for user when user is not in any unit
 			if err := s.UnsetUnitIDForUser(ctx, userId); err != nil {

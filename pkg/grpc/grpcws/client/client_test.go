@@ -31,14 +31,14 @@ func New(ctx context.Context, url string, headers http.Header) (*Client, error) 
 	}
 	c.streamId.Store(0)
 
-	go c.read()
+	go c.read(ctx)
 
 	return c, nil
 }
 
-func (c *Client) read() {
+func (c *Client) read(ctx context.Context) {
 	for {
-		mType, r, err := c.c.Reader(context.TODO())
+		mType, r, err := c.c.Reader(ctx)
 		if err != nil {
 			return
 		}

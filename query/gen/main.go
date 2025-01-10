@@ -42,7 +42,7 @@ func genTemplate() template.Template {
 						return template.DefaultTableModel(table).
 							UseField(func(columnMetaData metadata.Column) template.TableModelField {
 								if shouldSkipField(table.Name, columnMetaData.Name) {
-									// TODO skip fields that are not in the includedTable entry list
+									// TODO skip fields that are not in the includedTable columns list
 									// return template.TableModelField{Skip: true}
 								}
 
@@ -62,7 +62,7 @@ func genTemplate() template.Template {
 						return template.DefaultTableSQLBuilder(table).
 							UseColumn(func(column metadata.Column) template.TableSQLBuilderColumn {
 								if shouldSkipField(table.Name, column.Name) {
-									// TODO skip fields that are not in the includedTable entry's list
+									// TODO skip fields that are not in the includedTable columns list
 									// return template.TableSQLBuilderColumn{Skip: true}
 								}
 

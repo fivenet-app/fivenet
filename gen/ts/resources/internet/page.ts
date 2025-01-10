@@ -67,8 +67,6 @@ export interface Page {
     creatorId?: number;
 }
 /**
- * TODO
- *
  * @generated from protobuf message resources.internet.PageData
  */
 export interface PageData {

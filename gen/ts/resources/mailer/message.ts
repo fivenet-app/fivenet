@@ -80,8 +80,6 @@ export interface MessageData {
     entry: MessageDataEntry[];
 }
 /**
- * TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
- *
  * @generated from protobuf message resources.mailer.MessageDataEntry
  */
 export interface MessageDataEntry {

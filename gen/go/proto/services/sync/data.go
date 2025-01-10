@@ -312,7 +312,7 @@ func (s *Server) handleUsersData(ctx context.Context, data *SendDataRequest_User
 		}
 	}
 
-	// TODO handle users licenses `user.Licenses`
+	// TODO handle users licenses `user.Licenses` list
 
 	return rowsAffected, nil
 }

@@ -137,8 +137,8 @@ export const UserOAuth2Conn = new UserOAuth2Conn$Type();
 class UserProps$Type extends MessageType<UserProps> {
     constructor() {
         super("resources.sync.UserProps", [
-            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "props", kind: "message", T: () => UserProps$ }
+            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 2, name: "props", kind: "message", T: () => UserProps$, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
@@ -191,8 +191,8 @@ export const UserProps = new UserProps$Type();
 class JobsUserProps$Type extends MessageType<JobsUserProps> {
     constructor() {
         super("resources.sync.JobsUserProps", [
-            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "props", kind: "message", T: () => JobsUserProps$ }
+            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 2, name: "props", kind: "message", T: () => JobsUserProps$, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
