@@ -25,8 +25,8 @@ message JobsUserActivity {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 4 [(validate.rules).string.max_len = 20];
-  int32 source_user_id = 5 [(validate.rules).int32.gt = 0];
-  Colleague source_user = 6; // @gotags: alias:"source_user"
+  optional int32 source_user_id = 5 [(validate.rules).int32.gt = 0];
+  optional Colleague source_user = 6; // @gotags: alias:"source_user"
   int32 target_user_id = 7 [(validate.rules).int32.gt = 0];
   Colleague target_user = 8; // @gotags: alias:"target_user"
   JobsUserActivityType activity_type = 9;

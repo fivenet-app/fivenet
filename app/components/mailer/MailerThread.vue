@@ -134,8 +134,11 @@ async function postMessage(values: Schema): Promise<void> {
     });
 
     // Clear draft data
-    resetForm();
+    state.value.title = '';
+    state.value.content = '';
     state.value.recipients = [];
+
+    resetForm();
 }
 
 watch(

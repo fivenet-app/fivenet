@@ -13,7 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
@@ -45,6 +45,8 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			return resp, nil
 		}
 	}
+
+	tUserActivity := table.FivenetUserActivity
 
 	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId))
 
@@ -147,29 +149,4 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	resp.Pagination.Update(len(resp.Activity))
 
 	return resp, nil
-}
-
-func (s *Server) addUserActivity(ctx context.Context, tx qrm.DB, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
-	stmt := tUserActivity.
-		INSERT(
-			tUserActivity.SourceUserID,
-			tUserActivity.TargetUserID,
-			tUserActivity.Type,
-			tUserActivity.Key,
-			tUserActivity.OldValue,
-			tUserActivity.NewValue,
-			tUserActivity.Reason,
-		).
-		MODEL(&model.FivenetUserActivity{
-			SourceUserID: &userId,
-			TargetUserID: targetUserId,
-			Type:         int16(activityType),
-			Key:          key,
-			OldValue:     &oldValue,
-			NewValue:     &newValue,
-			Reason:       &reason,
-		})
-
-	_, err := stmt.ExecContext(ctx, tx)
-	return err
 }

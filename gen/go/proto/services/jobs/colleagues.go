@@ -25,7 +25,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -623,34 +622,11 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	absenceBegin := jet.DateExp(jet.NULL)
-	absenceEnd := jet.DateExp(jet.NULL)
 	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
 		// Allow users to set their own absence date regardless of types perms check
 		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
-
-		if req.Props.AbsenceBegin.Timestamp == nil {
-			req.Props.AbsenceBegin = nil
-		} else {
-			absenceBegin = jet.DateT(req.Props.AbsenceBegin.AsTime())
-		}
-
-		if req.Props.AbsenceEnd.Timestamp == nil {
-			req.Props.AbsenceEnd = nil
-		} else {
-			absenceEnd = jet.DateT(req.Props.AbsenceEnd.AsTime())
-		}
-	} else {
-		req.Props.AbsenceBegin = props.AbsenceBegin
-		req.Props.AbsenceEnd = props.AbsenceEnd
-	}
-
-	tJobsUserProps := table.FivenetJobsUserProps
-	updateSets := []jet.ColumnAssigment{
-		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
 	}
 
 	// Generate the update sets
@@ -658,10 +634,6 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		if !slices.Contains(types, "Note") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
-
-		updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*req.Props.Note)))
-	} else {
-		req.Props.Note = props.Note
 	}
 
 	if req.Props.Labels != nil {
@@ -682,28 +654,12 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		if !valid {
 			return nil, errorsjobs.ErrPropsLabelsDenied
 		}
-	} else {
-		req.Props.Labels = props.Labels
 	}
 
 	if req.Props.NamePrefix != nil || req.Props.NameSuffix != nil {
 		if !slices.Contains(types, "Name") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsNameDenied
 		}
-
-		if req.Props.NamePrefix != nil {
-			updateSets = append(updateSets, tJobsUserProps.NamePrefix.SET(jet.String(*req.Props.NamePrefix)))
-		} else {
-			req.Props.NamePrefix = props.NamePrefix
-		}
-		if req.Props.NameSuffix != nil {
-			updateSets = append(updateSets, tJobsUserProps.NameSuffix.SET(jet.String(*req.Props.NameSuffix)))
-		} else {
-			req.Props.NameSuffix = props.NameSuffix
-		}
-	} else {
-		req.Props.NamePrefix = props.NamePrefix
-		req.Props.NameSuffix = props.NameSuffix
 	}
 
 	// Begin transaction
@@ -714,123 +670,13 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tJobsUserProps.
-		INSERT(
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
-			tJobsUserProps.Note,
-			tJobsUserProps.NamePrefix,
-			tJobsUserProps.NameSuffix,
-		).
-		VALUES(
-			targetUser.UserId,
-			targetUser.Job,
-			absenceBegin,
-			absenceEnd,
-			req.Props.Note,
-			req.Props.NamePrefix,
-			req.Props.NameSuffix,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			updateSets...,
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+	activities, err := props.HandleChanges(ctx, tx, req.Props, targetUser.Job, &userInfo.UserId, req.Reason)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if req.Props.Labels != nil && !proto.Equal(req.Props.Labels, props.Labels) {
-		added, removed := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
-			func(in *jobs.Label) uint64 {
-				return in.Id
-			})
-
-		valid, err := s.validateLabels(ctx, userInfo, added)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-		if !valid {
-			return nil, errorsjobs.ErrPropsLabelsDenied
-		}
-
-		if err := s.updateLabels(ctx, tx, targetUser.UserId, targetUser.Job, added, removed); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-
-		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
-			Job:          userInfo.Job,
-			SourceUserId: userInfo.UserId,
-			TargetUserId: targetUser.UserId,
-			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_LABELS,
-			Reason:       req.Reason,
-			Data: &jobs.JobsUserActivityData{
-				Data: &jobs.JobsUserActivityData_LabelsChange{
-					LabelsChange: &jobs.ColleagueLabelsChange{
-						Added:   added,
-						Removed: removed,
-					},
-				},
-			},
-		}); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-
-	// Compare absence dates if any were set
-	if req.Props.AbsenceBegin != nil && (props.AbsenceBegin == nil || req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0) ||
-		req.Props.AbsenceEnd != nil && (props.AbsenceEnd == nil || req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0) {
-		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
-			Job:          userInfo.Job,
-			SourceUserId: userInfo.UserId,
-			TargetUserId: targetUser.UserId,
-			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE,
-			Reason:       req.Reason,
-			Data: &jobs.JobsUserActivityData{
-				Data: &jobs.JobsUserActivityData_AbsenceDate{
-					AbsenceDate: &jobs.ColleagueAbsenceDate{
-						AbsenceBegin: req.Props.AbsenceBegin,
-						AbsenceEnd:   req.Props.AbsenceEnd,
-					},
-				},
-			},
-		}); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-
-	if (req.Props.Note == nil && props.Note != nil) || (req.Props.Note != nil && props.Note == nil) {
-		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
-			Job:          userInfo.Job,
-			SourceUserId: userInfo.UserId,
-			TargetUserId: targetUser.UserId,
-			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NOTE,
-			Reason:       req.Reason,
-		}); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-
-	if req.Props.NamePrefix != nil && (props.NamePrefix == nil || req.Props.NamePrefix != props.NamePrefix) ||
-		req.Props.NameSuffix != nil && (props.NameSuffix == nil || req.Props.NameSuffix != props.NameSuffix) {
-		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
-			Job:          userInfo.Job,
-			SourceUserId: userInfo.UserId,
-			TargetUserId: targetUser.UserId,
-			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NAME,
-			Reason:       req.Reason,
-			Data: &jobs.JobsUserActivityData{
-				Data: &jobs.JobsUserActivityData_NameChange{
-					NameChange: &jobs.ColleagueNameChange{
-						Prefix: req.Props.NamePrefix,
-						Suffix: req.Props.NameSuffix,
-					},
-				},
-			},
-		}); err != nil {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	if err := jobs.CreateJobsUserActivities(ctx, tx, activities...); err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
 	// Commit the transaction
@@ -848,32 +694,6 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	return &SetJobsUserPropsResponse{
 		Props: props,
 	}, nil
-}
-
-func (s *Server) addJobsUserActivity(ctx context.Context, tx qrm.DB, activity *jobs.JobsUserActivity) error {
-	stmt := tJobsUserActivity.
-		INSERT(
-			tJobsUserActivity.Job,
-			tJobsUserActivity.SourceUserID,
-			tJobsUserActivity.TargetUserID,
-			tJobsUserActivity.ActivityType,
-			tJobsUserActivity.Reason,
-			tJobsUserActivity.Data,
-		).
-		VALUES(
-			activity.Job,
-			activity.SourceUserId,
-			activity.TargetUserId,
-			activity.ActivityType,
-			activity.Reason,
-			activity.Data,
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *Server) getConditionForColleagueAccess(actTable *table.FivenetJobsUserActivityTable, usersTable *tables.FivenetUsersTable, levels []string, userInfo *userinfo.UserInfo) jet.BoolExpression {

@@ -72,7 +72,7 @@ func (s *Server) handleJobsData(ctx context.Context, data *SendDataRequest_Jobs)
 		)
 	}
 
-	// TODO Delete removed/missing jobs from our tables
+	// TODO delete missing jobs from our database
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -122,7 +122,7 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 		)
 	}
 
-	// TODO delete missing job grades
+	// TODO delete missing job grades from our database
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -156,7 +156,7 @@ func (s *Server) handleLicensesData(ctx context.Context, data *SendDataRequest_L
 		)
 	}
 
-	// TODO delete missing licenses
+	// TODO delete missing licenses from our database
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -311,6 +311,8 @@ func (s *Server) handleUsersData(ctx context.Context, data *SendDataRequest_User
 			rowsAffected += rows
 		}
 	}
+
+	// TODO handle users licenses `user.Licenses`
 
 	return rowsAffected, nil
 }

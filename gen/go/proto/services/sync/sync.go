@@ -3,9 +3,11 @@ package sync
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -16,8 +18,11 @@ type Server struct {
 	SyncServiceServer
 
 	logger *zap.Logger
-	db     *sql.DB
-	auth   *auth.GRPCAuth
+
+	db   *sql.DB
+	js   *events.JSWrapper
+	auth *auth.GRPCAuth
+	cfg  *config.Config
 
 	esxCompat bool
 	tokens    []string
@@ -26,10 +31,12 @@ type Server struct {
 type Params struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger *zap.Logger
 	DB     *sql.DB
+	JS     *events.JSWrapper
 	Auth   *auth.GRPCAuth
-
 	Config *config.Config
 }
 
@@ -38,14 +45,26 @@ func NewServer(p Params) *Server {
 		return nil
 	}
 
-	return &Server{
+	s := &Server{
 		logger: p.Logger,
 		db:     p.DB,
+		js:     p.JS,
 		auth:   p.Auth,
+		cfg:    p.Config,
 
 		esxCompat: p.Config.Database.ESXCompat,
 		tokens:    p.Config.Sync.APITokens,
 	}
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if _, err := s.registerStream(ctxStartup, s.js); err != nil {
+			return fmt.Errorf("failed to register stream: %w", err)
+		}
+
+		return nil
+	}))
+
+	return s
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
@@ -74,6 +93,11 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 }
 
 func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	// Skip permission check for the sync service
+	return ctx, nil
+}
+
+func (s *Server) StreamServerInterceptor(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Skip permission check for the sync service
 	return ctx, nil
 }

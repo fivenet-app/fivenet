@@ -83,6 +83,7 @@ func New(p Params) IAuditer {
 
 func (a *AuditStorer) worker(ctx context.Context) {
 	defer a.wg.Done()
+
 	for {
 		select {
 		case <-ctx.Done():

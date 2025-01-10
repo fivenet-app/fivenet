@@ -3,7 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { UserProps } from '~~/gen/ts/resources/users/props';
+import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     user: User;

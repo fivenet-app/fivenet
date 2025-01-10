@@ -62,10 +62,13 @@ onBeforeMount(async () => {
 });
 
 // Disable create form when email is selected
-watch(selectedEmail, () => {
+watch(selectedEmail, async () => {
     if (!selectedEmail.value) {
         return;
     }
+
+    loading.value = true;
+    await mailerStore.getEmail(selectedEmail.value.id).finally(() => (loading.value = false));
 
     creating.value = false;
 });
@@ -74,6 +77,7 @@ const canCreate = computed(
     () => can('MailerService.CreateOrUpdateEmail').value && attr('MailerService.CreateOrUpdateEmail', 'Fields', 'Job').value,
 );
 
+const loading = ref(false);
 const creating = ref(false);
 </script>
 
@@ -209,7 +213,9 @@ const creating = ref(false);
                     </UDashboardNavbar>
 
                     <UDashboardPanelContent>
+                        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.mail')])" />
                         <EmailCreateForm
+                            v-else
                             v-model="selectedEmail"
                             :personal-email="selectedEmail.userId !== undefined"
                             :disabled="

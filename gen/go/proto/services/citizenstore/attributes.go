@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -255,53 +254,4 @@ func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserI
 	}
 
 	return list, nil
-}
-
-func (s *Server) updateCitizenAttributes(ctx context.Context, tx qrm.DB, userId int32, added []*users.CitizenAttribute, removed []*users.CitizenAttribute) error {
-	tUserCitizenAttributes := table.FivenetUserCitizenAttributes
-
-	if len(added) > 0 {
-		addedAttributes := make([]*model.FivenetUserCitizenAttributes, len(added))
-		for i, attribute := range added {
-			addedAttributes[i] = &model.FivenetUserCitizenAttributes{
-				UserID:      userId,
-				AttributeID: attribute.Id,
-			}
-		}
-
-		stmt := tUserCitizenAttributes.
-			INSERT(
-				tUserCitizenAttributes.UserID,
-				tUserCitizenAttributes.AttributeID,
-			).
-			MODELS(addedAttributes)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return err
-			}
-		}
-	}
-
-	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
-
-		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
-		}
-
-		stmt := tUserCitizenAttributes.
-			DELETE().
-			WHERE(jet.AND(
-				tUserCitizenAttributes.UserID.EQ(jet.Int32(userId)),
-				tUserCitizenAttributes.AttributeID.IN(ids...),
-			)).
-			LIMIT(int64(len(removed)))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

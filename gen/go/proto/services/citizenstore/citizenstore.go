@@ -4,9 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"slices"
-	"strconv"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -35,14 +33,9 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
-	"google.golang.org/protobuf/encoding/protojson"
-	"google.golang.org/protobuf/proto"
 )
 
-var (
-	tUserProps    = table.FivenetUserProps
-	tUserActivity = table.FivenetUserActivity
-)
+var tUserProps = table.FivenetUserProps
 
 var ZeroTrafficInfractionPoints uint32 = 0
 
@@ -55,6 +48,7 @@ type Server struct {
 	aud      audit.IAuditer
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
+	cfg      *config.Config
 
 	customDB config.CustomDB
 }
@@ -79,6 +73,7 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
+		cfg:      p.Config,
 
 		customDB: p.Config.Database.Custom,
 	}
@@ -542,16 +537,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		fields = fieldsAttr.([]string)
 	}
 
-	updateSets := []jet.ColumnAssigment{}
 	// Generate the update sets
 	if req.Props.Wanted != nil {
 		if !slices.Contains(fields, "Wanted") {
 			return nil, errorscitizenstore.ErrPropsWantedDenied
 		}
-
-		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
-	} else {
-		req.Props.Wanted = props.Wanted
 	}
 
 	if req.Props.JobName != nil {
@@ -564,7 +554,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 
 		if req.Props.JobGradeNumber == nil {
-			grade := int32(1)
+			grade := s.cfg.Game.StartJobGrade
 			req.Props.JobGradeNumber = &grade
 		}
 
@@ -572,34 +562,18 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if req.Props.Job == nil || req.Props.JobGrade == nil {
 			return nil, errorscitizenstore.ErrPropsJobInvalid
 		}
-
-		updateSets = append(updateSets, tUserProps.Job.SET(jet.String(*req.Props.JobName)))
-		updateSets = append(updateSets, tUserProps.JobGrade.SET(jet.Int32(*req.Props.JobGradeNumber)))
-	} else {
-		req.Props.JobName = props.JobName
-		req.Props.Job = props.Job
-		req.Props.JobGradeNumber = props.JobGradeNumber
-		req.Props.JobGrade = props.JobGrade
 	}
 
 	if req.Props.TrafficInfractionPoints != nil {
-		// Only update when it has actually changed
 		if !slices.Contains(fields, "TrafficInfractionPoints") {
 			return nil, errorscitizenstore.ErrPropsTrafficPointsDenied
 		}
-
-		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*req.Props.TrafficInfractionPoints)))
-	} else {
-		req.Props.TrafficInfractionPoints = props.TrafficInfractionPoints
 	}
 
 	if req.Props.MugShot != nil {
-		// Only update when it has actually changed
 		if !slices.Contains(fields, "MugShot") {
 			return nil, errorscitizenstore.ErrPropsMugShotDenied
 		}
-
-		updateSets = append(updateSets, tUserProps.MugShot.SET(jet.StringExp(jet.Raw("VALUES(`mug_shot`)"))))
 
 		if len(req.Props.MugShot.Data) > 0 {
 			if props.MugShot != nil {
@@ -625,8 +599,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 				}
 			}
 		}
-	} else {
-		req.Props.MugShot = props.MugShot
 	}
 
 	if req.Props.Attributes != nil {
@@ -654,8 +626,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if !valid {
 			return nil, errorscitizenstore.ErrPropsAttributesDenied
 		}
-	} else {
-		req.Props.Attributes = props.Attributes
 	}
 
 	// Begin transaction
@@ -666,99 +636,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	if len(updateSets) > 0 {
-		stmt := tUserProps.
-			INSERT(
-				tUserProps.UserID,
-				tUserProps.Wanted,
-				tUserProps.Job,
-				tUserProps.JobGrade,
-				tUserProps.TrafficInfractionPoints,
-				tUserProps.MugShot,
-			).
-			VALUES(
-				req.Props.UserId,
-				req.Props.Wanted,
-				req.Props.JobName,
-				req.Props.JobGradeNumber,
-				req.Props.TrafficInfractionPoints,
-				req.Props.MugShot,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				updateSets...,
-			)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
+	activities, err := props.HandleChanges(ctx, tx, req.Props, &userInfo.UserId, req.Reason)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
-	// Create user activity entries
-	if *req.Props.Wanted != *props.Wanted {
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted",
-			strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
-			fmt.Sprintf("%s|%s", props.Job.Label, props.JobGrade.Label), fmt.Sprintf("%s|%s", req.Props.Job.Label, req.Props.JobGrade.Label), req.Reason); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-	if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints",
-			strconv.Itoa(int(*props.TrafficInfractionPoints)), strconv.Itoa(int(*req.Props.TrafficInfractionPoints)), req.Reason); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-	if req.Props.MugShot != nil && (props.MugShot == nil || req.Props.MugShot.Url != props.MugShot.Url) {
-		previousUrl := ""
-		if props.MugShot != nil && props.MugShot.Url != nil {
-			previousUrl = *props.MugShot.Url
-		}
-		currentUrl := ""
-		if req.Props != nil && req.Props.MugShot != nil && req.Props.MugShot.Url != nil {
-			currentUrl = *req.Props.MugShot.Url
-		}
-
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.MugShot",
-			previousUrl, currentUrl, req.Reason); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-	if !proto.Equal(req.Props.Attributes, props.Attributes) {
-		added, removed := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
-			func(in *users.CitizenAttribute) uint64 {
-				return in.Id
-			})
-
-		if err := s.updateCitizenAttributes(ctx, tx, req.Props.UserId, added, removed); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-
-		addedOut, err := protojson.Marshal(&users.CitizenAttributes{
-			List: added,
-		})
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-		removedOut, err := protojson.Marshal(&users.CitizenAttributes{
-			List: removed,
-		})
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-
-		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Attributes",
-			string(removedOut), string(addedOut), req.Reason); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
+	if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
 	// Commit the transaction

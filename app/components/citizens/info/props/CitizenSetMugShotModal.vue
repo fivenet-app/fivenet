@@ -5,7 +5,8 @@ import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { UserProps } from '~~/gen/ts/resources/users/props';
+import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     user: User;
@@ -30,8 +31,8 @@ const schema = z
     })
     .or(
         z.union([
-            z.object({ reason: z.string(), mugShot: z.custom<FileList>(), reset: z.boolean() }),
-            z.object({ reason: z.string(), mugShot: z.undefined(), reset: z.boolean() }),
+            z.object({ reason: z.string().min(3).max(255), mugShot: z.custom<FileList>(), reset: z.boolean() }),
+            z.object({ reason: z.string().min(3).max(255), mugShot: z.undefined(), reset: z.boolean() }),
         ]),
     );
 

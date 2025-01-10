@@ -352,15 +352,14 @@ export const useMailerStore = defineStore('mailer', {
                 });
                 const { response } = await call;
 
+                const email = this.emails.find((e) => e.id === id);
+                if (email) {
+                    email.settings = response.email?.settings;
+                    email.access = response.email?.access;
+                }
                 if (this.selectedEmail && this.selectedEmail.id === response.email?.id) {
                     this.selectedEmail.settings = response.email.settings;
                     this.selectedEmail.access = response.email.access;
-                } else {
-                    const email = this.emails.find((e) => e.id === id);
-                    if (email) {
-                        email.settings = response.email?.settings;
-                        email.access = response.email?.access;
-                    }
                 }
 
                 return response.email;

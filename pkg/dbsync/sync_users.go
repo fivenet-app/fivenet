@@ -18,11 +18,11 @@ type usersSync struct {
 	state *TableSyncState
 }
 
-func NewUsersSync(s *syncer, state *TableSyncState) (ISyncer, error) {
+func newUsersSync(s *syncer, state *TableSyncState) *usersSync {
 	return &usersSync{
 		syncer: s,
 		state:  state,
-	}, nil
+	}
 }
 
 func (s *usersSync) Sync(ctx context.Context) error {
@@ -69,6 +69,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
+	// Split names if only one field is used by the framework
 	if s.cfg.Tables.Users.SplitName {
 		for k := range users {
 			if users[k].Lastname == "" {
@@ -133,9 +134,47 @@ func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifi
 func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, 0, 1)
-	_ = query
 
-	// TODO
+	user := &users.User{}
+	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &user); err != nil {
+		return err
+	}
+
+	if s.cfg.Tables.UserLicenses.Enabled {
+		// Retrieve user's licenses
+		identifier := ""
+		if user.Identifier != nil {
+			identifier = *user.Identifier
+		}
+
+		var err error
+		user.Licenses, err = s.retrieveLicenses(ctx, user.UserId, identifier)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Split names if only one field is used by the framework
+	if s.cfg.Tables.Users.SplitName {
+		if user.Lastname == "" {
+			ss := strings.Split(user.Firstname, " ")
+			user.Lastname = ss[len(ss)-1]
+
+			user.Firstname = strings.Replace(user.Firstname, " "+user.Lastname, "", 1)
+		}
+	}
+
+	if s.cli != nil {
+		if _, err := s.cli.SendData(ctx, &pbsync.SendDataRequest{
+			Data: &pbsync.SendDataRequest_Users{
+				Users: &sync.DataUsers{
+					Users: []*users.User{user},
+				},
+			},
+		}); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

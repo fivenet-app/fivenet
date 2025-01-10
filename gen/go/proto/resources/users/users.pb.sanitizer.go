@@ -3,10 +3,6 @@
 
 package users
 
-import (
-	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
-)
-
 func (m *License) Sanitize() error {
 	if m == nil {
 		return nil
@@ -68,65 +64,6 @@ func (m *UserLicenses) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *UserProps) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	// Field: Attributes
-	if m.Attributes != nil {
-		if v, ok := interface{}(m.GetAttributes()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: Email
-
-	if m.Email != nil {
-		*m.Email = htmlsanitizer.StripTags(*m.Email)
-	}
-
-	// Field: Job
-	if m.Job != nil {
-		if v, ok := interface{}(m.GetJob()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: JobGrade
-	if m.JobGrade != nil {
-		if v, ok := interface{}(m.GetJobGrade()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: MugShot
-	if m.MugShot != nil {
-		if v, ok := interface{}(m.GetMugShot()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	// Field: UpdatedAt
-	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
 	}
 
 	return nil

@@ -49,6 +49,16 @@ export default defineI18nConfig(() => ({
                 day: '2-digit',
                 weekday: 'short',
             },
+            shortDate: {
+                month: '2-digit',
+                day: '2-digit',
+            },
+            longDate: {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                weekday: 'short',
+            },
             short: {
                 year: 'numeric',
                 month: '2-digit',
@@ -79,8 +89,18 @@ export default defineI18nConfig(() => ({
         de: {
             date: {
                 year: 'numeric',
-                month: 'short',
+                month: '2-digit',
                 day: '2-digit',
+            },
+            shortDate: {
+                month: '2-digit',
+                day: '2-digit',
+            },
+            longDate: {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                weekday: 'long',
             },
             short: {
                 year: 'numeric',

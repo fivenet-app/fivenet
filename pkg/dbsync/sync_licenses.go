@@ -15,11 +15,11 @@ type licensesSync struct {
 	state *TableSyncState
 }
 
-func NewLicensesSync(s *syncer, state *TableSyncState) (ISyncer, error) {
+func newLicensesSync(s *syncer, state *TableSyncState) *licensesSync {
 	return &licensesSync{
 		syncer: s,
 		state:  state,
-	}, nil
+	}
 }
 
 func (s *licensesSync) Sync(ctx context.Context) error {

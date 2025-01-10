@@ -2,6 +2,10 @@ syntax = "proto3";
 
 package resources.sync;
 
+import "resources/jobs/colleagues.proto";
+import "resources/users/props.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/sync;sync";
 
 // Connect an identifier/license to the provider with the specified external id
@@ -10,4 +14,15 @@ message UserOAuth2Conn {
   string provider_name = 1;
   string identifier = 2;
   string external_id = 3;
+  string username = 4;
+}
+
+message UserProps {
+  string reason = 1 [(validate.rules).string.max_len = 255];
+  resources.users.UserProps props = 2 [(validate.rules).message.required = true];
+}
+
+message JobsUserProps {
+  string reason = 1 [(validate.rules).string.max_len = 255];
+  resources.jobs.JobsUserProps props = 2 [(validate.rules).message.required = true];
 }

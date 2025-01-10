@@ -37,8 +37,14 @@ type Sync struct {
 	acfg  *config.Config
 	cfg   *config.DBSync
 	state *DBSyncState
+	cli   pbsync.SyncServiceClient
 
-	cli pbsync.SyncServiceClient
+	jobs     *jobsSync
+	licenses *licensesSync
+	users    *usersSync
+	vehicles *vehiclesSync
+
+	streamCh chan *pbsync.StreamResponse
 }
 
 type Params struct {
@@ -56,6 +62,8 @@ func New(p Params) (*Sync, error) {
 
 		logger: p.Logger.Named("dbsync"),
 		acfg:   p.Config,
+
+		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
 	if err := s.loadConfig(); err != nil {
@@ -108,10 +116,26 @@ func New(p Params) (*Sync, error) {
 		s.cli = pbsync.NewSyncServiceClient(cli)
 	}
 
+	// Setup table syncers
+	syncer := &syncer{
+		logger: s.logger,
+		db:     s.db,
+		cfg:    s.cfg,
+		cli:    s.cli,
+	}
+	s.jobs = newJobsSync(syncer, s.state.Jobs)
+	s.licenses = newLicensesSync(syncer, s.state.Licenses)
+	s.users = newUsersSync(syncer, s.state.Users)
+	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go s.Run(ctx)
+
+		if s.cli != nil {
+			go s.RunStream(ctx)
+		}
 
 		return nil
 	}))
@@ -134,6 +158,9 @@ func New(p Params) (*Sync, error) {
 }
 
 func (s *Sync) Run(ctx context.Context) {
+	s.wg.Add(1)
+	defer s.wg.Done()
+
 	for {
 		if err := s.run(ctx); err != nil {
 			s.logger.Error("error during sync run", zap.Error(err))
@@ -148,45 +175,21 @@ func (s *Sync) Run(ctx context.Context) {
 }
 
 func (s *Sync) run(ctx context.Context) error {
-	syncer := &syncer{
-		logger: s.logger,
-		db:     s.db,
-		cfg:    s.cfg,
-		cli:    s.cli,
-	}
-
-	jobs, err := NewJobsSync(syncer, s.state.Jobs)
-	if err != nil {
-		return err
-	}
-	licenses, err := NewLicensesSync(syncer, s.state.Licenses)
-	if err != nil {
-		return err
-	}
-	users, err := NewUsersSync(syncer, s.state.Users)
-	if err != nil {
-		return err
-	}
-	vehicles, err := NewVehiclesSync(syncer, s.state.OwnedVehicles)
-	if err != nil {
-		return err
-	}
-
 	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
-	if err := jobs.Sync(ctx); err != nil {
+	if err := s.jobs.Sync(ctx); err != nil {
 		s.logger.Error("error during jobs sync", zap.Error(err))
 	}
-	if err := licenses.Sync(ctx); err != nil {
+	if err := s.licenses.Sync(ctx); err != nil {
 		s.logger.Error("error during licenses sync", zap.Error(err))
 	}
 
 	// User data sync loop
 	for {
-		if err := users.Sync(ctx); err != nil {
+		if err := s.users.Sync(ctx); err != nil {
 			s.logger.Error("error during users sync", zap.Error(err))
 		}
 
-		if err := vehicles.Sync(ctx); err != nil {
+		if err := s.vehicles.Sync(ctx); err != nil {
 			s.logger.Error("error during users sync", zap.Error(err))
 		}
 

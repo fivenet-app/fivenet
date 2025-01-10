@@ -3,12 +3,10 @@ syntax = "proto3";
 package services.sync;
 
 import "resources/jobs/activity.proto";
-import "resources/jobs/colleagues.proto";
 import "resources/jobs/timeclock.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
 import "resources/users/activity.proto";
-import "resources/users/users.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/sync;sync";
 
@@ -29,12 +27,12 @@ message AddActivityRequest {
     // User activity
     resources.users.UserActivity user_activity = 2;
     // Setting props will cause activity to be created automtically
-    resources.users.UserProps user_props = 3;
+    resources.sync.UserProps user_props = 3;
 
     // Jobs user activity
     resources.jobs.JobsUserActivity jobs_user_activity = 4;
     // Setting props will cause activity to be created automtically
-    resources.jobs.JobsUserProps jobs_user_props = 5;
+    resources.sync.JobsUserProps jobs_user_props = 5;
     // Timeclock user entry
     resources.jobs.TimeclockEntry jobs_timeclock = 6;
   }

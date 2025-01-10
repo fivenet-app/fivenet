@@ -5,7 +5,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CitizenAttributes } from '~~/gen/ts/resources/users/attributes';
-import type { UserProps } from '~~/gen/ts/resources/users/users';
+import type { UserProps } from '~~/gen/ts/resources/users/props';
 
 const props = defineProps<{
     modelValue?: CitizenAttributes;

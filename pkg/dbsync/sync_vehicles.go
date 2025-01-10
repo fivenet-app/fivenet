@@ -9,20 +9,20 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-type VehiclesSync struct {
+type vehiclesSync struct {
 	*syncer
 
 	state *TableSyncState
 }
 
-func NewVehiclesSync(s *syncer, state *TableSyncState) (ISyncer, error) {
-	return &VehiclesSync{
+func newVehiclesSync(s *syncer, state *TableSyncState) *vehiclesSync {
+	return &vehiclesSync{
 		syncer: s,
 		state:  state,
-	}, nil
+	}
 }
 
-func (s *VehiclesSync) Sync(ctx context.Context) error {
+func (s *vehiclesSync) Sync(ctx context.Context) error {
 	if !s.cfg.Tables.Vehicles.Enabled {
 		return nil
 	}

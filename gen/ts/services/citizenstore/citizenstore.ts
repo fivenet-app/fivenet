@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CitizenAttribute } from "../../resources/users/attributes";
 import { File } from "../../resources/filestore/file";
-import { UserProps } from "../../resources/users/users";
+import { UserProps } from "../../resources/users/props";
 import { UserActivity } from "../../resources/users/activity";
 import { User } from "../../resources/users/users";
 import { PaginationResponse } from "../../resources/common/database/database";

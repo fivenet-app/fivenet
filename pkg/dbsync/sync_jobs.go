@@ -16,11 +16,11 @@ type jobsSync struct {
 	state *TableSyncState
 }
 
-func NewJobsSync(s *syncer, state *TableSyncState) (ISyncer, error) {
+func newJobsSync(s *syncer, state *TableSyncState) *jobsSync {
 	return &jobsSync{
 		syncer: s,
 		state:  state,
-	}, nil
+	}
 }
 
 func (s *jobsSync) Sync(ctx context.Context) error {

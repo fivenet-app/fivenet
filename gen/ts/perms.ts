@@ -59,6 +59,7 @@
 // source: resources/users/attributes.proto
 // source: resources/users/job_props.proto
 // source: resources/users/jobs.proto
+// source: resources/users/props.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto
 // source: resources/wiki/access.proto

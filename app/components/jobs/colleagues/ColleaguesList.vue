@@ -555,7 +555,7 @@ defineShortcuts({
                                 class="inline-flex items-center gap-1"
                             >
                                 <UIcon name="i-mdi-island" class="size-5" />
-                                <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                                <GenericTime :value="colleague.props?.absenceBegin" type="shortDate" />
                                 <span>{{ $t('common.to') }}</span>
                                 <GenericTime :value="colleague.props?.absenceEnd" type="date" />
                             </span>

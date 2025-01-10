@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package resources.users;
+
+import "resources/filestore/file.proto";
+import "resources/timestamp/timestamp.proto";
+import "resources/users/attributes.proto";
+import "resources/users/jobs.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
+
+message UserProps {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  optional resources.timestamp.Timestamp updated_at = 2;
+  optional bool wanted = 3;
+  optional string job_name = 4; // @gotags: alias:"job"
+  optional resources.users.Job job = 5;
+  optional int32 job_grade_number = 6; // @gotags: alias:"job_grade"
+  optional resources.users.JobGrade job_grade = 7;
+  optional uint32 traffic_infraction_points = 8;
+  optional int64 open_fines = 9;
+  optional string blood_type = 10;
+  optional resources.filestore.File mug_shot = 11;
+  optional CitizenAttributes attributes = 12;
+  // @sanitize: method=StripTags
+  optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
+}

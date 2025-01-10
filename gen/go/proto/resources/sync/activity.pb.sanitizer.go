@@ -3,9 +3,43 @@
 
 package sync
 
+func (m *JobsUserProps) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *UserOAuth2Conn) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	return nil
+}
+
+func (m *UserProps) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Props
+	if m.Props != nil {
+		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

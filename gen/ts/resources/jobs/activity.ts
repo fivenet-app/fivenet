@@ -30,11 +30,11 @@ export interface JobsUserActivity {
      */
     job: string;
     /**
-     * @generated from protobuf field: int32 source_user_id = 5;
+     * @generated from protobuf field: optional int32 source_user_id = 5;
      */
-    sourceUserId: number;
+    sourceUserId?: number;
     /**
-     * @generated from protobuf field: resources.jobs.Colleague source_user = 6;
+     * @generated from protobuf field: optional resources.jobs.Colleague source_user = 6;
      */
     sourceUser?: Colleague; // @gotags: alias:"source_user"
     /**
@@ -195,7 +195,7 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 5, name: "source_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "source_user", kind: "message", T: () => Colleague },
             { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "target_user", kind: "message", T: () => Colleague },
@@ -208,7 +208,6 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.job = "";
-        message.sourceUserId = 0;
         message.targetUserId = 0;
         message.activityType = 0;
         message.reason = "";
@@ -230,10 +229,10 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
                 case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* int32 source_user_id */ 5:
+                case /* optional int32 source_user_id */ 5:
                     message.sourceUserId = reader.int32();
                     break;
-                case /* resources.jobs.Colleague source_user */ 6:
+                case /* optional resources.jobs.Colleague source_user */ 6:
                     message.sourceUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
                     break;
                 case /* int32 target_user_id */ 7:
@@ -272,10 +271,10 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         /* string job = 4; */
         if (message.job !== "")
             writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* int32 source_user_id = 5; */
-        if (message.sourceUserId !== 0)
+        /* optional int32 source_user_id = 5; */
+        if (message.sourceUserId !== undefined)
             writer.tag(5, WireType.Varint).int32(message.sourceUserId);
-        /* resources.jobs.Colleague source_user = 6; */
+        /* optional resources.jobs.Colleague source_user = 6; */
         if (message.sourceUser)
             Colleague.internalBinaryWrite(message.sourceUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* int32 target_user_id = 7; */

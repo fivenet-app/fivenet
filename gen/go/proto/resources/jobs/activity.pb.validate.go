@@ -70,46 +70,6 @@ func (m *JobsUserActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.GetSourceUserId() <= 0 {
-		err := JobsUserActivityValidationError{
-			field:  "SourceUserId",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetSourceUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, JobsUserActivityValidationError{
-					field:  "SourceUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, JobsUserActivityValidationError{
-					field:  "SourceUser",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return JobsUserActivityValidationError{
-				field:  "SourceUser",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if m.GetTargetUserId() <= 0 {
 		err := JobsUserActivityValidationError{
 			field:  "TargetUserId",
@@ -217,6 +177,54 @@ func (m *JobsUserActivity) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return JobsUserActivityValidationError{
 					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.SourceUserId != nil {
+
+		if m.GetSourceUserId() <= 0 {
+			err := JobsUserActivityValidationError{
+				field:  "SourceUserId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.SourceUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetSourceUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobsUserActivityValidationError{
+						field:  "SourceUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobsUserActivityValidationError{
+						field:  "SourceUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSourceUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobsUserActivityValidationError{
+					field:  "SourceUser",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

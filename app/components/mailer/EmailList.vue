@@ -28,7 +28,7 @@ const selectedEmail = computed({
     },
 });
 
-watch(selectedEmail, () => {
+watch(selectedEmail, async () => {
     if (!selectedEmail.value) {
         return;
     }

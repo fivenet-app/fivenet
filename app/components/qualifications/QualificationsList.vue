@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -14,6 +15,14 @@ const sort = useRouteQueryObject<TableSortable>('sort', {
     column: 'abbreviation',
     direction: 'asc',
 });
+
+const schema = z.object({
+    search: z.string().max(64).optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({});
 
 const {
     data,
@@ -31,6 +40,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
                 offset: offset.value,
             },
             sort: sort.value,
+            search: query.search,
         });
         const { response } = await call;
 
@@ -42,6 +52,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
 }
 
 watch(offset, async () => refresh());
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 </script>
 
 <template>
@@ -51,10 +62,22 @@ watch(offset, async () => refresh());
         }"
     >
         <template #header>
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-1">
                 <h3 class="flex-1 text-2xl font-semibold leading-6">
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
+
+                <UForm :schema="schema" :state="query" @submit="refresh">
+                    <UFormGroup name="search">
+                        <UInput
+                            v-model="query.search"
+                            type="text"
+                            name="search"
+                            :placeholder="$t('common.search')"
+                            leading-icon="i-mdi-search"
+                        />
+                    </UFormGroup>
+                </UForm>
 
                 <SortButton v-model="sort" :fields="[{ label: $t('common.id'), value: 'id' }]" />
             </div>

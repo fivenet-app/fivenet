@@ -17,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -289,57 +288,6 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 	}
 
 	return list, nil
-}
-
-func (s *Server) updateLabels(ctx context.Context, tx qrm.DB, userId int32, job string, added []*jobs.Label, removed []*jobs.Label) error {
-	tUserLabels := table.FivenetJobsLabelsUsers
-
-	if len(added) > 0 {
-		addedLabels := make([]*model.FivenetJobsLabelsUsers, len(added))
-		for i, label := range added {
-			addedLabels[i] = &model.FivenetJobsLabelsUsers{
-				UserID:  userId,
-				Job:     job,
-				LabelID: label.Id,
-			}
-		}
-
-		stmt := tUserLabels.
-			INSERT(
-				tUserLabels.UserID,
-				tUserLabels.Job,
-				tUserLabels.LabelID,
-			).
-			MODELS(addedLabels)
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return err
-			}
-		}
-	}
-
-	if len(removed) > 0 {
-		ids := make([]jet.Expression, len(removed))
-
-		for i := range removed {
-			ids[i] = jet.Uint64(removed[i].Id)
-		}
-
-		stmt := tUserLabels.
-			DELETE().
-			WHERE(jet.AND(
-				tUserLabels.UserID.EQ(jet.Int32(userId)),
-				tUserLabels.LabelID.IN(ids...),
-			)).
-			LIMIT(int64(len(removed)))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }
 
 func (s *Server) GetColleagueLabelsStats(ctx context.Context, req *GetColleagueLabelsStatsRequest) (*GetColleagueLabelsStatsResponse, error) {
