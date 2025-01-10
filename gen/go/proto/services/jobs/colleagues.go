@@ -262,7 +262,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
-	if slices.Contains(types, "Labels") || userInfo.SuperUser {
+	if len(resp.Colleagues) > 0 && (slices.Contains(types, "Labels") || userInfo.SuperUser) {
 		userIds := []jet.Expression{}
 		for _, colleague := range resp.Colleagues {
 			userIds = append(userIds, jet.Int32(colleague.UserId))
