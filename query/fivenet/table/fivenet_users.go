@@ -32,6 +32,7 @@ type fivenetUsersTable struct {
 	Visum       mysql.ColumnInteger
 	Playtime    mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
+	UpdatedAt   mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -87,8 +88,9 @@ func newFivenetUsersTableImpl(schemaName, tableName, alias string) fivenetUsersT
 		VisumColumn       = mysql.IntegerColumn("visum")
 		PlaytimeColumn    = mysql.IntegerColumn("playtime")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn}
-		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn}
+		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
+		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
+		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
 	)
 
 	return fivenetUsersTable{
@@ -110,6 +112,7 @@ func newFivenetUsersTableImpl(schemaName, tableName, alias string) fivenetUsersT
 		Visum:       VisumColumn,
 		Playtime:    PlaytimeColumn,
 		CreatedAt:   CreatedAtColumn,
+		UpdatedAt:   UpdatedAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

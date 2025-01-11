@@ -21,7 +21,6 @@ type jobGradesTable struct {
 	Grade   mysql.ColumnInteger
 	Name    mysql.ColumnString
 	Label   mysql.ColumnString
-	Salary  mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -66,9 +65,8 @@ func newJobGradesTableImpl(schemaName, tableName, alias string) jobGradesTable {
 		GradeColumn    = mysql.IntegerColumn("grade")
 		NameColumn     = mysql.StringColumn("name")
 		LabelColumn    = mysql.StringColumn("label")
-		SalaryColumn   = mysql.IntegerColumn("salary")
-		allColumns     = mysql.ColumnList{JobNameColumn, GradeColumn, NameColumn, LabelColumn, SalaryColumn}
-		mutableColumns = mysql.ColumnList{NameColumn, LabelColumn, SalaryColumn}
+		allColumns     = mysql.ColumnList{JobNameColumn, GradeColumn, NameColumn, LabelColumn}
+		mutableColumns = mysql.ColumnList{NameColumn, LabelColumn}
 	)
 
 	return jobGradesTable{
@@ -79,7 +77,6 @@ func newJobGradesTableImpl(schemaName, tableName, alias string) jobGradesTable {
 		Grade:   GradeColumn,
 		Name:    NameColumn,
 		Label:   LabelColumn,
-		Salary:  SalaryColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -34,6 +34,8 @@ message PageActivity {
 
 message PageActivityData {
   oneof data {
+    option (validate.required) = true;
+
     PageUpdated updated = 1;
     PageAccessUpdated access_updated = 2;
   }

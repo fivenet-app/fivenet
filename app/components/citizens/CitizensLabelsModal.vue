@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
-import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { ManageCitizenLabelsResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const { can } = useAuth();
 
@@ -12,7 +12,7 @@ const { isOpen } = useModal();
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    attributes: z
+    labels: z
         .object({
             id: z.string(),
             name: z.string().min(1).max(64),
@@ -25,18 +25,18 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    attributes: [],
+    labels: [],
 });
 
-const { data: attributes } = useLazyAsyncData('citizenstore-attributes', () => completorStore.completeCitizensAttributes(''));
+const { data: labels } = useLazyAsyncData('citizenstore-labels', () => completorStore.completeCitizenLabels(''));
 
-async function manageCitizenAttributes(values: Schema): Promise<ManageCitizenAttributesResponse> {
+async function manageCitizenLabels(values: Schema): Promise<ManageCitizenLabelsResponse> {
     try {
-        const { response } = await getGRPCCitizenStoreClient().manageCitizenAttributes({
-            attributes: values.attributes ?? [],
+        const { response } = await getGRPCCitizenStoreClient().manageCitizenLabels({
+            labels: values.labels ?? [],
         });
 
-        state.attributes = response.attributes;
+        state.labels = response.labels;
 
         isOpen.value = false;
 
@@ -50,10 +50,10 @@ async function manageCitizenAttributes(values: Schema): Promise<ManageCitizenAtt
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await manageCitizenAttributes(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await manageCitizenLabels(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-watch(attributes, () => (state.attributes = attributes.value ?? []));
+watch(labels, () => (state.labels = labels.value ?? []));
 </script>
 
 <template>
@@ -63,7 +63,7 @@ watch(attributes, () => (state.attributes = attributes.value ?? []));
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.rector.job_props.citizen_attributes.title') }}
+                            {{ $t('components.rector.job_props.citizen_labels.title') }}
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
@@ -71,27 +71,27 @@ watch(attributes, () => (state.attributes = attributes.value ?? []));
                 </template>
 
                 <UFormGroup
-                    v-if="state && can('CitizenStoreService.SetUserProps').value"
+                    v-if="state && can('CitizenStoreService.ManageCitizenLabels').value"
                     name="citizenAttributes.list"
                     class="grid items-center gap-2"
                     :ui="{ container: '' }"
                 >
                     <div class="flex flex-col gap-1">
-                        <div v-for="(_, idx) in state.attributes" :key="idx" class="flex items-center gap-1">
-                            <UFormGroup :name="`attributes.${idx}.name`" class="flex-1">
+                        <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
+                            <UFormGroup :name="`labels.${idx}.name`" class="flex-1">
                                 <UInput
-                                    v-model="state.attributes[idx]!.name"
-                                    :name="`attributes.${idx}.name`"
+                                    v-model="state.labels[idx]!.name"
+                                    :name="`labels.${idx}.name`"
                                     type="text"
                                     class="w-full flex-1"
-                                    :placeholder="$t('common.attributes', 1)"
+                                    :placeholder="$t('common.label', 1)"
                                 />
                             </UFormGroup>
 
-                            <UFormGroup :name="`attributes.${idx}.color`">
+                            <UFormGroup :name="`labels.${idx}.color`">
                                 <ColorPickerClient
-                                    v-model="state.attributes[idx]!.color"
-                                    :name="`${idx}.color`"
+                                    v-model="state.labels[idx]!.color"
+                                    :name="`labels.${idx}.color`"
                                     class="min-w-16"
                                 />
                             </UFormGroup>
@@ -100,7 +100,7 @@ watch(attributes, () => (state.attributes = attributes.value ?? []));
                                 :ui="{ rounded: 'rounded-full' }"
                                 :disabled="!canSubmit"
                                 icon="i-mdi-close"
-                                @click="state.attributes.splice(idx, 1)"
+                                @click="state.labels.splice(idx, 1)"
                             />
                         </div>
                     </div>
@@ -109,8 +109,8 @@ watch(attributes, () => (state.attributes = attributes.value ?? []));
                         :ui="{ rounded: 'rounded-full' }"
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
-                        :class="state.attributes.length ? 'mt-2' : ''"
-                        @click="state.attributes.push({ id: '0', name: '', color: '#ffffff' })"
+                        :class="state.labels.length ? 'mt-2' : ''"
+                        @click="state.labels.push({ id: '0', name: '', color: '#ffffff' })"
                     />
                 </UFormGroup>
 

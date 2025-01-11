@@ -2,11 +2,13 @@ syntax = "proto3";
 
 package services.sync;
 
+import "resources/centrum/dispatches.proto";
 import "resources/jobs/activity.proto";
 import "resources/jobs/timeclock.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
 import "resources/users/activity.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/sync;sync";
 
@@ -22,19 +24,23 @@ message GetStatusResponse {
 
 message AddActivityRequest {
   oneof activity {
+    option (validate.required) = true;
+
     resources.sync.UserOAuth2Conn user_oauth2 = 1;
 
+    resources.centrum.Dispatch dispatch = 2;
+
     // User activity
-    resources.users.UserActivity user_activity = 2;
+    resources.users.UserActivity user_activity = 3;
     // Setting props will cause activity to be created automtically
-    resources.sync.UserProps user_props = 3;
+    resources.sync.UserProps user_props = 4;
 
     // Jobs user activity
-    resources.jobs.JobsUserActivity jobs_user_activity = 4;
+    resources.jobs.JobsUserActivity jobs_user_activity = 5;
     // Setting props will cause activity to be created automtically
-    resources.sync.JobsUserProps jobs_user_props = 5;
+    resources.sync.JobsUserProps jobs_user_props = 6;
     // Timeclock user entry
-    resources.jobs.TimeclockEntry jobs_timeclock = 6;
+    resources.jobs.TimeclockEntry jobs_timeclock = 7;
   }
 }
 
@@ -44,6 +50,8 @@ message AddActivityResponse {
 
 message SendDataRequest {
   oneof data {
+    option (validate.required) = true;
+
     resources.sync.DataJobs jobs = 1;
     resources.sync.DataLicenses licenses = 2;
 

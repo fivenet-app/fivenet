@@ -485,6 +485,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *ExamQuestionData_Separator:
 		if v == nil {
@@ -497,6 +498,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetSeparator()).(type) {
@@ -538,6 +540,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetImage()).(type) {
@@ -579,6 +582,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetYesno()).(type) {
@@ -620,6 +624,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetFreeText()).(type) {
@@ -661,6 +666,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetSingleChoice()).(type) {
@@ -702,6 +708,7 @@ func (m *ExamQuestionData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetMultipleChoice()).(type) {
@@ -734,6 +741,16 @@ func (m *ExamQuestionData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := ExamQuestionDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -2189,6 +2206,7 @@ func (m *ExamResponseData) validate(all bool) error {
 
 	var errors []error
 
+	oneofResponsePresent := false
 	switch v := m.Response.(type) {
 	case *ExamResponseData_Separator:
 		if v == nil {
@@ -2201,6 +2219,7 @@ func (m *ExamResponseData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofResponsePresent = true
 
 		if all {
 			switch v := interface{}(m.GetSeparator()).(type) {
@@ -2242,6 +2261,7 @@ func (m *ExamResponseData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofResponsePresent = true
 
 		if all {
 			switch v := interface{}(m.GetYesno()).(type) {
@@ -2283,6 +2303,7 @@ func (m *ExamResponseData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofResponsePresent = true
 
 		if all {
 			switch v := interface{}(m.GetFreeText()).(type) {
@@ -2324,6 +2345,7 @@ func (m *ExamResponseData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofResponsePresent = true
 
 		if all {
 			switch v := interface{}(m.GetSingleChoice()).(type) {
@@ -2365,6 +2387,7 @@ func (m *ExamResponseData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofResponsePresent = true
 
 		if all {
 			switch v := interface{}(m.GetMultipleChoice()).(type) {
@@ -2397,6 +2420,16 @@ func (m *ExamResponseData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofResponsePresent {
+		err := ExamResponseDataValidationError{
+			field:  "Response",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

@@ -309,6 +309,7 @@ func (m *PageActivityData) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *PageActivityData_Updated:
 		if v == nil {
@@ -321,6 +322,7 @@ func (m *PageActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUpdated()).(type) {
@@ -362,6 +364,7 @@ func (m *PageActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetAccessUpdated()).(type) {
@@ -394,6 +397,16 @@ func (m *PageActivityData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := PageActivityDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

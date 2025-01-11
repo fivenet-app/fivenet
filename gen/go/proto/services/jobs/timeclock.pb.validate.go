@@ -367,6 +367,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 
 	}
 
+	oneofEntriesPresent := false
 	switch v := m.Entries.(type) {
 	case *ListTimeclockResponse_Daily:
 		if v == nil {
@@ -379,6 +380,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofEntriesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetDaily()).(type) {
@@ -420,6 +422,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofEntriesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetWeekly()).(type) {
@@ -461,6 +464,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofEntriesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetRange()).(type) {
@@ -493,6 +497,16 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofEntriesPresent {
+		err := ListTimeclockResponseValidationError{
+			field:  "Entries",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

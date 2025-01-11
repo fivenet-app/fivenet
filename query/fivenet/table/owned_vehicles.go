@@ -17,16 +17,10 @@ type ownedVehiclesTable struct {
 	mysql.Table
 
 	// Columns
-	Owner     mysql.ColumnString
-	Plate     mysql.ColumnString
-	Model     mysql.ColumnString
-	Vehicle   mysql.ColumnString
-	Type      mysql.ColumnString
-	Stored    mysql.ColumnBool
-	Carseller mysql.ColumnInteger
-	Owners    mysql.ColumnString
-	Trunk     mysql.ColumnString
-	Glovebox  mysql.ColumnString
+	Owner mysql.ColumnString
+	Plate mysql.ColumnString
+	Model mysql.ColumnString
+	Type  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -67,34 +61,22 @@ func newOwnedVehiclesTable(schemaName, tableName, alias string) *OwnedVehiclesTa
 
 func newOwnedVehiclesTableImpl(schemaName, tableName, alias string) ownedVehiclesTable {
 	var (
-		OwnerColumn     = mysql.StringColumn("owner")
-		PlateColumn     = mysql.StringColumn("plate")
-		ModelColumn     = mysql.StringColumn("model")
-		VehicleColumn   = mysql.StringColumn("vehicle")
-		TypeColumn      = mysql.StringColumn("type")
-		StoredColumn    = mysql.BoolColumn("stored")
-		CarsellerColumn = mysql.IntegerColumn("carseller")
-		OwnersColumn    = mysql.StringColumn("owners")
-		TrunkColumn     = mysql.StringColumn("trunk")
-		GloveboxColumn  = mysql.StringColumn("glovebox")
-		allColumns      = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
-		mutableColumns  = mysql.ColumnList{OwnerColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
+		OwnerColumn    = mysql.StringColumn("owner")
+		PlateColumn    = mysql.StringColumn("plate")
+		ModelColumn    = mysql.StringColumn("model")
+		TypeColumn     = mysql.StringColumn("type")
+		allColumns     = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, TypeColumn}
+		mutableColumns = mysql.ColumnList{OwnerColumn, ModelColumn, TypeColumn}
 	)
 
 	return ownedVehiclesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		Owner:     OwnerColumn,
-		Plate:     PlateColumn,
-		Model:     ModelColumn,
-		Vehicle:   VehicleColumn,
-		Type:      TypeColumn,
-		Stored:    StoredColumn,
-		Carseller: CarsellerColumn,
-		Owners:    OwnersColumn,
-		Trunk:     TrunkColumn,
-		Glovebox:  GloveboxColumn,
+		Owner: OwnerColumn,
+		Plate: PlateColumn,
+		Model: ModelColumn,
+		Type:  TypeColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

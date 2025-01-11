@@ -994,6 +994,7 @@ func (m *AttributeValues) validate(all bool) error {
 
 	var errors []error
 
+	oneofValidValuesPresent := false
 	switch v := m.ValidValues.(type) {
 	case *AttributeValues_StringList:
 		if v == nil {
@@ -1006,6 +1007,7 @@ func (m *AttributeValues) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofValidValuesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetStringList()).(type) {
@@ -1047,6 +1049,7 @@ func (m *AttributeValues) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofValidValuesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobList()).(type) {
@@ -1088,6 +1091,7 @@ func (m *AttributeValues) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofValidValuesPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobGradeList()).(type) {
@@ -1120,6 +1124,16 @@ func (m *AttributeValues) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofValidValuesPresent {
+		err := AttributeValuesValidationError{
+			field:  "ValidValues",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

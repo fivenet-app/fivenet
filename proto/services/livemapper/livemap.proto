@@ -12,6 +12,8 @@ message StreamRequest {}
 
 message StreamResponse {
   oneof data {
+    option (validate.required) = true;
+
     JobsList jobs = 1;
     MarkerMarkersUpdates markers = 2;
     UserMarkersUpdates users = 3;

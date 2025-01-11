@@ -37,6 +37,8 @@ message JobsUserActivity {
 
 message JobsUserActivityData {
   oneof data {
+    option (validate.required) = true;
+
     ColleagueAbsenceDate absence_date = 1;
     ColleagueGradeChange grade_change = 2;
     ColleagueLabelsChange labels_change = 3;

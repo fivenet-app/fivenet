@@ -31,12 +31,6 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	tDCategory = table.FivenetDocumentsCategories.AS("category")
-	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
-	tLaws      = table.FivenetLawbooksLaws.AS("law")
-)
-
 type Cache struct {
 	logger *zap.Logger
 	db     *sql.DB
@@ -90,10 +84,10 @@ func NewCache(p Params) (*Cache, error) {
 	debouncer := debounce.New(175 * time.Millisecond)
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		jobs, err := store.New[users.Job, *users.Job](ctxStartup, p.Logger, p.JS, "cache",
+		jobs, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
 			store.WithLocks[users.Job, *users.Job](nil),
 			store.WithKVPrefix[users.Job, *users.Job]("jobs"),
-			store.WithOnUpdateFn[users.Job, *users.Job](func(_ *store.Store[users.Job, *users.Job], value *users.Job) (*users.Job, error) {
+			store.WithOnUpdateFn(func(_ *store.Store[users.Job, *users.Job], value *users.Job) (*users.Job, error) {
 				if value == nil {
 					return value, nil
 				}
@@ -108,7 +102,7 @@ func NewCache(p Params) (*Cache, error) {
 		}
 		cc.jobs = jobs
 
-		docCategories, err := store.New[documents.Category, *documents.Category](ctxStartup, p.Logger, p.JS, "cache",
+		docCategories, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
 			store.WithLocks[documents.Category, *documents.Category](nil),
 			store.WithKVPrefix[documents.Category, *documents.Category]("doc_categories"),
 		)
@@ -194,6 +188,8 @@ func (c *Cache) refreshCache(ctx context.Context) error {
 }
 
 func (c *Cache) refreshCategories(ctx context.Context) error {
+	tDCategory := table.FivenetDocumentsCategories.AS("category")
+
 	stmt := tDCategory.
 		SELECT(
 			tDCategory.ID,
@@ -297,6 +293,9 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 }
 
 func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
+	tLawBooks := table.FivenetLawbooks.AS("lawbook")
+	tLaws := table.FivenetLawbooksLaws.AS("law")
+
 	stmt := tLawBooks.
 		SELECT(
 			tLawBooks.ID,

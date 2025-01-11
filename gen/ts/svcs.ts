@@ -56,9 +56,9 @@
 // source: resources/sync/data.proto
 // source: resources/timestamp/timestamp.proto
 // source: resources/users/activity.proto
-// source: resources/users/attributes.proto
 // source: resources/users/job_props.proto
 // source: resources/users/jobs.proto
+// source: resources/users/labels.proto
 // source: resources/users/props.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto
@@ -167,12 +167,12 @@ export const grpcMethods = [
 	'CitizenStoreService/ListUserActivity',
 	'CitizenStoreService/SetUserProps',
 	'CitizenStoreService/SetProfilePicture',
-	'CitizenStoreService/ManageCitizenAttributes',
+	'CitizenStoreService/ManageCitizenLabels',
 	'CompletorService/CompleteCitizens',
 	'CompletorService/CompleteJobs',
 	'CompletorService/CompleteDocumentCategories',
 	'CompletorService/ListLawBooks',
-	'CompletorService/CompleteCitizenAttributes',
+	'CompletorService/CompleteCitizenLabels',
 	'DMVService/ListVehicles',
 	'DocStoreService/ListTemplates',
 	'DocStoreService/GetTemplate',

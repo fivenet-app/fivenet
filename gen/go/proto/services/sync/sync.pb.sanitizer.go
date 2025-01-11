@@ -8,9 +8,17 @@ func (m *AddActivityRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: JobsTimeclock
+	// Field: Dispatch
 	switch v := m.Activity.(type) {
 
+	case *AddActivityRequest_Dispatch:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: JobsTimeclock
 	case *AddActivityRequest_JobsTimeclock:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {

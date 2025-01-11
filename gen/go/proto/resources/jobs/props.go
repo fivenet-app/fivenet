@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
@@ -11,6 +12,95 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
+
+func GetJobsUserProps(ctx context.Context, tx qrm.DB, job string, userId int32, fields []string) (*JobsUserProps, error) {
+	tJobsUserProps := table.FivenetJobsUserProps.AS("jobsuserprops")
+
+	columns := []jet.Projection{
+		tJobsUserProps.Job,
+		tJobsUserProps.AbsenceBegin,
+		tJobsUserProps.AbsenceEnd,
+		tJobsUserProps.NamePrefix,
+		tJobsUserProps.NameSuffix,
+	}
+
+	if fields == nil {
+		fields = append(fields, "Note")
+	}
+
+	for _, field := range fields {
+		switch field {
+		case "Note":
+			columns = append(columns, tJobsUserProps.Note)
+		}
+	}
+
+	stmt := tJobsUserProps.
+		SELECT(
+			tJobsUserProps.UserID,
+			columns...,
+		).
+		FROM(tJobsUserProps).
+		WHERE(jet.AND(
+			tJobsUserProps.UserID.EQ(jet.Int32(userId)),
+			tJobsUserProps.Job.EQ(jet.String(job)),
+		)).
+		LIMIT(1)
+
+	dest := &JobsUserProps{
+		UserId: userId,
+	}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	labels, err := GetUserLabels(ctx, tx, job, userId)
+	if err != nil {
+		return nil, err
+	}
+	dest.Labels = labels
+
+	return dest, nil
+}
+
+func GetUserLabels(ctx context.Context, tx qrm.DB, job string, userId int32) (*Labels, error) {
+	tJobLabels := table.FivenetJobsLabels.AS("label")
+	tUserLabels := table.FivenetJobsLabelsUsers
+
+	stmt := tUserLabels.
+		SELECT(
+			tJobLabels.ID,
+			tJobLabels.Job,
+			tJobLabels.Name,
+			tJobLabels.Color,
+		).
+		FROM(
+			tUserLabels.
+				INNER_JOIN(tJobLabels,
+					tJobLabels.ID.EQ(tUserLabels.LabelID),
+				),
+		).
+		WHERE(jet.AND(
+			tUserLabels.UserID.EQ(jet.Int32(userId)),
+			tJobLabels.Job.EQ(jet.String(job)),
+		)).
+		ORDER_BY(
+			tJobLabels.Order.ASC(),
+		)
+
+	list := &Labels{
+		List: []*Label{},
+	}
+	if err := stmt.QueryContext(ctx, tx, &list.List); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return list, nil
+}
 
 func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUserProps, job string, sourceUserId *int32, reason string) ([]*JobsUserActivity, error) {
 	absenceBegin := jet.DateExp(jet.NULL)

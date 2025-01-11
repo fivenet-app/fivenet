@@ -40,7 +40,7 @@ func init() {
 				{
 					Key:         permkeys.CitizenStoreServiceListCitizensFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"},
+					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"},
 				},
 			},
 		},
@@ -57,7 +57,7 @@ func init() {
 		},
 		{
 			Category: permkeys.CitizenStoreServicePerm,
-			Name:     permkeys.CitizenStoreServiceManageCitizenAttributesPerm,
+			Name:     permkeys.CitizenStoreServiceManageCitizenLabelsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -67,7 +67,7 @@ func init() {
 				{
 					Key:         permkeys.CitizenStoreServiceSetUserPropsFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"},
+					ValidValues: []string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"},
 				},
 			},
 		},

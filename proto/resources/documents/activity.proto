@@ -49,6 +49,8 @@ message DocActivity {
 
 message DocActivityData {
   oneof data {
+    option (validate.required) = true;
+
     DocUpdated updated = 1;
     DocOwnerChanged owner_changed = 2;
     DocAccessUpdated access_updated = 4;

@@ -18,10 +18,8 @@ type gksphoneJobMessageTable struct {
 
 	// Columns
 	ID      mysql.ColumnInteger
-	Name    mysql.ColumnString
 	Number  mysql.ColumnString
 	Message mysql.ColumnString
-	Photo   mysql.ColumnString
 	Gps     mysql.ColumnString
 	Owner   mysql.ColumnInteger
 	Jobm    mysql.ColumnString
@@ -68,17 +66,15 @@ func newGksphoneJobMessageTable(schemaName, tableName, alias string) *GksphoneJo
 func newGksphoneJobMessageTableImpl(schemaName, tableName, alias string) gksphoneJobMessageTable {
 	var (
 		IDColumn       = mysql.IntegerColumn("id")
-		NameColumn     = mysql.StringColumn("name")
 		NumberColumn   = mysql.StringColumn("number")
 		MessageColumn  = mysql.StringColumn("message")
-		PhotoColumn    = mysql.StringColumn("photo")
 		GpsColumn      = mysql.StringColumn("gps")
 		OwnerColumn    = mysql.IntegerColumn("owner")
 		JobmColumn     = mysql.StringColumn("jobm")
 		AnonColumn     = mysql.StringColumn("anon")
 		TimeColumn     = mysql.TimestampColumn("time")
-		allColumns     = mysql.ColumnList{IDColumn, NameColumn, NumberColumn, MessageColumn, PhotoColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
-		mutableColumns = mysql.ColumnList{NameColumn, NumberColumn, MessageColumn, PhotoColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
+		allColumns     = mysql.ColumnList{IDColumn, NumberColumn, MessageColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
+		mutableColumns = mysql.ColumnList{NumberColumn, MessageColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
 	)
 
 	return gksphoneJobMessageTable{
@@ -86,10 +82,8 @@ func newGksphoneJobMessageTableImpl(schemaName, tableName, alias string) gksphon
 
 		//Columns
 		ID:      IDColumn,
-		Name:    NameColumn,
 		Number:  NumberColumn,
 		Message: MessageColumn,
-		Photo:   PhotoColumn,
 		Gps:     GpsColumn,
 		Owner:   OwnerColumn,
 		Jobm:    JobmColumn,

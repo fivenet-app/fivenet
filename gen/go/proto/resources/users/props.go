@@ -18,9 +18,91 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var tUserProps = table.FivenetUserProps
+func GetUserProps(ctx context.Context, tx qrm.DB, userId int32, attrJobs []string) (*UserProps, error) {
+	tUserProps := table.FivenetUserProps.AS("userprops")
+	stmt := tUserProps.
+		SELECT(
+			tUserProps.UserID,
+			tUserProps.UpdatedAt,
+			tUserProps.Wanted,
+			tUserProps.Job,
+			tUserProps.JobGrade,
+			tUserProps.TrafficInfractionPoints,
+			tUserProps.MugShot,
+		).
+		FROM(tUserProps).
+		WHERE(
+			tUserProps.UserID.EQ(jet.Int32(userId)),
+		).
+		LIMIT(1)
+
+	dest := &UserProps{
+		UserId: userId,
+	}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	dest.UserId = userId
+
+	attributes, err := GetUserLabels(ctx, tx, userId, attrJobs)
+	if err != nil {
+		return nil, err
+	}
+	dest.Labels = attributes
+
+	return dest, nil
+}
+
+func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) (*CitizenLabels, error) {
+	list := &CitizenLabels{
+		List: []*CitizenLabel{},
+	}
+
+	if len(jobs) == 0 {
+		return list, nil
+	}
+
+	jobsExp := make([]jet.Expression, len(jobs))
+	for i := 0; i < len(jobs); i++ {
+		jobsExp[i] = jet.String(jobs[i])
+	}
+
+	tJobCitizenLabels := table.FivenetJobCitizenLabels.AS("citizen_label")
+	tUserCitizenLabels := table.FivenetUserCitizenLabels
+
+	stmt := tUserCitizenLabels.
+		SELECT(
+			tJobCitizenLabels.ID,
+			tJobCitizenLabels.Job,
+			tJobCitizenLabels.Name,
+			tJobCitizenLabels.Color,
+		).
+		FROM(
+			tUserCitizenLabels.
+				INNER_JOIN(tJobCitizenLabels,
+					tJobCitizenLabels.ID.EQ(tUserCitizenLabels.AttributeID),
+				),
+		).
+		WHERE(jet.AND(
+			tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
+			tJobCitizenLabels.Job.IN(jobsExp...),
+		))
+
+	if err := stmt.QueryContext(ctx, tx, &list.List); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return list, nil
+}
 
 func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps, sourceUserId *int32, reason string) ([]*UserActivity, error) {
+	tUserProps := table.FivenetUserProps
+
 	updateSets := []jet.ColumnAssigment{}
 
 	// Generate the update sets
@@ -61,16 +143,16 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 		in.MugShot = x.MugShot
 	}
 
-	if in.Attributes != nil {
-		if in.Attributes.List == nil {
-			in.Attributes.List = []*CitizenAttribute{}
+	if in.Labels != nil {
+		if in.Labels.List == nil {
+			in.Labels.List = []*CitizenLabel{}
 		}
 
-		slices.SortFunc(in.Attributes.List, func(a, b *CitizenAttribute) int {
+		slices.SortFunc(in.Labels.List, func(a, b *CitizenLabel) int {
 			return strings.Compare(a.Name, b.Name)
 		})
 	} else {
-		in.Attributes = x.Attributes
+		in.Labels = x.Labels
 	}
 
 	if len(updateSets) > 0 {
@@ -156,23 +238,23 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			Reason:       reason,
 		})
 	}
-	if !proto.Equal(in.Attributes, x.Attributes) {
-		added, removed := utils.SlicesDifferenceFunc(x.Attributes.List, in.Attributes.List,
-			func(in *CitizenAttribute) uint64 {
+	if !proto.Equal(in.Labels, x.Labels) {
+		added, removed := utils.SlicesDifferenceFunc(x.Labels.List, in.Labels.List,
+			func(in *CitizenLabel) uint64 {
 				return in.Id
 			})
 
-		if err := x.updateCitizenAttributes(ctx, tx, in.UserId, added, removed); err != nil {
+		if err := x.updateCitizenLabels(ctx, tx, in.UserId, added, removed); err != nil {
 			return nil, err
 		}
 
-		addedOut, err := protojson.Marshal(&CitizenAttributes{
+		addedOut, err := protojson.Marshal(&CitizenLabels{
 			List: added,
 		})
 		if err != nil {
 			return nil, err
 		}
-		removedOut, err := protojson.Marshal(&CitizenAttributes{
+		removedOut, err := protojson.Marshal(&CitizenLabels{
 			List: removed,
 		})
 		if err != nil {
@@ -183,7 +265,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			SourceUserId: sourceUserId,
 			TargetUserId: x.UserId,
 			Type:         UserActivityType_USER_ACTIVITY_TYPE_CHANGED,
-			Key:          "UserProps.Attributes",
+			Key:          "UserProps.Labels",
 			OldValue:     string(removedOut),
 			NewValue:     string(addedOut),
 			Reason:       reason,
@@ -193,24 +275,24 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 	return activities, nil
 }
 
-func (s *UserProps) updateCitizenAttributes(ctx context.Context, tx qrm.DB, userId int32, added []*CitizenAttribute, removed []*CitizenAttribute) error {
-	tUserCitizenAttributes := table.FivenetUserCitizenAttributes
+func (s *UserProps) updateCitizenLabels(ctx context.Context, tx qrm.DB, userId int32, added []*CitizenLabel, removed []*CitizenLabel) error {
+	tUserCitizenLabels := table.FivenetUserCitizenLabels
 
 	if len(added) > 0 {
-		addedAttributes := make([]*model.FivenetUserCitizenAttributes, len(added))
+		addedLabels := make([]*model.FivenetUserCitizenLabels, len(added))
 		for i, attribute := range added {
-			addedAttributes[i] = &model.FivenetUserCitizenAttributes{
+			addedLabels[i] = &model.FivenetUserCitizenLabels{
 				UserID:      userId,
 				AttributeID: attribute.Id,
 			}
 		}
 
-		stmt := tUserCitizenAttributes.
+		stmt := tUserCitizenLabels.
 			INSERT(
-				tUserCitizenAttributes.UserID,
-				tUserCitizenAttributes.AttributeID,
+				tUserCitizenLabels.UserID,
+				tUserCitizenLabels.AttributeID,
 			).
-			MODELS(addedAttributes)
+			MODELS(addedLabels)
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			if !dbutils.IsDuplicateError(err) {
@@ -226,11 +308,11 @@ func (s *UserProps) updateCitizenAttributes(ctx context.Context, tx qrm.DB, user
 			ids[i] = jet.Uint64(removed[i].Id)
 		}
 
-		stmt := tUserCitizenAttributes.
+		stmt := tUserCitizenLabels.
 			DELETE().
 			WHERE(jet.AND(
-				tUserCitizenAttributes.UserID.EQ(jet.Int32(userId)),
-				tUserCitizenAttributes.AttributeID.IN(ids...),
+				tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
+				tUserCitizenLabels.AttributeID.IN(ids...),
 			)).
 			LIMIT(int64(len(removed)))
 

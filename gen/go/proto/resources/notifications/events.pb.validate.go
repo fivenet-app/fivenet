@@ -57,6 +57,7 @@ func (m *UserEvent) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *UserEvent_RefreshToken:
 		if v == nil {
@@ -69,6 +70,7 @@ func (m *UserEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for RefreshToken
 	case *UserEvent_Notification:
 		if v == nil {
@@ -81,6 +83,7 @@ func (m *UserEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetNotification()).(type) {
@@ -122,9 +125,20 @@ func (m *UserEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for NotificationsReadCount
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := UserEventValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -226,6 +240,7 @@ func (m *JobEvent) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *JobEvent_JobProps:
 		if v == nil {
@@ -238,6 +253,7 @@ func (m *JobEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobProps()).(type) {
@@ -270,6 +286,16 @@ func (m *JobEvent) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := JobEventValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -371,6 +397,7 @@ func (m *JobGradeEvent) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *JobGradeEvent_RefreshToken:
 		if v == nil {
@@ -383,9 +410,20 @@ func (m *JobGradeEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for RefreshToken
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := JobGradeEventValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

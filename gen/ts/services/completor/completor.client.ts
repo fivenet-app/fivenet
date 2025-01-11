@@ -4,8 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CompletorService } from "./completor";
-import type { CompleteCitizenAttributesResponse } from "./completor";
-import type { CompleteCitizenAttributesRequest } from "./completor";
+import type { CompleteCitizenLabelsResponse } from "./completor";
+import type { CompleteCitizenLabelsRequest } from "./completor";
 import type { ListLawBooksResponse } from "./completor";
 import type { ListLawBooksRequest } from "./completor";
 import type { CompleteDocumentCategoriesResponse } from "./completor";
@@ -48,9 +48,9 @@ export interface ICompletorServiceClient {
     /**
      * @perm: Attrs=Jobs/JobList
      *
-     * @generated from protobuf rpc: CompleteCitizenAttributes(services.completor.CompleteCitizenAttributesRequest) returns (services.completor.CompleteCitizenAttributesResponse);
+     * @generated from protobuf rpc: CompleteCitizenLabels(services.completor.CompleteCitizenLabelsRequest) returns (services.completor.CompleteCitizenLabelsResponse);
      */
-    completeCitizenAttributes(input: CompleteCitizenAttributesRequest, options?: RpcOptions): UnaryCall<CompleteCitizenAttributesRequest, CompleteCitizenAttributesResponse>;
+    completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.completor.CompletorService
@@ -100,10 +100,10 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
     /**
      * @perm: Attrs=Jobs/JobList
      *
-     * @generated from protobuf rpc: CompleteCitizenAttributes(services.completor.CompleteCitizenAttributesRequest) returns (services.completor.CompleteCitizenAttributesResponse);
+     * @generated from protobuf rpc: CompleteCitizenLabels(services.completor.CompleteCitizenLabelsRequest) returns (services.completor.CompleteCitizenLabelsResponse);
      */
-    completeCitizenAttributes(input: CompleteCitizenAttributesRequest, options?: RpcOptions): UnaryCall<CompleteCitizenAttributesRequest, CompleteCitizenAttributesResponse> {
+    completeCitizenLabels(input: CompleteCitizenLabelsRequest, options?: RpcOptions): UnaryCall<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CompleteCitizenAttributesRequest, CompleteCitizenAttributesResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CompleteCitizenLabelsRequest, CompleteCitizenLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

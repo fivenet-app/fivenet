@@ -1,12 +1,17 @@
 syntax = "proto3";
 
 package resources.common.grpcws;
+
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws;grpcws";
 
 message GrpcFrame {
   uint32 streamId = 1;
 
   oneof payload {
+    option (validate.required) = true;
+
     Ping ping = 2;
     Header header = 3;
     Body body = 4;

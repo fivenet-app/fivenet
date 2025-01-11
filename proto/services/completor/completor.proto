@@ -4,8 +4,8 @@ package services.completor;
 
 import "resources/documents/category.proto";
 import "resources/laws/laws.proto";
-import "resources/users/attributes.proto";
 import "resources/users/jobs.proto";
+import "resources/users/labels.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -46,12 +46,12 @@ message ListLawBooksResponse {
   repeated resources.laws.LawBook books = 1;
 }
 
-message CompleteCitizenAttributesRequest {
+message CompleteCitizenLabelsRequest {
   string search = 1 [(validate.rules).string.max_len = 64];
 }
 
-message CompleteCitizenAttributesResponse {
-  repeated resources.users.CitizenAttribute attributes = 1;
+message CompleteCitizenLabelsResponse {
+  repeated resources.users.CitizenLabel labels = 1;
 }
 
 service CompletorService {
@@ -65,5 +65,5 @@ service CompletorService {
   rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse);
 
   // @perm: Attrs=Jobs/JobList
-  rpc CompleteCitizenAttributes(CompleteCitizenAttributesRequest) returns (CompleteCitizenAttributesResponse);
+  rpc CompleteCitizenLabels(CompleteCitizenLabelsRequest) returns (CompleteCitizenLabelsResponse);
 }

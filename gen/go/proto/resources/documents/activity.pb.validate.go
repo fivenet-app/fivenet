@@ -309,6 +309,7 @@ func (m *DocActivityData) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *DocActivityData_Updated:
 		if v == nil {
@@ -321,6 +322,7 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUpdated()).(type) {
@@ -362,6 +364,7 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetOwnerChanged()).(type) {
@@ -403,6 +406,7 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetAccessUpdated()).(type) {
@@ -444,6 +448,7 @@ func (m *DocActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetAccessRequested()).(type) {
@@ -476,6 +481,16 @@ func (m *DocActivityData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := DocActivityDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

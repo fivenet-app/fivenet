@@ -8,14 +8,8 @@
 package model
 
 type OwnedVehicles struct {
-	Owner     *string `json:"owner"`
-	Plate     string  `sql:"primary_key" json:"plate"`
-	Model     string  `json:"model"`
-	Vehicle   *string `json:"vehicle"`
-	Type      string  `json:"type"`
-	Stored    bool    `json:"stored"`
-	Carseller *int32  `json:"carseller"`
-	Owners    *string `json:"owners"`
-	Trunk     *string `json:"trunk"`
-	Glovebox  *string `json:"glovebox"`
+	Owner *string `json:"owner"`
+	Plate string  `sql:"primary_key" json:"plate"`
+	Model string  `json:"model"`
+	Type  string  `json:"type"`
 }

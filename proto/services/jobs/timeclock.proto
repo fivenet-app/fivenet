@@ -29,6 +29,8 @@ message ListTimeclockResponse {
   repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
 
   oneof entries {
+    option (validate.required) = true;
+
     TimeclockDay daily = 4;
     TimeclockWeekly weekly = 5;
     TimeclockRange range = 6;

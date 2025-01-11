@@ -56,6 +56,8 @@ message RoleAttribute {
 
 message AttributeValues {
   oneof valid_values {
+    option (validate.required) = true;
+
     StringList string_list = 1;
     StringList job_list = 2;
     JobGradeList job_grade_list = 3;

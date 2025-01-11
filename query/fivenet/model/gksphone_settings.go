@@ -8,9 +8,6 @@
 package model
 
 type GksphoneSettings struct {
-	ID          int32   `sql:"primary_key" json:"id"`
 	Identifier  *string `json:"identifier"`
-	Crypto      *string `json:"crypto"`
 	PhoneNumber *string `json:"phone_number"`
-	AvatarURL   *string `json:"avatar_url"`
 }

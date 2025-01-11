@@ -13,10 +13,8 @@ import (
 
 type GksphoneJobMessage struct {
 	ID      int32     `sql:"primary_key" json:"id"`
-	Name    *string   `json:"name"`
 	Number  *string   `json:"number"`
 	Message *string   `json:"message"`
-	Photo   *string   `json:"photo"`
 	Gps     *string   `json:"gps"`
 	Owner   int32     `json:"owner"`
 	Jobm    *string   `json:"jobm"`

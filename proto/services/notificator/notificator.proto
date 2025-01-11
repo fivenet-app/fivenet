@@ -49,7 +49,9 @@ message StreamResponse {
   optional bool restart = 2;
 
   oneof data {
-    resources.notifications.UserEvent user_event = 3;
+    option (validate.required) = true;
+
+resources.notifications.UserEvent user_event = 3;
     resources.notifications.JobEvent job_event = 4;
     resources.notifications.JobGradeEvent job_grade_event = 7;
     resources.notifications.SystemEvent system_event = 5;

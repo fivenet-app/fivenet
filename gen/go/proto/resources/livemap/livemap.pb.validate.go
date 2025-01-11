@@ -753,6 +753,7 @@ func (m *MarkerData) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *MarkerData_Circle:
 		if v == nil {
@@ -765,6 +766,7 @@ func (m *MarkerData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetCircle()).(type) {
@@ -806,6 +808,7 @@ func (m *MarkerData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetIcon()).(type) {
@@ -838,6 +841,16 @@ func (m *MarkerData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := MarkerDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

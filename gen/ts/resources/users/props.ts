@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { CitizenAttributes } from "./attributes";
+import { CitizenLabels } from "./labels";
 import { File } from "../filestore/file";
 import { JobGrade } from "./jobs";
 import { Job } from "./jobs";
@@ -64,9 +64,9 @@ export interface UserProps {
      */
     mugShot?: File;
     /**
-     * @generated from protobuf field: optional resources.users.CitizenAttributes attributes = 12;
+     * @generated from protobuf field: optional resources.users.CitizenLabels labels = 12;
      */
-    attributes?: CitizenAttributes;
+    labels?: CitizenLabels;
     /**
      * @sanitize: method=StripTags
      *
@@ -89,7 +89,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 9, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 10, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "mug_shot", kind: "message", T: () => File },
-            { no: 12, name: "attributes", kind: "message", T: () => CitizenAttributes },
+            { no: 12, name: "labels", kind: "message", T: () => CitizenLabels },
             { no: 19, name: "email", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxLen: "80" } } } }
         ]);
     }
@@ -138,8 +138,8 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional resources.filestore.File mug_shot */ 11:
                     message.mugShot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugShot);
                     break;
-                case /* optional resources.users.CitizenAttributes attributes */ 12:
-                    message.attributes = CitizenAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                case /* optional resources.users.CitizenLabels labels */ 12:
+                    message.labels = CitizenLabels.internalBinaryRead(reader, reader.uint32(), options, message.labels);
                     break;
                 case /* optional string email */ 19:
                     message.email = reader.string();
@@ -189,9 +189,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.filestore.File mug_shot = 11; */
         if (message.mugShot)
             File.internalBinaryWrite(message.mugShot, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.CitizenAttributes attributes = 12; */
-        if (message.attributes)
-            CitizenAttributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.CitizenLabels labels = 12; */
+        if (message.labels)
+            CitizenLabels.internalBinaryWrite(message.labels, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* optional string email = 19; */
         if (message.email !== undefined)
             writer.tag(19, WireType.LengthDelimited).string(message.email);

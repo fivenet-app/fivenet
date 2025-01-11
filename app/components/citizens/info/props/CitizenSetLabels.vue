@@ -4,37 +4,36 @@ import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { CitizenAttributes } from '~~/gen/ts/resources/users/attributes';
+import type { CitizenLabels } from '~~/gen/ts/resources/users/labels';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
 
 const props = defineProps<{
-    modelValue?: CitizenAttributes;
+    modelValue?: CitizenLabels;
     userId: number;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', attributes: CitizenAttributes | undefined): void;
+    (e: 'update:modelValue', labels: CitizenLabels | undefined): void;
 }>();
 
 const { attr, can } = useAuth();
 
-const attributes = useVModel(props, 'modelValue', emit);
+const labels = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 
 const canDo = computed(() => ({
-    set:
-        can('CitizenStoreService.SetUserProps').value && attr('CitizenStoreService.SetUserProps', 'Fields', 'Attributes').value,
+    set: can('CitizenStoreService.SetUserProps').value && attr('CitizenStoreService.SetUserProps', 'Fields', 'Labels').value,
 }));
 
-const attributesLoading = ref(false);
+const labelsLoading = ref(false);
 
 const changed = ref(false);
 
 const schema = z.object({
-    attributes: z
+    labels: z
         .object({
             id: z.string(),
             name: z.string().min(1),
@@ -48,15 +47,15 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    attributes: attributes.value?.list !== undefined ? attributes.value.list.slice() : [],
+    labels: labels.value?.list !== undefined ? labels.value.list.slice() : [],
     reason: '',
 });
 
 async function setJobProp(userId: number, values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: userId,
-        attributes: {
-            list: values.attributes,
+        labels: {
+            list: values.labels,
         },
     };
 
@@ -73,7 +72,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        attributes.value = response.props?.attributes;
+        labels.value = response.props?.labels;
         state.reason = '';
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -88,12 +87,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     changed.value = false;
 }, 1000);
 
-watch(props, () => (state.attributes = attributes.value?.list !== undefined ? attributes.value?.list.slice() : []));
+watch(props, () => (state.labels = labels.value?.list !== undefined ? labels.value?.list.slice() : []));
 
 watch(state, () => {
     if (
-        state.attributes.length === attributes.value?.list.length &&
-        state.attributes.every((el, idx) => el.name === attributes.value?.list[idx]?.name)
+        state.labels.length === labels.value?.list.length &&
+        state.labels.every((el, idx) => el.name === labels.value?.list[idx]?.name)
     ) {
         changed.value = false;
     } else {
@@ -104,13 +103,13 @@ watch(state, () => {
 
 <template>
     <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-        <p v-if="!state.attributes.length" class="text-sm leading-6">
-            {{ $t('common.none', [$t('common.attributes', 2)]) }}
+        <p v-if="!state.labels.length" class="text-sm leading-6">
+            {{ $t('common.none', [$t('common.label', 2)]) }}
         </p>
         <template v-else>
             <div class="flex max-w-72 flex-row flex-wrap gap-1">
                 <UBadge
-                    v-for="(attribute, idx) in state.attributes"
+                    v-for="(attribute, idx) in state.labels"
                     :key="attribute.name"
                     :style="{ backgroundColor: attribute.color }"
                     class="justify-between gap-2"
@@ -134,29 +133,29 @@ watch(state, () => {
                         "
                         @click="
                             changed = true;
-                            state.attributes.splice(idx, 1);
+                            state.labels.splice(idx, 1);
                         "
                     />
                 </UBadge>
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenAttributes').value" name="attributes">
+        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenLabels').value" name="labels">
             <ClientOnly>
                 <USelectMenu
-                    v-model="state.attributes"
+                    v-model="state.labels"
                     multiple
                     :searchable="
                         async (query: string) => {
-                            attributesLoading = true;
-                            const colleagues = await completorStore.completeCitizensAttributes(query);
-                            attributesLoading = false;
+                            labelsLoading = true;
+                            const colleagues = await completorStore.completeCitizenLabels(query);
+                            labelsLoading = false;
                             return colleagues;
                         }
                     "
                     searchable-lazy
                     :searchable-placeholder="$t('common.search_field')"
-                    :search-attributes="['name']"
+                    :search-labels="['name']"
                     option-attribute="name"
                     by="name"
                     clear-search-on-close
@@ -170,7 +169,7 @@ watch(state, () => {
                     </template>
 
                     <template #empty>
-                        {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                        {{ $t('common.not_found', [$t('common.label', 2)]) }}
                     </template>
                 </USelectMenu>
             </ClientOnly>

@@ -149,8 +149,8 @@ func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
 	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != ""
 }
 
-// Scan implements driver.Valuer for protobuf CitizenAttributes.
-func (x *CitizenAttributes) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf CitizenLabels.
+func (x *CitizenLabels) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -161,7 +161,7 @@ func (x *CitizenAttributes) Scan(value any) error {
 }
 
 // Value marshals the value into driver.Valuer.
-func (x *CitizenAttributes) Value() (driver.Value, error) {
+func (x *CitizenLabels) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}
@@ -170,7 +170,7 @@ func (x *CitizenAttributes) Value() (driver.Value, error) {
 	return string(out), err
 }
 
-func (x *CitizenAttribute) Equal(a *CitizenAttribute) bool {
+func (x *CitizenLabel) Equal(a *CitizenLabel) bool {
 	return x.Name == a.Name
 }
 

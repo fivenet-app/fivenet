@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/nats-io/nats.go/jetstream"
@@ -12,6 +13,7 @@ import (
 func (s *Server) Stream(req *StreamRequest, srv grpc.ServerStreamingServer[StreamResponse]) error {
 	// Setup consumer
 	c, err := s.js.CreateConsumer(srv.Context(), strings.ToUpper(string(BaseSubject)), jetstream.ConsumerConfig{
+		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 		DeliverPolicy: jetstream.DeliverNewPolicy,
 	})
 	if err != nil {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrummanager"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
@@ -24,6 +25,8 @@ type Server struct {
 	auth *auth.GRPCAuth
 	cfg  *config.Config
 
+	centrum *centrummanager.Manager
+
 	esxCompat bool
 	tokens    []string
 }
@@ -33,11 +36,12 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	DB     *sql.DB
-	JS     *events.JSWrapper
-	Auth   *auth.GRPCAuth
-	Config *config.Config
+	Logger  *zap.Logger
+	DB      *sql.DB
+	JS      *events.JSWrapper
+	Auth    *auth.GRPCAuth
+	Config  *config.Config
+	Centrum *centrummanager.Manager
 }
 
 func NewServer(p Params) *Server {
@@ -51,6 +55,8 @@ func NewServer(p Params) *Server {
 		js:     p.JS,
 		auth:   p.Auth,
 		cfg:    p.Config,
+
+		centrum: p.Centrum,
 
 		esxCompat: p.Config.Database.ESXCompat,
 		tokens:    p.Config.Sync.APITokens,

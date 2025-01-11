@@ -65,6 +65,8 @@ message MarkerMarker {
 
 message MarkerData {
   oneof data {
+    option (validate.required) = true;
+
     CircleMarker circle = 3;
     IconMarker icon = 4;
   }

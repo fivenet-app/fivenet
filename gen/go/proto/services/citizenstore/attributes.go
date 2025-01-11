@@ -21,60 +21,60 @@ import (
 )
 
 var (
-	tJobCitizenAttributes  = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
-	tUserCitizenAttributes = table.FivenetUserCitizenAttributes
+	tJobCitizenLabels  = table.FivenetJobCitizenLabels.AS("citizen_label")
+	tUserCitizenLabels = table.FivenetUserCitizenLabels
 )
 
-func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
+func (s *Server) ManageCitizenLabels(ctx context.Context, req *ManageCitizenLabelsRequest) (*ManageCitizenLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: CitizenStoreService_ServiceDesc.ServiceName,
-		Method:  "ManageCitizenAttributes",
+		Method:  "ManageCitizenLabels",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	resp := &ManageCitizenAttributesResponse{
-		Attributes: []*users.CitizenAttribute{},
+	resp := &ManageCitizenLabelsResponse{
+		Labels: []*users.CitizenLabel{},
 	}
 
-	stmt := tJobCitizenAttributes.
+	stmt := tJobCitizenLabels.
 		SELECT(
-			tJobCitizenAttributes.ID,
-			tJobCitizenAttributes.Job,
-			tJobCitizenAttributes.Name,
-			tJobCitizenAttributes.Color,
+			tJobCitizenLabels.ID,
+			tJobCitizenLabels.Job,
+			tJobCitizenLabels.Name,
+			tJobCitizenLabels.Color,
 		).
-		FROM(tJobCitizenAttributes).
+		FROM(tJobCitizenLabels).
 		WHERE(
-			tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
+			tJobCitizenLabels.Job.EQ(jet.String(userInfo.Job)),
 		)
 
-	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
 
-	_, removed := utils.SlicesDifferenceFunc(resp.Attributes, req.Attributes,
-		func(in *users.CitizenAttribute) string {
+	_, removed := utils.SlicesDifferenceFunc(resp.Labels, req.Labels,
+		func(in *users.CitizenLabel) string {
 			return in.Name
 		})
 
-	for i := 0; i < len(req.Attributes); i++ {
-		req.Attributes[i].Job = &userInfo.Job
+	for i := 0; i < len(req.Labels); i++ {
+		req.Labels[i].Job = &userInfo.Job
 	}
 
-	tJobCitizenAttributes := table.FivenetJobCitizenAttributes
+	tJobCitizenLabels := table.FivenetJobCitizenLabels
 
-	if len(req.Attributes) > 0 {
-		toCreate := []*users.CitizenAttribute{}
-		toUpdate := []*users.CitizenAttribute{}
+	if len(req.Labels) > 0 {
+		toCreate := []*users.CitizenLabel{}
+		toUpdate := []*users.CitizenLabel{}
 
-		for _, attribute := range req.Attributes {
+		for _, attribute := range req.Labels {
 			if attribute.Id == 0 {
 				toCreate = append(toCreate, attribute)
 			} else {
@@ -83,16 +83,16 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 		}
 
 		if len(toCreate) > 0 {
-			insertStmt := tJobCitizenAttributes.
+			insertStmt := tJobCitizenLabels.
 				INSERT(
-					tJobCitizenAttributes.Job,
-					tJobCitizenAttributes.Name,
-					tJobCitizenAttributes.Color,
+					tJobCitizenLabels.Job,
+					tJobCitizenLabels.Name,
+					tJobCitizenLabels.Color,
 				).
 				MODELS(toCreate).
 				ON_DUPLICATE_KEY_UPDATE(
-					tJobCitizenAttributes.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-					tJobCitizenAttributes.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+					tJobCitizenLabels.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
+					tJobCitizenLabels.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
 				)
 
 			if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
@@ -102,18 +102,18 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 
 		if len(toUpdate) > 0 {
 			for _, attribute := range toUpdate {
-				updateStmt := tJobCitizenAttributes.
+				updateStmt := tJobCitizenLabels.
 					UPDATE(
-						tJobCitizenAttributes.Name,
-						tJobCitizenAttributes.Color,
+						tJobCitizenLabels.Name,
+						tJobCitizenLabels.Color,
 					).
 					SET(
-						tJobCitizenAttributes.Name.SET(jet.String(attribute.Name)),
-						tJobCitizenAttributes.Color.SET(jet.String(attribute.Color)),
+						tJobCitizenLabels.Name.SET(jet.String(attribute.Name)),
+						tJobCitizenLabels.Color.SET(jet.String(attribute.Color)),
 					).
 					WHERE(jet.AND(
-						tJobCitizenAttributes.ID.EQ(jet.Uint64(attribute.Id)),
-						tJobCitizenAttributes.Job.EQ(jet.String(*attribute.Job)),
+						tJobCitizenLabels.ID.EQ(jet.Uint64(attribute.Id)),
+						tJobCitizenLabels.Job.EQ(jet.String(*attribute.Job)),
 					))
 
 				if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
@@ -130,11 +130,11 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 			ids[i] = jet.Uint64(removed[i].Id)
 		}
 
-		deleteStmt := tJobCitizenAttributes.
+		deleteStmt := tJobCitizenLabels.
 			DELETE().
 			WHERE(jet.AND(
-				tJobCitizenAttributes.ID.IN(ids...),
-				tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
+				tJobCitizenLabels.ID.IN(ids...),
+				tJobCitizenLabels.Job.EQ(jet.String(userInfo.Job)),
 			)).
 			LIMIT(int64(len(removed)))
 
@@ -143,8 +143,8 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 		}
 	}
 
-	resp.Attributes = []*users.CitizenAttribute{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+	resp.Labels = []*users.CitizenLabel{}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
@@ -155,12 +155,12 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 	return resp, nil
 }
 
-func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attributes []*users.CitizenAttribute) (bool, error) {
+func (s *Server) validateCitizenLabels(ctx context.Context, userInfo *userinfo.UserInfo, attributes []*users.CitizenLabel) (bool, error) {
 	if len(attributes) == 0 {
 		return true, nil
 	}
 
-	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -183,17 +183,17 @@ func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userin
 		idsExp[i] = jet.Uint64(attributes[i].Id)
 	}
 
-	stmt := tJobCitizenAttributes.
+	stmt := tJobCitizenLabels.
 		SELECT(
-			jet.COUNT(tJobCitizenAttributes.ID).AS("datacount.totalcount"),
+			jet.COUNT(tJobCitizenLabels.ID).AS("datacount.totalcount"),
 		).
-		FROM(tJobCitizenAttributes).
+		FROM(tJobCitizenLabels).
 		WHERE(jet.AND(
-			tJobCitizenAttributes.Job.IN(jobsExp...),
-			tJobCitizenAttributes.ID.IN(idsExp...),
+			tJobCitizenLabels.Job.IN(jobsExp...),
+			tJobCitizenLabels.ID.IN(idsExp...),
 		)).
 		ORDER_BY(
-			tJobCitizenAttributes.Name.DESC(),
+			tJobCitizenLabels.Name.DESC(),
 		).
 		LIMIT(10)
 
@@ -207,8 +207,8 @@ func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userin
 	return len(attributes) == int(count.TotalCount), nil
 }
 
-func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.CitizenAttributes, error) {
-	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.CitizenLabels, error) {
+	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -226,26 +226,26 @@ func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserI
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
-	stmt := tUserCitizenAttributes.
+	stmt := tUserCitizenLabels.
 		SELECT(
-			tJobCitizenAttributes.ID,
-			tJobCitizenAttributes.Job,
-			tJobCitizenAttributes.Name,
-			tJobCitizenAttributes.Color,
+			tJobCitizenLabels.ID,
+			tJobCitizenLabels.Job,
+			tJobCitizenLabels.Name,
+			tJobCitizenLabels.Color,
 		).
 		FROM(
-			tUserCitizenAttributes.
-				INNER_JOIN(tJobCitizenAttributes,
-					tJobCitizenAttributes.ID.EQ(tUserCitizenAttributes.AttributeID),
+			tUserCitizenLabels.
+				INNER_JOIN(tJobCitizenLabels,
+					tJobCitizenLabels.ID.EQ(tUserCitizenLabels.AttributeID),
 				),
 		).
 		WHERE(jet.AND(
-			tUserCitizenAttributes.UserID.EQ(jet.Int32(userId)),
-			tJobCitizenAttributes.Job.IN(jobsExp...),
+			tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
+			tJobCitizenLabels.Job.IN(jobsExp...),
 		))
 
-	list := &users.CitizenAttributes{
-		List: []*users.CitizenAttribute{},
+	list := &users.CitizenLabels{
+		List: []*users.CitizenLabel{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

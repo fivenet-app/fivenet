@@ -725,8 +725,8 @@
                         "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
                     }
                 },
-                "citizen_attributes": {
-                    "title": "Citizen Attributes"
+                "citizen_labels": {
+                    "title": "Citizen Labels"
                 }
             },
             "role_view": {
@@ -1186,7 +1186,7 @@
                     "created": "Fine created"
                 },
                 "userprops_mug_shot_set": "Set the citizen's mug shot picture",
-                "userprops_attributes_updated": "Updated the citizen's attributes"
+                "userprops_labels_updated": "Updated the citizen's labels"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1713,8 +1713,8 @@
                     "UserProps_OpenFines": "Open Fines",
                     "UserProps_BloodType": "Blood Type",
                     "UserProps_MugShot": "Mug Shot",
-                    "UserProps_Attributes": "Attributes",
-                    "UserProps_Email": "E-Mail"
+                    "UserProps_Email": "E-Mail",
+                    "UserProps_Labels": "Labels"
                 },
                 "attrs_types": {
                     "Fields": "Fields"
@@ -1739,7 +1739,7 @@
                     "Job": "Job",
                     "TrafficInfractionPoints": "Traffic Points",
                     "MugShot": "Mug Shot",
-                    "Attributes": "Attributes"
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Fields": "User Properties Fields"
@@ -1752,9 +1752,9 @@
                     "Jobs": "Factions"
                 }
             },
-            "ManageCitizenAttributes": {
-                "key": "Manage Citizen Attributes",
-                "description": "Create, update and delete citizens attributes."
+            "ManageCitizenLabels": {
+                "key": "Manage Citizen Labels",
+                "description": "Create, update and delete citizens labels."
             }
         },
         "CompletorService": {
@@ -1774,9 +1774,9 @@
                     "Jobs": "Factions"
                 }
             },
-            "CompleteCitizenAttributes": {
-                "key": "List job's citizen attributes",
-                "description": "Complete citizen attributes from multiple jobs.",
+            "CompleteCitizenLabels": {
+                "key": "List job's citizen labels",
+                "description": "Complete citizen labels from multiple jobs.",
                 "attrs_types": {
                     "Jobs": "Factions"
                 }
@@ -2331,13 +2331,13 @@
             "ErrFailedQuery": "Failed to list/ get citizens data!",
             "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
             "ErrReasonRequired": "A reason must be provided!",
-            "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
-            "ErrPropsJobDenied": "You are not allowed to set a user job!",
+            "ErrPropsWantedDenied": "You are not allowed to set a citizen's wanted status!",
+            "ErrPropsJobDenied": "You are not allowed to set a citizen's job!",
             "ErrPropsJobPublic": "You can't set a state job!",
             "ErrPropsJobInvalid": "Invalid job or job rank set!",
-            "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!",
-            "ErrPropsMugShotDenied": "You are not allowed to set a user's mug shot!",
-            "ErrPropsAttributesDenied": "You are not allowed to set a user's attributes!"
+            "ErrPropsTrafficPointsDenied": "You are not allowed to set a citizen's traffic infraction points!",
+            "ErrPropsMugShotDenied": "You are not allowed to set a citizen's mug shot!",
+            "ErrPropsLabelsDenied": "You are not allowed to set a citizen's labels!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"

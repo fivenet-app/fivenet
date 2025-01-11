@@ -449,12 +449,12 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	if slices.Contains(fields, "UserProps.Attributes") {
-		attributes, err := s.getUserAttributes(ctx, userInfo, req.UserId)
+	if slices.Contains(fields, "UserProps.Labels") {
+		attributes, err := s.getUserLabels(ctx, userInfo, req.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
-		resp.User.Props.Attributes = attributes
+		resp.User.Props.Labels = attributes
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -511,9 +511,9 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
-	if props.Attributes == nil {
-		props.Attributes = &users.CitizenAttributes{
-			List: []*users.CitizenAttribute{},
+	if props.Labels == nil {
+		props.Labels = &users.CitizenLabels{
+			List: []*users.CitizenLabel{},
 		}
 	}
 
@@ -601,30 +601,30 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		}
 	}
 
-	if req.Props.Attributes != nil {
-		if !slices.Contains(fields, "Attributes") {
-			return nil, errorscitizenstore.ErrPropsAttributesDenied
+	if req.Props.Labels != nil {
+		if !slices.Contains(fields, "Labels") {
+			return nil, errorscitizenstore.ErrPropsLabelsDenied
 		}
 
-		if req.Props.Attributes.List == nil {
-			req.Props.Attributes.List = []*users.CitizenAttribute{}
+		if req.Props.Labels.List == nil {
+			req.Props.Labels.List = []*users.CitizenLabel{}
 		}
 
-		slices.SortFunc(req.Props.Attributes.List, func(a, b *users.CitizenAttribute) int {
+		slices.SortFunc(req.Props.Labels.List, func(a, b *users.CitizenLabel) int {
 			return strings.Compare(a.Name, b.Name)
 		})
 
-		added, _ := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
-			func(in *users.CitizenAttribute) uint64 {
+		added, _ := utils.SlicesDifferenceFunc(props.Labels.List, req.Props.Labels.List,
+			func(in *users.CitizenLabel) uint64 {
 				return in.Id
 			})
 
-		valid, err := s.validateCitizenAttributes(ctx, userInfo, added)
+		valid, err := s.validateCitizenLabels(ctx, userInfo, added)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 		if !valid {
-			return nil, errorscitizenstore.ErrPropsAttributesDenied
+			return nil, errorscitizenstore.ErrPropsLabelsDenied
 		}
 	}
 
@@ -701,11 +701,11 @@ func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, 
 
 	dest.UserId = userId
 
-	attributes, err := s.getUserAttributes(ctx, userInfo, userId)
+	attributes, err := s.getUserLabels(ctx, userInfo, userId)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		return nil, err
 	}
-	dest.Attributes = attributes
+	dest.Labels = attributes
 
 	return &dest, nil
 }

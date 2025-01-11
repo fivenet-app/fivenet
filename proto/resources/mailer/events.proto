@@ -6,11 +6,14 @@ import "resources/mailer/email.proto";
 import "resources/mailer/settings.proto";
 import "resources/mailer/message.proto";
 import "resources/mailer/thread.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
 
 message MailerEvent {
   oneof data {
+    option (validate.required) = true;
+
     Email email_update = 1;
     uint64 email_delete = 2 [jstype = JS_STRING];
     EmailSettings email_settings_updated = 3;

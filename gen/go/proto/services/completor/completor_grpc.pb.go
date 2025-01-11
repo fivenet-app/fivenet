@@ -23,7 +23,7 @@ const (
 	CompletorService_CompleteJobs_FullMethodName               = "/services.completor.CompletorService/CompleteJobs"
 	CompletorService_CompleteDocumentCategories_FullMethodName = "/services.completor.CompletorService/CompleteDocumentCategories"
 	CompletorService_ListLawBooks_FullMethodName               = "/services.completor.CompletorService/ListLawBooks"
-	CompletorService_CompleteCitizenAttributes_FullMethodName  = "/services.completor.CompletorService/CompleteCitizenAttributes"
+	CompletorService_CompleteCitizenLabels_FullMethodName      = "/services.completor.CompletorService/CompleteCitizenLabels"
 )
 
 // CompletorServiceClient is the client API for CompletorService service.
@@ -39,7 +39,7 @@ type CompletorServiceClient interface {
 	// @perm: Name=Any
 	ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error)
 	// @perm: Attrs=Jobs/JobList
-	CompleteCitizenAttributes(ctx context.Context, in *CompleteCitizenAttributesRequest, opts ...grpc.CallOption) (*CompleteCitizenAttributesResponse, error)
+	CompleteCitizenLabels(ctx context.Context, in *CompleteCitizenLabelsRequest, opts ...grpc.CallOption) (*CompleteCitizenLabelsResponse, error)
 }
 
 type completorServiceClient struct {
@@ -90,10 +90,10 @@ func (c *completorServiceClient) ListLawBooks(ctx context.Context, in *ListLawBo
 	return out, nil
 }
 
-func (c *completorServiceClient) CompleteCitizenAttributes(ctx context.Context, in *CompleteCitizenAttributesRequest, opts ...grpc.CallOption) (*CompleteCitizenAttributesResponse, error) {
+func (c *completorServiceClient) CompleteCitizenLabels(ctx context.Context, in *CompleteCitizenLabelsRequest, opts ...grpc.CallOption) (*CompleteCitizenLabelsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(CompleteCitizenAttributesResponse)
-	err := c.cc.Invoke(ctx, CompletorService_CompleteCitizenAttributes_FullMethodName, in, out, cOpts...)
+	out := new(CompleteCitizenLabelsResponse)
+	err := c.cc.Invoke(ctx, CompletorService_CompleteCitizenLabels_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ type CompletorServiceServer interface {
 	// @perm: Name=Any
 	ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error)
 	// @perm: Attrs=Jobs/JobList
-	CompleteCitizenAttributes(context.Context, *CompleteCitizenAttributesRequest) (*CompleteCitizenAttributesResponse, error)
+	CompleteCitizenLabels(context.Context, *CompleteCitizenLabelsRequest) (*CompleteCitizenLabelsResponse, error)
 	mustEmbedUnimplementedCompletorServiceServer()
 }
 
@@ -136,8 +136,8 @@ func (UnimplementedCompletorServiceServer) CompleteDocumentCategories(context.Co
 func (UnimplementedCompletorServiceServer) ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListLawBooks not implemented")
 }
-func (UnimplementedCompletorServiceServer) CompleteCitizenAttributes(context.Context, *CompleteCitizenAttributesRequest) (*CompleteCitizenAttributesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CompleteCitizenAttributes not implemented")
+func (UnimplementedCompletorServiceServer) CompleteCitizenLabels(context.Context, *CompleteCitizenLabelsRequest) (*CompleteCitizenLabelsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CompleteCitizenLabels not implemented")
 }
 func (UnimplementedCompletorServiceServer) mustEmbedUnimplementedCompletorServiceServer() {}
 func (UnimplementedCompletorServiceServer) testEmbeddedByValue()                          {}
@@ -232,20 +232,20 @@ func _CompletorService_ListLawBooks_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CompletorService_CompleteCitizenAttributes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CompleteCitizenAttributesRequest)
+func _CompletorService_CompleteCitizenLabels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CompleteCitizenLabelsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CompletorServiceServer).CompleteCitizenAttributes(ctx, in)
+		return srv.(CompletorServiceServer).CompleteCitizenLabels(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CompletorService_CompleteCitizenAttributes_FullMethodName,
+		FullMethod: CompletorService_CompleteCitizenLabels_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CompletorServiceServer).CompleteCitizenAttributes(ctx, req.(*CompleteCitizenAttributesRequest))
+		return srv.(CompletorServiceServer).CompleteCitizenLabels(ctx, req.(*CompleteCitizenLabelsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -274,8 +274,8 @@ var CompletorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CompletorService_ListLawBooks_Handler,
 		},
 		{
-			MethodName: "CompleteCitizenAttributes",
-			Handler:    _CompletorService_CompleteCitizenAttributes_Handler,
+			MethodName: "CompleteCitizenLabels",
+			Handler:    _CompletorService_CompleteCitizenLabels_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -17,11 +17,8 @@ type gksphoneSettingsTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
 	Identifier  mysql.ColumnString
-	Crypto      mysql.ColumnString
 	PhoneNumber mysql.ColumnString
-	AvatarURL   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -62,24 +59,18 @@ func newGksphoneSettingsTable(schemaName, tableName, alias string) *GksphoneSett
 
 func newGksphoneSettingsTableImpl(schemaName, tableName, alias string) gksphoneSettingsTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
 		IdentifierColumn  = mysql.StringColumn("identifier")
-		CryptoColumn      = mysql.StringColumn("crypto")
 		PhoneNumberColumn = mysql.StringColumn("phone_number")
-		AvatarURLColumn   = mysql.StringColumn("avatar_url")
-		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, CryptoColumn, PhoneNumberColumn, AvatarURLColumn}
-		mutableColumns    = mysql.ColumnList{IdentifierColumn, CryptoColumn, PhoneNumberColumn, AvatarURLColumn}
+		allColumns        = mysql.ColumnList{IdentifierColumn, PhoneNumberColumn}
+		mutableColumns    = mysql.ColumnList{IdentifierColumn, PhoneNumberColumn}
 	)
 
 	return gksphoneSettingsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
 		Identifier:  IdentifierColumn,
-		Crypto:      CryptoColumn,
 		PhoneNumber: PhoneNumberColumn,
-		AvatarURL:   AvatarURLColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

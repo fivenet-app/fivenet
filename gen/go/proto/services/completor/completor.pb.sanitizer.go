@@ -3,7 +3,7 @@
 
 package completor
 
-func (m *CompleteCitizenAttributesRequest) Sanitize() error {
+func (m *CompleteCitizenLabelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -11,13 +11,13 @@ func (m *CompleteCitizenAttributesRequest) Sanitize() error {
 	return nil
 }
 
-func (m *CompleteCitizenAttributesResponse) Sanitize() error {
+func (m *CompleteCitizenLabelsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
+	// Field: Labels
+	for idx, item := range m.Labels {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {

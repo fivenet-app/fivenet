@@ -15,5 +15,5 @@ var (
 	ErrPropsJobInvalid          = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.CitizenStoreService.ErrPropsJobInvalid"}, nil)
 	ErrPropsTrafficPointsDenied = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizenStoreService.ErrPropsTrafficPointsDenied"}, nil)
 	ErrPropsMugShotDenied       = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizenStoreService.ErrPropsMugShotDenied"}, nil)
-	ErrPropsAttributesDenied    = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizenStoreService.ErrPropsAttributesDenied"}, nil)
+	ErrPropsLabelsDenied        = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.CitizenStoreService.ErrPropsLabelsDenied"}, nil)
 )

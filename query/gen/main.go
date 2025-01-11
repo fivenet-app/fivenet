@@ -41,15 +41,14 @@ func genTemplate() template.Template {
 
 						return template.DefaultTableModel(table).
 							UseField(func(columnMetaData metadata.Column) template.TableModelField {
+								defaultColumn := template.DefaultTableModelField(columnMetaData)
 								if shouldSkipField(table.Name, columnMetaData.Name) {
-									// TODO skip fields that are not in the includedTable columns list
-									// return template.TableModelField{Skip: true}
+									defaultColumn.Skip = true
 								}
 
-								return template.DefaultTableModelField(columnMetaData).
-									UseTags(
-										fmt.Sprintf(`json:"%s"`, columnMetaData.Name),
-									)
+								return defaultColumn.UseTags(
+									fmt.Sprintf(`json:"%s"`, columnMetaData.Name),
+								)
 							})
 					}),
 				).
@@ -60,13 +59,13 @@ func genTemplate() template.Template {
 						}
 
 						return template.DefaultTableSQLBuilder(table).
-							UseColumn(func(column metadata.Column) template.TableSQLBuilderColumn {
-								if shouldSkipField(table.Name, column.Name) {
-									// TODO skip fields that are not in the includedTable columns list
-									// return template.TableSQLBuilderColumn{Skip: true}
+							UseColumn(func(columnMetaData metadata.Column) template.TableSQLBuilderColumn {
+								defaultColumn := template.DefaultTableSQLBuilderColumn(columnMetaData)
+								if shouldSkipField(table.Name, columnMetaData.Name) {
+									defaultColumn.Skip = true
 								}
 
-								return template.DefaultTableSQLBuilderColumn(column)
+								return defaultColumn
 							})
 					}),
 				)

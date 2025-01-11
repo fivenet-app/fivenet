@@ -192,6 +192,8 @@ message StreamRequest {}
 
 message StreamResponse {
   oneof change {
+    option (validate.required) = true;
+
     LatestState latest_state = 1;
 
     resources.centrum.Settings settings = 2;

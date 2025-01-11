@@ -6,11 +6,11 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
 
-message CitizenAttributes {
-  repeated CitizenAttribute list = 1 [(validate.rules).repeated.max_items = 10];
+message CitizenLabels {
+  repeated CitizenLabel list = 1 [(validate.rules).repeated.max_items = 10];
 }
 
-message CitizenAttribute {
+message CitizenLabel {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional string job = 2 [(validate.rules).string.max_len = 20];
   string name = 3 [(validate.rules).string.max_len = 48];

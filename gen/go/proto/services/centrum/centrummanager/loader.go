@@ -363,8 +363,9 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		}
 
 		if dsps[i].Postal == nil {
-			postal := s.postals.Closest(dsps[i].X, dsps[i].Y)
-			dsps[i].Postal = postal.Code
+			if postal := s.postals.Closest(dsps[i].X, dsps[i].Y); postal != nil {
+				dsps[i].Postal = postal.Code
+			}
 
 			if _, err := s.UpdateDispatch(ctx, dsps[i].Job, dsps[i].CreatorId, dsps[i], false); err != nil {
 				return err

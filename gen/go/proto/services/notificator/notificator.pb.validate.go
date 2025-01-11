@@ -728,6 +728,7 @@ func (m *StreamResponse) validate(all bool) error {
 
 	// no validation rules for NotificationCount
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *StreamResponse_UserEvent:
 		if v == nil {
@@ -740,6 +741,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUserEvent()).(type) {
@@ -781,6 +783,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobEvent()).(type) {
@@ -822,6 +825,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobGradeEvent()).(type) {
@@ -863,6 +867,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetSystemEvent()).(type) {
@@ -904,6 +909,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetMailerEvent()).(type) {
@@ -936,6 +942,16 @@ func (m *StreamResponse) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := StreamResponseValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if m.Restart != nil {

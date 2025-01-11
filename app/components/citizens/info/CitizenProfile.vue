@@ -120,20 +120,20 @@ const { attr } = useAuth();
                 </div>
 
                 <div
-                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes').value"
+                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Labels').value"
                     class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 py-1 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.label', 2) }}
                     </dt>
                     <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
-                        <p v-if="!user.props?.attributes?.list.length" class="text-sm leading-6">
+                        <p v-if="!user.props?.labels?.list.length" class="text-sm leading-6">
                             {{ $t('common.none', [$t('common.label', 2)]) }}
                         </p>
                         <template v-else>
                             <div class="flex max-w-80 flex-row flex-wrap gap-1">
                                 <UBadge
-                                    v-for="attribute in user.props?.attributes?.list"
+                                    v-for="attribute in user.props?.labels?.list"
                                     :key="attribute.name"
                                     :style="{ backgroundColor: attribute.color }"
                                     class="justify-between gap-2"

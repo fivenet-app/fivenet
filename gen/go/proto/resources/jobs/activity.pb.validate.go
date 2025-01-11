@@ -333,6 +333,7 @@ func (m *JobsUserActivityData) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *JobsUserActivityData_AbsenceDate:
 		if v == nil {
@@ -345,6 +346,7 @@ func (m *JobsUserActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetAbsenceDate()).(type) {
@@ -386,6 +388,7 @@ func (m *JobsUserActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetGradeChange()).(type) {
@@ -427,6 +430,7 @@ func (m *JobsUserActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetLabelsChange()).(type) {
@@ -468,6 +472,7 @@ func (m *JobsUserActivityData) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetNameChange()).(type) {
@@ -500,6 +505,16 @@ func (m *JobsUserActivityData) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := JobsUserActivityDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CitizensAttributesModal from '~/components/citizens/CitizensAttributesModal.vue';
+import CitizensLabelsModal from '~/components/citizens/CitizensLabelsModal.vue';
 import CitizensList from '~/components/citizens/CitizensList.vue';
 
 useHead({
@@ -22,10 +22,10 @@ const modal = useModal();
             <UDashboardNavbar :title="$t('pages.citizens.title')">
                 <template #right>
                     <UButton
-                        v-if="can('CitizenStoreService.ManageCitizenAttributes').value"
+                        v-if="can('CitizenStoreService.ManageCitizenLabels').value"
                         :label="$t('common.label', 2)"
                         icon="i-mdi-tag"
-                        @click="modal.open(CitizensAttributesModal, {})"
+                        @click="modal.open(CitizensLabelsModal, {})"
                     />
                 </template>
             </UDashboardNavbar>

@@ -15,7 +15,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import CitizenActions from './CitizenActions.vue';
-import CitizenSetAttributes from './props/CitizenSetAttributes.vue';
+import CitizenSetLabels from './props/CitizenSetLabels.vue';
 
 const props = defineProps<{
     userId: number;
@@ -261,14 +261,14 @@ const isOpen = ref(false);
                         <UDashboardSection
                             v-if="
                                 can('CitizenStoreService.GetUser').value &&
-                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes').value
+                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Labels').value
                             "
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
                             }"
                             :title="$t('common.label', 2)"
                         >
-                            <CitizenSetAttributes v-model="user.props!.attributes" :user-id="user.userId" />
+                            <CitizenSetLabels v-model="user.props!.labels" :user-id="user.userId" />
                         </UDashboardSection>
                     </template>
                 </div>

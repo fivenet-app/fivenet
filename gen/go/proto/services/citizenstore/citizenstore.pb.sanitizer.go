@@ -142,13 +142,13 @@ func (m *ListUserActivityResponse) Sanitize() error {
 	return nil
 }
 
-func (m *ManageCitizenAttributesRequest) Sanitize() error {
+func (m *ManageCitizenLabelsRequest) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
+	// Field: Labels
+	for idx, item := range m.Labels {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
@@ -162,13 +162,13 @@ func (m *ManageCitizenAttributesRequest) Sanitize() error {
 	return nil
 }
 
-func (m *ManageCitizenAttributesResponse) Sanitize() error {
+func (m *ManageCitizenLabelsResponse) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Attributes
-	for idx, item := range m.Attributes {
+	// Field: Labels
+	for idx, item := range m.Labels {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {

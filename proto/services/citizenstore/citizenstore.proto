@@ -5,7 +5,7 @@ package services.citizenstore;
 import "resources/common/database/database.proto";
 import "resources/filestore/file.proto";
 import "resources/users/activity.proto";
-import "resources/users/attributes.proto";
+import "resources/users/labels.proto";
 import "resources/users/users.proto";
 import "resources/users/props.proto";
 import "validate/validate.proto";
@@ -71,27 +71,27 @@ message SetProfilePictureResponse {
   resources.filestore.File avatar = 1;
 }
 
-message ManageCitizenAttributesRequest {
-  repeated resources.users.CitizenAttribute attributes = 1;
+message ManageCitizenLabelsRequest {
+  repeated resources.users.CitizenLabel labels = 1;
 }
 
-message ManageCitizenAttributesResponse {
-  repeated resources.users.CitizenAttribute attributes = 1;
+message ManageCitizenLabelsResponse {
+  repeated resources.users.CitizenLabel labels = 1;
 }
 
 service CitizenStoreService {
-  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"}
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
+  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 
   // @perm: Name=Any
   rpc SetProfilePicture(SetProfilePictureRequest) returns (SetProfilePictureResponse);
 
   // @perm
-  rpc ManageCitizenAttributes(ManageCitizenAttributesRequest) returns (ManageCitizenAttributesResponse);
+  rpc ManageCitizenLabels(ManageCitizenLabelsRequest) returns (ManageCitizenLabelsResponse);
 }

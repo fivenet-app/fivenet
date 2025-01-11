@@ -4,6 +4,7 @@ package resources.notifications;
 
 import "resources/notifications/notifications.proto";
 import "resources/users/job_props.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
 
@@ -11,6 +12,8 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notif
 
 message UserEvent {
   oneof data {
+    option (validate.required) = true;
+
     bool refresh_token = 1;
     // Notifications
     resources.notifications.Notification notification = 2;
@@ -22,6 +25,8 @@ message UserEvent {
 
 message JobEvent {
   oneof data {
+    option (validate.required) = true;
+
     resources.users.JobProps job_props = 1;
   }
 }
@@ -30,6 +35,8 @@ message JobEvent {
 
 message JobGradeEvent {
   oneof data {
+    option (validate.required) = true;
+
     bool refresh_token = 1;
   }
 }

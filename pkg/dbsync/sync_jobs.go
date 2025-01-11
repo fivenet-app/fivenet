@@ -70,12 +70,11 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 }
 
 func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*users.JobGrade, error) {
-	grades := []*users.JobGrade{}
-
 	sQuery := s.cfg.Tables.JobGrades
 	query := prepareStringQuery(sQuery, nil, 0, 200)
 	query = strings.ReplaceAll(query, "$jobName", "?")
 
+	grades := []*users.JobGrade{}
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{
 		job,
 	}, &grades); err != nil {

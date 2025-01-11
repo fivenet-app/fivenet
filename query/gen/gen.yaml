@@ -4,8 +4,18 @@ excludeTables:
   - "fivenet_zschema_migrations"
 includeTables:
   "fivenet_*": ["*"]
-  "gksphone_job_message": ["*"]
-  "gksphone_settings": ["*"]
+  "gksphone_job_message":
+    - id
+    - jobm
+    - anon
+    - gps
+    - message
+    - number
+    - owner
+    - time
+  "gksphone_settings":
+    - identifier
+    - phone_number
   "job_grades":
     - job_name
     - grade
@@ -39,3 +49,4 @@ includeTables:
     - phone_number
     - visum
     - playtime
+    - last_seen

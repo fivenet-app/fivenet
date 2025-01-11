@@ -59,6 +59,7 @@ func (m *GrpcFrame) validate(all bool) error {
 
 	// no validation rules for StreamId
 
+	oneofPayloadPresent := false
 	switch v := m.Payload.(type) {
 	case *GrpcFrame_Ping:
 		if v == nil {
@@ -71,6 +72,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetPing()).(type) {
@@ -112,6 +114,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetHeader()).(type) {
@@ -153,6 +156,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetBody()).(type) {
@@ -194,6 +198,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetComplete()).(type) {
@@ -235,6 +240,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetFailure()).(type) {
@@ -276,6 +282,7 @@ func (m *GrpcFrame) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofPayloadPresent = true
 
 		if all {
 			switch v := interface{}(m.GetCancel()).(type) {
@@ -308,6 +315,16 @@ func (m *GrpcFrame) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofPayloadPresent {
+		err := GrpcFrameValidationError{
+			field:  "Payload",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

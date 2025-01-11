@@ -20,6 +20,7 @@ import { JobsUserProps } from "../../resources/sync/activity";
 import { JobsUserActivity } from "../../resources/jobs/activity";
 import { UserProps } from "../../resources/sync/activity";
 import { UserActivity } from "../../resources/users/activity";
+import { Dispatch } from "../../resources/centrum/dispatches";
 import { UserOAuth2Conn } from "../../resources/sync/activity";
 import { DataStatus } from "../../resources/sync/data";
 /**
@@ -62,11 +63,17 @@ export interface AddActivityRequest {
          */
         userOauth2: UserOAuth2Conn;
     } | {
+        oneofKind: "dispatch";
+        /**
+         * @generated from protobuf field: resources.centrum.Dispatch dispatch = 2;
+         */
+        dispatch: Dispatch;
+    } | {
         oneofKind: "userActivity";
         /**
          * User activity
          *
-         * @generated from protobuf field: resources.users.UserActivity user_activity = 2;
+         * @generated from protobuf field: resources.users.UserActivity user_activity = 3;
          */
         userActivity: UserActivity;
     } | {
@@ -74,7 +81,7 @@ export interface AddActivityRequest {
         /**
          * Setting props will cause activity to be created automtically
          *
-         * @generated from protobuf field: resources.sync.UserProps user_props = 3;
+         * @generated from protobuf field: resources.sync.UserProps user_props = 4;
          */
         userProps: UserProps;
     } | {
@@ -82,7 +89,7 @@ export interface AddActivityRequest {
         /**
          * Jobs user activity
          *
-         * @generated from protobuf field: resources.jobs.JobsUserActivity jobs_user_activity = 4;
+         * @generated from protobuf field: resources.jobs.JobsUserActivity jobs_user_activity = 5;
          */
         jobsUserActivity: JobsUserActivity;
     } | {
@@ -90,7 +97,7 @@ export interface AddActivityRequest {
         /**
          * Setting props will cause activity to be created automtically
          *
-         * @generated from protobuf field: resources.sync.JobsUserProps jobs_user_props = 5;
+         * @generated from protobuf field: resources.sync.JobsUserProps jobs_user_props = 6;
          */
         jobsUserProps: JobsUserProps;
     } | {
@@ -98,7 +105,7 @@ export interface AddActivityRequest {
         /**
          * Timeclock user entry
          *
-         * @generated from protobuf field: resources.jobs.TimeclockEntry jobs_timeclock = 6;
+         * @generated from protobuf field: resources.jobs.TimeclockEntry jobs_timeclock = 7;
          */
         jobsTimeclock: TimeclockEntry;
     } | {
@@ -269,11 +276,12 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
     constructor() {
         super("services.sync.AddActivityRequest", [
             { no: 1, name: "user_oauth2", kind: "message", oneof: "activity", T: () => UserOAuth2Conn },
-            { no: 2, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
-            { no: 3, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
-            { no: 4, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
-            { no: 5, name: "jobs_user_props", kind: "message", oneof: "activity", T: () => JobsUserProps },
-            { no: 6, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry }
+            { no: 2, name: "dispatch", kind: "message", oneof: "activity", T: () => Dispatch },
+            { no: 3, name: "user_activity", kind: "message", oneof: "activity", T: () => UserActivity },
+            { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
+            { no: 5, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
+            { no: 6, name: "jobs_user_props", kind: "message", oneof: "activity", T: () => JobsUserProps },
+            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry }
         ]);
     }
     create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
@@ -294,31 +302,37 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         userOauth2: UserOAuth2Conn.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userOauth2)
                     };
                     break;
-                case /* resources.users.UserActivity user_activity */ 2:
+                case /* resources.centrum.Dispatch dispatch */ 2:
+                    message.activity = {
+                        oneofKind: "dispatch",
+                        dispatch: Dispatch.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).dispatch)
+                    };
+                    break;
+                case /* resources.users.UserActivity user_activity */ 3:
                     message.activity = {
                         oneofKind: "userActivity",
                         userActivity: UserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userActivity)
                     };
                     break;
-                case /* resources.sync.UserProps user_props */ 3:
+                case /* resources.sync.UserProps user_props */ 4:
                     message.activity = {
                         oneofKind: "userProps",
                         userProps: UserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userProps)
                     };
                     break;
-                case /* resources.jobs.JobsUserActivity jobs_user_activity */ 4:
+                case /* resources.jobs.JobsUserActivity jobs_user_activity */ 5:
                     message.activity = {
                         oneofKind: "jobsUserActivity",
                         jobsUserActivity: JobsUserActivity.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserActivity)
                     };
                     break;
-                case /* resources.sync.JobsUserProps jobs_user_props */ 5:
+                case /* resources.sync.JobsUserProps jobs_user_props */ 6:
                     message.activity = {
                         oneofKind: "jobsUserProps",
                         jobsUserProps: JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserProps)
                     };
                     break;
-                case /* resources.jobs.TimeclockEntry jobs_timeclock */ 6:
+                case /* resources.jobs.TimeclockEntry jobs_timeclock */ 7:
                     message.activity = {
                         oneofKind: "jobsTimeclock",
                         jobsTimeclock: TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
@@ -339,21 +353,24 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.sync.UserOAuth2Conn user_oauth2 = 1; */
         if (message.activity.oneofKind === "userOauth2")
             UserOAuth2Conn.internalBinaryWrite(message.activity.userOauth2, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.UserActivity user_activity = 2; */
+        /* resources.centrum.Dispatch dispatch = 2; */
+        if (message.activity.oneofKind === "dispatch")
+            Dispatch.internalBinaryWrite(message.activity.dispatch, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.UserActivity user_activity = 3; */
         if (message.activity.oneofKind === "userActivity")
-            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.UserProps user_props = 3; */
+            UserActivity.internalBinaryWrite(message.activity.userActivity, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.UserProps user_props = 4; */
         if (message.activity.oneofKind === "userProps")
-            UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.JobsUserActivity jobs_user_activity = 4; */
+            UserProps.internalBinaryWrite(message.activity.userProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.JobsUserActivity jobs_user_activity = 5; */
         if (message.activity.oneofKind === "jobsUserActivity")
-            JobsUserActivity.internalBinaryWrite(message.activity.jobsUserActivity, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.JobsUserProps jobs_user_props = 5; */
+            JobsUserActivity.internalBinaryWrite(message.activity.jobsUserActivity, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.JobsUserProps jobs_user_props = 6; */
         if (message.activity.oneofKind === "jobsUserProps")
-            JobsUserProps.internalBinaryWrite(message.activity.jobsUserProps, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockEntry jobs_timeclock = 6; */
+            JobsUserProps.internalBinaryWrite(message.activity.jobsUserProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.jobs.TimeclockEntry jobs_timeclock = 7; */
         if (message.activity.oneofKind === "jobsTimeclock")
-            TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

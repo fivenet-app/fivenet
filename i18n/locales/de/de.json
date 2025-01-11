@@ -547,7 +547,8 @@
         "file_click_to_upload": "Datei auswählen",
         "file_drag_n_drop": "oder ziehen Sie sie hierher.",
         "insert": "Einfügen",
-        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)"
+        "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
+        "default_lang": "Standardsprache"
     },
     "components": {
         "partials": {
@@ -724,8 +725,8 @@
                         "description": "Format der Discord Rolle. Nutze %abbr% für die Abkürzung und %name% für den Rollen-Namen der Qualifizierungen."
                     }
                 },
-                "citizen_attributes": {
-                    "title": "Bürger-Attribute"
+                "citizen_labels": {
+                    "title": "Bürger-Labels"
                 }
             },
             "role_view": {
@@ -1185,7 +1186,7 @@
                     "created": "Strafe erstellt"
                 },
                 "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
-                "userprops_attributes_updated": "Bürger-Attribute aktualisiert"
+                "userprops_labels_updated": "Labels des Bürgers aktualisiert"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -1712,8 +1713,8 @@
                     "UserProps_OpenFines": "Offene Geldstrafen",
                     "UserProps_BloodType": "Blutgruppe",
                     "UserProps_MugShot": "Fahndungsfoto",
-                    "UserProps_Attributes": "Attribute",
-                    "UserProps_Email": "E-Mail"
+                    "UserProps_Email": "E-Mail",
+                    "UserProps_Labels": "Labels"
                 },
                 "attrs_types": {
                     "Fields": "Felder"
@@ -1738,7 +1739,7 @@
                     "Job": "Job",
                     "TrafficInfractionPoints": "Verkehrspunkte",
                     "MugShot": "Fahndungsfoto",
-                    "Attributes": "Attribute"
+                    "Labels": "Labels"
                 },
                 "attrs_types": {
                     "Fields": "Bürger Eigenschaften"
@@ -1751,9 +1752,9 @@
                     "Jobs": "Fraktionen"
                 }
             },
-            "ManageCitizenAttributes": {
-                "key": "Verwalte Bürger-Attribute",
-                "description": "Erstellen, Aktualisieren und Löschen von Bürger-Attribute."
+            "ManageCitizenLabels": {
+                "key": "Verwalten von Bürger-Labels",
+                "description": "Erstellen, aktualisieren und löschen von Bürger-Labels."
             }
         },
         "CompletorService": {
@@ -1773,9 +1774,9 @@
                     "Jobs": "Fraktionen"
                 }
             },
-            "CompleteCitizenAttributes": {
-                "key": "Auflisten von Bürger-Attributen zur Autovervollständigung",
-                "description": "Autovervollständigen von Bürger-Attributen von mehreren Fraktionen.",
+            "CompleteCitizenLabels": {
+                "key": "Auflisten von Bürger-Labels",
+                "description": "Damit wird der Zugriff auf Bürger-Labels von anderen Berufen kontrolliert.",
                 "attrs_types": {
                     "Jobs": "Fraktionen"
                 }
@@ -2336,7 +2337,7 @@
             "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
             "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
             "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
-            "ErrPropsAttributesDenied": "Sie haben keine Berechtigung die Bürger-Attribute zusetzen!"
+            "ErrPropsLabelsDenied": "Sie dürfen nicht die Labels der Person ändern!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"

@@ -12,5 +12,4 @@ type JobGrades struct {
 	Grade   int32  `sql:"primary_key" json:"grade"`
 	Name    string `json:"name"`
 	Label   string `json:"label"`
-	Salary  int32  `json:"salary"`
 }

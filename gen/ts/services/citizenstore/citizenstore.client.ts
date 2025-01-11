@@ -4,8 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CitizenStoreService } from "./citizenstore";
-import type { ManageCitizenAttributesResponse } from "./citizenstore";
-import type { ManageCitizenAttributesRequest } from "./citizenstore";
+import type { ManageCitizenLabelsResponse } from "./citizenstore";
+import type { ManageCitizenLabelsRequest } from "./citizenstore";
 import type { SetProfilePictureResponse } from "./citizenstore";
 import type { SetProfilePictureRequest } from "./citizenstore";
 import type { SetUserPropsResponse } from "./citizenstore";
@@ -24,7 +24,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICitizenStoreServiceClient {
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -42,7 +42,7 @@ export interface ICitizenStoreServiceClient {
      */
     listUserActivity(input: ListUserActivityRequest, options?: RpcOptions): UnaryCall<ListUserActivityRequest, ListUserActivityResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
@@ -56,9 +56,9 @@ export interface ICitizenStoreServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ManageCitizenAttributes(services.citizenstore.ManageCitizenAttributesRequest) returns (services.citizenstore.ManageCitizenAttributesResponse);
+     * @generated from protobuf rpc: ManageCitizenLabels(services.citizenstore.ManageCitizenLabelsRequest) returns (services.citizenstore.ManageCitizenLabelsResponse);
      */
-    manageCitizenAttributes(input: ManageCitizenAttributesRequest, options?: RpcOptions): UnaryCall<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse>;
+    manageCitizenLabels(input: ManageCitizenLabelsRequest, options?: RpcOptions): UnaryCall<ManageCitizenLabelsRequest, ManageCitizenLabelsResponse>;
 }
 /**
  * @generated from protobuf service services.citizenstore.CitizenStoreService
@@ -70,7 +70,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -97,7 +97,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
         return stackIntercept<ListUserActivityRequest, ListUserActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
@@ -117,10 +117,10 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ManageCitizenAttributes(services.citizenstore.ManageCitizenAttributesRequest) returns (services.citizenstore.ManageCitizenAttributesResponse);
+     * @generated from protobuf rpc: ManageCitizenLabels(services.citizenstore.ManageCitizenLabelsRequest) returns (services.citizenstore.ManageCitizenLabelsResponse);
      */
-    manageCitizenAttributes(input: ManageCitizenAttributesRequest, options?: RpcOptions): UnaryCall<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse> {
+    manageCitizenLabels(input: ManageCitizenLabelsRequest, options?: RpcOptions): UnaryCall<ManageCitizenLabelsRequest, ManageCitizenLabelsResponse> {
         const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ManageCitizenLabelsRequest, ManageCitizenLabelsResponse>("unary", this._transport, method, opt, input);
     }
 }

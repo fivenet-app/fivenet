@@ -4,8 +4,8 @@ package resources.users;
 
 import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/attributes.proto";
 import "resources/users/jobs.proto";
+import "resources/users/labels.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
@@ -22,7 +22,7 @@ message UserProps {
   optional int64 open_fines = 9;
   optional string blood_type = 10;
   optional resources.filestore.File mug_shot = 11;
-  optional CitizenAttributes attributes = 12;
+  optional CitizenLabels labels = 12;
   // @sanitize: method=StripTags
   optional string email = 19 [(validate.rules).string = {min_len: 6, max_len: 80}];
 }

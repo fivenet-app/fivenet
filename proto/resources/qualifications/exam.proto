@@ -33,6 +33,8 @@ message ExamQuestion {
 
 message ExamQuestionData {
   oneof data {
+    option (validate.required) = true;
+
     ExamQuestionSeparator separator = 1;
     ExamQuestionImage image = 6;
     ExamQuestionYesNo yesno  = 2;
@@ -98,6 +100,8 @@ message ExamResponse {
 
 message ExamResponseData {
   oneof response {
+    option (validate.required) = true;
+
     ExamResponseSeparator separator = 3;
     ExamResponseYesNo yesno  = 4;
     ExamResponseText free_text = 5;

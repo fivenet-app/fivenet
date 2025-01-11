@@ -56,9 +56,9 @@
 // source: resources/sync/data.proto
 // source: resources/timestamp/timestamp.proto
 // source: resources/users/activity.proto
-// source: resources/users/attributes.proto
 // source: resources/users/job_props.proto
 // source: resources/users/jobs.proto
+// source: resources/users/labels.proto
 // source: resources/users/props.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto
@@ -110,9 +110,9 @@ export type Perms =
 	| 'CitizenStoreService.GetUser'
 	| 'CitizenStoreService.ListCitizens'
 	| 'CitizenStoreService.ListUserActivity'
-	| 'CitizenStoreService.ManageCitizenAttributes'
+	| 'CitizenStoreService.ManageCitizenLabels'
 	| 'CitizenStoreService.SetUserProps'
-	| 'CompletorService.CompleteCitizenAttributes'
+	| 'CompletorService.CompleteCitizenLabels'
 	| 'CompletorService.CompleteCitizens'
 	| 'CompletorService.CompleteDocumentCategories'
 	| 'DMVService.ListVehicles'

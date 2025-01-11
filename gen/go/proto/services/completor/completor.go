@@ -25,8 +25,8 @@ import (
 )
 
 var (
-	tDCategory            = table.FivenetDocumentsCategories.AS("category")
-	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
+	tDCategory        = table.FivenetDocumentsCategories.AS("category")
+	tJobCitizenLabels = table.FivenetJobCitizenLabels.AS("citizen_label")
 )
 
 type Server struct {
@@ -239,10 +239,10 @@ func (s *Server) ListLawBooks(ctx context.Context, req *ListLawBooksRequest) (*L
 	}, nil
 }
 
-func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCitizenAttributesRequest) (*CompleteCitizenAttributesResponse, error) {
+func (s *Server) CompleteCitizenLabels(ctx context.Context, req *CompleteCitizenLabelsRequest) (*CompleteCitizenLabelsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenLabelsPerm, permscompletor.CompletorServiceCompleteCitizenLabelsJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 	}
@@ -264,30 +264,30 @@ func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCit
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
-	condition := tJobCitizenAttributes.Job.IN(jobsExp...)
+	condition := tJobCitizenLabels.Job.IN(jobsExp...)
 
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
-		condition = condition.AND(tJobCitizenAttributes.Name.LIKE(jet.String(req.Search)))
+		condition = condition.AND(tJobCitizenLabels.Name.LIKE(jet.String(req.Search)))
 	}
 
-	stmt := tJobCitizenAttributes.
+	stmt := tJobCitizenLabels.
 		SELECT(
-			tJobCitizenAttributes.ID,
-			tJobCitizenAttributes.Name,
-			tJobCitizenAttributes.Color,
+			tJobCitizenLabels.ID,
+			tJobCitizenLabels.Name,
+			tJobCitizenLabels.Color,
 		).
-		FROM(tJobCitizenAttributes).
+		FROM(tJobCitizenLabels).
 		WHERE(condition).
 		ORDER_BY(
-			tJobCitizenAttributes.Name.ASC(),
+			tJobCitizenLabels.Name.ASC(),
 		).
 		LIMIT(10)
 
-	resp := &CompleteCitizenAttributesResponse{
-		Attributes: []*users.CitizenAttribute{},
+	resp := &CompleteCitizenLabelsResponse{
+		Labels: []*users.CitizenLabel{},
 	}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}

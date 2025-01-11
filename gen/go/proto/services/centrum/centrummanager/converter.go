@@ -115,10 +115,6 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 			CreatorId:  &msg.UserId,
 		}
 
-		if postal := s.postals.Closest(x, y); postal != nil {
-			dsp.Postal = postal.Code
-		}
-
 		s.logger.Debug("converted phone dispatch to fivenet", zap.String("job", job), zap.Int32("creator_id", msg.UserId), zap.Int32("phone_dsp_id", msg.ID))
 		if _, err := s.CreateDispatch(s.ctx, dsp); err != nil {
 			return err

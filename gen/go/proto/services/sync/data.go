@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -72,7 +73,7 @@ func (s *Server) handleJobsData(ctx context.Context, data *SendDataRequest_Jobs)
 		)
 	}
 
-	// TODO delete missing jobs from our database
+	// ??? Shoud we delete jobs, that are not part of the list, from the database?
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -100,40 +101,162 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 		return 0, nil
 	}
 
-	tJobGrades := tables.JobGrades()
+	rowsAffectedCount := int64(0)
 
-	stmt := tJobGrades.
-		INSERT(
-			tJobGrades.JobName,
+	tJobGrades := tables.JobGrades().AS("jobgrade")
+
+	selectStmt := tJobGrades.
+		SELECT(
+			tJobGrades.JobName.AS("job_grade.job_name"),
 			tJobGrades.Grade,
 			tJobGrades.Label,
 		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobGrades.JobName.SET(jet.StringExp(jet.Raw("VALUES(`job_name`)"))),
-			tJobGrades.Grade.SET(jet.IntExp(jet.Raw("VALUES(`grade`)"))),
-			tJobGrades.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+		FROM(tJobGrades).
+		ORDER_BY(
+			tJobGrades.Grade.ASC(),
 		)
 
-	for _, grade := range job.Grades {
-		stmt = stmt.VALUES(
-			grade.JobName,
-			grade.Grade,
-			grade.Label,
-		)
-	}
-
-	// TODO delete missing job grades from our database
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return 0, err
-	}
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
+	currentGrades := []*users.JobGrade{}
+	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
 		return 0, err
 	}
 
-	return rowsAffected, nil
+	toCreate, toUpdate, toDelete := []*users.JobGrade{}, []*users.JobGrade{}, []*users.JobGrade{}
+	if len(currentGrades) == 0 {
+		toCreate = job.Grades
+	} else {
+		// Update cache
+		foundTracker := []int{}
+		for _, cg := range currentGrades {
+			var found *users.JobGrade
+			var foundIdx int
+
+			for i, ug := range job.Grades {
+				if cg.Grade != ug.Grade {
+					continue
+				}
+
+				found = ug
+				foundIdx = i
+				break
+			}
+			// No match in incoming job access, needs to be deleted
+			if found == nil {
+				toDelete = append(toDelete, cg)
+				continue
+			}
+
+			foundTracker = append(foundTracker, foundIdx)
+
+			changed := false
+			if cg.Label != found.Label {
+				cg.Label = found.Label
+				changed = true
+			}
+
+			if changed {
+				toUpdate = append(toUpdate, cg)
+			}
+		}
+
+		for i, uj := range job.Grades {
+			idx := slices.Index(foundTracker, i)
+			if idx == -1 {
+				toCreate = append(toCreate, uj)
+			}
+		}
+	}
+
+	tJobGrades = tables.JobGrades()
+
+	if len(toCreate) > 0 {
+		stmt := tJobGrades.
+			INSERT(
+				tJobGrades.JobName,
+				tJobGrades.Grade,
+				tJobGrades.Label,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tJobGrades.JobName.SET(jet.StringExp(jet.Raw("VALUES(`job_name`)"))),
+				tJobGrades.Grade.SET(jet.IntExp(jet.Raw("VALUES(`grade`)"))),
+				tJobGrades.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
+			)
+
+		for _, grade := range toCreate {
+			stmt = stmt.VALUES(
+				grade.JobName,
+				grade.Grade,
+				grade.Label,
+			)
+		}
+
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return 0, err
+		}
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+
+		rowsAffectedCount += rowsAffected
+	}
+
+	if len(toUpdate) > 0 {
+		for _, grade := range toUpdate {
+			stmt := tJobGrades.
+				UPDATE(
+					tJobGrades.JobName,
+					tJobGrades.Grade,
+					tJobGrades.Label,
+				).
+				SET(
+					grade.JobName,
+					grade.Grade,
+					grade.Label,
+				).
+				WHERE(jet.AND(
+					tJobGrades.JobName.EQ(jet.String(job.Name)),
+					tJobGrades.Grade.EQ(jet.Int32(grade.Grade)),
+				))
+
+			res, err := stmt.ExecContext(ctx, s.db)
+			if err != nil {
+				return 0, err
+			}
+			rowsAffected, err := res.RowsAffected()
+			if err != nil {
+				return 0, err
+			}
+
+			rowsAffectedCount += rowsAffected
+		}
+	}
+
+	if len(toDelete) > 0 {
+		for _, grade := range toDelete {
+			stmt := tJobGrades.
+				DELETE().
+				WHERE(jet.AND(
+					tJobGrades.JobName.EQ(jet.String(job.Name)),
+					tJobGrades.Grade.EQ(jet.Int32(grade.Grade)),
+				)).
+				LIMIT(1)
+
+			res, err := stmt.ExecContext(ctx, s.db)
+			if err != nil {
+				return 0, err
+			}
+			rowsAffected, err := res.RowsAffected()
+			if err != nil {
+				return 0, err
+			}
+
+			rowsAffectedCount += rowsAffected
+		}
+	}
+
+	return rowsAffectedCount, nil
 }
 
 func (s *Server) handleLicensesData(ctx context.Context, data *SendDataRequest_Licenses) (int64, error) {
@@ -145,7 +268,6 @@ func (s *Server) handleLicensesData(ctx context.Context, data *SendDataRequest_L
 			tLicenses.Label,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tLicenses.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
 			tLicenses.Label.SET(jet.StringExp(jet.Raw("VALUES(`label`)"))),
 		)
 
@@ -156,7 +278,7 @@ func (s *Server) handleLicensesData(ctx context.Context, data *SendDataRequest_L
 		)
 	}
 
-	// TODO delete missing licenses from our database
+	// ??? Shoud we delete jobs, that are not part of the list, from the database?
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -261,6 +383,10 @@ func (s *Server) handleUsersData(ctx context.Context, data *SendDataRequest_User
 			}
 
 			rowsAffected += rows
+
+			if err := s.handleUserLicenses(ctx, *user.Identifier, user.Licenses); err != nil {
+				return 0, err
+			}
 		}
 	}
 
@@ -312,9 +438,88 @@ func (s *Server) handleUsersData(ctx context.Context, data *SendDataRequest_User
 		}
 	}
 
-	// TODO handle users licenses `user.Licenses` list
-
 	return rowsAffected, nil
+}
+
+func (s *Server) handleUserLicenses(ctx context.Context, identifier string, licenses []*users.License) error {
+	tUserLicenses := tables.UserLicenses()
+
+	if len(licenses) == 0 {
+		// User has no licenses? Delete all from the database.
+		stmt := tUserLicenses.
+			DELETE().
+			WHERE(tUserLicenses.Owner.EQ(jet.String(identifier))).
+			LIMIT(25)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+
+		return nil
+	}
+
+	selectStmt := tUserLicenses.
+		SELECT(
+			tUserLicenses.Type,
+		).
+		FROM(tUserLicenses).
+		WHERE(tUserLicenses.Owner.EQ(jet.String(identifier)))
+
+	currentLicenses := []string{}
+	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
+		return err
+	}
+
+	licensesList := []string{}
+	for _, license := range licenses {
+		licensesList = append(licensesList, license.Type)
+	}
+
+	toAdd, toRemove := utils.SlicesDifference(currentLicenses, licensesList)
+
+	if len(toAdd) > 0 {
+		stmt := tUserLicenses.
+			INSERT(
+				tUserLicenses.Owner,
+				tUserLicenses.Type,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				tUserLicenses.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+			)
+
+		for _, t := range toAdd {
+			stmt = stmt.
+				VALUES(
+					identifier,
+					t,
+				)
+		}
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
+
+	if len(toRemove) > 0 {
+		types := []jet.Expression{}
+		for _, t := range toRemove {
+			types = append(types, jet.String(t))
+		}
+
+		stmt := tUserLicenses.
+			DELETE().
+			WHERE(jet.AND(
+				tUserLicenses.Owner.EQ(jet.String(identifier)),
+				tUserLicenses.Type.IN(types...),
+			)).
+			LIMIT(25)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) handleVehiclesData(ctx context.Context, data *SendDataRequest_Vehicles) (int64, error) {
@@ -328,7 +533,6 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *SendDataRequest_V
 			tVehicles.Type,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tVehicles.Owner.SET(jet.StringExp(jet.Raw("VALUES(`owner`)"))),
 			tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
 			tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
 			tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),

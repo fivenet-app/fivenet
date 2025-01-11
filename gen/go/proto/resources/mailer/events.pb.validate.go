@@ -57,6 +57,7 @@ func (m *MailerEvent) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *MailerEvent_EmailUpdate:
 		if v == nil {
@@ -69,6 +70,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetEmailUpdate()).(type) {
@@ -110,6 +112,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for EmailDelete
 	case *MailerEvent_EmailSettingsUpdated:
 		if v == nil {
@@ -122,6 +125,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetEmailSettingsUpdated()).(type) {
@@ -163,6 +167,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetThreadUpdate()).(type) {
@@ -204,6 +209,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for ThreadDelete
 	case *MailerEvent_ThreadStateUpdate:
 		if v == nil {
@@ -216,6 +222,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetThreadStateUpdate()).(type) {
@@ -257,6 +264,7 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetMessageUpdate()).(type) {
@@ -298,9 +306,20 @@ func (m *MailerEvent) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 		// no validation rules for MessageDelete
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := MailerEventValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

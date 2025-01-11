@@ -12,15 +12,6 @@ func (m *UserProps) Sanitize() error {
 		return nil
 	}
 
-	// Field: Attributes
-	if m.Attributes != nil {
-		if v, ok := interface{}(m.GetAttributes()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	// Field: Email
 
 	if m.Email != nil {
@@ -39,6 +30,15 @@ func (m *UserProps) Sanitize() error {
 	// Field: JobGrade
 	if m.JobGrade != nil {
 		if v, ok := interface{}(m.GetJobGrade()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Labels
+	if m.Labels != nil {
+		if v, ok := interface{}(m.GetLabels()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

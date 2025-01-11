@@ -4,7 +4,7 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { UserActivity } from '~~/gen/ts/resources/users/activity';
-import type { CitizenAttributes } from '~~/gen/ts/resources/users/attributes';
+import type { CitizenLabels } from '~~/gen/ts/resources/users/labels';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -191,7 +191,7 @@ const props = defineProps<{
             </div>
         </div>
     </template>
-    <template v-else-if="activity.key === 'UserProps.Attributes'">
+    <template v-else-if="activity.key === 'UserProps.Labels'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon name="i-mdi-tag" class="size-full text-amber-200" />
@@ -200,12 +200,12 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex flex-col gap-1 text-sm font-medium">
                         <span>
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_attributes_updated') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_labels_updated') }}
                         </span>
 
                         <div class="inline-flex gap-1">
                             <UBadge
-                                v-for="attribute in (JSON.parse(activity.oldValue) as CitizenAttributes)?.list"
+                                v-for="attribute in (JSON.parse(activity.oldValue) as CitizenLabels)?.list"
                                 :key="attribute.name"
                                 :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2 line-through"
@@ -216,7 +216,7 @@ const props = defineProps<{
                             </UBadge>
 
                             <UBadge
-                                v-for="attribute in (JSON.parse(activity.newValue) as CitizenAttributes)?.list"
+                                v-for="attribute in (JSON.parse(activity.newValue) as CitizenLabels)?.list"
                                 :key="attribute.name"
                                 :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2"

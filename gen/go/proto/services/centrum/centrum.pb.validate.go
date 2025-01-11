@@ -5192,6 +5192,7 @@ func (m *StreamResponse) validate(all bool) error {
 
 	var errors []error
 
+	oneofChangePresent := false
 	switch v := m.Change.(type) {
 	case *StreamResponse_LatestState:
 		if v == nil {
@@ -5204,6 +5205,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetLatestState()).(type) {
@@ -5245,6 +5247,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetSettings()).(type) {
@@ -5286,6 +5289,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetDisponents()).(type) {
@@ -5327,6 +5331,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetUnitCreated()).(type) {
@@ -5368,6 +5373,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetUnitDeleted()).(type) {
@@ -5409,6 +5415,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetUnitUpdated()).(type) {
@@ -5450,6 +5457,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetUnitStatus()).(type) {
@@ -5491,6 +5499,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetDispatchCreated()).(type) {
@@ -5532,6 +5541,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetDispatchDeleted()).(type) {
@@ -5573,6 +5583,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetDispatchUpdated()).(type) {
@@ -5614,6 +5625,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofChangePresent = true
 
 		if all {
 			switch v := interface{}(m.GetDispatchStatus()).(type) {
@@ -5646,6 +5658,16 @@ func (m *StreamResponse) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofChangePresent {
+		err := StreamResponseValidationError{
+			field:  "Change",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

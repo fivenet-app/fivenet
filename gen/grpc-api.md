@@ -315,10 +315,6 @@
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
   
-- [resources/users/attributes.proto](#resources_users_attributes-proto)
-    - [CitizenAttribute](#resources-users-CitizenAttribute)
-    - [CitizenAttributes](#resources-users-CitizenAttributes)
-  
 - [resources/users/activity.proto](#resources_users_activity-proto)
     - [UserActivity](#resources-users-UserActivity)
   
@@ -332,6 +328,10 @@
   
 - [resources/users/props.proto](#resources_users_props-proto)
     - [UserProps](#resources-users-UserProps)
+  
+- [resources/users/labels.proto](#resources_users_labels-proto)
+    - [CitizenLabel](#resources-users-CitizenLabel)
+    - [CitizenLabels](#resources-users-CitizenLabels)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -516,8 +516,8 @@
     - [ListCitizensResponse](#services-citizenstore-ListCitizensResponse)
     - [ListUserActivityRequest](#services-citizenstore-ListUserActivityRequest)
     - [ListUserActivityResponse](#services-citizenstore-ListUserActivityResponse)
-    - [ManageCitizenAttributesRequest](#services-citizenstore-ManageCitizenAttributesRequest)
-    - [ManageCitizenAttributesResponse](#services-citizenstore-ManageCitizenAttributesResponse)
+    - [ManageCitizenLabelsRequest](#services-citizenstore-ManageCitizenLabelsRequest)
+    - [ManageCitizenLabelsResponse](#services-citizenstore-ManageCitizenLabelsResponse)
     - [SetProfilePictureRequest](#services-citizenstore-SetProfilePictureRequest)
     - [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse)
     - [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest)
@@ -526,8 +526,8 @@
     - [CitizenStoreService](#services-citizenstore-CitizenStoreService)
   
 - [services/completor/completor.proto](#services_completor_completor-proto)
-    - [CompleteCitizenAttributesRequest](#services-completor-CompleteCitizenAttributesRequest)
-    - [CompleteCitizenAttributesResponse](#services-completor-CompleteCitizenAttributesResponse)
+    - [CompleteCitizenLabelsRequest](#services-completor-CompleteCitizenLabelsRequest)
+    - [CompleteCitizenLabelsResponse](#services-completor-CompleteCitizenLabelsResponse)
     - [CompleteCitizensRequest](#services-completor-CompleteCitizensRequest)
     - [CompleteCitizensRespoonse](#services-completor-CompleteCitizensRespoonse)
     - [CompleteDocumentCategoriesRequest](#services-completor-CompleteDocumentCategoriesRequest)
@@ -5359,55 +5359,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_users_attributes-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/attributes.proto
-
-
-
-<a name="resources-users-CitizenAttribute"></a>
-
-### CitizenAttribute
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-users-CitizenAttributes"></a>
-
-### CitizenAttributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_users_activity-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5598,8 +5549,57 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | open_fines | [int64](#int64) | optional |  |
 | blood_type | [string](#string) | optional |  |
 | mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
+| labels | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
 | email | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_labels-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/labels.proto
+
+
+
+<a name="resources-users-CitizenLabel"></a>
+
+### CitizenLabel
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-users-CitizenLabels"></a>
+
+### CitizenLabels
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
 
 
 
@@ -8147,30 +8147,30 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services-citizenstore-ManageCitizenAttributesRequest"></a>
+<a name="services-citizenstore-ManageCitizenLabelsRequest"></a>
 
-### ManageCitizenAttributesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| attributes | [resources.users.CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="services-citizenstore-ManageCitizenAttributesResponse"></a>
-
-### ManageCitizenAttributesResponse
+### ManageCitizenLabelsRequest
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| attributes | [resources.users.CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+| labels | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+
+
+
+
+
+
+<a name="services-citizenstore-ManageCitizenLabelsResponse"></a>
+
+### ManageCitizenLabelsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| labels | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
 
 
 
@@ -8251,12 +8251,12 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
-| ListCitizens | [ListCitizensRequest](#services-citizenstore-ListCitizensRequest) | [ListCitizensResponse](#services-citizenstore-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes", "UserProps.Email"} |
+| ListCitizens | [ListCitizensRequest](#services-citizenstore-ListCitizensRequest) | [ListCitizensResponse](#services-citizenstore-ListCitizensResponse) | @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Labels", "UserProps.Email"} |
 | GetUser | [GetUserRequest](#services-citizenstore-GetUserRequest) | [GetUserResponse](#services-citizenstore-GetUserResponse) | @perm: Attrs=Jobs/JobGradeList |
 | ListUserActivity | [ListUserActivityRequest](#services-citizenstore-ListUserActivityRequest) | [ListUserActivityResponse](#services-citizenstore-ListUserActivityResponse) | @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"} |
-| SetUserProps | [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"} |
+| SetUserProps | [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest) | [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse) | @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Labels"} |
 | SetProfilePicture | [SetProfilePictureRequest](#services-citizenstore-SetProfilePictureRequest) | [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse) | @perm: Name=Any |
-| ManageCitizenAttributes | [ManageCitizenAttributesRequest](#services-citizenstore-ManageCitizenAttributesRequest) | [ManageCitizenAttributesResponse](#services-citizenstore-ManageCitizenAttributesResponse) | @perm |
+| ManageCitizenLabels | [ManageCitizenLabelsRequest](#services-citizenstore-ManageCitizenLabelsRequest) | [ManageCitizenLabelsResponse](#services-citizenstore-ManageCitizenLabelsResponse) | @perm |
 
  <!-- end services -->
 
@@ -8269,9 +8269,9 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services-completor-CompleteCitizenAttributesRequest"></a>
+<a name="services-completor-CompleteCitizenLabelsRequest"></a>
 
-### CompleteCitizenAttributesRequest
+### CompleteCitizenLabelsRequest
 
 
 
@@ -8284,15 +8284,15 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services-completor-CompleteCitizenAttributesResponse"></a>
+<a name="services-completor-CompleteCitizenLabelsResponse"></a>
 
-### CompleteCitizenAttributesResponse
+### CompleteCitizenLabelsResponse
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| attributes | [resources.users.CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+| labels | [resources.users.CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
 
 
 
@@ -8436,7 +8436,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | CompleteJobs | [CompleteJobsRequest](#services-completor-CompleteJobsRequest) | [CompleteJobsResponse](#services-completor-CompleteJobsResponse) | @perm: Name=Any |
 | CompleteDocumentCategories | [CompleteDocumentCategoriesRequest](#services-completor-CompleteDocumentCategoriesRequest) | [CompleteDocumentCategoriesResponse](#services-completor-CompleteDocumentCategoriesResponse) | @perm: Attrs=Jobs/JobList |
 | ListLawBooks | [ListLawBooksRequest](#services-completor-ListLawBooksRequest) | [ListLawBooksResponse](#services-completor-ListLawBooksResponse) | @perm: Name=Any |
-| CompleteCitizenAttributes | [CompleteCitizenAttributesRequest](#services-completor-CompleteCitizenAttributesRequest) | [CompleteCitizenAttributesResponse](#services-completor-CompleteCitizenAttributesResponse) | @perm: Attrs=Jobs/JobList |
+| CompleteCitizenLabels | [CompleteCitizenLabelsRequest](#services-completor-CompleteCitizenLabelsRequest) | [CompleteCitizenLabelsResponse](#services-completor-CompleteCitizenLabelsResponse) | @perm: Attrs=Jobs/JobList |
 
  <!-- end services -->
 
@@ -13505,6 +13505,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_oauth2 | [resources.sync.UserOAuth2Conn](#resources-sync-UserOAuth2Conn) |  |  |
+| dispatch | [resources.centrum.Dispatch](#resources-centrum-Dispatch) |  |  |
 | user_activity | [resources.users.UserActivity](#resources-users-UserActivity) |  | User activity |
 | user_props | [resources.sync.UserProps](#resources-sync-UserProps) |  | Setting props will cause activity to be created automtically |
 | jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  | Jobs user activity |

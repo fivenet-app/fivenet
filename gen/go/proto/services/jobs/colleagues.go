@@ -515,53 +515,6 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 	}, nil
 }
 
-func (s *Server) getJobsUserProps(ctx context.Context, userInfo *userinfo.UserInfo, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
-	tJobsUserProps := table.FivenetJobsUserProps.AS("jobsuserprops")
-	columns := []jet.Projection{
-		tJobsUserProps.Job,
-		tJobsUserProps.AbsenceBegin,
-		tJobsUserProps.AbsenceEnd,
-		tJobsUserProps.NamePrefix,
-		tJobsUserProps.NameSuffix,
-	}
-
-	for _, field := range fields {
-		switch field {
-		case "Note":
-			columns = append(columns, tJobsUserProps.Note)
-		}
-	}
-
-	stmt := tJobsUserProps.
-		SELECT(
-			tJobsUserProps.UserID,
-			columns...,
-		).
-		FROM(tJobsUserProps).
-		WHERE(jet.AND(
-			tJobsUserProps.UserID.EQ(jet.Int32(userId)),
-			tJobsUserProps.Job.EQ(jet.String(job)),
-		)).
-		LIMIT(1)
-
-	dest := &jobs.JobsUserProps{
-		UserId: userId,
-	}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
-	}
-
-	labels, err := s.getUserLabels(ctx, userInfo, userId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	dest.Labels = labels
-
-	return dest, nil
-}
-
 func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.jobs.colleague.id", int64(req.Props.UserId)))
 
@@ -619,7 +572,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		types = []string{"AbsenceDate", "Note", "Labels", "Name"}
 	}
 
-	props, err := s.getJobsUserProps(ctx, userInfo, targetUser.UserId, targetUser.Job, types)
+	props, err := jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -688,7 +641,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	props, err = s.getJobsUserProps(ctx, userInfo, targetUser.UserId, targetUser.Job, types)
+	props, err = jobs.GetJobsUserProps(ctx, s.db, targetUser.Job, targetUser.UserId, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

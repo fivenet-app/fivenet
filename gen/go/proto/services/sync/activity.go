@@ -22,6 +22,11 @@ func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*Add
 			return nil, err
 		}
 
+	case *AddActivityRequest_Dispatch:
+		if _, err := s.centrum.CreateDispatch(ctx, d.Dispatch); err != nil {
+			return nil, err
+		}
+
 	case *AddActivityRequest_UserActivity:
 		if err := users.CreateUserActivities(ctx, s.db, d.UserActivity); err != nil {
 			return nil, err
@@ -118,8 +123,10 @@ func (s *Server) handleUserProps(ctx context.Context, data *AddActivityRequest_U
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	// TODO retrieve current user props
-	props := &users.UserProps{}
+	props, err := users.GetUserProps(ctx, tx, data.UserProps.Props.UserId, nil)
+	if err != nil {
+		return err
+	}
 
 	activities, err := props.HandleChanges(ctx, tx, data.UserProps.Props, &data.UserProps.Props.UserId, data.UserProps.Reason)
 	if err != nil {
@@ -147,8 +154,10 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *AddActivityReque
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	// TODO retrieve current jobs user props
-	props := &jobs.JobsUserProps{}
+	props, err := jobs.GetJobsUserProps(ctx, tx, data.JobsUserProps.Props.Job, data.JobsUserProps.Props.UserId, nil)
+	if err != nil {
+		return err
+	}
 
 	activities, err := props.HandleChanges(ctx, tx, data.JobsUserProps.Props, data.JobsUserProps.Props.Job, &data.JobsUserProps.Props.UserId, data.JobsUserProps.Reason)
 	if err != nil {

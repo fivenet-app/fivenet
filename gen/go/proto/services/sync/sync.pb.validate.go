@@ -375,6 +375,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 
 	var errors []error
 
+	oneofActivityPresent := false
 	switch v := m.Activity.(type) {
 	case *AddActivityRequest_UserOauth2:
 		if v == nil {
@@ -387,6 +388,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUserOauth2()).(type) {
@@ -417,6 +419,48 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 		}
 
+	case *AddActivityRequest_Dispatch:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofActivityPresent = true
+
+		if all {
+			switch v := interface{}(m.GetDispatch()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "Dispatch",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "Dispatch",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *AddActivityRequest_UserActivity:
 		if v == nil {
 			err := AddActivityRequestValidationError{
@@ -428,6 +472,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUserActivity()).(type) {
@@ -469,6 +514,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUserProps()).(type) {
@@ -510,6 +556,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobsUserActivity()).(type) {
@@ -551,6 +598,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobsUserProps()).(type) {
@@ -592,6 +640,7 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofActivityPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobsTimeclock()).(type) {
@@ -624,6 +673,16 @@ func (m *AddActivityRequest) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofActivityPresent {
+		err := AddActivityRequestValidationError{
+			field:  "Activity",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -832,6 +891,7 @@ func (m *SendDataRequest) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
 	switch v := m.Data.(type) {
 	case *SendDataRequest_Jobs:
 		if v == nil {
@@ -844,6 +904,7 @@ func (m *SendDataRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetJobs()).(type) {
@@ -885,6 +946,7 @@ func (m *SendDataRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetLicenses()).(type) {
@@ -926,6 +988,7 @@ func (m *SendDataRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetUsers()).(type) {
@@ -967,6 +1030,7 @@ func (m *SendDataRequest) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
+		oneofDataPresent = true
 
 		if all {
 			switch v := interface{}(m.GetVehicles()).(type) {
@@ -999,6 +1063,16 @@ func (m *SendDataRequest) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := SendDataRequestValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
