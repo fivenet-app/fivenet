@@ -2,6 +2,7 @@ package sync
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 
@@ -12,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*AddActivityResponse, error) {
@@ -182,10 +184,34 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *AddActivityReque
 }
 
 func (s *Server) handleTimeclockEntry(ctx context.Context, data *AddActivityRequest_JobsTimeclock) error {
-	tTimeclock := table.FivenetJobsTimeclock
+	tTimeClock := table.FivenetJobsTimeclock
 
-	_ = tTimeclock
-	// TODO
+	stmt := tTimeClock.
+		INSERT(
+			tTimeClock.Job,
+			tTimeClock.UserID,
+			tTimeClock.Date,
+			tTimeClock.StartTime,
+			tTimeClock.EndTime,
+			tTimeClock.SpentTime,
+		).
+		VALUES(
+			data.JobsTimeclock.Job,
+			data.JobsTimeclock.UserId,
+			data.JobsTimeclock.Date,
+			data.JobsTimeclock.StartTime,
+			data.JobsTimeclock.EndTime,
+			data.JobsTimeclock.SpentTime,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tTimeClock.StartTime.SET(jet.TimestampExp(jet.Raw("VALUES(`start_time`)"))),
+			tTimeClock.EndTime.SET(jet.TimestampExp(jet.Raw("VALUES(`end_time`)"))),
+			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("VALUES(`spent_time`)"))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -193,10 +219,50 @@ func (s *Server) handleTimeclockEntry(ctx context.Context, data *AddActivityRequ
 func (s *Server) handleUserUpdate(ctx context.Context, data *AddActivityRequest_UserUpdate) error {
 	tUser := tables.Users()
 
-	// TODO check if user exists in db, if not return nil
+	selectStmt := tUser.
+		SELECT(
+			tUser.ID,
+		).
+		FROM(tUser).
+		WHERE(tUser.ID.EQ(jet.Int32(data.UserUpdate.UserId))).
+		LIMIT(1)
 
-	_ = tUser
-	// TODO update user info (no activity to create)
+	user := &users.User{}
+	if err := selectStmt.QueryContext(ctx, s.db, user); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		} else {
+			return nil
+		}
+	}
+
+	updateSets := []jet.ColumnAssigment{}
+	if data.UserUpdate.Group != nil {
+		updateSets = append(updateSets, tUser.Group.SET(jet.String(*data.UserUpdate.Group)))
+	}
+	if data.UserUpdate.Job != nil {
+		updateSets = append(updateSets, tUser.Job.SET(jet.String(*data.UserUpdate.Job)))
+	}
+	if data.UserUpdate.JobGrade != nil {
+		updateSets = append(updateSets, tUser.JobGrade.SET(jet.Int32(*data.UserUpdate.JobGrade)))
+	}
+	if data.UserUpdate.Firstname != nil {
+		updateSets = append(updateSets, tUser.Firstname.SET(jet.String(*data.UserUpdate.Firstname)))
+	}
+	if data.UserUpdate.Lastname != nil {
+		updateSets = append(updateSets, tUser.Lastname.SET(jet.String(*data.UserUpdate.Lastname)))
+	}
+
+	if len(updateSets) > 0 {
+		stmt := tUser.
+			UPDATE().
+			SET(updateSets[0]).
+			WHERE(tUser.ID.EQ(jet.Int32(data.UserUpdate.UserId)))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

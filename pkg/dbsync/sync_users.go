@@ -45,6 +45,11 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	if len(users) == 0 {
+		s.state.Set(
+			s.cfg.Tables.Users.IDField,
+			0,
+			nil,
+		)
 		return nil
 	}
 

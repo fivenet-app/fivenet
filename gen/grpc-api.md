@@ -3247,6 +3247,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  | @gotags: sql:"primary_key" |
+| job | [string](#string) |  |  |
 | date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:"primary_key" |
 | user | [Colleague](#resources-jobs-Colleague) | optional |  |
 | start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |

@@ -197,7 +197,7 @@ func (s *Sync) run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(5 * time.Second):
+		case <-time.After(2 * time.Second):
 		}
 	}
 }

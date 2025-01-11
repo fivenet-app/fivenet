@@ -42,6 +42,11 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	}
 
 	if len(vehicles) == 0 {
+		s.state.Set(
+			s.cfg.Tables.Vehicles.IDField,
+			0,
+			nil,
+		)
 		return nil
 	}
 

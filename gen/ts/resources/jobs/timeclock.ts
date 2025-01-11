@@ -21,23 +21,27 @@ export interface TimeclockEntry {
      */
     userId: number; // @gotags: sql:"primary_key"
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp date = 2;
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp date = 3;
      */
     date?: Timestamp; // @gotags: sql:"primary_key"
     /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 3;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 4;
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
      */
     startTime?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 5;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 6;
      */
     endTime?: Timestamp;
     /**
-     * @generated from protobuf field: float spent_time = 6;
+     * @generated from protobuf field: float spent_time = 7;
      */
     spentTime: number;
 }
@@ -130,16 +134,18 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
     constructor() {
         super("resources.jobs.TimeclockEntry", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
-            { no: 2, name: "date", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user", kind: "message", T: () => Colleague },
-            { no: 4, name: "start_time", kind: "message", T: () => Timestamp },
-            { no: 5, name: "end_time", kind: "message", T: () => Timestamp },
-            { no: 6, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "date", kind: "message", T: () => Timestamp },
+            { no: 4, name: "user", kind: "message", T: () => Colleague },
+            { no: 5, name: "start_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "end_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockEntry>): TimeclockEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
+        message.job = "";
         message.spentTime = 0;
         if (value !== undefined)
             reflectionMergePartial<TimeclockEntry>(this, message, value);
@@ -153,19 +159,22 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* resources.timestamp.Timestamp date */ 2:
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                case /* resources.timestamp.Timestamp date */ 3:
                     message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
                     break;
-                case /* optional resources.jobs.Colleague user */ 3:
+                case /* optional resources.jobs.Colleague user */ 4:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional resources.timestamp.Timestamp start_time */ 4:
+                case /* optional resources.timestamp.Timestamp start_time */ 5:
                     message.startTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startTime);
                     break;
-                case /* optional resources.timestamp.Timestamp end_time */ 5:
+                case /* optional resources.timestamp.Timestamp end_time */ 6:
                     message.endTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endTime);
                     break;
-                case /* float spent_time */ 6:
+                case /* float spent_time */ 7:
                     message.spentTime = reader.float();
                     break;
                 default:
@@ -183,21 +192,24 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* resources.timestamp.Timestamp date = 2; */
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* resources.timestamp.Timestamp date = 3; */
         if (message.date)
-            Timestamp.internalBinaryWrite(message.date, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.jobs.Colleague user = 3; */
+            Timestamp.internalBinaryWrite(message.date, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.jobs.Colleague user = 4; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp start_time = 4; */
+            Colleague.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp start_time = 5; */
         if (message.startTime)
-            Timestamp.internalBinaryWrite(message.startTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp end_time = 5; */
+            Timestamp.internalBinaryWrite(message.startTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp end_time = 6; */
         if (message.endTime)
-            Timestamp.internalBinaryWrite(message.endTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* float spent_time = 6; */
+            Timestamp.internalBinaryWrite(message.endTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* float spent_time = 7; */
         if (message.spentTime !== 0)
-            writer.tag(6, WireType.Bit32).float(message.spentTime);
+            writer.tag(7, WireType.Bit32).float(message.spentTime);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

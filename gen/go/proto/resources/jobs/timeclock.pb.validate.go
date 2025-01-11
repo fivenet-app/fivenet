@@ -68,6 +68,8 @@ func (m *TimeclockEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Job
+
 	if all {
 		switch v := interface{}(m.GetDate()).(type) {
 		case interface{ ValidateAll() error }:

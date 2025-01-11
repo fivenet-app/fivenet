@@ -57,32 +57,34 @@ func (s *Server) SetThreadState(ctx context.Context, req *SetThreadStateRequest)
 		updateSets = append(updateSets, tThreadsState.Archived.SET(jet.RawBool("VALUES(`archived`)")))
 	}
 
-	tThreadsState := table.FivenetMailerThreadsState
-	stmt := tThreadsState.
-		INSERT(
-			tThreadsState.ThreadID,
-			tThreadsState.EmailID,
-			tThreadsState.Unread,
-			tThreadsState.LastRead,
-			tThreadsState.Important,
-			tThreadsState.Favorite,
-			tThreadsState.Muted,
-			tThreadsState.Archived,
-		).
-		VALUES(
-			req.State.ThreadId,
-			req.State.EmailId,
-			req.State.Unread,
-			req.State.LastRead,
-			req.State.Important,
-			req.State.Favorite,
-			req.State.Muted,
-			req.State.Archived,
-		).
-		ON_DUPLICATE_KEY_UPDATE(updateSets...)
+	if len(updateSets) > 0 {
+		tThreadsState := table.FivenetMailerThreadsState
+		stmt := tThreadsState.
+			INSERT(
+				tThreadsState.ThreadID,
+				tThreadsState.EmailID,
+				tThreadsState.Unread,
+				tThreadsState.LastRead,
+				tThreadsState.Important,
+				tThreadsState.Favorite,
+				tThreadsState.Muted,
+				tThreadsState.Archived,
+			).
+			VALUES(
+				req.State.ThreadId,
+				req.State.EmailId,
+				req.State.Unread,
+				req.State.LastRead,
+				req.State.Important,
+				req.State.Favorite,
+				req.State.Muted,
+				req.State.Archived,
+			).
+			ON_DUPLICATE_KEY_UPDATE(updateSets...)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
 	}
 
 	state, err := s.getThreadState(ctx, req.State.ThreadId, req.State.EmailId)
