@@ -48,11 +48,12 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := jet.Bool(true)
+
 	if !userInfo.SuperUser || (userInfo.SuperUser && req.All != nil && !*req.All) {
 		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
+		// Include deactivated e-mails
 		condition = condition.AND(jet.AND(
 			tEmails.DeletedAt.IS_NULL(),
-			// Include deactivated e-mails
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
@@ -69,7 +70,7 @@ func (s *Server) ListEmails(ctx context.Context, req *ListEmailsRequest) (*ListE
 					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
 					tQualificationsResults.DeletedAt.IS_NULL(),
 					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
-					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
+					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 				),
 			),
 		))
@@ -140,20 +141,20 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
+					tEmailsUserAccess.Access.IS_NOT_NULL(),
+					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
+				),
+				jet.AND(
 					tEmailsUserAccess.Access.IS_NULL(),
 					tEmailsJobAccess.Access.IS_NOT_NULL(),
 					tEmailsJobAccess.Access.GT_EQ(jet.Int32(access)),
-				),
-				jet.AND(
-					tEmailsUserAccess.Access.IS_NOT_NULL(),
-					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
 				),
 				jet.AND(
 					tEmailsQualificationsAccess.Access.IS_NOT_NULL(),
 					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
 					tQualificationsResults.DeletedAt.IS_NULL(),
 					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
-					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
+					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 				),
 			),
 		))
@@ -175,14 +176,14 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 		).
 		FROM(
 			tEmails.
+				LEFT_JOIN(tEmailsUserAccess,
+					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
+						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
+				).
 				LEFT_JOIN(tEmailsJobAccess,
 					tEmailsJobAccess.EmailID.EQ(tEmails.ID).
 						AND(tEmailsJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tEmailsJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-				).
-				LEFT_JOIN(tEmailsUserAccess,
-					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
-						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
 				).
 				LEFT_JOIN(tEmailsQualificationsAccess,
 					tEmailsQualificationsAccess.EmailID.EQ(tEmails.ID),

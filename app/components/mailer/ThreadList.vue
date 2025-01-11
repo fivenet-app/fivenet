@@ -92,7 +92,14 @@ defineShortcuts({
                             <UChip v-if="!!thread.state?.unread" class="mr-1" />
                         </div>
 
-                        <UTooltip :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')" class="shrink-0">
+                        <div
+                            v-if="thread.deletedAt"
+                            class="flex shrink-0 flex-row items-center justify-center gap-1.5 font-bold"
+                        >
+                            <UIcon name="i-mdi-trash-can" class="size-4 shrink-0" />
+                            {{ $t('common.deleted') }}
+                        </div>
+                        <UTooltip v-else :text="$d(toDate(thread.updatedAt ?? thread.createdAt), 'long')" class="shrink-0">
                             {{
                                 isToday(toDate(thread.updatedAt ?? thread.createdAt))
                                     ? $d(toDate(thread.updatedAt ?? thread.createdAt), 'time')

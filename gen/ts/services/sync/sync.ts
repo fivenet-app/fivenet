@@ -11,10 +11,12 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DataUserLocations } from "../../resources/sync/data";
 import { DataVehicles } from "../../resources/sync/data";
 import { DataUsers } from "../../resources/sync/data";
 import { DataLicenses } from "../../resources/sync/data";
 import { DataJobs } from "../../resources/sync/data";
+import { UserUpdate } from "../../resources/sync/activity";
 import { TimeclockEntry } from "../../resources/jobs/timeclock";
 import { JobsUserProps } from "../../resources/sync/activity";
 import { JobsUserActivity } from "../../resources/jobs/activity";
@@ -109,6 +111,14 @@ export interface AddActivityRequest {
          */
         jobsTimeclock: TimeclockEntry;
     } | {
+        oneofKind: "userUpdate";
+        /**
+         * User/Char info updates that aren't tracked by activity (yet)
+         *
+         * @generated from protobuf field: resources.sync.UserUpdate user_update = 8;
+         */
+        userUpdate: UserUpdate;
+    } | {
         oneofKind: undefined;
     };
 }
@@ -152,6 +162,12 @@ export interface SendDataRequest {
          * @generated from protobuf field: resources.sync.DataVehicles vehicles = 4;
          */
         vehicles: DataVehicles;
+    } | {
+        oneofKind: "userLocations";
+        /**
+         * @generated from protobuf field: resources.sync.DataUserLocations user_locations = 5;
+         */
+        userLocations: DataUserLocations;
     } | {
         oneofKind: undefined;
     };
@@ -281,7 +297,8 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
             { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
             { no: 5, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
             { no: 6, name: "jobs_user_props", kind: "message", oneof: "activity", T: () => JobsUserProps },
-            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry }
+            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry },
+            { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
         ]);
     }
     create(value?: PartialMessage<AddActivityRequest>): AddActivityRequest {
@@ -338,6 +355,12 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         jobsTimeclock: TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
                     };
                     break;
+                case /* resources.sync.UserUpdate user_update */ 8:
+                    message.activity = {
+                        oneofKind: "userUpdate",
+                        userUpdate: UserUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).userUpdate)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -371,6 +394,9 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.jobs.TimeclockEntry jobs_timeclock = 7; */
         if (message.activity.oneofKind === "jobsTimeclock")
             TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.UserUpdate user_update = 8; */
+        if (message.activity.oneofKind === "userUpdate")
+            UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -435,7 +461,8 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
             { no: 1, name: "jobs", kind: "message", oneof: "data", T: () => DataJobs },
             { no: 2, name: "licenses", kind: "message", oneof: "data", T: () => DataLicenses },
             { no: 3, name: "users", kind: "message", oneof: "data", T: () => DataUsers },
-            { no: 4, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles }
+            { no: 4, name: "vehicles", kind: "message", oneof: "data", T: () => DataVehicles },
+            { no: 5, name: "user_locations", kind: "message", oneof: "data", T: () => DataUserLocations }
         ]);
     }
     create(value?: PartialMessage<SendDataRequest>): SendDataRequest {
@@ -474,6 +501,12 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
                         vehicles: DataVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
                     };
                     break;
+                case /* resources.sync.DataUserLocations user_locations */ 5:
+                    message.data = {
+                        oneofKind: "userLocations",
+                        userLocations: DataUserLocations.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userLocations)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -498,6 +531,9 @@ class SendDataRequest$Type extends MessageType<SendDataRequest> {
         /* resources.sync.DataVehicles vehicles = 4; */
         if (message.data.oneofKind === "vehicles")
             DataVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.sync.DataUserLocations user_locations = 5; */
+        if (message.data.oneofKind === "userLocations")
+            DataUserLocations.internalBinaryWrite(message.data.userLocations, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

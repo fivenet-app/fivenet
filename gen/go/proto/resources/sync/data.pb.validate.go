@@ -711,3 +711,317 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DataLicensesValidationError{}
+
+// Validate checks the field values on DataUserLocations with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DataUserLocations) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DataUserLocations with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DataUserLocationsMultiError, or nil if none found.
+func (m *DataUserLocations) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DataUserLocations) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetUsers()) > 2000 {
+		err := DataUserLocationsValidationError{
+			field:  "Users",
+			reason: "value must contain no more than 2000 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DataUserLocationsValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DataUserLocationsValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DataUserLocationsValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Clear != nil {
+		// no validation rules for Clear
+	}
+
+	if len(errors) > 0 {
+		return DataUserLocationsMultiError(errors)
+	}
+
+	return nil
+}
+
+// DataUserLocationsMultiError is an error wrapping multiple validation errors
+// returned by DataUserLocations.ValidateAll() if the designated constraints
+// aren't met.
+type DataUserLocationsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DataUserLocationsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DataUserLocationsMultiError) AllErrors() []error { return m }
+
+// DataUserLocationsValidationError is the validation error returned by
+// DataUserLocations.Validate if the designated constraints aren't met.
+type DataUserLocationsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DataUserLocationsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DataUserLocationsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DataUserLocationsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DataUserLocationsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DataUserLocationsValidationError) ErrorName() string {
+	return "DataUserLocationsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DataUserLocationsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDataUserLocations.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DataUserLocationsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DataUserLocationsValidationError{}
+
+// Validate checks the field values on UserLocation with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserLocation) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserLocation with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserLocationMultiError, or
+// nil if none found.
+func (m *UserLocation) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserLocation) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetIdentifier()) > 64 {
+		err := UserLocationValidationError{
+			field:  "Identifier",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := UserLocationValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetCoords() == nil {
+		err := UserLocationValidationError{
+			field:  "Coords",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetCoords()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UserLocationValidationError{
+					field:  "Coords",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UserLocationValidationError{
+					field:  "Coords",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCoords()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UserLocationValidationError{
+				field:  "Coords",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Hidden
+
+	if len(errors) > 0 {
+		return UserLocationMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserLocationMultiError is an error wrapping multiple validation errors
+// returned by UserLocation.ValidateAll() if the designated constraints aren't met.
+type UserLocationMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserLocationMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserLocationMultiError) AllErrors() []error { return m }
+
+// UserLocationValidationError is the validation error returned by
+// UserLocation.Validate if the designated constraints aren't met.
+type UserLocationValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserLocationValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserLocationValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserLocationValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserLocationValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserLocationValidationError) ErrorName() string { return "UserLocationValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserLocationValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserLocation.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserLocationValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserLocationValidationError{}

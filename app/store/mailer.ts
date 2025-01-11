@@ -295,7 +295,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Emails
-        async listEmails(all?: boolean, offset?: number, redirect: boolean = true): Promise<ListEmailsResponse> {
+        async listEmails(all: boolean = false, offset: number = 0, redirect: boolean = true): Promise<ListEmailsResponse> {
             this.error = undefined;
 
             if (this.addressBook.length > 30) {
@@ -305,9 +305,9 @@ export const useMailerStore = defineStore('mailer', {
             try {
                 const call = getGRPCMailerClient().listEmails({
                     pagination: {
-                        offset: offset ?? 0,
+                        offset: offset,
                     },
-                    all: all ?? false,
+                    all: all,
                 });
                 const { response } = await call;
 

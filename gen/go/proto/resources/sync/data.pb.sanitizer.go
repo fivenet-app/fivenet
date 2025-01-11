@@ -51,6 +51,26 @@ func (m *DataStatus) Sanitize() error {
 	return nil
 }
 
+func (m *DataUserLocations) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	for idx, item := range m.Users {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *DataUsers) Sanitize() error {
 	if m == nil {
 		return nil
@@ -86,6 +106,23 @@ func (m *DataVehicles) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *UserLocation) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Coords
+	if m.Coords != nil {
+		if v, ok := interface{}(m.GetCoords()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

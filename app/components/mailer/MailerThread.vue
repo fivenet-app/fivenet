@@ -288,112 +288,123 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <Pagination v-if="messages?.pagination" v-model="page" :pagination="messages?.pagination" :refresh="refreshMessages" />
-
-        <UDashboardToolbar
-            v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
-            class="flex justify-between overflow-y-hidden border-b-0 border-t border-gray-200 px-3 py-3.5 dark:border-gray-700"
-        >
-            <UAccordion
-                variant="outline"
-                :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
-                :ui="{ default: { class: 'mb-0' } }"
-                class="max-h-[50vh] overflow-y-auto"
-            >
-                <template #compose>
-                    <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
-                        <UFormGroup name="recipients" class="w-full flex-1" :label="$t('common.additional_recipients')">
-                            <ClientOnly>
-                                <USelectMenu
-                                    v-model="state.recipients"
-                                    :placeholder="$t('common.recipient')"
-                                    block
-                                    multiple
-                                    trailing
-                                    searchable
-                                    :options="[...state.recipients, ...addressBook]"
-                                    :searchable-placeholder="$t('common.recipient')"
-                                    creatable
-                                    :disabled="!canSubmit"
-                                >
-                                    <template #label>&nbsp;</template>
-
-                                    <template #option-create="{ option }">
-                                        <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
-                                    </template>
-
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
-                                    </template>
-                                </USelectMenu>
-                            </ClientOnly>
-
-                            <div class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto">
-                                <UButtonGroup
-                                    v-for="(recipient, idx) in state.recipients"
-                                    :key="idx"
-                                    size="sm"
-                                    orientation="horizontal"
-                                >
-                                    <UButton variant="solid" color="gray" :label="recipient.label" />
-
-                                    <UButton
-                                        variant="outline"
-                                        icon="i-mdi-close"
-                                        color="red"
-                                        @click="state.recipients.splice(idx, 1)"
-                                    />
-                                </UButtonGroup>
-                            </div>
-                        </UFormGroup>
-
-                        <UFormGroup name="title" :label="$t('common.title')" class="w-full flex-1">
-                            <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
-                                <UInput
-                                    v-model="state.title"
-                                    type="text"
-                                    size="lg"
-                                    class="w-full font-semibold text-gray-900 dark:text-white"
-                                    :placeholder="$t('common.title')"
-                                    :disabled="!canSubmit"
-                                    :ui="{ icon: { trailing: { pointer: '' } } }"
-                                >
-                                    <template #trailing>
-                                        <UButton
-                                            v-show="state.title !== ''"
-                                            color="gray"
-                                            variant="link"
-                                            icon="i-mdi-close"
-                                            :padded="false"
-                                            @click="state.title = generateResponseTitle(selectedThread)"
-                                        />
-                                    </template>
-                                </UInput>
-
-                                <TemplateSelector v-model="state.content" size="lg" class="ml-auto" />
-                            </div>
-                        </UFormGroup>
-
-                        <UFormGroup name="message">
-                            <ClientOnly>
-                                <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
-                            </ClientOnly>
-                        </UFormGroup>
-
-                        <UButton
-                            type="submit"
-                            :disabled="!canSubmit"
-                            block
-                            class="flex-1"
-                            :label="$t('components.mailer.send')"
-                            trailing-icon="i-mdi-paper-airplane"
-                        />
-                    </UForm>
-                </template>
-            </UAccordion>
-        </UDashboardToolbar>
     </UDashboardPanelContent>
+
+    <UDashboardToolbar
+        v-if="thread && canAccess(selectedEmail?.access, selectedEmail?.userId, AccessLevel.WRITE)"
+        class="flex min-w-0 justify-between overflow-y-hidden border-b-0 border-t border-gray-200 dark:border-gray-700"
+        :ui="{
+            wrapper: 'p-0 gap-x-0',
+            container: 'gap-x-0 justify-stretch items-stretch h-full inline-flex flex-col p-0 px-1 min-w-0',
+        }"
+    >
+        <UAccordion
+            variant="outline"
+            :items="[{ slot: 'compose', label: $t('components.mailer.reply'), icon: 'i-mdi-paper-airplane' }]"
+            :ui="{ default: { class: 'mb-0' }, item: { base: 'overflow-x-hidden' } }"
+            class="mt-2 max-h-[50vh] overflow-y-auto"
+        >
+            <template #compose>
+                <UForm
+                    :schema="schema"
+                    :state="state"
+                    class="flex flex-1 grow-0 flex-col gap-2 px-1"
+                    @submit="onSubmitThrottle"
+                >
+                    <UFormGroup name="recipients" :label="$t('common.additional_recipients')">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.recipients"
+                                multiple
+                                trailing
+                                :options="[...state.recipients, ...addressBook]"
+                                searchable
+                                :searchable-placeholder="$t('common.recipient')"
+                                :placeholder="$t('common.recipient')"
+                                creatable
+                                :disabled="!canSubmit"
+                            >
+                                <template #label>&nbsp;</template>
+
+                                <template #option-create="{ option }">
+                                    <span class="shrink-0">{{ $t('common.recipient') }}: {{ option.label }}</span>
+                                </template>
+
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.recipient', 2)]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+
+                        <div
+                            v-if="state.recipients.length > 0"
+                            class="mt-2 flex snap-x flex-row flex-wrap gap-2 overflow-x-auto"
+                        >
+                            <UButtonGroup
+                                v-for="(recipient, idx) in state.recipients"
+                                :key="idx"
+                                size="sm"
+                                orientation="horizontal"
+                            >
+                                <UButton variant="solid" color="gray" :label="recipient.label" />
+
+                                <UButton
+                                    variant="outline"
+                                    icon="i-mdi-close"
+                                    color="red"
+                                    @click="state.recipients.splice(idx, 1)"
+                                />
+                            </UButtonGroup>
+                        </div>
+                    </UFormGroup>
+
+                    <UFormGroup name="title" :label="$t('common.title')">
+                        <div class="flex flex-1 flex-col items-center gap-2 sm:flex-row">
+                            <UInput
+                                v-model="state.title"
+                                type="text"
+                                size="lg"
+                                class="w-full font-semibold text-gray-900 dark:text-white"
+                                :placeholder="$t('common.title')"
+                                :disabled="!canSubmit"
+                                :ui="{ icon: { trailing: { pointer: '' } } }"
+                            >
+                                <template #trailing>
+                                    <UButton
+                                        v-show="state.title !== ''"
+                                        color="gray"
+                                        variant="link"
+                                        icon="i-mdi-close"
+                                        :padded="false"
+                                        @click="state.title = generateResponseTitle(selectedThread)"
+                                    />
+                                </template>
+                            </UInput>
+
+                            <TemplateSelector v-model="state.content" size="lg" class="ml-auto" />
+                        </div>
+                    </UFormGroup>
+
+                    <UFormGroup name="message">
+                        <ClientOnly>
+                            <TiptapEditor v-model="state.content" :disabled="!canSubmit" wrapper-class="min-h-44" />
+                        </ClientOnly>
+                    </UFormGroup>
+
+                    <UButton
+                        type="submit"
+                        :disabled="!canSubmit"
+                        block
+                        class="flex-1"
+                        :label="$t('components.mailer.send')"
+                        trailing-icon="i-mdi-paper-airplane"
+                    />
+                </UForm>
+            </template>
+        </UAccordion>
+    </UDashboardToolbar>
 </template>

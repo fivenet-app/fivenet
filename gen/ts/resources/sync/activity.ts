@@ -62,6 +62,37 @@ export interface JobsUserProps {
      */
     props?: JobsUserProps$;
 }
+/**
+ * @generated from protobuf message resources.sync.UserUpdate
+ */
+export interface UserUpdate {
+    /**
+     * @generated from protobuf field: int32 user_id = 1;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional string group = 2;
+     */
+    group?: string;
+    /**
+     * Char details
+     *
+     * @generated from protobuf field: optional string job = 3;
+     */
+    job?: string;
+    /**
+     * @generated from protobuf field: optional int32 job_grade = 4;
+     */
+    jobGrade?: number;
+    /**
+     * @generated from protobuf field: optional string firstname = 5;
+     */
+    firstname?: string;
+    /**
+     * @generated from protobuf field: optional string lastname = 6;
+     */
+    lastname?: string;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class UserOAuth2Conn$Type extends MessageType<UserOAuth2Conn> {
     constructor() {
@@ -241,3 +272,85 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
  * @generated MessageType for protobuf message resources.sync.JobsUserProps
  */
 export const JobsUserProps = new JobsUserProps$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserUpdate$Type extends MessageType<UserUpdate> {
+    constructor() {
+        super("resources.sync.UserUpdate", [
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "group", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "job_grade", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "firstname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "lastname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserUpdate>): UserUpdate {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<UserUpdate>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserUpdate): UserUpdate {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional string group */ 2:
+                    message.group = reader.string();
+                    break;
+                case /* optional string job */ 3:
+                    message.job = reader.string();
+                    break;
+                case /* optional int32 job_grade */ 4:
+                    message.jobGrade = reader.int32();
+                    break;
+                case /* optional string firstname */ 5:
+                    message.firstname = reader.string();
+                    break;
+                case /* optional string lastname */ 6:
+                    message.lastname = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
+        /* optional string group = 2; */
+        if (message.group !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.group);
+        /* optional string job = 3; */
+        if (message.job !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.job);
+        /* optional int32 job_grade = 4; */
+        if (message.jobGrade !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.jobGrade);
+        /* optional string firstname = 5; */
+        if (message.firstname !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.firstname);
+        /* optional string lastname = 6; */
+        if (message.lastname !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.lastname);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.UserUpdate
+ */
+export const UserUpdate = new UserUpdate$Type();

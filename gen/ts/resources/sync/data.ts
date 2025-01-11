@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Coords } from "../livemap/livemap";
 import { License } from "../users/users";
 import { Vehicle } from "../vehicles/vehicles";
 import { User } from "../users/users";
@@ -58,6 +59,40 @@ export interface DataLicenses {
      * @generated from protobuf field: repeated resources.users.License licenses = 1;
      */
     licenses: License[];
+}
+/**
+ * @generated from protobuf message resources.sync.DataUserLocations
+ */
+export interface DataUserLocations {
+    /**
+     * @generated from protobuf field: repeated resources.sync.UserLocation users = 1;
+     */
+    users: UserLocation[];
+    /**
+     * @generated from protobuf field: optional bool clear = 2;
+     */
+    clear?: boolean;
+}
+/**
+ * @generated from protobuf message resources.sync.UserLocation
+ */
+export interface UserLocation {
+    /**
+     * @generated from protobuf field: string identifier = 1;
+     */
+    identifier: string;
+    /**
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: resources.livemap.Coords coords = 3;
+     */
+    coords?: Coords;
+    /**
+     * @generated from protobuf field: bool hidden = 4;
+     */
+    hidden: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
@@ -294,3 +329,127 @@ class DataLicenses$Type extends MessageType<DataLicenses> {
  * @generated MessageType for protobuf message resources.sync.DataLicenses
  */
 export const DataLicenses = new DataLicenses$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DataUserLocations$Type extends MessageType<DataUserLocations> {
+    constructor() {
+        super("resources.sync.DataUserLocations", [
+            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserLocation, options: { "validate.rules": { repeated: { maxItems: "2000" } } } },
+            { no: 2, name: "clear", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DataUserLocations>): DataUserLocations {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.users = [];
+        if (value !== undefined)
+            reflectionMergePartial<DataUserLocations>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DataUserLocations): DataUserLocations {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.sync.UserLocation users */ 1:
+                    message.users.push(UserLocation.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional bool clear */ 2:
+                    message.clear = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DataUserLocations, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.sync.UserLocation users = 1; */
+        for (let i = 0; i < message.users.length; i++)
+            UserLocation.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool clear = 2; */
+        if (message.clear !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.clear);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.DataUserLocations
+ */
+export const DataUserLocations = new DataUserLocations$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UserLocation$Type extends MessageType<UserLocation> {
+    constructor() {
+        super("resources.sync.UserLocation", [
+            { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "coords", kind: "message", T: () => Coords, options: { "validate.rules": { message: { required: true } } } },
+            { no: 4, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<UserLocation>): UserLocation {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.identifier = "";
+        message.job = "";
+        message.hidden = false;
+        if (value !== undefined)
+            reflectionMergePartial<UserLocation>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UserLocation): UserLocation {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string identifier */ 1:
+                    message.identifier = reader.string();
+                    break;
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                case /* resources.livemap.Coords coords */ 3:
+                    message.coords = Coords.internalBinaryRead(reader, reader.uint32(), options, message.coords);
+                    break;
+                case /* bool hidden */ 4:
+                    message.hidden = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: UserLocation, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string identifier = 1; */
+        if (message.identifier !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.identifier);
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* resources.livemap.Coords coords = 3; */
+        if (message.coords)
+            Coords.internalBinaryWrite(message.coords, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool hidden = 4; */
+        if (message.hidden !== false)
+            writer.tag(4, WireType.Varint).bool(message.hidden);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.UserLocation
+ */
+export const UserLocation = new UserLocation$Type();

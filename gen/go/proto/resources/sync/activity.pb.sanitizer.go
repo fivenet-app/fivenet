@@ -44,3 +44,11 @@ func (m *UserProps) Sanitize() error {
 
 	return nil
 }
+
+func (m *UserUpdate) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}

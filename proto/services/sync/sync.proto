@@ -41,6 +41,9 @@ message AddActivityRequest {
     resources.sync.JobsUserProps jobs_user_props = 6;
     // Timeclock user entry
     resources.jobs.TimeclockEntry jobs_timeclock = 7;
+
+    // User/Char info updates that aren't tracked by activity (yet)
+    resources.sync.UserUpdate user_update = 8;
   }
 }
 
@@ -57,6 +60,8 @@ message SendDataRequest {
 
     resources.sync.DataUsers users = 3;
     resources.sync.DataVehicles vehicles = 4;
+
+    resources.sync.DataUserLocations user_locations = 5;
   }
 }
 

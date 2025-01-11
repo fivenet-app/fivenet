@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -52,6 +53,10 @@ func (s *Server) AddActivity(ctx context.Context, req *AddActivityRequest) (*Add
 			return nil, err
 		}
 
+	case *AddActivityRequest_UserUpdate:
+		if err := s.handleUserUpdate(ctx, d); err != nil {
+			return nil, err
+		}
 	}
 
 	return resp, nil
@@ -177,7 +182,21 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *AddActivityReque
 }
 
 func (s *Server) handleTimeclockEntry(ctx context.Context, data *AddActivityRequest_JobsTimeclock) error {
+	tTimeclock := table.FivenetJobsTimeclock
+
+	_ = tTimeclock
 	// TODO
+
+	return nil
+}
+
+func (s *Server) handleUserUpdate(ctx context.Context, data *AddActivityRequest_UserUpdate) error {
+	tUser := tables.Users()
+
+	// TODO check if user exists in db, if not return nil
+
+	_ = tUser
+	// TODO update user info (no activity to create)
 
 	return nil
 }

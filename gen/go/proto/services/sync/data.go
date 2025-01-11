@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -46,6 +47,11 @@ func (s *Server) SendData(ctx context.Context, req *SendDataRequest) (*SendDataR
 
 	case *SendDataRequest_Vehicles:
 		if resp.AffectedRows, err = s.handleVehiclesData(ctx, d); err != nil {
+			return nil, err
+		}
+
+	case *SendDataRequest_UserLocations:
+		if resp.AffectedRows, err = s.handleUserLocations(ctx, d); err != nil {
 			return nil, err
 		}
 	}
@@ -545,6 +551,56 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *SendDataRequest_V
 			vehicle.Model,
 			vehicle.Type,
 		)
+	}
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return rowsAffected, nil
+}
+
+func (s *Server) handleUserLocations(ctx context.Context, data *SendDataRequest_UserLocations) (int64, error) {
+	tLocations := table.FivenetUserLocations
+
+	if data.UserLocations.Clear != nil && *data.UserLocations.Clear {
+		stmt := tLocations.
+			DELETE()
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return 0, err
+		}
+	}
+
+	stmt := tLocations.
+		INSERT(
+			tLocations.Identifier,
+			tLocations.Job,
+			tLocations.X,
+			tLocations.Y,
+			tLocations.Hidden,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tLocations.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tLocations.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
+			tLocations.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
+			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
+		)
+
+	for _, location := range data.UserLocations.Users {
+		stmt = stmt.
+			VALUES(
+				location.Identifier,
+				location.Job,
+				location.Coords.X,
+				location.Coords.Y,
+				location.Hidden,
+			)
 	}
 
 	res, err := stmt.ExecContext(ctx, s.db)

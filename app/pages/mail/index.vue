@@ -205,7 +205,7 @@ onBeforeMount(async () => {
                 :ui="{
                     wrapper: 'p-0 gap-x-0',
                     container:
-                        'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800',
+                        'gap-x-0 gap-y-1 justify-stretch items-stretch h-full inline-flex flex-col bg-gray-100 p-0 px-1 dark:bg-gray-800 min-w-0',
                 }"
             >
                 <ClientOnly>
@@ -235,7 +235,7 @@ onBeforeMount(async () => {
                         by="id"
                     >
                         <template #label>
-                            <span class="overflow-hidden truncate">
+                            <span class="truncate">
                                 {{
                                     (selectedEmail?.label && selectedEmail?.label !== ''
                                         ? selectedEmail?.label + ' (' + selectedEmail.email + ')'

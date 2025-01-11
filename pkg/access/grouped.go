@@ -229,7 +229,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 			g.Qualifications.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
 			tQualiResults.DeletedAt.IS_NULL(),
 			tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
-			tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL.Number()))),
+			tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 		}
 		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))
 	}

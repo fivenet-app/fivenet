@@ -430,13 +430,16 @@
     - [JobsUserProps](#resources-sync-JobsUserProps)
     - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
     - [UserProps](#resources-sync-UserProps)
+    - [UserUpdate](#resources-sync-UserUpdate)
   
 - [resources/sync/data.proto](#resources_sync_data-proto)
     - [DataJobs](#resources-sync-DataJobs)
     - [DataLicenses](#resources-sync-DataLicenses)
     - [DataStatus](#resources-sync-DataStatus)
+    - [DataUserLocations](#resources-sync-DataUserLocations)
     - [DataUsers](#resources-sync-DataUsers)
     - [DataVehicles](#resources-sync-DataVehicles)
+    - [UserLocation](#resources-sync-UserLocation)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -6937,6 +6940,26 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+
+<a name="resources-sync-UserUpdate"></a>
+
+### UserUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| group | [string](#string) | optional |  |
+| job | [string](#string) | optional | Char details |
+| job_grade | [int32](#int32) | optional |  |
+| firstname | [string](#string) | optional |  |
+| lastname | [string](#string) | optional |  |
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -6999,6 +7022,22 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="resources-sync-DataUserLocations"></a>
+
+### DataUserLocations
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [UserLocation](#resources-sync-UserLocation) | repeated |  |
+| clear | [bool](#bool) | optional |  |
+
+
+
+
+
+
 <a name="resources-sync-DataUsers"></a>
 
 ### DataUsers
@@ -7023,6 +7062,24 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-UserLocation"></a>
+
+### UserLocation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| identifier | [string](#string) |  |  |
+| job | [string](#string) |  |  |
+| coords | [resources.livemap.Coords](#resources-livemap-Coords) |  |  |
+| hidden | [bool](#bool) |  |  |
 
 
 
@@ -13511,6 +13568,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  | Jobs user activity |
 | jobs_user_props | [resources.sync.JobsUserProps](#resources-sync-JobsUserProps) |  | Setting props will cause activity to be created automtically |
 | jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  | Timeclock user entry |
+| user_update | [resources.sync.UserUpdate](#resources-sync-UserUpdate) |  | User/Char info updates that aren't tracked by activity (yet) |
 
 
 
@@ -13572,6 +13630,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | licenses | [resources.sync.DataLicenses](#resources-sync-DataLicenses) |  |  |
 | users | [resources.sync.DataUsers](#resources-sync-DataUsers) |  |  |
 | vehicles | [resources.sync.DataVehicles](#resources-sync-DataVehicles) |  |  |
+| user_locations | [resources.sync.DataUserLocations](#resources-sync-DataUserLocations) |  |  |
 
 
 

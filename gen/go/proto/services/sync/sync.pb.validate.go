@@ -671,6 +671,48 @@ func (m *AddActivityRequest) validate(all bool) error {
 			}
 		}
 
+	case *AddActivityRequest_UserUpdate:
+		if v == nil {
+			err := AddActivityRequestValidationError{
+				field:  "Activity",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofActivityPresent = true
+
+		if all {
+			switch v := interface{}(m.GetUserUpdate()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, AddActivityRequestValidationError{
+						field:  "UserUpdate",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserUpdate()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return AddActivityRequestValidationError{
+					field:  "UserUpdate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -1055,6 +1097,48 @@ func (m *SendDataRequest) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return SendDataRequestValidationError{
 					field:  "Vehicles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *SendDataRequest_UserLocations:
+		if v == nil {
+			err := SendDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetUserLocations()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "UserLocations",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SendDataRequestValidationError{
+						field:  "UserLocations",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUserLocations()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SendDataRequestValidationError{
+					field:  "UserLocations",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

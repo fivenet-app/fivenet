@@ -26,3 +26,14 @@ message JobsUserProps {
   string reason = 1 [(validate.rules).string.max_len = 255];
   resources.jobs.JobsUserProps props = 2 [(validate.rules).message.required = true];
 }
+
+message UserUpdate {
+  int32 user_id = 1;
+  optional string group = 2;
+
+  // Char details
+  optional string job = 3;
+  optional int32 job_grade = 4;
+  optional string firstname = 5;
+  optional string lastname = 6;
+}

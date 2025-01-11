@@ -66,6 +66,14 @@ func (m *AddActivityRequest) Sanitize() error {
 			}
 		}
 
+		// Field: UserUpdate
+	case *AddActivityRequest_UserUpdate:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -148,6 +156,14 @@ func (m *SendDataRequest) Sanitize() error {
 
 		// Field: Licenses
 	case *SendDataRequest_Licenses:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: UserLocations
+	case *SendDataRequest_UserLocations:
 		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
