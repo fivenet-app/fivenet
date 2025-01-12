@@ -64,7 +64,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.state.Set(s.cfg.Tables.Jobs.IDField, 0, nil)
+	s.state.Set(0, nil)
 
 	return nil
 }

@@ -54,7 +54,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	s.state.Set(s.cfg.Tables.Licenses.IDField, 0, nil)
+	s.state.Set(0, nil)
 
 	return nil
 }

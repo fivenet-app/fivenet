@@ -17,6 +17,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -35,7 +36,7 @@ type Sync struct {
 	db     *sql.DB
 
 	acfg  *config.Config
-	cfg   *config.DBSync
+	cfg   *DBSync
 	state *DBSyncState
 	cli   pbsync.SyncServiceClient
 
@@ -143,6 +144,8 @@ func New(p Params) (*Sync, error) {
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		cancel()
 
+		s.wg.Wait()
+
 		if err := s.state.Save(); err != nil {
 			return err
 		}
@@ -175,34 +178,75 @@ func (s *Sync) Run(ctx context.Context) {
 }
 
 func (s *Sync) run(ctx context.Context) error {
-	// On startup sync jobs, job grades, licenses before the "main" sync loop starts
+	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
+
+	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
+	// then sync in 5 minute interval to keep the data fresh
+	if err := s.syncBaseData(ctx); err != nil {
+		s.logger.Error("error during jobs sync", zap.Error(err))
+		return err
+	}
+
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+
+		for {
+			s.syncBaseData(ctx)
+
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(5 * time.Minute):
+			}
+		}
+	}()
+
+	// User data sync loop
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+
+		for {
+			if err := s.users.Sync(ctx); err != nil {
+				s.logger.Error("error during users sync", zap.Error(err))
+			}
+
+			if err := s.vehicles.Sync(ctx); err != nil {
+				s.logger.Error("error during users sync", zap.Error(err))
+			}
+
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(2 * time.Second):
+			}
+		}
+	}()
+
+	return nil
+}
+
+func (s *Sync) syncBaseData(ctx context.Context) error {
+	errs := multierr.Combine()
+
 	if err := s.jobs.Sync(ctx); err != nil {
+		errs = multierr.Append(errs, err)
 		s.logger.Error("error during jobs sync", zap.Error(err))
 	}
+
 	if err := s.licenses.Sync(ctx); err != nil {
+		errs = multierr.Append(errs, err)
 		s.logger.Error("error during licenses sync", zap.Error(err))
 	}
 
-	// User data sync loop
-	for {
-		if err := s.users.Sync(ctx); err != nil {
-			s.logger.Error("error during users sync", zap.Error(err))
-		}
-
-		if err := s.vehicles.Sync(ctx); err != nil {
-			s.logger.Error("error during users sync", zap.Error(err))
-		}
-
-		select {
-		case <-ctx.Done():
-			return nil
-
-		case <-time.After(2 * time.Second):
-		}
-	}
+	return errs
 }
 
-func prepareStringQuery(query config.DBSyncTable, state *TableSyncState, offset uint64, limit int) string {
+func prepareStringQuery(query DBSyncTable, state *TableSyncState, offset uint64, limit int) string {
 	offsetStr := strconv.Itoa(int(offset))
 	limitStr := strconv.Itoa(limit)
 
@@ -210,11 +254,12 @@ func prepareStringQuery(query config.DBSyncTable, state *TableSyncState, offset 
 	q = strings.ReplaceAll(q, "$limit", limitStr)
 
 	where := ""
-	if state == nil || (query.UpdatedField == nil || state.LastCheck.IsZero()) {
+	// Add "updatedAt" column condition if available
+	if state == nil || (query.UpdatedTimeColumn == nil || state.LastCheck.IsZero()) {
 		q = strings.ReplaceAll(q, "$whereCondition", "")
 	} else {
 		where = fmt.Sprintf("WHERE `%s` >= '%s'\n",
-			*query.UpdatedField,
+			*query.UpdatedTimeColumn,
 			state.LastCheck.Format("2006-01-02 15:04:05"),
 		)
 	}

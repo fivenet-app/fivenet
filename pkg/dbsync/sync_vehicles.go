@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles"
@@ -33,6 +34,11 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		offset = s.state.Offset
 	}
 
+	// Ensure to zero the last check time if the data hasn't fully synced yet
+	if !s.state.SyncedUp {
+		s.state.LastCheck = time.Time{}
+	}
+
 	sQuery := s.cfg.Tables.Vehicles
 	query := prepareStringQuery(sQuery, s.state, offset, limit)
 
@@ -42,11 +48,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	}
 
 	if len(vehicles) == 0 {
-		s.state.Set(
-			s.cfg.Tables.Vehicles.IDField,
-			0,
-			nil,
-		)
+		s.state.Set(0, nil)
 		return nil
 	}
 
@@ -67,15 +69,11 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 	// and need to reset the offset to 0
 	if len(vehicles) < limit {
 		offset = 0
+		s.state.SyncedUp = true
 	}
 
 	lastPlate := vehicles[len(vehicles)-1].Plate
-	s.state.Set(
-		s.cfg.Tables.Vehicles.IDField,
-		uint64(limit)+offset,
-		&lastPlate,
-	)
-	s.state.Set(s.cfg.Tables.Vehicles.IDField, 0, nil)
+	s.state.Set(uint64(limit)+offset, &lastPlate)
 
 	return nil
 }

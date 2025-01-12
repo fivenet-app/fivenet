@@ -4,6 +4,7 @@ import (
 	"context"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -36,6 +37,11 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		offset = s.state.Offset
 	}
 
+	// Ensure to zero the last check time if the data hasn't fully synced yet
+	if !s.state.SyncedUp {
+		s.state.LastCheck = time.Time{}
+	}
+
 	sQuery := s.cfg.Tables.Users.DBSyncTable
 	query := prepareStringQuery(sQuery, s.state, offset, limit)
 
@@ -45,11 +51,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	if len(users) == 0 {
-		s.state.Set(
-			s.cfg.Tables.Users.IDField,
-			0,
-			nil,
-		)
+		s.state.Set(0, nil)
 		return nil
 	}
 
@@ -99,17 +101,15 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	}
 
 	// If less users than limit are returned, we probably have reached the "end" of the table
-	// and need to reset the offset to 0
+	// and need to reset the offset to 0. That means we are "synced up" and can start the normal
+	// sync loop of checking the "updatedAt" date.
 	if len(users) < limit {
 		offset = 0
+		s.state.SyncedUp = true
 	}
 
 	lastUserId := strconv.Itoa(int(users[len(users)-1].UserId))
-	s.state.Set(
-		s.cfg.Tables.Users.IDField,
-		uint64(limit)+offset,
-		&lastUserId,
-	)
+	s.state.Set(uint64(limit)+offset, &lastUserId)
 
 	return nil
 }

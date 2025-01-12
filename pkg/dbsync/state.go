@@ -17,23 +17,21 @@ type DBSyncState struct {
 
 	filepath string `yaml:"-"`
 
+	Jobs      *TableSyncState `yaml:"jobs"`
+	JobGrades *TableSyncState `yaml:"jobGrades"`
+	Licenses  *TableSyncState `yaml:"licenses"`
+
 	Users         *TableSyncState `yaml:"users"`
-	Jobs          *TableSyncState `yaml:"jobs"`
-	JobGrades     *TableSyncState `yaml:"jobGrades"`
-	Licenses      *TableSyncState `yaml:"licenses"`
-	UserLicenses  *TableSyncState `yaml:"userLicenses"`
 	OwnedVehicles *TableSyncState `yaml:"ownedVehicles"`
 }
 
 type TableSyncState struct {
 	dss *DBSyncState
 
-	// Used to track if the last id/string needs to be reset
-	IDField string `yaml:"idField"`
-
 	LastCheck time.Time `yaml:"lastCheck"`
 	Offset    uint64    `yaml:"offset"`
 	LastID    *string   `yaml:"lastId"`
+	SyncedUp  bool      `yaml:"syncedUp"`
 }
 
 func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
@@ -42,9 +40,6 @@ func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
 		filepath: filepath,
 	}
 
-	d.Users = &TableSyncState{
-		dss: d,
-	}
 	d.Jobs = &TableSyncState{
 		dss: d,
 	}
@@ -54,7 +49,8 @@ func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
 	d.Licenses = &TableSyncState{
 		dss: d,
 	}
-	d.UserLicenses = &TableSyncState{
+
+	d.Users = &TableSyncState{
 		dss: d,
 	}
 	d.OwnedVehicles = &TableSyncState{
@@ -98,9 +94,8 @@ func (s *DBSyncState) Save() error {
 	return nil
 }
 
-func (s *TableSyncState) Set(idField string, offset uint64, lastId *string) {
+func (s *TableSyncState) Set(offset uint64, lastId *string) {
 	s.LastCheck = time.Now()
-	s.IDField = idField
 	s.Offset = offset
 	s.LastID = lastId
 

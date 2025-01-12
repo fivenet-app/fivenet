@@ -17,7 +17,6 @@ tables:
   jobs:
     # Must return `name`, `label` columns
     enabled: true
-    idField: "name"
     query: |
       SELECT
         `name`,
@@ -42,7 +41,6 @@ tables:
   licenses:
     # Must return `type`, `label` columns
     enabled: true
-    idField: "type"
     query: |
       SELECT
         `type`,
@@ -55,7 +53,7 @@ tables:
     # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
     # Optional columns: `height`, `visum`, `playtime`
     enabled: true
-    idField: "id"
+    updatedTimeColumn: "last_seen"
     query: |
       SELECT
         `id`,
@@ -76,7 +74,6 @@ tables:
       $whereCondition
       LIMIT $limit
       OFFSET $offset;
-    updatedField: "last_seen"
   userLicenses:
     # Must return `type`, `owner` columns
     enabled: true
