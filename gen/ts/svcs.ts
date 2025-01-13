@@ -295,6 +295,7 @@ export const grpcMethods = [
 	'StatsService/GetStats',
 	'SyncService/GetStatus',
 	'SyncService/AddActivity',
+	'SyncService/RegisterAccount',
 	'SyncService/SendData',
 	'SyncService/Stream',
 	'WikiService/ListPages',

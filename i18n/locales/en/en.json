@@ -1092,7 +1092,8 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!",
-                "subtitle": "To create an account join the FiveM server and run {command} command."
+                "subtitle": "To create an account join the FiveM server and run {command} command.",
+                "open_server_account_management": "Click below to retrieve your registration token (you can also use {command})."
             },
             "UserSettingsPanel": {
                 "title": "Settings",

@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
+import { openTokenMgmt } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
@@ -73,9 +74,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </h2>
 
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-            <UAlert icon="i-mdi-info-circle">
+            <UAlert v-if="!isNUIAvailable()" icon="i-mdi-info-circle">
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">
+                        <template #command>
+                            <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                        </template>
+                    </I18nT>
+                </template>
+            </UAlert>
+            <UAlert
+                v-else
+                icon="i-mdi-info-circle"
+                :actions="[
+                    {
+                        label: $t('common.open'),
+                        click: () => openTokenMgmt(),
+                    },
+                ]"
+            >
+                <template #description>
+                    <I18nT keypath="components.auth.RegistrationForm.open_server_account_management">
                         <template #command>
                             <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
                         </template>

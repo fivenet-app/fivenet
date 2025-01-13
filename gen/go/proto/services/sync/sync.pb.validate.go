@@ -911,6 +911,275 @@ var _ interface {
 	ErrorName() string
 } = AddActivityResponseValidationError{}
 
+// Validate checks the field values on RegisterAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RegisterAccountRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterAccountRequestMultiError, or nil if none found.
+func (m *RegisterAccountRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterAccountRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetIdentifier()) > 64 {
+		err := RegisterAccountRequestValidationError{
+			field:  "Identifier",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for ResetToken
+
+	if m.CharId != nil {
+
+		if m.GetCharId() <= 0 {
+			err := RegisterAccountRequestValidationError{
+				field:  "CharId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RegisterAccountRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterAccountRequestMultiError is an error wrapping multiple validation
+// errors returned by RegisterAccountRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterAccountRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterAccountRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterAccountRequestMultiError) AllErrors() []error { return m }
+
+// RegisterAccountRequestValidationError is the validation error returned by
+// RegisterAccountRequest.Validate if the designated constraints aren't met.
+type RegisterAccountRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterAccountRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterAccountRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterAccountRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterAccountRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterAccountRequestValidationError) ErrorName() string {
+	return "RegisterAccountRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RegisterAccountRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterAccountRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterAccountRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterAccountRequestValidationError{}
+
+// Validate checks the field values on RegisterAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RegisterAccountResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterAccountResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterAccountResponseMultiError, or nil if none found.
+func (m *RegisterAccountResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterAccountResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.RegToken != nil {
+
+		if utf8.RuneCountInString(m.GetRegToken()) != 6 {
+			err := RegisterAccountResponseValidationError{
+				field:  "RegToken",
+				reason: "value length must be 6 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_RegisterAccountResponse_RegToken_Pattern.MatchString(m.GetRegToken()) {
+			err := RegisterAccountResponseValidationError{
+				field:  "RegToken",
+				reason: "value does not match regex pattern \"^[0-9]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.AccountId != nil {
+		// no validation rules for AccountId
+	}
+
+	if m.Username != nil {
+		// no validation rules for Username
+	}
+
+	if len(errors) > 0 {
+		return RegisterAccountResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterAccountResponseMultiError is an error wrapping multiple validation
+// errors returned by RegisterAccountResponse.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterAccountResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterAccountResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterAccountResponseMultiError) AllErrors() []error { return m }
+
+// RegisterAccountResponseValidationError is the validation error returned by
+// RegisterAccountResponse.Validate if the designated constraints aren't met.
+type RegisterAccountResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterAccountResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterAccountResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterAccountResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterAccountResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterAccountResponseValidationError) ErrorName() string {
+	return "RegisterAccountResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RegisterAccountResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterAccountResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterAccountResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterAccountResponseValidationError{}
+
+var _RegisterAccountResponse_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
+
 // Validate checks the field values on SendDataRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

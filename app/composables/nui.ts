@@ -88,6 +88,14 @@ export async function focusTablet(state: boolean): Promise<void> {
     return await fetchNUI('focusTablet', { state: state });
 }
 
+export async function openTokenMgmt(): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
+    return await fetchNUI('openTokenMgmt', { ok: true });
+}
+
 export async function setWaypoint(x: number, y: number): Promise<void> {
     if (!isNUIAvailable()) {
         return;

@@ -51,6 +51,21 @@ message AddActivityResponse {
   uint64 id = 1;
 }
 
+message RegisterAccountRequest {
+  string identifier = 1 [(validate.rules).string.max_len = 64];
+  bool reset_token = 2;
+  optional int32 char_id = 3 [(validate.rules).int32.gt = 0];
+}
+
+message RegisterAccountResponse {
+  optional string reg_token = 1 [(validate.rules).string = {
+    len: 6,
+    pattern: "^[0-9]{6}$",
+  }];
+  optional uint64 account_id = 2;
+  optional string username = 3;
+}
+
 message SendDataRequest {
   oneof data {
     option (validate.required) = true;
@@ -81,6 +96,9 @@ service SyncService {
 
   // For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc.
   rpc AddActivity(AddActivityRequest) returns (AddActivityResponse);
+
+  // Get registration token for a new user account or return the account id and username, for a given identifier/license.
+  rpc RegisterAccount(RegisterAccountRequest) returns (RegisterAccountResponse);
 
   // DBSync's method of sending (mass) data to the FiveNet server for storing.
   rpc SendData(SendDataRequest) returns (SendDataResponse);

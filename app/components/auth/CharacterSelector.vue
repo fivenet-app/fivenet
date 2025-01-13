@@ -63,7 +63,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
 
         <UCarousel
             v-else
-            v-slot="{ item }"
+            v-slot="{ item: char }"
             :items="chars"
             arrows
             :prev-button="{
@@ -77,9 +77,9 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             :ui="{ item: 'basis-full sm:basis-1/4', container: 'rounded-lg' }"
         >
             <CharacterSelectorCard
-                :key="item.userId"
-                :char="item.char"
-                :unavailable="!item.available"
+                :key="char.userId"
+                :char="char.char"
+                :unavailable="!char.available"
                 :can-submit="canSubmit"
                 @selected="onSubmitThrottle($event)"
             />

@@ -132,6 +132,40 @@ export interface AddActivityResponse {
     id: number;
 }
 /**
+ * @generated from protobuf message services.sync.RegisterAccountRequest
+ */
+export interface RegisterAccountRequest {
+    /**
+     * @generated from protobuf field: string identifier = 1;
+     */
+    identifier: string;
+    /**
+     * @generated from protobuf field: bool reset_token = 2;
+     */
+    resetToken: boolean;
+    /**
+     * @generated from protobuf field: optional int32 char_id = 3;
+     */
+    charId?: number;
+}
+/**
+ * @generated from protobuf message services.sync.RegisterAccountResponse
+ */
+export interface RegisterAccountResponse {
+    /**
+     * @generated from protobuf field: optional string reg_token = 1;
+     */
+    regToken?: string;
+    /**
+     * @generated from protobuf field: optional uint64 account_id = 2;
+     */
+    accountId?: number;
+    /**
+     * @generated from protobuf field: optional string username = 3;
+     */
+    username?: string;
+}
+/**
  * @generated from protobuf message services.sync.SendDataRequest
  */
 export interface SendDataRequest {
@@ -455,6 +489,128 @@ class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
  */
 export const AddActivityResponse = new AddActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
+    constructor() {
+        super("services.sync.RegisterAccountRequest", [
+            { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "reset_token", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "char_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<RegisterAccountRequest>): RegisterAccountRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.identifier = "";
+        message.resetToken = false;
+        if (value !== undefined)
+            reflectionMergePartial<RegisterAccountRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegisterAccountRequest): RegisterAccountRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string identifier */ 1:
+                    message.identifier = reader.string();
+                    break;
+                case /* bool reset_token */ 2:
+                    message.resetToken = reader.bool();
+                    break;
+                case /* optional int32 char_id */ 3:
+                    message.charId = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RegisterAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string identifier = 1; */
+        if (message.identifier !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.identifier);
+        /* bool reset_token = 2; */
+        if (message.resetToken !== false)
+            writer.tag(2, WireType.Varint).bool(message.resetToken);
+        /* optional int32 char_id = 3; */
+        if (message.charId !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.charId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.RegisterAccountRequest
+ */
+export const RegisterAccountRequest = new RegisterAccountRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RegisterAccountResponse$Type extends MessageType<RegisterAccountResponse> {
+    constructor() {
+        super("services.sync.RegisterAccountResponse", [
+            { no: 1, name: "reg_token", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
+            { no: 2, name: "account_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "username", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RegisterAccountResponse>): RegisterAccountResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RegisterAccountResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegisterAccountResponse): RegisterAccountResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string reg_token */ 1:
+                    message.regToken = reader.string();
+                    break;
+                case /* optional uint64 account_id */ 2:
+                    message.accountId = reader.uint64().toNumber();
+                    break;
+                case /* optional string username */ 3:
+                    message.username = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RegisterAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string reg_token = 1; */
+        if (message.regToken !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.regToken);
+        /* optional uint64 account_id = 2; */
+        if (message.accountId !== undefined)
+            writer.tag(2, WireType.Varint).uint64(message.accountId);
+        /* optional string username = 3; */
+        if (message.username !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.username);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.RegisterAccountResponse
+ */
+export const RegisterAccountResponse = new RegisterAccountResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class SendDataRequest$Type extends MessageType<SendDataRequest> {
     constructor() {
         super("services.sync.SendDataRequest", [
@@ -669,6 +825,7 @@ export const StreamResponse = new StreamResponse$Type();
 export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse },
     { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
+    { name: "RegisterAccount", options: {}, I: RegisterAccountRequest, O: RegisterAccountResponse },
     { name: "SendData", options: {}, I: SendDataRequest, O: SendDataResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
 ]);

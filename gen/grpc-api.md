@@ -915,6 +915,8 @@
     - [AddActivityResponse](#services-sync-AddActivityResponse)
     - [GetStatusRequest](#services-sync-GetStatusRequest)
     - [GetStatusResponse](#services-sync-GetStatusResponse)
+    - [RegisterAccountRequest](#services-sync-RegisterAccountRequest)
+    - [RegisterAccountResponse](#services-sync-RegisterAccountResponse)
     - [SendDataRequest](#services-sync-SendDataRequest)
     - [SendDataResponse](#services-sync-SendDataResponse)
     - [StreamRequest](#services-sync-StreamRequest)
@@ -13619,6 +13621,40 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="services-sync-RegisterAccountRequest"></a>
+
+### RegisterAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| identifier | [string](#string) |  |  |
+| reset_token | [bool](#bool) |  |  |
+| char_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-sync-RegisterAccountResponse"></a>
+
+### RegisterAccountResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| reg_token | [string](#string) | optional |  |
+| account_id | [uint64](#uint64) | optional |  |
+| username | [string](#string) | optional |  |
+
+
+
+
+
+
 <a name="services-sync-SendDataRequest"></a>
 
 ### SendDataRequest
@@ -13693,6 +13729,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----------- | ------------ | ------------- | ------------|
 | GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) | Get basic "sync state" from server side (currently simply the count of records on the server side). |
 | AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) | For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
+| RegisterAccount | [RegisterAccountRequest](#services-sync-RegisterAccountRequest) | [RegisterAccountResponse](#services-sync-RegisterAccountResponse) | Get registration token for a new user account or return the account id and username, for a given identifier/license. |
 | SendData | [SendDataRequest](#services-sync-SendDataRequest) | [SendDataResponse](#services-sync-SendDataResponse) | DBSync's method of sending (mass) data to the FiveNet server for storing. |
 | Stream | [StreamRequest](#services-sync-StreamRequest) | [StreamResponse](#services-sync-StreamResponse) stream | Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 

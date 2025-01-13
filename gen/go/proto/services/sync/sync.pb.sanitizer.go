@@ -139,6 +139,22 @@ func (m *GetStatusResponse) Sanitize() error {
 	return nil
 }
 
+func (m *RegisterAccountRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *RegisterAccountResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *SendDataRequest) Sanitize() error {
 	if m == nil {
 		return nil

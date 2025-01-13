@@ -1092,7 +1092,8 @@
                 "submit_button": "Konto erstellen",
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
-                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein."
+                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein.",
+                "open_server_account_management": "Klicken sie unten, um ihren Registrierungstoken zu erhalten (sie können auch den Befehl {command} nutzen)."
             },
             "UserSettingsPanel": {
                 "title": "Eigene FiveNet-Einstellungen",
