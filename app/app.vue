@@ -64,6 +64,7 @@ if (APP_VERSION !== settings.version) {
 // Set locale and theme colors in app config
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
+setTabletColors(appConfig.ui.primary, appConfig.ui.gray);
 
 logger.info('Setting user locale to', userLocale.value);
 if (userLocale.value !== null) {

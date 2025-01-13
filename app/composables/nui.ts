@@ -31,7 +31,7 @@ export async function onFocusHandler(event: FocusEvent): Promise<void> {
     event.stopPropagation();
     logger.debug('focus handler event:', event.type, element.tagName.toLowerCase());
 
-    focusTablet(event.type === 'focusin');
+    await focusTablet(event.type === 'focusin');
 }
 
 type NUIRequest = boolean | string | object;
@@ -142,4 +142,12 @@ export async function openURLInWindow(url: string): Promise<void> {
     }
 
     return fetchNUI('openURLInWindow', { url: url });
+}
+
+export async function setTabletColors(primary: string, gray: string): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
+    return fetchNUI('setTabletColors', { primary: primary, gray: gray });
 }

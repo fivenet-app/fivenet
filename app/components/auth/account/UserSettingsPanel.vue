@@ -40,9 +40,11 @@ watch(designDocumentsListStyle, async () => {
 
 const { ui } = useAppConfig();
 
-watch(design.value, () => {
+watch(design.value, async () => {
     ui.primary = design.value.ui.primary;
     ui.gray = design.value.ui.gray;
+
+    setTabletColors(ui.primary, ui.gray);
 });
 
 const reminderTimes = [300, 600, 900, 1800];
