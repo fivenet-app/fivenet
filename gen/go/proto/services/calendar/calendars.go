@@ -271,7 +271,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		return nil, errorscalendar.ErrFailedQuery
 	}
 	if req.Calendar.Color == "" {
-		req.Calendar.Color = "primary"
+		req.Calendar.Color = "blue"
 	}
 
 	// Begin transaction

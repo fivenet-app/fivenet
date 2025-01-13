@@ -12,7 +12,7 @@ CREATE TABLE
         `description` varchar(512) DEFAULT NULL,
         `public` tinyint(1) DEFAULT 0,
         `closed` tinyint(1) DEFAULT 0,
-        `color` varchar(24) DEFAULT 'primary',
+        `color` varchar(24) DEFAULT 'blue',
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
         PRIMARY KEY (`id`),

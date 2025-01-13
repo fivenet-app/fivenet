@@ -6,7 +6,6 @@ export type Color = {
 
 export const primaryColors = [
     // Primary - Default
-    { label: 'primary', chip: 'primary', class: 'bg-primary-500 dark:bg-primary-400' },
     { label: 'green', chip: 'green', class: 'bg-green-500 dark:bg-green-400' },
     { label: 'teal', chip: 'teal', class: 'bg-teal-500 dark:bg-teal-400' },
     { label: 'cyan', chip: 'cyan', class: 'bg-cyan-500 dark:bg-cyan-400' },
