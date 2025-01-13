@@ -446,7 +446,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest)
 	}
 
 	deletedAtTime := jet.CURRENT_TIMESTAMP()
-	if calendar != nil && calendar.DeletedAt != nil && userInfo.SuperUser {
+	if calendar.DeletedAt != nil && userInfo.SuperUser {
 		deletedAtTime = jet.TimestampExp(jet.NULL)
 	}
 
