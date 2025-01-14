@@ -946,11 +946,11 @@ func (m *RegisterAccountRequest) validate(all bool) error {
 
 	// no validation rules for ResetToken
 
-	if m.CharId != nil {
+	if m.LastCharId != nil {
 
-		if m.GetCharId() <= 0 {
+		if m.GetLastCharId() <= 0 {
 			err := RegisterAccountRequestValidationError{
-				field:  "CharId",
+				field:  "LastCharId",
 				reason: "value must be greater than 0",
 			}
 			if !all {

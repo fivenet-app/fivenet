@@ -144,9 +144,9 @@ export interface RegisterAccountRequest {
      */
     resetToken: boolean;
     /**
-     * @generated from protobuf field: optional int32 char_id = 3;
+     * @generated from protobuf field: optional int32 last_char_id = 3;
      */
-    charId?: number;
+    lastCharId?: number;
 }
 /**
  * @generated from protobuf message services.sync.RegisterAccountResponse
@@ -494,7 +494,7 @@ class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
         super("services.sync.RegisterAccountRequest", [
             { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 2, name: "reset_token", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "char_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+            { no: 3, name: "last_char_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterAccountRequest>): RegisterAccountRequest {
@@ -516,8 +516,8 @@ class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
                 case /* bool reset_token */ 2:
                     message.resetToken = reader.bool();
                     break;
-                case /* optional int32 char_id */ 3:
-                    message.charId = reader.int32();
+                case /* optional int32 last_char_id */ 3:
+                    message.lastCharId = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -537,9 +537,9 @@ class RegisterAccountRequest$Type extends MessageType<RegisterAccountRequest> {
         /* bool reset_token = 2; */
         if (message.resetToken !== false)
             writer.tag(2, WireType.Varint).bool(message.resetToken);
-        /* optional int32 char_id = 3; */
-        if (message.charId !== undefined)
-            writer.tag(3, WireType.Varint).int32(message.charId);
+        /* optional int32 last_char_id = 3; */
+        if (message.lastCharId !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.lastCharId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Server) RegisterAccount(ctx context.Context, req *RegisterAccountRequest) (*RegisterAccountResponse, error) {
-	tAccounts := table.FivenetAccounts
+	tAccounts := table.FivenetAccounts.AS("account")
 
 	// Check if an account already exists
 	selectStmt := tAccounts.
@@ -46,6 +46,8 @@ func (s *Server) RegisterAccount(ctx context.Context, req *RegisterAccountReques
 
 	var stmt jet.Statement
 
+	tAccounts = table.FivenetAccounts
+
 	// No account found, insert new account
 	if acc.Id == 0 {
 		stmt = tAccounts.
@@ -59,7 +61,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *RegisterAccountReques
 				true,
 				req.Identifier,
 				regToken,
-				req.CharId,
+				req.LastCharId,
 			)
 	} else {
 		// Account exists, and token reset requested

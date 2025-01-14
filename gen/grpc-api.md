@@ -13631,7 +13631,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----- | ---- | ----- | ----------- |
 | identifier | [string](#string) |  |  |
 | reset_token | [bool](#bool) |  |  |
-| char_id | [int32](#int32) | optional |  |
+| last_char_id | [int32](#int32) | optional |  |
 
 
 
