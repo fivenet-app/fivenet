@@ -1,0 +1,12 @@
+{
+    "name": "gen",
+    "private": true,
+    "version": "0.9.3",
+    "license": "Apache-2.0",
+    "type": "module",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/fivenet-app/fivenet.git"
+    },
+    "packageManager": "pnpm@9.15.3"
+}
