@@ -103,7 +103,7 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 	return ctx, nil
 }
 
-func (s *Server) StreamServerInterceptor(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
+func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Skip permission check for the sync service
 	return ctx, nil
 }
