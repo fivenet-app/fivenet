@@ -219,6 +219,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 
 	if err := p.publishMessage(ctx, RoleCreatedSubject, RoleIDEvent{
 		RoleID: role.ID,
+		Job:    role.Job,
 	}); err != nil {
 		return nil, err
 	}
@@ -232,13 +233,15 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		return err
 	}
 
-	p.deleteRole(role)
-
 	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
 		RoleID: role.ID,
+		Job:    role.Job,
+		Grade:  role.Grade,
 	}); err != nil {
 		return err
 	}
+
+	p.deleteRole(role.ID, role.Job, role.Grade)
 
 	stmt := tRoles.
 		DELETE().
@@ -253,15 +256,15 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (p *Perms) deleteRole(role *model.FivenetRoles) {
-	p.permsRoleMap.Delete(role.ID)
+func (p *Perms) deleteRole(id uint64, job string, grade int32) {
+	p.permsRoleMap.Delete(id)
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() *xsync.MapOf[int32, uint64] {
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(job, func() *xsync.MapOf[int32, uint64] {
 		return xsync.NewMapOf[int32, uint64]()
 	})
-	grades.Delete(role.Grade)
+	grades.Delete(grade)
 
-	p.roleIDToJobMap.Delete(role.ID)
+	p.roleIDToJobMap.Delete(id)
 }
 
 func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {

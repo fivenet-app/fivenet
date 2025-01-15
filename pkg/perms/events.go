@@ -23,6 +23,8 @@ const (
 
 type RoleIDEvent struct {
 	RoleID uint64
+	Job    string
+	Grade  int32
 }
 
 type JobAttrUpdateEvent struct {
@@ -118,13 +120,8 @@ func (p *Perms) handleMessageFunc(ctx context.Context) jetstream.MessageHandler 
 				return
 			}
 
-			role, err := p.GetRole(ctx, event.RoleID)
-			if err != nil {
-				p.logger.Error("failed to deleted role message event data", zap.Error(err))
-				return
-			}
 			// Remove role from local state
-			p.deleteRole(role)
+			p.deleteRole(event.RoleID, event.Job, event.Grade)
 
 		case JobAttrUpdateSubject:
 			event := &JobAttrUpdateEvent{}
