@@ -133,16 +133,14 @@ const { attr } = useAuth();
                         <template v-else>
                             <div class="flex max-w-80 flex-row flex-wrap gap-1">
                                 <UBadge
-                                    v-for="attribute in user.props?.labels?.list"
-                                    :key="attribute.name"
-                                    :style="{ backgroundColor: attribute.color }"
+                                    v-for="label in user.props?.labels?.list"
+                                    :key="label.name"
+                                    :style="{ backgroundColor: label.color }"
                                     class="justify-between gap-2"
-                                    :class="
-                                        isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'
-                                    "
+                                    :class="isColourBright(hexToRgb(label.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                                     size="md"
                                 >
-                                    {{ attribute.name }}
+                                    {{ label.name }}
                                 </UBadge>
                             </div>
                         </template>

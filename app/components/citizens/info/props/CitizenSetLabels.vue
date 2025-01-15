@@ -161,7 +161,12 @@ watch(state, () => {
                     clear-search-on-close
                 >
                     <template #option="{ option }">
-                        <span class="truncate" :style="{ backgroundColor: option.color }">{{ option.name }}</span>
+                        <span
+                            class="truncate"
+                            :class="isColourBright(hexToRgb(option.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                            :style="{ backgroundColor: option.color }"
+                            >{{ option.name }}</span
+                        >
                     </template>
 
                     <template #option-empty="{ query: search }">
