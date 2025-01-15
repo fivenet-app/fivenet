@@ -237,11 +237,6 @@ var PermsRemap = map[string]string{
     {{ end }}
     {{ end }}
 }
-
-func (s *Server) GetPermsRemap() map[string]string {
-    return PermsRemap
-}
-
 {{ end }}
 
 func init() {
