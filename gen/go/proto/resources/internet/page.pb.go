@@ -27,7 +27,7 @@ type PageLayoutType int32
 const (
 	PageLayoutType_PAGE_LAYOUT_TYPE_UNSPECIFIED PageLayoutType = 0
 	PageLayoutType_PAGE_LAYOUT_TYPE_LANDING     PageLayoutType = 1
-	PageLayoutType_PAGE_LAYOUT_TYPE_BASIC_PAGE  PageLayoutType = 2
+	PageLayoutType_PAGE_LAYOUT_TYPE_BASIC_PAGE  PageLayoutType = 2 // TODO
 )
 
 // Enum value maps for PageLayoutType.

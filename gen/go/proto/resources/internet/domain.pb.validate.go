@@ -87,6 +87,8 @@ func (m *Domain) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Online
+
 	if utf8.RuneCountInString(m.GetName()) > 128 {
 		err := DomainValidationError{
 			field:  "Name",

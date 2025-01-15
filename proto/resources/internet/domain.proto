@@ -12,7 +12,8 @@ message Domain {
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  string name = 5 [(validate.rules).string.max_len = 128];
-  optional string creator_job = 6;
-  optional int32 creator_id = 7;
+  bool online = 5;
+  string name = 6 [(validate.rules).string.max_len = 128];
+  optional string creator_job = 7;
+  optional int32 creator_id = 8;
 }

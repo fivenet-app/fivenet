@@ -21,6 +21,7 @@ type fivenetInternetDomainsTable struct {
 	CreatedAt  mysql.ColumnTimestamp
 	UpdatedAt  mysql.ColumnTimestamp
 	DeletedAt  mysql.ColumnTimestamp
+	Online     mysql.ColumnBool
 	Name       mysql.ColumnString
 	CreatorJob mysql.ColumnString
 	CreatorID  mysql.ColumnInteger
@@ -68,11 +69,12 @@ func newFivenetInternetDomainsTableImpl(schemaName, tableName, alias string) fiv
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
+		OnlineColumn     = mysql.BoolColumn("online")
 		NameColumn       = mysql.StringColumn("name")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, CreatorJobColumn, CreatorIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, CreatorJobColumn, CreatorIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, OnlineColumn, NameColumn, CreatorJobColumn, CreatorIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, OnlineColumn, NameColumn, CreatorJobColumn, CreatorIDColumn}
 	)
 
 	return fivenetInternetDomainsTable{
@@ -83,6 +85,7 @@ func newFivenetInternetDomainsTableImpl(schemaName, tableName, alias string) fiv
 		CreatedAt:  CreatedAtColumn,
 		UpdatedAt:  UpdatedAtColumn,
 		DeletedAt:  DeletedAtColumn,
+		Online:     OnlineColumn,
 		Name:       NameColumn,
 		CreatorJob: CreatorJobColumn,
 		CreatorID:  CreatorIDColumn,

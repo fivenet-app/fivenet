@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.users;
 
 import "resources/timestamp/timestamp.proto";
+import "resources/users/labels.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -28,8 +29,82 @@ message UserActivity {
     min_len: 1,
     max_len: 64
   }]; // @gotags: alias:"fivenet_user_activity.key"
-  string old_value = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
-  string new_value = 10 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
   // @sanitize
-  string reason = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
+  string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
+  optional UserActivityData data = 10; // @gotags: alias:"fivenet_user_activity.data"
+  string old_value = 11 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
+  string new_value = 12 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
+}
+
+message UserActivityData {
+  oneof data {
+    option (validate.required) = true;
+
+    UserNameChange name_change = 1;
+    UserLicenseChange licenses_change = 2;
+    // User Props
+    UserWantedChange wanted_change = 3;
+    UserTrafficInfractionPointsChange traffic_infraction_points_change = 4;
+    UserMugshotChange mugshot_change = 5;
+    UserLabelsChange labels_change = 6;
+    UserJobChange job_change = 7;
+
+    // Docstore related
+    UserDocumentRelation document_relation = 8;
+
+    // "Plugin" activities
+    UserJailChange jail_change = 9;
+    UserFineChange fine_change = 10;
+  }
+}
+
+message UserNameChange {
+  optional string firstname = 1;
+  optional string lastname = 2;
+}
+
+message UserLicenseChange {
+  repeated License added = 1;
+  repeated License removed = 2;
+}
+
+message UserWantedChange {
+  bool old_state = 1;
+}
+
+message UserTrafficInfractionPointsChange {
+  int32 old = 1;
+  int32 new = 2;
+}
+
+message UserMugshotChange {
+  string old = 1;
+}
+
+message UserLabelsChange {
+  repeated CitizenLabel added = 1;
+  repeated CitizenLabel removed = 2;
+}
+
+message UserJobChange {
+  optional string job = 1;
+  optional string job_label = 2;
+  optional int32 grade = 3;
+  optional string grade_label = 4;
+}
+
+message UserDocumentRelation {
+  bool added = 1;
+  uint64 document_id = 2;
+}
+
+message UserJailChange {
+  int32 seconds = 1;
+  bool admin = 2;
+}
+
+message UserFineChange {
+  int64 change = 1;
+  int64 old_total = 2;
+  int64 new_total = 3;
 }

@@ -32,15 +32,19 @@ export interface Domain {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string name = 5;
+     * @generated from protobuf field: bool online = 5;
+     */
+    online: boolean;
+    /**
+     * @generated from protobuf field: string name = 6;
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string creator_job = 6;
+     * @generated from protobuf field: optional string creator_job = 7;
      */
     creatorJob?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 7;
+     * @generated from protobuf field: optional int32 creator_id = 8;
      */
     creatorId?: number;
 }
@@ -52,14 +56,16 @@ class Domain$Type extends MessageType<Domain> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 6, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "online", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 7, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Domain>): Domain {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
+        message.online = false;
         message.name = "";
         if (value !== undefined)
             reflectionMergePartial<Domain>(this, message, value);
@@ -82,13 +88,16 @@ class Domain$Type extends MessageType<Domain> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* string name */ 5:
+                case /* bool online */ 5:
+                    message.online = reader.bool();
+                    break;
+                case /* string name */ 6:
                     message.name = reader.string();
                     break;
-                case /* optional string creator_job */ 6:
+                case /* optional string creator_job */ 7:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional int32 creator_id */ 7:
+                case /* optional int32 creator_id */ 8:
                     message.creatorId = reader.int32();
                     break;
                 default:
@@ -115,15 +124,18 @@ class Domain$Type extends MessageType<Domain> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* string name = 5; */
+        /* bool online = 5; */
+        if (message.online !== false)
+            writer.tag(5, WireType.Varint).bool(message.online);
+        /* string name = 6; */
         if (message.name !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.name);
-        /* optional string creator_job = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.name);
+        /* optional string creator_job = 7; */
         if (message.creatorJob !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional int32 creator_id = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 8; */
         if (message.creatorId !== undefined)
-            writer.tag(7, WireType.Varint).int32(message.creatorId);
+            writer.tag(8, WireType.Varint).int32(message.creatorId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

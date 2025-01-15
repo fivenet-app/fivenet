@@ -67,6 +67,8 @@ export interface Page {
     creatorId?: number;
 }
 /**
+ * TODO
+ *
  * @generated from protobuf message resources.internet.PageData
  */
 export interface PageData {
@@ -84,6 +86,8 @@ export enum PageLayoutType {
      */
     LANDING = 1,
     /**
+     * TODO
+     *
      * @generated from protobuf enum value: PAGE_LAYOUT_TYPE_BASIC_PAGE = 2;
      */
     BASIC_PAGE = 2

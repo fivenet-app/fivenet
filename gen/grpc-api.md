@@ -315,11 +315,6 @@
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
   
-- [resources/users/activity.proto](#resources_users_activity-proto)
-    - [UserActivity](#resources-users-UserActivity)
-  
-    - [UserActivityType](#resources-users-UserActivityType)
-  
 - [resources/users/users.proto](#resources_users_users-proto)
     - [License](#resources-users-License)
     - [User](#resources-users-User)
@@ -332,6 +327,22 @@
 - [resources/users/labels.proto](#resources_users_labels-proto)
     - [CitizenLabel](#resources-users-CitizenLabel)
     - [CitizenLabels](#resources-users-CitizenLabels)
+  
+- [resources/users/activity.proto](#resources_users_activity-proto)
+    - [UserActivity](#resources-users-UserActivity)
+    - [UserActivityData](#resources-users-UserActivityData)
+    - [UserDocumentRelation](#resources-users-UserDocumentRelation)
+    - [UserFineChange](#resources-users-UserFineChange)
+    - [UserJailChange](#resources-users-UserJailChange)
+    - [UserJobChange](#resources-users-UserJobChange)
+    - [UserLabelsChange](#resources-users-UserLabelsChange)
+    - [UserLicenseChange](#resources-users-UserLicenseChange)
+    - [UserMugshotChange](#resources-users-UserMugshotChange)
+    - [UserNameChange](#resources-users-UserNameChange)
+    - [UserTrafficInfractionPointsChange](#resources-users-UserTrafficInfractionPointsChange)
+    - [UserWantedChange](#resources-users-UserWantedChange)
+  
+    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -5365,65 +5376,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_users_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/activity.proto
-
-
-
-<a name="resources-users-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:"fivenet_user_activity.id" |
-| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"fivenet_user_activity.type" |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"fivenet_user_activity.created_at" |
-| source_user_id | [int32](#int32) | optional | @gotags: alias:"source_user_id" |
-| source_user | [UserShort](#resources-users-UserShort) | optional | @gotags: alias:"source_user" |
-| target_user_id | [int32](#int32) |  | @gotags: alias:"target_user_id" |
-| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
-| key | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.key" |
-| old_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.old_value" |
-| new_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.new_value" |
-| reason | [string](#string) |  | @sanitize
-
-@gotags: alias:"fivenet_user_activity.reason" |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-users-UserActivityType"></a>
-
-### UserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
-| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
-| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
-| USER_ACTIVITY_TYPE_CREATED | 3 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_users_users-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5612,6 +5564,251 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/activity.proto
+
+
+
+<a name="resources-users-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:"fivenet_user_activity.id" |
+| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:"fivenet_user_activity.type" |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:"fivenet_user_activity.created_at" |
+| source_user_id | [int32](#int32) | optional | @gotags: alias:"source_user_id" |
+| source_user | [UserShort](#resources-users-UserShort) | optional | @gotags: alias:"source_user" |
+| target_user_id | [int32](#int32) |  | @gotags: alias:"target_user_id" |
+| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:"target_user" |
+| key | [string](#string) |  | @sanitize
+
+@gotags: alias:"fivenet_user_activity.key" |
+| reason | [string](#string) |  | @sanitize
+
+@gotags: alias:"fivenet_user_activity.reason" |
+| data | [UserActivityData](#resources-users-UserActivityData) | optional | @gotags: alias:"fivenet_user_activity.data" |
+| old_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.old_value" |
+| new_value | [string](#string) |  | @gotags: alias:"fivenet_user_activity.new_value" |
+
+
+
+
+
+
+<a name="resources-users-UserActivityData"></a>
+
+### UserActivityData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name_change | [UserNameChange](#resources-users-UserNameChange) |  |  |
+| licenses_change | [UserLicenseChange](#resources-users-UserLicenseChange) |  |  |
+| wanted_change | [UserWantedChange](#resources-users-UserWantedChange) |  | User Props |
+| traffic_infraction_points_change | [UserTrafficInfractionPointsChange](#resources-users-UserTrafficInfractionPointsChange) |  |  |
+| mugshot_change | [UserMugshotChange](#resources-users-UserMugshotChange) |  |  |
+| labels_change | [UserLabelsChange](#resources-users-UserLabelsChange) |  |  |
+| job_change | [UserJobChange](#resources-users-UserJobChange) |  |  |
+| document_relation | [UserDocumentRelation](#resources-users-UserDocumentRelation) |  | Docstore related |
+| jail_change | [UserJailChange](#resources-users-UserJailChange) |  | "Plugin" activities |
+| fine_change | [UserFineChange](#resources-users-UserFineChange) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserDocumentRelation"></a>
+
+### UserDocumentRelation
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [bool](#bool) |  |  |
+| document_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserFineChange"></a>
+
+### UserFineChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| change | [int64](#int64) |  |  |
+| old_total | [int64](#int64) |  |  |
+| new_total | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserJailChange"></a>
+
+### UserJailChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| seconds | [int32](#int32) |  |  |
+| admin | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserJobChange"></a>
+
+### UserJobChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) | optional |  |
+| job_label | [string](#string) | optional |  |
+| grade | [int32](#int32) | optional |  |
+| grade_label | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserLabelsChange"></a>
+
+### UserLabelsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+| removed | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-UserLicenseChange"></a>
+
+### UserLicenseChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [License](#resources-users-License) | repeated |  |
+| removed | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-UserMugshotChange"></a>
+
+### UserMugshotChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| old | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserNameChange"></a>
+
+### UserNameChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| firstname | [string](#string) | optional |  |
+| lastname | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserTrafficInfractionPointsChange"></a>
+
+### UserTrafficInfractionPointsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| old | [int32](#int32) |  |  |
+| new | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserWantedChange"></a>
+
+### UserWantedChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| old_state | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-users-UserActivityType"></a>
+
+### UserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
+| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
+| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
+| USER_ACTIVITY_TYPE_CREATED | 3 |  |
+
 
  <!-- end enums -->
 
@@ -6061,6 +6258,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| online | [bool](#bool) |  |  |
 | name | [string](#string) |  |  |
 | creator_job | [string](#string) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
@@ -6114,7 +6312,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-internet-PageData"></a>
 
 ### PageData
-
+TODO
 
 
 
@@ -6132,7 +6330,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ---- | ------ | ----------- |
 | PAGE_LAYOUT_TYPE_UNSPECIFIED | 0 |  |
 | PAGE_LAYOUT_TYPE_LANDING | 1 |  |
-| PAGE_LAYOUT_TYPE_BASIC_PAGE | 2 |  |
+| PAGE_LAYOUT_TYPE_BASIC_PAGE | 2 | TODO |
 
 
  <!-- end enums -->

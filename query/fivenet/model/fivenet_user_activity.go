@@ -21,4 +21,5 @@ type FivenetUserActivity struct {
 	OldValue     *string    `json:"old_value"`
 	NewValue     *string    `json:"new_value"`
 	Reason       *string    `json:"reason"`
+	Data         *string    `json:"data"`
 }

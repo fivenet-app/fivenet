@@ -16,6 +16,7 @@ type FivenetInternetDomains struct {
 	CreatedAt  *time.Time `json:"created_at"`
 	UpdatedAt  *time.Time `json:"updated_at"`
 	DeletedAt  *time.Time `json:"deleted_at"`
+	Online     *bool      `json:"online"`
 	Name       string     `json:"name"`
 	CreatorJob *string    `json:"creator_job"`
 	CreatorID  *int32     `json:"creator_id"`

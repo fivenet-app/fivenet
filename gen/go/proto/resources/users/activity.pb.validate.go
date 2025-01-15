@@ -141,6 +141,17 @@ func (m *UserActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetReason()) > 255 {
+		err := UserActivityValidationError{
+			field:  "Reason",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetOldValue()) > 255 {
 		err := UserActivityValidationError{
 			field:  "OldValue",
@@ -155,17 +166,6 @@ func (m *UserActivity) validate(all bool) error {
 	if utf8.RuneCountInString(m.GetNewValue()) > 255 {
 		err := UserActivityValidationError{
 			field:  "NewValue",
-			reason: "value length must be at most 255 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetReason()) > 255 {
-		err := UserActivityValidationError{
-			field:  "Reason",
 			reason: "value length must be at most 255 runes",
 		}
 		if !all {
@@ -203,6 +203,39 @@ func (m *UserActivity) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return UserActivityValidationError{
 					field:  "SourceUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Data != nil {
+
+		if all {
+			switch v := interface{}(m.GetData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityValidationError{
+					field:  "Data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -287,3 +320,1732 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserActivityValidationError{}
+
+// Validate checks the field values on UserActivityData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UserActivityData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserActivityData with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserActivityDataMultiError, or nil if none found.
+func (m *UserActivityData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserActivityData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	oneofDataPresent := false
+	switch v := m.Data.(type) {
+	case *UserActivityData_NameChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetNameChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "NameChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "NameChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetNameChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "NameChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_LicensesChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetLicensesChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "LicensesChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "LicensesChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLicensesChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "LicensesChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_WantedChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetWantedChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "WantedChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "WantedChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWantedChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "WantedChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_TrafficInfractionPointsChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetTrafficInfractionPointsChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "TrafficInfractionPointsChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "TrafficInfractionPointsChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTrafficInfractionPointsChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "TrafficInfractionPointsChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_MugshotChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetMugshotChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "MugshotChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "MugshotChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMugshotChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "MugshotChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_LabelsChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetLabelsChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "LabelsChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "LabelsChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLabelsChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "LabelsChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_JobChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetJobChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "JobChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "JobChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJobChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "JobChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_DocumentRelation:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetDocumentRelation()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "DocumentRelation",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "DocumentRelation",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocumentRelation()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "DocumentRelation",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_JailChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetJailChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "JailChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "JailChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetJailChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "JailChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *UserActivityData_FineChange:
+		if v == nil {
+			err := UserActivityDataValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetFineChange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "FineChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserActivityDataValidationError{
+						field:  "FineChange",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFineChange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserActivityDataValidationError{
+					field:  "FineChange",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := UserActivityDataValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return UserActivityDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserActivityDataMultiError is an error wrapping multiple validation errors
+// returned by UserActivityData.ValidateAll() if the designated constraints
+// aren't met.
+type UserActivityDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserActivityDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserActivityDataMultiError) AllErrors() []error { return m }
+
+// UserActivityDataValidationError is the validation error returned by
+// UserActivityData.Validate if the designated constraints aren't met.
+type UserActivityDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserActivityDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserActivityDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserActivityDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserActivityDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserActivityDataValidationError) ErrorName() string { return "UserActivityDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserActivityDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserActivityData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserActivityDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserActivityDataValidationError{}
+
+// Validate checks the field values on UserNameChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserNameChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserNameChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserNameChangeMultiError,
+// or nil if none found.
+func (m *UserNameChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserNameChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Firstname != nil {
+		// no validation rules for Firstname
+	}
+
+	if m.Lastname != nil {
+		// no validation rules for Lastname
+	}
+
+	if len(errors) > 0 {
+		return UserNameChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserNameChangeMultiError is an error wrapping multiple validation errors
+// returned by UserNameChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserNameChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserNameChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserNameChangeMultiError) AllErrors() []error { return m }
+
+// UserNameChangeValidationError is the validation error returned by
+// UserNameChange.Validate if the designated constraints aren't met.
+type UserNameChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserNameChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserNameChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserNameChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserNameChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserNameChangeValidationError) ErrorName() string { return "UserNameChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserNameChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserNameChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserNameChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserNameChangeValidationError{}
+
+// Validate checks the field values on UserLicenseChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UserLicenseChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserLicenseChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserLicenseChangeMultiError, or nil if none found.
+func (m *UserLicenseChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserLicenseChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAdded() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserLicenseChangeValidationError{
+						field:  fmt.Sprintf("Added[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserLicenseChangeValidationError{
+						field:  fmt.Sprintf("Added[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserLicenseChangeValidationError{
+					field:  fmt.Sprintf("Added[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetRemoved() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserLicenseChangeValidationError{
+						field:  fmt.Sprintf("Removed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserLicenseChangeValidationError{
+						field:  fmt.Sprintf("Removed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserLicenseChangeValidationError{
+					field:  fmt.Sprintf("Removed[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UserLicenseChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserLicenseChangeMultiError is an error wrapping multiple validation errors
+// returned by UserLicenseChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserLicenseChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserLicenseChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserLicenseChangeMultiError) AllErrors() []error { return m }
+
+// UserLicenseChangeValidationError is the validation error returned by
+// UserLicenseChange.Validate if the designated constraints aren't met.
+type UserLicenseChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserLicenseChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserLicenseChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserLicenseChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserLicenseChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserLicenseChangeValidationError) ErrorName() string {
+	return "UserLicenseChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserLicenseChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserLicenseChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserLicenseChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserLicenseChangeValidationError{}
+
+// Validate checks the field values on UserWantedChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UserWantedChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserWantedChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserWantedChangeMultiError, or nil if none found.
+func (m *UserWantedChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserWantedChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for OldState
+
+	if len(errors) > 0 {
+		return UserWantedChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserWantedChangeMultiError is an error wrapping multiple validation errors
+// returned by UserWantedChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserWantedChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserWantedChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserWantedChangeMultiError) AllErrors() []error { return m }
+
+// UserWantedChangeValidationError is the validation error returned by
+// UserWantedChange.Validate if the designated constraints aren't met.
+type UserWantedChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserWantedChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserWantedChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserWantedChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserWantedChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserWantedChangeValidationError) ErrorName() string { return "UserWantedChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserWantedChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserWantedChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserWantedChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserWantedChangeValidationError{}
+
+// Validate checks the field values on UserTrafficInfractionPointsChange with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *UserTrafficInfractionPointsChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserTrafficInfractionPointsChange
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// UserTrafficInfractionPointsChangeMultiError, or nil if none found.
+func (m *UserTrafficInfractionPointsChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserTrafficInfractionPointsChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Old
+
+	// no validation rules for New
+
+	if len(errors) > 0 {
+		return UserTrafficInfractionPointsChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserTrafficInfractionPointsChangeMultiError is an error wrapping multiple
+// validation errors returned by
+// UserTrafficInfractionPointsChange.ValidateAll() if the designated
+// constraints aren't met.
+type UserTrafficInfractionPointsChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserTrafficInfractionPointsChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserTrafficInfractionPointsChangeMultiError) AllErrors() []error { return m }
+
+// UserTrafficInfractionPointsChangeValidationError is the validation error
+// returned by UserTrafficInfractionPointsChange.Validate if the designated
+// constraints aren't met.
+type UserTrafficInfractionPointsChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserTrafficInfractionPointsChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserTrafficInfractionPointsChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserTrafficInfractionPointsChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserTrafficInfractionPointsChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserTrafficInfractionPointsChangeValidationError) ErrorName() string {
+	return "UserTrafficInfractionPointsChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserTrafficInfractionPointsChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserTrafficInfractionPointsChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserTrafficInfractionPointsChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserTrafficInfractionPointsChangeValidationError{}
+
+// Validate checks the field values on UserMugshotChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UserMugshotChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserMugshotChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserMugshotChangeMultiError, or nil if none found.
+func (m *UserMugshotChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserMugshotChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Old
+
+	if len(errors) > 0 {
+		return UserMugshotChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserMugshotChangeMultiError is an error wrapping multiple validation errors
+// returned by UserMugshotChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserMugshotChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserMugshotChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserMugshotChangeMultiError) AllErrors() []error { return m }
+
+// UserMugshotChangeValidationError is the validation error returned by
+// UserMugshotChange.Validate if the designated constraints aren't met.
+type UserMugshotChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserMugshotChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserMugshotChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserMugshotChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserMugshotChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserMugshotChangeValidationError) ErrorName() string {
+	return "UserMugshotChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserMugshotChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserMugshotChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserMugshotChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserMugshotChangeValidationError{}
+
+// Validate checks the field values on UserLabelsChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UserLabelsChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserLabelsChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserLabelsChangeMultiError, or nil if none found.
+func (m *UserLabelsChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserLabelsChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAdded() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserLabelsChangeValidationError{
+						field:  fmt.Sprintf("Added[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserLabelsChangeValidationError{
+						field:  fmt.Sprintf("Added[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserLabelsChangeValidationError{
+					field:  fmt.Sprintf("Added[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetRemoved() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserLabelsChangeValidationError{
+						field:  fmt.Sprintf("Removed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserLabelsChangeValidationError{
+						field:  fmt.Sprintf("Removed[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserLabelsChangeValidationError{
+					field:  fmt.Sprintf("Removed[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UserLabelsChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserLabelsChangeMultiError is an error wrapping multiple validation errors
+// returned by UserLabelsChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserLabelsChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserLabelsChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserLabelsChangeMultiError) AllErrors() []error { return m }
+
+// UserLabelsChangeValidationError is the validation error returned by
+// UserLabelsChange.Validate if the designated constraints aren't met.
+type UserLabelsChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserLabelsChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserLabelsChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserLabelsChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserLabelsChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserLabelsChangeValidationError) ErrorName() string { return "UserLabelsChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserLabelsChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserLabelsChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserLabelsChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserLabelsChangeValidationError{}
+
+// Validate checks the field values on UserJobChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserJobChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserJobChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserJobChangeMultiError, or
+// nil if none found.
+func (m *UserJobChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserJobChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.Job != nil {
+		// no validation rules for Job
+	}
+
+	if m.JobLabel != nil {
+		// no validation rules for JobLabel
+	}
+
+	if m.Grade != nil {
+		// no validation rules for Grade
+	}
+
+	if m.GradeLabel != nil {
+		// no validation rules for GradeLabel
+	}
+
+	if len(errors) > 0 {
+		return UserJobChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserJobChangeMultiError is an error wrapping multiple validation errors
+// returned by UserJobChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserJobChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserJobChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserJobChangeMultiError) AllErrors() []error { return m }
+
+// UserJobChangeValidationError is the validation error returned by
+// UserJobChange.Validate if the designated constraints aren't met.
+type UserJobChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserJobChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserJobChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserJobChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserJobChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserJobChangeValidationError) ErrorName() string { return "UserJobChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserJobChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserJobChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserJobChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserJobChangeValidationError{}
+
+// Validate checks the field values on UserDocumentRelation with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UserDocumentRelation) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserDocumentRelation with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UserDocumentRelationMultiError, or nil if none found.
+func (m *UserDocumentRelation) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserDocumentRelation) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Added
+
+	// no validation rules for DocumentId
+
+	if len(errors) > 0 {
+		return UserDocumentRelationMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserDocumentRelationMultiError is an error wrapping multiple validation
+// errors returned by UserDocumentRelation.ValidateAll() if the designated
+// constraints aren't met.
+type UserDocumentRelationMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserDocumentRelationMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserDocumentRelationMultiError) AllErrors() []error { return m }
+
+// UserDocumentRelationValidationError is the validation error returned by
+// UserDocumentRelation.Validate if the designated constraints aren't met.
+type UserDocumentRelationValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserDocumentRelationValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserDocumentRelationValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserDocumentRelationValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserDocumentRelationValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserDocumentRelationValidationError) ErrorName() string {
+	return "UserDocumentRelationValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UserDocumentRelationValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserDocumentRelation.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserDocumentRelationValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserDocumentRelationValidationError{}
+
+// Validate checks the field values on UserJailChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserJailChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserJailChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserJailChangeMultiError,
+// or nil if none found.
+func (m *UserJailChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserJailChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Seconds
+
+	// no validation rules for Admin
+
+	if len(errors) > 0 {
+		return UserJailChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserJailChangeMultiError is an error wrapping multiple validation errors
+// returned by UserJailChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserJailChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserJailChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserJailChangeMultiError) AllErrors() []error { return m }
+
+// UserJailChangeValidationError is the validation error returned by
+// UserJailChange.Validate if the designated constraints aren't met.
+type UserJailChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserJailChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserJailChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserJailChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserJailChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserJailChangeValidationError) ErrorName() string { return "UserJailChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserJailChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserJailChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserJailChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserJailChangeValidationError{}
+
+// Validate checks the field values on UserFineChange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UserFineChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UserFineChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UserFineChangeMultiError,
+// or nil if none found.
+func (m *UserFineChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UserFineChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Change
+
+	// no validation rules for OldTotal
+
+	// no validation rules for NewTotal
+
+	if len(errors) > 0 {
+		return UserFineChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// UserFineChangeMultiError is an error wrapping multiple validation errors
+// returned by UserFineChange.ValidateAll() if the designated constraints
+// aren't met.
+type UserFineChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UserFineChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UserFineChangeMultiError) AllErrors() []error { return m }
+
+// UserFineChangeValidationError is the validation error returned by
+// UserFineChange.Validate if the designated constraints aren't met.
+type UserFineChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UserFineChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UserFineChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UserFineChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UserFineChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UserFineChangeValidationError) ErrorName() string { return "UserFineChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UserFineChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUserFineChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UserFineChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UserFineChangeValidationError{}
