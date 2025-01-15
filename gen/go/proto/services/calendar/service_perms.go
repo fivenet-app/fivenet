@@ -10,7 +10,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: CalendarService
 	"CalendarService/GetCalendar":           "Any",
 	"CalendarService/GetCalendarEntry":      "Any",
@@ -22,10 +21,6 @@ var PermsRemap = map[string]string{
 	"CalendarService/RSVPCalendarEntry":     "Any",
 	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntry",
 	"CalendarService/SubscribeToCalendar":   "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

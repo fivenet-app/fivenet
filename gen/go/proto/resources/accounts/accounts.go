@@ -5,7 +5,7 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 )
 
-func ConvertFromAcc(a *model.FivenetAccounts) *Account {
+func ConvertFromModelAcc(a *model.FivenetAccounts) *Account {
 	var createdAt *timestamp.Timestamp
 	if a.CreatedAt != nil {
 		createdAt = timestamp.New(*a.CreatedAt)

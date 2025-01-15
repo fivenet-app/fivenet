@@ -10,7 +10,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: DocStoreService
 	"DocStoreService/EditComment":             "DocStoreService/PostComment",
 	"DocStoreService/GetComments":             "DocStoreService/ListDocuments",
@@ -26,10 +25,6 @@ var PermsRemap = map[string]string{
 	"DocStoreService/UpdateCategory":          "DocStoreService/CreateCategory",
 	"DocStoreService/UpdateDocumentReq":       "DocStoreService/CreateDocumentReq",
 	"DocStoreService/UpdateTemplate":          "DocStoreService/CreateTemplate",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

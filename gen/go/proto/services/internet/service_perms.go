@@ -9,17 +9,12 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: AdsService
 	"AdsService/GetAds": "Any",
 
 	// Service: InternetService
 	"InternetService/GetPage": "Any",
 	"InternetService/Search":  "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Coords } from "../livemap/livemap";
-import { License } from "../users/users";
+import { License } from "../users/licenses";
 import { Vehicle } from "../vehicles/vehicles";
 import { User } from "../users/users";
 import { Job } from "../users/jobs";

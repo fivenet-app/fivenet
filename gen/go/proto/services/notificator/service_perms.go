@@ -8,15 +8,10 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: NotificatorService
 	"NotificatorService/GetNotifications":  "Any",
 	"NotificatorService/MarkNotifications": "Any",
 	"NotificatorService/Stream":            "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

@@ -786,9 +786,9 @@ export interface ListCategoriesRequest {
  */
 export interface ListCategoriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.Category category = 1;
+     * @generated from protobuf field: repeated resources.documents.Category categories = 1;
      */
-    category: Category[];
+    categories: Category[];
 }
 /**
  * @generated from protobuf message services.docstore.CreateCategoryRequest
@@ -3952,12 +3952,12 @@ export const ListCategoriesRequest = new ListCategoriesRequest$Type();
 class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
     constructor() {
         super("services.docstore.ListCategoriesResponse", [
-            { no: 1, name: "category", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Category }
+            { no: 1, name: "categories", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Category }
         ]);
     }
     create(value?: PartialMessage<ListCategoriesResponse>): ListCategoriesResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.category = [];
+        message.categories = [];
         if (value !== undefined)
             reflectionMergePartial<ListCategoriesResponse>(this, message, value);
         return message;
@@ -3967,8 +3967,8 @@ class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.documents.Category category */ 1:
-                    message.category.push(Category.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.documents.Category categories */ 1:
+                    message.categories.push(Category.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -3982,9 +3982,9 @@ class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
         return message;
     }
     internalBinaryWrite(message: ListCategoriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.documents.Category category = 1; */
-        for (let i = 0; i < message.category.length; i++)
-            Category.internalBinaryWrite(message.category[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.Category categories = 1; */
+        for (let i = 0; i < message.categories.length; i++)
+            Category.internalBinaryWrite(message.categories[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

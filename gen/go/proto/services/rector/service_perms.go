@@ -12,7 +12,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: RectorConfigService
 	"RectorConfigService/GetAppConfig":    "SuperUser",
 	"RectorConfigService/UpdateAppConfig": "SuperUser",
@@ -33,10 +32,6 @@ var PermsRemap = map[string]string{
 	"RectorService/GetPermissions":   "RectorService/GetRoles",
 	"RectorService/GetRole":          "RectorService/GetRoles",
 	"RectorService/UpdateRoleLimits": "SuperUser",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

@@ -4,6 +4,7 @@ package resources.sync;
 
 import "resources/livemap/livemap.proto";
 import "resources/users/jobs.proto";
+import "resources/users/licenses.proto";
 import "resources/users/users.proto";
 import "resources/vehicles/vehicles.proto";
 import "validate/validate.proto";

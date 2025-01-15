@@ -327,7 +327,7 @@ message ListUserDocumentsResponse {
 message ListCategoriesRequest {}
 
 message ListCategoriesResponse {
-  repeated resources.documents.Category category = 1;
+  repeated resources.documents.Category categories = 1;
 }
 
 message CreateCategoryRequest {

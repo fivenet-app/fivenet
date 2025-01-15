@@ -2,8 +2,10 @@ syntax = "proto3";
 
 package resources.users;
 
+//import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/labels.proto";
+import "resources/users/licenses.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -14,6 +16,19 @@ enum UserActivityType {
   USER_ACTIVITY_TYPE_CHANGED = 1;
   USER_ACTIVITY_TYPE_MENTIONED = 2;
   USER_ACTIVITY_TYPE_CREATED = 3;
+
+  // Types for `UserActivityData`
+
+  USER_ACTIVITY_TYPE_NAME = 4;
+  USER_ACTIVITY_TYPE_LICENSES = 5;
+  USER_ACTIVITY_TYPE_WANTED = 6;
+  USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS = 7;
+  USER_ACTIVITY_TYPE_MUGSHOT = 8;
+  USER_ACTIVITY_TYPE_LABELS = 9;
+  USER_ACTIVITY_TYPE_JOB = 10;
+  USER_ACTIVITY_TYPE_DOCUMENT = 11;
+  USER_ACTIVITY_TYPE_JAIL = 12;
+  USER_ACTIVITY_TYPE_FINE = 13;
 }
 
 message UserActivity {
@@ -42,6 +57,7 @@ message UserActivityData {
 
     UserNameChange name_change = 1;
     UserLicenseChange licenses_change = 2;
+
     // User Props
     UserWantedChange wanted_change = 3;
     UserTrafficInfractionPointsChange traffic_infraction_points_change = 4;
@@ -69,7 +85,7 @@ message UserLicenseChange {
 }
 
 message UserWantedChange {
-  bool old_state = 1;
+  bool wanted = 1;
 }
 
 message UserTrafficInfractionPointsChange {
@@ -95,16 +111,16 @@ message UserJobChange {
 
 message UserDocumentRelation {
   bool added = 1;
-  uint64 document_id = 2;
+  uint64 document_id = 2 [jstype = JS_STRING];
+  //resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true];
 }
 
 message UserJailChange {
   int32 seconds = 1;
   bool admin = 2;
+  optional string location = 3;
 }
 
 message UserFineChange {
-  int64 change = 1;
-  int64 old_total = 2;
-  int64 new_total = 3;
+  int64 amount = 1;
 }

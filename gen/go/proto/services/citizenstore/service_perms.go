@@ -10,13 +10,8 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: CitizenStoreService
 	"CitizenStoreService/SetProfilePicture": "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

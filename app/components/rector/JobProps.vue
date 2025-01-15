@@ -12,8 +12,8 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { DiscordSyncChange, JobProps } from '~~/gen/ts/resources/users/job_props';
-import { UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_props';
+import type { JobProps } from '~~/gen/ts/resources/users/job_props';
+import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_settings';
 import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t } = useI18n();

@@ -10,14 +10,9 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: CompletorService
 	"CompletorService/CompleteJobs": "Any",
 	"CompletorService/ListLawBooks": "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

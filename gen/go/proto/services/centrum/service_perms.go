@@ -9,7 +9,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: CentrumService
 	"CentrumService/AssignDispatch":       "CentrumService/TakeControl",
 	"CentrumService/AssignUnit":           "CentrumService/TakeControl",
@@ -22,10 +21,6 @@ var PermsRemap = map[string]string{
 	"CentrumService/ListUnits":            "CentrumService/Stream",
 	"CentrumService/UpdateDispatchStatus": "CentrumService/TakeDispatch",
 	"CentrumService/UpdateUnitStatus":     "CentrumService/TakeDispatch",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

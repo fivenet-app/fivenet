@@ -10,7 +10,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: QualificationsService
 	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/ListQualifications",
 	"QualificationsService/GetExamInfo":                        "QualificationsService/ListQualifications",
@@ -20,10 +19,6 @@ var PermsRemap = map[string]string{
 	"QualificationsService/ListQualificationsResults":          "QualificationsService/ListQualifications",
 	"QualificationsService/SubmitExam":                         "QualificationsService/ListQualifications",
 	"QualificationsService/TakeExam":                           "QualificationsService/ListQualifications",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

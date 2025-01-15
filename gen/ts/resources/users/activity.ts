@@ -11,7 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CitizenLabel } from "./labels";
-import { License } from "./users";
+import { License } from "./licenses";
 import { UserShort } from "./users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
@@ -179,9 +179,9 @@ export interface UserLicenseChange {
  */
 export interface UserWantedChange {
     /**
-     * @generated from protobuf field: bool old_state = 1;
+     * @generated from protobuf field: bool wanted = 1;
      */
-    oldState: boolean;
+    wanted: boolean;
 }
 /**
  * @generated from protobuf message resources.users.UserTrafficInfractionPointsChange
@@ -248,9 +248,9 @@ export interface UserDocumentRelation {
      */
     added: boolean;
     /**
-     * @generated from protobuf field: uint64 document_id = 2;
+     * @generated from protobuf field: uint64 document_id = 2 [jstype = JS_STRING];
      */
-    documentId: number;
+    documentId: string; // resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true];
 }
 /**
  * @generated from protobuf message resources.users.UserJailChange
@@ -264,23 +264,19 @@ export interface UserJailChange {
      * @generated from protobuf field: bool admin = 2;
      */
     admin: boolean;
+    /**
+     * @generated from protobuf field: optional string location = 3;
+     */
+    location?: string;
 }
 /**
  * @generated from protobuf message resources.users.UserFineChange
  */
 export interface UserFineChange {
     /**
-     * @generated from protobuf field: int64 change = 1;
+     * @generated from protobuf field: int64 amount = 1;
      */
-    change: number;
-    /**
-     * @generated from protobuf field: int64 old_total = 2;
-     */
-    oldTotal: number;
-    /**
-     * @generated from protobuf field: int64 new_total = 3;
-     */
-    newTotal: number;
+    amount: number;
 }
 /**
  * @generated from protobuf enum resources.users.UserActivityType
@@ -301,7 +297,47 @@ export enum UserActivityType {
     /**
      * @generated from protobuf enum value: USER_ACTIVITY_TYPE_CREATED = 3;
      */
-    CREATED = 3
+    CREATED = 3,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_NAME = 4;
+     */
+    NAME = 4,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_LICENSES = 5;
+     */
+    LICENSES = 5,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_WANTED = 6;
+     */
+    WANTED = 6,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS = 7;
+     */
+    TRAFFIC_INFRACTION_POINTS = 7,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_MUGSHOT = 8;
+     */
+    MUGSHOT = 8,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_LABELS = 9;
+     */
+    LABELS = 9,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_JOB = 10;
+     */
+    JOB = 10,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_DOCUMENT = 11;
+     */
+    DOCUMENT = 11,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_JAIL = 12;
+     */
+    JAIL = 12,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_FINE = 13;
+     */
+    FINE = 13
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserActivity$Type extends MessageType<UserActivity> {
@@ -685,12 +721,12 @@ export const UserLicenseChange = new UserLicenseChange$Type();
 class UserWantedChange$Type extends MessageType<UserWantedChange> {
     constructor() {
         super("resources.users.UserWantedChange", [
-            { no: 1, name: "old_state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "wanted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserWantedChange>): UserWantedChange {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.oldState = false;
+        message.wanted = false;
         if (value !== undefined)
             reflectionMergePartial<UserWantedChange>(this, message, value);
         return message;
@@ -700,8 +736,8 @@ class UserWantedChange$Type extends MessageType<UserWantedChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool old_state */ 1:
-                    message.oldState = reader.bool();
+                case /* bool wanted */ 1:
+                    message.wanted = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -715,9 +751,9 @@ class UserWantedChange$Type extends MessageType<UserWantedChange> {
         return message;
     }
     internalBinaryWrite(message: UserWantedChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool old_state = 1; */
-        if (message.oldState !== false)
-            writer.tag(1, WireType.Varint).bool(message.oldState);
+        /* bool wanted = 1; */
+        if (message.wanted !== false)
+            writer.tag(1, WireType.Varint).bool(message.wanted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -957,13 +993,13 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
     constructor() {
         super("resources.users.UserDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<UserDocumentRelation>): UserDocumentRelation {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = false;
-        message.documentId = 0;
+        message.documentId = "0";
         if (value !== undefined)
             reflectionMergePartial<UserDocumentRelation>(this, message, value);
         return message;
@@ -976,8 +1012,8 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
                 case /* bool added */ 1:
                     message.added = reader.bool();
                     break;
-                case /* uint64 document_id */ 2:
-                    message.documentId = reader.uint64().toNumber();
+                case /* uint64 document_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.documentId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -994,8 +1030,8 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
-        /* uint64 document_id = 2; */
-        if (message.documentId !== 0)
+        /* uint64 document_id = 2 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.documentId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1012,7 +1048,8 @@ class UserJailChange$Type extends MessageType<UserJailChange> {
     constructor() {
         super("resources.users.UserJailChange", [
             { no: 1, name: "seconds", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "admin", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "location", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserJailChange>): UserJailChange {
@@ -1034,6 +1071,9 @@ class UserJailChange$Type extends MessageType<UserJailChange> {
                 case /* bool admin */ 2:
                     message.admin = reader.bool();
                     break;
+                case /* optional string location */ 3:
+                    message.location = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1052,6 +1092,9 @@ class UserJailChange$Type extends MessageType<UserJailChange> {
         /* bool admin = 2; */
         if (message.admin !== false)
             writer.tag(2, WireType.Varint).bool(message.admin);
+        /* optional string location = 3; */
+        if (message.location !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.location);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1066,16 +1109,12 @@ export const UserJailChange = new UserJailChange$Type();
 class UserFineChange$Type extends MessageType<UserFineChange> {
     constructor() {
         super("resources.users.UserFineChange", [
-            { no: 1, name: "change", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "old_total", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "new_total", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<UserFineChange>): UserFineChange {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.change = 0;
-        message.oldTotal = 0;
-        message.newTotal = 0;
+        message.amount = 0;
         if (value !== undefined)
             reflectionMergePartial<UserFineChange>(this, message, value);
         return message;
@@ -1085,14 +1124,8 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 change */ 1:
-                    message.change = reader.int64().toNumber();
-                    break;
-                case /* int64 old_total */ 2:
-                    message.oldTotal = reader.int64().toNumber();
-                    break;
-                case /* int64 new_total */ 3:
-                    message.newTotal = reader.int64().toNumber();
+                case /* int64 amount */ 1:
+                    message.amount = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1106,15 +1139,9 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
         return message;
     }
     internalBinaryWrite(message: UserFineChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 change = 1; */
-        if (message.change !== 0)
-            writer.tag(1, WireType.Varint).int64(message.change);
-        /* int64 old_total = 2; */
-        if (message.oldTotal !== 0)
-            writer.tag(2, WireType.Varint).int64(message.oldTotal);
-        /* int64 new_total = 3; */
-        if (message.newTotal !== 0)
-            writer.tag(3, WireType.Varint).int64(message.newTotal);
+        /* int64 amount = 1; */
+        if (message.amount !== 0)
+            writer.tag(1, WireType.Varint).int64(message.amount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

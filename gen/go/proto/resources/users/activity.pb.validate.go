@@ -1157,7 +1157,7 @@ func (m *UserWantedChange) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for OldState
+	// no validation rules for Wanted
 
 	if len(errors) > 0 {
 		return UserWantedChangeMultiError(errors)
@@ -1866,6 +1866,10 @@ func (m *UserJailChange) validate(all bool) error {
 
 	// no validation rules for Admin
 
+	if m.Location != nil {
+		// no validation rules for Location
+	}
+
 	if len(errors) > 0 {
 		return UserJailChangeMultiError(errors)
 	}
@@ -1966,11 +1970,7 @@ func (m *UserFineChange) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Change
-
-	// no validation rules for OldTotal
-
-	// no validation rules for NewTotal
+	// no validation rules for Amount
 
 	if len(errors) > 0 {
 		return UserFineChangeMultiError(errors)

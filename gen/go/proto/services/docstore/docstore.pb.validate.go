@@ -8142,7 +8142,7 @@ func (m *ListCategoriesResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetCategory() {
+	for idx, item := range m.GetCategories() {
 		_, _ = idx, item
 
 		if all {
@@ -8150,7 +8150,7 @@ func (m *ListCategoriesResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListCategoriesResponseValidationError{
-						field:  fmt.Sprintf("Category[%v]", idx),
+						field:  fmt.Sprintf("Categories[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -8158,7 +8158,7 @@ func (m *ListCategoriesResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListCategoriesResponseValidationError{
-						field:  fmt.Sprintf("Category[%v]", idx),
+						field:  fmt.Sprintf("Categories[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -8167,7 +8167,7 @@ func (m *ListCategoriesResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListCategoriesResponseValidationError{
-					field:  fmt.Sprintf("Category[%v]", idx),
+					field:  fmt.Sprintf("Categories[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

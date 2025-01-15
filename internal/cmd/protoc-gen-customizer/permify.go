@@ -230,7 +230,7 @@ import (
 
 {{ with .PermissionRemap }}
 var PermsRemap = map[string]string{
-    {{ range $service, $remap := . }}
+    {{- range $service, $remap := . }}
 	// Service: {{ $service }}
 	{{ range $key, $target := $remap -}}
 	"{{ $service }}/{{ $key }}": "{{- if and (ne $target "SuperUser") (ne $target "Any") }}{{ $service }}/{{ end }}{{ $target }}",

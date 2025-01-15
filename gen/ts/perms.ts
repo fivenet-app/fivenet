@@ -57,8 +57,10 @@
 // source: resources/timestamp/timestamp.proto
 // source: resources/users/activity.proto
 // source: resources/users/job_props.proto
+// source: resources/users/job_settings.proto
 // source: resources/users/jobs.proto
 // source: resources/users/labels.proto
+// source: resources/users/licenses.proto
 // source: resources/users/props.proto
 // source: resources/users/users.proto
 // source: resources/vehicles/vehicles.proto

@@ -297,28 +297,15 @@
     - [Timestamp](#resources-timestamp-Timestamp)
   
 - [resources/users/job_props.proto](#resources_users_job_props-proto)
-    - [DiscordSyncChange](#resources-users-DiscordSyncChange)
-    - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
-    - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
-    - [GroupMapping](#resources-users-GroupMapping)
-    - [GroupSyncSettings](#resources-users-GroupSyncSettings)
     - [JobProps](#resources-users-JobProps)
-    - [JobSettings](#resources-users-JobSettings)
-    - [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings)
     - [QuickButtons](#resources-users-QuickButtons)
-    - [StatusLogSettings](#resources-users-StatusLogSettings)
-    - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
-  
-    - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
   
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
   
 - [resources/users/users.proto](#resources_users_users-proto)
-    - [License](#resources-users-License)
     - [User](#resources-users-User)
-    - [UserLicenses](#resources-users-UserLicenses)
     - [UserShort](#resources-users-UserShort)
   
 - [resources/users/props.proto](#resources_users_props-proto)
@@ -343,6 +330,23 @@
     - [UserWantedChange](#resources-users-UserWantedChange)
   
     - [UserActivityType](#resources-users-UserActivityType)
+  
+- [resources/users/licenses.proto](#resources_users_licenses-proto)
+    - [License](#resources-users-License)
+    - [UserLicenses](#resources-users-UserLicenses)
+  
+- [resources/users/job_settings.proto](#resources_users_job_settings-proto)
+    - [DiscordSyncChange](#resources-users-DiscordSyncChange)
+    - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
+    - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
+    - [GroupMapping](#resources-users-GroupMapping)
+    - [GroupSyncSettings](#resources-users-GroupSyncSettings)
+    - [JobSettings](#resources-users-JobSettings)
+    - [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings)
+    - [StatusLogSettings](#resources-users-StatusLogSettings)
+    - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
+  
+    - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -5112,92 +5116,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources-users-DiscordSyncChange"></a>
-
-### DiscordSyncChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| plan | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-DiscordSyncChanges"></a>
-
-### DiscordSyncChanges
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| changes | [DiscordSyncChange](#resources-users-DiscordSyncChange) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-DiscordSyncSettings"></a>
-
-### DiscordSyncSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dry_run | [bool](#bool) |  |  |
-| user_info_sync | [bool](#bool) |  |  |
-| user_info_sync_settings | [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings) |  |  |
-| status_log | [bool](#bool) |  |  |
-| status_log_settings | [StatusLogSettings](#resources-users-StatusLogSettings) |  |  |
-| jobs_absence | [bool](#bool) |  |  |
-| jobs_absence_settings | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) |  |  |
-| group_sync_settings | [GroupSyncSettings](#resources-users-GroupSyncSettings) |  |  |
-| qualifications_role_format | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-GroupMapping"></a>
-
-### GroupMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| from_grade | [int32](#int32) |  |  |
-| to_grade | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-users-GroupSyncSettings"></a>
-
-### GroupSyncSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| ignored_role_ids | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
 <a name="resources-users-JobProps"></a>
 
 ### JobProps
@@ -5225,31 +5143,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources-users-JobSettings"></a>
-
-### JobSettings
-
-
-
-
-
-
-
-<a name="resources-users-JobsAbsenceSettings"></a>
-
-### JobsAbsenceSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| absence_role | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="resources-users-QuickButtons"></a>
 
 ### QuickButtons
@@ -5266,57 +5159,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-
-<a name="resources-users-StatusLogSettings"></a>
-
-### StatusLogSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| channel_id | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserInfoSyncSettings"></a>
-
-### UserInfoSyncSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| employee_role_enabled | [bool](#bool) |  |  |
-| employee_role_format | [string](#string) |  |  |
-| grade_role_format | [string](#string) |  |  |
-| unemployed_enabled | [bool](#bool) |  |  |
-| unemployed_mode | [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode) |  |  |
-| unemployed_role_name | [string](#string) |  |  |
-| sync_nicknames | [bool](#bool) |  |  |
-| group_mapping | [GroupMapping](#resources-users-GroupMapping) | repeated |  |
-
-
-
-
-
  <!-- end messages -->
-
-
-<a name="resources-users-UserInfoSyncUnemployedMode"></a>
-
-### UserInfoSyncUnemployedMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED | 0 |  |
-| USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE | 1 |  |
-| USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
-
 
  <!-- end enums -->
 
@@ -5383,22 +5226,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
-
 <a name="resources-users-User"></a>
 
 ### User
@@ -5425,22 +5252,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | licenses | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
 | avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | group | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenses"></a>
-
-### UserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| licenses | [License](#resources-users-License) | repeated |  |
 
 
 
@@ -5643,7 +5454,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | added | [bool](#bool) |  |  |
-| document_id | [uint64](#uint64) |  |  |
+| document_id | [uint64](#uint64) |  | resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true]; |
 
 
 
@@ -5658,9 +5469,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| change | [int64](#int64) |  |  |
-| old_total | [int64](#int64) |  |  |
-| new_total | [int64](#int64) |  |  |
+| amount | [int64](#int64) |  |  |
 
 
 
@@ -5677,6 +5486,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | seconds | [int32](#int32) |  |  |
 | admin | [bool](#bool) |  |  |
+| location | [string](#string) | optional |  |
 
 
 
@@ -5788,7 +5598,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| old_state | [bool](#bool) |  |  |
+| wanted | [bool](#bool) |  |  |
 
 
 
@@ -5808,6 +5618,241 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | USER_ACTIVITY_TYPE_CHANGED | 1 |  |
 | USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
 | USER_ACTIVITY_TYPE_CREATED | 3 |  |
+| USER_ACTIVITY_TYPE_NAME | 4 |  |
+| USER_ACTIVITY_TYPE_LICENSES | 5 |  |
+| USER_ACTIVITY_TYPE_WANTED | 6 |  |
+| USER_ACTIVITY_TYPE_TRAFFIC_INFRACTION_POINTS | 7 |  |
+| USER_ACTIVITY_TYPE_MUGSHOT | 8 |  |
+| USER_ACTIVITY_TYPE_LABELS | 9 |  |
+| USER_ACTIVITY_TYPE_JOB | 10 |  |
+| USER_ACTIVITY_TYPE_DOCUMENT | 11 |  |
+| USER_ACTIVITY_TYPE_JAIL | 12 |  |
+| USER_ACTIVITY_TYPE_FINE | 13 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_licenses-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/licenses.proto
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [string](#string) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserLicenses"></a>
+
+### UserLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| licenses | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_job_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/job_settings.proto
+
+
+
+<a name="resources-users-DiscordSyncChange"></a>
+
+### DiscordSyncChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| plan | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-DiscordSyncChanges"></a>
+
+### DiscordSyncChanges
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| changes | [DiscordSyncChange](#resources-users-DiscordSyncChange) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-DiscordSyncSettings"></a>
+
+### DiscordSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dry_run | [bool](#bool) |  |  |
+| user_info_sync | [bool](#bool) |  |  |
+| user_info_sync_settings | [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings) |  |  |
+| status_log | [bool](#bool) |  |  |
+| status_log_settings | [StatusLogSettings](#resources-users-StatusLogSettings) |  |  |
+| jobs_absence | [bool](#bool) |  |  |
+| jobs_absence_settings | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) |  |  |
+| group_sync_settings | [GroupSyncSettings](#resources-users-GroupSyncSettings) |  |  |
+| qualifications_role_format | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-GroupMapping"></a>
+
+### GroupMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| from_grade | [int32](#int32) |  |  |
+| to_grade | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-users-GroupSyncSettings"></a>
+
+### GroupSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ignored_role_ids | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-users-JobSettings"></a>
+
+### JobSettings
+
+
+
+
+
+
+
+<a name="resources-users-JobsAbsenceSettings"></a>
+
+### JobsAbsenceSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| absence_role | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-StatusLogSettings"></a>
+
+### StatusLogSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| channel_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserInfoSyncSettings"></a>
+
+### UserInfoSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| employee_role_enabled | [bool](#bool) |  |  |
+| employee_role_format | [string](#string) |  |  |
+| grade_role_format | [string](#string) |  |  |
+| unemployed_enabled | [bool](#bool) |  |  |
+| unemployed_mode | [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode) |  |  |
+| unemployed_role_name | [string](#string) |  |  |
+| sync_nicknames | [bool](#bool) |  |  |
+| group_mapping | [GroupMapping](#resources-users-GroupMapping) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-users-UserInfoSyncUnemployedMode"></a>
+
+### UserInfoSyncUnemployedMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED | 0 |  |
+| USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE | 1 |  |
+| USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
 
 
  <!-- end enums -->
@@ -9350,7 +9395,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| category | [resources.documents.Category](#resources-documents-Category) | repeated |  |
+| categories | [resources.documents.Category](#resources-documents-Category) | repeated |  |
 
 
 

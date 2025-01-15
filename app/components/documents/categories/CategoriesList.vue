@@ -15,7 +15,7 @@ async function listCategories(): Promise<Category[]> {
         const call = getGRPCDocStoreClient().listCategories({});
         const { response } = await call;
 
-        return response.category;
+        return response.categories;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

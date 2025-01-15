@@ -10,7 +10,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: MailerService
 	"MailerService/CreateOrUpdateTemplate": "MailerService/ListEmails",
 	"MailerService/CreateThread":           "MailerService/ListEmails",
@@ -30,10 +29,6 @@ var PermsRemap = map[string]string{
 	"MailerService/SearchThreads":          "MailerService/ListEmails",
 	"MailerService/SetEmailSettings":       "MailerService/ListEmails",
 	"MailerService/SetThreadState":         "MailerService/ListEmails",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

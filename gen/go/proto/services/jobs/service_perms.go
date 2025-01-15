@@ -12,7 +12,6 @@ import (
 )
 
 var PermsRemap = map[string]string{
-
 	// Service: JobsService
 	"JobsService/GetColleagueLabels":      "JobsService/GetColleague",
 	"JobsService/GetColleagueLabelsStats": "JobsService/GetColleague",
@@ -21,10 +20,6 @@ var PermsRemap = map[string]string{
 
 	// Service: JobsTimeclockService
 	"JobsTimeclockService/GetTimeclockStats": "JobsTimeclockService/ListTimeclock",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
 }
 
 func init() {

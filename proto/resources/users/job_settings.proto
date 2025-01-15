@@ -1,0 +1,75 @@
+syntax = "proto3";
+
+package resources.users;
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
+
+message DiscordSyncSettings {
+  bool dry_run = 1;
+
+  bool user_info_sync = 2;
+  UserInfoSyncSettings user_info_sync_settings = 3;
+
+  bool status_log = 4;
+  StatusLogSettings status_log_settings = 5;
+
+  bool jobs_absence = 6;
+  JobsAbsenceSettings jobs_absence_settings = 7;
+
+  GroupSyncSettings group_sync_settings = 8;
+
+  string qualifications_role_format = 9 [(validate.rules).string.max_len = 64];
+}
+
+message DiscordSyncChanges {
+  repeated DiscordSyncChange changes = 1;
+}
+
+message DiscordSyncChange {
+  resources.timestamp.Timestamp time = 1;
+  string plan = 2;
+}
+
+enum UserInfoSyncUnemployedMode {
+  USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED = 0;
+  USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE = 1;
+  USER_INFO_SYNC_UNEMPLOYED_MODE_KICK = 2;
+}
+
+message UserInfoSyncSettings {
+  bool employee_role_enabled = 1;
+  string employee_role_format = 2 [(validate.rules).string.max_len = 64];
+  string grade_role_format = 3 [(validate.rules).string.max_len = 64];
+
+  bool unemployed_enabled = 4;
+  UserInfoSyncUnemployedMode unemployed_mode = 5 [(validate.rules).enum.defined_only = true];
+  string unemployed_role_name = 6 [(validate.rules).string.max_len = 64];
+
+  bool sync_nicknames = 7;
+
+  repeated GroupMapping group_mapping = 8;
+}
+
+message GroupMapping {
+  string name = 1 [(validate.rules).string.max_len = 64];
+  int32 from_grade = 2 [(validate.rules).int32.gte = 0];
+  int32 to_grade = 3 [(validate.rules).int32.gte = 0];
+}
+
+message StatusLogSettings {
+  string channel_id = 1;
+}
+
+message JobsAbsenceSettings {
+  string absence_role = 1 [(validate.rules).string.max_len = 64];
+}
+
+message GroupSyncSettings {
+  // @sanitize: method=StripTags
+  repeated string ignored_role_ids = 1 [(validate.rules).repeated = { items { string { max_len: 24 } }, max_items: 25 }];
+}
+
+message JobSettings {}

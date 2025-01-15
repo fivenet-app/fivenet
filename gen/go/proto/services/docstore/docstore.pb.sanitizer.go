@@ -525,8 +525,8 @@ func (m *ListCategoriesResponse) Sanitize() error {
 		return nil
 	}
 
-	// Field: Category
-	for idx, item := range m.Category {
+	// Field: Categories
+	for idx, item := range m.Categories {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
