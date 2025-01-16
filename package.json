@@ -24,7 +24,7 @@
         "@iconify-json/flagpack": "1.2.2",
         "@iconify-json/mdi": "1.2.2",
         "@iconify-json/simple-icons": "1.2.20",
-        "@nuxt/content": "2.13.4",
+        "@nuxt/content": "3.0.0",
         "@nuxt/fonts": "0.10.3",
         "@nuxt/ui-pro": "1.7.0",
         "@nuxtjs/robots": "5.1.1",
