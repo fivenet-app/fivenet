@@ -1187,7 +1187,8 @@
                     "created": "Strafe erstellt"
                 },
                 "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
-                "userprops_labels_updated": "Labels des Bürgers aktualisiert"
+                "userprops_labels_updated": "Labels des Bürgers aktualisiert",
+                "name_change": "Bürgername wurde geändert von {old} zu {new}"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
