@@ -165,17 +165,6 @@ func (m *UserProps) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetReason()) > 255 {
-		err := UserPropsValidationError{
-			field:  "Reason",
-			reason: "value length must be at most 255 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetProps() == nil {
 		err := UserPropsValidationError{
 			field:  "Props",
@@ -214,6 +203,21 @@ func (m *UserProps) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := UserPropsValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -315,17 +319,6 @@ func (m *JobsUserProps) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetReason()) > 255 {
-		err := JobsUserPropsValidationError{
-			field:  "Reason",
-			reason: "value length must be at most 255 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.GetProps() == nil {
 		err := JobsUserPropsValidationError{
 			field:  "Props",
@@ -364,6 +357,21 @@ func (m *JobsUserProps) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := JobsUserPropsValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

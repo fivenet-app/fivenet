@@ -829,8 +829,6 @@ func (m *AddActivityResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
 	if len(errors) > 0 {
 		return AddActivityResponseMultiError(errors)
 	}

@@ -41,9 +41,9 @@ export interface UserOAuth2Conn {
  */
 export interface UserProps {
     /**
-     * @generated from protobuf field: string reason = 1;
+     * @generated from protobuf field: optional string reason = 1;
      */
-    reason: string;
+    reason?: string;
     /**
      * @generated from protobuf field: resources.users.UserProps props = 2;
      */
@@ -54,9 +54,9 @@ export interface UserProps {
  */
 export interface JobsUserProps {
     /**
-     * @generated from protobuf field: string reason = 1;
+     * @generated from protobuf field: optional string reason = 1;
      */
-    reason: string;
+    reason?: string;
     /**
      * @generated from protobuf field: resources.jobs.JobsUserProps props = 2;
      */
@@ -168,13 +168,12 @@ export const UserOAuth2Conn = new UserOAuth2Conn$Type();
 class UserProps$Type extends MessageType<UserProps> {
     constructor() {
         super("resources.sync.UserProps", [
-            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 2, name: "props", kind: "message", T: () => UserProps$, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.reason = "";
         if (value !== undefined)
             reflectionMergePartial<UserProps>(this, message, value);
         return message;
@@ -184,7 +183,7 @@ class UserProps$Type extends MessageType<UserProps> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string reason */ 1:
+                case /* optional string reason */ 1:
                     message.reason = reader.string();
                     break;
                 case /* resources.users.UserProps props */ 2:
@@ -202,8 +201,8 @@ class UserProps$Type extends MessageType<UserProps> {
         return message;
     }
     internalBinaryWrite(message: UserProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string reason = 1; */
-        if (message.reason !== "")
+        /* optional string reason = 1; */
+        if (message.reason !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.reason);
         /* resources.users.UserProps props = 2; */
         if (message.props)
@@ -222,13 +221,12 @@ export const UserProps = new UserProps$Type();
 class JobsUserProps$Type extends MessageType<JobsUserProps> {
     constructor() {
         super("resources.sync.JobsUserProps", [
-            { no: 1, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 1, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 2, name: "props", kind: "message", T: () => JobsUserProps$, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.reason = "";
         if (value !== undefined)
             reflectionMergePartial<JobsUserProps>(this, message, value);
         return message;
@@ -238,7 +236,7 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string reason */ 1:
+                case /* optional string reason */ 1:
                     message.reason = reader.string();
                     break;
                 case /* resources.jobs.JobsUserProps props */ 2:
@@ -256,8 +254,8 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         return message;
     }
     internalBinaryWrite(message: JobsUserProps, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string reason = 1; */
-        if (message.reason !== "")
+        /* optional string reason = 1; */
+        if (message.reason !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.reason);
         /* resources.jobs.JobsUserProps props = 2; */
         if (message.props)

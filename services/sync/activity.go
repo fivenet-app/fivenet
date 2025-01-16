@@ -72,8 +72,8 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 	if idx == -1 {
 		return fmt.Errorf("invalid provider name")
 	}
-	provider := s.cfg.OAuth2.Providers[idx]
 
+	provider := s.cfg.OAuth2.Providers[idx]
 	accountId := uint64(0)
 
 	tAccounts := table.FivenetAccounts
@@ -136,13 +136,20 @@ func (s *Server) handleUserProps(ctx context.Context, data *pbsync.AddActivityRe
 		return err
 	}
 
-	activities, err := props.HandleChanges(ctx, tx, data.UserProps.Props, &data.UserProps.Props.UserId, data.UserProps.Reason)
+	reason := ""
+	if data.UserProps.Reason != nil {
+		reason = *data.UserProps.Reason
+	}
+
+	activities, err := props.HandleChanges(ctx, tx, data.UserProps.Props, &data.UserProps.Props.UserId, reason)
 	if err != nil {
 		return err
 	}
 
-	if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
-		return err
+	if data.UserProps.Reason != nil && *data.UserProps.Reason != "" {
+		if err := users.CreateUserActivities(ctx, tx, activities...); err != nil {
+			return err
+		}
 	}
 
 	// Commit the transaction
@@ -167,13 +174,20 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 		return err
 	}
 
-	activities, err := props.HandleChanges(ctx, tx, data.JobsUserProps.Props, data.JobsUserProps.Props.Job, &data.JobsUserProps.Props.UserId, data.JobsUserProps.Reason)
+	reason := ""
+	if data.JobsUserProps.Reason != nil {
+		reason = *data.JobsUserProps.Reason
+	}
+
+	activities, err := props.HandleChanges(ctx, tx, data.JobsUserProps.Props, data.JobsUserProps.Props.Job, &data.JobsUserProps.Props.UserId, reason)
 	if err != nil {
 		return err
 	}
 
-	if err := jobs.CreateJobsUserActivities(ctx, tx, activities...); err != nil {
-		return err
+	if data.JobsUserProps.Reason != nil && *data.JobsUserProps.Reason != "" {
+		if err := jobs.CreateJobsUserActivities(ctx, tx, activities...); err != nil {
+			return err
+		}
 	}
 
 	// Commit the transaction

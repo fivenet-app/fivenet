@@ -18,12 +18,12 @@ message UserOAuth2Conn {
 }
 
 message UserProps {
-  string reason = 1 [(validate.rules).string.max_len = 255];
+  optional string reason = 1 [(validate.rules).string.max_len = 255];
   resources.users.UserProps props = 2 [(validate.rules).message.required = true];
 }
 
 message JobsUserProps {
-  string reason = 1 [(validate.rules).string.max_len = 255];
+  optional string reason = 1 [(validate.rules).string.max_len = 255];
   resources.jobs.JobsUserProps props = 2 [(validate.rules).message.required = true];
 }
 

@@ -126,10 +126,6 @@ export interface AddActivityRequest {
  * @generated from protobuf message services.sync.AddActivityResponse
  */
 export interface AddActivityResponse {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: number;
 }
 /**
  * @generated from protobuf message services.sync.RegisterAccountRequest
@@ -444,40 +440,18 @@ export const AddActivityRequest = new AddActivityRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AddActivityResponse$Type extends MessageType<AddActivityResponse> {
     constructor() {
-        super("services.sync.AddActivityResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
-        ]);
+        super("services.sync.AddActivityResponse", []);
     }
     create(value?: PartialMessage<AddActivityResponse>): AddActivityResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<AddActivityResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: AddActivityResponse): AddActivityResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 id */ 1:
-                    message.id = reader.uint64().toNumber();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
+        return target ?? this.create();
     }
     internalBinaryWrite(message: AddActivityResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1; */
-        if (message.id !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

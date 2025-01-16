@@ -47,9 +47,7 @@ message AddActivityRequest {
   }
 }
 
-message AddActivityResponse {
-  uint64 id = 1;
-}
+message AddActivityResponse {}
 
 message RegisterAccountRequest {
   string identifier = 1 [(validate.rules).string.max_len = 64];
