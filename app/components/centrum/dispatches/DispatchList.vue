@@ -111,7 +111,7 @@ const columns = [
             <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">
                 {{ $t('common.dispatches') }}
 
-                <UTooltip v-if="showButton" :text="$t('common.dispatches')">
+                <UTooltip v-if="showButton" :text="$t('common.archive')">
                     <UButton :to="{ name: 'centrum-dispatches' }" icon="i-mdi-archive" variant="link" />
                 </UTooltip>
             </h2>

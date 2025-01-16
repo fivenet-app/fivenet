@@ -102,14 +102,15 @@ watchOnce(opened, async () => {
                         variant="link"
                     />
 
-                    <UButton
-                        v-if="can('DocStoreService.ListDocuments').value"
-                        variant="link"
-                        icon="i-mdi-eye"
-                        :to="{ name: 'documents-id', params: { id: documentId ?? document?.id ?? 0 } }"
-                    >
-                        {{ $t('common.open') }}
-                    </UButton>
+                    <UTooltip v-if="can('DocStoreService.ListDocuments').value" :text="$t('common.open')">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :to="{ name: 'documents-id', params: { id: documentId ?? document?.id ?? 0 } }"
+                        >
+                            {{ $t('common.open') }}
+                        </UButton>
+                    </UTooltip>
                 </div>
 
                 <div v-if="error">

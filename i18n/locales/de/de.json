@@ -850,7 +850,8 @@
                 "attributes": {
                     "static": "Statisch",
                     "no_dispatch_auto_assign": "Keine automatische Einsatz Zuweisung"
-                }
+                },
+                "edit_units": "Einheiten editieren"
             },
             "dispatches": {
                 "feed": {

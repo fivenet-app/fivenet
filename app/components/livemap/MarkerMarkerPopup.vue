@@ -38,16 +38,13 @@ async function deleteMarker(id: string): Promise<void> {
     <LPopup :options="{ closeButton: true }">
         <div class="flex flex-col gap-2">
             <div class="grid grid-cols-2 gap-1">
-                <UButton
-                    v-if="marker.info?.x !== undefined && marker.info?.y !== undefined"
-                    variant="link"
-                    icon="i-mdi-map-marker"
-                    @click="goto({ x: marker.info?.x, y: marker.info?.y })"
-                >
-                    <span class="truncate">
-                        {{ $t('common.mark') }}
-                    </span>
-                </UButton>
+                <UTooltip v-if="marker.info?.x !== undefined && marker.info?.y !== undefined" :text="$t('common.mark')">
+                    <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.info?.x, y: marker.info?.y })">
+                        <span class="truncate">
+                            {{ $t('common.mark') }}
+                        </span>
+                    </UButton>
+                </UTooltip>
 
                 <UTooltip v-if="can('LivemapperService.CreateOrUpdateMarker').value" :text="$t('common.edit')">
                     <UButton

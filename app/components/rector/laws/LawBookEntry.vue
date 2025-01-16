@@ -213,9 +213,11 @@ const editing = ref(props.startInEdit);
                     <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
-                <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
-                    {{ $t('pages.rector.laws.add_new_law') }}
-                </UButton>
+                <UTooltip :text="$t('pages.rector.laws.add_new_law')">
+                    <UButton color="gray" trailing-icon="i-mdi-plus" @click="addLaw">
+                        {{ $t('pages.rector.laws.add_new_law') }}
+                    </UButton>
+                </UTooltip>
             </div>
             <UForm
                 v-else
