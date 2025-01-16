@@ -569,7 +569,8 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataRequest_UserLocations) (int64, error) {
 	tLocations := table.FivenetUserLocations
 
-	if data.UserLocations.Clear != nil && *data.UserLocations.Clear {
+	// Handle clear all
+	if data.UserLocations.ClearAll != nil && *data.UserLocations.ClearAll {
 		stmt := tLocations.
 			DELETE()
 
@@ -593,7 +594,14 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
 		)
 
+	toDelete := []string{}
 	for _, location := range data.UserLocations.Users {
+		// Collect user locations are marked for removal
+		if location.Remove {
+			toDelete = append(toDelete, location.Identifier)
+			continue
+		}
+
 		stmt = stmt.
 			VALUES(
 				location.Identifier,
@@ -611,6 +619,30 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	rowsAffected, err := res.RowsAffected()
 	if err != nil {
 		return 0, err
+	}
+
+	// Delete any user locations that have been marked for removal
+	if len(toDelete) > 0 {
+		identifiers := []jet.Expression{}
+		for _, identifier := range toDelete {
+			identifiers = append(identifiers, jet.String(identifier))
+		}
+
+		delStmt := tLocations.
+			DELETE().
+			WHERE(tLocations.Identifier.IN(identifiers...)).
+			LIMIT(int64(len(toDelete)))
+
+		res, err := delStmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return 0, err
+		}
+
+		rows, err := res.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+		rowsAffected += rows
 	}
 
 	return rowsAffected, nil

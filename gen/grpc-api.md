@@ -7279,7 +7279,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | users | [UserLocation](#resources-sync-UserLocation) | repeated |  |
-| clear | [bool](#bool) | optional |  |
+| clear_all | [bool](#bool) | optional |  |
 
 
 
@@ -7328,6 +7328,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | job | [string](#string) |  |  |
 | coords | [resources.livemap.Coords](#resources-livemap-Coords) |  |  |
 | hidden | [bool](#bool) |  |  |
+| remove | [bool](#bool) |  |  |
 
 
 

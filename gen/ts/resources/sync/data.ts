@@ -69,9 +69,9 @@ export interface DataUserLocations {
      */
     users: UserLocation[];
     /**
-     * @generated from protobuf field: optional bool clear = 2;
+     * @generated from protobuf field: optional bool clear_all = 2;
      */
-    clear?: boolean;
+    clearAll?: boolean;
 }
 /**
  * @generated from protobuf message resources.sync.UserLocation
@@ -93,6 +93,10 @@ export interface UserLocation {
      * @generated from protobuf field: bool hidden = 4;
      */
     hidden: boolean;
+    /**
+     * @generated from protobuf field: bool remove = 5;
+     */
+    remove: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
@@ -334,7 +338,7 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
     constructor() {
         super("resources.sync.DataUserLocations", [
             { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserLocation, options: { "validate.rules": { repeated: { maxItems: "2000" } } } },
-            { no: 2, name: "clear", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "clear_all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<DataUserLocations>): DataUserLocations {
@@ -352,8 +356,8 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
                 case /* repeated resources.sync.UserLocation users */ 1:
                     message.users.push(UserLocation.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional bool clear */ 2:
-                    message.clear = reader.bool();
+                case /* optional bool clear_all */ 2:
+                    message.clearAll = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -370,9 +374,9 @@ class DataUserLocations$Type extends MessageType<DataUserLocations> {
         /* repeated resources.sync.UserLocation users = 1; */
         for (let i = 0; i < message.users.length; i++)
             UserLocation.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool clear = 2; */
-        if (message.clear !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.clear);
+        /* optional bool clear_all = 2; */
+        if (message.clearAll !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.clearAll);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -390,7 +394,8 @@ class UserLocation$Type extends MessageType<UserLocation> {
             { no: 1, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "coords", kind: "message", T: () => Coords, options: { "validate.rules": { message: { required: true } } } },
-            { no: 4, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "remove", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserLocation>): UserLocation {
@@ -398,6 +403,7 @@ class UserLocation$Type extends MessageType<UserLocation> {
         message.identifier = "";
         message.job = "";
         message.hidden = false;
+        message.remove = false;
         if (value !== undefined)
             reflectionMergePartial<UserLocation>(this, message, value);
         return message;
@@ -418,6 +424,9 @@ class UserLocation$Type extends MessageType<UserLocation> {
                     break;
                 case /* bool hidden */ 4:
                     message.hidden = reader.bool();
+                    break;
+                case /* bool remove */ 5:
+                    message.remove = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -443,6 +452,9 @@ class UserLocation$Type extends MessageType<UserLocation> {
         /* bool hidden = 4; */
         if (message.hidden !== false)
             writer.tag(4, WireType.Varint).bool(message.hidden);
+        /* bool remove = 5; */
+        if (message.remove !== false)
+            writer.tag(5, WireType.Varint).bool(message.remove);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

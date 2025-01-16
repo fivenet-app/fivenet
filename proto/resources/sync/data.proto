@@ -33,7 +33,7 @@ message DataLicenses {
 
 message DataUserLocations {
   repeated UserLocation users = 1 [(validate.rules).repeated.max_items = 2000];
-  optional bool clear = 2;
+  optional bool clear_all = 2;
 }
 
 message UserLocation {
@@ -41,4 +41,5 @@ message UserLocation {
   string job = 2 [(validate.rules).string.max_len = 20];
   resources.livemap.Coords coords = 3 [(validate.rules).message.required = true];
   bool hidden = 4;
+  bool remove = 5;
 }

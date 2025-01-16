@@ -779,8 +779,8 @@ func (m *DataUserLocations) validate(all bool) error {
 
 	}
 
-	if m.Clear != nil {
-		// no validation rules for Clear
+	if m.ClearAll != nil {
+		// no validation rules for ClearAll
 	}
 
 	if len(errors) > 0 {
@@ -948,6 +948,8 @@ func (m *UserLocation) validate(all bool) error {
 	}
 
 	// no validation rules for Hidden
+
+	// no validation rules for Remove
 
 	if len(errors) > 0 {
 		return UserLocationMultiError(errors)
