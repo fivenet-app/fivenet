@@ -1164,7 +1164,7 @@
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
-                    "action_text": "Setzte Verkehrspunkte von"
+                    "action_text": "Setzte Verkehrspunkte von {old} zu {new}"
                 },
                 "bool_set_citizen": "Setzte den Bürger als",
                 "document_relation": {

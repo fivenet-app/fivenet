@@ -3,6 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { UserActivityType, type UserActivity } from '~~/gen/ts/resources/users/activity';
 import type { CitizenLabels } from '~~/gen/ts/resources/users/labels';
 
@@ -13,7 +14,7 @@ const props = defineProps<{
 
 <template>
     <template v-if="activity.data">
-        <template v-if="activity.type === UserActivityType.NAME && activity.data.data.oneofKind === 'nameChange'">
+        <template v-if="activity.type === UserActivityType.NAME && activity.data?.data.oneofKind === 'nameChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon name="i-mdi-identification-card" class="size-full text-info-600" />
@@ -58,7 +59,7 @@ const props = defineProps<{
             </div>
         </template>
         <template
-            v-else-if="activity.type === UserActivityType.DOCUMENT && activity.data.data.oneofKind === 'documentRelation'"
+            v-else-if="activity.type === UserActivityType.DOCUMENT && activity.data?.data.oneofKind === 'documentRelation'"
         >
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -80,7 +81,21 @@ const props = defineProps<{
                                 {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
                             </template>
 
-                            <DocumentInfoPopover :document-id="activity.data.data.documentRelation.documentId" hide-trailing />
+                            <DocumentInfoPopover
+                                :document-id="activity.data.data.documentRelation.documentId"
+                                hide-trailing
+                                load-on-open
+                            >
+                                <template #title>
+                                    <IDCopyBadge
+                                        :id="activity.data.data.documentRelation.documentId"
+                                        prefix="DOC"
+                                        size="xs"
+                                        disable-tooltip
+                                        hide-icon
+                                    />
+                                </template>
+                            </DocumentInfoPopover>
                         </h3>
 
                         <p class="text-sm">
@@ -90,9 +105,13 @@ const props = defineProps<{
 
                     <div class="flex items-center justify-between">
                         <p class="inline-flex gap-1 text-sm">
-                            <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                            <span class="font-semibold">{{ $t('common.type') }}:</span>
                             <span>
-                                {{ $t(`enums.docstore.DocRelation.${activity.reason.replace('DOC_RELATION_', '')}`) }}
+                                {{
+                                    $t(
+                                        `enums.docstore.DocRelation.${DocRelation[activity.data.data.documentRelation.relation]}`,
+                                    )
+                                }}
                             </span>
                         </p>
 
@@ -104,7 +123,7 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.WANTED && activity.data.data.oneofKind === 'wantedChange'">
+        <template v-else-if="activity.type === UserActivityType.WANTED && activity.data?.data.oneofKind === 'wantedChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
@@ -149,10 +168,10 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.JOB && activity.data.data.oneofKind === 'jobChange'">
+        <template v-else-if="activity.type === UserActivityType.JOB && activity.data?.data.oneofKind === 'jobChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-briefcase" class="text-secondary-400 size-full" />
+                    <UIcon name="i-mdi-briefcase" class="size-full text-gray-400" />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -196,7 +215,16 @@ const props = defineProps<{
         >
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-traffic-cone" class="text-secondary-400 size-full" />
+                    <UIcon
+                        name="i-mdi-traffic-cone"
+                        class="size-full"
+                        :class="
+                            activity.data.data.trafficInfractionPointsChange.old >
+                            activity.data.data.trafficInfractionPointsChange.new
+                                ? 'text-gray-400'
+                                : 'text-orange-400'
+                        "
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -239,16 +267,25 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.MUGSHOT && activity.data.data.oneofKind === 'mugshotChange'">
+        <template v-else-if="activity.type === UserActivityType.MUGSHOT && activity.data?.data.oneofKind === 'mugshotChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-camera-account" class="text-secondary-400 size-full" />
+                    <UIcon
+                        name="i-mdi-camera-account"
+                        class="size-full text-amber-400"
+                        :class="activity.data.data.mugshotChange.new ? 'text-gray-400' : 'text-amber-400'"
+                    />
                 </div>
 
                 <div class="flex-1 space-y-1">
                     <div class="flex items-center justify-between">
                         <h3 class="text-sm font-medium">
-                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_set') }}
+                            <template v-if="activity.data.data.mugshotChange.new">
+                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_set') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_removed') }}
+                            </template>
                         </h3>
 
                         <p class="text-sm">
@@ -272,7 +309,7 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.LABELS && activity.data.data.oneofKind === 'labelsChange'">
+        <template v-else-if="activity.type === UserActivityType.LABELS && activity.data?.data.oneofKind === 'labelsChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon name="i-mdi-tag" class="size-full text-amber-200" />
@@ -335,13 +372,13 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.LICENSES && activity.data.data.oneofKind === 'licensesChange'">
+        <template v-else-if="activity.type === UserActivityType.LICENSES && activity.data?.data.oneofKind === 'licensesChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
                         name="i-mdi-license"
                         class="size-full"
-                        :class="activity.data.data.licensesChange.added ? 'text-info-600' : 'text-warn-600'"
+                        :class="activity.data.data.licensesChange.added ? 'text-info-600' : 'text-amber-600'"
                     />
                 </div>
 
@@ -376,7 +413,7 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.JAIL && activity.data.data.oneofKind === 'jailChange'">
+        <template v-else-if="activity.type === UserActivityType.JAIL && activity.data?.data.oneofKind === 'jailChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon v-if="activity.data.data.jailChange.seconds > 0" name="i-mdi-handcuffs" class="size-full" />
@@ -389,7 +426,7 @@ const props = defineProps<{
                         <h3 class="text-sm font-medium">
                             <template v-if="activity.data.data.jailChange.seconds > 0">
                                 {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.jailed') }}
-                                {{ fromSecondsToFormattedDuration(parseInt(props.activity.newValue)) }}
+                                {{ fromSecondsToFormattedDuration(activity.data.data.jailChange.seconds) }}
                             </template>
                             <template v-else-if="activity.data.data.jailChange.seconds === 0">
                                 {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.unjailed') }}
@@ -422,13 +459,13 @@ const props = defineProps<{
                 </div>
             </div>
         </template>
-        <template v-else-if="activity.type === UserActivityType.FINE && activity.data.data.oneofKind === 'fineChange'">
+        <template v-else-if="activity.type === UserActivityType.FINE && activity.data?.data.oneofKind === 'fineChange'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
                     <UIcon
                         v-if="activity.data.data.fineChange.removed"
                         name="i-mdi-receipt-text-remove"
-                        class="text-secondary-400 size-full"
+                        class="size-full text-red-400"
                     />
                     <UIcon
                         v-else-if="activity.data.data.fineChange.amount < 0"
@@ -452,7 +489,7 @@ const props = defineProps<{
                             </template>
 
                             <span>
-                                {{ $n(parseInt(props.activity.newValue), 'currency') }}
+                                {{ $n(Math.abs(activity.data.data.fineChange.amount), 'currency') }}
                             </span>
                         </h3>
 
@@ -542,6 +579,7 @@ const props = defineProps<{
                                         prefix="DOC"
                                         size="xs"
                                         disable-tooltip
+                                        hide-icon
                                     />
                                 </template>
                             </DocumentInfoPopover>
@@ -612,7 +650,7 @@ const props = defineProps<{
         <template v-else-if="activity.key === 'UserProps.Job'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-briefcase" class="text-secondary-400 size-full" />
+                    <UIcon name="i-mdi-briefcase" class="size-full text-gray-400" />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -648,7 +686,7 @@ const props = defineProps<{
         <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-traffic-cone" class="text-secondary-400 size-full" />
+                    <UIcon name="i-mdi-traffic-cone" class="size-full text-gray-400" />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -690,7 +728,7 @@ const props = defineProps<{
         <template v-else-if="activity.key === 'UserProps.MugShot'">
             <div class="flex space-x-3">
                 <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                    <UIcon name="i-mdi-camera-account" class="text-secondary-400 size-full" />
+                    <UIcon name="i-mdi-camera-account" class="size-full text-gray-400" />
                 </div>
 
                 <div class="flex-1 space-y-1">
@@ -789,7 +827,7 @@ const props = defineProps<{
                     <UIcon
                         name="i-mdi-license"
                         class="size-full"
-                        :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'"
+                        :class="activity.newValue !== '' ? 'text-info-600' : 'text-amber-600'"
                     />
                 </div>
 
@@ -880,7 +918,7 @@ const props = defineProps<{
                     <UIcon
                         v-else-if="activity.newValue === activity.oldValue"
                         name="i-mdi-receipt-text-remove"
-                        class="text-secondary-400 size-full"
+                        class="size-full text-gray-400"
                     />
                     <UIcon v-else name="i-mdi-receipt-text-plus" class="size-full text-info-400" />
                 </div>

@@ -2,7 +2,6 @@ syntax = "proto3";
 
 package resources.users;
 
-//import "resources/documents/documents.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/labels.proto";
 import "resources/users/licenses.proto";
@@ -94,7 +93,7 @@ message UserTrafficInfractionPointsChange {
 }
 
 message UserMugshotChange {
-  string old = 1;
+  optional string new = 1;
 }
 
 message UserLabelsChange {
@@ -112,7 +111,7 @@ message UserJobChange {
 message UserDocumentRelation {
   bool added = 1;
   uint64 document_id = 2 [jstype = JS_STRING];
-  //resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true];
+  int32 relation = 3; // resources.documents.DocRelation enum
 }
 
 message UserJailChange {

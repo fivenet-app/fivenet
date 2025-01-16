@@ -5582,7 +5582,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | added | [bool](#bool) |  |  |
-| document_id | [uint64](#uint64) |  | resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true]; |
+| document_id | [uint64](#uint64) |  |  |
+| relation | [int32](#int32) |  | resources.documents.DocRelation enum |
 
 
 
@@ -5680,7 +5681,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| old | [string](#string) |  |  |
+| new | [string](#string) | optional |  |
 
 
 

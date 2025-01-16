@@ -1332,7 +1332,9 @@ func (m *UserMugshotChange) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Old
+	if m.New != nil {
+		// no validation rules for New
+	}
 
 	if len(errors) > 0 {
 		return UserMugshotChangeMultiError(errors)
@@ -1723,6 +1725,8 @@ func (m *UserDocumentRelation) validate(all bool) error {
 	// no validation rules for Added
 
 	// no validation rules for DocumentId
+
+	// no validation rules for Relation
 
 	if len(errors) > 0 {
 		return UserDocumentRelationMultiError(errors)

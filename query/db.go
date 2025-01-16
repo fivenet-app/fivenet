@@ -26,7 +26,8 @@ var migrationsFS embed.FS
 type Params struct {
 	fx.In
 
-	LC     fx.Lifecycle
+	LC fx.Lifecycle
+
 	Logger *zap.Logger
 	Config *config.Config
 }
@@ -75,6 +76,28 @@ func SetupDB(p Params) (*sql.DB, error) {
 	return db, nil
 }
 
+func NewMigrate(db *sql.DB) (*migrate.Migrate, error) {
+	// Setup migrate source and driver
+	source, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return nil, err
+	}
+	driver, err := mysql.WithInstance(db, &mysql.Config{
+		MigrationsTable: "fivenet_zschema_migrations",
+	})
+	if err != nil {
+		return nil, err
+	}
+	m, err := migrate.NewWithInstance(
+		"iofs", source,
+		"mysql", driver)
+	if err != nil {
+		return nil, err
+	}
+
+	return m, nil
+}
+
 func MigrateDB(logger *zap.Logger, dsn string) error {
 	logger.Info("starting database migrations")
 	// Connect to database
@@ -83,23 +106,12 @@ func MigrateDB(logger *zap.Logger, dsn string) error {
 		return err
 	}
 
-	// Setup migrate source and driver
-	source, err := iofs.New(migrationsFS, "migrations")
+	m, err := NewMigrate(db)
 	if err != nil {
 		return err
 	}
-	driver, err := mysql.WithInstance(db, &mysql.Config{
-		MigrationsTable: "fivenet_zschema_migrations",
-	})
-	if err != nil {
-		return err
-	}
-	m, err := migrate.NewWithInstance(
-		"iofs", source,
-		"mysql", driver)
-	if err != nil {
-		return err
-	}
+	m.Log = NewMigrateLogger(logger)
+
 	// Run migrations
 	if err := m.Up(); err != nil {
 		if !errors.Is(err, migrate.ErrNoChange) {

@@ -1187,6 +1187,7 @@
                     "created": "Fine created"
                 },
                 "userprops_mug_shot_set": "Set the citizen's mug shot picture",
+                "userprops_mug_shot_removed": "Removed citizen's mug shot picture",
                 "userprops_labels_updated": "Updated the citizen's labels",
                 "name_change": "Citizen's name changed from {old} to {new}"
             },

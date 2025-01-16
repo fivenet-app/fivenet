@@ -201,9 +201,9 @@ export interface UserTrafficInfractionPointsChange {
  */
 export interface UserMugshotChange {
     /**
-     * @generated from protobuf field: string old = 1;
+     * @generated from protobuf field: optional string new = 1;
      */
-    old: string;
+    new?: string;
 }
 /**
  * @generated from protobuf message resources.users.UserLabelsChange
@@ -250,7 +250,11 @@ export interface UserDocumentRelation {
     /**
      * @generated from protobuf field: uint64 document_id = 2 [jstype = JS_STRING];
      */
-    documentId: string; // resources.documents.DocRelation relation = 3 [(validate.rules).enum.defined_only = true];
+    documentId: string;
+    /**
+     * @generated from protobuf field: int32 relation = 3;
+     */
+    relation: number; // resources.documents.DocRelation enum
 }
 /**
  * @generated from protobuf message resources.users.UserJailChange
@@ -829,12 +833,11 @@ export const UserTrafficInfractionPointsChange = new UserTrafficInfractionPoints
 class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
     constructor() {
         super("resources.users.UserMugshotChange", [
-            { no: 1, name: "old", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "new", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserMugshotChange>): UserMugshotChange {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.old = "";
         if (value !== undefined)
             reflectionMergePartial<UserMugshotChange>(this, message, value);
         return message;
@@ -844,8 +847,8 @@ class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string old */ 1:
-                    message.old = reader.string();
+                case /* optional string new */ 1:
+                    message.new = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -859,9 +862,9 @@ class UserMugshotChange$Type extends MessageType<UserMugshotChange> {
         return message;
     }
     internalBinaryWrite(message: UserMugshotChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string old = 1; */
-        if (message.old !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.old);
+        /* optional string new = 1; */
+        if (message.new !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.new);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -999,13 +1002,15 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
     constructor() {
         super("resources.users.UserDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "relation", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<UserDocumentRelation>): UserDocumentRelation {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = false;
         message.documentId = "0";
+        message.relation = 0;
         if (value !== undefined)
             reflectionMergePartial<UserDocumentRelation>(this, message, value);
         return message;
@@ -1020,6 +1025,9 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
                     break;
                 case /* uint64 document_id = 2 [jstype = JS_STRING];*/ 2:
                     message.documentId = reader.uint64().toString();
+                    break;
+                case /* int32 relation */ 3:
+                    message.relation = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1039,6 +1047,9 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
         /* uint64 document_id = 2 [jstype = JS_STRING]; */
         if (message.documentId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.documentId);
+        /* int32 relation = 3; */
+        if (message.relation !== 0)
+            writer.tag(3, WireType.Varint).int32(message.relation);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
