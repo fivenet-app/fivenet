@@ -186,7 +186,7 @@ watch(jobsAccess, setFromPropsJobs);
 watch(usersAccess, setFromPropsUsers);
 watch(qualificationsAccess, setFromPropsQualifications);
 
-function addEntry(): void {
+function addNewEntry(): void {
     let idx = aTypes.value.findIndex((at) => at.type === props.defaultAccessType);
     if (idx === -1) {
         idx = aTypes.value.length - 1;
@@ -224,7 +224,7 @@ const { data: jobsList } = useAsyncData('completor-jobs', () => completorStore.l
                 :disabled="access.length >= maxEntries"
                 :ui="{ rounded: 'rounded-full' }"
                 icon="i-mdi-plus"
-                @click="addEntry"
+                @click="addNewEntry"
             />
         </UTooltip>
     </div>

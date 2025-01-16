@@ -14,6 +14,7 @@ const props = withDefaults(
         variant?: ButtonVariant;
         padded?: boolean;
         size?: ButtonSize;
+        disableTooltip?: boolean;
     }>(),
     {
         prefix: undefined,
@@ -24,6 +25,7 @@ const props = withDefaults(
         variant: 'solid',
         padded: true,
         size: 'sm',
+        disableTooltip: false,
     },
 );
 
@@ -52,7 +54,7 @@ function click(): void {
 </script>
 
 <template>
-    <UTooltip :text="$t('common.copy')">
+    <UTooltip :text="disableTooltip ? undefined : $t('common.copy')">
         <UButton
             :ui="{ round: 'rounded-md', base: '' }"
             :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"

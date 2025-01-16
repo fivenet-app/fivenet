@@ -103,12 +103,7 @@ const correctCount = ref(0);
                 />
                 <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
 
-                <ExamViewResult
-                    v-else-if="data?.examUser && data?.responses"
-                    :qualification-id="qualificationId"
-                    :exam-user="data.examUser"
-                    :responses="data.responses"
-                >
+                <ExamViewResult v-else-if="data.responses" :qualification-id="qualificationId" :responses="data.responses">
                     <template #question-after="{ question }">
                         <div
                             v-if="
@@ -148,7 +143,7 @@ const correctCount = ref(0);
                     </template>
                 </ExamViewResult>
 
-                <div v-if="!viewOnly" class="flex flex-1 justify-end gap-2 p-2">
+                <div class="flex flex-1 justify-end gap-2 p-2">
                     <p class="text-sm">
                         <span class="font-semibold">{{ $t('common.corrected') }}</span
                         >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
@@ -159,7 +154,7 @@ const correctCount = ref(0);
                     </p>
                 </div>
 
-                <UDivider class="mb-4 mt-2" />
+                <UDivider v-if="!viewOnly" class="mb-4 mt-2" />
             </template>
         </QualificationResultTutorForm>
     </UModal>

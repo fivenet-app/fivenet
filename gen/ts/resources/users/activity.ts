@@ -153,26 +153,26 @@ export interface UserActivityData {
  */
 export interface UserNameChange {
     /**
-     * @generated from protobuf field: optional string firstname = 1;
+     * @generated from protobuf field: string old = 1;
      */
-    firstname?: string;
+    old: string;
     /**
-     * @generated from protobuf field: optional string lastname = 2;
+     * @generated from protobuf field: string new = 2;
      */
-    lastname?: string;
+    new: string;
 }
 /**
  * @generated from protobuf message resources.users.UserLicenseChange
  */
 export interface UserLicenseChange {
     /**
-     * @generated from protobuf field: repeated resources.users.License added = 1;
+     * @generated from protobuf field: bool added = 1;
      */
-    added: License[];
+    added: boolean;
     /**
-     * @generated from protobuf field: repeated resources.users.License removed = 2;
+     * @generated from protobuf field: repeated resources.users.License licenses = 2;
      */
-    removed: License[];
+    licenses: License[];
 }
 /**
  * @generated from protobuf message resources.users.UserWantedChange
@@ -274,7 +274,11 @@ export interface UserJailChange {
  */
 export interface UserFineChange {
     /**
-     * @generated from protobuf field: int64 amount = 1;
+     * @generated from protobuf field: bool removed = 1;
+     */
+    removed: boolean;
+    /**
+     * @generated from protobuf field: int64 amount = 2;
      */
     amount: number;
 }
@@ -613,12 +617,14 @@ export const UserActivityData = new UserActivityData$Type();
 class UserNameChange$Type extends MessageType<UserNameChange> {
     constructor() {
         super("resources.users.UserNameChange", [
-            { no: 1, name: "firstname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "lastname", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "old", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<UserNameChange>): UserNameChange {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.old = "";
+        message.new = "";
         if (value !== undefined)
             reflectionMergePartial<UserNameChange>(this, message, value);
         return message;
@@ -628,11 +634,11 @@ class UserNameChange$Type extends MessageType<UserNameChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string firstname */ 1:
-                    message.firstname = reader.string();
+                case /* string old */ 1:
+                    message.old = reader.string();
                     break;
-                case /* optional string lastname */ 2:
-                    message.lastname = reader.string();
+                case /* string new */ 2:
+                    message.new = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -646,12 +652,12 @@ class UserNameChange$Type extends MessageType<UserNameChange> {
         return message;
     }
     internalBinaryWrite(message: UserNameChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string firstname = 1; */
-        if (message.firstname !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.firstname);
-        /* optional string lastname = 2; */
-        if (message.lastname !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.lastname);
+        /* string old = 1; */
+        if (message.old !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.old);
+        /* string new = 2; */
+        if (message.new !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.new);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -666,14 +672,14 @@ export const UserNameChange = new UserNameChange$Type();
 class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
     constructor() {
         super("resources.users.UserLicenseChange", [
-            { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License },
-            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License }
+            { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "licenses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => License }
         ]);
     }
     create(value?: PartialMessage<UserLicenseChange>): UserLicenseChange {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.added = [];
-        message.removed = [];
+        message.added = false;
+        message.licenses = [];
         if (value !== undefined)
             reflectionMergePartial<UserLicenseChange>(this, message, value);
         return message;
@@ -683,11 +689,11 @@ class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.License added */ 1:
-                    message.added.push(License.internalBinaryRead(reader, reader.uint32(), options));
+                case /* bool added */ 1:
+                    message.added = reader.bool();
                     break;
-                case /* repeated resources.users.License removed */ 2:
-                    message.removed.push(License.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.users.License licenses */ 2:
+                    message.licenses.push(License.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -701,12 +707,12 @@ class UserLicenseChange$Type extends MessageType<UserLicenseChange> {
         return message;
     }
     internalBinaryWrite(message: UserLicenseChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.License added = 1; */
-        for (let i = 0; i < message.added.length; i++)
-            License.internalBinaryWrite(message.added[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.users.License removed = 2; */
-        for (let i = 0; i < message.removed.length; i++)
-            License.internalBinaryWrite(message.removed[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* bool added = 1; */
+        if (message.added !== false)
+            writer.tag(1, WireType.Varint).bool(message.added);
+        /* repeated resources.users.License licenses = 2; */
+        for (let i = 0; i < message.licenses.length; i++)
+            License.internalBinaryWrite(message.licenses[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1109,11 +1115,13 @@ export const UserJailChange = new UserJailChange$Type();
 class UserFineChange$Type extends MessageType<UserFineChange> {
     constructor() {
         super("resources.users.UserFineChange", [
-            { no: 1, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "removed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "amount", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<UserFineChange>): UserFineChange {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.removed = false;
         message.amount = 0;
         if (value !== undefined)
             reflectionMergePartial<UserFineChange>(this, message, value);
@@ -1124,7 +1132,10 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 amount */ 1:
+                case /* bool removed */ 1:
+                    message.removed = reader.bool();
+                    break;
+                case /* int64 amount */ 2:
                     message.amount = reader.int64().toNumber();
                     break;
                 default:
@@ -1139,9 +1150,12 @@ class UserFineChange$Type extends MessageType<UserFineChange> {
         return message;
     }
     internalBinaryWrite(message: UserFineChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 amount = 1; */
+        /* bool removed = 1; */
+        if (message.removed !== false)
+            writer.tag(1, WireType.Varint).bool(message.removed);
+        /* int64 amount = 2; */
         if (message.amount !== 0)
-            writer.tag(1, WireType.Varint).int64(message.amount);
+            writer.tag(2, WireType.Varint).int64(message.amount);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

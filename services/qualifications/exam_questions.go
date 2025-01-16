@@ -290,7 +290,9 @@ func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, u
 		ExamResponses: &qualifications.ExamResponses{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	dest.ExamResponses.QualificationId = qualificationId

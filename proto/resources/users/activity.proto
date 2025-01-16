@@ -75,13 +75,13 @@ message UserActivityData {
 }
 
 message UserNameChange {
-  optional string firstname = 1;
-  optional string lastname = 2;
+  string old = 1;
+  string new = 2;
 }
 
 message UserLicenseChange {
-  repeated License added = 1;
-  repeated License removed = 2;
+  bool added = 1;
+  repeated License licenses = 2;
 }
 
 message UserWantedChange {
@@ -122,5 +122,6 @@ message UserJailChange {
 }
 
 message UserFineChange {
-  int64 amount = 1;
+  bool removed = 1;
+  int64 amount = 2;
 }

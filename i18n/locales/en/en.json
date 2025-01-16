@@ -1164,7 +1164,7 @@
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
-                    "action_text": "Set traffic points from"
+                    "action_text": "Set traffic points from {old} to {new}"
                 },
                 "bool_set_citizen": "Set the citizen as",
                 "document_relation": {
@@ -1187,7 +1187,8 @@
                     "created": "Fine created"
                 },
                 "userprops_mug_shot_set": "Set the citizen's mug shot picture",
-                "userprops_labels_updated": "Updated the citizen's labels"
+                "userprops_labels_updated": "Updated the citizen's labels",
+                "name_change": "Citizen's name changed from {old} to {new}"
             },
             "CitizenInfoActivityFeed": {
                 "own": {

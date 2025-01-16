@@ -14,14 +14,16 @@ const props = withDefaults(
     defineProps<{
         documentId?: string;
         document?: Document | DocumentShort;
-        trailing?: boolean;
+        hideTrailing?: boolean;
         hideCategory?: boolean;
+        loadOnOpen?: boolean;
     }>(),
     {
         documentId: undefined,
         document: undefined,
-        trailing: true,
+        hideTrailing: false,
         hideCategory: false,
+        loadOnOpen: false,
     },
 );
 
@@ -36,7 +38,9 @@ const {
     refresh,
     pending: loading,
     error,
-} = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), { immediate: !props.document });
+} = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), {
+    immediate: !props.loadOnOpen,
+});
 
 async function getDocument(id: string): Promise<Document> {
     const call = getGRPCDocStoreClient().getDocument({
@@ -54,6 +58,8 @@ const opened = ref(false);
 watchOnce(opened, async () => {
     if (props.document) {
         useTimeoutFn(async () => refresh(), popover.waitTime);
+    } else {
+        refresh();
     }
 });
 </script>
@@ -70,7 +76,7 @@ watchOnce(opened, async () => {
             variant="link"
             :padded="false"
             class="line-clamp-2 inline-flex w-full items-center gap-1 whitespace-normal break-words p-px"
-            :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
             @click="opened = true"
         >
             <slot name="title" :document="document" :loading="loading">

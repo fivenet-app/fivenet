@@ -218,20 +218,8 @@ func (m *UserLicenseChange) Sanitize() error {
 		return nil
 	}
 
-	// Field: Added
-	for idx, item := range m.Added {
-		_, _ = idx, item
-
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	// Field: Removed
-	for idx, item := range m.Removed {
+	// Field: Licenses
+	for idx, item := range m.Licenses {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {

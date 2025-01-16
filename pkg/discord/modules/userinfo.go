@@ -53,6 +53,7 @@ type UserInfo struct {
 type userRoleMapping struct {
 	AccountID    uint64               `alias:"account_id"`
 	ExternalID   string               `alias:"external_id"`
+	UserID       int32                `alias:"user_id"`
 	JobGrade     int32                `alias:"job_grade"`
 	Firstname    string               `alias:"firstname"`
 	Lastname     string               `alias:"lastname"`
@@ -240,6 +241,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 		SELECT(
 			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
 			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tUsers.ID.AS("userrolemapping.user_id"),
 			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
@@ -319,7 +321,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 
 		user.Roles.Sum, err = g.getUserRoles(u.Job, u.JobGrade)
 		if err != nil {
-			g.logger.Error(fmt.Sprintf("failed to set user's job roles %d", externalId), zap.Error(err))
+			g.logger.Warn(fmt.Sprintf("failed to get user's job roles %d", externalId), zap.Int32("user_id", u.UserID), zap.Error(err))
 			continue
 		}
 

@@ -879,13 +879,9 @@ func (m *UserNameChange) validate(all bool) error {
 
 	var errors []error
 
-	if m.Firstname != nil {
-		// no validation rules for Firstname
-	}
+	// no validation rules for Old
 
-	if m.Lastname != nil {
-		// no validation rules for Lastname
-	}
+	// no validation rules for New
 
 	if len(errors) > 0 {
 		return UserNameChangeMultiError(errors)
@@ -987,7 +983,9 @@ func (m *UserLicenseChange) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetAdded() {
+	// no validation rules for Added
+
+	for idx, item := range m.GetLicenses() {
 		_, _ = idx, item
 
 		if all {
@@ -995,7 +993,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserLicenseChangeValidationError{
-						field:  fmt.Sprintf("Added[%v]", idx),
+						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1003,7 +1001,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserLicenseChangeValidationError{
-						field:  fmt.Sprintf("Added[%v]", idx),
+						field:  fmt.Sprintf("Licenses[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1012,41 +1010,7 @@ func (m *UserLicenseChange) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserLicenseChangeValidationError{
-					field:  fmt.Sprintf("Added[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	for idx, item := range m.GetRemoved() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UserLicenseChangeValidationError{
-						field:  fmt.Sprintf("Removed[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UserLicenseChangeValidationError{
-						field:  fmt.Sprintf("Removed[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UserLicenseChangeValidationError{
-					field:  fmt.Sprintf("Removed[%v]", idx),
+					field:  fmt.Sprintf("Licenses[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1969,6 +1933,8 @@ func (m *UserFineChange) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Removed
 
 	// no validation rules for Amount
 

@@ -96,15 +96,7 @@ const state = reactive<Schema>({
         questions: [],
     },
     access: {
-        jobs: [
-            {
-                id: '0',
-                targetId: '0',
-                job: activeChar.value!.job,
-                minimumGrade: -1,
-                access: AccessLevel.EDIT,
-            },
-        ],
+        jobs: [],
     },
     labelSyncEnabled: false,
     labelSyncFormat: '%abbr%: %name%',
@@ -147,6 +139,7 @@ async function getQualification(qualificationId: string): Promise<void> {
                 state.exam = qualification.exam;
             }
             if (qualification.access) {
+                console.log(qualification.access.jobs);
                 state.access = qualification.access;
             }
 
@@ -165,6 +158,14 @@ async function getQualification(qualificationId: string): Promise<void> {
 onMounted(async () => {
     if (props.qualificationId) {
         await getQualification(props.qualificationId);
+    } else {
+        state.access.jobs.push({
+            id: '0',
+            targetId: '0',
+            job: activeChar.value!.job,
+            minimumGrade: -1,
+            access: AccessLevel.EDIT,
+        });
     }
 });
 
