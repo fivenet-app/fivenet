@@ -5809,8 +5809,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| old | [int32](#int32) |  |  |
-| new | [int32](#int32) |  |  |
+| old | [uint32](#uint32) |  |  |
+| new | [uint32](#uint32) |  |  |
 
 
 

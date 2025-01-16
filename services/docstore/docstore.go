@@ -51,8 +51,12 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 	if req.Search != nil && *req.Search != "" {
 		logRequest = true
 		condition = jet.BoolExp(
-			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
-				jet.RawArgs{"$search": *req.Search}),
+			jet.Raw(
+				"MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
+				jet.RawArgs{
+					"$search": *req.Search,
+				},
+			),
 		)
 	}
 	if len(req.CategoryIds) > 0 {

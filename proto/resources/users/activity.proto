@@ -88,8 +88,8 @@ message UserWantedChange {
 }
 
 message UserTrafficInfractionPointsChange {
-  int32 old = 1;
-  int32 new = 2;
+  uint32 old = 1;
+  uint32 new = 2;
 }
 
 message UserMugshotChange {

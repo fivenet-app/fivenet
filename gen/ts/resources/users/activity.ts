@@ -188,11 +188,11 @@ export interface UserWantedChange {
  */
 export interface UserTrafficInfractionPointsChange {
     /**
-     * @generated from protobuf field: int32 old = 1;
+     * @generated from protobuf field: uint32 old = 1;
      */
     old: number;
     /**
-     * @generated from protobuf field: int32 new = 2;
+     * @generated from protobuf field: uint32 new = 2;
      */
     new: number;
 }
@@ -778,8 +778,8 @@ export const UserWantedChange = new UserWantedChange$Type();
 class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfractionPointsChange> {
     constructor() {
         super("resources.users.UserTrafficInfractionPointsChange", [
-            { no: 1, name: "old", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "new", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "old", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 2, name: "new", kind: "scalar", T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
     create(value?: PartialMessage<UserTrafficInfractionPointsChange>): UserTrafficInfractionPointsChange {
@@ -795,11 +795,11 @@ class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfr
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int32 old */ 1:
-                    message.old = reader.int32();
+                case /* uint32 old */ 1:
+                    message.old = reader.uint32();
                     break;
-                case /* int32 new */ 2:
-                    message.new = reader.int32();
+                case /* uint32 new */ 2:
+                    message.new = reader.uint32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -813,12 +813,12 @@ class UserTrafficInfractionPointsChange$Type extends MessageType<UserTrafficInfr
         return message;
     }
     internalBinaryWrite(message: UserTrafficInfractionPointsChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int32 old = 1; */
+        /* uint32 old = 1; */
         if (message.old !== 0)
-            writer.tag(1, WireType.Varint).int32(message.old);
-        /* int32 new = 2; */
+            writer.tag(1, WireType.Varint).uint32(message.old);
+        /* uint32 new = 2; */
         if (message.new !== 0)
-            writer.tag(2, WireType.Varint).int32(message.new);
+            writer.tag(2, WireType.Varint).uint32(message.new);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -520,6 +520,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 		}
 	}
 
+	// Users aren't allowed to set certain props, unset them
+	req.Props.OpenFines = nil
+	req.Props.BloodType = nil
+
 	if req.Props.MugShot != nil {
 		if !slices.Contains(fields, "MugShot") {
 			return nil, errorscitizenstore.ErrPropsMugShotDenied

@@ -272,8 +272,8 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 				activity.Data = &users.UserActivityData{
 					Data: &users.UserActivityData_TrafficInfractionPointsChange{
 						TrafficInfractionPointsChange: &users.UserTrafficInfractionPointsChange{
-							Old: int32(oldPoints),
-							New: int32(newPoints),
+							Old: uint32(oldPoints),
+							New: uint32(newPoints),
 						},
 					},
 				}
