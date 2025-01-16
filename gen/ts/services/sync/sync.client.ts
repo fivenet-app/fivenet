@@ -9,6 +9,8 @@ import type { StreamRequest } from "./sync";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { SendDataResponse } from "./sync";
 import type { SendDataRequest } from "./sync";
+import type { TransferAccountResponse } from "./sync";
+import type { TransferAccountRequest } from "./sync";
 import type { RegisterAccountResponse } from "./sync";
 import type { RegisterAccountRequest } from "./sync";
 import type { AddActivityResponse } from "./sync";
@@ -40,6 +42,12 @@ export interface ISyncServiceClient {
      * @generated from protobuf rpc: RegisterAccount(services.sync.RegisterAccountRequest) returns (services.sync.RegisterAccountResponse);
      */
     registerAccount(input: RegisterAccountRequest, options?: RpcOptions): UnaryCall<RegisterAccountRequest, RegisterAccountResponse>;
+    /**
+     * Transfer account from one license to another
+     *
+     * @generated from protobuf rpc: TransferAccount(services.sync.TransferAccountRequest) returns (services.sync.TransferAccountResponse);
+     */
+    transferAccount(input: TransferAccountRequest, options?: RpcOptions): UnaryCall<TransferAccountRequest, TransferAccountResponse>;
     /**
      * DBSync's method of sending (mass) data to the FiveNet server for storing.
      *
@@ -90,12 +98,21 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<RegisterAccountRequest, RegisterAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Transfer account from one license to another
+     *
+     * @generated from protobuf rpc: TransferAccount(services.sync.TransferAccountRequest) returns (services.sync.TransferAccountResponse);
+     */
+    transferAccount(input: TransferAccountRequest, options?: RpcOptions): UnaryCall<TransferAccountRequest, TransferAccountResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<TransferAccountRequest, TransferAccountResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * DBSync's method of sending (mass) data to the FiveNet server for storing.
      *
      * @generated from protobuf rpc: SendData(services.sync.SendDataRequest) returns (services.sync.SendDataResponse);
      */
     sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -104,7 +121,7 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
      * @generated from protobuf rpc: Stream(services.sync.StreamRequest) returns (stream services.sync.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

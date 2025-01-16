@@ -230,3 +230,19 @@ func (m *StreamResponse) Sanitize() error {
 
 	return nil
 }
+
+func (m *TransferAccountRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *TransferAccountResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}

@@ -162,6 +162,24 @@ export interface RegisterAccountResponse {
     username?: string;
 }
 /**
+ * @generated from protobuf message services.sync.TransferAccountRequest
+ */
+export interface TransferAccountRequest {
+    /**
+     * @generated from protobuf field: string old_license = 1;
+     */
+    oldLicense: string;
+    /**
+     * @generated from protobuf field: string new_license = 2;
+     */
+    newLicense: string;
+}
+/**
+ * @generated from protobuf message services.sync.TransferAccountResponse
+ */
+export interface TransferAccountResponse {
+}
+/**
  * @generated from protobuf message services.sync.SendDataRequest
  */
 export interface SendDataRequest {
@@ -585,6 +603,86 @@ class RegisterAccountResponse$Type extends MessageType<RegisterAccountResponse> 
  */
 export const RegisterAccountResponse = new RegisterAccountResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TransferAccountRequest$Type extends MessageType<TransferAccountRequest> {
+    constructor() {
+        super("services.sync.TransferAccountRequest", [
+            { no: 1, name: "old_license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "new_license", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TransferAccountRequest>): TransferAccountRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.oldLicense = "";
+        message.newLicense = "";
+        if (value !== undefined)
+            reflectionMergePartial<TransferAccountRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TransferAccountRequest): TransferAccountRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string old_license */ 1:
+                    message.oldLicense = reader.string();
+                    break;
+                case /* string new_license */ 2:
+                    message.newLicense = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TransferAccountRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string old_license = 1; */
+        if (message.oldLicense !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.oldLicense);
+        /* string new_license = 2; */
+        if (message.newLicense !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.newLicense);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.TransferAccountRequest
+ */
+export const TransferAccountRequest = new TransferAccountRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TransferAccountResponse$Type extends MessageType<TransferAccountResponse> {
+    constructor() {
+        super("services.sync.TransferAccountResponse", []);
+    }
+    create(value?: PartialMessage<TransferAccountResponse>): TransferAccountResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<TransferAccountResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TransferAccountResponse): TransferAccountResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: TransferAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.sync.TransferAccountResponse
+ */
+export const TransferAccountResponse = new TransferAccountResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class SendDataRequest$Type extends MessageType<SendDataRequest> {
     constructor() {
         super("services.sync.SendDataRequest", [
@@ -800,6 +898,7 @@ export const SyncService = new ServiceType("services.sync.SyncService", [
     { name: "GetStatus", options: {}, I: GetStatusRequest, O: GetStatusResponse },
     { name: "AddActivity", options: {}, I: AddActivityRequest, O: AddActivityResponse },
     { name: "RegisterAccount", options: {}, I: RegisterAccountRequest, O: RegisterAccountResponse },
+    { name: "TransferAccount", options: {}, I: TransferAccountRequest, O: TransferAccountResponse },
     { name: "SendData", options: {}, I: SendDataRequest, O: SendDataResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
 ]);

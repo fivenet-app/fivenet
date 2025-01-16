@@ -1178,6 +1178,232 @@ var _ interface {
 
 var _RegisterAccountResponse_RegToken_Pattern = regexp.MustCompile("^[0-9]{6}$")
 
+// Validate checks the field values on TransferAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TransferAccountRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TransferAccountRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TransferAccountRequestMultiError, or nil if none found.
+func (m *TransferAccountRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TransferAccountRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetOldLicense()) > 64 {
+		err := TransferAccountRequestValidationError{
+			field:  "OldLicense",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetNewLicense()) > 64 {
+		err := TransferAccountRequestValidationError{
+			field:  "NewLicense",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return TransferAccountRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// TransferAccountRequestMultiError is an error wrapping multiple validation
+// errors returned by TransferAccountRequest.ValidateAll() if the designated
+// constraints aren't met.
+type TransferAccountRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TransferAccountRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TransferAccountRequestMultiError) AllErrors() []error { return m }
+
+// TransferAccountRequestValidationError is the validation error returned by
+// TransferAccountRequest.Validate if the designated constraints aren't met.
+type TransferAccountRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TransferAccountRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TransferAccountRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TransferAccountRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TransferAccountRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TransferAccountRequestValidationError) ErrorName() string {
+	return "TransferAccountRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TransferAccountRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTransferAccountRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TransferAccountRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TransferAccountRequestValidationError{}
+
+// Validate checks the field values on TransferAccountResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TransferAccountResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TransferAccountResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TransferAccountResponseMultiError, or nil if none found.
+func (m *TransferAccountResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TransferAccountResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return TransferAccountResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// TransferAccountResponseMultiError is an error wrapping multiple validation
+// errors returned by TransferAccountResponse.ValidateAll() if the designated
+// constraints aren't met.
+type TransferAccountResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TransferAccountResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TransferAccountResponseMultiError) AllErrors() []error { return m }
+
+// TransferAccountResponseValidationError is the validation error returned by
+// TransferAccountResponse.Validate if the designated constraints aren't met.
+type TransferAccountResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TransferAccountResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TransferAccountResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TransferAccountResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TransferAccountResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TransferAccountResponseValidationError) ErrorName() string {
+	return "TransferAccountResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TransferAccountResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTransferAccountResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TransferAccountResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TransferAccountResponseValidationError{}
+
 // Validate checks the field values on SendDataRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

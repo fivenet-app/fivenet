@@ -22,6 +22,7 @@ const (
 	SyncService_GetStatus_FullMethodName       = "/services.sync.SyncService/GetStatus"
 	SyncService_AddActivity_FullMethodName     = "/services.sync.SyncService/AddActivity"
 	SyncService_RegisterAccount_FullMethodName = "/services.sync.SyncService/RegisterAccount"
+	SyncService_TransferAccount_FullMethodName = "/services.sync.SyncService/TransferAccount"
 	SyncService_SendData_FullMethodName        = "/services.sync.SyncService/SendData"
 	SyncService_Stream_FullMethodName          = "/services.sync.SyncService/Stream"
 )
@@ -36,6 +37,8 @@ type SyncServiceClient interface {
 	AddActivity(ctx context.Context, in *AddActivityRequest, opts ...grpc.CallOption) (*AddActivityResponse, error)
 	// Get registration token for a new user account or return the account id and username, for a given identifier/license.
 	RegisterAccount(ctx context.Context, in *RegisterAccountRequest, opts ...grpc.CallOption) (*RegisterAccountResponse, error)
+	// Transfer account from one license to another
+	TransferAccount(ctx context.Context, in *TransferAccountRequest, opts ...grpc.CallOption) (*TransferAccountResponse, error)
 	// DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
@@ -74,6 +77,16 @@ func (c *syncServiceClient) RegisterAccount(ctx context.Context, in *RegisterAcc
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RegisterAccountResponse)
 	err := c.cc.Invoke(ctx, SyncService_RegisterAccount_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *syncServiceClient) TransferAccount(ctx context.Context, in *TransferAccountRequest, opts ...grpc.CallOption) (*TransferAccountResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TransferAccountResponse)
+	err := c.cc.Invoke(ctx, SyncService_TransferAccount_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,6 +132,8 @@ type SyncServiceServer interface {
 	AddActivity(context.Context, *AddActivityRequest) (*AddActivityResponse, error)
 	// Get registration token for a new user account or return the account id and username, for a given identifier/license.
 	RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error)
+	// Transfer account from one license to another
+	TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error)
 	// DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
@@ -141,6 +156,9 @@ func (UnimplementedSyncServiceServer) AddActivity(context.Context, *AddActivityR
 }
 func (UnimplementedSyncServiceServer) RegisterAccount(context.Context, *RegisterAccountRequest) (*RegisterAccountResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterAccount not implemented")
+}
+func (UnimplementedSyncServiceServer) TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TransferAccount not implemented")
 }
 func (UnimplementedSyncServiceServer) SendData(context.Context, *SendDataRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendData not implemented")
@@ -223,6 +241,24 @@ func _SyncService_RegisterAccount_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncService_TransferAccount_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TransferAccountRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).TransferAccount(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_TransferAccount_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).TransferAccount(ctx, req.(*TransferAccountRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SyncService_SendData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SendDataRequest)
 	if err := dec(in); err != nil {
@@ -270,6 +306,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterAccount",
 			Handler:    _SyncService_RegisterAccount_Handler,
+		},
+		{
+			MethodName: "TransferAccount",
+			Handler:    _SyncService_TransferAccount_Handler,
 		},
 		{
 			MethodName: "SendData",

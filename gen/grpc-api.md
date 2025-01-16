@@ -936,6 +936,8 @@
     - [SendDataResponse](#services-sync-SendDataResponse)
     - [StreamRequest](#services-sync-StreamRequest)
     - [StreamResponse](#services-sync-StreamResponse)
+    - [TransferAccountRequest](#services-sync-TransferAccountRequest)
+    - [TransferAccountResponse](#services-sync-TransferAccountResponse)
   
     - [SyncService](#services-sync-SyncService)
   
@@ -13954,6 +13956,32 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+
+<a name="services-sync-TransferAccountRequest"></a>
+
+### TransferAccountRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| old_license | [string](#string) |  |  |
+| new_license | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-sync-TransferAccountResponse"></a>
+
+### TransferAccountResponse
+
+
+
+
+
+
  <!-- end messages -->
 
  <!-- end enums -->
@@ -13971,6 +13999,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | GetStatus | [GetStatusRequest](#services-sync-GetStatusRequest) | [GetStatusResponse](#services-sync-GetStatusResponse) | Get basic "sync state" from server side (currently simply the count of records on the server side). |
 | AddActivity | [AddActivityRequest](#services-sync-AddActivityRequest) | [AddActivityResponse](#services-sync-AddActivityResponse) | For "tracking" activity such as "user received traffic infraction points", timeclock entries, etc. |
 | RegisterAccount | [RegisterAccountRequest](#services-sync-RegisterAccountRequest) | [RegisterAccountResponse](#services-sync-RegisterAccountResponse) | Get registration token for a new user account or return the account id and username, for a given identifier/license. |
+| TransferAccount | [TransferAccountRequest](#services-sync-TransferAccountRequest) | [TransferAccountResponse](#services-sync-TransferAccountResponse) | Transfer account from one license to another |
 | SendData | [SendDataRequest](#services-sync-SendDataRequest) | [SendDataResponse](#services-sync-SendDataResponse) | DBSync's method of sending (mass) data to the FiveNet server for storing. |
 | Stream | [StreamRequest](#services-sync-StreamRequest) | [StreamResponse](#services-sync-StreamResponse) stream | Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 

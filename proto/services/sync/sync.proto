@@ -64,6 +64,13 @@ message RegisterAccountResponse {
   optional string username = 3;
 }
 
+message TransferAccountRequest {
+  string old_license = 1 [(validate.rules).string.max_len = 64];
+  string new_license = 2 [(validate.rules).string.max_len = 64];
+}
+
+message TransferAccountResponse {}
+
 message SendDataRequest {
   oneof data {
     option (validate.required) = true;
@@ -97,6 +104,8 @@ service SyncService {
 
   // Get registration token for a new user account or return the account id and username, for a given identifier/license.
   rpc RegisterAccount(RegisterAccountRequest) returns (RegisterAccountResponse);
+  // Transfer account from one license to another
+  rpc TransferAccount(TransferAccountRequest) returns (TransferAccountResponse);
 
   // DBSync's method of sending (mass) data to the FiveNet server for storing.
   rpc SendData(SendDataRequest) returns (SendDataResponse);
