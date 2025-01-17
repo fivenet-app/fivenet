@@ -66,8 +66,9 @@ import (
 type Context struct{}
 
 var Cli struct {
-	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
-	StartTimeout time.Duration `help:"App start timeout duration" default:"180s"`
+	Config         string        `help:"Config file path" env:"FIVENET_CONFIG_FILE"`
+	StartTimeout   time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
+	SkipMigrations *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`
 
 	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
 	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`

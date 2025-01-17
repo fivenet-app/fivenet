@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/creasty/defaults"
+	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
@@ -28,7 +29,7 @@ func Load() (Result, error) {
 	v.SetEnvPrefix("FIVENET")
 	v.SetConfigType("yaml")
 
-	if configFile := os.Getenv("FIVENET_CONFIG_FILE"); configFile != "" {
+	if configFile := os.Getenv(envs.ConfigFileEnvVar); configFile != "" {
 		v.SetConfigFile(configFile)
 	} else {
 		v.SetConfigName("config")

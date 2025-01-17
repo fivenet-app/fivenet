@@ -5,11 +5,13 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 
 	"github.com/alecthomas/kong"
+	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -30,6 +32,10 @@ type UserActivityMigrateCmd struct {
 
 func (c *UserActivityMigrateCmd) Run(ctx *kong.Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
+
+	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
+		return err
+	}
 
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(lifecycle fx.Lifecycle, logger *zap.Logger, db *sql.DB, shutdowner fx.Shutdowner) {

@@ -4,8 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"os"
 
 	"github.com/alecthomas/kong"
+	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/query"
 	"go.uber.org/fx"
@@ -20,6 +22,10 @@ type VersionCmd struct{}
 
 func (c *VersionCmd) Run(ctx *kong.Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
+
+	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
+		return err
+	}
 
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {
@@ -71,6 +77,10 @@ type UpCmd struct{}
 
 func (c *UpCmd) Run(ctx *kong.Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, false)
+
+	if err := os.Setenv(envs.SkipDBMigrationsEnv, "true"); err != nil {
+		return err
+	}
 
 	fxOpts = append(fxOpts,
 		fx.Invoke(func(lifecycle fx.Lifecycle, cfg *config.Config, shutdowner fx.Shutdowner) {

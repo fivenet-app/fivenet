@@ -5,8 +5,11 @@ import (
 	"database/sql"
 	"embed"
 	"errors"
+	"os"
+	"strconv"
 
 	"github.com/XSAM/otelsql"
+	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	_ "github.com/go-sql-driver/mysql"
@@ -33,8 +36,10 @@ type Params struct {
 }
 
 func SetupDB(p Params) (*sql.DB, error) {
-	if err := MigrateDB(p.Logger, p.Config.Database.DSN); err != nil {
-		return nil, err
+	if skip, _ := strconv.ParseBool(os.Getenv(envs.SkipDBMigrationsEnv)); !skip {
+		if err := MigrateDB(p.Logger, p.Config.Database.DSN); err != nil {
+			return nil, err
+		}
 	}
 
 	// Connect to database
