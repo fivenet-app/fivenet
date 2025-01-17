@@ -388,12 +388,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
                                         </template>
 
-                                        <div class="mt-2 flex w-full items-center justify-center">
+                                        <div class="mt-2 flex w-full flex-col items-center justify-center gap-2">
                                             <GenericImg
                                                 v-if="jobProps.logoUrl?.url"
                                                 size="3xl"
-                                                :src="jobProps.logoUrl.url"
+                                                :src="`${jobProps.logoUrl.url}?date=${new Date().getTime()}`"
                                                 :no-blur="true"
+                                            />
+
+                                            <UAlert
+                                                icon="i-mdi-information-slab-circle"
+                                                :description="$t('common.image_caching')"
                                             />
                                         </div>
                                     </div>

@@ -413,7 +413,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <template #access>
-                    <div class="flex flex-col gap-2 overflow-y-scroll px-2">
+                    <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
                         <UFormGroup name="access" :label="$t('common.access')">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"

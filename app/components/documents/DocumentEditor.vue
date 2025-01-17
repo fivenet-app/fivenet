@@ -688,7 +688,7 @@ logger.info(
                 </template>
 
                 <template #access>
-                    <div class="flex flex-col gap-2 overflow-y-scroll px-2">
+                    <div class="flex flex-1 flex-col gap-2 overflow-y-scroll px-2">
                         <h2 class="text- text-gray-900 dark:text-white">
                             {{ $t('common.access') }}
                         </h2>
