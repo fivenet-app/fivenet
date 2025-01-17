@@ -160,6 +160,10 @@ watch(state, () => {
                     by="name"
                     clear-search-on-close
                 >
+                    <template #label>
+                        {{ $t('common.selected', state.labels.length) }}
+                    </template>
+
                     <template #option="{ option }">
                         <span
                             class="truncate"

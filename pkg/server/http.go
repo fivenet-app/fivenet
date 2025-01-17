@@ -244,7 +244,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	notFoundPage := []byte("404 page not found")
 	notFoundPageFile, err := frontendFS.Open("404.html")
 	if err != nil {
-		p.Logger.Error("failed to open 404.html file, falling back to 404 text page", zap.Error(err))
+		p.Logger.Warn("failed to open 404.html file, falling back to 404 text page")
 	} else {
 		notFoundPage, err = io.ReadAll(notFoundPageFile)
 		if err != nil {

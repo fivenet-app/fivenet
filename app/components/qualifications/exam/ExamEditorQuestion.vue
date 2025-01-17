@@ -190,14 +190,17 @@ function changeQuestionType(qt: string): void {
                             {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
                         </span>
                     </template>
+
                     <template #option="{ option }">
                         <span class="truncate">
                             {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
                         </span>
                     </template>
+
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
+
                     <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>

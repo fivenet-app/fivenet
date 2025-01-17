@@ -295,18 +295,6 @@ export enum UserActivityType {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_CHANGED = 1;
-     */
-    CHANGED = 1,
-    /**
-     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_MENTIONED = 2;
-     */
-    MENTIONED = 2,
-    /**
-     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_CREATED = 3;
-     */
-    CREATED = 3,
-    /**
      * @generated from protobuf enum value: USER_ACTIVITY_TYPE_NAME = 4;
      */
     NAME = 4,

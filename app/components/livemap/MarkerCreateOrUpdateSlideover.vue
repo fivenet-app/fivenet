@@ -244,6 +244,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
                                                 }}</span>
                                             </template>
+
                                             <template #option="{ option }">
                                                 <span class="truncate">{{
                                                     $t(`enums.livemap.MarkerType.${MarkerType[option.type ?? 0]}`)

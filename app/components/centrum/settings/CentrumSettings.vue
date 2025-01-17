@@ -228,6 +228,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
                                             }}</span>
                                         </template>
+
                                         <template #option="{ option }">
                                             <span class="truncate">{{
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
@@ -255,6 +256,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
                                             }}</span>
                                         </template>
+
                                         <template #option="{ option }">
                                             <span class="truncate">{{
                                                 $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)

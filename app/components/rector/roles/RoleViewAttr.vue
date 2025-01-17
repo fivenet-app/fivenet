@@ -336,12 +336,15 @@ onBeforeMount(async () => {
                                                 }}</span>
                                             </template>
                                         </template>
+
                                         <template #option="{ option: grade }">
                                             {{ grade?.label }}
                                         </template>
+
                                         <template #option-empty="{ query: search }">
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
+
                                         <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>

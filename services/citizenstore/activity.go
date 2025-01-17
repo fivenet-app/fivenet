@@ -51,6 +51,15 @@ func (s *Server) ListUserActivity(ctx context.Context, req *pbcitizenstore.ListU
 
 	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId))
 
+	if len(req.Types) > 0 {
+		types := []jet.Expression{}
+		for _, t := range req.Types {
+			types = append(types, jet.Int16(int16(*t.Enum())))
+		}
+
+		condition = condition.AND(tUserActivity.Type.IN(types...))
+	}
+
 	// Get total count of values
 	countStmt := tUserActivity.
 		SELECT(

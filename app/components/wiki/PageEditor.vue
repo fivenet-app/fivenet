@@ -187,7 +187,7 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
                 params: {
                     job: responsePage!.job,
                     id: responsePage!.id,
-                    slug: responsePage!.meta!.slug,
+                    slug: [responsePage!.meta!.slug ?? ''],
                 },
             });
         } else {
@@ -330,6 +330,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     }}
                                                 </span>
                                             </template>
+
                                             <template #option="{ option: opt }">
                                                 {{ opt.title }}
                                             </template>

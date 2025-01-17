@@ -626,6 +626,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         )
                                                     }}
                                                 </template>
+
                                                 <template #option="{ option }">
                                                     <span class="truncate">{{
                                                         $t(
@@ -909,6 +910,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         $d(toDate(selectedChange?.time), 'short')
                                                     }}</span>
                                                 </template>
+
                                                 <template #option="{ option }">
                                                     <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
                                                 </template>

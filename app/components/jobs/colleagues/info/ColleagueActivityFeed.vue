@@ -168,12 +168,18 @@ watchDebounced(query, async () => refresh(), {
                         value-attribute="aType"
                         :searchable-placeholder="$t('common.type', 2)"
                     >
+                        <template #label>
+                            {{ $t('common.selected', query.colleagues.length) }}
+                        </template>
+
                         <template #option="{ option }">
                             {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[option.aType]}`) }}
                         </template>
+
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
+
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>

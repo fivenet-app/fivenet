@@ -139,6 +139,7 @@ const canSubmit = ref(true);
                                         <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
                                     </template>
                                 </template>
+
                                 <template #option="{ option }">
                                     <span class="truncate">{{
                                         $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)

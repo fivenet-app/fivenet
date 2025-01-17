@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = users.UserActivityType(0)
 )
 
 // Validate checks the field values on ListCitizensRequest with the rules
@@ -738,6 +742,17 @@ func (m *ListUserActivityRequest) validate(all bool) error {
 		err := ListUserActivityRequestValidationError{
 			field:  "UserId",
 			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetTypes()) > 20 {
+		err := ListUserActivityRequestValidationError{
+			field:  "Types",
+			reason: "value must contain no more than 20 item(s)",
 		}
 		if !all {
 			return err

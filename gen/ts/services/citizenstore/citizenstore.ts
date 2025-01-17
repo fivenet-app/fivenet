@@ -15,6 +15,7 @@ import { CitizenLabel } from "../../resources/users/labels";
 import { File } from "../../resources/filestore/file";
 import { UserProps } from "../../resources/users/props";
 import { UserActivity } from "../../resources/users/activity";
+import { UserActivityType } from "../../resources/users/activity";
 import { User } from "../../resources/users/users";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Sort } from "../../resources/common/database/database";
@@ -106,9 +107,15 @@ export interface ListUserActivityRequest {
      */
     sort?: Sort;
     /**
+     * Search params
+     *
      * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserActivityType types = 4;
+     */
+    types: UserActivityType[];
 }
 /**
  * @generated from protobuf message services.citizenstore.ListUserActivityResponse
@@ -439,12 +446,14 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
         super("services.citizenstore.ListUserActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 4, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityRequest>): ListUserActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
+        message.types = [];
         if (value !== undefined)
             reflectionMergePartial<ListUserActivityRequest>(this, message, value);
         return message;
@@ -462,6 +471,13 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
                     break;
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
+                    break;
+                case /* repeated resources.users.UserActivityType types */ 4:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.types.push(reader.int32());
+                    else
+                        message.types.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -484,6 +500,13 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
+        /* repeated resources.users.UserActivityType types = 4; */
+        if (message.types.length) {
+            writer.tag(4, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.types.length; i++)
+                writer.int32(message.types[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

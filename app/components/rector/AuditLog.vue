@@ -226,14 +226,17 @@ const expand = ref({
                                         {{ usersToLabel(query.users) }}
                                     </span>
                                 </template>
+
                                 <template #option="{ option: user }">
                                     <span class="truncate">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
@@ -252,6 +255,7 @@ const expand = ref({
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.service')]) }}
                                 </template>
@@ -271,6 +275,7 @@ const expand = ref({
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
+
                             <template #empty>
                                 {{ $t('common.not_found', [$t('common.method')]) }}
                             </template>

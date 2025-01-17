@@ -548,7 +548,8 @@
         "file_drag_n_drop": "oder ziehen Sie sie hierher.",
         "insert": "Einfügen",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
-        "default_lang": "Standardsprache"
+        "default_lang": "Standardsprache",
+        "selected": "Keine ausgewählt | {n} ausgewählt"
     },
     "components": {
         "partials": {
@@ -1189,7 +1190,8 @@
                 },
                 "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
                 "userprops_labels_updated": "Labels des Bürgers aktualisiert",
-                "name_change": "Bürgername wurde geändert von {old} zu {new}"
+                "name_change": "Bürgername wurde geändert von {old} zu {new}",
+                "userprops_mug_shot_removed": "Fahndungsfoto des Bürgers entfernt"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -2738,6 +2740,21 @@
                 "MANAGE": "Verwalten",
                 "READ": "Ansehen",
                 "WRITE": "Schreiben"
+            }
+        },
+        "users": {
+            "UserActivityType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NAME": "Name",
+                "LICENSES": "Lizenzen",
+                "WANTED": "Gesucht",
+                "TRAFFIC_INFRACTION_POINTS": "StVo Punkte",
+                "MUGSHOT": "Fahndungsfoto",
+                "LABELS": "Labels",
+                "JOB": "Beruf",
+                "DOCUMENT": "Dokumente",
+                "JAIL": "Gefängnis",
+                "FINE": "Geldstrafen"
             }
         }
     },

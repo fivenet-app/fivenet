@@ -245,6 +245,10 @@ const columns = [
                                 :searchable-placeholder="$t('common.search_field')"
                                 @keydown.esc="$event.target.blur()"
                             >
+                                <template #label>
+                                    {{ $t('common.selected', state.users.length) }}
+                                </template>
+
                                 <template #option="{ option }">
                                     <span class="truncate" :class="conductTypesToBGColor(option.status)">
                                         {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}

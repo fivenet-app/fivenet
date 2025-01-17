@@ -123,12 +123,15 @@ onBeforeMount(async () => listJobs());
                                         <span class="truncate">{{ state.job?.label }}</span>
                                     </template>
                                 </template>
+
                                 <template #option="{ option: job }">
                                     <span class="truncate">{{ job.label }}</span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.job')]) }}
                                 </template>
@@ -149,12 +152,15 @@ onBeforeMount(async () => listJobs());
                                         >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
                                     >
                                 </template>
+
                                 <template #option="{ option: jobGrade }">
                                     <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>
+
                                 <template #empty>
                                     {{ $t('common.not_found', [$t('common.job_grade')]) }}
                                 </template>

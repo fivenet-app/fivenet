@@ -1,10 +1,12 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
+import { UserActivityType } from '~~/gen/ts/resources/users/activity';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const props = defineProps<{
@@ -12,6 +14,28 @@ const props = defineProps<{
 }>();
 
 const { attr, activeChar } = useAuth();
+
+const activityTypes = Object.keys(UserActivityType)
+    .map((aType) => UserActivityType[aType as keyof typeof UserActivityType])
+    .filter((aType) => {
+        if (typeof aType === 'string') {
+            return false;
+        } else if (typeof aType === 'number' && aType < 3) {
+            return false;
+        }
+        return true;
+    });
+const options = activityTypes.map((aType) => ({ aType: aType }));
+
+const schema = z.object({
+    types: z.nativeEnum(UserActivityType).array().max(activityTypes.length),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
+    types: activityTypes,
+});
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -42,6 +66,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             },
             sort: sort.value,
             userId: props.userId,
+            types: query.types,
         });
         const { response } = await call;
 
@@ -53,6 +78,10 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
 }
 
 watch(offset, async () => refresh());
+watchDebounced(query, async () => refresh(), {
+    debounce: 500,
+    maxWait: 1250,
+});
 </script>
 
 <template>
@@ -83,15 +112,43 @@ watch(offset, async () => refresh());
         />
 
         <div v-else class="flex flex-1 flex-col gap-2">
-            <div class="flex flex-1">
-                <div class="flex-1 grow" />
+            <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
+                <UFormGroup name="types" :label="$t('common.type', 2)" class="flex-1 grow">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="query.types"
+                            class="min-w-40 flex-1"
+                            multiple
+                            block
+                            trailing
+                            option-attribute="aType"
+                            :options="options"
+                            value-attribute="aType"
+                            :searchable-placeholder="$t('common.type', 2)"
+                        >
+                            <template #label>
+                                {{ $t('common.selected', query.types.length) }}
+                            </template>
+
+                            <template #option="{ option }">
+                                {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
+                            </template>
+
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+
+                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormGroup>
 
                 <SortButton
                     v-model="sort"
                     :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
                     class="flex-initial"
                 />
-            </div>
+            </UForm>
 
             <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                 <li

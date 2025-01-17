@@ -139,7 +139,6 @@ async function getQualification(qualificationId: string): Promise<void> {
                 state.exam = qualification.exam;
             }
             if (qualification.access) {
-                console.log(qualification.access.jobs);
                 state.access = qualification.access;
             }
 
@@ -435,6 +434,7 @@ const selectedTab = computed({
                                                     <template #option-empty="{ query: search }">
                                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                                     </template>
+
                                                     <template #empty>
                                                         {{ $t('common.not_found', [$t('common.close', 1)]) }}
                                                     </template>

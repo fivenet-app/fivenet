@@ -41,7 +41,9 @@ message GetUserResponse {
 message ListUserActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
+  // Search params
   int32 user_id = 3 [(validate.rules).int32.gt = 0];
+  repeated resources.users.UserActivityType types = 4 [(validate.rules).repeated.max_items = 20];
 }
 
 message ListUserActivityResponse {

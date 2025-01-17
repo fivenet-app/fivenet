@@ -260,6 +260,7 @@ watch(props, () => setFromProps());
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                         </template>
+
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>

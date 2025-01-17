@@ -129,6 +129,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                             >
                                                         </template>
                                                     </template>
+
                                                     <template #option="{ option: jobGrade }">
                                                         <span class="truncate"
                                                             >{{ jobGrade.label }} ({{ jobGrade.grade }})</span

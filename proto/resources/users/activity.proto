@@ -12,9 +12,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users
 
 enum UserActivityType {
   USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
-  USER_ACTIVITY_TYPE_CHANGED = 1;
-  USER_ACTIVITY_TYPE_MENTIONED = 2;
-  USER_ACTIVITY_TYPE_CREATED = 3;
+  reserved 1 to 3;
 
   // Types for `UserActivityData`
 

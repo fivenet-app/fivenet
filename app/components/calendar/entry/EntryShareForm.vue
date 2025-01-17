@@ -103,6 +103,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             trailing
                             by="userId"
                         >
+                            <template #label>
+                                {{ $t('common.selected', state.users.length) }}
+                            </template>
+
                             <template #option="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </template>

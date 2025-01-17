@@ -548,7 +548,8 @@
         "file_drag_n_drop": "or drag it here.",
         "insert": "Insert",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
-        "default_lang": "Default Language"
+        "default_lang": "Default Language",
+        "selected": "None selected | {n} selected"
     },
     "components": {
         "partials": {
@@ -1188,9 +1189,9 @@
                     "created": "Fine created"
                 },
                 "userprops_mug_shot_set": "Set the citizen's mug shot picture",
-                "userprops_mug_shot_removed": "Removed citizen's mug shot picture",
                 "userprops_labels_updated": "Updated the citizen's labels",
-                "name_change": "Citizen's name changed from {old} to {new}"
+                "name_change": "Citizen's name changed from {old} to {new}",
+                "userprops_mug_shot_removed": "Removed citizen's mug shot picture"
             },
             "CitizenInfoActivityFeed": {
                 "own": {
@@ -2739,6 +2740,21 @@
                 "MANAGE": "Manage",
                 "READ": "Read",
                 "WRITE": "Write"
+            }
+        },
+        "users": {
+            "UserActivityType": {
+                "UNSPECIFIED": "Unspecified",
+                "NAME": "Name",
+                "LICENSES": "Licenses",
+                "WANTED": "Wanted",
+                "TRAFFIC_INFRACTION_POINTS": "Traffic Infraction Points",
+                "MUGSHOT": "Mugshot",
+                "LABELS": "Labels",
+                "JOB": "Job",
+                "DOCUMENT": "Documents",
+                "JAIL": "Jail",
+                "FINE": "Fines"
             }
         }
     },

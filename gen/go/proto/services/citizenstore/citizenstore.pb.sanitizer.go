@@ -110,6 +110,12 @@ func (m *ListUserActivityRequest) Sanitize() error {
 		}
 	}
 
+	// Field: Types
+	for idx, item := range m.Types {
+		_, _ = idx, item
+
+	}
+
 	return nil
 }
 

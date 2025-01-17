@@ -116,6 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
                                     }}</span>
                                 </template>
+
                                 <template #option="{ option }">
                                     <span class="size-2 rounded-full" :class="requestStatusToBgColor(option.status)" />
                                     <span class="truncate">{{
