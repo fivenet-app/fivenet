@@ -17,7 +17,6 @@ async function getCharacters(): Promise<Character[]> {
         const call = getGRPCAuthClient().getCharacters({});
         const { response } = await call;
 
-        console.log('getCharacters returned', response.chars.length ?? 0, 'chars');
         return response.chars;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -34,11 +33,12 @@ watch(chars, async () => {
 
 const charLockActive = computed(() => chars.value?.some((c) => c.available === false) ?? false);
 
+const cardsRef = useTemplateRef('cardsRef');
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (charId: number) => {
     canSubmit.value = false;
 
-    console.log('choose character', charId);
     await chooseCharacter(charId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
@@ -62,29 +62,35 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             class="w-full min-w-64"
         />
 
-        <UCarousel
-            v-else
-            v-slot="{ item: char }"
-            :items="chars"
-            arrows
-            :prev-button="{
-                color: 'gray',
-                icon: 'i-mdi-arrow-left',
-            }"
-            :next-button="{
-                color: 'gray',
-                icon: 'i-mdi-arrow-right',
-            }"
-            :ui="{ item: 'basis-full sm:basis-1/3 lg:basis-1/4', container: 'rounded-lg' }"
-        >
-            <CharacterSelectorCard
-                :key="char.userId"
-                :char="char.char"
-                :unavailable="!char.available"
-                :can-submit="canSubmit"
-                @selected="onSubmitThrottle($event)"
-            />
-        </UCarousel>
+        <div v-else class="relative overflow-hidden rounded-lg">
+            <div ref="cardsRef" class="no-scrollbar relative flex w-full snap-x snap-mandatory overflow-x-auto scroll-smooth">
+                <CharacterSelectorCard
+                    v-for="char in chars"
+                    :key="char.char!.userId"
+                    :char="char.char!"
+                    :unavailable="!char.available"
+                    :can-submit="canSubmit"
+                    class="basis-full sm:basis-1/3 lg:basis-1/4"
+                    @selected="onSubmitThrottle($event)"
+                />
+            </div>
+
+            <div class="flex items-center justify-between">
+                <UButton
+                    class="absolute start-4 top-1/2 -translate-y-1/2 transform rounded-full rtl:[&_span:first-child]:rotate-180"
+                    icon="i-mdi-arrow-left"
+                    aria-label="Prev"
+                    @click="cardsRef?.scrollLeft !== null && (cardsRef!.scrollLeft -= 395)"
+                />
+
+                <UButton
+                    class="absolute end-4 top-1/2 -translate-y-1/2 transform rounded-full rtl:[&_span:last-child]:rotate-180"
+                    icon="i-mdi-arrow-right"
+                    aria-label="Next"
+                    @click="cardsRef?.scrollLeft !== null && (cardsRef!.scrollLeft += 395)"
+                />
+            </div>
+        </div>
 
         <UContainer v-if="charLockActive" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
             <UAlert

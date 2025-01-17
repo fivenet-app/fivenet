@@ -9,7 +9,7 @@ const authStore = useAuthStore();
 
 const { lastCharID } = storeToRefs(authStore);
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         char: User;
         unavailable?: boolean;
@@ -21,9 +21,13 @@ withDefaults(
     },
 );
 
-defineEmits<{
+const emit = defineEmits<{
     (e: 'selected', id: number): void;
 }>();
+
+function selectChar(): void {
+    emit('selected', props.char.userId);
+}
 
 const { game } = useAppConfig();
 </script>
@@ -35,14 +39,16 @@ const { game } = useAppConfig();
                 <div class="mx-auto inline-flex items-center gap-2">
                     <ProfilePictureImg :src="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" :no-blur="true" />
 
-                    <h2 class="text-center text-2xl font-semibold">{{ char.firstname }} {{ char.lastname }}</h2>
+                    <h2 class="text-center text-2xl font-semibold" @click="selectChar">
+                        {{ char.firstname }} {{ char.lastname }}
+                    </h2>
                 </div>
             </div>
         </template>
 
         <dl class="flex grow flex-col justify-between text-center">
             <dd class="mb-1 flex items-center justify-center gap-2">
-                <CharSexBadge :sex="char.sex!" />
+                <CharSexBadge :sex="char.sex ?? 'f'" />
 
                 <UBadge v-if="lastCharID === char.userId" class="flex-initial" size="md" variant="subtle">
                     {{ $t('common.last_used') }}
@@ -86,11 +92,8 @@ const { game } = useAppConfig();
                 :disabled="unavailable || !canSubmit"
                 :loading="!canSubmit"
                 :icon="unavailable ? 'i-mdi-lock' : undefined"
-                :label="!unavailable ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char')"
-                @click="
-                    console.log('char selected', char.userId);
-                    $emit('selected', char.userId);
-                "
+                :label="$t(!unavailable ? 'common.choose' : 'components.auth.CharacterSelectorCard.disabled_char')"
+                @click="selectChar"
             />
         </template>
     </UCard>
