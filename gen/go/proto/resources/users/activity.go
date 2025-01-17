@@ -18,10 +18,8 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 			tUserActivity.SourceUserID,
 			tUserActivity.TargetUserID,
 			tUserActivity.Type,
-			tUserActivity.Key,
-			tUserActivity.OldValue,
-			tUserActivity.NewValue,
 			tUserActivity.Reason,
+			tUserActivity.Data,
 		)
 
 	for _, activity := range activities {
@@ -30,10 +28,8 @@ func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserAct
 				activity.SourceUserId,
 				activity.TargetUserId,
 				activity.Type,
-				activity.Key,
-				activity.OldValue,
-				activity.NewValue,
 				activity.Reason,
+				activity.Data,
 			)
 	}
 

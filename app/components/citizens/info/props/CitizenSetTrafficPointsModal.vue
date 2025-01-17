@@ -66,6 +66,14 @@ async function setTrafficPoints(values: Schema): Promise<void> {
     }
 }
 
+watch(isOpen, () => {
+    if (!isOpen.value) {
+        return;
+    }
+
+    state.trafficInfractionPoints = props.user.props?.trafficInfractionPoints ?? 0;
+});
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;

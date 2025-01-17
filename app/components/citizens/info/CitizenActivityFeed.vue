@@ -95,72 +95,74 @@ watchDebounced(query, async () => refresh(), {
     />
 
     <div v-else>
-        <DataPendingBlock
-            v-if="loading"
-            :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
-        />
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
-            :error="error"
-            :retry="refresh"
-        />
-        <DataNoDataBlock
-            v-else-if="!data || data?.activity.length === 0"
-            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
-            icon="i-mdi-pulse"
-        />
+        <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
+            <UFormGroup name="types" :label="$t('common.type', 2)" class="flex-1 grow">
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="query.types"
+                        class="min-w-40 flex-1"
+                        multiple
+                        block
+                        trailing
+                        option-attribute="aType"
+                        :options="options"
+                        value-attribute="aType"
+                        :searchable-placeholder="$t('common.type', 2)"
+                    >
+                        <template #label>
+                            {{ $t('common.selected', query.types.length) }}
+                        </template>
 
-        <div v-else class="flex flex-1 flex-col gap-2">
-            <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-                <UFormGroup name="types" :label="$t('common.type', 2)" class="flex-1 grow">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="query.types"
-                            class="min-w-40 flex-1"
-                            multiple
-                            block
-                            trailing
-                            option-attribute="aType"
-                            :options="options"
-                            value-attribute="aType"
-                            :searchable-placeholder="$t('common.type', 2)"
-                        >
-                            <template #label>
-                                {{ $t('common.selected', query.types.length) }}
-                            </template>
+                        <template #option="{ option }">
+                            {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
+                        </template>
 
-                            <template #option="{ option }">
-                                {{ $t(`enums.users.UserActivityType.${UserActivityType[option.aType]}`) }}
-                            </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
 
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
+            </UFormGroup>
 
-                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </UFormGroup>
+            <SortButton
+                v-model="sort"
+                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
+                class="flex-initial"
+            />
+        </UForm>
 
-                <SortButton
-                    v-model="sort"
-                    :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
-                    class="flex-initial"
-                />
-            </UForm>
+        <div class="relative flex-1">
+            <DataPendingBlock
+                v-if="loading"
+                :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
+            />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
+                :error="error"
+                :retry="refresh"
+            />
+            <DataNoDataBlock
+                v-else-if="!data || data?.activity.length === 0"
+                :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
+                icon="i-mdi-pulse"
+            />
 
-            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                <li
-                    v-for="activity in data?.activity"
-                    :key="activity.id"
-                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
-                >
-                    <CitizenActivityFeedEntry :activity="activity" />
-                </li>
-            </ul>
-
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+            <div v-else>
+                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                    <li
+                        v-for="activity in data?.activity"
+                        :key="activity.id"
+                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
+                    >
+                        <CitizenActivityFeedEntry :activity="activity" />
+                    </li>
+                </ul>
+            </div>
         </div>
+
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>
 </template>
