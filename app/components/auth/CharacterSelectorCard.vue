@@ -35,7 +35,7 @@ const { game } = useAppConfig();
                 <div class="mx-auto inline-flex items-center gap-2">
                     <ProfilePictureImg :src="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" :no-blur="true" />
 
-                    <h2 class="text-center text-2xl font-medium">{{ char.firstname }} {{ char.lastname }}</h2>
+                    <h2 class="text-center text-2xl font-semibold">{{ char.firstname }} {{ char.lastname }}</h2>
                 </div>
             </div>
         </template>
@@ -49,28 +49,28 @@ const { game } = useAppConfig();
                 </UBadge>
             </dd>
 
-            <dt class="text-sm font-medium">
+            <dt class="text-sm font-semibold">
                 {{ $t('common.job') }}
             </dt>
             <dd class="text-sm">
                 {{ char.jobLabel }}<template v-if="char.job !== game.unemployedJobName"> ({{ char.jobGradeLabel }})</template>
             </dd>
 
-            <dt class="text-sm font-medium">
+            <dt class="text-sm font-semibold">
                 {{ $t('common.date_of_birth') }}
             </dt>
             <dd class="text-sm">{{ char.dateofbirth }}</dd>
 
-            <dt class="text-sm font-medium">{{ $t('common.height') }}</dt>
+            <dt class="text-sm font-semibold">{{ $t('common.height') }}</dt>
             <dd class="text-sm">{{ char.height }}cm</dd>
 
             <template v-if="char.visum">
-                <dt class="text-sm font-medium">{{ $t('common.visum') }}</dt>
+                <dt class="text-sm font-semibold">{{ $t('common.visum') }}</dt>
                 <dd class="text-sm">{{ char.visum }}</dd>
             </template>
 
             <template v-if="char.playtime">
-                <dt class="text-sm font-medium">
+                <dt class="text-sm font-semibold">
                     {{ $t('common.playtime') }}
                 </dt>
                 <dd class="truncate text-sm">

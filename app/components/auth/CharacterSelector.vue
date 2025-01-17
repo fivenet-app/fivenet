@@ -17,6 +17,7 @@ async function getCharacters(): Promise<Character[]> {
         const call = getGRPCAuthClient().getCharacters({});
         const { response } = await call;
 
+        console.log('getCharacters returned', response.chars.length ?? 0, 'chars');
         return response.chars;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -31,7 +32,7 @@ watch(chars, async () => {
     }
 });
 
-const charLockActive = computed(() => chars.value?.find((c) => c.available === false));
+const charLockActive = computed(() => chars.value?.some((c) => c.available === false) ?? false);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (charId: number) => {
@@ -74,7 +75,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
                 color: 'gray',
                 icon: 'i-mdi-arrow-right',
             }"
-            :ui="{ item: 'basis-full sm:basis-1/4', container: 'rounded-lg' }"
+            :ui="{ item: 'basis-full sm:basis-1/3 lg:basis-1/4', container: 'rounded-lg' }"
         >
             <CharacterSelectorCard
                 :key="char.userId"
