@@ -87,6 +87,10 @@ watch(
 
         access.value.forEach((e) => {
             if (e.type === 'user') {
+                if (e.userId === undefined) {
+                    return;
+                }
+
                 const idx = usersAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     usersAccess.value.push({
@@ -98,6 +102,10 @@ watch(
                     } as UsersT);
                 }
             } else if (e.type === 'job') {
+                if (e.job === undefined || e.minimumGrade === undefined) {
+                    return;
+                }
+
                 const idx = jobsAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     jobsAccess.value.push({
@@ -110,6 +118,10 @@ watch(
                     } as JobsT);
                 }
             } else if (e.type === 'qualification') {
+                if (e.qualificationId === undefined) {
+                    return;
+                }
+
                 const idx = qualificationsAccess.value.findIndex((a) => a.id === e.id);
                 if (idx === -1) {
                     qualificationsAccess.value.push({

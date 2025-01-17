@@ -523,7 +523,7 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 			}
 		}
 
-		if ids.ID != req.Page.Id {
+		if ids.ID != req.Page.Id && !userInfo.SuperUser {
 			return nil, errorswiki.ErrPageDenied
 		}
 	} else {
