@@ -21,13 +21,14 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-const now = new Date();
+const today = new Date();
+const minimumDay = subDays(today, 7);
 
 const schema = z.union([
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().min(now),
-        absenceEnd: z.date().min(addDays(now, 1)),
+        absenceBegin: z.date().min(minimumDay),
+        absenceEnd: z.date().min(today),
         reset: z.literal(false),
     }),
     z.object({
@@ -42,8 +43,8 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    absenceBegin: now,
-    absenceEnd: addDays(now, 1),
+    absenceBegin: today,
+    absenceEnd: addDays(today, 1),
     reset: false,
 });
 
@@ -131,6 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <PartialsDatePickerPopover
                                 v-model="state.absenceBegin"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
+                                :date-picker="{ disabledDates: [{ start: null, end: minimumDay }] }"
                             />
                         </UFormGroup>
 
@@ -138,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <DatePickerPopoverClient
                                 v-model="state.absenceEnd"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{ disabledDates: [{ start: null, end: subDays(new Date(), 1) }] }"
+                                :date-picker="{ disabledDates: [{ start: null, end: subDays(today, 1) }] }"
                             />
                         </UFormGroup>
                     </div>
