@@ -126,14 +126,12 @@ watchDebounced(query, async () => refresh(), {
                 </ClientOnly>
             </UFormGroup>
 
-            <SortButton
-                v-model="sort"
-                :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]"
-                class="flex-initial"
-            />
+            <UFormGroup label="&nbsp;">
+                <SortButton v-model="sort" :fields="[{ label: $t('common.created_at'), value: 'createdAt' }]" />
+            </UFormGroup>
         </UForm>
 
-        <div class="relative flex-1">
+        <div class="relative mt-2 flex-1">
             <DataPendingBlock
                 v-if="loading"
                 :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
