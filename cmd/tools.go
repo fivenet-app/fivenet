@@ -72,14 +72,14 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 		stmt := tUserActivity.
 			SELECT(
 				tUserActivity.ID,
-				tUserActivity.Key,
+				jet.String("fivenet_user_activity.key"),
+				jet.String("fivenet_user_activity.old_value"),
+				jet.String("fivenet_user_activity.new_value"),
 				tUserActivity.Reason,
-				tUserActivity.OldValue,
-				tUserActivity.NewValue,
 			).
 			FROM(tUserActivity).
 			WHERE(jet.AND(
-				tUserActivity.Key.IS_NOT_NULL(),
+				jet.String("fivenet_user_activity.key").IS_NOT_NULL(),
 			)).
 			ORDER_BY(tUserActivity.ID.ASC()).
 			LIMIT(limit)
@@ -124,7 +124,7 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 					Data: &users.UserActivityData_DocumentRelation{
 						DocumentRelation: &users.UserDocumentRelation{
 							DocumentId: uint64(docId),
-							Added:      activity.OldValue != "",
+							Added:      activity.NewValue != "",
 							Relation:   int32(relation),
 						},
 					},
@@ -318,11 +318,12 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 
 func (c *UserActivityMigrateCmd) updateActivity(ctx context.Context, tx *sql.DB, id uint64, aType users.UserActivityType, reason string, data *users.UserActivityData) error {
 	tUserActivity := table.FivenetUserActivity
+
 	stmt := tUserActivity.
 		UPDATE(
-			tUserActivity.Key,
-			tUserActivity.OldValue,
-			tUserActivity.NewValue,
+			jet.StringColumn("fivenet_user_activity.key"),
+			jet.StringColumn("fivenet_user_activity.old_value"),
+			jet.StringColumn("fivenet_user_activity.new_value"),
 			tUserActivity.Type,
 			tUserActivity.Reason,
 			tUserActivity.Data,

@@ -22,9 +22,6 @@ type fivenetUserActivityTable struct {
 	SourceUserID mysql.ColumnInteger
 	TargetUserID mysql.ColumnInteger
 	Type         mysql.ColumnInteger
-	Key          mysql.ColumnString
-	OldValue     mysql.ColumnString
-	NewValue     mysql.ColumnString
 	Reason       mysql.ColumnString
 	Data         mysql.ColumnString
 
@@ -72,13 +69,10 @@ func newFivenetUserActivityTableImpl(schemaName, tableName, alias string) fivene
 		SourceUserIDColumn = mysql.IntegerColumn("source_user_id")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
 		TypeColumn         = mysql.IntegerColumn("type")
-		KeyColumn          = mysql.StringColumn("key")
-		OldValueColumn     = mysql.StringColumn("old_value")
-		NewValueColumn     = mysql.StringColumn("new_value")
 		ReasonColumn       = mysql.StringColumn("reason")
 		DataColumn         = mysql.StringColumn("data")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn, DataColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, KeyColumn, OldValueColumn, NewValueColumn, ReasonColumn, DataColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, ReasonColumn, DataColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, SourceUserIDColumn, TargetUserIDColumn, TypeColumn, ReasonColumn, DataColumn}
 	)
 
 	return fivenetUserActivityTable{
@@ -90,9 +84,6 @@ func newFivenetUserActivityTableImpl(schemaName, tableName, alias string) fivene
 		SourceUserID: SourceUserIDColumn,
 		TargetUserID: TargetUserIDColumn,
 		Type:         TypeColumn,
-		Key:          KeyColumn,
-		OldValue:     OldValueColumn,
-		NewValue:     NewValueColumn,
 		Reason:       ReasonColumn,
 		Data:         DataColumn,
 
