@@ -214,8 +214,23 @@ func (s *Sync) run(ctx context.Context) error {
 				s.logger.Error("error during users sync", zap.Error(err))
 			}
 
+			select {
+			case <-ctx.Done():
+				return
+
+			case <-time.After(2 * time.Second):
+			}
+		}
+	}()
+
+	// Owned Vehicles data sync loop
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
+
+		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
-				s.logger.Error("error during users sync", zap.Error(err))
+				s.logger.Error("error during vehicles sync", zap.Error(err))
 			}
 
 			select {

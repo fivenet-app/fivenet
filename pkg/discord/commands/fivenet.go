@@ -16,7 +16,7 @@ func init() {
 	CommandsFactories["fivenet"] = NewFivenetCommand
 }
 
-type FiveNetCommand struct {
+type FivenetCommand struct {
 	l *lang.I18n
 
 	url string
@@ -26,7 +26,7 @@ func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, p CommandPar
 	lEN := p.L.I18n("en")
 	lDE := p.L.I18n("de")
 
-	router.Add("fivenet", &FiveNetCommand{
+	router.Add("fivenet", &FivenetCommand{
 		l:   p.L,
 		url: cfg.HTTP.PublicURL,
 	})
@@ -47,7 +47,7 @@ func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, p CommandPar
 		nil
 }
 
-func (c *FiveNetCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+func (c *FivenetCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
 	localizer := c.l.I18n(string(cmd.Event.Locale))
 
 	return &api.InteractionResponseData{

@@ -28,10 +28,10 @@ type DBSyncState struct {
 type TableSyncState struct {
 	dss *DBSyncState
 
-	LastCheck time.Time `yaml:"lastCheck"`
-	Offset    uint64    `yaml:"offset"`
-	LastID    *string   `yaml:"lastId"`
-	SyncedUp  bool      `yaml:"syncedUp"`
+	LastCheck *time.Time `yaml:"lastCheck"`
+	Offset    uint64     `yaml:"offset"`
+	LastID    *string    `yaml:"lastId"`
+	SyncedUp  bool       `yaml:"syncedUp"`
 }
 
 func NewDBSyncState(logger *zap.Logger, filepath string) *DBSyncState {
@@ -95,7 +95,8 @@ func (s *DBSyncState) Save() error {
 }
 
 func (s *TableSyncState) Set(offset uint64, lastId *string) {
-	s.LastCheck = time.Now()
+	now := time.Now()
+	s.LastCheck = &now
 	s.Offset = offset
 	s.LastID = lastId
 

@@ -4,7 +4,6 @@ import (
 	"context"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -39,7 +38,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 	// Ensure to zero the last check time if the data hasn't fully synced yet
 	if !s.state.SyncedUp {
-		s.state.LastCheck = time.Time{}
+		s.state.LastCheck = nil
 	}
 
 	sQuery := s.cfg.Tables.Users.DBSyncTable
