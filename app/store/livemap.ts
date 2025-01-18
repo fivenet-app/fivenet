@@ -153,7 +153,7 @@ export const useLivemapStore = defineStore('livemap', {
                     logger.error('Stream failed', error.code, error.message, error.cause);
 
                     // Only set error if we don't need to restart
-                    if (this.abort !== undefined && !this.abort?.signal.aborted) {
+                    if (!this.abort?.signal.aborted) {
                         this.restartStream();
                     } else {
                         this.error = error;

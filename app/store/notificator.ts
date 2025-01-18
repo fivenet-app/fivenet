@@ -56,6 +56,11 @@ export const useNotificatorStore = defineStore('notifications', {
             this.notifications.push(notification);
         },
 
+        resetData(): void {
+            this.notificationsCount = 0;
+            this.notifications = [];
+        },
+
         async startStream(): Promise<void> {
             if (this.abort !== undefined) {
                 return;
@@ -147,19 +152,27 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             this.add(not);
+                        } else {
+                            logger.warn('Unknown userEvent data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'jobEvent') {
                         if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
                             authStore.setJobProps(resp.data.jobEvent.data.jobProps);
                         } else {
-                            logger.warn('Unknown job event data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown jobEvent data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'jobGradeEvent') {
                         if (resp.data.jobGradeEvent.data.oneofKind === 'refreshToken') {
                             await authStore.chooseCharacter(undefined);
+                        } else {
+                            logger.warn('Unknown jobGradeEvent event data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     } else if (resp.data.oneofKind === 'systemEvent') {
-                        logger.warn('No systemEvent handlers available.', resp.data);
+                        if (resp.data.systemEvent.data.oneofKind === 'ping') {
+                            // Pong!
+                        } else {
+                            logger.warn('Unknown systemEvent event data received - Kind: ', resp.data.oneofKind, resp.data);
+                        }
                     } else if (resp.data.oneofKind === 'mailerEvent') {
                         if (can('MailerService.ListEmails').value) {
                             useMailerStore().handleEvent(resp.data.mailerEvent);
@@ -183,10 +196,9 @@ export const useNotificatorStore = defineStore('notifications', {
                     if (error.message.includes('ErrCharLock')) {
                         await handleGRPCError(error);
                     }
-                    if (this.abort !== undefined && !this.abort?.signal.aborted) {
-                        this.restartStream();
-                    }
-                } else {
+                }
+
+                if (!this.abort?.signal.aborted) {
                     await this.restartStream();
                 }
             }

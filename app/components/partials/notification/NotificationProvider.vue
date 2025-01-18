@@ -13,7 +13,7 @@ const { timeouts } = useAppConfig();
 const { can, username, activeChar } = useAuth();
 
 const notificatorStore = useNotificatorStore();
-const { abort, notifications } = storeToRefs(notificatorStore);
+const { notifications } = storeToRefs(notificatorStore);
 const { startStream, stopStream } = notificatorStore;
 
 const settingsStore = useSettingsStore();
@@ -25,6 +25,7 @@ const mailerStore = useMailerStore();
 async function checkAppointments(): Promise<void> {
     await calendarStore.checkAppointments();
 }
+
 const { pause, resume } = useIntervalFn(
     async () => {
         pause();
@@ -73,12 +74,12 @@ async function toggleStream(): Promise<void> {
         } catch (e) {
             logger.error('exception during notification stream', e);
         }
-    } else if (abort.value !== undefined) {
+    } else {
         pause();
         stop();
         await stopStream();
 
-        notificatorStore.$reset();
+        notificatorStore.resetData();
     }
 }
 

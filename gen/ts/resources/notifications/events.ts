@@ -89,6 +89,18 @@ export interface JobGradeEvent {
  * @generated from protobuf message resources.notifications.SystemEvent
  */
 export interface SystemEvent {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "ping";
+        /**
+         * @generated from protobuf field: bool ping = 1;
+         */
+        ping: boolean;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserEvent$Type extends MessageType<UserEvent> {
@@ -263,18 +275,43 @@ export const JobGradeEvent = new JobGradeEvent$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SystemEvent$Type extends MessageType<SystemEvent> {
     constructor() {
-        super("resources.notifications.SystemEvent", []);
+        super("resources.notifications.SystemEvent", [
+            { no: 1, name: "ping", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
     create(value?: PartialMessage<SystemEvent>): SystemEvent {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<SystemEvent>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SystemEvent): SystemEvent {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool ping */ 1:
+                    message.data = {
+                        oneofKind: "ping",
+                        ping: reader.bool()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: SystemEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool ping = 1; */
+        if (message.data.oneofKind === "ping")
+            writer.tag(1, WireType.Varint).bool(message.data.ping);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

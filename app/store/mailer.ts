@@ -587,6 +587,18 @@ export const useMailerStore = defineStore('mailer', {
                 thread.state = response.state;
             }
 
+            // Add/Remove thread from unread thread list
+            const unreadThreadIdx = this.unreadThreadIds.findIndex((t) => t === state.threadId);
+            if (!response.state?.unread) {
+                if (unreadThreadIdx > -1) {
+                    this.unreadThreadIds.splice(unreadThreadIdx, 1);
+                }
+            } else {
+                if (unreadThreadIdx === -1) {
+                    this.unreadThreadIds.push(response.state.threadId);
+                }
+            }
+
             if (notify) {
                 useNotificatorStore().add({
                     title: { key: 'notifications.action_successfull.title', parameters: {} },

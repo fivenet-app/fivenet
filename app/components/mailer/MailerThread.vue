@@ -185,7 +185,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <template v-else-if="thread">
             <div class="flex w-full flex-1 items-center justify-between gap-1">
-                <h3 class="line-clamp-2 text-left font-semibold text-gray-900 hover:line-clamp-none dark:text-white">
+                <h3 class="line-clamp-2 break-all text-left font-semibold text-gray-900 hover:line-clamp-none dark:text-white">
                     {{ thread.title }}
                 </h3>
 

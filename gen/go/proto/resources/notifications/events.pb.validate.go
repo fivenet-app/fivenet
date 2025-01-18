@@ -526,6 +526,35 @@ func (m *SystemEvent) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
+	switch v := m.Data.(type) {
+	case *SystemEvent_Ping:
+		if v == nil {
+			err := SystemEventValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+		// no validation rules for Ping
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := SystemEventValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return SystemEventMultiError(errors)
 	}
