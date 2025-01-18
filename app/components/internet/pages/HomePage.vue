@@ -132,5 +132,22 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                 <SponsoredAdCard v-for="(ad, idx) in ads?.ads" :key="idx" :ad="ad" />
             </UPageGrid>
         </ULandingSection>
+
+        <ULandingSection :ui="{ wrapper: 'py-3 sm:py-3 mx-auto max-w-lg' }">
+            <ULandingCard
+                icon="i-mdi-web-box"
+                orientation="horizontal"
+                :title="$t('components.internet.pages.homepage.nic_registrar_cta.title')"
+            >
+                <template #description>
+                    <p>{{ $t('components.internet.pages.homepage.nic_registrar_cta.description') }}</p>
+
+                    <UButton
+                        :label="$t('components.internet.pages.homepage.nic_registrar_cta.button')"
+                        @click="internetStore.goTo('nic.ls')"
+                    />
+                </template>
+            </ULandingCard>
+        </ULandingSection>
     </UPage>
 </template>

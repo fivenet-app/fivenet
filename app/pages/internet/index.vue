@@ -83,7 +83,7 @@ watch(activeTab, () => updateQuery(), { deep: true });
                     :ui="{
                         container: 'divide-x divide-gray-200 dark:divide-gray-600',
                         inner: 'min-w-60 max-w-60',
-                        wrapper: 'overflow-x-auto',
+                        wrapper: 'overflow-x-auto h-[60px]',
                     }"
                 >
                     <template #default="{ link }">
@@ -100,7 +100,15 @@ watch(activeTab, () => updateQuery(), { deep: true });
                     </template>
 
                     <template #badge="{ link }">
-                        <UButton icon="i-mdi-close" variant="ghost" color="black" @click="internetStore.closeTab(link.id)" />
+                        <UButton
+                            icon="i-mdi-close"
+                            variant="ghost"
+                            color="black"
+                            @click="
+                                $event.stopPropagation();
+                                internetStore.closeTab(link.id);
+                            "
+                        />
                     </template>
                 </UHorizontalNavigation>
 

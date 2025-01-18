@@ -277,7 +277,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="inline-flex items-center gap-1">
                         <span class="text-sm font-semibold">{{ $t('common.title') }}:</span>
-                        <h3 class="line-clamp-2 text-xl font-bold hover:line-clamp-none">{{ message.title }}</h3>
+                        <h3 class="line-clamp-2 break-all text-xl font-bold hover:line-clamp-none">{{ message.title }}</h3>
                     </div>
                 </div>
 

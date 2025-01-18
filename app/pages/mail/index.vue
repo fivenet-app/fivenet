@@ -267,7 +267,7 @@ onBeforeMount(async () => {
                                 }}
                             </span>
 
-                            <UBadge v-if="selectedEmail?.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
+                            <UBadge v-if="option?.deactivated" color="red" size="xs" :label="$t('common.disabled')" />
                         </template>
 
                         <template #option-empty="{ query: search }">

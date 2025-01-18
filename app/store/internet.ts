@@ -55,10 +55,6 @@ export const useInternetStore = defineStore('internet', {
             return id;
         },
         closeTab(id: number): void {
-            if (this.activeTab?.id === id) {
-                this.selectTab();
-            }
-
             const idx = this.tabs.findIndex((t) => t.id === id);
             if (idx === -1) {
                 return;
@@ -66,6 +62,20 @@ export const useInternetStore = defineStore('internet', {
 
             logger.debug('close tab, id:', id);
             this.tabs.splice(idx, 1);
+
+            // Attempt to find a close by tab if needed
+            if (this.activeTab?.id === id) {
+                this.selectTab();
+
+                if (this.tabs.length > 0) {
+                    const idx = this.tabs.findIndex((t) => t.id === id - 1);
+                    if (idx === -1) {
+                        this.selectTab(this.tabs[0]?.id);
+                    } else {
+                        this.selectTab(this.tabs[idx]?.id);
+                    }
+                }
+            }
         },
         selectTab(id?: number): void {
             logger.debug('select tab, id:', id);

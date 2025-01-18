@@ -1273,7 +1273,16 @@
             "pages": {
                 "homepage": {
                     "title": "Internet Search",
-                    "description": "Search through the internet."
+                    "description": "Search through the internet.",
+                    "nic_registrar_cta": {
+                        "title": "Want your own Domain on the Internet?",
+                        "description": "Every Domain comes with Free Website Hosting that includes a convienent Website builder.",
+                        "button": "Click here to register your domain!"
+                    }
+                },
+                "nic_registrar": {
+                    "title": "Network Information Center",
+                    "description": ""
                 }
             },
             "ads": {
