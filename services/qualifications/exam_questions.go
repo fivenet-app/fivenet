@@ -82,6 +82,7 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 
 		return nil
 	}
+
 	current, err := s.getExamQuestions(ctx, tx, qualificationId, false)
 	if err != nil {
 		return err

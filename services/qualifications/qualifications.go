@@ -408,7 +408,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	if req.Qualification.Exam != nil && req.Qualification.Exam.Questions != nil {
+	if req.Qualification.Exam != nil {
 		if err := s.handleExamQuestionsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Exam); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
