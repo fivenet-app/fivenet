@@ -72,14 +72,14 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 		stmt := tUserActivity.
 			SELECT(
 				tUserActivity.ID,
-				jet.String("fivenet_user_activity.key"),
-				jet.String("fivenet_user_activity.old_value"),
-				jet.String("fivenet_user_activity.new_value"),
+				jet.StringColumn("key").AS("fivenet_user_activity.key"),
+				jet.StringColumn("old_value").AS("fivenet_user_activity.old_value"),
+				jet.StringColumn("new_value").AS("fivenet_user_activity.new_value"),
 				tUserActivity.Reason,
 			).
 			FROM(tUserActivity).
 			WHERE(jet.AND(
-				jet.String("fivenet_user_activity.key").IS_NOT_NULL(),
+				jet.StringColumn("key").IS_NOT_NULL(),
 			)).
 			ORDER_BY(tUserActivity.ID.ASC()).
 			LIMIT(limit)
@@ -241,7 +241,7 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 
 			case "UserProps.Labels":
 				// Labels entries are not transfered but deleted
-				delStmt := tUserActivity.DELETE().WHERE(tUserActivity.ID.EQ(jet.Uint64(activity.Id))).LIMIT(1)
+				delStmt := table.FivenetUserActivity.DELETE().WHERE(table.FivenetUserActivity.ID.EQ(jet.Uint64(activity.Id))).LIMIT(1)
 				if _, err := delStmt.ExecContext(ctx, db); err != nil {
 					return err
 				}
@@ -321,9 +321,9 @@ func (c *UserActivityMigrateCmd) updateActivity(ctx context.Context, tx *sql.DB,
 
 	stmt := tUserActivity.
 		UPDATE(
-			jet.StringColumn("fivenet_user_activity.key"),
-			jet.StringColumn("fivenet_user_activity.old_value"),
-			jet.StringColumn("fivenet_user_activity.new_value"),
+			jet.StringColumn("key"),
+			jet.StringColumn("old_value"),
+			jet.StringColumn("new_value"),
 			tUserActivity.Type,
 			tUserActivity.Reason,
 			tUserActivity.Data,
