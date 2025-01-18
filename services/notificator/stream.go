@@ -108,7 +108,6 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 			return nil
 
 		case <-pingTicker.C:
-
 			if err := srv.Send(&pbnotificator.StreamResponse{
 				Data: &pbnotificator.StreamResponse_SystemEvent{
 					SystemEvent: &notifications.SystemEvent{

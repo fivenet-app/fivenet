@@ -91,15 +91,21 @@ const { pending: messagesLoading, refresh: refreshMessages } = useLazyAsyncData(
 watch(offset, async () => refreshMessages());
 
 watchDebounced(
-    selectedThread,
-    async (val) =>
-        props.threadId === val?.id &&
-        thread.value?.state?.unread !== false &&
-        canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE) &&
-        (await mailerStore.setThreadState({
+    () => props.threadId,
+    async () => {
+        if (!thread.value?.state?.unread) {
+            return;
+        }
+
+        if (!canAccess(selectedEmail.value?.access, selectedEmail.value?.userId, AccessLevel.WRITE)) {
+            return;
+        }
+
+        await mailerStore.setThreadState({
             threadId: props.threadId,
             unread: false,
-        })),
+        });
+    },
     {
         debounce: 500,
         maxWait: 2500,
