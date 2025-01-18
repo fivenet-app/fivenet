@@ -132,16 +132,18 @@ func New(p Params) (*Sync, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		s.wg.Add(1)
 		go s.Run(ctx)
 
 		if s.cli != nil {
+			s.wg.Add(1)
 			go s.RunStream(ctx)
 		}
 
 		return nil
 	}))
 
-	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 
 		s.wg.Wait()
@@ -161,7 +163,6 @@ func New(p Params) (*Sync, error) {
 }
 
 func (s *Sync) Run(ctx context.Context) {
-	s.wg.Add(1)
 	defer s.wg.Done()
 
 	for {
@@ -178,9 +179,7 @@ func (s *Sync) Run(ctx context.Context) {
 }
 
 func (s *Sync) run(ctx context.Context) error {
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
-
+	wg := sync.WaitGroup{}
 	// On startup sync base data (jobs, job grades and license types) before the "main" sync loop starts,
 	// then sync in 5 minute interval to keep the data fresh
 	if err := s.syncBaseData(ctx); err != nil {
@@ -188,9 +187,9 @@ func (s *Sync) run(ctx context.Context) error {
 		return err
 	}
 
-	s.wg.Add(1)
+	wg.Add(1)
 	go func() {
-		defer s.wg.Done()
+		defer wg.Done()
 
 		for {
 			s.syncBaseData(ctx)
@@ -205,9 +204,9 @@ func (s *Sync) run(ctx context.Context) error {
 	}()
 
 	// User data sync loop
-	s.wg.Add(1)
+	wg.Add(1)
 	go func() {
-		defer s.wg.Done()
+		defer wg.Done()
 
 		for {
 			if err := s.users.Sync(ctx); err != nil {
@@ -224,9 +223,9 @@ func (s *Sync) run(ctx context.Context) error {
 	}()
 
 	// Owned Vehicles data sync loop
-	s.wg.Add(1)
+	wg.Add(1)
 	go func() {
-		defer s.wg.Done()
+		defer wg.Done()
 
 		for {
 			if err := s.vehicles.Sync(ctx); err != nil {
@@ -241,6 +240,8 @@ func (s *Sync) run(ctx context.Context) error {
 			}
 		}
 	}()
+
+	wg.Wait()
 
 	return nil
 }
@@ -270,7 +271,7 @@ func prepareStringQuery(query DBSyncTable, state *TableSyncState, offset uint64,
 
 	where := ""
 	// Add "updatedAt" column condition if available
-	if state == nil || (query.UpdatedTimeColumn == nil || state.LastCheck.IsZero()) {
+	if state == nil || (query.UpdatedTimeColumn == nil || (state.LastCheck == nil || state.LastCheck.IsZero())) {
 		q = strings.ReplaceAll(q, "$whereCondition", "")
 	} else {
 		where = fmt.Sprintf("WHERE `%s` >= '%s'\n",

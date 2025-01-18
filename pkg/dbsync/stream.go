@@ -10,7 +10,6 @@ import (
 )
 
 func (s *Sync) RunStream(ctx context.Context) {
-	s.wg.Add(1)
 	defer s.wg.Done()
 
 	for i := 0; i < 3; i++ {

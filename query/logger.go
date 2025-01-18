@@ -2,6 +2,7 @@ package query
 
 import (
 	"fmt"
+	"strings"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -20,7 +21,7 @@ func NewMigrateLogger(logger *zap.Logger) *MigrateLogger {
 }
 
 func (l *MigrateLogger) Printf(format string, v ...interface{}) {
-	l.logger.Info(fmt.Sprintf(format, v...))
+	l.logger.Info(fmt.Sprintf(strings.TrimRight(format, "\n"), v...))
 }
 
 // Verbose should return true when verbose logging output is wanted
