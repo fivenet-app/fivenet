@@ -7,4 +7,5 @@ module.exports = {
     printWidth: 128,
     plugins: ['prettier-plugin-organize-imports', 'prettier-plugin-tailwindcss'],
     tailwindConfig: './tailwind.config.ts',
+    tailwindStylesheet: './app/assets/css/tailwind.css',
 };
