@@ -61,7 +61,6 @@
     "devDependencies": {
         "@nuxt/devtools": "1.7.0",
         "@nuxt/eslint": "0.7.5",
-        "@nuxtjs/fontaine": "0.4.4",
         "@nuxtjs/i18n": "9.1.1",
         "@protobuf-ts/plugin": "2.9.4",
         "@tiptap/extension-character-count": "2.11.2",
