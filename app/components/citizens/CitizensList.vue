@@ -202,7 +202,7 @@ defineShortcuts({
                         v-maska
                         type="text"
                         name="dateofbirth"
-                        data-maska="##.##.####"
+                        data-maska="##[./]##[./]####"
                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                         block
                     />

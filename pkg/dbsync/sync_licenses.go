@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -34,7 +35,9 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 
 	licenses := []*users.License{}
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &licenses); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	if len(licenses) == 0 {

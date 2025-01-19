@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"errors"
 	"strconv"
 	"strings"
 
@@ -46,7 +47,9 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 	users := []*users.User{}
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &users); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	if len(users) == 0 {

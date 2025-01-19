@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles"
@@ -43,7 +44,9 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 
 	vehicles := []*vehicles.Vehicle{}
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &vehicles); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	if len(vehicles) == 0 {

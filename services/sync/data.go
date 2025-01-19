@@ -334,13 +334,13 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	if len(existing) == 0 {
 		toCreate = data.Users.Users
 	} else {
-		for _, userId := range existing {
-			if idx := slices.IndexFunc(data.Users.Users, func(user *users.User) bool {
-				return user.UserId == userId
+		for _, user := range data.Users.Users {
+			if idx := slices.IndexFunc(existing, func(userId int32) bool {
+				return userId == user.UserId
 			}); idx == -1 {
-				toCreate = append(toCreate, data.Users.Users[idx])
+				toCreate = append(toCreate, user)
 			} else {
-				toUpdate = append(toUpdate, data.Users.Users[idx])
+				toUpdate = append(toUpdate, user)
 			}
 		}
 	}
@@ -349,6 +349,7 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 	if len(toCreate) > 0 {
 		stmt := tUsers.
 			INSERT(
+				tUsers.ID,
 				tUsers.Identifier,
 				tUsers.Group,
 				tUsers.Firstname,
@@ -366,6 +367,7 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 		for _, user := range toCreate {
 			insertStmt := stmt.
 				VALUES(
+					user.UserId,
 					user.Identifier,
 					user.Group,
 					user.Firstname,

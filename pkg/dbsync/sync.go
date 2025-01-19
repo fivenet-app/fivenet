@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"crypto/tls"
 	"database/sql"
 	"fmt"
 	"strconv"
@@ -20,6 +21,7 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
 )
 
@@ -106,8 +108,15 @@ func New(p Params) (*Sync, error) {
 
 	// Create GRPC client for sync if destination is given
 	if s.cfg.Destination.URL != "" {
+		transportCreds := insecure.NewCredentials()
+		if !s.cfg.Destination.Insecure {
+			transportCreds = credentials.NewTLS(&tls.Config{
+				ClientAuth: tls.NoClientCert,
+			})
+		}
+
 		cli, err := grpc.NewClient(s.cfg.Destination.URL,
-			grpc.WithTransportCredentials(insecure.NewCredentials()),
+			grpc.WithTransportCredentials(transportCreds),
 			// Require transport security for release mode
 			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Destination.Token, s.acfg.Mode == "release")),
 		)

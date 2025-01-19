@@ -2,6 +2,7 @@ package dbsync
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
@@ -35,7 +36,9 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 
 	jobs := []*users.Job{}
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &jobs); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	if len(jobs) == 0 {

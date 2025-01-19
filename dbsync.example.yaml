@@ -6,6 +6,7 @@ destination:
   # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs)
   url: "example.fivenet.app"
   token: "YOUR_SYNC_API_TOKEN"
+  insecure: false
 
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
