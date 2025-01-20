@@ -649,3 +649,21 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 
 	return rowsAffected, nil
 }
+
+func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) (*pbsync.DeleteDataResponse, error) {
+	if s.esxCompat {
+		return nil, ErrSendDataDisabled
+	}
+
+	switch d := req.Data.(type) {
+	case *pbsync.DeleteDataRequest_Users:
+		_ = d
+		// TODO
+
+	case *pbsync.DeleteDataRequest_Vehicles:
+		_ = d
+		// TODO
+	}
+
+	return &pbsync.DeleteDataResponse{}, nil
+}

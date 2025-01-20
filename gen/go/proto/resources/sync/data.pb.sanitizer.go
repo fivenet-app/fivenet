@@ -111,6 +111,22 @@ func (m *DataVehicles) Sanitize() error {
 	return nil
 }
 
+func (m *DeleteUsers) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
+func (m *DeleteVehicles) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *UserLocation) Sanitize() error {
 	if m == nil {
 		return nil

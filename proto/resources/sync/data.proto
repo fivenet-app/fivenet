@@ -43,3 +43,11 @@ message UserLocation {
   bool hidden = 4;
   bool remove = 5;
 }
+
+message DeleteUsers {
+  repeated int32 user_ids = 1 [(validate.rules).repeated.max_items = 100];
+}
+
+message DeleteVehicles {
+  repeated string plates = 1 [(validate.rules).repeated.max_items = 100];
+}

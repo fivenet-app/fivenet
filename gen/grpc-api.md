@@ -454,6 +454,8 @@
     - [DataUserLocations](#resources-sync-DataUserLocations)
     - [DataUsers](#resources-sync-DataUsers)
     - [DataVehicles](#resources-sync-DataVehicles)
+    - [DeleteUsers](#resources-sync-DeleteUsers)
+    - [DeleteVehicles](#resources-sync-DeleteVehicles)
     - [UserLocation](#resources-sync-UserLocation)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
@@ -928,6 +930,8 @@
 - [services/sync/sync.proto](#services_sync_sync-proto)
     - [AddActivityRequest](#services-sync-AddActivityRequest)
     - [AddActivityResponse](#services-sync-AddActivityResponse)
+    - [DeleteDataRequest](#services-sync-DeleteDataRequest)
+    - [DeleteDataResponse](#services-sync-DeleteDataResponse)
     - [GetStatusRequest](#services-sync-GetStatusRequest)
     - [GetStatusResponse](#services-sync-GetStatusResponse)
     - [RegisterAccountRequest](#services-sync-RegisterAccountRequest)
@@ -7314,6 +7318,36 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | vehicles | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DeleteUsers"></a>
+
+### DeleteUsers
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_ids | [int32](#int32) | repeated |  |
+
+
+
+
+
+
+<a name="resources-sync-DeleteVehicles"></a>
+
+### DeleteVehicles
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| plates | [string](#string) | repeated |  |
 
 
 
@@ -13839,6 +13873,32 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+<a name="services-sync-DeleteDataRequest"></a>
+
+### DeleteDataRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| users | [resources.sync.DeleteUsers](#resources-sync-DeleteUsers) |  |  |
+| vehicles | [resources.sync.DeleteUsers](#resources-sync-DeleteUsers) |  |  |
+
+
+
+
+
+
+<a name="services-sync-DeleteDataResponse"></a>
+
+### DeleteDataResponse
+
+
+
+
+
+
+
 <a name="services-sync-GetStatusRequest"></a>
 
 ### GetStatusRequest
@@ -14004,6 +14064,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | RegisterAccount | [RegisterAccountRequest](#services-sync-RegisterAccountRequest) | [RegisterAccountResponse](#services-sync-RegisterAccountResponse) | Get registration token for a new user account or return the account id and username, for a given identifier/license. |
 | TransferAccount | [TransferAccountRequest](#services-sync-TransferAccountRequest) | [TransferAccountResponse](#services-sync-TransferAccountResponse) | Transfer account from one license to another |
 | SendData | [SendDataRequest](#services-sync-SendDataRequest) | [SendDataResponse](#services-sync-SendDataResponse) | DBSync's method of sending (mass) data to the FiveNet server for storing. |
+| DeleteData | [DeleteDataRequest](#services-sync-DeleteDataRequest) | [DeleteDataResponse](#services-sync-DeleteDataResponse) | Way for the gameserver to delete certain data as well |
 | Stream | [StreamRequest](#services-sync-StreamRequest) | [StreamResponse](#services-sync-StreamResponse) stream | Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data) |
 
  <!-- end services -->

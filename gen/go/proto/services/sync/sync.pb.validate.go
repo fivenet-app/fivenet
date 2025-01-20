@@ -1832,6 +1832,310 @@ var _ interface {
 	ErrorName() string
 } = SendDataResponseValidationError{}
 
+// Validate checks the field values on DeleteDataRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDataRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDataRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDataRequestMultiError, or nil if none found.
+func (m *DeleteDataRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDataRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	oneofDataPresent := false
+	switch v := m.Data.(type) {
+	case *DeleteDataRequest_Users:
+		if v == nil {
+			err := DeleteDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetUsers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DeleteDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DeleteDataRequestValidationError{
+						field:  "Users",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUsers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DeleteDataRequestValidationError{
+					field:  "Users",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *DeleteDataRequest_Vehicles:
+		if v == nil {
+			err := DeleteDataRequestValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+
+		if all {
+			switch v := interface{}(m.GetVehicles()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DeleteDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DeleteDataRequestValidationError{
+						field:  "Vehicles",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetVehicles()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DeleteDataRequestValidationError{
+					field:  "Vehicles",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := DeleteDataRequestValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteDataRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDataRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteDataRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteDataRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDataRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDataRequestMultiError) AllErrors() []error { return m }
+
+// DeleteDataRequestValidationError is the validation error returned by
+// DeleteDataRequest.Validate if the designated constraints aren't met.
+type DeleteDataRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDataRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDataRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDataRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDataRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDataRequestValidationError) ErrorName() string {
+	return "DeleteDataRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDataRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDataRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDataRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDataRequestValidationError{}
+
+// Validate checks the field values on DeleteDataResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDataResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDataResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDataResponseMultiError, or nil if none found.
+func (m *DeleteDataResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDataResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteDataResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDataResponseMultiError is an error wrapping multiple validation errors
+// returned by DeleteDataResponse.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteDataResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDataResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDataResponseMultiError) AllErrors() []error { return m }
+
+// DeleteDataResponseValidationError is the validation error returned by
+// DeleteDataResponse.Validate if the designated constraints aren't met.
+type DeleteDataResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDataResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDataResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDataResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDataResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDataResponseValidationError) ErrorName() string {
+	return "DeleteDataResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDataResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDataResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDataResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDataResponseValidationError{}
+
 // Validate checks the field values on StreamRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.

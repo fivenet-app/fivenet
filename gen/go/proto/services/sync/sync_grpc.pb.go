@@ -24,6 +24,7 @@ const (
 	SyncService_RegisterAccount_FullMethodName = "/services.sync.SyncService/RegisterAccount"
 	SyncService_TransferAccount_FullMethodName = "/services.sync.SyncService/TransferAccount"
 	SyncService_SendData_FullMethodName        = "/services.sync.SyncService/SendData"
+	SyncService_DeleteData_FullMethodName      = "/services.sync.SyncService/DeleteData"
 	SyncService_Stream_FullMethodName          = "/services.sync.SyncService/Stream"
 )
 
@@ -41,6 +42,8 @@ type SyncServiceClient interface {
 	TransferAccount(ctx context.Context, in *TransferAccountRequest, opts ...grpc.CallOption) (*TransferAccountResponse, error)
 	// DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(ctx context.Context, in *SendDataRequest, opts ...grpc.CallOption) (*SendDataResponse, error)
+	// Way for the gameserver to delete certain data as well
+	DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error)
 }
@@ -103,6 +106,16 @@ func (c *syncServiceClient) SendData(ctx context.Context, in *SendDataRequest, o
 	return out, nil
 }
 
+func (c *syncServiceClient) DeleteData(ctx context.Context, in *DeleteDataRequest, opts ...grpc.CallOption) (*DeleteDataResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteDataResponse)
+	err := c.cc.Invoke(ctx, SyncService_DeleteData_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *syncServiceClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[StreamResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &SyncService_ServiceDesc.Streams[0], SyncService_Stream_FullMethodName, cOpts...)
@@ -136,6 +149,8 @@ type SyncServiceServer interface {
 	TransferAccount(context.Context, *TransferAccountRequest) (*TransferAccountResponse, error)
 	// DBSync's method of sending (mass) data to the FiveNet server for storing.
 	SendData(context.Context, *SendDataRequest) (*SendDataResponse, error)
+	// Way for the gameserver to delete certain data as well
+	DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error)
 	// Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
 	Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error
 	mustEmbedUnimplementedSyncServiceServer()
@@ -162,6 +177,9 @@ func (UnimplementedSyncServiceServer) TransferAccount(context.Context, *Transfer
 }
 func (UnimplementedSyncServiceServer) SendData(context.Context, *SendDataRequest) (*SendDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendData not implemented")
+}
+func (UnimplementedSyncServiceServer) DeleteData(context.Context, *DeleteDataRequest) (*DeleteDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteData not implemented")
 }
 func (UnimplementedSyncServiceServer) Stream(*StreamRequest, grpc.ServerStreamingServer[StreamResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -277,6 +295,24 @@ func _SyncService_SendData_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _SyncService_DeleteData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDataRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SyncServiceServer).DeleteData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: SyncService_DeleteData_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SyncServiceServer).DeleteData(ctx, req.(*DeleteDataRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _SyncService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -314,6 +350,10 @@ var SyncService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SendData",
 			Handler:    _SyncService_SendData_Handler,
+		},
+		{
+			MethodName: "DeleteData",
+			Handler:    _SyncService_DeleteData_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

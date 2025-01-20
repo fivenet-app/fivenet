@@ -78,14 +78,16 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	// Split names if only one field is used by the framework
+	// Split names if only one field is used by the framework and only if we get 2 names out of it
 	if s.cfg.Tables.Users.SplitName {
 		for k := range users {
 			if users[k].Lastname == "" {
 				ss := strings.Split(users[k].Firstname, " ")
-				users[k].Lastname = ss[len(ss)-1]
+				if len(ss) > 1 {
+					users[k].Lastname = ss[len(ss)-1]
 
-				users[k].Firstname = strings.Replace(users[k].Firstname, " "+users[k].Lastname, "", 1)
+					users[k].Firstname = strings.Replace(users[k].Firstname, " "+users[k].Lastname, "", 1)
+				}
 			}
 		}
 	}

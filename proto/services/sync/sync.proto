@@ -89,6 +89,17 @@ message SendDataResponse {
   int64 affected_rows = 1;
 }
 
+message DeleteDataRequest {
+  oneof data {
+    option (validate.required) = true;
+
+    resources.sync.DeleteUsers users = 1;
+    resources.sync.DeleteUsers vehicles = 2;
+  }
+}
+
+message DeleteDataResponse {}
+
 message StreamRequest {}
 
 message StreamResponse {
@@ -109,6 +120,9 @@ service SyncService {
 
   // DBSync's method of sending (mass) data to the FiveNet server for storing.
   rpc SendData(SendDataRequest) returns (SendDataResponse);
+  // Way for the gameserver to delete certain data as well
+  rpc DeleteData(DeleteDataRequest) returns (DeleteDataResponse);
+
   // Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

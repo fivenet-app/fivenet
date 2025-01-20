@@ -87,6 +87,42 @@ func (m *AddActivityResponse) Sanitize() error {
 	return nil
 }
 
+func (m *DeleteDataRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Users
+	switch v := m.Data.(type) {
+
+	case *DeleteDataRequest_Users:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+		// Field: Vehicles
+	case *DeleteDataRequest_Vehicles:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *DeleteDataResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *GetStatusRequest) Sanitize() error {
 	if m == nil {
 		return nil

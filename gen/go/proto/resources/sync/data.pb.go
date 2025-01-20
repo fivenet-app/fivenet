@@ -372,6 +372,94 @@ func (x *UserLocation) GetRemove() bool {
 	return false
 }
 
+type DeleteUsers struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UserIds       []int32                `protobuf:"varint,1,rep,packed,name=user_ids,json=userIds,proto3" json:"user_ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteUsers) Reset() {
+	*x = DeleteUsers{}
+	mi := &file_resources_sync_data_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteUsers) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteUsers) ProtoMessage() {}
+
+func (x *DeleteUsers) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_sync_data_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteUsers.ProtoReflect.Descriptor instead.
+func (*DeleteUsers) Descriptor() ([]byte, []int) {
+	return file_resources_sync_data_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DeleteUsers) GetUserIds() []int32 {
+	if x != nil {
+		return x.UserIds
+	}
+	return nil
+}
+
+type DeleteVehicles struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Plates        []string               `protobuf:"bytes,1,rep,name=plates,proto3" json:"plates,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteVehicles) Reset() {
+	*x = DeleteVehicles{}
+	mi := &file_resources_sync_data_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteVehicles) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteVehicles) ProtoMessage() {}
+
+func (x *DeleteVehicles) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_sync_data_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteVehicles.ProtoReflect.Descriptor instead.
+func (*DeleteVehicles) Descriptor() ([]byte, []int) {
+	return file_resources_sync_data_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DeleteVehicles) GetPlates() []string {
+	if x != nil {
+		return x.Plates
+	}
+	return nil
+}
+
 var File_resources_sync_data_proto protoreflect.FileDescriptor
 
 var file_resources_sync_data_proto_rawDesc = []byte{
@@ -430,12 +518,18 @@ var file_resources_sync_data_proto_rawDesc = []byte{
 	0x06, 0x63, 0x6f, 0x6f, 0x72, 0x64, 0x73, 0x12, 0x16, 0x0a, 0x06, 0x68, 0x69, 0x64, 0x64, 0x65,
 	0x6e, 0x18, 0x04, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x68, 0x69, 0x64, 0x64, 0x65, 0x6e, 0x12,
 	0x16, 0x0a, 0x06, 0x72, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x08, 0x52,
-	0x06, 0x72, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x42, 0x41, 0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75,
-	0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70,
-	0x70, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f,
-	0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73,
-	0x2f, 0x73, 0x79, 0x6e, 0x63, 0x3b, 0x73, 0x79, 0x6e, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x33,
+	0x06, 0x72, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x22, 0x32, 0x0a, 0x0b, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x55, 0x73, 0x65, 0x72, 0x73, 0x12, 0x23, 0x0a, 0x08, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69,
+	0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x05, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02,
+	0x10, 0x64, 0x52, 0x07, 0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x73, 0x22, 0x32, 0x0a, 0x0e, 0x44,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x56, 0x65, 0x68, 0x69, 0x63, 0x6c, 0x65, 0x73, 0x12, 0x20, 0x0a,
+	0x06, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x09, 0x42, 0x08, 0xfa,
+	0x42, 0x05, 0x92, 0x01, 0x02, 0x10, 0x64, 0x52, 0x06, 0x70, 0x6c, 0x61, 0x74, 0x65, 0x73, 0x42,
+	0x41, 0x5a, 0x3f, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69,
+	0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65,
+	0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72,
+	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x73, 0x79, 0x6e, 0x63, 0x3b, 0x73, 0x79,
+	0x6e, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -450,7 +544,7 @@ func file_resources_sync_data_proto_rawDescGZIP() []byte {
 	return file_resources_sync_data_proto_rawDescData
 }
 
-var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_resources_sync_data_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_resources_sync_data_proto_goTypes = []any{
 	(*DataStatus)(nil),        // 0: resources.sync.DataStatus
 	(*DataJobs)(nil),          // 1: resources.sync.DataJobs
@@ -459,19 +553,21 @@ var file_resources_sync_data_proto_goTypes = []any{
 	(*DataLicenses)(nil),      // 4: resources.sync.DataLicenses
 	(*DataUserLocations)(nil), // 5: resources.sync.DataUserLocations
 	(*UserLocation)(nil),      // 6: resources.sync.UserLocation
-	(*users.Job)(nil),         // 7: resources.users.Job
-	(*users.User)(nil),        // 8: resources.users.User
-	(*vehicles.Vehicle)(nil),  // 9: resources.vehicles.Vehicle
-	(*users.License)(nil),     // 10: resources.users.License
-	(*livemap.Coords)(nil),    // 11: resources.livemap.Coords
+	(*DeleteUsers)(nil),       // 7: resources.sync.DeleteUsers
+	(*DeleteVehicles)(nil),    // 8: resources.sync.DeleteVehicles
+	(*users.Job)(nil),         // 9: resources.users.Job
+	(*users.User)(nil),        // 10: resources.users.User
+	(*vehicles.Vehicle)(nil),  // 11: resources.vehicles.Vehicle
+	(*users.License)(nil),     // 12: resources.users.License
+	(*livemap.Coords)(nil),    // 13: resources.livemap.Coords
 }
 var file_resources_sync_data_proto_depIdxs = []int32{
-	7,  // 0: resources.sync.DataJobs.jobs:type_name -> resources.users.Job
-	8,  // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
-	9,  // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
-	10, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
+	9,  // 0: resources.sync.DataJobs.jobs:type_name -> resources.users.Job
+	10, // 1: resources.sync.DataUsers.users:type_name -> resources.users.User
+	11, // 2: resources.sync.DataVehicles.vehicles:type_name -> resources.vehicles.Vehicle
+	12, // 3: resources.sync.DataLicenses.licenses:type_name -> resources.users.License
 	6,  // 4: resources.sync.DataUserLocations.users:type_name -> resources.sync.UserLocation
-	11, // 5: resources.sync.UserLocation.coords:type_name -> resources.livemap.Coords
+	13, // 5: resources.sync.UserLocation.coords:type_name -> resources.livemap.Coords
 	6,  // [6:6] is the sub-list for method output_type
 	6,  // [6:6] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
@@ -491,7 +587,7 @@ func file_resources_sync_data_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_sync_data_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

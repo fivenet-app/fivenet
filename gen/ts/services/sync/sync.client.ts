@@ -7,6 +7,8 @@ import { SyncService } from "./sync";
 import type { StreamResponse } from "./sync";
 import type { StreamRequest } from "./sync";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { DeleteDataResponse } from "./sync";
+import type { DeleteDataRequest } from "./sync";
 import type { SendDataResponse } from "./sync";
 import type { SendDataRequest } from "./sync";
 import type { TransferAccountResponse } from "./sync";
@@ -54,6 +56,12 @@ export interface ISyncServiceClient {
      * @generated from protobuf rpc: SendData(services.sync.SendDataRequest) returns (services.sync.SendDataResponse);
      */
     sendData(input: SendDataRequest, options?: RpcOptions): UnaryCall<SendDataRequest, SendDataResponse>;
+    /**
+     * Way for the gameserver to delete certain data as well
+     *
+     * @generated from protobuf rpc: DeleteData(services.sync.DeleteDataRequest) returns (services.sync.DeleteDataResponse);
+     */
+    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse>;
     /**
      * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
      *
@@ -116,12 +124,21 @@ export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {
         return stackIntercept<SendDataRequest, SendDataResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * Way for the gameserver to delete certain data as well
+     *
+     * @generated from protobuf rpc: DeleteData(services.sync.DeleteDataRequest) returns (services.sync.DeleteDataResponse);
+     */
+    deleteData(input: DeleteDataRequest, options?: RpcOptions): UnaryCall<DeleteDataRequest, DeleteDataResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteDataRequest, DeleteDataResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * Used for the server to stream events to the dbsync (e.g., "refresh" of user/char data)
      *
      * @generated from protobuf rpc: Stream(services.sync.StreamRequest) returns (stream services.sync.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

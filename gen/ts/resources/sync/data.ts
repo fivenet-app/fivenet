@@ -98,6 +98,24 @@ export interface UserLocation {
      */
     remove: boolean;
 }
+/**
+ * @generated from protobuf message resources.sync.DeleteUsers
+ */
+export interface DeleteUsers {
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 1;
+     */
+    userIds: number[];
+}
+/**
+ * @generated from protobuf message resources.sync.DeleteVehicles
+ */
+export interface DeleteVehicles {
+    /**
+     * @generated from protobuf field: repeated string plates = 1;
+     */
+    plates: string[];
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class DataStatus$Type extends MessageType<DataStatus> {
     constructor() {
@@ -465,3 +483,105 @@ class UserLocation$Type extends MessageType<UserLocation> {
  * @generated MessageType for protobuf message resources.sync.UserLocation
  */
 export const UserLocation = new UserLocation$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteUsers$Type extends MessageType<DeleteUsers> {
+    constructor() {
+        super("resources.sync.DeleteUsers", [
+            { no: 1, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteUsers>): DeleteUsers {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.userIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<DeleteUsers>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteUsers): DeleteUsers {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated int32 user_ids */ 1:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteUsers, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated int32 user_ids = 1; */
+        if (message.userIds.length) {
+            writer.tag(1, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.DeleteUsers
+ */
+export const DeleteUsers = new DeleteUsers$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteVehicles$Type extends MessageType<DeleteVehicles> {
+    constructor() {
+        super("resources.sync.DeleteVehicles", [
+            { no: 1, name: "plates", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteVehicles>): DeleteVehicles {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plates = [];
+        if (value !== undefined)
+            reflectionMergePartial<DeleteVehicles>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteVehicles): DeleteVehicles {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string plates */ 1:
+                    message.plates.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteVehicles, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string plates = 1; */
+        for (let i = 0; i < message.plates.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.plates[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.DeleteVehicles
+ */
+export const DeleteVehicles = new DeleteVehicles$Type();

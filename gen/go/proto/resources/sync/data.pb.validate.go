@@ -1027,3 +1027,224 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserLocationValidationError{}
+
+// Validate checks the field values on DeleteUsers with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DeleteUsers) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteUsers with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DeleteUsersMultiError, or
+// nil if none found.
+func (m *DeleteUsers) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteUsers) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetUserIds()) > 100 {
+		err := DeleteUsersValidationError{
+			field:  "UserIds",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteUsersMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteUsersMultiError is an error wrapping multiple validation errors
+// returned by DeleteUsers.ValidateAll() if the designated constraints aren't met.
+type DeleteUsersMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteUsersMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteUsersMultiError) AllErrors() []error { return m }
+
+// DeleteUsersValidationError is the validation error returned by
+// DeleteUsers.Validate if the designated constraints aren't met.
+type DeleteUsersValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteUsersValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteUsersValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteUsersValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteUsersValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteUsersValidationError) ErrorName() string { return "DeleteUsersValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteUsersValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteUsers.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteUsersValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteUsersValidationError{}
+
+// Validate checks the field values on DeleteVehicles with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DeleteVehicles) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteVehicles with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DeleteVehiclesMultiError,
+// or nil if none found.
+func (m *DeleteVehicles) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteVehicles) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetPlates()) > 100 {
+		err := DeleteVehiclesValidationError{
+			field:  "Plates",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return DeleteVehiclesMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteVehiclesMultiError is an error wrapping multiple validation errors
+// returned by DeleteVehicles.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteVehiclesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteVehiclesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteVehiclesMultiError) AllErrors() []error { return m }
+
+// DeleteVehiclesValidationError is the validation error returned by
+// DeleteVehicles.Validate if the designated constraints aren't met.
+type DeleteVehiclesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteVehiclesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteVehiclesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteVehiclesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteVehiclesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteVehiclesValidationError) ErrorName() string { return "DeleteVehiclesValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteVehiclesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteVehicles.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteVehiclesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteVehiclesValidationError{}
