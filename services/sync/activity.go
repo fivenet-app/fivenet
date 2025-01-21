@@ -88,7 +88,9 @@ func (s *Server) handleUserOauth2(ctx context.Context, data *pbsync.AddActivityR
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &accountId); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	if accountId == 0 {
@@ -246,9 +248,9 @@ func (s *Server) handleUserUpdate(ctx context.Context, data *pbsync.AddActivityR
 	if err := selectStmt.QueryContext(ctx, s.db, user); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
-		} else {
-			return nil
 		}
+
+		return nil
 	}
 
 	updateSets := []jet.ColumnAssigment{}

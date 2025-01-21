@@ -262,8 +262,8 @@ const selectedMode = computed({
 });
 
 const itemsAll = computed(() => [
-    { label: t('common.time_ago.day'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
-    { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
+    { label: t('common.day_view'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
+    { label: t('common.week_view'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
     { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
 ]);
 </script>

@@ -125,7 +125,9 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 
 	currentGrades := []*users.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {
-		return 0, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return 0, err
+		}
 	}
 
 	toCreate, toUpdate, toDelete := []*users.JobGrade{}, []*users.JobGrade{}, []*users.JobGrade{}
@@ -476,7 +478,9 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 
 	currentLicenses := []string{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentLicenses); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	licensesList := []string{}

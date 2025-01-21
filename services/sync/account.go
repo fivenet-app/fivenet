@@ -2,12 +2,14 @@ package sync
 
 import (
 	"context"
+	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.Account, *string, error) {
@@ -32,7 +34,9 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 		Account: &accounts.Account{},
 	}
 	if err := selectStmt.QueryContext(ctx, s.db, acc); err != nil {
-		return nil, nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil, err
+		}
 	}
 
 	return acc.Account, acc.RegToken, nil
@@ -44,7 +48,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 		return nil, err
 	}
 
-	if acc.Id > 0 {
+	if acc == nil || acc.Id > 0 {
 		// Account exists and no token reset has been requested
 		if !req.ResetToken {
 			return &pbsync.RegisterAccountResponse{
