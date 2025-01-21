@@ -42,7 +42,7 @@ export const useInternetStore = defineStore('internet', {
                 id: id,
                 label: tab.label ?? '',
                 domain: tab.domain ?? urlHomePage,
-                path: tab.path ?? '',
+                path: tab.path ?? '/',
                 icon: tab.icon,
                 active: tab.active ?? false,
                 history: [],

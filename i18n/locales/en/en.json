@@ -1284,7 +1284,7 @@
                 },
                 "nic_registrar": {
                     "title": "Network Information Center",
-                    "description": ""
+                    "description": "Network Information Center handling the registration and management of domains and websites on the internet."
                 }
             },
             "ads": {

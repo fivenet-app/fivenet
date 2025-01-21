@@ -549,7 +549,10 @@
         "insert": "Einfügen",
         "allowed_file_types": "PNG, JPG (MAX. 2000x1500px)",
         "default_lang": "Standardsprache",
-        "selected": "Keine ausgewählt | {n} ausgewählt"
+        "selected": "Keine ausgewählt | {n} ausgewählt",
+        "image_caching": "Bitte beachten Sie, dass es aufgrund des Browser-Cachings bis zu 4 Stunden dauern kann, bis das Bild für alle aktualisiert wurde.",
+        "day_view": "Tagesansicht",
+        "week_view": "Wochenansicht"
     },
     "components": {
         "partials": {
@@ -1272,7 +1275,16 @@
             "pages": {
                 "homepage": {
                     "title": "Internet Suche",
-                    "description": "Das Internet durchsuchen."
+                    "description": "Das Internet durchsuchen.",
+                    "nic_registrar_cta": {
+                        "title": "Möchten Sie Ihre eigene Domain im Internet?",
+                        "description": "Jede Domain wird mit kostenlosem Website-Hosting und einem einfachen Website-Builder geliefert.",
+                        "button": "Klicken Sie hier, um Ihre Domain zu registrieren!"
+                    }
+                },
+                "nic_registrar": {
+                    "title": "Netzwerk-Informationszentrum",
+                    "description": "Network Information Center, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst."
                 }
             },
             "ads": {
@@ -1700,7 +1712,7 @@
         "AuthService": {
             "category": "Authentifizierung",
             "ChooseCharacter": {
-                "key": "Charakter Auswählen",
+                "key": "Charakter auswählen",
                 "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
@@ -1805,7 +1817,7 @@
                 "description": "Bürgerbeziehung hinzufügen/ entfernen."
             },
             "CreateDocument": {
-                "key": "Dokument Erstellen",
+                "key": "Dokument erstellen",
                 "description": "Ein neues Dokument erstellen."
             },
             "ListDocuments": {
@@ -1813,7 +1825,7 @@
                 "description": "Dokumente auflisten/ suchen, und anzeigen."
             },
             "ListUserDocuments": {
-                "key": "Bürger-Dokumente Sehen",
+                "key": "Bürger-Dokumente sehen",
                 "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
             },
             "ListTemplates": {
