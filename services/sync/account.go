@@ -25,7 +25,7 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 		)).
 		LIMIT(1)
 
-	acc := struct {
+	acc := &struct {
 		Account  *accounts.Account
 		RegToken *string
 	}{
