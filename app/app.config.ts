@@ -117,8 +117,9 @@ export default defineAppConfig({
                 },
             },
         },
-        // Nuxt UI Pro Icons
+        // Nuxt UI Pro
         icons: {
+            // Icons
             dark: 'i-mdi-moon-and-stars',
             light: 'i-mdi-weather-sunny',
             system: 'i-mdi-computer',
@@ -151,7 +152,6 @@ export default defineAppConfig({
                 padding: 'px-2 py-3 sm:px-4',
             },
         },
-        // Nuxt UI Pro
         dashboard: {
             panel: {
                 content: {

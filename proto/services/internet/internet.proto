@@ -30,4 +30,6 @@ service InternetService {
 
   // @perm: Name=Any
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
+
+  // TODO domain registrar logic
 }
