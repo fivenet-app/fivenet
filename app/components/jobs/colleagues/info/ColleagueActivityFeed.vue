@@ -169,7 +169,7 @@ watchDebounced(query, async () => refresh(), {
                         :searchable-placeholder="$t('common.type', 2)"
                     >
                         <template #label>
-                            {{ $t('common.selected', query.colleagues.length) }}
+                            {{ $t('common.selected', query.types.length) }}
                         </template>
 
                         <template #option="{ option }">

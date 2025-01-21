@@ -246,7 +246,7 @@ const columns = [
                                 @keydown.esc="$event.target.blur()"
                             >
                                 <template #label>
-                                    {{ $t('common.selected', state.users.length) }}
+                                    {{ $t('common.selected', query.types.length) }}
                                 </template>
 
                                 <template #option="{ option }">
