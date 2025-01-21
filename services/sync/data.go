@@ -655,15 +655,61 @@ func (s *Server) DeleteData(ctx context.Context, req *pbsync.DeleteDataRequest) 
 		return nil, ErrSendDataDisabled
 	}
 
+	rowsAffected := int64(0)
+
 	switch d := req.Data.(type) {
 	case *pbsync.DeleteDataRequest_Users:
-		_ = d
-		// TODO
+		userIds := []jet.Expression{}
+		for _, identifier := range d.Users.UserIds {
+			userIds = append(userIds, jet.Int32(identifier))
+		}
+
+		tUsers := tables.Users()
+
+		delStmt := tUsers.
+			DELETE().
+			WHERE(tUsers.ID.IN(userIds...)).
+			LIMIT(int64(len(d.Users.UserIds)))
+
+		res, err := delStmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, err
+		}
+
+		rows, err := res.RowsAffected()
+		if err != nil {
+			return nil, err
+		}
+
+		rowsAffected += rows
 
 	case *pbsync.DeleteDataRequest_Vehicles:
-		_ = d
-		// TODO
+		plates := []jet.Expression{}
+		for _, plate := range d.Vehicles.Plates {
+			plates = append(plates, jet.String(plate))
+		}
+
+		tVehicles := tables.OwnedVehicles()
+
+		delStmt := tVehicles.
+			DELETE().
+			WHERE(tVehicles.Plate.IN(plates...)).
+			LIMIT(int64(len(d.Vehicles.Plates)))
+
+		res, err := delStmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, err
+		}
+
+		rows, err := res.RowsAffected()
+		if err != nil {
+			return nil, err
+		}
+
+		rowsAffected += rows
 	}
 
-	return &pbsync.DeleteDataResponse{}, nil
+	return &pbsync.DeleteDataResponse{
+		AffectedRows: rowsAffected,
+	}, nil
 }

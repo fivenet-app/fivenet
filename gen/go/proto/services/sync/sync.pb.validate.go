@@ -2056,6 +2056,8 @@ func (m *DeleteDataResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for AffectedRows
+
 	if len(errors) > 0 {
 		return DeleteDataResponseMultiError(errors)
 	}

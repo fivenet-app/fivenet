@@ -11,6 +11,7 @@ import type { IBinaryReader } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DeleteVehicles } from "../../resources/sync/data";
 import { DeleteUsers } from "../../resources/sync/data";
 import { DataUserLocations } from "../../resources/sync/data";
 import { DataVehicles } from "../../resources/sync/data";
@@ -246,9 +247,9 @@ export interface DeleteDataRequest {
     } | {
         oneofKind: "vehicles";
         /**
-         * @generated from protobuf field: resources.sync.DeleteUsers vehicles = 2;
+         * @generated from protobuf field: resources.sync.DeleteVehicles vehicles = 2;
          */
-        vehicles: DeleteUsers;
+        vehicles: DeleteVehicles;
     } | {
         oneofKind: undefined;
     };
@@ -257,6 +258,10 @@ export interface DeleteDataRequest {
  * @generated from protobuf message services.sync.DeleteDataResponse
  */
 export interface DeleteDataResponse {
+    /**
+     * @generated from protobuf field: int64 affected_rows = 1;
+     */
+    affectedRows: number;
 }
 /**
  * @generated from protobuf message services.sync.StreamRequest
@@ -853,7 +858,7 @@ class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
     constructor() {
         super("services.sync.DeleteDataRequest", [
             { no: 1, name: "users", kind: "message", oneof: "data", T: () => DeleteUsers },
-            { no: 2, name: "vehicles", kind: "message", oneof: "data", T: () => DeleteUsers }
+            { no: 2, name: "vehicles", kind: "message", oneof: "data", T: () => DeleteVehicles }
         ]);
     }
     create(value?: PartialMessage<DeleteDataRequest>): DeleteDataRequest {
@@ -874,10 +879,10 @@ class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
                         users: DeleteUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).users)
                     };
                     break;
-                case /* resources.sync.DeleteUsers vehicles */ 2:
+                case /* resources.sync.DeleteVehicles vehicles */ 2:
                     message.data = {
                         oneofKind: "vehicles",
-                        vehicles: DeleteUsers.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
+                        vehicles: DeleteVehicles.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).vehicles)
                     };
                     break;
                 default:
@@ -895,9 +900,9 @@ class DeleteDataRequest$Type extends MessageType<DeleteDataRequest> {
         /* resources.sync.DeleteUsers users = 1; */
         if (message.data.oneofKind === "users")
             DeleteUsers.internalBinaryWrite(message.data.users, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.sync.DeleteUsers vehicles = 2; */
+        /* resources.sync.DeleteVehicles vehicles = 2; */
         if (message.data.oneofKind === "vehicles")
-            DeleteUsers.internalBinaryWrite(message.data.vehicles, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            DeleteVehicles.internalBinaryWrite(message.data.vehicles, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -911,18 +916,40 @@ export const DeleteDataRequest = new DeleteDataRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteDataResponse$Type extends MessageType<DeleteDataResponse> {
     constructor() {
-        super("services.sync.DeleteDataResponse", []);
+        super("services.sync.DeleteDataResponse", [
+            { no: 1, name: "affected_rows", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
     }
     create(value?: PartialMessage<DeleteDataResponse>): DeleteDataResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.affectedRows = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteDataResponse>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteDataResponse): DeleteDataResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 affected_rows */ 1:
+                    message.affectedRows = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: DeleteDataResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 affected_rows = 1; */
+        if (message.affectedRows !== 0)
+            writer.tag(1, WireType.Varint).int64(message.affectedRows);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

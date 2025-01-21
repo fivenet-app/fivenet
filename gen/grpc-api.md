@@ -13882,7 +13882,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | users | [resources.sync.DeleteUsers](#resources-sync-DeleteUsers) |  |  |
-| vehicles | [resources.sync.DeleteUsers](#resources-sync-DeleteUsers) |  |  |
+| vehicles | [resources.sync.DeleteVehicles](#resources-sync-DeleteVehicles) |  |  |
 
 
 
@@ -13893,6 +13893,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 ### DeleteDataResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| affected_rows | [int64](#int64) |  |  |
 
 
 

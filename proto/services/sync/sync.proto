@@ -94,11 +94,13 @@ message DeleteDataRequest {
     option (validate.required) = true;
 
     resources.sync.DeleteUsers users = 1;
-    resources.sync.DeleteUsers vehicles = 2;
+    resources.sync.DeleteVehicles vehicles = 2;
   }
 }
 
-message DeleteDataResponse {}
+message DeleteDataResponse {
+  int64 affected_rows = 1;
+}
 
 message StreamRequest {}
 
