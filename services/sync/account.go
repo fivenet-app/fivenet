@@ -19,7 +19,7 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 		SELECT(
 			tAccounts.ID,
 			tAccounts.Username,
-			tAccounts.RegToken,
+			tAccounts.RegToken.AS("reg_token"),
 		).
 		FROM(tAccounts).
 		WHERE(jet.AND(
@@ -28,7 +28,7 @@ func (s *Server) getAccount(ctx context.Context, identifier string) (*accounts.A
 		LIMIT(1)
 
 	acc := &struct {
-		Account  *accounts.Account
+		*accounts.Account
 		RegToken *string
 	}{
 		Account: &accounts.Account{},
