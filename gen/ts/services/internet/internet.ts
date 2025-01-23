@@ -57,7 +57,7 @@ export interface GetPageResponse {
 class SearchRequest$Type extends MessageType<SearchRequest> {
     constructor() {
         super("services.internet.SearchRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "60" } } } }
         ]);
     }
     create(value?: PartialMessage<SearchRequest>): SearchRequest {
@@ -151,8 +151,8 @@ export const SearchResponse = new SearchResponse$Type();
 class GetPageRequest$Type extends MessageType<GetPageRequest> {
     constructor() {
         super("services.internet.GetPageRequest", [
-            { no: 1, name: "domain", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "domain", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } },
+            { no: 2, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<GetPageRequest>): GetPageRequest {

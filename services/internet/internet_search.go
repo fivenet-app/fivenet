@@ -13,5 +13,6 @@ func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pb
 	resp := &pbinternet.SearchResponse{
 		Results: []*internet.SearchResult{},
 	}
+
 	return resp, nil
 }

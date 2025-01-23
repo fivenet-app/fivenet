@@ -57,7 +57,16 @@ func (m *SearchRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Search
+	if utf8.RuneCountInString(m.GetSearch()) > 60 {
+		err := SearchRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 60 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return SearchRequestMultiError(errors)
@@ -293,9 +302,27 @@ func (m *GetPageRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Domain
+	if l := utf8.RuneCountInString(m.GetDomain()); l < 3 || l > 60 {
+		err := GetPageRequestValidationError{
+			field:  "Domain",
+			reason: "value length must be between 3 and 60 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
-	// no validation rules for Path
+	if l := utf8.RuneCountInString(m.GetPath()); l < 1 || l > 128 {
+		err := GetPageRequestValidationError{
+			field:  "Path",
+			reason: "value length must be between 1 and 128 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return GetPageRequestMultiError(errors)

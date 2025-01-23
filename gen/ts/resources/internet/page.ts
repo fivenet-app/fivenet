@@ -82,15 +82,13 @@ export enum PageLayoutType {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: PAGE_LAYOUT_TYPE_LANDING = 1;
+     * @generated from protobuf enum value: PAGE_LAYOUT_TYPE_BASIC_PAGE = 1;
      */
-    LANDING = 1,
+    BASIC_PAGE = 1,
     /**
-     * TODO
-     *
-     * @generated from protobuf enum value: PAGE_LAYOUT_TYPE_BASIC_PAGE = 2;
+     * @generated from protobuf enum value: PAGE_LAYOUT_TYPE_LANDING_PAGE = 2;
      */
-    BASIC_PAGE = 2
+    LANDING_PAGE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Page$Type extends MessageType<Page> {

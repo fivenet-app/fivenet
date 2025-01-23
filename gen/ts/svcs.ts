@@ -75,6 +75,7 @@
 // source: services/dmv/vehicles.proto
 // source: services/docstore/docstore.proto
 // source: services/internet/ads.proto
+// source: services/internet/domain.proto
 // source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
@@ -100,6 +101,7 @@ export const grpcServices = [
     'CompletorService',
     'DMVService',
     'DocStoreService',
+    'DomainService',
     'InternetService',
     'JobsConductService',
     'JobsService',
@@ -213,6 +215,11 @@ export const grpcMethods = [
 	'DocStoreService/ListDocumentPins',
 	'DocStoreService/ToggleDocumentPin',
 	'DocStoreService/SetDocumentReminder',
+	'DomainService/CheckDomainAvailability',
+	'DomainService/ListDomains',
+	'DomainService/RegisterDomain',
+	'DomainService/UpdateDomain',
+	'DomainService/TransferDomain',
 	'InternetService/Search',
 	'InternetService/GetPage',
 	'JobsConductService/ListConductEntries',

@@ -75,6 +75,7 @@
 // source: services/dmv/vehicles.proto
 // source: services/docstore/docstore.proto
 // source: services/internet/ads.proto
+// source: services/internet/domain.proto
 // source: services/internet/internet.proto
 // source: services/jobs/conduct.proto
 // source: services/jobs/jobs.proto
