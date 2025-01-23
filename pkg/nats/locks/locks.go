@@ -79,7 +79,7 @@ loop:
 		}
 
 		if time.Since(revision.Created()) > l.maxLockAge {
-			l.logger.Warn("cleanin up old lock", zap.String("key", key))
+			l.logger.Warn("cleaning up old lock", zap.String("key", key))
 			if err := l.kv.Delete(ctx, lockKey, jetstream.LastRevision(revision.Revision())); err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
 				return err
 			}

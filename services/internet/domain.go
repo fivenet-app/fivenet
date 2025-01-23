@@ -4,6 +4,7 @@ import (
 	"context"
 
 	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
+	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.CheckDomainAvailabilityRequest) (*pbinternet.CheckDomainAvailabilityResponse, error) {
@@ -13,6 +14,16 @@ func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.Ch
 }
 
 func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsRequest) (*pbinternet.ListDomainsResponse, error) {
+	condition := jet.Bool(true)
+
+	stmt := tDomains.
+		SELECT(
+			tDomains.ID,
+		).
+		FROM(tDomains).
+		WHERE(condition)
+
+	_ = stmt
 	// TODO
 
 	return nil, nil

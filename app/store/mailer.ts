@@ -277,13 +277,19 @@ export const useMailerStore = defineStore('mailer', {
                     return;
                 }
 
+                const { isSuperuser } = useAuth();
+                // If superuser and doesn't have a private email to check
+                if (isSuperuser.value && this.getPrivateEmail === undefined) {
+                    return;
+                }
+
                 // Load unread threads for all emails
                 const threads = await this.listThreads(
                     {
                         pagination: {
                             offset: 0,
                         },
-                        emailIds: this.emails.map((e) => e.id),
+                        emailIds: isSuperuser.value ? [this.getPrivateEmail!.id] : this.emails.map((e) => e.id),
                         unread: true,
                     },
                     false,

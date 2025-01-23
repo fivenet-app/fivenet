@@ -13916,6 +13916,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | @sanitize: method=StripTags |
+
+
 
 
 
@@ -13926,6 +13931,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [resources.internet.Domain](#resources-internet-Domain) |  |  |
+
+
 
 
 
@@ -13934,6 +13944,12 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 ### TransferDomainRequest
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain_id | [uint64](#uint64) |  |  |
+| accept | [bool](#bool) | optional |  |
 
 
 
@@ -13956,6 +13972,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [resources.internet.Domain](#resources-internet-Domain) |  |  |
+
+
 
 
 
@@ -13964,6 +13985,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 ### UpdateDomainResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [resources.internet.Domain](#resources-internet-Domain) |  |  |
 
 
 

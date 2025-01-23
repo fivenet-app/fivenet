@@ -50,26 +50,52 @@ export interface ListDomainsResponse {
  * @generated from protobuf message services.internet.RegisterDomainRequest
  */
 export interface RegisterDomainRequest {
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
 }
 /**
  * @generated from protobuf message services.internet.RegisterDomainResponse
  */
 export interface RegisterDomainResponse {
+    /**
+     * @generated from protobuf field: resources.internet.Domain domain = 1;
+     */
+    domain?: Domain;
 }
 /**
  * @generated from protobuf message services.internet.UpdateDomainRequest
  */
 export interface UpdateDomainRequest {
+    /**
+     * @generated from protobuf field: resources.internet.Domain domain = 1;
+     */
+    domain?: Domain;
 }
 /**
  * @generated from protobuf message services.internet.UpdateDomainResponse
  */
 export interface UpdateDomainResponse {
+    /**
+     * @generated from protobuf field: resources.internet.Domain domain = 1;
+     */
+    domain?: Domain;
 }
 /**
  * @generated from protobuf message services.internet.TransferDomainRequest
  */
 export interface TransferDomainRequest {
+    /**
+     * @generated from protobuf field: uint64 domain_id = 1;
+     */
+    domainId: number;
+    /**
+     * @generated from protobuf field: optional bool accept = 2;
+     */
+    accept?: boolean;
 }
 /**
  * @generated from protobuf message services.internet.TransferDomainResponse
@@ -245,18 +271,40 @@ export const ListDomainsResponse = new ListDomainsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
     constructor() {
-        super("services.internet.RegisterDomainRequest", []);
+        super("services.internet.RegisterDomainRequest", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } }
+        ]);
     }
     create(value?: PartialMessage<RegisterDomainRequest>): RegisterDomainRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
         if (value !== undefined)
             reflectionMergePartial<RegisterDomainRequest>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegisterDomainRequest): RegisterDomainRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: RegisterDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -270,7 +318,9 @@ export const RegisterDomainRequest = new RegisterDomainRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RegisterDomainResponse$Type extends MessageType<RegisterDomainResponse> {
     constructor() {
-        super("services.internet.RegisterDomainResponse", []);
+        super("services.internet.RegisterDomainResponse", [
+            { no: 1, name: "domain", kind: "message", T: () => Domain }
+        ]);
     }
     create(value?: PartialMessage<RegisterDomainResponse>): RegisterDomainResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -279,9 +329,28 @@ class RegisterDomainResponse$Type extends MessageType<RegisterDomainResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RegisterDomainResponse): RegisterDomainResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.internet.Domain domain */ 1:
+                    message.domain = Domain.internalBinaryRead(reader, reader.uint32(), options, message.domain);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: RegisterDomainResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.internet.Domain domain = 1; */
+        if (message.domain)
+            Domain.internalBinaryWrite(message.domain, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -295,7 +364,9 @@ export const RegisterDomainResponse = new RegisterDomainResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDomainRequest$Type extends MessageType<UpdateDomainRequest> {
     constructor() {
-        super("services.internet.UpdateDomainRequest", []);
+        super("services.internet.UpdateDomainRequest", [
+            { no: 1, name: "domain", kind: "message", T: () => Domain }
+        ]);
     }
     create(value?: PartialMessage<UpdateDomainRequest>): UpdateDomainRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -304,9 +375,28 @@ class UpdateDomainRequest$Type extends MessageType<UpdateDomainRequest> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateDomainRequest): UpdateDomainRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.internet.Domain domain */ 1:
+                    message.domain = Domain.internalBinaryRead(reader, reader.uint32(), options, message.domain);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: UpdateDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.internet.Domain domain = 1; */
+        if (message.domain)
+            Domain.internalBinaryWrite(message.domain, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -320,7 +410,9 @@ export const UpdateDomainRequest = new UpdateDomainRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDomainResponse$Type extends MessageType<UpdateDomainResponse> {
     constructor() {
-        super("services.internet.UpdateDomainResponse", []);
+        super("services.internet.UpdateDomainResponse", [
+            { no: 1, name: "domain", kind: "message", T: () => Domain }
+        ]);
     }
     create(value?: PartialMessage<UpdateDomainResponse>): UpdateDomainResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -329,9 +421,28 @@ class UpdateDomainResponse$Type extends MessageType<UpdateDomainResponse> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: UpdateDomainResponse): UpdateDomainResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.internet.Domain domain */ 1:
+                    message.domain = Domain.internalBinaryRead(reader, reader.uint32(), options, message.domain);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: UpdateDomainResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.internet.Domain domain = 1; */
+        if (message.domain)
+            Domain.internalBinaryWrite(message.domain, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -345,18 +456,47 @@ export const UpdateDomainResponse = new UpdateDomainResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TransferDomainRequest$Type extends MessageType<TransferDomainRequest> {
     constructor() {
-        super("services.internet.TransferDomainRequest", []);
+        super("services.internet.TransferDomainRequest", [
+            { no: 1, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "accept", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
     create(value?: PartialMessage<TransferDomainRequest>): TransferDomainRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.domainId = 0;
         if (value !== undefined)
             reflectionMergePartial<TransferDomainRequest>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TransferDomainRequest): TransferDomainRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 domain_id */ 1:
+                    message.domainId = reader.uint64().toNumber();
+                    break;
+                case /* optional bool accept */ 2:
+                    message.accept = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: TransferDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 domain_id = 1; */
+        if (message.domainId !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.domainId);
+        /* optional bool accept = 2; */
+        if (message.accept !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.accept);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

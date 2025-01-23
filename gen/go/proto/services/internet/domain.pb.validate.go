@@ -514,6 +514,17 @@ func (m *RegisterDomainRequest) validate(all bool) error {
 
 	var errors []error
 
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 60 {
+		err := RegisterDomainRequestValidationError{
+			field:  "Name",
+			reason: "value length must be between 3 and 60 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return RegisterDomainRequestMultiError(errors)
 	}
@@ -615,6 +626,35 @@ func (m *RegisterDomainResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDomain()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RegisterDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RegisterDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RegisterDomainResponseValidationError{
+				field:  "Domain",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return RegisterDomainResponseMultiError(errors)
@@ -718,6 +758,35 @@ func (m *UpdateDomainRequest) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetDomain()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDomainRequestValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDomainRequestValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDomainRequestValidationError{
+				field:  "Domain",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return UpdateDomainRequestMultiError(errors)
 	}
@@ -820,6 +889,35 @@ func (m *UpdateDomainResponse) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetDomain()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDomainResponseValidationError{
+				field:  "Domain",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return UpdateDomainResponseMultiError(errors)
 	}
@@ -921,6 +1019,12 @@ func (m *TransferDomainRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for DomainId
+
+	if m.Accept != nil {
+		// no validation rules for Accept
+	}
 
 	if len(errors) > 0 {
 		return TransferDomainRequestMultiError(errors)

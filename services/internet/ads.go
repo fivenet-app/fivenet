@@ -14,6 +14,7 @@ func (s *Server) GetAds(ctx context.Context, req *pbinternet.GetAdsRequest) (*pb
 	cafeLogoUrl := "/api/filestore/joblogos/cafe.png"
 	nagataLogoUrl := "/api/filestore/joblogos/mechanic.png"
 	fivenetLogoUrl := "/api/filestore/joblogos/5net.png"
+
 	resp := &pbinternet.GetAdsResponse{
 		Ads: []*internet.Ad{
 			{
