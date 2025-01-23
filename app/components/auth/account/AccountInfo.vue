@@ -39,26 +39,30 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
     }
 }
 
-const items = [
-    {
-        slot: 'accountInfo',
-        label: t('components.auth.AccountInfo.title'),
-        icon: 'i-mdi-information-slab-circle',
-    },
-    {
-        slot: 'oauth2Connections',
-        label: t('components.auth.OAuth2Connections.title'),
-        icon: 'i-simple-icons-discord',
-    },
-    { slot: 'debugInfo', label: t('components.debug_info.title'), icon: 'i-mdi-connection' },
-];
+const items = computed(() =>
+    [
+        {
+            slot: 'accountInfo',
+            label: t('components.auth.AccountInfo.title'),
+            icon: 'i-mdi-information-slab-circle',
+        },
+        account.value?.oauth2Providers && account.value.oauth2Providers.length > 0
+            ? {
+                  slot: 'oauth2Connections',
+                  label: t('components.auth.OAuth2Connections.title'),
+                  icon: 'i-simple-icons-discord',
+              }
+            : undefined,
+        { slot: 'debugInfo', label: t('components.debug_info.title'), icon: 'i-mdi-connection' },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
 const route = useRoute();
 const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.slot === route.query.tab);
+        const index = items.value.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
             return 0;
         }
@@ -67,7 +71,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
+        router.replace({ query: { tab: items.value[value]?.slot }, hash: '#' });
     },
 });
 </script>
@@ -155,7 +159,7 @@ const selectedTab = computed({
                     </UDashboardPanelContent>
                 </template>
 
-                <template #oauth2Connections>
+                <template v-if="account.oauth2Providers.length > 0" #oauth2Connections>
                     <OAuth2Connections
                         :providers="account.oauth2Providers"
                         :connections="account.oauth2Connections"

@@ -104,7 +104,13 @@ const canSubmit = ref(true);
             <div v-if="login.signupEnabled" class="space-y-4">
                 <UDivider orientation="horizontal" />
 
-                <UButton block color="gray" :to="{ name: 'auth-registration' }" :disabled="!canSubmit">
+                <UButton
+                    block
+                    color="gray"
+                    trailing-icon="i-mdi-account-plus"
+                    :to="{ name: 'auth-registration' }"
+                    :disabled="!canSubmit"
+                >
                     {{ $t('components.auth.LoginForm.register_account') }}
                 </UButton>
             </div>
