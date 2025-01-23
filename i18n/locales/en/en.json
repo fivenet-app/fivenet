@@ -552,7 +552,8 @@
         "selected": "None selected | {n} selected",
         "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
         "day_view": "Daily View",
-        "week_view": "Weekly View"
+        "week_view": "Weekly View",
+        "domains": "No Domain | {n} Domain | {n} Domains"
     },
     "components": {
         "partials": {
@@ -1283,8 +1284,21 @@
                     }
                 },
                 "nic_registrar": {
-                    "title": "Network Information Center",
-                    "description": "Network Information Center handling the registration and management of domains and websites on the internet."
+                    "title": "NIC.ls",
+                    "description": "Network Information Center handling the registration and management of domains and websites on the internet.",
+                    "search": {
+                        "button": "Search Domain"
+                    },
+                    "cards": {
+                        "builder": {
+                            "title": "Website Builder",
+                            "description": "Our convienent website builder will help you get started quickly with your website."
+                        },
+                        "access": {
+                            "title": "Access Control",
+                            "description": "Manage who can edit your website with our easy to use access control manager."
+                        }
+                    }
                 }
             },
             "ads": {

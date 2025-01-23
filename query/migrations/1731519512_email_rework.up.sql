@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails` (
   UNIQUE KEY `idx_fivenet_mailer_emails_email` (`email`),
   UNIQUE KEY `idx_fivenet_mailer_emails_job_user_id` (`job`, `user_id`),
   UNIQUE KEY `fk_fivenet_mailer_emails_user_id` (`user_id`),
-  CONSTRAINT `fk_fivenet_mailer_emails_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_emails_job_access
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_emails_user_access` (
   KEY `idx_fivenet_mailer_emails_user_access_email_id` (`email_id`),
   KEY `idx_fivenet_mailer_emails_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_mailer_emails_user_access_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_emails_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_emails_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_emails_qualifications_access
@@ -89,7 +89,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_mailer_templates` (
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_mailer_templates_creator_id_creator_job` (`email_id`, `creator_id`, `creator_job`),
   CONSTRAINT `fk_fivenet_mailer_templates_email_id` FOREIGN KEY (`email_id`) REFERENCES `fivenet_mailer_emails` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_mailer_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_mailer_templates_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_mailer_threads

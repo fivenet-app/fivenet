@@ -25,7 +25,7 @@ CREATE TABLE
         KEY `idx_fivenet_qualifications_job` (`job`),
         KEY `idx_fivenet_qualifications_weight` (`weight`),
         KEY `idx_fivenet_qualifications_discord_sync_enabled` (`job`, `discord_sync_enabled`),
-        CONSTRAINT `fk_fivenet_qualifications_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_qualifications_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_qualifications_job_access
@@ -71,8 +71,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_results` (
   KEY `idx_fivenet_qualifications_results_qualification_id_user_id` (`qualification_id`, `user_id`),
   KEY `idx_fivenet_qualifications_results_status` (`status`),
   CONSTRAINT `fk_fivenet_qualifications_results_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_results_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_results_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_qualifications_results_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_qualifications_results_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_qualifications_requests
@@ -91,8 +91,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_qualifications_requests` (
   KEY `idx_fivenet_qualifications_requests_status` (`status`),
   KEY `idx_fivenet_qualifications_requests_approved_at` (`approved_at`),
   CONSTRAINT `fk_fivenet_qualifications_requests_qualification_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_requests_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_qualifications_requests_approver_id` FOREIGN KEY (`approver_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_qualifications_requests_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_qualifications_requests_approver_id` FOREIGN KEY (`approver_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

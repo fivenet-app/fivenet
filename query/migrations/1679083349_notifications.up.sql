@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   KEY `idx_fivenet_notifications_read_at` (`read_at`),
   KEY `idx_fivenet_notifications_user_id` (`user_id`),
   KEY `idx_fivenet_notifications_type` (`type`),
-  CONSTRAINT `fk_fivenet_notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_notifications_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

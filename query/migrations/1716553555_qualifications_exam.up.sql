@@ -27,7 +27,7 @@ CREATE TABLE
         `ended_at` datetime(3) DEFAULT NULL,
         PRIMARY KEY (`qualification_id`, `user_id`),
         CONSTRAINT `fk_fivenet_qualifications_exam_users_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_qualifications_exam_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_qualifications_exam_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_qualifications_exam_responses

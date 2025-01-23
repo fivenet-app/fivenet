@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   FULLTEXT KEY `idx_fivenet_documents_title` (`title`),
   FULLTEXT KEY `idx_fivenet_documents_content` (`content`),
   CONSTRAINT `fk_fivenet_documents_categories` FOREIGN KEY (`category_id`) REFERENCES `fivenet_documents_categories` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_documents_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_comments
@@ -97,7 +97,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   KEY `idx_fivenet_documents_comments_document_id` (`document_id`),
   KEY `idx_fivenet_documents_comments_creator_id` (`creator_id`),
   CONSTRAINT `fk_fivenet_documents_comments_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_job_access
@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
   KEY `idx_fivenet_documents_references_creator_id` (`creator_id`),
   CONSTRAINT `fk_fivenet_documents_references_source_document_id` FOREIGN KEY (`source_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_documents_references_target_document_id` FOREIGN KEY (`target_document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_documents_references_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_relations
@@ -150,8 +150,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   KEY `idx_fivenet_documents_relations_source_user_id` (`source_user_id`),
   KEY `idx_fivenet_documents_relations_target_user_id` (`target_user_id`),
   CONSTRAINT `fk_fivenet_documents_relations_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_relations_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_documents_relations_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_user_access
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   KEY `idx_fivenet_documents_user_access_document_id` (`document_id`),
   KEY `idx_fivenet_documents_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_user_access_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_activity
@@ -184,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_activity` (
   KEY `idx_fivenet_documents_activity_creator_id` (`creator_id`),
   KEY `idx_fivenet_documents_activity_activity_type` (`activity_type`),
   CONSTRAINT `fk_fivenet_documents_activity_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_documents_activity_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_documents_requests
@@ -206,7 +206,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_requests` (
   KEY `idx_fivenet_documents_requests_accepted` (`accepted`),
   KEY `idx_fivenet_documents_requests_unique` (`document_id`, `request_type`),
   CONSTRAINT `fk_fivenet_documents_requests_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+  CONSTRAINT `fk_fivenet_documents_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_user_activity
@@ -223,8 +223,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_user_activity_source_user_id` (`source_user_id`),
   KEY `idx_fivenet_user_activity_target_user_id` (`target_user_id`),
-  CONSTRAINT `fk_fivenet_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
-  CONSTRAINT `fk_fivenet_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_activity_source_user_id` FOREIGN KEY (`source_user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_user_activity_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_user_locations
@@ -237,7 +237,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `updated_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),
-  CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `{{.UsersTableName}}` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_user_props
@@ -256,7 +256,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
   KEY `idx_fivenet_user_props_avatar` (`avatar`),
   KEY `idx_fivenet_user_props_mug_shot` (`mug_shot`),
-  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;

@@ -37,7 +37,7 @@ type Params struct {
 
 func SetupDB(p Params) (*sql.DB, error) {
 	if skip, _ := strconv.ParseBool(os.Getenv(envs.SkipDBMigrationsEnv)); !skip {
-		if err := MigrateDB(p.Logger, p.Config.Database.DSN); err != nil {
+		if err := MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.Database.ESXCompat); err != nil {
 			return nil, err
 		}
 	}
@@ -81,18 +81,32 @@ func SetupDB(p Params) (*sql.DB, error) {
 	return db, nil
 }
 
-func NewMigrate(db *sql.DB) (*migrate.Migrate, error) {
+func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
+	// FiveNet's own `users` table
+	tableName := "fivenet_users"
+	if esxCompat {
+		// Use ESX's table
+		tableName = "users"
+	}
+
 	// Setup migrate source and driver
-	source, err := iofs.New(migrationsFS, "migrations")
+	source, err := iofs.New(&templateFS{
+		data: map[string]interface{}{
+			"UsersTableName": tableName,
+		},
+		FS: migrationsFS,
+	}, "migrations")
 	if err != nil {
 		return nil, err
 	}
+
 	driver, err := mysql.WithInstance(db, &mysql.Config{
 		MigrationsTable: "fivenet_zschema_migrations",
 	})
 	if err != nil {
 		return nil, err
 	}
+
 	m, err := migrate.NewWithInstance(
 		"iofs", source,
 		"mysql", driver)
@@ -103,7 +117,7 @@ func NewMigrate(db *sql.DB) (*migrate.Migrate, error) {
 	return m, nil
 }
 
-func MigrateDB(logger *zap.Logger, dsn string) error {
+func MigrateDB(logger *zap.Logger, dsn string, esxCompat bool) error {
 	logger.Info("starting database migrations")
 	// Connect to database
 	db, err := sql.Open("mysql", dsn+"&multiStatements=true")
@@ -111,7 +125,7 @@ func MigrateDB(logger *zap.Logger, dsn string) error {
 		return err
 	}
 
-	m, err := NewMigrate(db)
+	m, err := NewMigrate(db, esxCompat)
 	if err != nil {
 		return err
 	}

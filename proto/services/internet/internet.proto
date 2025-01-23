@@ -4,6 +4,7 @@ package services.internet;
 
 import "resources/internet/page.proto";
 import "resources/internet/search.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
 
@@ -24,6 +25,20 @@ message GetPageResponse {
   optional resources.internet.Page page = 1;
 }
 
+// Domains
+
+message CheckDomainAvailabilityRequest {
+  // @sanitize: method=StripTags
+  string name = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 60
+  }];
+}
+
+message CheckDomainAvailabilityResponse {
+  bool available = 1;
+}
+
 service InternetService {
   // @perm: Name=Any
   rpc Search(SearchRequest) returns (SearchResponse);
@@ -31,5 +46,7 @@ service InternetService {
   // @perm: Name=Any
   rpc GetPage(GetPageRequest) returns (GetPageResponse);
 
+  // @perm: Name=Any
+  rpc CheckDomainAvailability(CheckDomainAvailabilityRequest) returns (CheckDomainAvailabilityResponse);
   // TODO domain registrar logic
 }

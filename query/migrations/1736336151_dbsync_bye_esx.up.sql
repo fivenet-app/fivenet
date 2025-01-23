@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_licenses` (
   PRIMARY KEY (`type`,`owner`),
   KEY `fivenet_user_licenses_owner_IDX` (`owner`),
   CONSTRAINT `fk_fivenet_user_licenses_type` FOREIGN KEY (`type`) REFERENCES `fivenet_licenses` (`type`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_user_licenses_owner` FOREIGN KEY (`owner`) REFERENCES `fivenet_users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_user_licenses_owner` FOREIGN KEY (`owner`) REFERENCES `{{.UsersTableName}}` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 -- Table: fivenet_owned_vehicles

@@ -65,15 +65,16 @@ export const useInternetStore = defineStore('internet', {
 
             // Attempt to find a close by tab if needed
             if (this.activeTab?.id === id) {
-                this.selectTab();
-
                 if (this.tabs.length > 0) {
                     const idx = this.tabs.findIndex((t) => t.id === id - 1);
                     if (idx === -1) {
+                        // Fallback to first tab in list
                         this.selectTab(this.tabs[0]?.id);
                     } else {
                         this.selectTab(this.tabs[idx]?.id);
                     }
+                } else {
+                    this.selectTab();
                 }
             }
         },

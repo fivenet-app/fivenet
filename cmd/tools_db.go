@@ -58,7 +58,7 @@ func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
 		return err
 	}
 
-	m, err := query.NewMigrate(db)
+	m, err := query.NewMigrate(db, cfg.Database.ESXCompat)
 	if err != nil {
 		return err
 	}
@@ -113,7 +113,7 @@ func (c *UpCmd) run(_ context.Context, cfg *config.Config) error {
 		return err
 	}
 
-	m, err := query.NewMigrate(db)
+	m, err := query.NewMigrate(db, cfg.Database.ESXCompat)
 	if err != nil {
 		return err
 	}

@@ -116,8 +116,8 @@ func (m *dbServer) prepareDBForFirstUse() error {
 		return err
 	}
 
-	// Use DB migrations to handle the rest
-	if err := query.MigrateDB(zap.NewNop(), m.getDSN()); err != nil {
+	// Use DB migrations to handle the rest (esx compat mode is true)
+	if err := query.MigrateDB(zap.NewNop(), m.getDSN(), true); err != nil {
 		return fmt.Errorf("failed to migrate test database: %w", err)
 	}
 

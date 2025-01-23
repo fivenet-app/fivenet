@@ -26,7 +26,7 @@ type Schema = z.output<typeof schema>;
 const registrationToken = useRouteQuery('registrationToken', '');
 
 const state = reactive<Schema>({
-    registrationToken: registrationToken.value,
+    registrationToken: registrationToken.value.trim(),
     username: '',
     password: '',
 });
@@ -34,7 +34,7 @@ const state = reactive<Schema>({
 async function createAccount(values: Schema): Promise<void> {
     try {
         await getGRPCAuthClient().createAccount({
-            regToken: values.registrationToken.toString(),
+            regToken: values.registrationToken,
             username: values.username,
             password: values.password,
         });

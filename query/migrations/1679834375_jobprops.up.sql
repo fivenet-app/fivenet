@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_citizen_attributes` (
   `user_id` int(11) NOT NULL,
   `attribute_id` bigint(20) unsigned NOT NULL,
   UNIQUE KEY `idx_fivenet_user_citizen_attributes_unique` (`user_id`, `attribute_id`),
-  CONSTRAINT `fk_fivenet_user_citizen_attributes_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_user_citizen_attributes_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_user_citizen_attributes_attribute_id` FOREIGN KEY (`attribute_id`) REFERENCES `fivenet_job_citizen_attributes` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

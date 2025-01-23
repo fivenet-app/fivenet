@@ -23,7 +23,7 @@ CREATE TABLE `fivenet_documents_workflow_users` (
   UNIQUE KEY `idx_fivenet_documents_workflow_users_document_id` (`document_id`, `user_id`),
   KEY `idx_fivenet_documents_workflow_users_manual_reminder_time` (`manual_reminder_time`),
   CONSTRAINT `fk_fivenet_documents_workflow_users_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_fivenet_documents_workflow_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT `fk_fivenet_documents_workflow_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
 COMMIT;
