@@ -7,6 +7,8 @@ import (
 
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"go.uber.org/zap"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func (s *Sync) RunStream(ctx context.Context) {
@@ -19,14 +21,14 @@ func (s *Sync) RunStream(ctx context.Context) {
 
 	for {
 		if err := s.runStream(ctx); err != nil {
-			s.logger.Error("error during sync stream", zap.Error(err))
+			s.logger.Error("error during sync stream, restarting in a second", zap.Error(err))
 		}
 
 		select {
 		case <-ctx.Done():
 			return
 
-		case <-time.After(5 * time.Second):
+		case <-time.After(1 * time.Second):
 		}
 	}
 }
@@ -43,6 +45,12 @@ func (s *Sync) runStream(ctx context.Context) error {
 			return nil
 		}
 		if err != nil {
+			st := status.Convert(err)
+			if st.Code() == codes.Unavailable {
+				s.logger.Debug("stream ended with unavailable code", zap.Error(err))
+				return nil
+			}
+
 			return err
 		}
 
