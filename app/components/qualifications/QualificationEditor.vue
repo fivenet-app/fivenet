@@ -25,7 +25,7 @@ import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{
-    qualificationId?: string;
+    qualificationId?: number;
 }>();
 
 const { t } = useI18n();
@@ -103,7 +103,7 @@ const state = reactive<Schema>({
 });
 const qualiRequirements = ref<QualificationRequirement[]>([]);
 
-async function getQualification(qualificationId: string): Promise<void> {
+async function getQualification(qualificationId: number): Promise<void> {
     try {
         const call = getGRPCQualificationsClient().getQualification({
             qualificationId: qualificationId,
@@ -159,8 +159,8 @@ onMounted(async () => {
         await getQualification(props.qualificationId);
     } else {
         state.access.jobs.push({
-            id: '0',
-            targetId: '0',
+            id: 0,
+            targetId: 0,
             job: activeChar.value!.job,
             minimumGrade: -1,
             access: AccessLevel.EDIT,
@@ -171,7 +171,7 @@ onMounted(async () => {
 async function createQualification(values: Schema): Promise<CreateQualificationResponse> {
     const req: CreateQualificationRequest = {
         qualification: {
-            id: '0',
+            id: 0,
             job: '',
             weight: 0,
             closed: values.closed,
@@ -282,7 +282,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
         return;
     }
 
-    qualiRequirements.value[idx]!.qualificationId = props.qualificationId ?? '0';
+    qualiRequirements.value[idx]!.qualificationId = props.qualificationId ?? 0;
     qualiRequirements.value[idx]!.targetQualificationId = qualification.id;
 }
 
@@ -474,7 +474,7 @@ const selectedTab = computed({
 
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
-                                :target-id="qualificationId ?? '0'"
+                                :target-id="qualificationId ?? 0"
                                 :disabled="!canDo.access"
                                 :access-types="accessTypes"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.qualifications.AccessLevel')"
@@ -498,7 +498,7 @@ const selectedTab = computed({
                                 :ui="{ rounded: 'rounded-full' }"
                                 :disabled="!canSubmit"
                                 icon="i-mdi-plus"
-                                @click="qualiRequirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
+                                @click="qualiRequirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
                             />
                         </div>
 

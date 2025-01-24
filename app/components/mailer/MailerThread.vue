@@ -17,7 +17,7 @@ import TemplateSelector from './TemplateSelector.vue';
 
 const props = withDefaults(
     defineProps<{
-        threadId: string;
+        threadId: number;
         selected?: boolean;
     }>(),
     {
@@ -119,7 +119,7 @@ async function postMessage(values: Schema): Promise<void> {
 
     await mailerStore.postMessage({
         message: {
-            id: '0',
+            id: 0,
             senderId: selectedEmail.value.id,
             threadId: props.threadId,
             title: values.title,
@@ -164,8 +164,8 @@ function scrollToMessage(messageId: number): void {
     }
 }
 
-const selectedMessageId = useRouteQuery('msg', '0', { transform: Number });
-const selectedMessage = computed(() => selectedMessageId.value.toString());
+const selectedMessageId = useRouteQuery('msg', 0, { transform: Number });
+const selectedMessage = computed(() => selectedMessageId.value);
 watch(selectedMessageId, () => scrollToMessage(selectedMessageId.value));
 
 watch(messages, () => {
@@ -231,12 +231,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :key="message.id"
                 :ref="
                     (el) => {
-                        messageRefs[parseInt(message.id)] = el as Element;
+                        messageRefs[message.id] = el as Element;
                     }
                 "
                 class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white px-2 pb-3 hover:bg-neutral-100 sm:pb-2 dark:border-gray-900 dark:hover:bg-base-800"
                 :class="selectedMessage === message.id && '!border-primary-500'"
-                @click="selectedMessageId = parseInt(message.id)"
+                @click="selectedMessageId = message.id"
             >
                 <UDivider>
                     <GenericTime :value="message.createdAt" type="short" />

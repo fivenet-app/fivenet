@@ -28,7 +28,7 @@ import { useSettingsStore } from './settings';
 const logger = useLogger('📅 Calendar');
 
 export interface CalendarState {
-    activeCalendarIds: string[];
+    activeCalendarIds: number[];
     view: 'month' | 'week' | 'summary';
     currentDate: {
         year: number;
@@ -36,7 +36,7 @@ export interface CalendarState {
     };
     calendars: Calendar[];
     entries: CalendarEntry[];
-    eventReminders: Map<string, number>;
+    eventReminders: Map<number, number>;
 }
 
 export const useCalendarStore = defineStore('calendar', {
@@ -50,7 +50,7 @@ export const useCalendarStore = defineStore('calendar', {
             },
             calendars: [],
             entries: [],
-            eventReminders: new Map<string, number>(),
+            eventReminders: new Map<number, number>(),
         }) as CalendarState,
     persist: {
         pick: ['activeCalendarIds', 'view'],
@@ -144,7 +144,7 @@ export const useCalendarStore = defineStore('calendar', {
                 // Only "register" calendars in list when they are accessible by the user
                 if (!req.onlyPublic) {
                     if (response.calendars.length > 0) {
-                        const foundCalendars: string[] = [];
+                        const foundCalendars: number[] = [];
                         response.calendars.forEach((calendar) => {
                             const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
                             if (idx > -1) {
@@ -199,7 +199,7 @@ export const useCalendarStore = defineStore('calendar', {
 
             return response;
         },
-        async deleteCalendar(id: string): Promise<void> {
+        async deleteCalendar(id: number): Promise<void> {
             try {
                 const call = getGRPCCalendarClient().deleteCalendar({
                     calendarId: id,
@@ -302,7 +302,7 @@ export const useCalendarStore = defineStore('calendar', {
             return response;
         },
 
-        async deleteCalendarEntry(entryId: string): Promise<void> {
+        async deleteCalendarEntry(entryId: number): Promise<void> {
             try {
                 const call = getGRPCCalendarClient().deleteCalendarEntry({
                     entryId: entryId,

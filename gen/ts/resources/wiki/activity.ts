@@ -19,17 +19,17 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface PageActivity {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 page_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 page_id = 3;
      */
-    pageId: string;
+    pageId: number;
     /**
      * @generated from protobuf field: resources.wiki.PageActivityType activity_type = 4;
      */
@@ -181,9 +181,9 @@ export enum PageActivityType {
 class PageActivity$Type extends MessageType<PageActivity> {
     constructor() {
         super("resources.wiki.PageActivity", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "activity_type", kind: "enum", T: () => ["resources.wiki.PageActivityType", PageActivityType, "PAGE_ACTIVITY_TYPE_"] },
             { no: 5, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "creator", kind: "message", T: () => UserShort },
@@ -195,8 +195,8 @@ class PageActivity$Type extends MessageType<PageActivity> {
     }
     create(value?: PartialMessage<PageActivity>): PageActivity {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.pageId = "0";
+        message.id = 0;
+        message.pageId = 0;
         message.activityType = 0;
         message.creatorJob = "";
         if (value !== undefined)
@@ -208,14 +208,14 @@ class PageActivity$Type extends MessageType<PageActivity> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 page_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.pageId = reader.uint64().toString();
+                case /* uint64 page_id */ 3:
+                    message.pageId = reader.uint64().toNumber();
                     break;
                 case /* resources.wiki.PageActivityType activity_type */ 4:
                     message.activityType = reader.int32();
@@ -250,14 +250,14 @@ class PageActivity$Type extends MessageType<PageActivity> {
         return message;
     }
     internalBinaryWrite(message: PageActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 page_id = 3 [jstype = JS_STRING]; */
-        if (message.pageId !== "0")
+        /* uint64 page_id = 3; */
+        if (message.pageId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.pageId);
         /* resources.wiki.PageActivityType activity_type = 4; */
         if (message.activityType !== 0)

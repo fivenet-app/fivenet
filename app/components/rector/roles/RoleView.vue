@@ -10,7 +10,7 @@ import type { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts
 import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{
-    roleId: string;
+    roleId: number;
 }>();
 
 const emit = defineEmits<{
@@ -36,12 +36,12 @@ const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
-const permStates = ref(new Map<string, boolean | undefined>());
+const permStates = ref(new Map<number, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref(new Map<string, AttributeValues | undefined>());
+const attrStates = ref(new Map<number, AttributeValues | undefined>());
 
-async function getRole(id: string): Promise<Role> {
+async function getRole(id: number): Promise<Role> {
     try {
         const call = getGRPCRectorClient().getRole({
             id,
@@ -56,7 +56,7 @@ async function getRole(id: string): Promise<Role> {
     }
 }
 
-async function deleteRole(id: string): Promise<void> {
+async function deleteRole(id: number): Promise<void> {
     try {
         await getGRPCRectorClient().deleteRole({
             id,
@@ -75,7 +75,7 @@ async function deleteRole(id: string): Promise<void> {
     }
 }
 
-async function getPermissions(roleId: string): Promise<void> {
+async function getPermissions(roleId: number): Promise<void> {
     try {
         const call = getGRPCRectorClient().getPermissions({
             roleId,
@@ -109,7 +109,7 @@ async function propogatePermissionStates(): Promise<void> {
     });
 }
 
-async function updatePermissionState(perm: string, state: boolean | undefined): Promise<void> {
+async function updatePermissionState(perm: number, state: boolean | undefined): Promise<void> {
     changed.value = true;
     permStates.value.set(perm, state);
 }
@@ -157,7 +157,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: '0',
+                permissionId: 0,
                 type: '',
             });
         } else if (state !== undefined) {
@@ -168,7 +168,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: '0',
+                permissionId: 0,
                 type: '',
             });
         }

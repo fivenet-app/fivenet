@@ -9,7 +9,7 @@ import type { SetDocumentReminderResponse } from '~~/gen/ts/services/docstore/do
 import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const props = defineProps<{
-    documentId: string;
+    documentId: number;
     reminderTime?: Timestamp;
 }>();
 

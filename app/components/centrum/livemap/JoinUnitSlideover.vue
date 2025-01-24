@@ -14,10 +14,10 @@ const { isOpen } = useSlideover();
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
-async function joinOrLeaveUnit(unitId?: string): Promise<void> {
+async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     try {
         const call = getGRPCCentrumClient().joinUnit({
-            unitId,
+            unitId: unitId,
         });
         const { response } = await call;
 
@@ -35,7 +35,7 @@ async function joinOrLeaveUnit(unitId?: string): Promise<void> {
 }
 
 const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (unitID?: string) => {
+const onSubmitThrottle = useThrottleFn(async (unitID?: number) => {
     canSubmit.value = false;
     await joinOrLeaveUnit(unitID).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);

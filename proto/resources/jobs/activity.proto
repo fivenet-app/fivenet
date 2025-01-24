@@ -22,7 +22,7 @@ enum JobsUserActivityType {
 }
 
 message JobsUserActivity {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 4 [(validate.rules).string.max_len = 20];
   optional int32 source_user_id = 5 [(validate.rules).int32.gt = 0];

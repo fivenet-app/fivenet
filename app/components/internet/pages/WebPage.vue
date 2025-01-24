@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Tab } from '~/store/internet';
-import type { Page } from '~~/gen/ts/resources/internet/internet';
+import type { Page } from '~~/gen/ts/resources/internet/page';
 
 const props = defineProps<{
     modelValue?: Tab;

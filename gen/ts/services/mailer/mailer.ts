@@ -55,9 +55,9 @@ export interface ListEmailsResponse {
  */
 export interface GetEmailRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetEmailResponse
@@ -91,9 +91,9 @@ export interface CreateOrUpdateEmailResponse {
  */
 export interface DeleteEmailRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.mailer.DeleteEmailResponse
@@ -137,9 +137,9 @@ export interface GetEmailProposalsResponse {
  */
 export interface ListTemplatesRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
 }
 /**
  * @generated from protobuf message services.mailer.ListTemplatesResponse
@@ -155,13 +155,13 @@ export interface ListTemplatesResponse {
  */
 export interface GetTemplateRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 template_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 template_id = 2;
      */
-    templateId: string;
+    templateId: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetTemplateResponse
@@ -195,13 +195,13 @@ export interface CreateOrUpdateTemplateResponse {
  */
 export interface DeleteTemplateRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 2;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.mailer.DeleteTemplateResponse
@@ -221,9 +221,9 @@ export interface ListThreadsRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated uint64 email_ids = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 email_ids = 2;
      */
-    emailIds: string[];
+    emailIds: number[];
     /**
      * @generated from protobuf field: optional bool unread = 4;
      */
@@ -251,13 +251,13 @@ export interface ListThreadsResponse {
  */
 export interface GetThreadRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 2;
      */
-    threadId: string;
+    threadId: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetThreadResponse
@@ -301,13 +301,13 @@ export interface CreateThreadResponse {
  */
 export interface DeleteThreadRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 2;
      */
-    threadId: string;
+    threadId: number;
 }
 /**
  * @generated from protobuf message services.mailer.DeleteThreadResponse
@@ -319,13 +319,13 @@ export interface DeleteThreadResponse {
  */
 export interface GetThreadStateRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 2;
      */
-    threadId: string;
+    threadId: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetThreadStateResponse
@@ -359,9 +359,9 @@ export interface SetThreadStateResponse {
  */
 export interface GetEmailSettingsRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
 }
 /**
  * @generated from protobuf message services.mailer.GetEmailSettingsResponse
@@ -429,13 +429,13 @@ export interface ListThreadMessagesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 email_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 2;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 3;
      */
-    threadId: string;
+    threadId: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp after = 4;
      */
@@ -483,17 +483,17 @@ export interface PostMessageResponse {
  */
 export interface DeleteMessageRequest {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 2;
      */
-    threadId: string;
+    threadId: number;
     /**
-     * @generated from protobuf field: uint64 message_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 message_id = 3;
      */
-    messageId: string;
+    messageId: number;
 }
 /**
  * @generated from protobuf message services.mailer.DeleteMessageResponse
@@ -611,12 +611,12 @@ export const ListEmailsResponse = new ListEmailsResponse$Type();
 class GetEmailRequest$Type extends MessageType<GetEmailRequest> {
     constructor() {
         super("services.mailer.GetEmailRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetEmailRequest>): GetEmailRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<GetEmailRequest>(this, message, value);
         return message;
@@ -626,8 +626,8 @@ class GetEmailRequest$Type extends MessageType<GetEmailRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -641,8 +641,8 @@ class GetEmailRequest$Type extends MessageType<GetEmailRequest> {
         return message;
     }
     internalBinaryWrite(message: GetEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -796,12 +796,12 @@ export const CreateOrUpdateEmailResponse = new CreateOrUpdateEmailResponse$Type(
 class DeleteEmailRequest$Type extends MessageType<DeleteEmailRequest> {
     constructor() {
         super("services.mailer.DeleteEmailRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteEmailRequest>): DeleteEmailRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteEmailRequest>(this, message, value);
         return message;
@@ -811,8 +811,8 @@ class DeleteEmailRequest$Type extends MessageType<DeleteEmailRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -826,8 +826,8 @@ class DeleteEmailRequest$Type extends MessageType<DeleteEmailRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteEmailRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -984,12 +984,12 @@ export const GetEmailProposalsResponse = new GetEmailProposalsResponse$Type();
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
     constructor() {
         super("services.mailer.ListTemplatesRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<ListTemplatesRequest>): ListTemplatesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
+        message.emailId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListTemplatesRequest>(this, message, value);
         return message;
@@ -999,8 +999,8 @@ class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1014,8 +1014,8 @@ class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
         return message;
     }
     internalBinaryWrite(message: ListTemplatesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1078,14 +1078,14 @@ export const ListTemplatesResponse = new ListTemplatesResponse$Type();
 class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
     constructor() {
         super("services.mailer.GetTemplateRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetTemplateRequest>): GetTemplateRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.templateId = "0";
+        message.emailId = 0;
+        message.templateId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetTemplateRequest>(this, message, value);
         return message;
@@ -1095,11 +1095,11 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 template_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.templateId = reader.uint64().toString();
+                case /* uint64 template_id */ 2:
+                    message.templateId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1113,11 +1113,11 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
         return message;
     }
     internalBinaryWrite(message: GetTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 template_id = 2 [jstype = JS_STRING]; */
-        if (message.templateId !== "0")
+        /* uint64 template_id = 2; */
+        if (message.templateId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.templateId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1271,14 +1271,14 @@ export const CreateOrUpdateTemplateResponse = new CreateOrUpdateTemplateResponse
 class DeleteTemplateRequest$Type extends MessageType<DeleteTemplateRequest> {
     constructor() {
         super("services.mailer.DeleteTemplateRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteTemplateRequest>): DeleteTemplateRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.id = "0";
+        message.emailId = 0;
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteTemplateRequest>(this, message, value);
         return message;
@@ -1288,11 +1288,11 @@ class DeleteTemplateRequest$Type extends MessageType<DeleteTemplateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 id = 2 [jstype = JS_STRING];*/ 2:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 2:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1306,11 +1306,11 @@ class DeleteTemplateRequest$Type extends MessageType<DeleteTemplateRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteTemplateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 id = 2 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 2; */
+        if (message.id !== 0)
             writer.tag(2, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1352,7 +1352,7 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
     constructor() {
         super("services.mailer.ListThreadsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { uint64: { gt: "0" } } } } } },
+            { no: 2, name: "email_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "10", items: { uint64: { gt: "0" } } } } } },
             { no: 4, name: "unread", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "archived", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -1372,12 +1372,12 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated uint64 email_ids = 2 [jstype = JS_STRING];*/ 2:
+                case /* repeated uint64 email_ids */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.emailIds.push(reader.uint64().toString());
+                            message.emailIds.push(reader.uint64().toNumber());
                     else
-                        message.emailIds.push(reader.uint64().toString());
+                        message.emailIds.push(reader.uint64().toNumber());
                     break;
                 case /* optional bool unread */ 4:
                     message.unread = reader.bool();
@@ -1400,7 +1400,7 @@ class ListThreadsRequest$Type extends MessageType<ListThreadsRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated uint64 email_ids = 2 [jstype = JS_STRING]; */
+        /* repeated uint64 email_ids = 2; */
         if (message.emailIds.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.emailIds.length; i++)
@@ -1481,14 +1481,14 @@ export const ListThreadsResponse = new ListThreadsResponse$Type();
 class GetThreadRequest$Type extends MessageType<GetThreadRequest> {
     constructor() {
         super("services.mailer.GetThreadRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetThreadRequest>): GetThreadRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.threadId = "0";
+        message.emailId = 0;
+        message.threadId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetThreadRequest>(this, message, value);
         return message;
@@ -1498,11 +1498,11 @@ class GetThreadRequest$Type extends MessageType<GetThreadRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 2:
+                    message.threadId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1516,11 +1516,11 @@ class GetThreadRequest$Type extends MessageType<GetThreadRequest> {
         return message;
     }
     internalBinaryWrite(message: GetThreadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 2; */
+        if (message.threadId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.threadId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1689,14 +1689,14 @@ export const CreateThreadResponse = new CreateThreadResponse$Type();
 class DeleteThreadRequest$Type extends MessageType<DeleteThreadRequest> {
     constructor() {
         super("services.mailer.DeleteThreadRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteThreadRequest>): DeleteThreadRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.threadId = "0";
+        message.emailId = 0;
+        message.threadId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteThreadRequest>(this, message, value);
         return message;
@@ -1706,11 +1706,11 @@ class DeleteThreadRequest$Type extends MessageType<DeleteThreadRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 2:
+                    message.threadId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1724,11 +1724,11 @@ class DeleteThreadRequest$Type extends MessageType<DeleteThreadRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteThreadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 2; */
+        if (message.threadId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.threadId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1769,14 +1769,14 @@ export const DeleteThreadResponse = new DeleteThreadResponse$Type();
 class GetThreadStateRequest$Type extends MessageType<GetThreadStateRequest> {
     constructor() {
         super("services.mailer.GetThreadStateRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetThreadStateRequest>): GetThreadStateRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.threadId = "0";
+        message.emailId = 0;
+        message.threadId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetThreadStateRequest>(this, message, value);
         return message;
@@ -1786,11 +1786,11 @@ class GetThreadStateRequest$Type extends MessageType<GetThreadStateRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 2:
+                    message.threadId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1804,11 +1804,11 @@ class GetThreadStateRequest$Type extends MessageType<GetThreadStateRequest> {
         return message;
     }
     internalBinaryWrite(message: GetThreadStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 2; */
+        if (message.threadId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.threadId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1962,12 +1962,12 @@ export const SetThreadStateResponse = new SetThreadStateResponse$Type();
 class GetEmailSettingsRequest$Type extends MessageType<GetEmailSettingsRequest> {
     constructor() {
         super("services.mailer.GetEmailSettingsRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetEmailSettingsRequest>): GetEmailSettingsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
+        message.emailId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetEmailSettingsRequest>(this, message, value);
         return message;
@@ -1977,8 +1977,8 @@ class GetEmailSettingsRequest$Type extends MessageType<GetEmailSettingsRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1992,8 +1992,8 @@ class GetEmailSettingsRequest$Type extends MessageType<GetEmailSettingsRequest> 
         return message;
     }
     internalBinaryWrite(message: GetEmailSettingsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -2256,15 +2256,15 @@ class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesReque
     constructor() {
         super("services.mailer.ListThreadMessagesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 3, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 3, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
             { no: 4, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListThreadMessagesRequest>): ListThreadMessagesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.threadId = "0";
+        message.emailId = 0;
+        message.threadId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListThreadMessagesRequest>(this, message, value);
         return message;
@@ -2277,11 +2277,11 @@ class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesReque
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 email_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 2:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 3:
+                    message.threadId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp after */ 4:
                     message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
@@ -2301,11 +2301,11 @@ class ListThreadMessagesRequest$Type extends MessageType<ListThreadMessagesReque
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 email_id = 2 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 2; */
+        if (message.emailId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.emailId);
-        /* uint64 thread_id = 3 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 3; */
+        if (message.threadId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.threadId);
         /* optional resources.timestamp.Timestamp after = 4; */
         if (message.after)
@@ -2478,16 +2478,16 @@ export const PostMessageResponse = new PostMessageResponse$Type();
 class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
     constructor() {
         super("services.mailer.DeleteMessageRequest", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
-            { no: 3, name: "message_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } },
+            { no: 3, name: "message_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteMessageRequest>): DeleteMessageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
-        message.threadId = "0";
-        message.messageId = "0";
+        message.emailId = 0;
+        message.threadId = 0;
+        message.messageId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteMessageRequest>(this, message, value);
         return message;
@@ -2497,14 +2497,14 @@ class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 2:
+                    message.threadId = reader.uint64().toNumber();
                     break;
-                case /* uint64 message_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.messageId = reader.uint64().toString();
+                case /* uint64 message_id */ 3:
+                    message.messageId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2518,14 +2518,14 @@ class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteMessageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 2; */
+        if (message.threadId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* uint64 message_id = 3 [jstype = JS_STRING]; */
-        if (message.messageId !== "0")
+        /* uint64 message_id = 3; */
+        if (message.messageId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.messageId);
         let u = options.writeUnknownFields;
         if (u !== false)

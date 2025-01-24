@@ -24,14 +24,14 @@ const { showLocationMarker } = storeToRefs(livemapStore);
 
 const schema = z.object({
     postal: z.string().trim().max(12),
-    id: z.string().trim().max(16),
+    id: z.number().max(16),
 });
 
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
     postal: '',
-    id: '',
+    id: 0,
 });
 
 const page = useRouteQuery('page', '1', { transform: Number });
@@ -51,11 +51,8 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             postal: query.postal.replaceAll('-', '').replace(/\D/g, ''),
         };
 
-        if (query.id) {
-            const id = query.id.replaceAll('-', '').replace(/\D/g, '');
-            if (id.length > 0) {
-                req.ids.push(id);
-            }
+        if (query.id && query.id > 0) {
+            req.ids.push(query.id);
         }
 
         const call = getGRPCCentrumClient().listDispatches(req);

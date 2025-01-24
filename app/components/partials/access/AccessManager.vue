@@ -17,7 +17,7 @@ import type {
 
 const props = withDefaults(
     defineProps<{
-        targetId: string;
+        targetId: number;
         jobs?: JobsT[];
         users?: UsersT[];
         qualifications?: QualiT[];
@@ -148,8 +148,8 @@ function setFromPropsJobs(): void {
         ...jobsAccess.value
             .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
-                if (a.id === '0') {
-                    a.id = lastId.value.toString();
+                if (a.id === 0) {
+                    a.id = lastId.value;
                     lastId.value++;
                 }
                 return a;
@@ -163,8 +163,8 @@ function setFromPropsUsers(): void {
         ...usersAccess.value
             .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
-                if (a.id === '0') {
-                    a.id = lastId.value.toString();
+                if (a.id === 0) {
+                    a.id = lastId.value;
                     lastId.value++;
                 }
                 return a;
@@ -178,8 +178,8 @@ function setFromPropsQualifications(): void {
         ...usersAccess.value
             .filter((a) => !access.value.find((ac) => ac.id === a.id))
             .map((a) => {
-                if (a.id === '0') {
-                    a.id = lastId.value.toString();
+                if (a.id === 0) {
+                    a.id = lastId.value;
                     lastId.value++;
                 }
                 return a;
@@ -205,7 +205,7 @@ function addNewEntry(): void {
     }
 
     access.value.push({
-        id: lastId.value.toString(),
+        id: lastId.value,
         type: aTypes.value[idx]?.type ?? 'job',
         access: props.defaultAccess,
     });

@@ -14,7 +14,7 @@ import AccessManager from '../partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = defineProps<{
-    calendarId?: string;
+    calendarId?: number;
 }>();
 
 const { isOpen } = useModal();
@@ -77,7 +77,7 @@ const {
 async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
     try {
         const response = await calendarStore.createOrUpdateCalendar({
-            id: data.value?.calendar?.id ?? '0',
+            id: data.value?.calendar?.id ?? 0,
             name: values.name,
             job: values.private ? undefined : activeChar.value?.job,
             public: values.public,
@@ -203,7 +203,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
-                                :target-id="calendarId ?? '0'"
+                                :target-id="calendarId ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.calendar.AccessLevel')"
                             />
                         </UFormGroup>

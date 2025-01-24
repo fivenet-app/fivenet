@@ -7,7 +7,7 @@ import PageActivityListEntry from '~/components/wiki/PageActivityListEntry.vue';
 import type { ListPageActivityResponse } from '~~/gen/ts/services/wiki/wiki';
 
 const props = defineProps<{
-    pageId: string;
+    pageId: number;
 }>();
 
 const page = useRouteQuery('page', '1', { transform: Number });

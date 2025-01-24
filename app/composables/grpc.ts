@@ -48,7 +48,7 @@ const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
     code: undefined,
 };
 
-function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: string): void {
+function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: number): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
         click: async () => {
@@ -76,7 +76,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
     }
 
     const notification = {
-        id: '',
+        id: 0,
         type: NotificationType.ERROR,
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
         description: {

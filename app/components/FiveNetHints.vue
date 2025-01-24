@@ -1,23 +1,23 @@
 <script lang="ts" setup>
 import type { RoutesNamedLocations } from '@typed-router';
 
-type Hint = { id: string; keyboard?: boolean; to?: RoutesNamedLocations };
+type Hint = { key: string; keyboard?: boolean; to?: RoutesNamedLocations };
 
 const hints = shuffle([
     {
-        id: 'commandpalette',
+        key: 'commandpalette',
         keyboard: true,
     },
     {
-        id: 'startpage',
+        key: 'startpage',
         to: { name: 'settings' },
     },
     {
-        id: 'documenteditor',
+        key: 'documenteditor',
         to: { name: 'settings' },
     },
     {
-        id: 'sociallogin_discord',
+        key: 'sociallogin_discord',
         to: { name: 'auth-account-info', query: { tab: 'oauth2Connections' }, hash: '#' },
     },
 ] as Hint[]);

@@ -132,7 +132,7 @@ async function createOrUpdateEmail(values: Schema): Promise<undefined> {
 
     const response = await mailerStore.createOrUpdateEmail({
         email: {
-            id: props.modelValue?.id ?? '0',
+            id: props.modelValue?.id ?? 0,
             email: values.email + '@' + values.domain,
             internal: values.internal,
             label: values.label !== '' ? values.label : undefined,
@@ -247,7 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-model:jobs="state.access!.jobs"
                 v-model:users="state.access!.users"
                 v-model:qualifications="state.access!.qualifications"
-                :target-id="modelValue?.id ?? '0'"
+                :target-id="modelValue?.id ?? 0"
                 :access-types="[
                     { type: 'user', name: $t('common.citizen', 2) },
                     { type: 'job', name: $t('common.job', 2) },

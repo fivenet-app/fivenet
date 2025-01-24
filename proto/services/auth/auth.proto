@@ -28,7 +28,7 @@ message CreateAccountRequest {
 }
 
 message CreateAccountResponse {
-  uint64 account_id = 1 [jstype = JS_STRING];
+  uint64 account_id = 1;
 }
 
 message LoginRequest {
@@ -45,7 +45,7 @@ message LoginRequest {
 
 message LoginResponse {
   resources.timestamp.Timestamp expires = 1;
-  uint64 account_id = 2 [jstype = JS_STRING];
+  uint64 account_id = 2;
   optional ChooseCharacterResponse char = 3;
 }
 

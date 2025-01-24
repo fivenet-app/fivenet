@@ -11,13 +11,13 @@ import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     open: boolean;
-    documentId?: string;
-    modelValue: Map<string, DocumentRelation>;
+    documentId?: number;
+    modelValue: Map<number, DocumentRelation>;
 }>();
 
 defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<string, DocumentRelation>): void;
+    (e: 'update:modelValue', payload: Map<number, DocumentRelation>): void;
 }>();
 
 const { t } = useI18n();
@@ -82,11 +82,11 @@ async function listCitizens(): Promise<User[]> {
 
 function addRelation(user: User, relation: DocRelation): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]!) + 1).toString();
+    const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
 
     props.modelValue.set(key, {
         id: key,
-        documentId: props.documentId ?? '0',
+        documentId: props.documentId ?? 0,
         sourceUserId: activeChar.value!.userId,
         sourceUser: activeChar.value!,
         targetUserId: user.userId,
@@ -96,7 +96,7 @@ function addRelation(user: User, relation: DocRelation): void {
     refresh();
 }
 
-function removeRelation(id: string): void {
+function removeRelation(id: number): void {
     props.modelValue.delete(id);
     refresh();
 }

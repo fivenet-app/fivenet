@@ -35,6 +35,212 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on TLD with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *TLD) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TLD with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in TLDMultiError, or nil if none found.
+func (m *TLD) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TLD) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if all {
+		switch v := interface{}(m.GetCreatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TLDValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TLDValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TLDValidationError{
+				field:  "CreatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if l := utf8.RuneCountInString(m.GetName()); l < 2 || l > 24 {
+		err := TLDValidationError{
+			field:  "Name",
+			reason: "value length must be between 2 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TLDValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TLDValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TLDValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TLDValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TLDValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TLDValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return TLDMultiError(errors)
+	}
+
+	return nil
+}
+
+// TLDMultiError is an error wrapping multiple validation errors returned by
+// TLD.ValidateAll() if the designated constraints aren't met.
+type TLDMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TLDMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TLDMultiError) AllErrors() []error { return m }
+
+// TLDValidationError is the validation error returned by TLD.Validate if the
+// designated constraints aren't met.
+type TLDValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TLDValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TLDValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TLDValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TLDValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TLDValidationError) ErrorName() string { return "TLDValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TLDValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTLD.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TLDValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TLDValidationError{}
+
 // Validate checks the field values on Domain with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -86,6 +292,8 @@ func (m *Domain) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for TldId
 
 	// no validation rules for Online
 
@@ -158,6 +366,39 @@ func (m *Domain) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return DomainValidationError{
 					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Tld != nil {
+
+		if all {
+			switch v := interface{}(m.GetTld()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "Tld",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DomainValidationError{
+						field:  "Tld",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTld()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DomainValidationError{
+					field:  "Tld",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

@@ -24,9 +24,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Template {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"id"
+    id: number; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -109,9 +109,9 @@ export interface Template {
  */
 export interface TemplateShort {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"id"
+    id: number; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -238,17 +238,17 @@ export interface TemplateData {
  */
 export interface TemplateJobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"id"
+    id: number; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: string; // @gotags: alias:"template_id"
+    targetId: number; // @gotags: alias:"template_id"
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -281,7 +281,7 @@ export interface TemplateUserAccess {
 class Template$Type extends MessageType<Template> {
     constructor() {
         super("resources.documents.Template", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category },
@@ -303,7 +303,7 @@ class Template$Type extends MessageType<Template> {
     }
     create(value?: PartialMessage<Template>): Template {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.weight = 0;
         message.title = "";
         message.description = "";
@@ -321,8 +321,8 @@ class Template$Type extends MessageType<Template> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -387,8 +387,8 @@ class Template$Type extends MessageType<Template> {
         return message;
     }
     internalBinaryWrite(message: Template, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -455,7 +455,7 @@ export const Template = new Template$Type();
 class TemplateShort$Type extends MessageType<TemplateShort> {
     constructor() {
         super("resources.documents.TemplateShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category },
@@ -472,7 +472,7 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
     }
     create(value?: PartialMessage<TemplateShort>): TemplateShort {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.weight = 0;
         message.title = "";
         message.description = "";
@@ -486,8 +486,8 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -537,8 +537,8 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
         return message;
     }
     internalBinaryWrite(message: TemplateShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -826,9 +826,9 @@ export const TemplateData = new TemplateData$Type();
 class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
     constructor() {
         super("resources.documents.TemplateJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
@@ -838,8 +838,8 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
     }
     create(value?: PartialMessage<TemplateJobAccess>): TemplateJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
+        message.id = 0;
+        message.targetId = 0;
         message.job = "";
         message.minimumGrade = 0;
         message.access = 0;
@@ -852,14 +852,14 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.targetId = reader.uint64().toString();
+                case /* uint64 target_id */ 3:
+                    message.targetId = reader.uint64().toNumber();
                     break;
                 case /* string job */ 4:
                     message.job = reader.string();
@@ -888,14 +888,14 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
         return message;
     }
     internalBinaryWrite(message: TemplateJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
+        /* uint64 target_id = 3; */
+        if (message.targetId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.targetId);
         /* string job = 4; */
         if (message.job !== "")

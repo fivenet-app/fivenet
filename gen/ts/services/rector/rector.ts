@@ -75,9 +75,9 @@ export interface GetRolesResponse {
  */
 export interface GetRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional bool filtered = 2;
      */
@@ -119,9 +119,9 @@ export interface CreateRoleResponse {
  */
 export interface DeleteRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.rector.DeleteRoleResponse
@@ -133,9 +133,9 @@ export interface DeleteRoleResponse {
  */
 export interface UpdateRolePermsRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional services.rector.PermsUpdate perms = 2;
      */
@@ -154,18 +154,18 @@ export interface PermsUpdate {
      */
     toUpdate: PermItem[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 to_remove = 2;
      */
-    toRemove: string[];
+    toRemove: number[];
 }
 /**
  * @generated from protobuf message services.rector.PermItem
  */
 export interface PermItem {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: bool val = 2;
      */
@@ -194,9 +194,9 @@ export interface UpdateRolePermsResponse {
  */
 export interface GetPermissionsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 role_id = 1;
      */
-    roleId: string;
+    roleId: number;
     /**
      * @generated from protobuf field: optional bool filtered = 2;
      */
@@ -276,9 +276,9 @@ export interface ViewAuditLogResponse {
  */
 export interface UpdateRoleLimitsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 role_id = 1;
      */
-    roleId: string;
+    roleId: number;
     /**
      * @generated from protobuf field: optional services.rector.PermsUpdate perms = 2;
      */
@@ -298,9 +298,9 @@ export interface UpdateRoleLimitsResponse {
  */
 export interface DeleteFactionRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 role_id = 1;
      */
-    roleId: string;
+    roleId: number;
 }
 /**
  * @generated from protobuf message services.rector.DeleteFactionResponse
@@ -567,13 +567,13 @@ export const GetRolesResponse = new GetRolesResponse$Type();
 class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
     constructor() {
         super("services.rector.GetRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetRoleRequest>): GetRoleRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<GetRoleRequest>(this, message, value);
         return message;
@@ -583,8 +583,8 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional bool filtered */ 2:
                     message.filtered = reader.bool();
@@ -601,8 +601,8 @@ class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
         return message;
     }
     internalBinaryWrite(message: GetRoleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional bool filtered = 2; */
         if (message.filtered !== undefined)
@@ -768,12 +768,12 @@ export const CreateRoleResponse = new CreateRoleResponse$Type();
 class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
     constructor() {
         super("services.rector.DeleteRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteRoleRequest>): DeleteRoleRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteRoleRequest>(this, message, value);
         return message;
@@ -783,8 +783,8 @@ class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -798,8 +798,8 @@ class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteRoleRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -840,14 +840,14 @@ export const DeleteRoleResponse = new DeleteRoleResponse$Type();
 class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
     constructor() {
         super("services.rector.UpdateRolePermsRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
             { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
     }
     create(value?: PartialMessage<UpdateRolePermsRequest>): UpdateRolePermsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateRolePermsRequest>(this, message, value);
         return message;
@@ -857,8 +857,8 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional services.rector.PermsUpdate perms */ 2:
                     message.perms = PermsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.perms);
@@ -878,8 +878,8 @@ class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
         return message;
     }
     internalBinaryWrite(message: UpdateRolePermsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional services.rector.PermsUpdate perms = 2; */
         if (message.perms)
@@ -902,7 +902,7 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
     constructor() {
         super("services.rector.PermsUpdate", [
             { no: 1, name: "to_update", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PermItem },
-            { no: 2, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<PermsUpdate>): PermsUpdate {
@@ -921,12 +921,12 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
                 case /* repeated services.rector.PermItem to_update */ 1:
                     message.toUpdate.push(PermItem.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated uint64 to_remove = 2 [jstype = JS_STRING];*/ 2:
+                case /* repeated uint64 to_remove */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toRemove.push(reader.uint64().toString());
+                            message.toRemove.push(reader.uint64().toNumber());
                     else
-                        message.toRemove.push(reader.uint64().toString());
+                        message.toRemove.push(reader.uint64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -943,7 +943,7 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
         /* repeated services.rector.PermItem to_update = 1; */
         for (let i = 0; i < message.toUpdate.length; i++)
             PermItem.internalBinaryWrite(message.toUpdate[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated uint64 to_remove = 2 [jstype = JS_STRING]; */
+        /* repeated uint64 to_remove = 2; */
         if (message.toRemove.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.toRemove.length; i++)
@@ -964,13 +964,13 @@ export const PermsUpdate = new PermsUpdate$Type();
 class PermItem$Type extends MessageType<PermItem> {
     constructor() {
         super("services.rector.PermItem", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<PermItem>): PermItem {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.val = false;
         if (value !== undefined)
             reflectionMergePartial<PermItem>(this, message, value);
@@ -981,8 +981,8 @@ class PermItem$Type extends MessageType<PermItem> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* bool val */ 2:
                     message.val = reader.bool();
@@ -999,8 +999,8 @@ class PermItem$Type extends MessageType<PermItem> {
         return message;
     }
     internalBinaryWrite(message: PermItem, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* bool val = 2; */
         if (message.val !== false)
@@ -1099,13 +1099,13 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
         super("services.rector.GetPermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetPermissionsRequest>): GetPermissionsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.roleId = "0";
+        message.roleId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetPermissionsRequest>(this, message, value);
         return message;
@@ -1115,8 +1115,8 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.roleId = reader.uint64().toString();
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
                     break;
                 case /* optional bool filtered */ 2:
                     message.filtered = reader.bool();
@@ -1133,8 +1133,8 @@ class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
         return message;
     }
     internalBinaryWrite(message: GetPermissionsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1 [jstype = JS_STRING]; */
-        if (message.roleId !== "0")
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
         /* optional bool filtered = 2; */
         if (message.filtered !== undefined)
@@ -1368,14 +1368,14 @@ export const ViewAuditLogResponse = new ViewAuditLogResponse$Type();
 class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> {
     constructor() {
         super("services.rector.UpdateRoleLimitsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
             { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
     }
     create(value?: PartialMessage<UpdateRoleLimitsRequest>): UpdateRoleLimitsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.roleId = "0";
+        message.roleId = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateRoleLimitsRequest>(this, message, value);
         return message;
@@ -1385,8 +1385,8 @@ class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.roleId = reader.uint64().toString();
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
                     break;
                 case /* optional services.rector.PermsUpdate perms */ 2:
                     message.perms = PermsUpdate.internalBinaryRead(reader, reader.uint32(), options, message.perms);
@@ -1406,8 +1406,8 @@ class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> 
         return message;
     }
     internalBinaryWrite(message: UpdateRoleLimitsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1 [jstype = JS_STRING]; */
-        if (message.roleId !== "0")
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
         /* optional services.rector.PermsUpdate perms = 2; */
         if (message.perms)
@@ -1454,12 +1454,12 @@ export const UpdateRoleLimitsResponse = new UpdateRoleLimitsResponse$Type();
 class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
     constructor() {
         super("services.rector.DeleteFactionRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteFactionRequest>): DeleteFactionRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.roleId = "0";
+        message.roleId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteFactionRequest>(this, message, value);
         return message;
@@ -1469,8 +1469,8 @@ class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.roleId = reader.uint64().toString();
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1484,8 +1484,8 @@ class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteFactionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1 [jstype = JS_STRING]; */
-        if (message.roleId !== "0")
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
         let u = options.writeUnknownFields;
         if (u !== false)

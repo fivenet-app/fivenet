@@ -4,7 +4,7 @@ import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qual
 import ExamViewQuestion from './ExamViewQuestion.vue';
 
 defineProps<{
-    qualificationId: string;
+    qualificationId: number;
     qualification?: QualificationShort;
     responses?: ExamResponses;
 }>();

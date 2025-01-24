@@ -7,7 +7,7 @@ import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    documentId: string;
+    documentId: number;
 }>();
 
 const { isOpen } = useModal();

@@ -25,7 +25,7 @@ const route = useRoute('documents-id');
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <DocumentView :document-id="route.params.id" />
+            <DocumentView :document-id="parseInt(route.params.id)" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

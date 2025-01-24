@@ -35,7 +35,7 @@ const changed = ref(false);
 const schema = z.object({
     labels: z
         .object({
-            id: z.string(),
+            id: z.number(),
             name: z.string().min(1),
             color: z.string().length(7),
         })

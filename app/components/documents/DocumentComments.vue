@@ -14,7 +14,7 @@ import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = withDefaults(
     defineProps<{
-        documentId: string;
+        documentId: number;
         closed?: boolean;
         canComment?: boolean;
     }>(),
@@ -78,13 +78,13 @@ const state = reactive<Schema>({
     comment: '',
 });
 
-async function addComment(documentId: string, values: Schema): Promise<void> {
+async function addComment(documentId: number, values: Schema): Promise<void> {
     if (data.value === null) {
         return;
     }
 
     const comment: Comment = {
-        id: '0',
+        id: 0,
         documentId,
         content: {
             rawContent: values.comment,
@@ -115,7 +115,7 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
     }
 }
 
-async function removeComment(id: string): Promise<void> {
+async function removeComment(id: number): Promise<void> {
     if (!data.value) {
         return;
     }

@@ -15,9 +15,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface EmailSettings {
     /**
-     * @generated from protobuf field: uint64 email_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 email_id = 1;
      */
-    emailId: string;
+    emailId: number;
     /**
      * @sanitize
      *
@@ -35,14 +35,14 @@ export interface EmailSettings {
 class EmailSettings$Type extends MessageType<EmailSettings> {
     constructor() {
         super("resources.mailer.EmailSettings", [
-            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "email_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "signature", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 3, name: "blocked_emails", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "25" } } } }
         ]);
     }
     create(value?: PartialMessage<EmailSettings>): EmailSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.emailId = "0";
+        message.emailId = 0;
         message.blockedEmails = [];
         if (value !== undefined)
             reflectionMergePartial<EmailSettings>(this, message, value);
@@ -53,8 +53,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 email_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.emailId = reader.uint64().toString();
+                case /* uint64 email_id */ 1:
+                    message.emailId = reader.uint64().toNumber();
                     break;
                 case /* optional string signature */ 2:
                     message.signature = reader.string();
@@ -74,8 +74,8 @@ class EmailSettings$Type extends MessageType<EmailSettings> {
         return message;
     }
     internalBinaryWrite(message: EmailSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 email_id = 1 [jstype = JS_STRING]; */
-        if (message.emailId !== "0")
+        /* uint64 email_id = 1; */
+        if (message.emailId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.emailId);
         /* optional string signature = 2; */
         if (message.signature !== undefined)

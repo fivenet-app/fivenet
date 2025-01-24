@@ -12,13 +12,13 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @generated from protobuf message resources.internet.Domain
+ * @generated from protobuf message resources.internet.TLD
  */
-export interface Domain {
+export interface TLD {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -32,39 +32,151 @@ export interface Domain {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: bool online = 5;
+     * @generated from protobuf field: string name = 5;
+     */
+    name: string;
+}
+/**
+ * @generated from protobuf message resources.internet.Domain
+ */
+export interface Domain {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 tld_id = 5;
+     */
+    tldId: number;
+    /**
+     * @generated from protobuf field: optional resources.internet.TLD tld = 6;
+     */
+    tld?: TLD;
+    /**
+     * @generated from protobuf field: bool online = 7;
      */
     online: boolean;
     /**
-     * @generated from protobuf field: string name = 6;
+     * @generated from protobuf field: string name = 8;
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string creator_job = 7;
+     * @generated from protobuf field: optional string creator_job = 9;
      */
     creatorJob?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 8;
+     * @generated from protobuf field: optional int32 creator_id = 10;
      */
     creatorId?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class Domain$Type extends MessageType<Domain> {
+class TLD$Type extends MessageType<TLD> {
     constructor() {
-        super("resources.internet.Domain", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+        super("resources.internet.TLD", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "online", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 7, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "24" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<TLD>): TLD {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        message.name = "";
+        if (value !== undefined)
+            reflectionMergePartial<TLD>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TLD): TLD {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
+                    break;
+                case /* resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp updated_at */ 3:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* string name */ 5:
+                    message.name = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TLD, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 3; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string name = 5; */
+        if (message.name !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.name);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.internet.TLD
+ */
+export const TLD = new TLD$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Domain$Type extends MessageType<Domain> {
+    constructor() {
+        super("resources.internet.Domain", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 6, name: "tld", kind: "message", T: () => TLD },
+            { no: 7, name: "online", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Domain>): Domain {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
+        message.tldId = 0;
         message.online = false;
         message.name = "";
         if (value !== undefined)
@@ -76,8 +188,8 @@ class Domain$Type extends MessageType<Domain> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -88,16 +200,22 @@ class Domain$Type extends MessageType<Domain> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* bool online */ 5:
+                case /* uint64 tld_id */ 5:
+                    message.tldId = reader.uint64().toNumber();
+                    break;
+                case /* optional resources.internet.TLD tld */ 6:
+                    message.tld = TLD.internalBinaryRead(reader, reader.uint32(), options, message.tld);
+                    break;
+                case /* bool online */ 7:
                     message.online = reader.bool();
                     break;
-                case /* string name */ 6:
+                case /* string name */ 8:
                     message.name = reader.string();
                     break;
-                case /* optional string creator_job */ 7:
+                case /* optional string creator_job */ 9:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional int32 creator_id */ 8:
+                case /* optional int32 creator_id */ 10:
                     message.creatorId = reader.int32();
                     break;
                 default:
@@ -112,8 +230,8 @@ class Domain$Type extends MessageType<Domain> {
         return message;
     }
     internalBinaryWrite(message: Domain, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -124,18 +242,24 @@ class Domain$Type extends MessageType<Domain> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool online = 5; */
+        /* uint64 tld_id = 5; */
+        if (message.tldId !== 0)
+            writer.tag(5, WireType.Varint).uint64(message.tldId);
+        /* optional resources.internet.TLD tld = 6; */
+        if (message.tld)
+            TLD.internalBinaryWrite(message.tld, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* bool online = 7; */
         if (message.online !== false)
-            writer.tag(5, WireType.Varint).bool(message.online);
-        /* string name = 6; */
+            writer.tag(7, WireType.Varint).bool(message.online);
+        /* string name = 8; */
         if (message.name !== "")
-            writer.tag(6, WireType.LengthDelimited).string(message.name);
-        /* optional string creator_job = 7; */
+            writer.tag(8, WireType.LengthDelimited).string(message.name);
+        /* optional string creator_job = 9; */
         if (message.creatorJob !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional int32 creator_id = 8; */
+            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 10; */
         if (message.creatorId !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.creatorId);
+            writer.tag(10, WireType.Varint).int32(message.creatorId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

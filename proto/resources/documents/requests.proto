@@ -10,10 +10,10 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
 
 message DocRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp updated_at = 3;
-  uint64 document_id = 4 [jstype = JS_STRING];
+  uint64 document_id = 4;
   DocActivityType request_type = 5 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
   optional int32 creator_id = 6 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 7; // @gotags: alias:"creator"

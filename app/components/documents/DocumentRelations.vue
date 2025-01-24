@@ -11,7 +11,7 @@ import { relationToBadge } from './helpers';
 
 const props = withDefaults(
     defineProps<{
-        documentId: string;
+        documentId: number;
         showDocument?: boolean;
         showSource?: boolean;
     }>(),

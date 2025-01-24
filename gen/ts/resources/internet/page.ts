@@ -16,9 +16,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Page {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -32,9 +32,9 @@ export interface Page {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 domain_id = 5 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 domain_id = 5;
      */
-    domainId: string;
+    domainId: number;
     /**
      * @sanitize: method=StripTags
      *
@@ -94,11 +94,11 @@ export enum PageLayoutType {
 class Page$Type extends MessageType<Page> {
     constructor() {
         super("resources.internet.Page", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
@@ -109,8 +109,8 @@ class Page$Type extends MessageType<Page> {
     }
     create(value?: PartialMessage<Page>): Page {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.domainId = "0";
+        message.id = 0;
+        message.domainId = 0;
         message.path = "";
         message.title = "";
         message.description = "";
@@ -123,8 +123,8 @@ class Page$Type extends MessageType<Page> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -135,8 +135,8 @@ class Page$Type extends MessageType<Page> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 domain_id = 5 [jstype = JS_STRING];*/ 5:
-                    message.domainId = reader.uint64().toString();
+                case /* uint64 domain_id */ 5:
+                    message.domainId = reader.uint64().toNumber();
                     break;
                 case /* string path */ 6:
                     message.path = reader.string();
@@ -168,8 +168,8 @@ class Page$Type extends MessageType<Page> {
         return message;
     }
     internalBinaryWrite(message: Page, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -180,8 +180,8 @@ class Page$Type extends MessageType<Page> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 domain_id = 5 [jstype = JS_STRING]; */
-        if (message.domainId !== "0")
+        /* uint64 domain_id = 5; */
+        if (message.domainId !== 0)
             writer.tag(5, WireType.Varint).uint64(message.domainId);
         /* string path = 6; */
         if (message.path !== "")

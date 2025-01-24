@@ -16,8 +16,8 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{
-    calendarId?: string;
-    entryId?: string;
+    calendarId?: number;
+    entryId?: number;
 }>();
 
 const { isOpen } = useModal();
@@ -69,7 +69,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
     try {
         const response = await calendarStore.createOrUpdateCalendarEntry(
             {
-                id: data.value?.entry?.id ?? '0',
+                id: data.value?.entry?.id ?? 0,
                 calendarId: values.calendar.id,
                 title: values.title,
                 startTime: toTimestamp(values.startTime),

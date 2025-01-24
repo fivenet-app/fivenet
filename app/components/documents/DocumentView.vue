@@ -29,7 +29,7 @@ import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.v
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
 const props = defineProps<{
-    documentId: string;
+    documentId: number;
 }>();
 
 const { t } = useI18n();
@@ -52,7 +52,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
 
-async function getDocument(id: string): Promise<Document> {
+async function getDocument(id: number): Promise<Document> {
     try {
         const call = getGRPCDocStoreClient().getDocument({
             documentId: id,
@@ -68,7 +68,7 @@ async function getDocument(id: string): Promise<Document> {
     }
 }
 
-async function deleteDocument(id: string): Promise<void> {
+async function deleteDocument(id: number): Promise<void> {
     try {
         await getGRPCDocStoreClient().deleteDocument({
             documentId: id,
@@ -87,7 +87,7 @@ async function deleteDocument(id: string): Promise<void> {
     }
 }
 
-async function toggleDocument(id: string, closed: boolean): Promise<void> {
+async function toggleDocument(id: number, closed: boolean): Promise<void> {
     try {
         await getGRPCDocStoreClient().toggleDocument({
             documentId: id,
@@ -115,7 +115,7 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
     }
 }
 
-async function changeDocumentOwner(id: string): Promise<void> {
+async function changeDocumentOwner(id: number): Promise<void> {
     try {
         await getGRPCDocStoreClient().changeDocumentOwner({
             documentId: id,
@@ -166,7 +166,7 @@ function openRequestsModal(): void {
     });
 }
 
-async function togglePin(documentId: string, state: boolean): Promise<ToggleDocumentPinResponse> {
+async function togglePin(documentId: number, state: boolean): Promise<ToggleDocumentPinResponse> {
     try {
         const call = getGRPCDocStoreClient().toggleDocumentPin({
             documentId: documentId,

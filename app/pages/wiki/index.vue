@@ -53,7 +53,7 @@ watch(pages, async () => {
             params: {
                 job: pages.value[0]!.job,
                 id: pages.value[0]!.id,
-                slug: pages.value[0]!.slug,
+                slug: [pages.value[0]!.slug ?? ''],
             },
         });
     }

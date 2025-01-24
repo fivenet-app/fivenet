@@ -18,9 +18,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Notification {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -101,13 +101,13 @@ export interface Link {
  */
 export interface CalendarData {
     /**
-     * @generated from protobuf field: optional uint64 calendar_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 calendar_id = 1;
      */
-    calendarId?: string;
+    calendarId?: number;
     /**
-     * @generated from protobuf field: optional uint64 calendar_entry_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 calendar_entry_id = 2;
      */
-    calendarEntryId?: string;
+    calendarEntryId?: number;
 }
 /**
  * @generated from protobuf enum resources.notifications.NotificationType
@@ -159,7 +159,7 @@ export enum NotificationCategory {
 class Notification$Type extends MessageType<Notification> {
     constructor() {
         super("resources.notifications.Notification", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
@@ -173,7 +173,7 @@ class Notification$Type extends MessageType<Notification> {
     }
     create(value?: PartialMessage<Notification>): Notification {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.userId = 0;
         message.type = 0;
         message.category = 0;
@@ -186,8 +186,8 @@ class Notification$Type extends MessageType<Notification> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -228,8 +228,8 @@ class Notification$Type extends MessageType<Notification> {
         return message;
     }
     internalBinaryWrite(message: Notification, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -393,8 +393,8 @@ export const Link = new Link$Type();
 class CalendarData$Type extends MessageType<CalendarData> {
     constructor() {
         super("resources.notifications.CalendarData", [
-            { no: 1, name: "calendar_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "calendar_entry_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "calendar_entry_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CalendarData>): CalendarData {
@@ -408,11 +408,11 @@ class CalendarData$Type extends MessageType<CalendarData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.calendarId = reader.uint64().toString();
+                case /* optional uint64 calendar_id */ 1:
+                    message.calendarId = reader.uint64().toNumber();
                     break;
-                case /* optional uint64 calendar_entry_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.calendarEntryId = reader.uint64().toString();
+                case /* optional uint64 calendar_entry_id */ 2:
+                    message.calendarEntryId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -426,10 +426,10 @@ class CalendarData$Type extends MessageType<CalendarData> {
         return message;
     }
     internalBinaryWrite(message: CalendarData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        /* optional uint64 calendar_id = 1; */
         if (message.calendarId !== undefined)
             writer.tag(1, WireType.Varint).uint64(message.calendarId);
-        /* optional uint64 calendar_entry_id = 2 [jstype = JS_STRING]; */
+        /* optional uint64 calendar_entry_id = 2; */
         if (message.calendarEntryId !== undefined)
             writer.tag(2, WireType.Varint).uint64(message.calendarEntryId);
         let u = options.writeUnknownFields;

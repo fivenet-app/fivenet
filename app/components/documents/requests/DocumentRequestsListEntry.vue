@@ -18,7 +18,7 @@ const emit = defineEmits<{
 
 const notifications = useNotificatorStore();
 
-async function updateDocumentReq(documentId: string, requestId: string, accepted: boolean): Promise<void> {
+async function updateDocumentReq(documentId: number, requestId: number, accepted: boolean): Promise<void> {
     try {
         const call = getGRPCDocStoreClient().updateDocumentReq({
             documentId,
@@ -46,7 +46,7 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
     }
 }
 
-async function deleteDocumentReq(id: string): Promise<void> {
+async function deleteDocumentReq(id: number): Promise<void> {
     try {
         const call = getGRPCDocStoreClient().deleteDocumentReq({
             requestId: id,

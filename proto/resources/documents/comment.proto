@@ -10,11 +10,11 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents;documents";
 
 message Comment {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 id = 1; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  uint64 document_id = 5 [jstype = JS_STRING];
+  uint64 document_id = 5;
   resources.common.content.Content content = 6;
   optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"

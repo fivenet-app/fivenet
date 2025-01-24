@@ -40,11 +40,11 @@ export interface MailerState {
     };
 
     emails: Email[];
-    selectedEmailId: string | undefined;
+    selectedEmailId: number | undefined;
     selectedEmail: Email | undefined;
     selectedThread: Thread | undefined;
 
-    unreadThreadIds: string[];
+    unreadThreadIds: number[];
 
     threads: ListThreadsResponse | undefined;
     messages: ListThreadMessagesResponse | undefined;
@@ -122,7 +122,7 @@ export const useMailerStore = defineStore('mailer', {
                         data.state.unread = false;
                     } else {
                         data.state = {
-                            emailId: this.selectedEmail?.id ?? '0',
+                            emailId: this.selectedEmail?.id ?? 0,
                             threadId: data.id,
                             unread: false,
                         };
@@ -351,7 +351,7 @@ export const useMailerStore = defineStore('mailer', {
             }
         },
 
-        async getEmail(id: string): Promise<Email | undefined> {
+        async getEmail(id: number): Promise<Email | undefined> {
             try {
                 const call = getGRPCMailerClient().getEmail({
                     id: id,
@@ -474,7 +474,7 @@ export const useMailerStore = defineStore('mailer', {
             }
         },
 
-        async getThread(threadId: string): Promise<Thread | undefined> {
+        async getThread(threadId: number): Promise<Thread | undefined> {
             if (!this.selectedEmail) {
                 return;
             }
@@ -556,7 +556,7 @@ export const useMailerStore = defineStore('mailer', {
         },
 
         // Thread User State
-        async getThreadState(threadId: string): Promise<ThreadState | undefined> {
+        async getThreadState(threadId: number): Promise<ThreadState | undefined> {
             try {
                 const call = getGRPCMailerClient().getThreadState({
                     emailId: this.selectedEmail!.id,
@@ -725,7 +725,7 @@ export const useMailerStore = defineStore('mailer', {
             return this.selectedEmail.settings.blockedEmails.includes(email.toLowerCase());
         },
 
-        getNotificationActions(threadId?: string): NotificationActionI18n[] {
+        getNotificationActions(threadId?: number): NotificationActionI18n[] {
             return [
                 {
                     label: { key: 'common.click_here' },

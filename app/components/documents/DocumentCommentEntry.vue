@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'update:modelValue', comment: Comment | undefined): void;
-    (e: 'deleted', id: string | undefined): void;
+    (e: 'deleted', id: number | undefined): void;
 }>();
 
 const comment = useVModel(props, 'modelValue', emit);
@@ -39,7 +39,7 @@ const state = reactive<Schema>({
     comment: '',
 });
 
-async function editComment(documentId: string, commentId: string, values: Schema): Promise<void> {
+async function editComment(documentId: number, commentId: number, values: Schema): Promise<void> {
     try {
         const { response } = await getGRPCDocStoreClient().editComment({
             comment: {
@@ -72,7 +72,7 @@ async function editComment(documentId: string, commentId: string, values: Schema
     }
 }
 
-async function deleteComment(id: string): Promise<void> {
+async function deleteComment(id: number): Promise<void> {
     try {
         await getGRPCDocStoreClient().deleteComment({
             commentId: id,

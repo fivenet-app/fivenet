@@ -13,7 +13,7 @@ const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
 
-async function deleteMarker(id: string): Promise<void> {
+async function deleteMarker(id: number): Promise<void> {
     try {
         const call = getGRPCLivemapperClient().deleteMarker({
             id,

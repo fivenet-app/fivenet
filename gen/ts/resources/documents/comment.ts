@@ -18,9 +18,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Comment {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"id"
+    id: number; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -34,9 +34,9 @@ export interface Comment {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 5 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 document_id = 5;
      */
-    documentId: string;
+    documentId: number;
     /**
      * @generated from protobuf field: resources.common.content.Content content = 6;
      */
@@ -58,11 +58,11 @@ export interface Comment {
 class Comment$Type extends MessageType<Comment> {
     constructor() {
         super("resources.documents.Comment", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "creator", kind: "message", T: () => UserShort },
@@ -71,8 +71,8 @@ class Comment$Type extends MessageType<Comment> {
     }
     create(value?: PartialMessage<Comment>): Comment {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.documentId = "0";
+        message.id = 0;
+        message.documentId = 0;
         message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Comment>(this, message, value);
@@ -83,8 +83,8 @@ class Comment$Type extends MessageType<Comment> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -95,8 +95,8 @@ class Comment$Type extends MessageType<Comment> {
                 case /* optional resources.timestamp.Timestamp deleted_at */ 4:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
                     break;
-                case /* uint64 document_id = 5 [jstype = JS_STRING];*/ 5:
-                    message.documentId = reader.uint64().toString();
+                case /* uint64 document_id */ 5:
+                    message.documentId = reader.uint64().toNumber();
                     break;
                 case /* resources.common.content.Content content */ 6:
                     message.content = Content.internalBinaryRead(reader, reader.uint32(), options, message.content);
@@ -122,8 +122,8 @@ class Comment$Type extends MessageType<Comment> {
         return message;
     }
     internalBinaryWrite(message: Comment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -134,8 +134,8 @@ class Comment$Type extends MessageType<Comment> {
         /* optional resources.timestamp.Timestamp deleted_at = 4; */
         if (message.deletedAt)
             Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 document_id = 5 [jstype = JS_STRING]; */
-        if (message.documentId !== "0")
+        /* uint64 document_id = 5; */
+        if (message.documentId !== 0)
             writer.tag(5, WireType.Varint).uint64(message.documentId);
         /* resources.common.content.Content content = 6; */
         if (message.content)

@@ -20,9 +20,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Dispatch {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -95,9 +95,9 @@ export interface Dispatch {
  */
 export interface DispatchAssignments {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 dispatch_id = 1;
      */
-    dispatchId: string;
+    dispatchId: number;
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -112,13 +112,13 @@ export interface DispatchAssignments {
  */
 export interface DispatchAssignment {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 dispatch_id = 1;
      */
-    dispatchId: string; // @gotags: sql:"primary_key" alias:"dispatch_id"
+    dispatchId: number; // @gotags: sql:"primary_key" alias:"dispatch_id"
     /**
-     * @generated from protobuf field: uint64 unit_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 2;
      */
-    unitId: string; // @gotags: sql:"primary_key" alias:"unit_id"
+    unitId: number; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: optional resources.centrum.Unit unit = 3;
      */
@@ -137,21 +137,21 @@ export interface DispatchAssignment {
  */
 export interface DispatchStatus {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 dispatch_id = 3;
      */
-    dispatchId: string;
+    dispatchId: number;
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 unit_id = 4;
      */
-    unitId?: string;
+    unitId?: number;
     /**
      * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
      */
@@ -209,9 +209,9 @@ export interface DispatchReferences {
  */
 export interface DispatchReference {
     /**
-     * @generated from protobuf field: uint64 target_dispatch_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_dispatch_id = 1;
      */
-    targetDispatchId: string;
+    targetDispatchId: number;
     /**
      * @generated from protobuf field: resources.centrum.DispatchReferenceType reference_type = 2;
      */
@@ -324,7 +324,7 @@ export enum DispatchReferenceType {
 class Dispatch$Type extends MessageType<Dispatch> {
     constructor() {
         super("resources.centrum.Dispatch", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -344,7 +344,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
     }
     create(value?: PartialMessage<Dispatch>): Dispatch {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         message.message = "";
         message.x = 0;
@@ -360,8 +360,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -420,8 +420,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
         return message;
     }
     internalBinaryWrite(message: Dispatch, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -482,14 +482,14 @@ export const Dispatch = new Dispatch$Type();
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {
         super("resources.centrum.DispatchAssignments", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }
     create(value?: PartialMessage<DispatchAssignments>): DispatchAssignments {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchId = "0";
+        message.dispatchId = 0;
         message.job = "";
         message.units = [];
         if (value !== undefined)
@@ -501,8 +501,8 @@ class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.dispatchId = reader.uint64().toString();
+                case /* uint64 dispatch_id */ 1:
+                    message.dispatchId = reader.uint64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -522,8 +522,8 @@ class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
         return message;
     }
     internalBinaryWrite(message: DispatchAssignments, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1 [jstype = JS_STRING]; */
-        if (message.dispatchId !== "0")
+        /* uint64 dispatch_id = 1; */
+        if (message.dispatchId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.dispatchId);
         /* string job = 2; */
         if (message.job !== "")
@@ -545,8 +545,8 @@ export const DispatchAssignments = new DispatchAssignments$Type();
 class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     constructor() {
         super("resources.centrum.DispatchAssignment", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "unit", kind: "message", T: () => Unit },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "expires_at", kind: "message", T: () => Timestamp }
@@ -554,8 +554,8 @@ class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     }
     create(value?: PartialMessage<DispatchAssignment>): DispatchAssignment {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchId = "0";
-        message.unitId = "0";
+        message.dispatchId = 0;
+        message.unitId = 0;
         if (value !== undefined)
             reflectionMergePartial<DispatchAssignment>(this, message, value);
         return message;
@@ -565,11 +565,11 @@ class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.dispatchId = reader.uint64().toString();
+                case /* uint64 dispatch_id */ 1:
+                    message.dispatchId = reader.uint64().toNumber();
                     break;
-                case /* uint64 unit_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 2:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 3:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -592,11 +592,11 @@ class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
         return message;
     }
     internalBinaryWrite(message: DispatchAssignment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1 [jstype = JS_STRING]; */
-        if (message.dispatchId !== "0")
+        /* uint64 dispatch_id = 1; */
+        if (message.dispatchId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.dispatchId);
-        /* uint64 unit_id = 2 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 2; */
+        if (message.unitId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.unitId);
         /* optional resources.centrum.Unit unit = 3; */
         if (message.unit)
@@ -621,10 +621,10 @@ export const DispatchAssignment = new DispatchAssignment$Type();
 class DispatchStatus$Type extends MessageType<DispatchStatus> {
     constructor() {
         super("resources.centrum.DispatchStatus", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -638,8 +638,8 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
     }
     create(value?: PartialMessage<DispatchStatus>): DispatchStatus {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.dispatchId = "0";
+        message.id = 0;
+        message.dispatchId = 0;
         message.status = 0;
         if (value !== undefined)
             reflectionMergePartial<DispatchStatus>(this, message, value);
@@ -650,17 +650,17 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 dispatch_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.dispatchId = reader.uint64().toString();
+                case /* uint64 dispatch_id */ 3:
+                    message.dispatchId = reader.uint64().toNumber();
                     break;
-                case /* optional uint64 unit_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.unitId = reader.uint64().toString();
+                case /* optional uint64 unit_id */ 4:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 5:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -701,16 +701,16 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
         return message;
     }
     internalBinaryWrite(message: DispatchStatus, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 dispatch_id = 3 [jstype = JS_STRING]; */
-        if (message.dispatchId !== "0")
+        /* uint64 dispatch_id = 3; */
+        if (message.dispatchId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.dispatchId);
-        /* optional uint64 unit_id = 4 [jstype = JS_STRING]; */
+        /* optional uint64 unit_id = 4; */
         if (message.unitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.unitId);
         /* optional resources.centrum.Unit unit = 5; */
@@ -801,13 +801,13 @@ export const DispatchReferences = new DispatchReferences$Type();
 class DispatchReference$Type extends MessageType<DispatchReference> {
     constructor() {
         super("resources.centrum.DispatchReference", [
-            { no: 1, name: "target_dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "target_dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "reference_type", kind: "enum", T: () => ["resources.centrum.DispatchReferenceType", DispatchReferenceType, "DISPATCH_REFERENCE_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<DispatchReference>): DispatchReference {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.targetDispatchId = "0";
+        message.targetDispatchId = 0;
         message.referenceType = 0;
         if (value !== undefined)
             reflectionMergePartial<DispatchReference>(this, message, value);
@@ -818,8 +818,8 @@ class DispatchReference$Type extends MessageType<DispatchReference> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 target_dispatch_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.targetDispatchId = reader.uint64().toString();
+                case /* uint64 target_dispatch_id */ 1:
+                    message.targetDispatchId = reader.uint64().toNumber();
                     break;
                 case /* resources.centrum.DispatchReferenceType reference_type */ 2:
                     message.referenceType = reader.int32();
@@ -836,8 +836,8 @@ class DispatchReference$Type extends MessageType<DispatchReference> {
         return message;
     }
     internalBinaryWrite(message: DispatchReference, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 target_dispatch_id = 1 [jstype = JS_STRING]; */
-        if (message.targetDispatchId !== "0")
+        /* uint64 target_dispatch_id = 1; */
+        if (message.targetDispatchId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.targetDispatchId);
         /* resources.centrum.DispatchReferenceType reference_type = 2; */
         if (message.referenceType !== 0)

@@ -24,7 +24,7 @@ message ListPagesResponse {
 }
 
 message GetPageRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message GetPageResponse {
@@ -48,14 +48,14 @@ message UpdatePageResponse {
 }
 
 message DeletePageRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message DeletePageResponse {}
 
 message ListPageActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 page_id = 2 [jstype = JS_STRING];
+  uint64 page_id = 2;
 }
 
 message ListPageActivityResponse {

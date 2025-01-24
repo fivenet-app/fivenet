@@ -19,9 +19,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface UserActivity {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"fivenet_user_activity.id"
+    id: number; // @gotags: alias:"fivenet_user_activity.id"
     /**
      * @generated from protobuf field: resources.users.UserActivityType type = 2;
      */
@@ -248,9 +248,9 @@ export interface UserDocumentRelation {
      */
     added: boolean;
     /**
-     * @generated from protobuf field: uint64 document_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 document_id = 2;
      */
-    documentId: string;
+    documentId: number;
     /**
      * @generated from protobuf field: int32 relation = 3;
      */
@@ -339,7 +339,7 @@ export enum UserActivityType {
 class UserActivity$Type extends MessageType<UserActivity> {
     constructor() {
         super("resources.users.UserActivity", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "type", kind: "enum", T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "source_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -355,7 +355,7 @@ class UserActivity$Type extends MessageType<UserActivity> {
     }
     create(value?: PartialMessage<UserActivity>): UserActivity {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.type = 0;
         message.targetUserId = 0;
         message.key = "";
@@ -371,8 +371,8 @@ class UserActivity$Type extends MessageType<UserActivity> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.users.UserActivityType type */ 2:
                     message.type = reader.int32();
@@ -419,8 +419,8 @@ class UserActivity$Type extends MessageType<UserActivity> {
         return message;
     }
     internalBinaryWrite(message: UserActivity, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.users.UserActivityType type = 2; */
         if (message.type !== 0)
@@ -990,14 +990,14 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
     constructor() {
         super("resources.users.UserDocumentRelation", [
             { no: 1, name: "added", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "relation", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<UserDocumentRelation>): UserDocumentRelation {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.added = false;
-        message.documentId = "0";
+        message.documentId = 0;
         message.relation = 0;
         if (value !== undefined)
             reflectionMergePartial<UserDocumentRelation>(this, message, value);
@@ -1011,8 +1011,8 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
                 case /* bool added */ 1:
                     message.added = reader.bool();
                     break;
-                case /* uint64 document_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.documentId = reader.uint64().toString();
+                case /* uint64 document_id */ 2:
+                    message.documentId = reader.uint64().toNumber();
                     break;
                 case /* int32 relation */ 3:
                     message.relation = reader.int32();
@@ -1032,8 +1032,8 @@ class UserDocumentRelation$Type extends MessageType<UserDocumentRelation> {
         /* bool added = 1; */
         if (message.added !== false)
             writer.tag(1, WireType.Varint).bool(message.added);
-        /* uint64 document_id = 2 [jstype = JS_STRING]; */
-        if (message.documentId !== "0")
+        /* uint64 document_id = 2; */
+        if (message.documentId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.documentId);
         /* int32 relation = 3; */
         if (message.relation !== 0)

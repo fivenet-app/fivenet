@@ -10,7 +10,7 @@ import SortButton from '../partials/SortButton.vue';
 
 const props = withDefaults(
     defineProps<{
-        qualificationId?: string;
+        qualificationId?: number;
         userId?: number;
         status?: ResultStatus[];
     }>(),
@@ -43,7 +43,7 @@ const {
 );
 
 async function listQualificationsResults(
-    qualificationId?: string,
+    qualificationId?: number,
     userId?: number,
     status?: ResultStatus[],
 ): Promise<ListQualificationsResultsResponse> {

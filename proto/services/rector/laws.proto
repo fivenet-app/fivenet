@@ -16,7 +16,7 @@ message CreateOrUpdateLawBookResponse {
 }
 
 message DeleteLawBookRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 message DeleteLawBookResponse {}
 
@@ -29,7 +29,7 @@ message CreateOrUpdateLawResponse {
 }
 
 message DeleteLawRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message DeleteLawResponse {}

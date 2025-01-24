@@ -27,8 +27,8 @@ export interface LivemapState {
     jobsMarkers: Job[];
     jobsUsers: Job[];
 
-    markersMarkers: Map<string, MarkerMarker>;
-    markersUsers: Map<string, UserMarker>;
+    markersMarkers: Map<number, MarkerMarker>;
+    markersUsers: Map<number, UserMarker>;
 
     selectedMarker: UserMarker | undefined;
 }
@@ -51,8 +51,8 @@ export const useLivemapStore = defineStore('livemap', {
             jobsMarkers: [],
             jobsUsers: [],
 
-            markersMarkers: new Map<string, MarkerMarker>(),
-            markersUsers: new Map<string, UserMarker>(),
+            markersMarkers: new Map<number, MarkerMarker>(),
+            markersUsers: new Map<number, UserMarker>(),
 
             selectedMarker: undefined,
         }) as LivemapState,
@@ -80,7 +80,7 @@ export const useLivemapStore = defineStore('livemap', {
                     },
                 );
 
-                const foundUsers: string[] = [];
+                const foundUsers: number[] = [];
 
                 for await (const resp of call.responses) {
                     this.error = undefined;
@@ -99,7 +99,7 @@ export const useLivemapStore = defineStore('livemap', {
                         this.jobsMarkers = resp.data.jobs.markers;
                         this.jobsUsers = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
-                        const foundMarkers: string[] = [];
+                        const foundMarkers: number[] = [];
                         resp.data.markers.markers.forEach((v) => {
                             foundMarkers.push(v.info!.id);
                             this.addOrUpdateMarkerMarker(v);
@@ -305,7 +305,7 @@ export const useLivemapStore = defineStore('livemap', {
             }
         },
 
-        deleteMarkerMarker(id: string): void {
+        deleteMarkerMarker(id: number): void {
             this.markersMarkers.delete(id);
         },
 

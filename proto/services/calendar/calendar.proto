@@ -25,7 +25,7 @@ message ListCalendarsResponse {
 }
 
 message GetCalendarRequest {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
+  uint64 calendar_id = 1;
 }
 
 message GetCalendarResponse {
@@ -41,7 +41,7 @@ message CreateOrUpdateCalendarResponse {
 }
 
 message DeleteCalendarRequest {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
+  uint64 calendar_id = 1;
 }
 
 message DeleteCalendarResponse {}
@@ -54,7 +54,7 @@ message ListCalendarEntriesRequest {
     gte: 1,
     lte: 12,
   }];
-  repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
+  repeated uint64 calendar_ids = 3;
   optional bool show_hidden = 4;
   optional resources.timestamp.Timestamp after = 5;
 }
@@ -72,7 +72,7 @@ message GetUpcomingEntriesResponse {
 }
 
 message GetCalendarEntryRequest {
-  uint64 entry_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 1;
 }
 
 message GetCalendarEntryResponse {
@@ -89,13 +89,13 @@ message CreateOrUpdateCalendarEntryResponse {
 }
 
 message DeleteCalendarEntryRequest {
-  uint64 entry_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 1;
 }
 
 message DeleteCalendarEntryResponse {}
 
 message ShareCalendarEntryRequest {
-  uint64 entry_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 1;
   repeated int32 user_ids = 2;
 }
 
@@ -105,7 +105,7 @@ message ShareCalendarEntryResponse {}
 
 message ListCalendarEntryRSVPRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 entry_id = 2 [jstype = JS_STRING];
+  uint64 entry_id = 2;
 }
 
 message ListCalendarEntryRSVPResponse {

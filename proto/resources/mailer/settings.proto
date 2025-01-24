@@ -7,7 +7,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
 
 message EmailSettings {
-  uint64 email_id = 1 [jstype = JS_STRING];
+  uint64 email_id = 1;
   // @sanitize
   optional string signature = 2 [(validate.rules).string.max_len = 1024];
   // @sanitize: method=StripTags

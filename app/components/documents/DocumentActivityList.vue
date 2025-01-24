@@ -7,7 +7,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
-    documentId: string;
+    documentId: number;
 }>();
 
 const page = useRouteQuery('page', '1', { transform: Number });

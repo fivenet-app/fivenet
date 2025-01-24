@@ -20,9 +20,9 @@ message UnitAccess {
 }
 
 message UnitJobAccess {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"calendar_id"
+  uint64 target_id = 3; // @gotags: alias:"calendar_id"
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
@@ -33,10 +33,10 @@ message UnitJobAccess {
 message UnitUserAccess {}
 
 message UnitQualificationAccess {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
-  uint64 qualification_id = 4 [jstype = JS_STRING];
+  uint64 target_id = 3; // @gotags: alias:"thread_id"
+  uint64 qualification_id = 4;
   optional resources.qualifications.QualificationShort qualification = 5;
   UnitAccessLevel access = 6 [(validate.rules).enum.defined_only = true];
 }

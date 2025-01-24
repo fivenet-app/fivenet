@@ -15,9 +15,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface Category {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @sanitize
      *
@@ -51,7 +51,7 @@ export interface Category {
 class Category$Type extends MessageType<Category> {
     constructor() {
         super("resources.documents.Category", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -61,7 +61,7 @@ class Category$Type extends MessageType<Category> {
     }
     create(value?: PartialMessage<Category>): Category {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.name = "";
         if (value !== undefined)
             reflectionMergePartial<Category>(this, message, value);
@@ -72,8 +72,8 @@ class Category$Type extends MessageType<Category> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* string name */ 2:
                     message.name = reader.string();
@@ -102,8 +102,8 @@ class Category$Type extends MessageType<Category> {
         return message;
     }
     internalBinaryWrite(message: Category, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* string name = 2; */
         if (message.name !== "")

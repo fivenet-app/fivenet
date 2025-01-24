@@ -16,9 +16,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Permission {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -45,9 +45,9 @@ export interface Permission {
  */
 export interface Role {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -82,21 +82,21 @@ export interface Role {
  */
 export interface RawRoleAttribute {
     /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 role_id = 1;
      */
-    roleId: string;
+    roleId: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 attr_id = 3;
      */
-    attrId: string;
+    attrId: number;
     /**
-     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 permission_id = 4;
      */
-    permissionId: string;
+    permissionId: number;
     /**
      * @generated from protobuf field: string category = 5;
      */
@@ -127,21 +127,21 @@ export interface RawRoleAttribute {
  */
 export interface RoleAttribute {
     /**
-     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 role_id = 1;
      */
-    roleId: string;
+    roleId: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 attr_id = 3;
      */
-    attrId: string;
+    attrId: number;
     /**
-     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 permission_id = 4;
      */
-    permissionId: string;
+    permissionId: number;
     /**
      * @generated from protobuf field: string category = 5;
      */
@@ -226,7 +226,7 @@ export interface JobGradeList {
 class Permission$Type extends MessageType<Permission> {
     constructor() {
         super("resources.permissions.Permission", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -236,7 +236,7 @@ class Permission$Type extends MessageType<Permission> {
     }
     create(value?: PartialMessage<Permission>): Permission {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.category = "";
         message.name = "";
         message.guardName = "";
@@ -250,8 +250,8 @@ class Permission$Type extends MessageType<Permission> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -280,8 +280,8 @@ class Permission$Type extends MessageType<Permission> {
         return message;
     }
     internalBinaryWrite(message: Permission, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -312,7 +312,7 @@ export const Permission = new Permission$Type();
 class Role$Type extends MessageType<Role> {
     constructor() {
         super("resources.permissions.Role", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
@@ -324,7 +324,7 @@ class Role$Type extends MessageType<Role> {
     }
     create(value?: PartialMessage<Role>): Role {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         message.grade = 0;
         message.permissions = [];
@@ -338,8 +338,8 @@ class Role$Type extends MessageType<Role> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -374,8 +374,8 @@ class Role$Type extends MessageType<Role> {
         return message;
     }
     internalBinaryWrite(message: Role, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -412,10 +412,10 @@ export const Role = new Role$Type();
 class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
     constructor() {
         super("resources.permissions.RawRoleAttribute", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -426,9 +426,9 @@ class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
     }
     create(value?: PartialMessage<RawRoleAttribute>): RawRoleAttribute {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.roleId = "0";
-        message.attrId = "0";
-        message.permissionId = "0";
+        message.roleId = 0;
+        message.attrId = 0;
+        message.permissionId = 0;
         message.category = "";
         message.name = "";
         message.key = "";
@@ -442,17 +442,17 @@ class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.roleId = reader.uint64().toString();
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 attr_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.attrId = reader.uint64().toString();
+                case /* uint64 attr_id */ 3:
+                    message.attrId = reader.uint64().toNumber();
                     break;
-                case /* uint64 permission_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.permissionId = reader.uint64().toString();
+                case /* uint64 permission_id */ 4:
+                    message.permissionId = reader.uint64().toNumber();
                     break;
                 case /* string category */ 5:
                     message.category = reader.string();
@@ -484,17 +484,17 @@ class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
         return message;
     }
     internalBinaryWrite(message: RawRoleAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1 [jstype = JS_STRING]; */
-        if (message.roleId !== "0")
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 attr_id = 3 [jstype = JS_STRING]; */
-        if (message.attrId !== "0")
+        /* uint64 attr_id = 3; */
+        if (message.attrId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.attrId);
-        /* uint64 permission_id = 4 [jstype = JS_STRING]; */
-        if (message.permissionId !== "0")
+        /* uint64 permission_id = 4; */
+        if (message.permissionId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.permissionId);
         /* string category = 5; */
         if (message.category !== "")
@@ -528,10 +528,10 @@ export const RawRoleAttribute = new RawRoleAttribute$Type();
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
     constructor() {
         super("resources.permissions.RoleAttribute", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -543,9 +543,9 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
     }
     create(value?: PartialMessage<RoleAttribute>): RoleAttribute {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.roleId = "0";
-        message.attrId = "0";
-        message.permissionId = "0";
+        message.roleId = 0;
+        message.attrId = 0;
+        message.permissionId = 0;
         message.category = "";
         message.name = "";
         message.key = "";
@@ -559,17 +559,17 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.roleId = reader.uint64().toString();
+                case /* uint64 role_id */ 1:
+                    message.roleId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 attr_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.attrId = reader.uint64().toString();
+                case /* uint64 attr_id */ 3:
+                    message.attrId = reader.uint64().toNumber();
                     break;
-                case /* uint64 permission_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.permissionId = reader.uint64().toString();
+                case /* uint64 permission_id */ 4:
+                    message.permissionId = reader.uint64().toNumber();
                     break;
                 case /* string category */ 5:
                     message.category = reader.string();
@@ -604,17 +604,17 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
         return message;
     }
     internalBinaryWrite(message: RoleAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 role_id = 1 [jstype = JS_STRING]; */
-        if (message.roleId !== "0")
+        /* uint64 role_id = 1; */
+        if (message.roleId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.roleId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 attr_id = 3 [jstype = JS_STRING]; */
-        if (message.attrId !== "0")
+        /* uint64 attr_id = 3; */
+        if (message.attrId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.attrId);
-        /* uint64 permission_id = 4 [jstype = JS_STRING]; */
-        if (message.permissionId !== "0")
+        /* uint64 permission_id = 4; */
+        if (message.permissionId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.permissionId);
         /* string category = 5; */
         if (message.category !== "")

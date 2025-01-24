@@ -40,9 +40,9 @@ export interface CreateAccountRequest {
  */
 export interface CreateAccountResponse {
     /**
-     * @generated from protobuf field: uint64 account_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 account_id = 1;
      */
-    accountId: string;
+    accountId: number;
 }
 /**
  * @generated from protobuf message services.auth.LoginRequest
@@ -66,9 +66,9 @@ export interface LoginResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 account_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 account_id = 2;
      */
-    accountId: string;
+    accountId: number;
     /**
      * @generated from protobuf field: optional services.auth.ChooseCharacterResponse char = 3;
      */
@@ -331,12 +331,12 @@ export const CreateAccountRequest = new CreateAccountRequest$Type();
 class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
     constructor() {
         super("services.auth.CreateAccountResponse", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreateAccountResponse>): CreateAccountResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.accountId = "0";
+        message.accountId = 0;
         if (value !== undefined)
             reflectionMergePartial<CreateAccountResponse>(this, message, value);
         return message;
@@ -346,8 +346,8 @@ class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.accountId = reader.uint64().toString();
+                case /* uint64 account_id */ 1:
+                    message.accountId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -361,8 +361,8 @@ class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
         return message;
     }
     internalBinaryWrite(message: CreateAccountResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1 [jstype = JS_STRING]; */
-        if (message.accountId !== "0")
+        /* uint64 account_id = 1; */
+        if (message.accountId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.accountId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -434,13 +434,13 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("services.auth.LoginResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "char", kind: "message", T: () => ChooseCharacterResponse }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.accountId = "0";
+        message.accountId = 0;
         if (value !== undefined)
             reflectionMergePartial<LoginResponse>(this, message, value);
         return message;
@@ -453,8 +453,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
                 case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* uint64 account_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.accountId = reader.uint64().toString();
+                case /* uint64 account_id */ 2:
+                    message.accountId = reader.uint64().toNumber();
                     break;
                 case /* optional services.auth.ChooseCharacterResponse char */ 3:
                     message.char = ChooseCharacterResponse.internalBinaryRead(reader, reader.uint32(), options, message.char);
@@ -474,8 +474,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 account_id = 2 [jstype = JS_STRING]; */
-        if (message.accountId !== "0")
+        /* uint64 account_id = 2; */
+        if (message.accountId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.accountId);
         /* optional services.auth.ChooseCharacterResponse char = 3; */
         if (message.char)

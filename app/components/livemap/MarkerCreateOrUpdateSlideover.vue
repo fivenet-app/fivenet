@@ -68,7 +68,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
     try {
         const marker: MarkerMarker = {
             info: {
-                id: props.marker?.info?.id ?? '0',
+                id: props.marker?.info?.id ?? 0,
                 job: '',
                 jobLabel: '',
                 name: values.name,

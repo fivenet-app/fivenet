@@ -19,9 +19,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface MarkerInfo {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -94,9 +94,9 @@ export interface UserMarker {
      */
     user?: Colleague; // @gotags: alias:"user"
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 unit_id = 4;
      */
-    unitId?: string;
+    unitId?: number;
     /**
      * @generated from protobuf field: optional resources.centrum.Unit unit = 5;
      */
@@ -220,7 +220,7 @@ export enum MarkerType {
 class MarkerInfo$Type extends MessageType<MarkerInfo> {
     constructor() {
         super("resources.livemap.MarkerInfo", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -236,7 +236,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
     }
     create(value?: PartialMessage<MarkerInfo>): MarkerInfo {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         message.jobLabel = "";
         message.name = "";
@@ -251,8 +251,8 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -299,8 +299,8 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
         return message;
     }
     internalBinaryWrite(message: MarkerInfo, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -352,7 +352,7 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => Colleague },
-            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "hidden", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -379,8 +379,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
                 case /* resources.jobs.Colleague user */ 3:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional uint64 unit_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.unitId = reader.uint64().toString();
+                case /* optional uint64 unit_id */ 4:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 5:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -409,7 +409,7 @@ class UserMarker$Type extends MessageType<UserMarker> {
         /* resources.jobs.Colleague user = 3; */
         if (message.user)
             Colleague.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 unit_id = 4 [jstype = JS_STRING]; */
+        /* optional uint64 unit_id = 4; */
         if (message.unitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.unitId);
         /* optional resources.centrum.Unit unit = 5; */

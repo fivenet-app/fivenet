@@ -45,9 +45,9 @@ export interface ListConductEntriesRequest {
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated uint64 ids = 6 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 ids = 6;
      */
-    ids: string[];
+    ids: number[];
 }
 /**
  * @generated from protobuf message services.jobs.ListConductEntriesResponse
@@ -103,9 +103,9 @@ export interface UpdateConductEntryResponse {
  */
 export interface DeleteConductEntryRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.jobs.DeleteConductEntryResponse
@@ -121,7 +121,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
             { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
+            { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
@@ -161,12 +161,12 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated uint64 ids = 6 [jstype = JS_STRING];*/ 6:
+                case /* repeated uint64 ids */ 6:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.uint64().toString());
+                            message.ids.push(reader.uint64().toNumber());
                     else
-                        message.ids.push(reader.uint64().toString());
+                        message.ids.push(reader.uint64().toNumber());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -203,7 +203,7 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated uint64 ids = 6 [jstype = JS_STRING]; */
+        /* repeated uint64 ids = 6; */
         if (message.ids.length) {
             writer.tag(6, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
@@ -462,12 +462,12 @@ export const UpdateConductEntryResponse = new UpdateConductEntryResponse$Type();
 class DeleteConductEntryRequest$Type extends MessageType<DeleteConductEntryRequest> {
     constructor() {
         super("services.jobs.DeleteConductEntryRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteConductEntryRequest>): DeleteConductEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteConductEntryRequest>(this, message, value);
         return message;
@@ -477,8 +477,8 @@ class DeleteConductEntryRequest$Type extends MessageType<DeleteConductEntryReque
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -492,8 +492,8 @@ class DeleteConductEntryRequest$Type extends MessageType<DeleteConductEntryReque
         return message;
     }
     internalBinaryWrite(message: DeleteConductEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)

@@ -46,7 +46,7 @@ async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTem
     try {
         const call = getGRPCMailerClient().createOrUpdateTemplate({
             template: {
-                id: props.template?.id ?? '0',
+                id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,
                 title: values.title,
                 content: values.content,

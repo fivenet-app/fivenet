@@ -80,7 +80,7 @@ async function markAll(unread: boolean = false): Promise<void> {
     );
 }
 
-async function markUnread(unread: boolean, ...ids: string[]): Promise<void> {
+async function markUnread(unread: boolean, ...ids: number[]): Promise<void> {
     await notifications.markNotifications({
         unread: unread,
         ids: ids,

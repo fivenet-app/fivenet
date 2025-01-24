@@ -3,8 +3,8 @@ import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qual
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export type JobAccessEntry = {
-    id: string;
-    targetId: string;
+    id: number;
+    targetId: number;
     job?: string;
     minimumGrade?: number;
     access: number;
@@ -14,8 +14,8 @@ export type JobAccessEntry = {
 };
 
 export type UserAccessEntry = {
-    id: string;
-    targetId: string;
+    id: number;
+    targetId: number;
     userId?: number;
     access: number;
     required?: boolean;
@@ -23,9 +23,9 @@ export type UserAccessEntry = {
 };
 
 export type QualificationAccessEntry = {
-    id: string;
-    targetId: string;
-    qualificationId?: string;
+    id: number;
+    targetId: number;
+    qualificationId?: number;
     access: number;
     required?: boolean;
     qualification?: QualificationShort;
@@ -34,7 +34,7 @@ export type QualificationAccessEntry = {
 export type AccessEntryType = 'user' | 'job' | 'qualification';
 
 export type MixedAccessEntry = {
-    id: string;
+    id: number;
     type: AccessEntryType;
 
     userId?: number;
@@ -43,7 +43,7 @@ export type MixedAccessEntry = {
     job?: string;
     minimumGrade?: number;
 
-    qualificationId?: string;
+    qualificationId?: number;
     qualification?: QualificationShort;
 
     access: number;

@@ -9,7 +9,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:law', update: { id: string; law: Law }): void;
+    (e: 'update:law', update: { id: number; law: Law }): void;
     (e: 'close'): void;
 }>();
 
@@ -33,11 +33,11 @@ const state = reactive<Schema>({
     stvoPoints: props.law.stvoPoints ?? 0,
 });
 
-async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<void> {
+async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<void> {
     try {
         const call = getGRPCRectorLawsClient().createOrUpdateLaw({
             law: {
-                id: parseInt(id) < 0 ? '0' : id,
+                id: id < 0 ? 0 : id,
                 lawbookId: lawBookId,
                 name: values.name,
                 description: values.description,
@@ -49,7 +49,7 @@ async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<v
         });
         const { response } = await call;
 
-        emit('update:law', { id, law: response.law! });
+        emit('update:law', { id: id, law: response.law! });
 
         editing.value = false;
     } catch (e) {

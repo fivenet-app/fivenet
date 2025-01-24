@@ -59,7 +59,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
     try {
         const call = getGRPCCentrumClient().createOrUpdateUnit({
             unit: {
-                id: props.unit?.id ?? '0',
+                id: props.unit?.id ?? 0,
                 job: '',
                 name: values.name,
                 initials: values.initials,
@@ -197,7 +197,7 @@ onMounted(async () => updateUnitInForm());
                         <AccessManager
                             v-model:jobs="state.access.jobs"
                             v-model:qualifications="state.access.qualifications"
-                            :target-id="unit?.id ?? '0'"
+                            :target-id="unit?.id ?? 0"
                             :access-roles="
                                 enumToAccessLevelEnums(UnitAccessLevel, 'enums.centrum.UnitAccessLevel').filter(
                                     (a) => a.value > 1,

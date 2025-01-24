@@ -55,7 +55,12 @@ const zIndexOffset = computed(() => {
 </script>
 
 <template>
-    <LMarker :key="dispatch.id" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.id" :z-index-offset="zIndexOffset">
+    <LMarker
+        :key="dispatch.id"
+        :lat-lng="[dispatch.y, dispatch.x]"
+        :name="dispatch.id.toString()"
+        :z-index-offset="zIndexOffset"
+    >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span

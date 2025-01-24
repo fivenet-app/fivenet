@@ -110,9 +110,9 @@ export interface CreateOrUpdateMarkerResponse {
  */
 export interface DeleteMarkerRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.livemapper.DeleteMarkerResponse
@@ -474,12 +474,12 @@ export const CreateOrUpdateMarkerResponse = new CreateOrUpdateMarkerResponse$Typ
 class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
     constructor() {
         super("services.livemapper.DeleteMarkerRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteMarkerRequest>): DeleteMarkerRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteMarkerRequest>(this, message, value);
         return message;
@@ -489,8 +489,8 @@ class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -504,8 +504,8 @@ class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteMarkerRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)

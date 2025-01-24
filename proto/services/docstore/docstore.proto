@@ -25,7 +25,7 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 template_id = 1 [jstype = JS_STRING];
+  uint64 template_id = 1;
   optional resources.documents.TemplateData data = 2;
   optional bool render = 3;
 }
@@ -40,7 +40,7 @@ message CreateTemplateRequest {
 }
 
 message CreateTemplateResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message UpdateTemplateRequest {
@@ -52,7 +52,7 @@ message UpdateTemplateResponse {
 }
 
 message DeleteTemplateRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message DeleteTemplateResponse {}
@@ -64,12 +64,12 @@ message ListDocumentsRequest {
   optional resources.common.database.Sort sort = 2;
   // Search params
   optional string search = 3 [(validate.rules).string.max_len = 64];
-  repeated uint64 category_ids = 4 [jstype = JS_STRING, (validate.rules).repeated.max_items = 5];
+  repeated uint64 category_ids = 4 [(validate.rules).repeated.max_items = 5];
   repeated int32 creator_ids = 5 [(validate.rules).repeated.max_items = 5];
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
-  repeated uint64 document_ids = 9 [jstype = JS_STRING];
+  repeated uint64 document_ids = 9;
 }
 
 message ListDocumentsResponse {
@@ -78,7 +78,7 @@ message ListDocumentsResponse {
 }
 
 message GetDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   optional bool info_only = 2;
 }
 
@@ -88,7 +88,7 @@ message GetDocumentResponse {
 }
 
 message GetDocumentReferencesRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
 }
 
 message GetDocumentReferencesResponse {
@@ -96,7 +96,7 @@ message GetDocumentReferencesResponse {
 }
 
 message GetDocumentRelationsRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
 }
 
 message GetDocumentRelationsResponse {
@@ -108,11 +108,11 @@ message AddDocumentReferenceRequest {
 }
 
 message AddDocumentReferenceResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message RemoveDocumentReferenceRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message RemoveDocumentReferenceResponse {}
@@ -122,11 +122,11 @@ message AddDocumentRelationRequest {
 }
 
 message AddDocumentRelationResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message RemoveDocumentRelationRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message RemoveDocumentRelationResponse {}
@@ -135,7 +135,7 @@ message RemoveDocumentRelationResponse {}
 
 message GetCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 document_id = 2 [jstype = JS_STRING];
+  uint64 document_id = 2;
 }
 
 message GetCommentsResponse {
@@ -160,37 +160,37 @@ message EditCommentResponse {
 }
 
 message DeleteCommentRequest {
-  uint64 comment_id = 1 [jstype = JS_STRING];
+  uint64 comment_id = 1;
 }
 
 message DeleteCommentResponse {}
 
 message UpdateDocumentResponse {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
 }
 
 message DeleteDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
 }
 
 message DeleteDocumentResponse {}
 
 message ToggleDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   bool closed = 2;
 }
 
 message ToggleDocumentResponse {}
 
 message ChangeDocumentOwnerRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   optional int32 new_user_id = 2;
 }
 
 message ChangeDocumentOwnerResponse {}
 
 message CreateDocumentRequest {
-  optional uint64 category_id = 1 [jstype = JS_STRING]; // @gotags: alias:"category_id"
+  optional uint64 category_id = 1; // @gotags: alias:"category_id"
   // @sanitize: method=StripTags
   string title = 2 [(validate.rules).string = {
     min_len: 3,
@@ -207,16 +207,16 @@ message CreateDocumentRequest {
   bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
   optional resources.documents.DocumentAccess access = 9;
-  optional uint64 template_id = 10 [jstype = JS_STRING];
+  optional uint64 template_id = 10;
 }
 
 message CreateDocumentResponse {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 document_id = 1; // @gotags: alias:"id"
 }
 
 message UpdateDocumentRequest {
-  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
-  optional uint64 category_id = 2 [jstype = JS_STRING]; // @gotags: alias:"category_id"
+  uint64 document_id = 1; // @gotags: alias:"id"
+  optional uint64 category_id = 2; // @gotags: alias:"category_id"
   // @sanitize: method=StripTags
   string title = 3 [(validate.rules).string = {
     min_len: 3,
@@ -239,7 +239,7 @@ message UpdateDocumentRequest {
 
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 document_id = 2 [jstype = JS_STRING];
+  uint64 document_id = 2;
   // Search params
   repeated resources.documents.DocActivityType activity_types = 3 [(validate.rules).repeated = {
     max_items: 10,
@@ -254,7 +254,7 @@ message ListDocumentActivityResponse {
 
 message ListDocumentReqsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 document_id = 2 [jstype = JS_STRING];
+  uint64 document_id = 2;
 }
 
 message ListDocumentReqsResponse {
@@ -263,7 +263,7 @@ message ListDocumentReqsResponse {
 }
 
 message CreateDocumentReqRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   resources.documents.DocActivityType request_type = 2 [(validate.rules).enum = {in: [13,14,15,16,17,18]}];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -275,8 +275,8 @@ message CreateDocumentReqResponse {
 }
 
 message UpdateDocumentReqRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
-  uint64 request_id = 2 [jstype = JS_STRING];
+  uint64 document_id = 1;
+  uint64 request_id = 2;
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
   optional resources.documents.DocActivityData data = 4;
@@ -288,7 +288,7 @@ message UpdateDocumentReqResponse {
 }
 
 message DeleteDocumentReqRequest {
-  uint64 request_id = 1 [jstype = JS_STRING];
+  uint64 request_id = 1;
 }
 
 message DeleteDocumentReqResponse {}
@@ -296,7 +296,7 @@ message DeleteDocumentReqResponse {}
 // Access =====================================================================
 
 message GetDocumentAccessRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
 }
 
 message GetDocumentAccessResponse {
@@ -304,7 +304,7 @@ message GetDocumentAccessResponse {
 }
 
 message SetDocumentAccessRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   resources.documents.DocumentAccess access = 2 [(validate.rules).message.required = true];
 }
 
@@ -335,7 +335,7 @@ message CreateCategoryRequest {
 }
 
 message CreateCategoryResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message UpdateCategoryRequest {
@@ -345,7 +345,7 @@ message UpdateCategoryRequest {
 message UpdateCategoryResponse {}
 
 message DeleteCategoryRequest {
-  repeated uint64 ids = 1 [jstype = JS_STRING];
+  repeated uint64 ids = 1;
 }
 
 message DeleteCategoryResponse {}
@@ -362,7 +362,7 @@ message ListDocumentPinsResponse {
 }
 
 message ToggleDocumentPinRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   bool state = 2;
 }
 
@@ -373,7 +373,7 @@ message ToggleDocumentPinResponse {
 // Reminders ==================================================================
 
 message SetDocumentReminderRequest {
-  uint64 document_id = 1 [jstype = JS_STRING];
+  uint64 document_id = 1;
   optional resources.timestamp.Timestamp reminder_time = 2;
   // @sanitize: method=StripTags
   optional string message = 3 [(validate.rules).string.max_bytes = 1024];

@@ -18,17 +18,17 @@ import { Email } from "./email";
  */
 export interface Message {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 2;
      */
-    threadId: string;
+    threadId: number;
     /**
-     * @generated from protobuf field: uint64 sender_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 sender_id = 3;
      */
-    senderId: string;
+    senderId: number;
     /**
      * @generated from protobuf field: optional resources.mailer.Email sender = 4;
      */
@@ -88,9 +88,9 @@ export interface MessageDataEntry {
 class Message$Type extends MessageType<Message> {
     constructor() {
         super("resources.mailer.Message", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "sender_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "sender_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "sender", kind: "message", T: () => Email },
             { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "updated_at", kind: "message", T: () => Timestamp },
@@ -104,9 +104,9 @@ class Message$Type extends MessageType<Message> {
     }
     create(value?: PartialMessage<Message>): Message {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.threadId = "0";
-        message.senderId = "0";
+        message.id = 0;
+        message.threadId = 0;
+        message.senderId = 0;
         message.title = "";
         if (value !== undefined)
             reflectionMergePartial<Message>(this, message, value);
@@ -117,14 +117,14 @@ class Message$Type extends MessageType<Message> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.threadId = reader.uint64().toString();
+                case /* uint64 thread_id */ 2:
+                    message.threadId = reader.uint64().toNumber();
                     break;
-                case /* uint64 sender_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.senderId = reader.uint64().toString();
+                case /* uint64 sender_id */ 3:
+                    message.senderId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.mailer.Email sender */ 4:
                     message.sender = Email.internalBinaryRead(reader, reader.uint32(), options, message.sender);
@@ -165,14 +165,14 @@ class Message$Type extends MessageType<Message> {
         return message;
     }
     internalBinaryWrite(message: Message, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
-        if (message.threadId !== "0")
+        /* uint64 thread_id = 2; */
+        if (message.threadId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* uint64 sender_id = 3 [jstype = JS_STRING]; */
-        if (message.senderId !== "0")
+        /* uint64 sender_id = 3; */
+        if (message.senderId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.senderId);
         /* optional resources.mailer.Email sender = 4; */
         if (message.sender)

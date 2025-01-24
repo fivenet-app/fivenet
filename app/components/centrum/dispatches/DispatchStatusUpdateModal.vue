@@ -9,7 +9,7 @@ import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    dispatchId: string;
+    dispatchId: number;
     status?: StatusDispatch;
 }>();
 
@@ -32,7 +32,7 @@ const state = reactive<Schema>({
     status: props.status ?? StatusDispatch.NEW,
 });
 
-async function updateDispatchStatus(dispatchId: string, values: Schema): Promise<void> {
+async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
     try {
         const call = getGRPCCentrumClient().updateDispatchStatus({
             dispatchId,

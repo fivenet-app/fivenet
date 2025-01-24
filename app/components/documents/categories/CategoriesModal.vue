@@ -41,7 +41,7 @@ async function createCategory(values: Schema): Promise<void> {
     try {
         await getGRPCDocStoreClient().createCategory({
             category: {
-                id: '0',
+                id: 0,
                 name: values.name,
                 description: values.description,
                 color: values.color,

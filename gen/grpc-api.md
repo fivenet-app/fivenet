@@ -434,6 +434,7 @@
   
 - [resources/internet/domain.proto](#resources_internet_domain-proto)
     - [Domain](#resources-internet-Domain)
+    - [TLD](#resources-internet-TLD)
   
 - [resources/internet/page.proto](#resources_internet_page-proto)
     - [Page](#resources-internet-Page)
@@ -7071,10 +7072,31 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| tld_id | [uint64](#uint64) |  |  |
+| tld | [TLD](#resources-internet-TLD) | optional |  |
 | online | [bool](#bool) |  |  |
 | name | [string](#string) |  |  |
 | creator_job | [string](#string) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-internet-TLD"></a>
+
+### TLD
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| name | [string](#string) |  |  |
 
 
 
@@ -13891,6 +13913,11 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+
+
 
 
 
@@ -13903,6 +13930,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | domains | [resources.internet.Domain](#resources-internet-Domain) | repeated |  |
 
 

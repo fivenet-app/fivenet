@@ -18,7 +18,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import EntryRSVPList from './EntryRSVPList.vue';
 
 const props = defineProps<{
-    entryId: string;
+    entryId: number;
 }>();
 
 const modal = useModal();

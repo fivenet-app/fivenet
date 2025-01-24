@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia';
-import { v4 as uuidv4 } from 'uuid';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
@@ -41,14 +40,10 @@ export const useNotificatorStore = defineStore('notifications', {
         pick: ['doNotDisturb'],
     },
     actions: {
-        remove(id: string): void {
-            this.notifications = this.notifications.filter((notification) => notification.id !== id);
+        remove(notId: number): void {
+            this.notifications = this.notifications.filter((notification) => notification.id !== notId);
         },
         add(notification: Notification): void {
-            if (notification.id === undefined) {
-                notification.id = uuidv4();
-            }
-
             if (notification.timeout === undefined) {
                 notification.timeout = useAppConfig().timeouts.notification;
             }

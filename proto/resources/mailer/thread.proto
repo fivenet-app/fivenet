@@ -10,11 +10,11 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
 
 message Thread {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  uint64 creator_email_id = 5 [jstype = JS_STRING];
+  uint64 creator_email_id = 5;
   optional resources.mailer.Email creator_email = 6;
   optional int32 creator_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
@@ -28,16 +28,16 @@ message Thread {
 }
 
 message ThreadRecipientEmail {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 4 [jstype = JS_STRING]; // @gotags: alias:"thread_id"
-  uint64 email_id = 5 [jstype = JS_STRING];
+  uint64 target_id = 4; // @gotags: alias:"thread_id"
+  uint64 email_id = 5;
   optional resources.mailer.Email email = 6;
 }
 
 message ThreadState {
-  uint64 thread_id = 1 [jstype = JS_STRING];
-  uint64 email_id = 2 [jstype = JS_STRING];
+  uint64 thread_id = 1;
+  uint64 email_id = 2;
 
   optional resources.timestamp.Timestamp last_read = 3;
   optional bool unread = 4;

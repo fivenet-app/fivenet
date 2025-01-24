@@ -8,7 +8,7 @@ import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/q
 import ExamViewQuestions from './ExamViewQuestions.vue';
 
 const props = defineProps<{
-    qualificationId: string;
+    qualificationId: number;
 }>();
 
 const {
@@ -18,7 +18,7 @@ const {
     error,
 } = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () => getExamInfo(props.qualificationId));
 
-async function getExamInfo(qualificationId: string): Promise<GetExamInfoResponse> {
+async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse> {
     try {
         const call = getGRPCQualificationsClient().getExamInfo({
             qualificationId: qualificationId,

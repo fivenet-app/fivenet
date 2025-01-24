@@ -9,7 +9,7 @@ defineProps<{
 
 const modal = useModal();
 
-const selectedDispatch = ref<string | undefined>();
+const selectedDispatch = ref<number | undefined>();
 </script>
 
 <template>

@@ -31,6 +31,15 @@ func (m *ListDomainsRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -49,6 +58,15 @@ func (m *ListDomainsResponse) Sanitize() error {
 			}
 		}
 
+	}
+
+	// Field: Pagination
+	if m.Pagination != nil {
+		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

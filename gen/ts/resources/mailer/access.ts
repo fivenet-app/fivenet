@@ -35,17 +35,17 @@ export interface Access {
  */
 export interface JobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 4;
      */
-    targetId: string; // @gotags: alias:"email_id"
+    targetId: number; // @gotags: alias:"email_id"
     /**
      * @generated from protobuf field: string job = 5;
      */
@@ -72,17 +72,17 @@ export interface JobAccess {
  */
 export interface UserAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: string; // @gotags: alias:"thread_id"
+    targetId: number; // @gotags: alias:"thread_id"
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */
@@ -101,21 +101,21 @@ export interface UserAccess {
  */
 export interface QualificationAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: string; // @gotags: alias:"thread_id"
+    targetId: number; // @gotags: alias:"thread_id"
     /**
-     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 4;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
      */
@@ -217,9 +217,9 @@ export const Access = new Access$Type();
 class JobAccess$Type extends MessageType<JobAccess> {
     constructor() {
         super("resources.mailer.JobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
@@ -229,8 +229,8 @@ class JobAccess$Type extends MessageType<JobAccess> {
     }
     create(value?: PartialMessage<JobAccess>): JobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
+        message.id = 0;
+        message.targetId = 0;
         message.job = "";
         message.minimumGrade = 0;
         message.access = 0;
@@ -243,14 +243,14 @@ class JobAccess$Type extends MessageType<JobAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.targetId = reader.uint64().toString();
+                case /* uint64 target_id */ 4:
+                    message.targetId = reader.uint64().toNumber();
                     break;
                 case /* string job */ 5:
                     message.job = reader.string();
@@ -279,14 +279,14 @@ class JobAccess$Type extends MessageType<JobAccess> {
         return message;
     }
     internalBinaryWrite(message: JobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 4 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
+        /* uint64 target_id = 4; */
+        if (message.targetId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.targetId);
         /* string job = 5; */
         if (message.job !== "")
@@ -317,9 +317,9 @@ export const JobAccess = new JobAccess$Type();
 class UserAccess$Type extends MessageType<UserAccess> {
     constructor() {
         super("resources.mailer.UserAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 5, name: "user", kind: "message", T: () => UserShort },
             { no: 6, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
@@ -327,8 +327,8 @@ class UserAccess$Type extends MessageType<UserAccess> {
     }
     create(value?: PartialMessage<UserAccess>): UserAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
+        message.id = 0;
+        message.targetId = 0;
         message.userId = 0;
         message.access = 0;
         if (value !== undefined)
@@ -340,14 +340,14 @@ class UserAccess$Type extends MessageType<UserAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.targetId = reader.uint64().toString();
+                case /* uint64 target_id */ 3:
+                    message.targetId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 4:
                     message.userId = reader.int32();
@@ -370,14 +370,14 @@ class UserAccess$Type extends MessageType<UserAccess> {
         return message;
     }
     internalBinaryWrite(message: UserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
+        /* uint64 target_id = 3; */
+        if (message.targetId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.targetId);
         /* int32 user_id = 4; */
         if (message.userId !== 0)
@@ -402,19 +402,19 @@ export const UserAccess = new UserAccess$Type();
 class QualificationAccess$Type extends MessageType<QualificationAccess> {
     constructor() {
         super("resources.mailer.QualificationAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 6, name: "access", kind: "enum", T: () => ["resources.mailer.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationAccess>): QualificationAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
-        message.qualificationId = "0";
+        message.id = 0;
+        message.targetId = 0;
+        message.qualificationId = 0;
         message.access = 0;
         if (value !== undefined)
             reflectionMergePartial<QualificationAccess>(this, message, value);
@@ -425,17 +425,17 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.targetId = reader.uint64().toString();
+                case /* uint64 target_id */ 3:
+                    message.targetId = reader.uint64().toNumber();
                     break;
-                case /* uint64 qualification_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 4:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.qualifications.QualificationShort qualification */ 5:
                     message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
@@ -455,17 +455,17 @@ class QualificationAccess$Type extends MessageType<QualificationAccess> {
         return message;
     }
     internalBinaryWrite(message: QualificationAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 3 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
+        /* uint64 target_id = 3; */
+        if (message.targetId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.targetId);
-        /* uint64 qualification_id = 4 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 4; */
+        if (message.qualificationId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.qualificationId);
         /* optional resources.qualifications.QualificationShort qualification = 5; */
         if (message.qualification)

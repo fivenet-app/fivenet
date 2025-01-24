@@ -18,7 +18,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: Thread | undefined): void;
 }>();
 
-const threadRefs = ref(new Map<string, Element>());
+const threadRefs = ref(new Map<number, Element>());
 
 const selectedThread = computed({
     get() {

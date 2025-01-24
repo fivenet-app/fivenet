@@ -35,9 +35,9 @@ export interface ListDispatchActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 2;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitActivityRequest
@@ -48,9 +48,9 @@ export interface ListUnitActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 2;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.centrum.GetSettingsRequest
@@ -127,9 +127,9 @@ export interface CreateOrUpdateUnitResponse {
  */
 export interface DeleteUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: string;
+    unitId: number;
 }
 /**
  * @generated from protobuf message services.centrum.DeleteUnitResponse
@@ -141,9 +141,9 @@ export interface DeleteUnitResponse {
  */
 export interface UpdateUnitStatusRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: string;
+    unitId: number;
     /**
      * @generated from protobuf field: resources.centrum.StatusUnit status = 2;
      */
@@ -171,9 +171,9 @@ export interface UpdateUnitStatusResponse {
  */
 export interface AssignUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: string;
+    unitId: number;
     /**
      * @generated from protobuf field: repeated int32 to_add = 2;
      */
@@ -234,9 +234,9 @@ export interface ListDispatchesRequest {
      */
     notStatus: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated uint64 ids = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 ids = 4;
      */
-    ids: string[];
+    ids: number[];
     /**
      * @generated from protobuf field: optional string postal = 5;
      */
@@ -260,9 +260,9 @@ export interface ListDispatchesResponse {
  */
 export interface GetDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.centrum.GetDispatchResponse
@@ -310,9 +310,9 @@ export interface UpdateDispatchResponse {
  */
 export interface DeleteDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.centrum.DeleteDispatchResponse
@@ -324,9 +324,9 @@ export interface DeleteDispatchResponse {
  */
 export interface UpdateDispatchStatusRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 dispatch_id = 1;
      */
-    dispatchId: string;
+    dispatchId: number;
     /**
      * @generated from protobuf field: resources.centrum.StatusDispatch status = 2;
      */
@@ -354,17 +354,17 @@ export interface UpdateDispatchStatusResponse {
  */
 export interface AssignDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 dispatch_id = 1;
      */
-    dispatchId: string;
+    dispatchId: number;
     /**
-     * @generated from protobuf field: repeated uint64 to_add = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 to_add = 2;
      */
-    toAdd: string[];
+    toAdd: number[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 to_remove = 3;
      */
-    toRemove: string[];
+    toRemove: number[];
     /**
      * @generated from protobuf field: optional bool forced = 4;
      */
@@ -393,9 +393,9 @@ export interface ListDispatchActivityResponse {
  */
 export interface JoinUnitRequest {
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 unit_id = 1;
      */
-    unitId?: string;
+    unitId?: number;
 }
 /**
  * @generated from protobuf message services.centrum.JoinUnitResponse
@@ -411,9 +411,9 @@ export interface JoinUnitResponse {
  */
 export interface TakeDispatchRequest {
     /**
-     * @generated from protobuf field: repeated uint64 dispatch_ids = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
      */
-    dispatchIds: string[];
+    dispatchIds: number[];
     /**
      * @generated from protobuf field: resources.centrum.TakeDispatchResp resp = 2;
      */
@@ -447,9 +447,9 @@ export interface LatestState {
      */
     disponents: Colleague[];
     /**
-     * @generated from protobuf field: optional uint64 own_unit_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 own_unit_id = 4;
      */
-    ownUnitId?: string;
+    ownUnitId?: number;
     /**
      * Send the current units and dispatches
      *
@@ -548,12 +548,12 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
     constructor() {
         super("services.centrum.ListDispatchActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListDispatchActivityRequest>): ListDispatchActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<ListDispatchActivityRequest>(this, message, value);
         return message;
@@ -566,8 +566,8 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 id = 2 [jstype = JS_STRING];*/ 2:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 2:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -584,8 +584,8 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 id = 2 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 2; */
+        if (message.id !== 0)
             writer.tag(2, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -602,12 +602,12 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
     constructor() {
         super("services.centrum.ListUnitActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListUnitActivityRequest>): ListUnitActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<ListUnitActivityRequest>(this, message, value);
         return message;
@@ -620,8 +620,8 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 id = 2 [jstype = JS_STRING];*/ 2:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 2:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -638,8 +638,8 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 id = 2 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 2; */
+        if (message.id !== 0)
             writer.tag(2, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1012,12 +1012,12 @@ export const CreateOrUpdateUnitResponse = new CreateOrUpdateUnitResponse$Type();
 class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
     constructor() {
         super("services.centrum.DeleteUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteUnitRequest>): DeleteUnitRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = "0";
+        message.unitId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteUnitRequest>(this, message, value);
         return message;
@@ -1027,8 +1027,8 @@ class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1042,8 +1042,8 @@ class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 1; */
+        if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1084,7 +1084,7 @@ export const DeleteUnitResponse = new DeleteUnitResponse$Type();
 class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
@@ -1092,7 +1092,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
     }
     create(value?: PartialMessage<UpdateUnitStatusRequest>): UpdateUnitStatusRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = "0";
+        message.unitId = 0;
         message.status = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateUnitStatusRequest>(this, message, value);
@@ -1103,8 +1103,8 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* resources.centrum.StatusUnit status */ 2:
                     message.status = reader.int32();
@@ -1127,8 +1127,8 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         return message;
     }
     internalBinaryWrite(message: UpdateUnitStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 1; */
+        if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         /* resources.centrum.StatusUnit status = 2; */
         if (message.status !== 0)
@@ -1178,14 +1178,14 @@ export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
         super("services.centrum.AssignUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<AssignUnitRequest>): AssignUnitRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = "0";
+        message.unitId = 0;
         message.toAdd = [];
         message.toRemove = [];
         if (value !== undefined)
@@ -1197,8 +1197,8 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* repeated int32 to_add */ 2:
                     if (wireType === WireType.LengthDelimited)
@@ -1226,8 +1226,8 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: AssignUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 1; */
+        if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         /* repeated int32 to_add = 2; */
         if (message.toAdd.length) {
@@ -1411,7 +1411,7 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
+            { no: 4, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } },
             { no: 5, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } }
         ]);
     }
@@ -1446,12 +1446,12 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                     else
                         message.notStatus.push(reader.int32());
                     break;
-                case /* repeated uint64 ids = 4 [jstype = JS_STRING];*/ 4:
+                case /* repeated uint64 ids */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.uint64().toString());
+                            message.ids.push(reader.uint64().toNumber());
                     else
-                        message.ids.push(reader.uint64().toString());
+                        message.ids.push(reader.uint64().toNumber());
                     break;
                 case /* optional string postal */ 5:
                     message.postal = reader.string();
@@ -1485,7 +1485,7 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
                 writer.int32(message.notStatus[i]);
             writer.join();
         }
-        /* repeated uint64 ids = 4 [jstype = JS_STRING]; */
+        /* repeated uint64 ids = 4; */
         if (message.ids.length) {
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
@@ -1563,12 +1563,12 @@ export const ListDispatchesResponse = new ListDispatchesResponse$Type();
 class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
     constructor() {
         super("services.centrum.GetDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<GetDispatchRequest>): GetDispatchRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<GetDispatchRequest>(this, message, value);
         return message;
@@ -1578,8 +1578,8 @@ class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1593,8 +1593,8 @@ class GetDispatchRequest$Type extends MessageType<GetDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: GetDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1819,12 +1819,12 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
     constructor() {
         super("services.centrum.DeleteDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDispatchRequest>): DeleteDispatchRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteDispatchRequest>(this, message, value);
         return message;
@@ -1834,8 +1834,8 @@ class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1849,8 +1849,8 @@ class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1891,7 +1891,7 @@ export const DeleteDispatchResponse = new DeleteDispatchResponse$Type();
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.centrum.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -1899,7 +1899,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
     }
     create(value?: PartialMessage<UpdateDispatchStatusRequest>): UpdateDispatchStatusRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchId = "0";
+        message.dispatchId = 0;
         message.status = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateDispatchStatusRequest>(this, message, value);
@@ -1910,8 +1910,8 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.dispatchId = reader.uint64().toString();
+                case /* uint64 dispatch_id */ 1:
+                    message.dispatchId = reader.uint64().toNumber();
                     break;
                 case /* resources.centrum.StatusDispatch status */ 2:
                     message.status = reader.int32();
@@ -1934,8 +1934,8 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
         return message;
     }
     internalBinaryWrite(message: UpdateDispatchStatusRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1 [jstype = JS_STRING]; */
-        if (message.dispatchId !== "0")
+        /* uint64 dispatch_id = 1; */
+        if (message.dispatchId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.dispatchId);
         /* resources.centrum.StatusDispatch status = 2; */
         if (message.status !== 0)
@@ -1985,15 +1985,15 @@ export const UpdateDispatchStatusResponse = new UpdateDispatchStatusResponse$Typ
 class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
         super("services.centrum.AssignDispatchRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "forced", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AssignDispatchRequest>): AssignDispatchRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.dispatchId = "0";
+        message.dispatchId = 0;
         message.toAdd = [];
         message.toRemove = [];
         if (value !== undefined)
@@ -2005,22 +2005,22 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 dispatch_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.dispatchId = reader.uint64().toString();
+                case /* uint64 dispatch_id */ 1:
+                    message.dispatchId = reader.uint64().toNumber();
                     break;
-                case /* repeated uint64 to_add = 2 [jstype = JS_STRING];*/ 2:
+                case /* repeated uint64 to_add */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toAdd.push(reader.uint64().toString());
+                            message.toAdd.push(reader.uint64().toNumber());
                     else
-                        message.toAdd.push(reader.uint64().toString());
+                        message.toAdd.push(reader.uint64().toNumber());
                     break;
-                case /* repeated uint64 to_remove = 3 [jstype = JS_STRING];*/ 3:
+                case /* repeated uint64 to_remove */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.toRemove.push(reader.uint64().toString());
+                            message.toRemove.push(reader.uint64().toNumber());
                     else
-                        message.toRemove.push(reader.uint64().toString());
+                        message.toRemove.push(reader.uint64().toNumber());
                     break;
                 case /* optional bool forced */ 4:
                     message.forced = reader.bool();
@@ -2037,17 +2037,17 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: AssignDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 dispatch_id = 1 [jstype = JS_STRING]; */
-        if (message.dispatchId !== "0")
+        /* uint64 dispatch_id = 1; */
+        if (message.dispatchId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.dispatchId);
-        /* repeated uint64 to_add = 2 [jstype = JS_STRING]; */
+        /* repeated uint64 to_add = 2; */
         if (message.toAdd.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.toAdd.length; i++)
                 writer.uint64(message.toAdd[i]);
             writer.join();
         }
-        /* repeated uint64 to_remove = 3 [jstype = JS_STRING]; */
+        /* repeated uint64 to_remove = 3; */
         if (message.toRemove.length) {
             writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.toRemove.length; i++)
@@ -2150,7 +2150,7 @@ export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Typ
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<JoinUnitRequest>): JoinUnitRequest {
@@ -2164,8 +2164,8 @@ class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* optional uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2179,7 +2179,7 @@ class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
         return message;
     }
     internalBinaryWrite(message: JoinUnitRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional uint64 unit_id = 1 [jstype = JS_STRING]; */
+        /* optional uint64 unit_id = 1; */
         if (message.unitId !== undefined)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         let u = options.writeUnknownFields;
@@ -2242,7 +2242,7 @@ export const JoinUnitResponse = new JoinUnitResponse$Type();
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["resources.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
@@ -2260,12 +2260,12 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated uint64 dispatch_ids = 1 [jstype = JS_STRING];*/ 1:
+                case /* repeated uint64 dispatch_ids */ 1:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.dispatchIds.push(reader.uint64().toString());
+                            message.dispatchIds.push(reader.uint64().toNumber());
                     else
-                        message.dispatchIds.push(reader.uint64().toString());
+                        message.dispatchIds.push(reader.uint64().toNumber());
                     break;
                 case /* resources.centrum.TakeDispatchResp resp */ 2:
                     message.resp = reader.int32();
@@ -2285,7 +2285,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
         return message;
     }
     internalBinaryWrite(message: TakeDispatchRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated uint64 dispatch_ids = 1 [jstype = JS_STRING]; */
+        /* repeated uint64 dispatch_ids = 1; */
         if (message.dispatchIds.length) {
             writer.tag(1, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.dispatchIds.length; i++)
@@ -2340,7 +2340,7 @@ class LatestState$Type extends MessageType<LatestState> {
             { no: 1, name: "server_time", kind: "message", T: () => Timestamp },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
             { no: 3, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Colleague },
-            { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "own_unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
             { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
         ]);
@@ -2368,8 +2368,8 @@ class LatestState$Type extends MessageType<LatestState> {
                 case /* repeated resources.jobs.Colleague disponents */ 3:
                     message.disponents.push(Colleague.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional uint64 own_unit_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.ownUnitId = reader.uint64().toString();
+                case /* optional uint64 own_unit_id */ 4:
+                    message.ownUnitId = reader.uint64().toNumber();
                     break;
                 case /* repeated resources.centrum.Unit units */ 5:
                     message.units.push(Unit.internalBinaryRead(reader, reader.uint32(), options));
@@ -2398,7 +2398,7 @@ class LatestState$Type extends MessageType<LatestState> {
         /* repeated resources.jobs.Colleague disponents = 3; */
         for (let i = 0; i < message.disponents.length; i++)
             Colleague.internalBinaryWrite(message.disponents[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 own_unit_id = 4 [jstype = JS_STRING]; */
+        /* optional uint64 own_unit_id = 4; */
         if (message.ownUnitId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.ownUnitId);
         /* repeated resources.centrum.Unit units = 5; */

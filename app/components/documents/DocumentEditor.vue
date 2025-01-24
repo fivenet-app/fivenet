@@ -23,7 +23,7 @@ import { enumToAccessLevelEnums } from '../partials/access/helpers';
 import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
-    documentId?: string;
+    documentId?: number;
 }>();
 
 const { t } = useI18n();
@@ -77,20 +77,20 @@ const state = reactive<Schema>({
 const docCreator = ref<UserShort | undefined>();
 
 const openRelationManager = ref<boolean>(false);
-const relationManagerData = ref(new Map<string, DocumentRelation>());
+const relationManagerData = ref(new Map<number, DocumentRelation>());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const openReferenceManager = ref<boolean>(false);
-const referenceManagerData = ref(new Map<string, DocumentReference>());
+const referenceManagerData = ref(new Map<number, DocumentReference>());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
 const emptyCategory: Category = {
-    id: '0',
+    id: 0,
     name: t('common.categories', 0),
 };
-const templateId = ref<undefined | string>();
+const templateId = ref<undefined | number>();
 
 onMounted(async () => {
     if (route.query.templateId) {
@@ -98,11 +98,11 @@ onMounted(async () => {
         data.activeChar = activeChar.value!;
         logger.debug('Editor - Clipboard Template Data', data);
 
-        templateId.value = route.query.templateId as string;
+        templateId.value = parseInt(route.query.templateId as string);
 
         try {
             const call = getGRPCDocStoreClient().getTemplate({
-                templateId: templateId.value as string,
+                templateId: templateId.value,
                 data,
                 render: true,
             });
@@ -168,19 +168,18 @@ onMounted(async () => {
         state.closed = documentStore.$state.closed;
 
         state.access.jobs.push({
-            id: '0',
-            targetId: props.documentId ?? '0',
+            id: 0,
+            targetId: props.documentId ?? 0,
             job: activeChar.value!.job,
             minimumGrade: game.startJobGrade,
             access: AccessLevel.EDIT,
         });
     }
 
-    clipboardStore.activeStack.documents.forEach((doc, i) => {
-        const id = i.toString();
-        referenceManagerData.value.set(id, {
-            id,
-            sourceDocumentId: props.documentId ?? '0',
+    clipboardStore.activeStack.documents.forEach((doc, idx) => {
+        referenceManagerData.value.set(idx, {
+            id: idx,
+            sourceDocumentId: props.documentId ?? 0,
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
@@ -189,11 +188,10 @@ onMounted(async () => {
         });
     });
 
-    clipboardStore.activeStack.users.forEach((user, i) => {
-        const id = i.toString();
-        relationManagerData.value.set(id, {
-            id,
-            documentId: props.documentId ?? '0',
+    clipboardStore.activeStack.users.forEach((user, idx) => {
+        relationManagerData.value.set(idx, {
+            id: idx,
+            documentId: props.documentId ?? 0,
             targetUserId: user.userId!,
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
@@ -268,7 +266,7 @@ async function createDocument(values: Schema): Promise<void> {
         state: values.state,
         public: values.public,
         templateId: templateId.value,
-        categoryId: values.category?.id !== '0' ? values.category?.id : undefined,
+        categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
         access: values.access,
     };
 
@@ -319,7 +317,7 @@ async function createDocument(values: Schema): Promise<void> {
     }
 }
 
-async function updateDocument(id: string, values: Schema): Promise<void> {
+async function updateDocument(id: number, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
@@ -330,7 +328,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         closed: values.closed,
         state: values.state,
         public: values.public,
-        categoryId: values.category?.id !== '0' ? values.category?.id : undefined,
+        categoryId: values.category?.id !== 0 ? values.category?.id : undefined,
         access: values.access,
     };
 
@@ -339,12 +337,16 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         const { response } = await call;
 
         if (canDo.value.references) {
-            const referencesToRemove: string[] = [];
+            const referencesToRemove: number[] = [];
             currentReferences.value.forEach((ref) => {
-                if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
+                if (!referenceManagerData.value.has(ref.id!)) {
+                    referencesToRemove.push(ref.id!);
+                }
             });
             referencesToRemove.forEach((id) => {
-                getGRPCDocStoreClient().removeDocumentReference({ id });
+                getGRPCDocStoreClient().removeDocumentReference({
+                    id: id,
+                });
             });
             referenceManagerData.value.forEach((ref) => {
                 if (currentReferences.value.find((r) => r.id === ref.id!)) {
@@ -359,7 +361,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         }
 
         if (canDo.value.relations) {
-            const relationsToRemove: string[] = [];
+            const relationsToRemove: number[] = [];
             currentRelations.value.forEach((rel) => {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
@@ -696,7 +698,7 @@ logger.info(
                         <AccessManager
                             v-model:jobs="state.access.jobs"
                             v-model:users="state.access.users"
-                            :target-id="documentId ?? '0'"
+                            :target-id="documentId ?? 0"
                             :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
                             :disabled="!canEdit || !canDo.access"
                         />

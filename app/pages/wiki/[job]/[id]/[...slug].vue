@@ -53,11 +53,11 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(route.params.id), {
+} = useLazyAsyncData(`wiki-page:${route.path}`, () => getPage(parseInt(route.params.id)), {
     watch: [() => route.path],
 });
 
-async function getPage(id: string): Promise<Page | undefined> {
+async function getPage(id: number): Promise<Page | undefined> {
     try {
         const call = getGRPCWikiClient().getPage({
             id: id,

@@ -14,7 +14,7 @@ const notifications = useNotificatorStore();
 const schema = z.object({
     labels: z
         .object({
-            id: z.string(),
+            id: z.number(),
             name: z.string().min(1).max(64),
             color: z.string().length(7),
             order: z.number().nonnegative().default(0),
@@ -127,7 +127,7 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         :class="state.labels.length ? 'mt-2' : ''"
-                        @click="state.labels.push({ id: '0', name: '', color: '#ffffff', order: 0 })"
+                        @click="state.labels.push({ id: 0, name: '', color: '#ffffff', order: 0 })"
                     />
                 </UFormGroup>
 

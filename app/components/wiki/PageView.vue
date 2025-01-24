@@ -51,7 +51,7 @@ const breadcrumbs = computed(() => [
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 ]);
 
-async function deletePage(id: string): Promise<void> {
+async function deletePage(id: number): Promise<void> {
     try {
         const call = getGRPCWikiClient().deletePage({
             id: id,

@@ -7,7 +7,7 @@ import type { QualificationRequest } from '~~/gen/ts/resources/qualifications/qu
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
-    qualificationId: string;
+    qualificationId: number;
 }>();
 
 const emit = defineEmits<{
@@ -29,7 +29,7 @@ const state = reactive<Schema>({
 });
 
 async function createOrUpdateQualificationRequest(
-    qualificationId: string,
+    qualificationId: number,
     values: Schema,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {
     try {

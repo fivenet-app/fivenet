@@ -19,9 +19,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface DocRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -31,9 +31,9 @@ export interface DocRequest {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 document_id = 4;
      */
-    documentId: string;
+    documentId: number;
     /**
      * @generated from protobuf field: resources.documents.DocActivityType request_type = 5;
      */
@@ -71,10 +71,10 @@ export interface DocRequest {
 class DocRequest$Type extends MessageType<DocRequest> {
     constructor() {
         super("resources.documents.DocRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "request_type", kind: "enum", T: () => ["resources.documents.DocActivityType", DocActivityType, "DOC_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { in: [13, 14, 15, 16, 17, 18] } } } },
             { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 7, name: "creator", kind: "message", T: () => UserShort },
@@ -87,8 +87,8 @@ class DocRequest$Type extends MessageType<DocRequest> {
     }
     create(value?: PartialMessage<DocRequest>): DocRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.documentId = "0";
+        message.id = 0;
+        message.documentId = 0;
         message.requestType = 0;
         message.creatorJob = "";
         if (value !== undefined)
@@ -100,8 +100,8 @@ class DocRequest$Type extends MessageType<DocRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -109,8 +109,8 @@ class DocRequest$Type extends MessageType<DocRequest> {
                 case /* resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* uint64 document_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.documentId = reader.uint64().toString();
+                case /* uint64 document_id */ 4:
+                    message.documentId = reader.uint64().toNumber();
                     break;
                 case /* resources.documents.DocActivityType request_type */ 5:
                     message.requestType = reader.int32();
@@ -148,8 +148,8 @@ class DocRequest$Type extends MessageType<DocRequest> {
         return message;
     }
     internalBinaryWrite(message: DocRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -157,8 +157,8 @@ class DocRequest$Type extends MessageType<DocRequest> {
         /* resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
             Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 document_id = 4 [jstype = JS_STRING]; */
-        if (message.documentId !== "0")
+        /* uint64 document_id = 4; */
+        if (message.documentId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.documentId);
         /* resources.documents.DocActivityType request_type = 5; */
         if (message.requestType !== 0)

@@ -15,9 +15,9 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface SearchResult {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
      * @generated from protobuf field: string title = 2;
      */
@@ -35,7 +35,7 @@ export interface SearchResult {
 class SearchResult$Type extends MessageType<SearchResult> {
     constructor() {
         super("resources.internet.SearchResult", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
@@ -43,7 +43,7 @@ class SearchResult$Type extends MessageType<SearchResult> {
     }
     create(value?: PartialMessage<SearchResult>): SearchResult {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.title = "";
         message.description = "";
         message.url = "";
@@ -56,8 +56,8 @@ class SearchResult$Type extends MessageType<SearchResult> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* string title */ 2:
                     message.title = reader.string();
@@ -80,8 +80,8 @@ class SearchResult$Type extends MessageType<SearchResult> {
         return message;
     }
     internalBinaryWrite(message: SearchResult, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* string title = 2; */
         if (message.title !== "")

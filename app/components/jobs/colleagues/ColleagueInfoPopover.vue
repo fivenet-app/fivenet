@@ -10,7 +10,7 @@ import ColleagueName from './ColleagueName.vue';
 
 const props = withDefaults(
     defineProps<{
-        userId?: number | string;
+        userId?: number;
         user?: Colleague;
         textClass?: ClassProp;
         showAvatar?: boolean;
@@ -31,13 +31,7 @@ const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
 
-const userId = computed(() => {
-    if (typeof props.userId === 'string') {
-        return parseInt(props.userId);
-    }
-
-    return props.userId ?? props.user?.userId ?? 0;
-});
+const userId = computed(() => props.userId ?? props.user?.userId ?? 0);
 
 const {
     data,

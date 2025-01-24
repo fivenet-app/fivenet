@@ -12,6 +12,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Domain } from "../../resources/internet/domain";
+import { PaginationResponse } from "../../resources/common/database/database";
+import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.internet.CheckDomainAvailabilityRequest
  */
@@ -36,13 +38,21 @@ export interface CheckDomainAvailabilityResponse {
  * @generated from protobuf message services.internet.ListDomainsRequest
  */
 export interface ListDomainsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
 }
 /**
  * @generated from protobuf message services.internet.ListDomainsResponse
  */
 export interface ListDomainsResponse {
     /**
-     * @generated from protobuf field: repeated resources.internet.Domain domains = 1;
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.internet.Domain domains = 2;
      */
     domains: Domain[];
 }
@@ -199,7 +209,9 @@ export const CheckDomainAvailabilityResponse = new CheckDomainAvailabilityRespon
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDomainsRequest$Type extends MessageType<ListDomainsRequest> {
     constructor() {
-        super("services.internet.ListDomainsRequest", []);
+        super("services.internet.ListDomainsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
     create(value?: PartialMessage<ListDomainsRequest>): ListDomainsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -208,9 +220,28 @@ class ListDomainsRequest$Type extends MessageType<ListDomainsRequest> {
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDomainsRequest): ListDomainsRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ListDomainsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -225,7 +256,8 @@ export const ListDomainsRequest = new ListDomainsRequest$Type();
 class ListDomainsResponse$Type extends MessageType<ListDomainsResponse> {
     constructor() {
         super("services.internet.ListDomainsResponse", [
-            { no: 1, name: "domains", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Domain }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "domains", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Domain }
         ]);
     }
     create(value?: PartialMessage<ListDomainsResponse>): ListDomainsResponse {
@@ -240,7 +272,10 @@ class ListDomainsResponse$Type extends MessageType<ListDomainsResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.internet.Domain domains */ 1:
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.internet.Domain domains */ 2:
                     message.domains.push(Domain.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -255,9 +290,12 @@ class ListDomainsResponse$Type extends MessageType<ListDomainsResponse> {
         return message;
     }
     internalBinaryWrite(message: ListDomainsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.internet.Domain domains = 1; */
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.internet.Domain domains = 2; */
         for (let i = 0; i < message.domains.length; i++)
-            Domain.internalBinaryWrite(message.domains[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Domain.internalBinaryWrite(message.domains[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

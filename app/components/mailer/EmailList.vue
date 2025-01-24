@@ -17,7 +17,7 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: Email | undefined): void;
 }>();
 
-const emailRefs = ref(new Map<string, Element>());
+const emailRefs = ref(new Map<number, Element>());
 
 const selectedEmail = computed({
     get() {

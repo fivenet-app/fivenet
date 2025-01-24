@@ -14,7 +14,7 @@ import EntryShareForm from './EntryShareForm.vue';
 const props = withDefaults(
     defineProps<{
         modelValue: CalendarEntryRSVP | undefined;
-        entryId: string;
+        entryId: number;
         rsvpOpen?: boolean;
         disabled?: boolean;
         showRemove?: boolean;

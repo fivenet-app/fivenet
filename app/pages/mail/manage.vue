@@ -191,7 +191,7 @@ const creating = ref(false);
                             <UButton
                                 v-if="
                                     selectedEmail &&
-                                    selectedEmail.id !== '0' &&
+                                    selectedEmail.id !== 0 &&
                                     selectedEmail.job !== undefined &&
                                     canAccess(selectedEmail.access, selectedEmail.userId, AccessLevel.MANAGE)
                                 "

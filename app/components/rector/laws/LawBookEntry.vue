@@ -13,10 +13,10 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'deleted', id: string): void;
+    (e: 'deleted', id: number): void;
     (e: 'update:modelValue', book?: LawBook): void;
     (e: 'update:laws', laws: Law[]): void;
-    (e: 'update:law', update: { id: string; law: Law }): void;
+    (e: 'update:law', update: { id: number; law: Law }): void;
 }>();
 
 const { t } = useI18n();
@@ -37,15 +37,16 @@ const state = reactive<Schema>({
     description: '',
 });
 
-async function deleteLawBook(id: string): Promise<void> {
-    const i = parseInt(id);
-    if (i < 0) {
+async function deleteLawBook(id: number): Promise<void> {
+    if (id < 0) {
         emit('deleted', id);
         return;
     }
 
     try {
-        const call = getGRPCRectorLawsClient().deleteLawBook({ id });
+        const call = getGRPCRectorLawsClient().deleteLawBook({
+            id: id,
+        });
         await call;
 
         emit('deleted', id);
@@ -55,13 +56,11 @@ async function deleteLawBook(id: string): Promise<void> {
     }
 }
 
-async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
-    const i = parseInt(id);
-
+async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
     try {
         const call = getGRPCRectorLawsClient().createOrUpdateLawBook({
             lawBook: {
-                id: i < 0 ? '0' : id,
+                id: id < 0 ? 0 : id,
                 name: values.name,
                 description: values.description,
                 laws: [],
@@ -90,7 +89,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await saveLawBook(lawBook.value.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-function deletedLaw(id: string): void {
+function deletedLaw(id: number): void {
     emit(
         'update:laws',
         props.laws.filter((b) => b.id !== id),
@@ -108,7 +107,7 @@ function addLaw(): void {
         ...props.laws,
         {
             lawbookId: lawBook.value.id,
-            id: lastNewId.value.toString(),
+            id: lastNewId.value,
             name: '',
             fine: 0,
             detentionTime: 0,
@@ -126,16 +125,15 @@ function resetForm(): void {
 onMounted(() => resetForm());
 watch(props, () => resetForm());
 
-async function deleteLaw(id: string): Promise<void> {
-    const i = parseInt(id);
-    if (i < 0) {
+async function deleteLaw(id: number): Promise<void> {
+    if (id < 0) {
         deletedLaw(id);
         return;
     }
 
     try {
         const call = getGRPCRectorLawsClient().deleteLaw({
-            id,
+            id: id,
         });
         await call;
 
@@ -236,7 +234,7 @@ const editing = ref(props.startInEdit);
                         icon="i-mdi-cancel"
                         @click="
                             editing = false;
-                            parseInt(lawBook.id) < 0 && $emit('deleted', lawBook.id);
+                            lawBook.id < 0 && $emit('deleted', lawBook.id);
                         "
                     />
                 </UTooltip>
@@ -270,14 +268,14 @@ const editing = ref(props.startInEdit);
             <template #expand="{ row: law, index }">
                 <LawEntry
                     :law="law"
-                    :start-in-edit="parseInt(law.id) < 0"
+                    :start-in-edit="law.id < 0"
                     @update:law="
                         $emit('update:law', $event);
                         table?.toggleOpened(index);
                     "
                     @close="
                         table?.toggleOpened(index);
-                        if (parseInt(law.id) < 0) {
+                        if (law.id < 0) {
                             deleteLaw(law.id);
                         }
                     "

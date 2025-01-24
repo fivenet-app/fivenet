@@ -59,9 +59,9 @@ export interface MarkNotificationsRequest {
      */
     unread: boolean;
     /**
-     * @generated from protobuf field: repeated uint64 ids = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 ids = 2;
      */
-    ids: string[];
+    ids: number[];
     /**
      * @generated from protobuf field: optional bool all = 3;
      */
@@ -72,9 +72,9 @@ export interface MarkNotificationsRequest {
  */
 export interface MarkNotificationsResponse {
     /**
-     * @generated from protobuf field: uint64 updated = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 updated = 1;
      */
-    updated: string;
+    updated: number;
 }
 /**
  * @generated from protobuf message services.notificator.StreamRequest
@@ -258,7 +258,7 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
     constructor() {
         super("services.notificator.MarkNotificationsRequest", [
             { no: 1, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
+            { no: 2, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
             { no: 3, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -278,12 +278,12 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
                 case /* bool unread */ 1:
                     message.unread = reader.bool();
                     break;
-                case /* repeated uint64 ids = 2 [jstype = JS_STRING];*/ 2:
+                case /* repeated uint64 ids */ 2:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
-                            message.ids.push(reader.uint64().toString());
+                            message.ids.push(reader.uint64().toNumber());
                     else
-                        message.ids.push(reader.uint64().toString());
+                        message.ids.push(reader.uint64().toNumber());
                     break;
                 case /* optional bool all */ 3:
                     message.all = reader.bool();
@@ -303,7 +303,7 @@ class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest
         /* bool unread = 1; */
         if (message.unread !== false)
             writer.tag(1, WireType.Varint).bool(message.unread);
-        /* repeated uint64 ids = 2 [jstype = JS_STRING]; */
+        /* repeated uint64 ids = 2; */
         if (message.ids.length) {
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
@@ -327,12 +327,12 @@ export const MarkNotificationsRequest = new MarkNotificationsRequest$Type();
 class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsResponse> {
     constructor() {
         super("services.notificator.MarkNotificationsResponse", [
-            { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<MarkNotificationsResponse>): MarkNotificationsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.updated = "0";
+        message.updated = 0;
         if (value !== undefined)
             reflectionMergePartial<MarkNotificationsResponse>(this, message, value);
         return message;
@@ -342,8 +342,8 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 updated = 1 [jstype = JS_STRING];*/ 1:
-                    message.updated = reader.uint64().toString();
+                case /* uint64 updated */ 1:
+                    message.updated = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -357,8 +357,8 @@ class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsRespon
         return message;
     }
     internalBinaryWrite(message: MarkNotificationsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 updated = 1 [jstype = JS_STRING]; */
-        if (message.updated !== "0")
+        /* uint64 updated = 1; */
+        if (message.updated !== 0)
             writer.tag(1, WireType.Varint).uint64(message.updated);
         let u = options.writeUnknownFields;
         if (u !== false)

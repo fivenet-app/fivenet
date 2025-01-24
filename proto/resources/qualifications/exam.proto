@@ -15,8 +15,8 @@ message ExamQuestions {
 }
 
 message ExamQuestion {
-  uint64 id = 1 [jstype = JS_STRING];
-  uint64 qualification_id = 2 [jstype = JS_STRING];
+  uint64 id = 1;
+  uint64 qualification_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   // @sanitize: method=StripTags
@@ -76,7 +76,7 @@ message ExamQuestionAnswerData {
 // User Response
 
 message ExamUser {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
+  uint64 qualification_id = 1;
   int32 user_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
@@ -85,13 +85,13 @@ message ExamUser {
 }
 
 message ExamResponses {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
+  uint64 qualification_id = 1;
   int32 user_id = 2;
   repeated ExamResponse responses = 3 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
-  uint64 question_id = 1 [jstype = JS_STRING];
+  uint64 question_id = 1;
   int32 user_id = 2;
 
   ExamQuestion question = 3;

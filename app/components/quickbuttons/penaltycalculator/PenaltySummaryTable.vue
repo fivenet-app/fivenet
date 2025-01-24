@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-function getNameForLawBookId(id: string): string | undefined {
+function getNameForLawBookId(id: number): string | undefined {
     return props.lawBooks?.filter((b) => b.id === id)[0]?.name;
 }
 

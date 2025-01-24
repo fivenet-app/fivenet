@@ -24,9 +24,9 @@ export interface CitizenLabels {
  */
 export interface CitizenLabel {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional string job = 2;
      */
@@ -93,7 +93,7 @@ export const CitizenLabels = new CitizenLabels$Type();
 class CitizenLabel$Type extends MessageType<CitizenLabel> {
     constructor() {
         super("resources.users.CitizenLabel", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
@@ -101,7 +101,7 @@ class CitizenLabel$Type extends MessageType<CitizenLabel> {
     }
     create(value?: PartialMessage<CitizenLabel>): CitizenLabel {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.name = "";
         message.color = "";
         if (value !== undefined)
@@ -113,8 +113,8 @@ class CitizenLabel$Type extends MessageType<CitizenLabel> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional string job */ 2:
                     message.job = reader.string();
@@ -137,8 +137,8 @@ class CitizenLabel$Type extends MessageType<CitizenLabel> {
         return message;
     }
     internalBinaryWrite(message: CitizenLabel, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional string job = 2; */
         if (message.job !== undefined)

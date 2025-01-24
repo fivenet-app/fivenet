@@ -11,7 +11,7 @@ const { t } = useI18n();
 function mapNavItemToNavItem(page: PageShort): NavItem {
     const fullPath = `/wiki/${page.job}/${page.id}/${page.slug ?? ''}`;
     return {
-        _id: page.id,
+        _id: page.id.toString(),
         title: page.title !== '' ? page.title : `${page?.jobLabel ? page?.jobLabel + ': ' : ''}${t('common.wiki')}`,
         _path: fullPath,
         children: page.children.map((p) => mapNavItemToNavItem(p)),

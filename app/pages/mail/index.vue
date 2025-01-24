@@ -111,7 +111,7 @@ watch(selectedThreadId, async () => {
         return;
     }
 
-    const thread = await mailerStore.getThread(selectedThreadId.value.toString());
+    const thread = await mailerStore.getThread(selectedThreadId.value);
     selectedThread.value = thread;
 });
 
@@ -159,7 +159,7 @@ onBeforeMount(async () => {
     await mailerStore.listEmails();
 
     if (route.query.thread) {
-        selectedThread.value = await mailerStore.getThread(route.query.thread as string);
+        selectedThread.value = await mailerStore.getThread(parseInt(route.query.thread as string));
         updateQuery();
     }
 

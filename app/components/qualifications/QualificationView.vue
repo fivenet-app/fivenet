@@ -26,7 +26,7 @@ import HTMLContent from '../partials/content/HTMLContent.vue';
 import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{
-    qualificationId: string;
+    qualificationId: number;
 }>();
 
 const { t } = useI18n();
@@ -44,7 +44,7 @@ const {
     error,
 } = useLazyAsyncData(`qualification-${props.qualificationId}`, () => getQualification(props.qualificationId));
 
-async function getQualification(qualificationId: string): Promise<GetQualificationResponse> {
+async function getQualification(qualificationId: number): Promise<GetQualificationResponse> {
     try {
         const call = getGRPCQualificationsClient().getQualification({
             qualificationId: qualificationId,
@@ -58,7 +58,7 @@ async function getQualification(qualificationId: string): Promise<GetQualificati
     }
 }
 
-async function deleteQualification(qualificationId: string): Promise<DeleteQualificationResponse> {
+async function deleteQualification(qualificationId: number): Promise<DeleteQualificationResponse> {
     try {
         const call = getGRPCQualificationsClient().deleteQualification({
             qualificationId: qualificationId,

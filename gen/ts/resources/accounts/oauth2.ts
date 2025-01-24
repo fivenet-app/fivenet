@@ -16,9 +16,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface OAuth2Account {
     /**
-     * @generated from protobuf field: uint64 account_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 account_id = 1;
      */
-    accountId: string;
+    accountId: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -32,9 +32,9 @@ export interface OAuth2Account {
      */
     provider?: OAuth2Provider;
     /**
-     * @generated from protobuf field: uint64 external_id = 5 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 external_id = 5;
      */
-    externalId: string;
+    externalId: number;
     /**
      * @generated from protobuf field: string username = 6;
      */
@@ -69,20 +69,20 @@ export interface OAuth2Provider {
 class OAuth2Account$Type extends MessageType<OAuth2Account> {
     constructor() {
         super("resources.accounts.OAuth2Account", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
-            { no: 5, name: "external_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 5, name: "external_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<OAuth2Account>): OAuth2Account {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.accountId = "0";
+        message.accountId = 0;
         message.providerName = "";
-        message.externalId = "0";
+        message.externalId = 0;
         message.username = "";
         message.avatar = "";
         if (value !== undefined)
@@ -94,8 +94,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 account_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.accountId = reader.uint64().toString();
+                case /* uint64 account_id */ 1:
+                    message.accountId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -106,8 +106,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
                 case /* resources.accounts.OAuth2Provider provider */ 4:
                     message.provider = OAuth2Provider.internalBinaryRead(reader, reader.uint32(), options, message.provider);
                     break;
-                case /* uint64 external_id = 5 [jstype = JS_STRING];*/ 5:
-                    message.externalId = reader.uint64().toString();
+                case /* uint64 external_id */ 5:
+                    message.externalId = reader.uint64().toNumber();
                     break;
                 case /* string username */ 6:
                     message.username = reader.string();
@@ -127,8 +127,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         return message;
     }
     internalBinaryWrite(message: OAuth2Account, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 account_id = 1 [jstype = JS_STRING]; */
-        if (message.accountId !== "0")
+        /* uint64 account_id = 1; */
+        if (message.accountId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.accountId);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -139,8 +139,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         /* resources.accounts.OAuth2Provider provider = 4; */
         if (message.provider)
             OAuth2Provider.internalBinaryWrite(message.provider, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 external_id = 5 [jstype = JS_STRING]; */
-        if (message.externalId !== "0")
+        /* uint64 external_id = 5; */
+        if (message.externalId !== 0)
             writer.tag(5, WireType.Varint).uint64(message.externalId);
         /* string username = 6; */
         if (message.username !== "")

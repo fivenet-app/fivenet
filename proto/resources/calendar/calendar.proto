@@ -11,7 +11,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar;calendar";
 
 message Calendar {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
@@ -35,7 +35,7 @@ message Calendar {
 }
 
 message CalendarShort {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   // @sanitize: method=StripTags
   string name = 6 [(validate.rules).string = {
@@ -52,7 +52,7 @@ message CalendarShort {
 }
 
 message CalendarSub {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
+  uint64 calendar_id = 1;
   int32 user_id = 2 [(validate.rules).int32.gte = 0];
   optional resources.users.UserShort user = 3;
   optional resources.timestamp.Timestamp created_at = 4;
@@ -63,11 +63,11 @@ message CalendarSub {
 // Entry
 
 message CalendarEntry {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  uint64 calendar_id = 5 [jstype = JS_STRING];
+  uint64 calendar_id = 5;
   optional Calendar calendar = 6;
   optional string job = 7 [(validate.rules).string.max_len = 20];
   resources.timestamp.Timestamp start_time = 8;
@@ -103,7 +103,7 @@ enum RsvpResponses {
 }
 
 message CalendarEntryRSVP {
-  uint64 entry_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   int32 user_id = 3 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 4;

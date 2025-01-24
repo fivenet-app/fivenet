@@ -2,9 +2,9 @@
 import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
 
 defineProps<{
-    qualificationId: string;
+    qualificationId: number;
     userId?: number;
-    resultId?: string;
+    resultId?: number;
 }>();
 
 defineEmits<{

@@ -14,7 +14,7 @@ import type {
 
 const props = withDefaults(
     defineProps<{
-        qualificationId?: string;
+        qualificationId?: number;
         status?: ResultStatus[];
         examMode?: QualificationExamMode;
     }>(),
@@ -57,7 +57,7 @@ const {
 );
 
 async function listQualificationsResults(
-    qualificationId?: string,
+    qualificationId?: number,
     status?: ResultStatus[],
 ): Promise<ListQualificationsResultsResponse> {
     try {
@@ -80,7 +80,7 @@ async function listQualificationsResults(
 
 watch(offset, async () => refresh());
 
-async function deleteQualificationResult(resultId: string): Promise<DeleteQualificationResultResponse> {
+async function deleteQualificationResult(resultId: number): Promise<DeleteQualificationResultResponse> {
     try {
         const call = getGRPCQualificationsClient().deleteQualificationResult({
             resultId,

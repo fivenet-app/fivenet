@@ -11,13 +11,13 @@ import { DocReference } from '~~/gen/ts/resources/documents/documents';
 
 const props = defineProps<{
     open: boolean;
-    documentId?: string;
-    modelValue: Map<string, DocumentReference>;
+    documentId?: number;
+    modelValue: Map<number, DocumentReference>;
 }>();
 
 defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<string, DocumentReference>): void;
+    (e: 'update:modelValue', payload: Map<number, DocumentReference>): void;
 }>();
 
 const { t } = useI18n();
@@ -84,11 +84,11 @@ async function listDocuments(): Promise<DocumentShort[]> {
 
 function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]!) + 1).toString();
+    const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
 
     props.modelValue.set(key, {
         id: key,
-        sourceDocumentId: props.documentId ?? '0',
+        sourceDocumentId: props.documentId ?? 0,
         reference,
         targetDocumentId: doc.id,
         targetDocument: doc,
@@ -100,7 +100,7 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
     addReference(getDocument(doc), reference);
 }
 
-function removeReference(id: string): void {
+function removeReference(id: number): void {
     props.modelValue.delete(id);
     listDocuments();
 }

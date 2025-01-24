@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package services.internet;
 
+import "resources/common/database/database.proto";
 import "resources/internet/domain.proto";
 import "validate/validate.proto";
 
@@ -19,10 +20,13 @@ message CheckDomainAvailabilityResponse {
   bool available = 1;
 }
 
-message ListDomainsRequest {}
+message ListDomainsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+}
 
 message ListDomainsResponse {
-  repeated resources.internet.Domain domains = 1;
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.internet.Domain domains = 2;
 }
 
 message RegisterDomainRequest {

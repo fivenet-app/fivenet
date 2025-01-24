@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
+	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
@@ -12,13 +13,15 @@ type Server struct {
 	pbinternet.InternetServiceServer
 	pbinternet.AdsServiceServer
 
-	db *sql.DB
+	db  *sql.DB
+	aud audit.IAuditer
 }
 
 type Params struct {
 	fx.In
 
-	DB *sql.DB
+	DB  *sql.DB
+	Aud audit.IAuditer
 }
 
 func NewServer(p Params) *Server {

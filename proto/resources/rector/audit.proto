@@ -18,9 +18,9 @@ enum EventType {
 }
 
 message AuditEntry {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  uint64 id = 1; // @gotags: alias:"id"
   resources.timestamp.Timestamp created_at = 2;
-  uint64 user_id = 3 [jstype = JS_STRING]; // @gotags: alias:"user_id"
+  uint64 user_id = 3; // @gotags: alias:"user_id"
   optional resources.users.UserShort user = 4;
   string user_job = 5; // @gotags: alias:"user_job"
   optional int32 target_user_id = 6; // @gotags: alias:"target_user_id"

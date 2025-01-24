@@ -19,7 +19,7 @@ message ListColleaguesRequest {
   string search = 3 [(validate.rules).string.max_len = 64];
   optional int32 user_id = 4 [(validate.rules).int32.gte = 0];
   optional bool absent = 5;
-  repeated uint64 label_ids = 6 [jstype = JS_STRING];
+  repeated uint64 label_ids = 6;
   optional string name_prefix = 7 [(validate.rules).string.max_len = 12];
   optional string name_suffix = 8 [(validate.rules).string.max_len = 12];
 }
@@ -88,7 +88,7 @@ message ManageColleagueLabelsResponse {
 }
 
 message GetColleagueLabelsStatsRequest {
-  repeated uint64 label_ids = 1 [jstype = JS_STRING];
+  repeated uint64 label_ids = 1;
 }
 
 message GetColleagueLabelsStatsResponse {

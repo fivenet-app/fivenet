@@ -31,7 +31,7 @@ const slideover = useSlideover();
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    id: z.string().max(16).optional(),
+    id: z.number().max(16).optional(),
     types: z.nativeEnum(ConductType).array().max(10),
     showExpired: z.boolean(),
     user: z.custom<Colleague>().optional(),
@@ -70,12 +70,9 @@ const {
 );
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
-    const entryIds = [];
-    if (query.id) {
-        const id = query.id.trim().replaceAll('-', '').replace(/\D/g, '');
-        if (id.length > 0) {
-            entryIds.push(id);
-        }
+    const entryIds: number[] = [];
+    if (query.id && query.id > 0) {
+        entryIds.push(query.id);
     }
 
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
@@ -99,7 +96,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
     }
 }
 
-async function deleteConductEntry(id: string): Promise<void> {
+async function deleteConductEntry(id: number): Promise<void> {
     try {
         const call = getGRPCJobsConductClient().deleteConductEntry({ id });
         await call;

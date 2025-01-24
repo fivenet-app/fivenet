@@ -21,9 +21,9 @@ import { Content } from "../common/content/content";
  */
 export interface Page {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @sanitize: method=StripTags
      *
@@ -35,9 +35,9 @@ export interface Page {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional uint64 parent_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 parent_id = 4;
      */
-    parentId?: string;
+    parentId?: number;
     /**
      * @generated from protobuf field: resources.wiki.PageMeta meta = 5;
      */
@@ -117,9 +117,9 @@ export interface PageMeta {
  */
 export interface PageShort {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -129,9 +129,9 @@ export interface PageShort {
      */
     jobLabel?: string;
     /**
-     * @generated from protobuf field: optional uint64 parent_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 parent_id = 4;
      */
-    parentId?: string;
+    parentId?: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 5;
      */
@@ -172,10 +172,10 @@ export interface PageRootInfo {
 class Page$Type extends MessageType<Page> {
     constructor() {
         super("resources.wiki.Page", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "meta", kind: "message", T: () => PageMeta, options: { "validate.rules": { message: { required: true } } } },
             { no: 6, name: "content", kind: "message", T: () => Content },
             { no: 7, name: "access", kind: "message", T: () => PageAccess, options: { "validate.rules": { message: { required: true } } } }
@@ -183,7 +183,7 @@ class Page$Type extends MessageType<Page> {
     }
     create(value?: PartialMessage<Page>): Page {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         if (value !== undefined)
             reflectionMergePartial<Page>(this, message, value);
@@ -194,8 +194,8 @@ class Page$Type extends MessageType<Page> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -203,8 +203,8 @@ class Page$Type extends MessageType<Page> {
                 case /* optional string job_label */ 3:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional uint64 parent_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.parentId = reader.uint64().toString();
+                case /* optional uint64 parent_id */ 4:
+                    message.parentId = reader.uint64().toNumber();
                     break;
                 case /* resources.wiki.PageMeta meta */ 5:
                     message.meta = PageMeta.internalBinaryRead(reader, reader.uint32(), options, message.meta);
@@ -227,8 +227,8 @@ class Page$Type extends MessageType<Page> {
         return message;
     }
     internalBinaryWrite(message: Page, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* string job = 2; */
         if (message.job !== "")
@@ -236,7 +236,7 @@ class Page$Type extends MessageType<Page> {
         /* optional string job_label = 3; */
         if (message.jobLabel !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional uint64 parent_id = 4 [jstype = JS_STRING]; */
+        /* optional uint64 parent_id = 4; */
         if (message.parentId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.parentId);
         /* resources.wiki.PageMeta meta = 5; */
@@ -390,10 +390,10 @@ export const PageMeta = new PageMeta$Type();
 class PageShort$Type extends MessageType<PageShort> {
     constructor() {
         super("resources.wiki.PageShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "parent_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 6, name: "slug", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "100" } } } },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -404,7 +404,7 @@ class PageShort$Type extends MessageType<PageShort> {
     }
     create(value?: PartialMessage<PageShort>): PageShort {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         message.title = "";
         message.description = "";
@@ -418,8 +418,8 @@ class PageShort$Type extends MessageType<PageShort> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -427,8 +427,8 @@ class PageShort$Type extends MessageType<PageShort> {
                 case /* optional string job_label */ 3:
                     message.jobLabel = reader.string();
                     break;
-                case /* optional uint64 parent_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.parentId = reader.uint64().toString();
+                case /* optional uint64 parent_id */ 4:
+                    message.parentId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp deleted_at */ 5:
                     message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
@@ -460,8 +460,8 @@ class PageShort$Type extends MessageType<PageShort> {
         return message;
     }
     internalBinaryWrite(message: PageShort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* string job = 2; */
         if (message.job !== "")
@@ -469,7 +469,7 @@ class PageShort$Type extends MessageType<PageShort> {
         /* optional string job_label = 3; */
         if (message.jobLabel !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.jobLabel);
-        /* optional uint64 parent_id = 4 [jstype = JS_STRING]; */
+        /* optional uint64 parent_id = 4; */
         if (message.parentId !== undefined)
             writer.tag(4, WireType.Varint).uint64(message.parentId);
         /* optional resources.timestamp.Timestamp deleted_at = 5; */

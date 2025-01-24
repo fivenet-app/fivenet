@@ -36,7 +36,7 @@ async function createThread(values: Schema): Promise<void> {
 
     await mailerStore.createThread({
         thread: {
-            id: '0',
+            id: 0,
             recipients: [],
             creatorEmailId: selectedEmail.value.id,
             creatorId: activeChar.value!.userId,
@@ -44,8 +44,8 @@ async function createThread(values: Schema): Promise<void> {
         },
 
         message: {
-            id: '0',
-            threadId: '0',
+            id: 0,
+            threadId: 0,
             senderId: selectedEmail.value?.id,
             title: values.title,
             content: {

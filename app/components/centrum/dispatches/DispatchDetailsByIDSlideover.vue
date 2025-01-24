@@ -4,7 +4,7 @@ import { useCentrumStore } from '~/store/centrum';
 import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
-    dispatchId: string;
+    dispatchId: number;
 }>();
 
 const centrumStore = useCentrumStore();
@@ -14,7 +14,7 @@ const { isOpen } = useSlideover();
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
 
-async function getDispatch(id: string): Promise<GetDispatchResponse> {
+async function getDispatch(id: number): Promise<GetDispatchResponse> {
     if (dispatches.value.has(id)) {
         return {
             dispatch: dispatches.value.get(id),

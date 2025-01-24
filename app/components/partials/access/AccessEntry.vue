@@ -34,13 +34,13 @@ const entry = useVModel(props, 'modelValue', emit);
 const completorStore = useCompletorStore();
 
 const schema = z.object({
-    id: z.string(),
+    id: z.number(),
     type: z.number(),
     userId: z.number().optional(),
     user: z.custom<UserShort>().optional(),
     job: z.string().optional(),
     minimumGrade: z.number().optional(),
-    qualificationId: z.string().optional(),
+    qualificationId: z.number().optional(),
     access: z.number(),
     required: z.boolean().optional(),
 });

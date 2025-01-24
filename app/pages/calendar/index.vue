@@ -160,7 +160,7 @@ const transformedCalendarEntries = computedAsync(async () =>
                 } as DateRangeSource,
             };
         })
-        .sort((a, b) => a.key.localeCompare(b.key) + b.customData.id.localeCompare(a.customData.id)),
+        .sort((a, b) => a.key.localeCompare(b.key) + (b.customData.id - a.customData.id)),
 );
 
 type GroupedCalendarEntries = {
@@ -211,7 +211,7 @@ const groupedCalendarEntries = computedAsync(async () => {
     return groups.sort((a, b) => b.date.getTime() - a.date.getTime());
 });
 
-function calendarIdChange(calendarId: string, state: boolean): void {
+function calendarIdChange(calendarId: number, state: boolean): void {
     if (state) {
         if (!activeCalendarIds.value.includes(calendarId)) {
             activeCalendarIds.value.push(calendarId);
@@ -229,13 +229,13 @@ watch(entryIdQuery, () => {
     }
 
     slideover.open(EntryViewSlideover, {
-        entryId: entryIdQuery.value.toString(),
+        entryId: entryIdQuery.value,
     });
 });
 
 if (entryIdQuery.value) {
     slideover.open(EntryViewSlideover, {
-        entryId: entryIdQuery.value.toString(),
+        entryId: entryIdQuery.value,
     });
 }
 

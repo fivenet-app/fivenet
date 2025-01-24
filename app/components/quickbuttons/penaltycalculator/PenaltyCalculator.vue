@@ -73,7 +73,7 @@ const filteredLawBooks = computed(() =>
 const reduction = ref<number>(0);
 const leeway = computed(() => reduction.value / 100);
 
-function getNameForLawBookId(id: string): string | undefined {
+function getNameForLawBookId(id: number): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
 }
 
@@ -123,12 +123,12 @@ ${t('common.fine')}: ${n(state.value.fine, 'currency')}${
         }
 ${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime)}${
             leeway.value > 0 && state.value.detentionTime > 0
-                ? ` (-${(state.value.detentionTime * leeway.value).toFixed(0)} ${t('common.time_ago.month', parseInt((state.value.detentionTime * leeway.value).toFixed(0)))})`
+                ? ` (-${(state.value.detentionTime * leeway.value).toFixed(0)} ${t('common.time_ago.month', (state.value.detentionTime * leeway.value).toFixed(0))})`
                 : ''
         }
 ${t('common.traffic_infraction_points', 2)}: ${state.value.stvoPoints}${
             leeway.value > 0 && state.value.stvoPoints > 0
-                ? ` (-${(state.value.stvoPoints * leeway.value).toFixed(0)} ${t('common.points', parseInt((state.value.stvoPoints * leeway.value).toFixed(0)))})`
+                ? ` (-${(state.value.stvoPoints * leeway.value).toFixed(0)} ${t('common.points', (state.value.stvoPoints * leeway.value).toFixed(0))})`
                 : ''
         }
 ${t('common.reduction')}: ${reduction.value}%

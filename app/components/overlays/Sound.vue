@@ -4,7 +4,7 @@ import { Howl } from 'howler';
 
 const props = withDefaults(
     defineProps<{
-        id?: string;
+        id?: number;
         name: SoundBites;
         volume: number;
         rate?: number;

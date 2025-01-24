@@ -11,9 +11,9 @@ import { resultStatusToBgColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
-        qualificationId: string;
+        qualificationId: number;
         userId?: number;
-        resultId?: string;
+        resultId?: number;
         score?: number;
         viewOnly?: boolean;
     }>(),
@@ -60,13 +60,13 @@ const state = reactive<Schema>({
 });
 
 async function createOrUpdateQualificationResult(
-    qualificationId: string,
+    qualificationId: number,
     values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
         const call = getGRPCQualificationsClient().createOrUpdateQualificationResult({
             result: {
-                id: props.resultId ?? '0',
+                id: props.resultId ?? 0,
                 qualificationId: qualificationId,
                 userId: props.userId ?? selectedUser.value?.userId ?? 0,
                 status: values.status,

@@ -18,7 +18,7 @@ import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/di
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    dispatchId: string;
+    dispatchId: number;
     dispatch?: Dispatch;
 }>();
 
@@ -38,7 +38,7 @@ const notifications = useNotificatorStore();
 
 const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
 
-async function selfAssign(id: string): Promise<void> {
+async function selfAssign(id: number): Promise<void> {
     if (ownUnitId.value === undefined) {
         notifications.add({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
@@ -61,7 +61,7 @@ async function selfAssign(id: string): Promise<void> {
     }
 }
 
-async function deleteDispatch(id: string): Promise<void> {
+async function deleteDispatch(id: number): Promise<void> {
     try {
         const call = getGRPCCentrumClient().deleteDispatch({ id });
         await call;

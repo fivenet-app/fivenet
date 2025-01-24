@@ -14,7 +14,7 @@ export interface NotificationActionI18n extends Omit<NotificationAction, 'label'
 }
 
 export interface Notification {
-    id?: string;
+    id?: number;
     title: TranslateItem;
     description: TranslateItem;
     timeout?: number;

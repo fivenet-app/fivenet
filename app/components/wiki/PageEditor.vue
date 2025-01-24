@@ -31,7 +31,7 @@ const page = computed({
         return props.modelValue
             ? props.modelValue
             : ({
-                  id: '0',
+                  id: 0,
                   job: activeChar.value?.job ?? '',
                   path: '/wiki/' + (activeChar.value?.job ?? ''),
                   meta: {
@@ -48,15 +48,15 @@ const page = computed({
                   access: {
                       jobs: [
                           {
-                              id: '0',
-                              targetId: '0',
+                              id: 0,
+                              targetId: 0,
                               job: activeChar.value?.job ?? '',
                               minimumGrade: 1,
                               access: AccessLevel.VIEW,
                           },
                           {
-                              id: '0',
-                              targetId: '0',
+                              id: 0,
+                              targetId: 0,
                               job: activeChar.value?.job ?? '',
                               minimumGrade: -1,
                               access: AccessLevel.EDIT,
@@ -80,7 +80,7 @@ const canDo = computed(() => ({
 }));
 
 const schema = z.object({
-    parentId: z.string().optional(),
+    parentId: z.number().optional(),
     meta: z.object({
         title: z.string().min(3).max(255),
         description: z.string().max(255),
@@ -111,7 +111,7 @@ const state = reactive<Schema>({
     },
 });
 
-const createPage = computed(() => page.value.id === '0');
+const createPage = computed(() => page.value.id === 0);
 
 function setFromProps(): void {
     state.parentId =
@@ -138,7 +138,7 @@ setFromProps();
 
 async function createOrUpdatePage(values: Schema): Promise<void> {
     const req: Page = {
-        id: props.modelValue?.id ?? '0',
+        id: props.modelValue?.id ?? 0,
         job: props.modelValue?.job ?? '',
         meta: {
             title: values.meta.title,
@@ -199,7 +199,7 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
     }
 }
 
-type PageItem = { id: string; title: string };
+type PageItem = { id: number; title: string };
 
 function pageChildrenToList(p: PageShort, prefix?: string): PageItem[] {
     const list = [];
@@ -418,7 +418,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <AccessManager
                                 v-model:jobs="state.access.jobs"
                                 v-model:users="state.access.users"
-                                :target-id="page.id ?? '0'"
+                                :target-id="page.id ?? 0"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.wiki.AccessLevel')"
                             />
                         </UFormGroup>

@@ -16,7 +16,7 @@ import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(
     defineProps<{
-        qualificationId?: string;
+        qualificationId?: number;
         status?: RequestStatus[];
         examMode?: QualificationExamMode;
     }>(),
@@ -59,7 +59,7 @@ const {
 );
 
 async function listQualificationsRequests(
-    qualificationId?: string,
+    qualificationId?: number,
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
     try {
@@ -82,7 +82,7 @@ async function listQualificationsRequests(
 
 watch(offset, async () => refresh());
 
-async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
+async function deleteQualificationRequest(qualificationId: number, userId: number): Promise<DeleteQualificationReqResponse> {
     try {
         const call = getGRPCQualificationsClient().deleteQualificationReq({
             qualificationId: qualificationId,

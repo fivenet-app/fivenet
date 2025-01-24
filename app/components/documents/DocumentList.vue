@@ -85,8 +85,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     };
 
     if (query.documentIds) {
-        const id = query.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
-        if (id.length > 0) {
+        const id = parseInt(query.documentIds.trim().replaceAll('-', '').replace(/\D/g, ''));
+        if (id > 0) {
             req.documentIds.push(id);
         }
     }

@@ -10,7 +10,7 @@ import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/quali
 import ExamViewQuestion from './ExamViewQuestion.vue';
 
 const props = defineProps<{
-    qualificationId: string;
+    qualificationId: number;
     exam: ExamQuestions;
     examUser: ExamUser;
     qualification?: QualificationShort;

@@ -345,7 +345,7 @@ defineShortcuts({
 
         <template #openFines-data="{ row: citizen }">
             <template v-if="(citizen.props?.openFines ?? 0) > 0">
-                {{ $n(parseInt((citizen.props?.openFines ?? 0).toString()), 'currency') }}
+                {{ $n(citizen.props?.openFines ?? 0, 'currency') }}
             </template>
         </template>
 

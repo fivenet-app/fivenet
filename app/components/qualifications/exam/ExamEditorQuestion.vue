@@ -15,7 +15,7 @@ const emit = defineEmits<{
 const question = useVModel(props, 'modelValue', emit);
 
 const schema = z.object({
-    id: z.string(),
+    id: z.number(),
     title: z.string().min(3).max(512),
     description: z.string().max(1024).optional(),
     data: z.object({
@@ -66,8 +66,8 @@ const schema = z.object({
 watch(question, () => {
     if (question.value === undefined) {
         question.value = {
-            id: '0',
-            qualificationId: '0',
+            id: 0,
+            qualificationId: 0,
             title: '',
             answer: {
                 answerKey: '',

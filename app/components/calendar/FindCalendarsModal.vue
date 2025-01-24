@@ -29,7 +29,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
     return response;
 }
 
-async function subscribeToCalendar(calendarId: string, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
+async function subscribeToCalendar(calendarId: number, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
     const call = getGRPCCalendarClient().subscribeToCalendar({
         delete: !subscribe,
         sub: {

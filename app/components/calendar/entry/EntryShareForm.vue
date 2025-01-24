@@ -8,7 +8,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{
-    entryId: string;
+    entryId: number;
 }>();
 
 const emit = defineEmits<{

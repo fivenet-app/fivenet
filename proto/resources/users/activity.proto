@@ -29,7 +29,7 @@ enum UserActivityType {
 }
 
 message UserActivity {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"fivenet_user_activity.id"
+  uint64 id = 1; // @gotags: alias:"fivenet_user_activity.id"
   UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   optional int32 source_user_id = 4; // @gotags: alias:"source_user_id"
@@ -108,7 +108,7 @@ message UserJobChange {
 
 message UserDocumentRelation {
   bool added = 1;
-  uint64 document_id = 2 [jstype = JS_STRING];
+  uint64 document_id = 2;
   int32 relation = 3; // resources.documents.DocRelation enum
 }
 

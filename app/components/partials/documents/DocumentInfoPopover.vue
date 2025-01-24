@@ -12,7 +12,7 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        documentId?: string;
+        documentId?: number;
         document?: Document | DocumentShort;
         hideTrailing?: boolean;
         hideCategory?: boolean;
@@ -31,7 +31,7 @@ const { can } = useAuth();
 
 const { popover } = useAppConfig();
 
-const documentId = computed(() => props.documentId ?? props.document?.id ?? '0');
+const documentId = computed(() => props.documentId ?? props.document?.id ?? 0);
 
 const {
     data,
@@ -42,7 +42,7 @@ const {
     immediate: !props.loadOnOpen,
 });
 
-async function getDocument(id: string): Promise<Document> {
+async function getDocument(id: number): Promise<Document> {
     const call = getGRPCDocStoreClient().getDocument({
         documentId: id,
         infoOnly: true,

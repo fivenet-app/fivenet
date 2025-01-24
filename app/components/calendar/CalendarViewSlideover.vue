@@ -12,7 +12,7 @@ import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
 import { checkCalendarAccess } from './helpers';
 
 const props = defineProps<{
-    calendarId: string;
+    calendarId: number;
 }>();
 
 const { can } = useAuth();

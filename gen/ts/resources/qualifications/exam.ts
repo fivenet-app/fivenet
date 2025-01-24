@@ -28,13 +28,13 @@ export interface ExamQuestions {
  */
 export interface ExamQuestion {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 2;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 3;
      */
@@ -193,9 +193,9 @@ export interface ExamQuestionAnswerData {
  */
 export interface ExamUser {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -222,9 +222,9 @@ export interface ExamUser {
  */
 export interface ExamResponses {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -239,9 +239,9 @@ export interface ExamResponses {
  */
 export interface ExamResponse {
     /**
-     * @generated from protobuf field: uint64 question_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 question_id = 1;
      */
-    questionId: string;
+    questionId: number;
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -394,8 +394,8 @@ export const ExamQuestions = new ExamQuestions$Type();
 class ExamQuestion$Type extends MessageType<ExamQuestion> {
     constructor() {
         super("resources.qualifications.ExamQuestion", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
@@ -407,8 +407,8 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
     }
     create(value?: PartialMessage<ExamQuestion>): ExamQuestion {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.qualificationId = "0";
+        message.id = 0;
+        message.qualificationId = 0;
         message.title = "";
         if (value !== undefined)
             reflectionMergePartial<ExamQuestion>(this, message, value);
@@ -419,11 +419,11 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
-                case /* uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 2:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 3:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -458,11 +458,11 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         return message;
     }
     internalBinaryWrite(message: ExamQuestion, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* uint64 qualification_id = 2 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 2; */
+        if (message.qualificationId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.qualificationId);
         /* optional resources.timestamp.Timestamp created_at = 3; */
         if (message.createdAt)
@@ -905,7 +905,7 @@ export const ExamQuestionAnswerData = new ExamQuestionAnswerData$Type();
 class ExamUser$Type extends MessageType<ExamUser> {
     constructor() {
         super("resources.qualifications.ExamUser", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
@@ -915,7 +915,7 @@ class ExamUser$Type extends MessageType<ExamUser> {
     }
     create(value?: PartialMessage<ExamUser>): ExamUser {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<ExamUser>(this, message, value);
@@ -926,8 +926,8 @@ class ExamUser$Type extends MessageType<ExamUser> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -956,8 +956,8 @@ class ExamUser$Type extends MessageType<ExamUser> {
         return message;
     }
     internalBinaryWrite(message: ExamUser, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
@@ -988,14 +988,14 @@ export const ExamUser = new ExamUser$Type();
 class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.ExamResponses", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "responses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamResponse, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponses>): ExamResponses {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         message.userId = 0;
         message.responses = [];
         if (value !== undefined)
@@ -1007,8 +1007,8 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1028,8 +1028,8 @@ class ExamResponses$Type extends MessageType<ExamResponses> {
         return message;
     }
     internalBinaryWrite(message: ExamResponses, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
@@ -1051,7 +1051,7 @@ export const ExamResponses = new ExamResponses$Type();
 class ExamResponse$Type extends MessageType<ExamResponse> {
     constructor() {
         super("resources.qualifications.ExamResponse", [
-            { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "question", kind: "message", T: () => ExamQuestion },
             { no: 4, name: "response", kind: "message", T: () => ExamResponseData }
@@ -1059,7 +1059,7 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
     }
     create(value?: PartialMessage<ExamResponse>): ExamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.questionId = "0";
+        message.questionId = 0;
         message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<ExamResponse>(this, message, value);
@@ -1070,8 +1070,8 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 question_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.questionId = reader.uint64().toString();
+                case /* uint64 question_id */ 1:
+                    message.questionId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1094,8 +1094,8 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         return message;
     }
     internalBinaryWrite(message: ExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 question_id = 1 [jstype = JS_STRING]; */
-        if (message.questionId !== "0")
+        /* uint64 question_id = 1; */
+        if (message.questionId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.questionId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)

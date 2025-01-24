@@ -30,7 +30,7 @@ message GetNotificationsResponse {
 
 message MarkNotificationsRequest {
   bool unread = 1;
-  repeated uint64 ids = 2 [jstype = JS_STRING, (validate.rules).repeated = {
+  repeated uint64 ids = 2 [(validate.rules).repeated = {
     ignore_empty: true,
     min_items: 1,
     max_items: 20
@@ -39,7 +39,7 @@ message MarkNotificationsRequest {
 }
 
 message MarkNotificationsResponse {
-  uint64 updated = 1 [jstype = JS_STRING];
+  uint64 updated = 1;
 }
 
 message StreamRequest {}

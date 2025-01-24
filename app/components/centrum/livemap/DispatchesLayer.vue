@@ -24,7 +24,7 @@ const dispatchesFiltered = computedAsync(async () =>
     [...(dispatches.value.values() ?? [])].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&
-            (m.id.startsWith(dispatchQuery.value) ||
+            (m.id.toString().startsWith(dispatchQuery.value) ||
                 m.message.toLowerCase().includes(dispatchQuery.value) ||
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
     ),

@@ -36,9 +36,9 @@ export interface CreateOrUpdateLawBookResponse {
  */
 export interface DeleteLawBookRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.rector.DeleteLawBookResponse
@@ -68,9 +68,9 @@ export interface CreateOrUpdateLawResponse {
  */
 export interface DeleteLawRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.rector.DeleteLawResponse
@@ -173,12 +173,12 @@ export const CreateOrUpdateLawBookResponse = new CreateOrUpdateLawBookResponse$T
 class DeleteLawBookRequest$Type extends MessageType<DeleteLawBookRequest> {
     constructor() {
         super("services.rector.DeleteLawBookRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteLawBookRequest>): DeleteLawBookRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteLawBookRequest>(this, message, value);
         return message;
@@ -188,8 +188,8 @@ class DeleteLawBookRequest$Type extends MessageType<DeleteLawBookRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -203,8 +203,8 @@ class DeleteLawBookRequest$Type extends MessageType<DeleteLawBookRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteLawBookRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -337,12 +337,12 @@ export const CreateOrUpdateLawResponse = new CreateOrUpdateLawResponse$Type();
 class DeleteLawRequest$Type extends MessageType<DeleteLawRequest> {
     constructor() {
         super("services.rector.DeleteLawRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteLawRequest>): DeleteLawRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteLawRequest>(this, message, value);
         return message;
@@ -352,8 +352,8 @@ class DeleteLawRequest$Type extends MessageType<DeleteLawRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -367,8 +367,8 @@ class DeleteLawRequest$Type extends MessageType<DeleteLawRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteLawRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)

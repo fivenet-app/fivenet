@@ -95,7 +95,7 @@ const toast = useToast();
 function createNotifications(notifications: Notification[]): void {
     notifications.forEach((notification) => {
         toast.add({
-            id: notification.id,
+            id: notification.id?.toString(),
             title: t(notification.title.key, notification.title.parameters ?? {}),
             description: t(notification.description.key, notification.description.parameters ?? {}),
             icon: notificationTypeToIcon(notification.type),

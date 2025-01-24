@@ -17,17 +17,17 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface AuditEntry {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: alias:"id"
+    id: number; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 user_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 user_id = 3;
      */
-    userId: string; // @gotags: alias:"user_id"
+    userId: number; // @gotags: alias:"user_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort user = 4;
      */
@@ -98,9 +98,9 @@ export enum EventType {
 class AuditEntry$Type extends MessageType<AuditEntry> {
     constructor() {
         super("resources.rector.AuditEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "user_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
             { no: 5, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -114,8 +114,8 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
     }
     create(value?: PartialMessage<AuditEntry>): AuditEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.userId = "0";
+        message.id = 0;
+        message.userId = 0;
         message.userJob = "";
         message.targetUserJob = "";
         message.service = "";
@@ -130,14 +130,14 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 user_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.userId = reader.uint64().toString();
+                case /* uint64 user_id */ 3:
+                    message.userId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.users.UserShort user */ 4:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
@@ -178,14 +178,14 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
         return message;
     }
     internalBinaryWrite(message: AuditEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 user_id = 3 [jstype = JS_STRING]; */
-        if (message.userId !== "0")
+        /* uint64 user_id = 3; */
+        if (message.userId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.userId);
         /* optional resources.users.UserShort user = 4; */
         if (message.user)

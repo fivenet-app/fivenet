@@ -19,7 +19,7 @@ enum ConductType {
 }
 
 message ConductEntry {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];

@@ -66,9 +66,9 @@ export interface ListQualificationsResponse {
  */
 export interface GetQualificationRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: optional bool with_exam = 2;
      */
@@ -97,9 +97,9 @@ export interface CreateQualificationRequest {
  */
 export interface CreateQualificationResponse {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.UpdateQualificationRequest
@@ -115,18 +115,18 @@ export interface UpdateQualificationRequest {
  */
 export interface UpdateQualificationResponse {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationRequest
  */
 export interface DeleteQualificationRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationResponse
@@ -140,9 +140,9 @@ export interface DeleteQualificationResponse {
  */
 export interface GetQualificationAccessRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.GetQualificationAccessResponse
@@ -158,9 +158,9 @@ export interface GetQualificationAccessResponse {
  */
 export interface SetQualificationAccessRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: resources.qualifications.QualificationAccess access = 2;
      */
@@ -188,9 +188,9 @@ export interface ListQualificationRequestsRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: optional uint64 qualification_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 qualification_id = 3;
      */
-    qualificationId?: string;
+    qualificationId?: number;
     /**
      * @generated from protobuf field: repeated resources.qualifications.RequestStatus status = 4;
      */
@@ -236,9 +236,9 @@ export interface CreateOrUpdateQualificationRequestResponse {
  */
 export interface DeleteQualificationReqRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -266,9 +266,9 @@ export interface ListQualificationsResultsRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: optional uint64 qualification_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 qualification_id = 3;
      */
-    qualificationId?: string;
+    qualificationId?: number;
     /**
      * @generated from protobuf field: repeated resources.qualifications.ResultStatus status = 4;
      */
@@ -314,9 +314,9 @@ export interface CreateOrUpdateQualificationResultResponse {
  */
 export interface DeleteQualificationResultRequest {
     /**
-     * @generated from protobuf field: uint64 result_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 result_id = 1;
      */
-    resultId: string;
+    resultId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.DeleteQualificationResultResponse
@@ -330,9 +330,9 @@ export interface DeleteQualificationResultResponse {
  */
 export interface GetExamInfoRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
 }
 /**
  * @generated from protobuf message services.qualifications.GetExamInfoResponse
@@ -356,9 +356,9 @@ export interface GetExamInfoResponse {
  */
 export interface TakeExamRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: optional bool cancel = 2;
      */
@@ -382,9 +382,9 @@ export interface TakeExamResponse {
  */
 export interface SubmitExamRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: resources.qualifications.ExamResponses responses = 2;
      */
@@ -404,9 +404,9 @@ export interface SubmitExamResponse {
  */
 export interface GetUserExamRequest {
     /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 qualification_id = 1;
      */
-    qualificationId: string;
+    qualificationId: number;
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -554,13 +554,13 @@ export const ListQualificationsResponse = new ListQualificationsResponse$Type();
 class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> {
     constructor() {
         super("services.qualifications.GetQualificationRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "with_exam", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetQualificationRequest>): GetQualificationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetQualificationRequest>(this, message, value);
         return message;
@@ -570,8 +570,8 @@ class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* optional bool with_exam */ 2:
                     message.withExam = reader.bool();
@@ -588,8 +588,8 @@ class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> 
         return message;
     }
     internalBinaryWrite(message: GetQualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* optional bool with_exam = 2; */
         if (message.withExam !== undefined)
@@ -700,12 +700,12 @@ export const CreateQualificationRequest = new CreateQualificationRequest$Type();
 class CreateQualificationResponse$Type extends MessageType<CreateQualificationResponse> {
     constructor() {
         super("services.qualifications.CreateQualificationResponse", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<CreateQualificationResponse>): CreateQualificationResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<CreateQualificationResponse>(this, message, value);
         return message;
@@ -715,8 +715,8 @@ class CreateQualificationResponse$Type extends MessageType<CreateQualificationRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -730,8 +730,8 @@ class CreateQualificationResponse$Type extends MessageType<CreateQualificationRe
         return message;
     }
     internalBinaryWrite(message: CreateQualificationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -793,12 +793,12 @@ export const UpdateQualificationRequest = new UpdateQualificationRequest$Type();
 class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationResponse> {
     constructor() {
         super("services.qualifications.UpdateQualificationResponse", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<UpdateQualificationResponse>): UpdateQualificationResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<UpdateQualificationResponse>(this, message, value);
         return message;
@@ -808,8 +808,8 @@ class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationRe
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -823,8 +823,8 @@ class UpdateQualificationResponse$Type extends MessageType<UpdateQualificationRe
         return message;
     }
     internalBinaryWrite(message: UpdateQualificationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -840,12 +840,12 @@ export const UpdateQualificationResponse = new UpdateQualificationResponse$Type(
 class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationRequest> {
     constructor() {
         super("services.qualifications.DeleteQualificationRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationRequest>): DeleteQualificationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationRequest>(this, message, value);
         return message;
@@ -855,8 +855,8 @@ class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationReq
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -870,8 +870,8 @@ class DeleteQualificationRequest$Type extends MessageType<DeleteQualificationReq
         return message;
     }
     internalBinaryWrite(message: DeleteQualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -912,12 +912,12 @@ export const DeleteQualificationResponse = new DeleteQualificationResponse$Type(
 class GetQualificationAccessRequest$Type extends MessageType<GetQualificationAccessRequest> {
     constructor() {
         super("services.qualifications.GetQualificationAccessRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetQualificationAccessRequest>): GetQualificationAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetQualificationAccessRequest>(this, message, value);
         return message;
@@ -927,8 +927,8 @@ class GetQualificationAccessRequest$Type extends MessageType<GetQualificationAcc
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -942,8 +942,8 @@ class GetQualificationAccessRequest$Type extends MessageType<GetQualificationAcc
         return message;
     }
     internalBinaryWrite(message: GetQualificationAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1005,13 +1005,13 @@ export const GetQualificationAccessResponse = new GetQualificationAccessResponse
 class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAccessRequest> {
     constructor() {
         super("services.qualifications.SetQualificationAccessRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "access", kind: "message", T: () => QualificationAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<SetQualificationAccessRequest>): SetQualificationAccessRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<SetQualificationAccessRequest>(this, message, value);
         return message;
@@ -1021,8 +1021,8 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* resources.qualifications.QualificationAccess access */ 2:
                     message.access = QualificationAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
@@ -1039,8 +1039,8 @@ class SetQualificationAccessRequest$Type extends MessageType<SetQualificationAcc
         return message;
     }
     internalBinaryWrite(message: SetQualificationAccessRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* resources.qualifications.QualificationAccess access = 2; */
         if (message.access)
@@ -1086,7 +1086,7 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
         super("services.qualifications.ListQualificationRequestsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
@@ -1109,8 +1109,8 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* optional uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.qualificationId = reader.uint64().toString();
+                case /* optional uint64 qualification_id */ 3:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* repeated resources.qualifications.RequestStatus status */ 4:
                     if (wireType === WireType.LengthDelimited)
@@ -1140,7 +1140,7 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 qualification_id = 3 [jstype = JS_STRING]; */
+        /* optional uint64 qualification_id = 3; */
         if (message.qualificationId !== undefined)
             writer.tag(3, WireType.Varint).uint64(message.qualificationId);
         /* repeated resources.qualifications.RequestStatus status = 4; */
@@ -1313,13 +1313,13 @@ export const CreateOrUpdateQualificationRequestResponse = new CreateOrUpdateQual
 class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualificationReqRequest> {
     constructor() {
         super("services.qualifications.DeleteQualificationReqRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationReqRequest>): DeleteQualificationReqRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationReqRequest>(this, message, value);
@@ -1330,8 +1330,8 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -1348,8 +1348,8 @@ class DeleteQualificationReqRequest$Type extends MessageType<DeleteQualification
         return message;
     }
     internalBinaryWrite(message: DeleteQualificationReqRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
@@ -1395,7 +1395,7 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
         super("services.qualifications.ListQualificationsResultsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
@@ -1418,8 +1418,8 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* optional uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.qualificationId = reader.uint64().toString();
+                case /* optional uint64 qualification_id */ 3:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* repeated resources.qualifications.ResultStatus status */ 4:
                     if (wireType === WireType.LengthDelimited)
@@ -1449,7 +1449,7 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 qualification_id = 3 [jstype = JS_STRING]; */
+        /* optional uint64 qualification_id = 3; */
         if (message.qualificationId !== undefined)
             writer.tag(3, WireType.Varint).uint64(message.qualificationId);
         /* repeated resources.qualifications.ResultStatus status = 4; */
@@ -1622,12 +1622,12 @@ export const CreateOrUpdateQualificationResultResponse = new CreateOrUpdateQuali
 class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificationResultRequest> {
     constructor() {
         super("services.qualifications.DeleteQualificationResultRequest", [
-            { no: 1, name: "result_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "result_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteQualificationResultRequest>): DeleteQualificationResultRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.resultId = "0";
+        message.resultId = 0;
         if (value !== undefined)
             reflectionMergePartial<DeleteQualificationResultRequest>(this, message, value);
         return message;
@@ -1637,8 +1637,8 @@ class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificat
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 result_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.resultId = reader.uint64().toString();
+                case /* uint64 result_id */ 1:
+                    message.resultId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1652,8 +1652,8 @@ class DeleteQualificationResultRequest$Type extends MessageType<DeleteQualificat
         return message;
     }
     internalBinaryWrite(message: DeleteQualificationResultRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 result_id = 1 [jstype = JS_STRING]; */
-        if (message.resultId !== "0")
+        /* uint64 result_id = 1; */
+        if (message.resultId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.resultId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1694,12 +1694,12 @@ export const DeleteQualificationResultResponse = new DeleteQualificationResultRe
 class GetExamInfoRequest$Type extends MessageType<GetExamInfoRequest> {
     constructor() {
         super("services.qualifications.GetExamInfoRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetExamInfoRequest>): GetExamInfoRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetExamInfoRequest>(this, message, value);
         return message;
@@ -1709,8 +1709,8 @@ class GetExamInfoRequest$Type extends MessageType<GetExamInfoRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1724,8 +1724,8 @@ class GetExamInfoRequest$Type extends MessageType<GetExamInfoRequest> {
         return message;
     }
     internalBinaryWrite(message: GetExamInfoRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -1802,13 +1802,13 @@ export const GetExamInfoResponse = new GetExamInfoResponse$Type();
 class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
     constructor() {
         super("services.qualifications.TakeExamRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "cancel", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<TakeExamRequest>): TakeExamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<TakeExamRequest>(this, message, value);
         return message;
@@ -1818,8 +1818,8 @@ class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* optional bool cancel */ 2:
                     message.cancel = reader.bool();
@@ -1836,8 +1836,8 @@ class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
         return message;
     }
     internalBinaryWrite(message: TakeExamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* optional bool cancel = 2; */
         if (message.cancel !== undefined)
@@ -1909,13 +1909,13 @@ export const TakeExamResponse = new TakeExamResponse$Type();
 class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
     constructor() {
         super("services.qualifications.SubmitExamRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "responses", kind: "message", T: () => ExamResponses }
         ]);
     }
     create(value?: PartialMessage<SubmitExamRequest>): SubmitExamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         if (value !== undefined)
             reflectionMergePartial<SubmitExamRequest>(this, message, value);
         return message;
@@ -1925,8 +1925,8 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* resources.qualifications.ExamResponses responses */ 2:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
@@ -1943,8 +1943,8 @@ class SubmitExamRequest$Type extends MessageType<SubmitExamRequest> {
         return message;
     }
     internalBinaryWrite(message: SubmitExamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* resources.qualifications.ExamResponses responses = 2; */
         if (message.responses)
@@ -2009,13 +2009,13 @@ export const SubmitExamResponse = new SubmitExamResponse$Type();
 class GetUserExamRequest$Type extends MessageType<GetUserExamRequest> {
     constructor() {
         super("services.qualifications.GetUserExamRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<GetUserExamRequest>): GetUserExamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
+        message.qualificationId = 0;
         message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<GetUserExamRequest>(this, message, value);
@@ -2026,8 +2026,8 @@ class GetUserExamRequest$Type extends MessageType<GetUserExamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
+                case /* uint64 qualification_id */ 1:
+                    message.qualificationId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -2044,8 +2044,8 @@ class GetUserExamRequest$Type extends MessageType<GetUserExamRequest> {
         return message;
     }
     internalBinaryWrite(message: GetUserExamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
+        /* uint64 qualification_id = 1; */
+        if (message.qualificationId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)

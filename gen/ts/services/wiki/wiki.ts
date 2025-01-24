@@ -62,9 +62,9 @@ export interface ListPagesResponse {
  */
 export interface GetPageRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.wiki.GetPageResponse
@@ -116,9 +116,9 @@ export interface UpdatePageResponse {
  */
 export interface DeletePageRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string;
+    id: number;
 }
 /**
  * @generated from protobuf message services.wiki.DeletePageResponse
@@ -134,9 +134,9 @@ export interface ListPageActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 page_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 page_id = 2;
      */
-    pageId: string;
+    pageId: number;
 }
 /**
  * @generated from protobuf message services.wiki.ListPageActivityResponse
@@ -283,12 +283,12 @@ export const ListPagesResponse = new ListPagesResponse$Type();
 class GetPageRequest$Type extends MessageType<GetPageRequest> {
     constructor() {
         super("services.wiki.GetPageRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<GetPageRequest>): GetPageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<GetPageRequest>(this, message, value);
         return message;
@@ -298,8 +298,8 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -313,8 +313,8 @@ class GetPageRequest$Type extends MessageType<GetPageRequest> {
         return message;
     }
     internalBinaryWrite(message: GetPageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -560,12 +560,12 @@ export const UpdatePageResponse = new UpdatePageResponse$Type();
 class DeletePageRequest$Type extends MessageType<DeletePageRequest> {
     constructor() {
         super("services.wiki.DeletePageRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<DeletePageRequest>): DeletePageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         if (value !== undefined)
             reflectionMergePartial<DeletePageRequest>(this, message, value);
         return message;
@@ -575,8 +575,8 @@ class DeletePageRequest$Type extends MessageType<DeletePageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -590,8 +590,8 @@ class DeletePageRequest$Type extends MessageType<DeletePageRequest> {
         return message;
     }
     internalBinaryWrite(message: DeletePageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -633,12 +633,12 @@ class ListPageActivityRequest$Type extends MessageType<ListPageActivityRequest> 
     constructor() {
         super("services.wiki.ListPageActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "page_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListPageActivityRequest>): ListPageActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.pageId = "0";
+        message.pageId = 0;
         if (value !== undefined)
             reflectionMergePartial<ListPageActivityRequest>(this, message, value);
         return message;
@@ -651,8 +651,8 @@ class ListPageActivityRequest$Type extends MessageType<ListPageActivityRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* uint64 page_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.pageId = reader.uint64().toString();
+                case /* uint64 page_id */ 2:
+                    message.pageId = reader.uint64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -669,8 +669,8 @@ class ListPageActivityRequest$Type extends MessageType<ListPageActivityRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 page_id = 2 [jstype = JS_STRING]; */
-        if (message.pageId !== "0")
+        /* uint64 page_id = 2; */
+        if (message.pageId !== 0)
             writer.tag(2, WireType.Varint).uint64(message.pageId);
         let u = options.writeUnknownFields;
         if (u !== false)

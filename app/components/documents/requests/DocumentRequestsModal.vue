@@ -60,7 +60,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
 
-async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
+async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsResponse> {
     try {
         const call = getGRPCDocStoreClient().listDocumentReqs({
             pagination: {

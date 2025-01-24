@@ -36,7 +36,7 @@ export class ClipboardUser {
 }
 
 export class ClipboardDocument {
-    public id: string;
+    public id: number;
     public createdAt?: string;
     public title: string;
     public creator: ClipboardUser;
@@ -155,7 +155,7 @@ export const useClipboardStore = defineStore('clipboard', {
                 this.documents.unshift(new ClipboardDocument(document));
             }
         },
-        removeDocument(id: string): void {
+        removeDocument(id: number): void {
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
                 return o.id === id;
             });
@@ -260,7 +260,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
 
     const doc: DocumentShort = {
         id: obj.id,
-        categoryId: obj.category && obj.category.id ? obj.category.id : '0',
+        categoryId: obj.category && obj.category.id ? obj.category.id : 0,
         category: obj.category,
         title: obj.title,
         contentType: ContentType.HTML,

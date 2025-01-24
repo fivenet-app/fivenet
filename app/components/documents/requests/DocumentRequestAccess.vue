@@ -2,7 +2,7 @@
 import DocumentRequestAccessModal from '~/components/documents/requests/DocumentRequestAccessModal.vue';
 
 defineProps<{
-    documentId: string;
+    documentId: number;
 }>();
 
 const { attr, can } = useAuth();

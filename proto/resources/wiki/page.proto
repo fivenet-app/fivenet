@@ -12,11 +12,11 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki;wiki";
 
 message Page {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   // @sanitize: method=StripTags
   string job = 2 [(validate.rules).string.max_len = 50];
   optional string job_label = 3 [(validate.rules).string.max_len = 50];
-  optional uint64 parent_id = 4 [jstype = JS_STRING];
+  optional uint64 parent_id = 4;
   PageMeta meta = 5 [(validate.rules).message.required = true];
   resources.common.content.Content content = 6;
   PageAccess access = 7 [(validate.rules).message.required = true];
@@ -45,10 +45,10 @@ message PageMeta {
 }
 
 message PageShort {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   string job = 2 [(validate.rules).string.max_len = 50];
   optional string job_label = 3 [(validate.rules).string.max_len = 50];
-  optional uint64 parent_id = 4 [jstype = JS_STRING];
+  optional uint64 parent_id = 4;
   optional resources.timestamp.Timestamp deleted_at = 5;
   // @sanitize: method=StripTags
   optional string slug = 6 [(validate.rules).string.max_len = 100];

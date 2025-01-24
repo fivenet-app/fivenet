@@ -44,7 +44,7 @@ const state = reactive<Schema>({
 });
 
 async function createOrUpdateQualificationRequest(
-    qualificationId: string,
+    qualificationId: number,
     userId: number,
     values: Schema,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {

@@ -9,10 +9,10 @@ const props = withDefaults(
     defineProps<{
         settings: QualificationExamSettings;
         questions: ExamQuestions;
-        qualificationId?: string;
+        qualificationId?: number;
     }>(),
     {
-        qualificationId: '0',
+        qualificationId: 0,
     },
 );
 
@@ -74,7 +74,7 @@ if (!settings.value.time) {
                     :ui="{ rounded: 'rounded-full' }"
                     @click="
                         questions.questions.push({
-                            id: '0',
+                            id: 0,
                             qualificationId: props.qualificationId,
                             title: '',
                             description: '',

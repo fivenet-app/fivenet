@@ -34,11 +34,11 @@ export interface CentrumState {
     isDisponent: boolean;
     disponents: UserShort[];
     feed: (DispatchStatus | UnitStatus)[];
-    units: Map<string, Unit>;
-    dispatches: Map<string, Dispatch>;
-    ownUnitId: string | undefined;
-    ownDispatches: string[];
-    pendingDispatches: string[];
+    units: Map<number, Unit>;
+    dispatches: Map<number, Dispatch>;
+    ownUnitId: number | undefined;
+    ownDispatches: number[];
+    pendingDispatches: number[];
 }
 
 export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
@@ -58,11 +58,11 @@ export const useCentrumStore = defineStore('centrum', {
             isDisponent: false,
             disponents: [] as UserShort[],
             feed: [] as (DispatchStatus | UnitStatus)[],
-            units: new Map<string, Unit>(),
-            dispatches: new Map<string, Dispatch>(),
+            units: new Map<number, Unit>(),
+            dispatches: new Map<number, Dispatch>(),
             ownUnitId: undefined,
-            ownDispatches: [] as string[],
-            pendingDispatches: [] as string[],
+            ownDispatches: [] as number[],
+            pendingDispatches: [] as number[],
         }) as CentrumState,
     persist: false,
     getters: {
@@ -82,10 +82,10 @@ export const useCentrumStore = defineStore('centrum', {
             );
         },
         getSortedDispatches: (state: CentrumState) => {
-            return Array.from(state.dispatches, ([_, dsp]) => dsp).sort((a, b) => a.id.localeCompare(b.id));
+            return Array.from(state.dispatches, ([_, dsp]) => dsp).sort((a, b) => a.id - b.id);
         },
         getSortedOwnDispatches: (state: CentrumState) => {
-            return state.ownDispatches.sort((a, b) => b.localeCompare(a));
+            return state.ownDispatches.sort((a, b) => b - a);
         },
     },
     actions: {
@@ -116,7 +116,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (unit.status === undefined) {
                     unit.status = {
                         unitId: unit.id,
-                        id: '0',
+                        id: 0,
                         status: StatusUnit.UNKNOWN,
                     };
                 }
@@ -181,10 +181,10 @@ export const useCentrumStore = defineStore('centrum', {
                 u.status!.creatorId = status.creatorId;
             }
         },
-        setOwnUnit(id: string | undefined): void {
+        setOwnUnit(id: number | undefined): void {
             this.ownUnitId = id;
         },
-        removeUnit(id: string): void {
+        removeUnit(id: number): void {
             // User's unit has been deleted, reset it
             if (this.ownUnitId === id) {
                 this.setOwnUnit(undefined);
@@ -194,7 +194,7 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         // Dispatches
-        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: string | undefined): boolean {
+        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: number | undefined): boolean {
             if (unit === undefined) return false;
 
             return dsp.units.findIndex((d) => d.unitId === unit) > -1;
@@ -206,7 +206,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (dispatch.status === undefined) {
                     dispatch.status = {
                         dispatchId: dispatch.id,
-                        id: '0',
+                        id: 0,
                         status: StatusDispatch.NEW,
                     };
                 }
@@ -274,19 +274,19 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             }
         },
-        removeDispatch(id: string): void {
+        removeDispatch(id: number): void {
             this.removePendingDispatch(id);
             this.removeOwnDispatch(id);
 
             this.dispatches.delete(id);
         },
-        addOrUpdateOwnDispatch(id: string): void {
+        addOrUpdateOwnDispatch(id: number): void {
             const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
                 this.ownDispatches.push(id);
             }
         },
-        removeOwnDispatch(id: string): void {
+        removeOwnDispatch(id: number): void {
             const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx > -1) {
                 this.ownDispatches?.splice(idx, 1);
@@ -330,7 +330,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        addOrUpdatePendingDispatch(id: string): void {
+        addOrUpdatePendingDispatch(id: number): void {
             const idx = this.pendingDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
                 this.pendingDispatches.push(id);
@@ -345,7 +345,7 @@ export const useCentrumStore = defineStore('centrum', {
                 useSound().play({ name: 'centrum/message-incoming' });
             }
         },
-        removePendingDispatch(id: string): void {
+        removePendingDispatch(id: number): void {
             const idx = this.pendingDispatches.findIndex((d) => d === id);
             if (idx > -1) {
                 this.pendingDispatches.splice(idx, 1);
@@ -412,7 +412,7 @@ export const useCentrumStore = defineStore('centrum', {
                         this.disponents.push(...resp.change.latestState.disponents);
                         this.isDisponent = this.checkIfDisponent(activeChar.value?.userId);
 
-                        const foundUnits: string[] = [];
+                        const foundUnits: number[] = [];
                         resp.change.latestState.units.forEach((u) => {
                             foundUnits.push(u.id);
                             this.addOrUpdateUnit(u);
@@ -428,7 +428,7 @@ export const useCentrumStore = defineStore('centrum', {
                         logger.debug(`Removed ${removedUnits} old units`);
                         this.setOwnUnit(resp.change.latestState.ownUnitId);
 
-                        const foundDispatches: string[] = [];
+                        const foundDispatches: number[] = [];
                         resp.change.latestState.dispatches.forEach((d) => {
                             foundDispatches.push(d.id);
                             this.addOrUpdateDispatch(d);
@@ -774,7 +774,7 @@ export const useCentrumStore = defineStore('centrum', {
             logger.info('Cleaned up dispatches, count:', count, 'skipped:', skipped);
         },
 
-        removeDispatchAssignments(dispatch: Dispatch, unitId?: string): void {
+        removeDispatchAssignments(dispatch: Dispatch, unitId?: number): void {
             this.removeOwnDispatch(dispatch.id);
             this.removePendingDispatch(dispatch.id);
 

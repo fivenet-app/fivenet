@@ -48,9 +48,9 @@ const { livemap } = storeToRefs(settingsStore);
 
 const canStream = can('CentrumService.Stream');
 
-const selectedDispatch = ref<string | undefined>();
+const selectedDispatch = ref<number | undefined>();
 
-async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
+async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
         const call = getGRPCCentrumClient().updateDispatchStatus({ dispatchId, status });
         await call;
@@ -66,7 +66,7 @@ async function updateDispatchStatus(dispatchId: string, status: StatusDispatch):
     }
 }
 
-async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Promise<void> {
+async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Promise<void> {
     if (!dispatchId) {
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: {} },
@@ -87,7 +87,7 @@ async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Pr
     await updateDispatchStatus(dispatchId, status);
 }
 
-async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
+async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     try {
         const call = getGRPCCentrumClient().updateUnitStatus({
             unitId: id,
@@ -106,7 +106,7 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
     }
 }
 
-async function updateUtStatus(id: string, status?: StatusUnit): Promise<void> {
+async function updateUtStatus(id: number, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
         if (!getOwnUnit.value) {
             return;
@@ -175,13 +175,13 @@ watch(open, async () => {
 });
 
 const canSubmitUnitStatus = ref(true);
-const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: string, status?: StatusUnit) => {
+const onSubmitUnitStatusThrottle = useThrottleFn(async (unitId: number, status?: StatusUnit) => {
     canSubmitUnitStatus.value = false;
     await updateUtStatus(unitId, status).finally(() => useTimeoutFn(() => (canSubmitUnitStatus.value = true), 300));
 }, 1000);
 
 const canSubmitDispatchStatus = ref(true);
-const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: string, status?: StatusDispatch) => {
+const onSubmitDispatchStatusThrottle = useThrottleFn(async (dispatchId?: number, status?: StatusDispatch) => {
     canSubmitDispatchStatus.value = false;
     await updateDspStatus(dispatchId, status).finally(() => useTimeoutFn(() => (canSubmitDispatchStatus.value = true), 300));
 }, 1000);

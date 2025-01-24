@@ -15,15 +15,15 @@ message MailerEvent {
     option (validate.required) = true;
 
     Email email_update = 1;
-    uint64 email_delete = 2 [jstype = JS_STRING];
+    uint64 email_delete = 2;
     EmailSettings email_settings_updated = 3;
 
     Thread thread_update = 4;
-    uint64 thread_delete = 5 [jstype = JS_STRING];
+    uint64 thread_delete = 5;
 
     ThreadState thread_state_update = 6;
 
     Message message_update = 7;
-    uint64 message_delete = 8 [jstype = JS_STRING];
+    uint64 message_delete = 8;
   }
 }

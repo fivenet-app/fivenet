@@ -181,7 +181,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
             throw errUnavailable;
         }
 
-        return this.ws.send(GrpcFrame.toBinary(toSend), usignBuffer);
+        return this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, usignBuffer);
     }
 
     getStream(opts: TransportOptions): GrpcStream {

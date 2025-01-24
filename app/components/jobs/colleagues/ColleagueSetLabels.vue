@@ -40,7 +40,7 @@ const schema = z.object({
     reason: z.string().min(3).max(255),
     labels: z
         .object({
-            id: z.string(),
+            id: z.number(),
             name: z.string().min(1),
             color: z.string().length(7),
             order: z.number().nonnegative().default(0),

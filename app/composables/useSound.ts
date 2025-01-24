@@ -4,7 +4,7 @@ import { useSettingsStore } from '~/store/settings';
 export type SoundBites = 'centrum/attention' | 'centrum/message-incoming' | 'centrum/morse-sos' | 'notification';
 
 export type Sound = {
-    id?: string;
+    id?: number;
     name: SoundBites;
     volume?: number;
     rate?: number;
@@ -33,7 +33,7 @@ export function useSound() {
         return body;
     }
 
-    function stop(id: string) {
+    function stop(id: number) {
         sounds.value = sounds.value.filter((s: Sound) => s.id !== id);
     }
 

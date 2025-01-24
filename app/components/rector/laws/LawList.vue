@@ -10,7 +10,7 @@ const completorStore = useCompletorStore();
 
 const { data: lawBooks, pending: loading, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
-function deletedLawBook(id: string): void {
+function deletedLawBook(id: number): void {
     if (!lawBooks.value) {
         return;
     }
@@ -25,14 +25,14 @@ const lastNewId = ref(-1);
 
 function addLawBook(): void {
     lawBooks.value?.unshift({
-        id: lastNewId.value.toString(),
+        id: lastNewId.value,
         name: '',
         laws: [],
     });
     lastNewId.value--;
 }
 
-function updateLaw(event: { id: string; law: Law }): void {
+function updateLaw(event: { id: number; law: Law }): void {
     const book = lawBooks.value?.find((b) => b.id === event.law.lawbookId);
     if (book === undefined) {
         return;
@@ -74,7 +74,7 @@ function updateLaw(event: { id: string; law: Law }): void {
                     <LawBookEntry
                         v-model="lawBooks[idx]"
                         v-model:laws="book.laws"
-                        :start-in-edit="parseInt(book.id) < 0"
+                        :start-in-edit="book.id < 0"
                         @update:law="updateLaw($event)"
                         @deleted="deletedLawBook($event)"
                     />

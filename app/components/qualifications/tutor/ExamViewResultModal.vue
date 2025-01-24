@@ -9,9 +9,9 @@ import ExamViewResult from '../exam/ExamViewResult.vue';
 
 const props = withDefaults(
     defineProps<{
-        qualificationId: string;
+        qualificationId: number;
         userId: number;
-        resultId?: string;
+        resultId?: number;
         viewOnly?: boolean;
         examMode?: QualificationExamMode;
     }>(),
@@ -65,13 +65,13 @@ async function getUserExam(): Promise<GetUserExamResponse> {
 
 const pointsCounter = ref<
     {
-        id: string;
+        id: number;
         checked: boolean;
         points: number;
     }[]
 >([]);
 
-function getPointsCounterIndex(id: string): number {
+function getPointsCounterIndex(id: number): number {
     return pointsCounter.value.findIndex((a) => a.id === id);
 }
 

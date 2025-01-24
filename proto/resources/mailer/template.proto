@@ -8,11 +8,11 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
 
 message Template {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
   resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp updated_at = 4;
   optional resources.timestamp.Timestamp deleted_at = 5;
-  uint64 email_id = 6 [jstype = JS_STRING];
+  uint64 email_id = 6;
   // @sanitize: method=StripTags
   string title = 7 [(validate.rules).string = {
     min_len: 3,

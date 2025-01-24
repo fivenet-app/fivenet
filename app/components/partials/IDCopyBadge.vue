@@ -5,11 +5,11 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const props = withDefaults(
     defineProps<{
-        id: string | number | string;
+        id: number | number | string;
         prefix?: string;
         title?: TranslateItem;
         content?: TranslateItem;
-        action?: (id: string | number | string) => void;
+        action?: (id: number | number | string) => void;
         hideIcon?: boolean;
         variant?: ButtonVariant;
         padded?: boolean;

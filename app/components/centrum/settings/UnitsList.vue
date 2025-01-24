@@ -32,7 +32,7 @@ async function listUnits(): Promise<ListUnitsResponse> {
     }
 }
 
-async function deleteUnit(id: string): Promise<void> {
+async function deleteUnit(id: number): Promise<void> {
     try {
         const call = getGRPCCentrumClient().deleteUnit({
             unitId: id,

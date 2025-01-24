@@ -40,7 +40,7 @@ type UserAccess<L> = {
 };
 
 type QualificationAccess<L> = {
-    qualificationId: string;
+    qualificationId: number;
     qualification?: QualificationShort;
     access: L;
 };

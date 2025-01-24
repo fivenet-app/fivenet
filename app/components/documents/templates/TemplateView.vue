@@ -14,7 +14,7 @@ import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documen
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    templateId: string;
+    templateId: number;
 }>();
 
 const { t } = useI18n();
@@ -53,7 +53,7 @@ async function getTemplate(): Promise<Template | undefined> {
     }
 }
 
-async function deleteTemplate(id: string): Promise<void> {
+async function deleteTemplate(id: number): Promise<void> {
     try {
         await getGRPCDocStoreClient().deleteTemplate({ id });
 
@@ -175,7 +175,7 @@ const contentAccessTypes: AccessType[] = [
                             <div class="my-2">
                                 <AccessManager
                                     v-model:jobs="template.jobAccess"
-                                    :target-id="templateId ?? '0'"
+                                    :target-id="templateId ?? 0"
                                     :access-roles="
                                         enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
                                             (e) => e.value === AccessLevel.VIEW || e.value === AccessLevel.EDIT,
@@ -271,7 +271,7 @@ const contentAccessTypes: AccessType[] = [
                             <div class="my-2">
                                 <AccessManager
                                     v-model:jobs="template.contentAccess.jobs"
-                                    :target-id="templateId ?? '0'"
+                                    :target-id="templateId ?? 0"
                                     :access-types="contentAccessTypes"
                                     :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
                                     :disabled="true"

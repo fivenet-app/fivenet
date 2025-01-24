@@ -19,9 +19,9 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface Unit {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -84,9 +84,9 @@ export interface Unit {
  */
 export interface UnitAssignments {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: string;
+    unitId: number;
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -101,9 +101,9 @@ export interface UnitAssignments {
  */
 export interface UnitAssignment {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: string; // @gotags: sql:"primary_key" alias:"unit_id"
+    unitId: number; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -118,17 +118,17 @@ export interface UnitAssignment {
  */
 export interface UnitStatus {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 unit_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 unit_id = 3;
      */
-    unitId: string;
+    unitId: number;
     /**
      * @generated from protobuf field: optional resources.centrum.Unit unit = 4;
      */
@@ -221,7 +221,7 @@ export enum StatusUnit {
 class Unit$Type extends MessageType<Unit> {
     constructor() {
         super("resources.centrum.Unit", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -238,7 +238,7 @@ class Unit$Type extends MessageType<Unit> {
     }
     create(value?: PartialMessage<Unit>): Unit {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
+        message.id = 0;
         message.job = "";
         message.name = "";
         message.initials = "";
@@ -253,8 +253,8 @@ class Unit$Type extends MessageType<Unit> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
@@ -304,8 +304,8 @@ class Unit$Type extends MessageType<Unit> {
         return message;
     }
     internalBinaryWrite(message: Unit, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
@@ -357,14 +357,14 @@ export const Unit = new Unit$Type();
 class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {
         super("resources.centrum.UnitAssignments", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
     }
     create(value?: PartialMessage<UnitAssignments>): UnitAssignments {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = "0";
+        message.unitId = 0;
         message.job = "";
         message.users = [];
         if (value !== undefined)
@@ -376,8 +376,8 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* string job */ 2:
                     message.job = reader.string();
@@ -397,8 +397,8 @@ class UnitAssignments$Type extends MessageType<UnitAssignments> {
         return message;
     }
     internalBinaryWrite(message: UnitAssignments, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 1; */
+        if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         /* string job = 2; */
         if (message.job !== "")
@@ -420,14 +420,14 @@ export const UnitAssignments = new UnitAssignments$Type();
 class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.centrum.UnitAssignment", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<UnitAssignment>): UnitAssignment {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.unitId = "0";
+        message.unitId = 0;
         message.userId = 0;
         if (value !== undefined)
             reflectionMergePartial<UnitAssignment>(this, message, value);
@@ -438,8 +438,8 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 unit_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 1:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
@@ -459,8 +459,8 @@ class UnitAssignment$Type extends MessageType<UnitAssignment> {
         return message;
     }
     internalBinaryWrite(message: UnitAssignment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 unit_id = 1 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 1; */
+        if (message.unitId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.unitId);
         /* int32 user_id = 2; */
         if (message.userId !== 0)
@@ -482,9 +482,9 @@ export const UnitAssignment = new UnitAssignment$Type();
 class UnitStatus$Type extends MessageType<UnitStatus> {
     constructor() {
         super("resources.centrum.UnitStatus", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 4, name: "unit", kind: "message", T: () => Unit },
             { no: 5, name: "status", kind: "enum", T: () => ["resources.centrum.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -500,8 +500,8 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
     }
     create(value?: PartialMessage<UnitStatus>): UnitStatus {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.unitId = "0";
+        message.id = 0;
+        message.unitId = 0;
         message.status = 0;
         if (value !== undefined)
             reflectionMergePartial<UnitStatus>(this, message, value);
@@ -512,14 +512,14 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 unit_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.unitId = reader.uint64().toString();
+                case /* uint64 unit_id */ 3:
+                    message.unitId = reader.uint64().toNumber();
                     break;
                 case /* optional resources.centrum.Unit unit */ 4:
                     message.unit = Unit.internalBinaryRead(reader, reader.uint32(), options, message.unit);
@@ -566,14 +566,14 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
         return message;
     }
     internalBinaryWrite(message: UnitStatus, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 unit_id = 3 [jstype = JS_STRING]; */
-        if (message.unitId !== "0")
+        /* uint64 unit_id = 3; */
+        if (message.unitId !== 0)
             writer.tag(3, WireType.Varint).uint64(message.unitId);
         /* optional resources.centrum.Unit unit = 4; */
         if (message.unit)

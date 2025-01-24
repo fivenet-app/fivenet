@@ -9,11 +9,11 @@ import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     dispatch: Dispatch;
-    selectedDispatch: string | undefined;
+    selectedDispatch: number | undefined;
 }>();
 
 defineEmits<{
-    (e: 'update:selectedDispatch', dsp: string | undefined): void;
+    (e: 'update:selectedDispatch', dsp: number | undefined): void;
 }>();
 
 const centrumStore = useCentrumStore();

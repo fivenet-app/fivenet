@@ -22,7 +22,7 @@ import type { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/ser
 import TemplateWorkflowEditor from './TemplateWorkflowEditor.vue';
 
 const props = defineProps<{
-    templateId?: string;
+    templateId?: number;
 }>();
 
 const { t } = useI18n();
@@ -135,7 +135,7 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     return o;
 }
 
-async function createOrUpdateTemplate(values: Schema, templateId?: string): Promise<void> {
+async function createOrUpdateTemplate(values: Schema, templateId?: number): Promise<void> {
     const tRequirements: TemplateRequirements = {
         users: createObjectSpec(schemaEditor.value.users),
         documents: createObjectSpec(schemaEditor.value.documents),
@@ -144,7 +144,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
-            id: templateId ?? '0',
+            id: templateId ?? 0,
             weight: values.weight,
             title: values.title,
             description: values.description,
@@ -309,8 +309,8 @@ onBeforeMount(async () => {
         state.weight = 0;
 
         state.jobAccess.push({
-            id: '0',
-            targetId: props.templateId ?? '0',
+            id: 0,
+            targetId: props.templateId ?? 0,
             job: activeChar.value!.job,
             minimumGrade: game.startJobGrade,
             access: AccessLevel.VIEW,
@@ -442,7 +442,7 @@ const categoriesLoading = ref(false);
 
                             <AccessManager
                                 v-model:jobs="state.jobAccess"
-                                :target-id="templateId ?? '0'"
+                                :target-id="templateId ?? 0"
                                 :access-types="accessTypes"
                                 :access-roles="
                                     enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel').filter(
@@ -479,7 +479,7 @@ const categoriesLoading = ref(false);
                             <AccessManager
                                 v-model:jobs="state.contentAccess.jobs"
                                 v-model:users="state.contentAccess.users"
-                                :target-id="templateId ?? '0'"
+                                :target-id="templateId ?? 0"
                                 :access-types="contentAccessTypes"
                                 :access-roles="enumToAccessLevelEnums(AccessLevel, 'enums.docstore.AccessLevel')"
                                 :show-required="true"

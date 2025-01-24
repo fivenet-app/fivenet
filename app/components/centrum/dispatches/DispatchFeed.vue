@@ -3,12 +3,12 @@ import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.v
 import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
-    dispatchId?: string;
+    dispatchId?: number;
 }>();
 
 const offset = ref(0);
 
-const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? '0'}-activity-${offset.value}`, () =>
+const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? 0}-activity-${offset.value}`, () =>
     listDispatchActivity(),
 );
 
@@ -18,7 +18,7 @@ async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
             pagination: {
                 offset: offset.value,
             },
-            id: props.dispatchId ?? '0',
+            id: props.dispatchId ?? 0,
         });
         const { response } = await call;
 

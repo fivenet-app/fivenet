@@ -45,7 +45,7 @@ message CreateOrUpdateMarkerResponse {
 }
 
 message DeleteMarkerRequest {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 id = 1;
 }
 
 message DeleteMarkerResponse {}

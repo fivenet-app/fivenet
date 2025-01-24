@@ -11,7 +11,7 @@ import { refToBadge } from './helpers';
 
 const props = withDefaults(
     defineProps<{
-        documentId: string;
+        documentId: number;
         showSource?: boolean;
     }>(),
     {

@@ -36,7 +36,7 @@ async function createDispatch(values: Schema): Promise<void> {
     try {
         const call = getGRPCCentrumClient().createDispatch({
             dispatch: {
-                id: '0',
+                id: 0,
                 job: '',
                 message: values.message,
                 description: values.description,

@@ -11,7 +11,7 @@ const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const props = defineProps<{
-    dispatchId: string;
+    dispatchId: number;
 }>();
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
@@ -19,7 +19,7 @@ const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 const { isOpen } = useModal();
 
 const schema = z.object({
-    units: z.custom<string>().array().max(10),
+    units: z.custom<number>().array().max(10),
 });
 
 type Schema = z.output<typeof schema>;
@@ -34,8 +34,8 @@ async function assignDispatch(): Promise<void> {
     }
 
     try {
-        const toAdd: string[] = [];
-        const toRemove: string[] = [];
+        const toAdd: number[] = [];
+        const toRemove: number[] = [];
         state.units.forEach((u) => {
             toAdd.push(u);
         });

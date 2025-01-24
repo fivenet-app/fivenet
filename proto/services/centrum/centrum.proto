@@ -17,12 +17,12 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/centru
 
 message ListDispatchActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 id = 2 [jstype = JS_STRING];
+  uint64 id = 2;
 }
 
 message ListUnitActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 id = 2 [jstype = JS_STRING];
+  uint64 id = 2;
 }
 
 message GetSettingsRequest {}
@@ -58,13 +58,13 @@ message CreateOrUpdateUnitResponse {
 }
 
 message DeleteUnitRequest {
-  uint64 unit_id = 1 [jstype = JS_STRING];
+  uint64 unit_id = 1;
 }
 
 message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
-  uint64 unit_id = 1 [jstype = JS_STRING];
+  uint64 unit_id = 1;
   resources.centrum.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -75,7 +75,7 @@ message UpdateUnitStatusRequest {
 message UpdateUnitStatusResponse {}
 
 message AssignUnitRequest {
-  uint64 unit_id = 1 [jstype = JS_STRING];
+  uint64 unit_id = 1;
   repeated int32 to_add = 2;
   repeated int32 to_remove = 3;
 }
@@ -99,7 +99,7 @@ message ListDispatchesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.centrum.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
   repeated resources.centrum.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated uint64 ids = 4 [jstype = JS_STRING, (validate.rules).repeated.max_items = 10];
+  repeated uint64 ids = 4 [(validate.rules).repeated.max_items = 10];
   optional string postal = 5 [(validate.rules).string.max_len = 12];
 }
 
@@ -109,7 +109,7 @@ message ListDispatchesResponse {
 }
 
 message GetDispatchRequest {
-  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message GetDispatchResponse {
@@ -131,13 +131,13 @@ message UpdateDispatchRequest {
 message UpdateDispatchResponse {}
 
 message DeleteDispatchRequest {
-  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
-  uint64 dispatch_id = 1 [jstype = JS_STRING];
+  uint64 dispatch_id = 1;
   resources.centrum.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -148,9 +148,9 @@ message UpdateDispatchStatusRequest {
 message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
-  uint64 dispatch_id = 1 [jstype = JS_STRING];
-  repeated uint64 to_add = 2 [jstype = JS_STRING];
-  repeated uint64 to_remove = 3 [jstype = JS_STRING];
+  uint64 dispatch_id = 1;
+  repeated uint64 to_add = 2;
+  repeated uint64 to_remove = 3;
   optional bool forced = 4;
 }
 
@@ -162,7 +162,7 @@ message ListDispatchActivityResponse {
 }
 
 message JoinUnitRequest {
-  optional uint64 unit_id = 1 [jstype = JS_STRING];
+  optional uint64 unit_id = 1;
 }
 
 message JoinUnitResponse {
@@ -170,7 +170,7 @@ message JoinUnitResponse {
 }
 
 message TakeDispatchRequest {
-  repeated uint64 dispatch_ids = 1 [jstype = JS_STRING, (validate.rules).repeated.min_items = 1];
+  repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
   resources.centrum.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -182,7 +182,7 @@ message LatestState {
   resources.timestamp.Timestamp server_time = 1;
   resources.centrum.Settings settings = 2;
   repeated resources.jobs.Colleague disponents = 3;
-  optional uint64 own_unit_id = 4 [jstype = JS_STRING];
+  optional uint64 own_unit_id = 4;
   // Send the current units and dispatches
   repeated resources.centrum.Unit units = 5;
   repeated resources.centrum.Dispatch dispatches = 6;

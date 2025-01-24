@@ -8,7 +8,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{
-    templateId: string;
+    templateId: number;
 }>();
 
 const { isOpen } = useModal();

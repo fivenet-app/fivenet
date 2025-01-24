@@ -74,32 +74,32 @@ const links = computed(() =>
     [
         {
             label: t('common.info'),
-            to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? '0' } },
+            to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-information-slab-circle',
             permission: 'JobsService.GetColleague' as Perms,
         },
         {
             label: t('common.activity'),
-            to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? '0' } },
+            to: { name: 'jobs-colleagues-id-activity', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-pulse',
             permission: 'JobsService.ListColleagueActivity' as Perms,
         },
         {
             label: t('common.timeclock'),
-            to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? '0' } },
+            to: { name: 'jobs-colleagues-id-timeclock', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-timeline-clock',
             permission: 'JobsTimeclockService.ListTimeclock' as Perms,
             check: attr('JobsTimeclockService.ListTimeclock', 'Access', 'All').value,
         },
         {
             label: t('pages.qualifications.title'),
-            to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? '0' } },
+            to: { name: 'jobs-colleagues-id-qualifications', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-school',
             permission: 'QualificationsService.ListQualifications' as Perms,
         },
         {
             label: t('pages.jobs.conduct.title'),
-            to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? '0' } },
+            to: { name: 'jobs-colleagues-id-conduct', params: { id: route.params?.id ?? 0 } },
             icon: 'i-mdi-list-status',
             permission: 'JobsConductService.ListConductEntries' as Perms,
         },

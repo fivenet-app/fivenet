@@ -58,11 +58,11 @@ const state = reactive<Partial<Schema>>({
     expiresAt: undefined,
 });
 
-async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<void> {
+async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<void> {
     try {
         const req = {
             entry: {
-                id: id ?? '0',
+                id: id ?? 0,
                 job: '',
                 creatorId: activeChar.value?.userId ?? 0,
                 type: values.type,

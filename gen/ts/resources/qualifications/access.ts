@@ -25,17 +25,17 @@ export interface QualificationAccess {
  */
 export interface QualificationJobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
+    id: number; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 target_id = 4 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 target_id = 4;
      */
-    targetId: string; // @gotags: alias:"qualification_id"
+    targetId: number; // @gotags: alias:"qualification_id"
     /**
      * @generated from protobuf field: string job = 5;
      */
@@ -152,9 +152,9 @@ export const QualificationAccess = new QualificationAccess$Type();
 class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
     constructor() {
         super("resources.qualifications.QualificationJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
@@ -164,8 +164,8 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
     }
     create(value?: PartialMessage<QualificationJobAccess>): QualificationJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
-        message.targetId = "0";
+        message.id = 0;
+        message.targetId = 0;
         message.job = "";
         message.minimumGrade = 0;
         message.access = 0;
@@ -178,14 +178,14 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
                     break;
                 case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* uint64 target_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.targetId = reader.uint64().toString();
+                case /* uint64 target_id */ 4:
+                    message.targetId = reader.uint64().toNumber();
                     break;
                 case /* string job */ 5:
                     message.job = reader.string();
@@ -214,14 +214,14 @@ class QualificationJobAccess$Type extends MessageType<QualificationJobAccess> {
         return message;
     }
     internalBinaryWrite(message: QualificationJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
+        /* uint64 id = 1; */
+        if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
             Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 target_id = 4 [jstype = JS_STRING]; */
-        if (message.targetId !== "0")
+        /* uint64 target_id = 4; */
+        if (message.targetId !== 0)
             writer.tag(4, WireType.Varint).uint64(message.targetId);
         /* string job = 5; */
         if (message.job !== "")
