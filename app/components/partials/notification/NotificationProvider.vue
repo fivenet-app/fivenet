@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import type { Notification } from '~/composables/notifications';
 import { useCalendarStore } from '~/store/calendar';
@@ -95,7 +96,7 @@ const toast = useToast();
 function createNotifications(notifications: Notification[]): void {
     notifications.forEach((notification) => {
         toast.add({
-            id: notification.id?.toString(),
+            id: notification.id?.toString() ?? uuidv4(),
             title: t(notification.title.key, notification.title.parameters ?? {}),
             description: t(notification.description.key, notification.description.parameters ?? {}),
             icon: notificationTypeToIcon(notification.type),
