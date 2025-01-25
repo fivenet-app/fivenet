@@ -123,6 +123,25 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 	}
 	resp.Emails = emails
 
+	// Retrieve user's private email with access and settings
+	for idx := range resp.Emails {
+		if resp.Emails[idx] == nil || resp.Emails[idx].UserId == nil {
+			continue
+		}
+
+		if *resp.Emails[idx].UserId != userInfo.UserId {
+			continue
+		}
+
+		e, err := s.getEmail(ctx, resp.Emails[idx].Id, true, true)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsmailer.ErrFailedQuery)
+		}
+
+		resp.Emails[idx] = e
+		break
+	}
+
 	resp.Pagination.Update(len(resp.Emails))
 
 	return resp, nil

@@ -353,7 +353,7 @@ defineShortcuts({
             {{ citizen.dateofbirth.value }}
         </template>
 
-        <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
+        <template #height-data="{ row: citizen }"> {{ citizen.height.value ?? '?' }}cm </template>
 
         <template v-if="can('CitizenStoreService.GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">

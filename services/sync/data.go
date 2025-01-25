@@ -121,7 +121,8 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 		FROM(tJobGrades).
 		ORDER_BY(
 			tJobGrades.Grade.ASC(),
-		)
+		).
+		WHERE(tJobGrades.JobName.EQ(jet.String(job.Name)))
 
 	currentGrades := []*users.JobGrade{}
 	if err := selectStmt.QueryContext(ctx, s.db, &currentGrades); err != nil {

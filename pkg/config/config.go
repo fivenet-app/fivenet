@@ -82,7 +82,7 @@ type Database struct {
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`
 	ConnMaxLifetime time.Duration `default:"60m" yaml:"connMaxLifetime"`
 
-	ESXCompat bool `default:"true" yaml:"esxCompat"`
+	ESXCompat bool `default:"false" yaml:"esxCompat"`
 
 	Custom CustomDB `yaml:"custom"`
 }

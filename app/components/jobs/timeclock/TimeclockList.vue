@@ -277,138 +277,33 @@ const itemsAll = computed(() => [
         }"
     />
 
-    <template v-if="query.userMode === TimeclockUserMode.SELF">
-        <UDashboardToolbar>
-            <template #default>
-                <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
-                    <div class="flex flex-1 justify-between gap-2">
-                        <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
-                            <DateRangePickerPopoverClient
-                                v-model="query.date"
-                                mode="date"
-                                class="flex-1"
-                                :popover="{ class: 'flex-1' }"
-                                :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
-                            />
-                        </UFormGroup>
+    <UDashboardToolbar>
+        <template #default>
+            <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
+                <div v-if="query.userMode === TimeclockUserMode.SELF" class="flex flex-1 justify-between gap-2">
+                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                        <DateRangePickerPopoverClient
+                            v-model="query.date"
+                            mode="date"
+                            class="flex-1"
+                            :popover="{ class: 'flex-1' }"
+                            :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
+                        />
+                    </UFormGroup>
 
-                        <UFormGroup
-                            name="day"
-                            :label="$t('common.per_day')"
-                            class="flex flex-initial flex-col"
-                            :ui="{ container: 'flex-1 flex' }"
-                        >
-                            <div class="flex flex-1 items-center">
-                                <UToggle v-model="query.perDay" />
-                            </div>
-                        </UFormGroup>
-                    </div>
-                </UForm>
-            </template>
-        </UDashboardToolbar>
-
-        <UCard v-if="!query.perDay">
-            <p
-                class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
-            >
-                {{
-                    selfPerDaySum === 0
-                        ? $t('common.not_found', [$t('common.entry', 2)])
-                        : fromSecondsToFormattedDuration(selfPerDaySum, {
-                              seconds: false,
-                          })
-                }}
-            </p>
-        </UCard>
-
-        <UTable
-            v-else
-            v-model:sort="sort"
-            :loading="loading"
-            :columns="columns"
-            :rows="data?.entries.oneofKind === 'range' ? data.entries.range.entries : []"
-            :empty-state="{
-                icon: 'i-mdi-timeline-clock',
-                label: $t('common.not_found', [$t('common.entry', 2)]),
-            }"
-            sort-mode="manual"
-            class="flex-1"
-            :ui="{ caption: '' }"
-        >
-            <template #caption>
-                <caption>
-                    <p class="text-right">
-                        <span class="font-semibold">{{ $t('common.sum') }}:</span>
-
-                        {{
-                            fromSecondsToFormattedDuration(
-                                parseFloat(
-                                    (
-                                        (Math.round((data?.entries.oneofKind === 'range' ? data?.entries.range.sum : 0) * 100) /
-                                            100) *
-                                        60 *
-                                        60
-                                    ).toPrecision(2),
-                                ),
-                                { seconds: false },
-                            )
-                        }}
-                    </p>
-                </caption>
-            </template>
-
-            <template #date-data="{ row: item }">
-                <div class="text-gray-900 dark:text-white">
-                    {{ $d(toDate(item.date), 'date') }}
+                    <UFormGroup
+                        name="day"
+                        :label="$t('common.per_day')"
+                        class="flex flex-initial flex-col"
+                        :ui="{ container: 'flex-1 flex' }"
+                    >
+                        <div class="flex flex-1 items-center">
+                            <UToggle v-model="query.perDay" />
+                        </div>
+                    </UFormGroup>
                 </div>
-            </template>
 
-            <template #rank-data="{ row: entry }">
-                {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-            </template>
-
-            <template #time-data="{ row: entry }">
-                <div class="text-right">
-                    {{
-                        entry.spentTime > 0
-                            ? fromSecondsToFormattedDuration(
-                                  parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                  { seconds: false },
-                              )
-                            : ''
-                    }}
-
-                    <UBadge v-if="!!entry.startTime" color="green">
-                        {{ $t('common.active') }}
-                    </UBadge>
-                </div>
-            </template>
-        </UTable>
-
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-
-        <UAccordion
-            v-if="showStats && data && data.stats"
-            :items="[{ slot: 'stats', label: $t('common.stats') }]"
-            class="px-3 py-0.5"
-        >
-            <template #stats>
-                <TimeclockStatsBlock
-                    :weekly="data?.statsWeekly"
-                    :stats="data?.stats"
-                    :hide-header="true"
-                    :failed="!!error"
-                    :loading="loading"
-                    :ui="{ rounded: '' }"
-                />
-            </template>
-        </UAccordion>
-    </template>
-
-    <template v-else>
-        <UDashboardToolbar>
-            <template #default>
-                <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
+                <template v-if="query.userMode === TimeclockUserMode.ALL">
                     <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
                         <UTabs
                             v-model="selectedMode"
@@ -567,10 +462,111 @@ const itemsAll = computed(() => [
                             </div>
                         </div>
                     </div>
-                </UForm>
-            </template>
-        </UDashboardToolbar>
+                </template>
+            </UForm>
+        </template>
+    </UDashboardToolbar>
 
+    <template v-if="query.userMode === TimeclockUserMode.SELF">
+        <UCard v-if="!query.perDay">
+            <p
+                class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
+            >
+                {{
+                    selfPerDaySum === 0
+                        ? $t('common.not_found', [$t('common.entry', 2)])
+                        : fromSecondsToFormattedDuration(selfPerDaySum, {
+                              seconds: false,
+                          })
+                }}
+            </p>
+        </UCard>
+
+        <UTable
+            v-else
+            v-model:sort="sort"
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.entries.oneofKind === 'range' ? data.entries.range.entries : []"
+            :empty-state="{
+                icon: 'i-mdi-timeline-clock',
+                label: $t('common.not_found', [$t('common.entry', 2)]),
+            }"
+            sort-mode="manual"
+            class="flex-1"
+            :ui="{ caption: '' }"
+        >
+            <template #caption>
+                <caption>
+                    <p class="text-right">
+                        <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
+                        {{
+                            fromSecondsToFormattedDuration(
+                                parseFloat(
+                                    (
+                                        (Math.round((data?.entries.oneofKind === 'range' ? data?.entries.range.sum : 0) * 100) /
+                                            100) *
+                                        60 *
+                                        60
+                                    ).toPrecision(2),
+                                ),
+                                { seconds: false },
+                            )
+                        }}
+                    </p>
+                </caption>
+            </template>
+
+            <template #date-data="{ row: item }">
+                <div class="text-gray-900 dark:text-white">
+                    {{ $d(toDate(item.date), 'date') }}
+                </div>
+            </template>
+
+            <template #rank-data="{ row: entry }">
+                {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+            </template>
+
+            <template #time-data="{ row: entry }">
+                <div class="text-right">
+                    {{
+                        entry.spentTime > 0
+                            ? fromSecondsToFormattedDuration(
+                                  parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                  { seconds: false },
+                              )
+                            : ''
+                    }}
+
+                    <UBadge v-if="!!entry.startTime" color="green">
+                        {{ $t('common.active') }}
+                    </UBadge>
+                </div>
+            </template>
+        </UTable>
+
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+
+        <UAccordion
+            v-if="showStats && data && data.stats"
+            :items="[{ slot: 'stats', label: $t('common.stats') }]"
+            class="px-3 py-0.5"
+        >
+            <template #stats>
+                <TimeclockStatsBlock
+                    :weekly="data?.statsWeekly"
+                    :stats="data?.stats"
+                    :hide-header="true"
+                    :failed="!!error"
+                    :loading="loading"
+                    :ui="{ rounded: '' }"
+                />
+            </template>
+        </UAccordion>
+    </template>
+
+    <template v-else>
         <DataErrorBlock
             v-if="error"
             :title="$t('common.unable_to_load', [$t('common.entry', 2)])"

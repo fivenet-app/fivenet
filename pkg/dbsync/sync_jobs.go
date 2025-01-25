@@ -81,7 +81,9 @@ func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*users.JobGrade
 	if _, err := qrm.Query(ctx, s.db, query, []interface{}{
 		job,
 	}, &grades); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return grades, nil
