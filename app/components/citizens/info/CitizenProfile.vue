@@ -114,7 +114,7 @@ const { attr } = useAuth();
                             {{ $t('common.no_open_fine') }}
                         </span>
                         <span v-else class="text-error-500">
-                            {{ $n(user?.props?.openFines ?? 0), 'currency') }}
+                            {{ $n(user?.props?.openFines ?? 0, 'currency') }}
                         </span>
                     </dd>
                 </div>
