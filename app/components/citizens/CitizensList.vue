@@ -10,6 +10,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import { sexToTextColor } from '../partials/citizens/helpers';
 
 const { t } = useI18n();
 
@@ -336,7 +337,9 @@ defineShortcuts({
         </template>
 
         <template #sex-data="{ row: citizen }">
-            {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}
+            <span :class="sexToTextColor(citizen.sex?.value ?? '')">
+                {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}
+            </span>
         </template>
 
         <template #phoneNumber-data="{ row: citizen }">
