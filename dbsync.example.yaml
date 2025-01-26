@@ -37,6 +37,8 @@ tables:
         `label`
       FROM
         `job_grades`
+      WHERE
+        `job_name` = $jobName
       LIMIT $limit
       OFFSET $offset;
   licenses:
@@ -54,7 +56,11 @@ tables:
     # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
     # Optional columns: `height`, `visum`, `playtime`
     enabled: true
-    updatedTimeColumn: "last_seen"
+    # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
+    # configure it here so that after the initial sync only the changed data is synced again.
+    #updatedTimeColumn: "last_seen"
+    # The identifier column should be a smart combination of values when using a multichar system.
+    # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     query: |
       SELECT
         `id`,
@@ -75,6 +81,22 @@ tables:
       $whereCondition
       LIMIT $limit
       OFFSET $offset;
+    # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
+    splitName: true
+    # Normalize date of birth value to the output format if possible
+    dateOfBirth:
+      formats:
+        - "2006-01-02" # 2000-10-18 = YYYY-MM-DD
+        - "02/01/2006" # 09/06/1993 = MM/DD/YYYY
+        - "02.01.2006" # 01.08.1982 = DD.MM.YYYY
+      outputFormat: "DD.MM.YYYY"
+    valueMapping:
+      # This allows to map values to different values for FiveNet
+      # E.g., the sex of a char must be either `m`, `f`, or `d`
+      sex:
+        fallback: 'm'
+        values:
+          '1': 'f'
   userLicenses:
     # Must return `type`, `owner` columns
     enabled: true
@@ -84,6 +106,8 @@ tables:
         `owner`
       FROM
         `user_licenses`
+      WHERE
+        `owner` = $identifier
       LIMIT $limit
       OFFSET $offset;
   vehicles:

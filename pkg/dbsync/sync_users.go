@@ -5,6 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -78,9 +79,16 @@ func (s *usersSync) Sync(ctx context.Context) error {
 		}
 	}
 
-	// Split names if only one field is used by the framework and only if we get 2 names out of it
-	if s.cfg.Tables.Users.SplitName {
-		for k := range users {
+	for k := range users {
+		// Value mapping logic
+		if s.cfg.Tables.Users.ValueMapping != nil {
+			if !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+				s.cfg.Tables.Users.ValueMapping.Sex.Process(users[k].Sex)
+			}
+		}
+
+		// Split names if only one field is used by the source data structure and only if we get 2 names out of it
+		if s.cfg.Tables.Users.SplitName {
 			if users[k].Lastname == "" {
 				ss := strings.Split(users[k].Firstname, " ")
 				if len(ss) > 1 {
@@ -89,6 +97,18 @@ func (s *usersSync) Sync(ctx context.Context) error {
 					users[k].Firstname = strings.Replace(users[k].Firstname, " "+users[k].Lastname, "", 1)
 				}
 			}
+		}
+
+		// Attempt to parse date of birth via list of input formats
+		for _, format := range s.cfg.Tables.Users.DateOfBirth.Formats {
+			parsedTime, err := time.Parse(format, users[k].Dateofbirth)
+			if err != nil {
+				continue
+			}
+
+			// Format dates to the output format so all are the same if parseable
+			users[k].Dateofbirth = parsedTime.Format(s.cfg.Tables.Users.DateOfBirth.OutputFormat)
+			break
 		}
 	}
 
