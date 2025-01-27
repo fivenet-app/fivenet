@@ -98,6 +98,8 @@ func (m *TLD) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Internal
+
 	if m.UpdatedAt != nil {
 
 		if all {
@@ -162,6 +164,10 @@ func (m *TLD) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if len(errors) > 0 {
@@ -295,7 +301,7 @@ func (m *Domain) validate(all bool) error {
 
 	// no validation rules for TldId
 
-	// no validation rules for Online
+	// no validation rules for Active
 
 	if utf8.RuneCountInString(m.GetName()) > 128 {
 		err := DomainValidationError{

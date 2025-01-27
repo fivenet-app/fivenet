@@ -35,6 +35,14 @@ export interface TLD {
      * @generated from protobuf field: string name = 5;
      */
     name: string;
+    /**
+     * @generated from protobuf field: bool internal = 6;
+     */
+    internal: boolean;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 7;
+     */
+    creatorId?: number;
 }
 /**
  * @generated from protobuf message resources.internet.Domain
@@ -65,9 +73,9 @@ export interface Domain {
      */
     tld?: TLD;
     /**
-     * @generated from protobuf field: bool online = 7;
+     * @generated from protobuf field: bool active = 7;
      */
-    online: boolean;
+    active: boolean;
     /**
      * @generated from protobuf field: string name = 8;
      */
@@ -89,13 +97,16 @@ class TLD$Type extends MessageType<TLD> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "24" } } } }
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "24" } } } },
+            { no: 6, name: "internal", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<TLD>): TLD {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.name = "";
+        message.internal = false;
         if (value !== undefined)
             reflectionMergePartial<TLD>(this, message, value);
         return message;
@@ -119,6 +130,12 @@ class TLD$Type extends MessageType<TLD> {
                     break;
                 case /* string name */ 5:
                     message.name = reader.string();
+                    break;
+                case /* bool internal */ 6:
+                    message.internal = reader.bool();
+                    break;
+                case /* optional int32 creator_id */ 7:
+                    message.creatorId = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -147,6 +164,12 @@ class TLD$Type extends MessageType<TLD> {
         /* string name = 5; */
         if (message.name !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.name);
+        /* bool internal = 6; */
+        if (message.internal !== false)
+            writer.tag(6, WireType.Varint).bool(message.internal);
+        /* optional int32 creator_id = 7; */
+        if (message.creatorId !== undefined)
+            writer.tag(7, WireType.Varint).int32(message.creatorId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -167,7 +190,7 @@ class Domain$Type extends MessageType<Domain> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 6, name: "tld", kind: "message", T: () => TLD },
-            { no: 7, name: "online", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
@@ -177,7 +200,7 @@ class Domain$Type extends MessageType<Domain> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.tldId = 0;
-        message.online = false;
+        message.active = false;
         message.name = "";
         if (value !== undefined)
             reflectionMergePartial<Domain>(this, message, value);
@@ -206,8 +229,8 @@ class Domain$Type extends MessageType<Domain> {
                 case /* optional resources.internet.TLD tld */ 6:
                     message.tld = TLD.internalBinaryRead(reader, reader.uint32(), options, message.tld);
                     break;
-                case /* bool online */ 7:
-                    message.online = reader.bool();
+                case /* bool active */ 7:
+                    message.active = reader.bool();
                     break;
                 case /* string name */ 8:
                     message.name = reader.string();
@@ -248,9 +271,9 @@ class Domain$Type extends MessageType<Domain> {
         /* optional resources.internet.TLD tld = 6; */
         if (message.tld)
             TLD.internalBinaryWrite(message.tld, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* bool online = 7; */
-        if (message.online !== false)
-            writer.tag(7, WireType.Varint).bool(message.online);
+        /* bool active = 7; */
+        if (message.active !== false)
+            writer.tag(7, WireType.Varint).bool(message.active);
         /* string name = 8; */
         if (message.name !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.name);

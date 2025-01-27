@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package resources.internet;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
+
+enum AccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_VIEW = 2;
+  ACCESS_LEVEL_EDIT = 3;
+  ACCESS_LEVEL_OWNER = 4;
+}
+
+message DomainAccess {
+  repeated DomainJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
+  repeated DomainUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
+}
+
+message DomainJobAccess {
+  uint64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 target_id = 3; // @gotags: alias:"page_id"
+  string job = 4 [(validate.rules).string.max_len = 20];
+  optional string job_label = 5 [(validate.rules).string.max_len = 50];
+  int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
+  optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
+  AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
+}
+
+message DomainUserAccess {
+  uint64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 target_id = 3; // @gotags: alias:"page_id"
+  int32 user_id = 4 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 5;
+  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
+}

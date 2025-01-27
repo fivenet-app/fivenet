@@ -389,6 +389,13 @@
 - [resources/internet/search.proto](#resources_internet_search-proto)
     - [SearchResult](#resources-internet-SearchResult)
   
+- [resources/internet/access.proto](#resources_internet_access-proto)
+    - [DomainAccess](#resources-internet-DomainAccess)
+    - [DomainJobAccess](#resources-internet-DomainJobAccess)
+    - [DomainUserAccess](#resources-internet-DomainUserAccess)
+  
+    - [AccessLevel](#resources-internet-AccessLevel)
+  
 - [resources/mailer/access.proto](#resources_mailer_access-proto)
     - [Access](#resources-mailer-Access)
     - [JobAccess](#resources-mailer-JobAccess)
@@ -6296,7 +6303,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | tld_id | [uint64](#uint64) |  |  |
 | tld | [TLD](#resources-internet-TLD) | optional |  |
-| online | [bool](#bool) |  |  |
+| active | [bool](#bool) |  |  |
 | name | [string](#string) |  |  |
 | creator_job | [string](#string) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
@@ -6319,6 +6326,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | name | [string](#string) |  |  |
+| internal | [bool](#bool) |  |  |
+| creator_id | [int32](#int32) | optional |  |
 
 
 
@@ -6423,6 +6432,95 @@ TODO
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_internet_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/access.proto
+
+
+
+<a name="resources-internet-DomainAccess"></a>
+
+### DomainAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [DomainJobAccess](#resources-internet-DomainJobAccess) | repeated | @gotags: alias:"job_access" |
+| users | [DomainUserAccess](#resources-internet-DomainUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-internet-DomainJobAccess"></a>
+
+### DomainJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-internet-DomainUserAccess"></a>
+
+### DomainUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-internet-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_EDIT | 3 |  |
+| ACCESS_LEVEL_OWNER | 4 |  |
+
 
  <!-- end enums -->
 

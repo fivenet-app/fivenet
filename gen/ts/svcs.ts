@@ -24,6 +24,7 @@
 // source: resources/documents/templates.proto
 // source: resources/documents/workflow.proto
 // source: resources/filestore/file.proto
+// source: resources/internet/access.proto
 // source: resources/internet/ads.proto
 // source: resources/internet/domain.proto
 // source: resources/internet/page.proto
