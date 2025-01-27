@@ -1042,7 +1042,7 @@
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | provider_name | [string](#string) |  |  |
 | provider | [OAuth2Provider](#resources-accounts-OAuth2Provider) |  |  |
-| external_id | [uint64](#uint64) |  |  |
+| external_id | [string](#string) |  |  |
 | username | [string](#string) |  |  |
 | avatar | [string](#string) |  |  |
 

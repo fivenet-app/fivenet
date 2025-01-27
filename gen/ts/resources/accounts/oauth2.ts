@@ -32,9 +32,9 @@ export interface OAuth2Account {
      */
     provider?: OAuth2Provider;
     /**
-     * @generated from protobuf field: uint64 external_id = 5;
+     * @generated from protobuf field: string external_id = 5;
      */
-    externalId: number;
+    externalId: string;
     /**
      * @generated from protobuf field: string username = 6;
      */
@@ -73,7 +73,7 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
-            { no: 5, name: "external_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "external_id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -82,7 +82,7 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.accountId = 0;
         message.providerName = "";
-        message.externalId = 0;
+        message.externalId = "";
         message.username = "";
         message.avatar = "";
         if (value !== undefined)
@@ -106,8 +106,8 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
                 case /* resources.accounts.OAuth2Provider provider */ 4:
                     message.provider = OAuth2Provider.internalBinaryRead(reader, reader.uint32(), options, message.provider);
                     break;
-                case /* uint64 external_id */ 5:
-                    message.externalId = reader.uint64().toNumber();
+                case /* string external_id */ 5:
+                    message.externalId = reader.string();
                     break;
                 case /* string username */ 6:
                     message.username = reader.string();
@@ -139,9 +139,9 @@ class OAuth2Account$Type extends MessageType<OAuth2Account> {
         /* resources.accounts.OAuth2Provider provider = 4; */
         if (message.provider)
             OAuth2Provider.internalBinaryWrite(message.provider, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 external_id = 5; */
-        if (message.externalId !== 0)
-            writer.tag(5, WireType.Varint).uint64(message.externalId);
+        /* string external_id = 5; */
+        if (message.externalId !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.externalId);
         /* string username = 6; */
         if (message.username !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.username);

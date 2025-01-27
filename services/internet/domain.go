@@ -130,7 +130,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 
 	stmt := tDomains.
 		INSERT(
-			tDomains.Online,
+			tDomains.Active,
 			tDomains.Name,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,
@@ -183,7 +183,7 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 
 	stmt := tDomains.
 		UPDATE(
-			tDomains.Online,
+			tDomains.Active,
 			tDomains.Name,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,

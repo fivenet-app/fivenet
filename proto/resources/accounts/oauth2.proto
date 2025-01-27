@@ -11,7 +11,7 @@ message OAuth2Account {
   optional resources.timestamp.Timestamp created_at = 2;
   string provider_name = 3;
   OAuth2Provider provider = 4;
-  uint64 external_id = 5;
+  string external_id = 5;
   string username = 6;
   string avatar = 7;
 }
