@@ -434,7 +434,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 	// Get the last 3 commentors to send them a notification
 	stmt := tDComments.
 		SELECT(
-			tDComments.CreatorID,
+			jet.DISTINCT(tDComments.CreatorID),
 		).
 		FROM(
 			tDComments.
