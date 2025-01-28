@@ -3,10 +3,11 @@
   description = "Basic flake for FiveNet development";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-24.11";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.11";
   };
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, nixpkgs-stable }:
     let
       goMajorVersion = 1;
       goMinorVersion = 23; # Change this to update the whole stack
@@ -17,21 +18,26 @@
           inherit system;
           overlays = [ self.overlays.default ];
         };
+        stablePkgs = import nixpkgs-stable {
+          inherit system;
+        };
       });
+
+      unstable = import (builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/nixos-unstable) { config = { allowUnfree = true; }; };
     in
     {
       overlays.default = final: prev: {
         go = final."go_${toString goMajorVersion}_${toString goMinorVersion}";
       };
 
-      devShells = forEachSupportedSystem ({ pkgs }: {
+      devShells = forEachSupportedSystem ({ pkgs, stablePkgs }: {
         default = pkgs.mkShell {
           # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
           hardeningDisable = [ "fortify" ];
 
           packages = with pkgs; [
             # go and tools
-            go
+            stablePkgs.go
             # goimports, godoc, etc.
             gotools
             gofumpt

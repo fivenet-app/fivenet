@@ -72,6 +72,34 @@ func (m *ListDomainsResponse) Sanitize() error {
 	return nil
 }
 
+func (m *ListTLDsRequest) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Tlds
+	for idx, item := range m.Tlds {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ListTLDsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *RegisterDomainRequest) Sanitize() error {
 	if m == nil {
 		return nil

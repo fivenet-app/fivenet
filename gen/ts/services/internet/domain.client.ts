@@ -12,15 +12,23 @@ import type { RegisterDomainResponse } from "./domain";
 import type { RegisterDomainRequest } from "./domain";
 import type { ListDomainsResponse } from "./domain";
 import type { ListDomainsRequest } from "./domain";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { CheckDomainAvailabilityResponse } from "./domain";
 import type { CheckDomainAvailabilityRequest } from "./domain";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ListTLDsResponse } from "./domain";
+import type { ListTLDsRequest } from "./domain";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.internet.DomainService
  */
 export interface IDomainServiceClient {
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListTLDs(services.internet.ListTLDsRequest) returns (services.internet.ListTLDsResponse);
+     */
+    listTLDs(input: ListTLDsRequest, options?: RpcOptions): UnaryCall<ListTLDsRequest, ListTLDsResponse>;
     /**
      * @perm: Name=Any
      *
@@ -64,10 +72,19 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
     /**
      * @perm: Name=Any
      *
+     * @generated from protobuf rpc: ListTLDs(services.internet.ListTLDsRequest) returns (services.internet.ListTLDsResponse);
+     */
+    listTLDs(input: ListTLDsRequest, options?: RpcOptions): UnaryCall<ListTLDsRequest, ListTLDsResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListTLDsRequest, ListTLDsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: CheckDomainAvailability(services.internet.CheckDomainAvailabilityRequest) returns (services.internet.CheckDomainAvailabilityResponse);
      */
     checkDomainAvailability(input: CheckDomainAvailabilityRequest, options?: RpcOptions): UnaryCall<CheckDomainAvailabilityRequest, CheckDomainAvailabilityResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<CheckDomainAvailabilityRequest, CheckDomainAvailabilityResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -76,7 +93,7 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
      * @generated from protobuf rpc: ListDomains(services.internet.ListDomainsRequest) returns (services.internet.ListDomainsResponse);
      */
     listDomains(input: ListDomainsRequest, options?: RpcOptions): UnaryCall<ListDomainsRequest, ListDomainsResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDomainsRequest, ListDomainsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -85,7 +102,7 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
      * @generated from protobuf rpc: RegisterDomain(services.internet.RegisterDomainRequest) returns (services.internet.RegisterDomainResponse);
      */
     registerDomain(input: RegisterDomainRequest, options?: RpcOptions): UnaryCall<RegisterDomainRequest, RegisterDomainResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<RegisterDomainRequest, RegisterDomainResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -94,7 +111,7 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
      * @generated from protobuf rpc: UpdateDomain(services.internet.UpdateDomainRequest) returns (services.internet.UpdateDomainResponse);
      */
     updateDomain(input: UpdateDomainRequest, options?: RpcOptions): UnaryCall<UpdateDomainRequest, UpdateDomainResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDomainRequest, UpdateDomainResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -103,7 +120,7 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
      * @generated from protobuf rpc: TransferDomain(services.internet.TransferDomainRequest) returns (services.internet.TransferDomainResponse);
      */
     transferDomain(input: TransferDomainRequest, options?: RpcOptions): UnaryCall<TransferDomainRequest, TransferDomainResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<TransferDomainRequest, TransferDomainResponse>("unary", this._transport, method, opt, input);
     }
 }

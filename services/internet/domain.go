@@ -2,7 +2,6 @@ package internet
 
 import (
 	"context"
-	"database/sql"
 	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -69,6 +68,17 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 	stmt := tDomains.
 		SELECT(
 			tDomains.ID,
+			tDomains.CreatedAt,
+			tDomains.UpdatedAt,
+			tDomains.DeletedAt,
+			tDomains.ExpiresAt,
+			tDomains.TldID,
+			tDomains.Name,
+			tDomains.Active,
+			tDomains.ApproverJob,
+			tDomains.ApproverID,
+			tDomains.CreatorJob,
+			tDomains.CreatorID,
 		).
 		FROM(tDomains).
 		WHERE(condition).
@@ -84,38 +94,6 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 	resp.Pagination.Update(len(resp.Domains))
 
 	return resp, nil
-}
-
-func (s *Server) getDomain(ctx context.Context, tx *sql.DB, id uint64) (*internet.Domain, error) {
-	tCreator := tables.Users().AS("creator")
-
-	stmt := tDomains.
-		SELECT(
-			tDomains.ID,
-		).
-		FROM(
-			tDomains.
-				LEFT_JOIN(tCreator,
-					tDomains.CreatorID.EQ(tCreator.ID),
-				),
-		).
-		WHERE(
-			tDomains.ID.EQ(jet.Uint64(id)),
-		).
-		LIMIT(1)
-
-	dest := &internet.Domain{}
-	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
-		}
-	}
-
-	if dest.Id == 0 {
-		return nil, nil
-	}
-
-	return dest, nil
 }
 
 func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDomainRequest) (*pbinternet.RegisterDomainResponse, error) {
@@ -154,7 +132,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
-	domain, err := s.getDomain(ctx, s.db, uint64(lastId))
+	domain, err := s.getDomainById(ctx, s.db, uint64(lastId))
 	if err != nil {
 		return nil, err
 	}
@@ -178,7 +156,9 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	domain, err := s.getDomain(ctx, s.db, req.Domain.Id)
+	// TODO check if user has access to domain
+
+	domain, err := s.getDomainById(ctx, s.db, req.Domain.Id)
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +190,7 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
-	domain, err = s.getDomain(ctx, s.db, uint64(lastId))
+	domain, err = s.getDomainById(ctx, s.db, uint64(lastId))
 	if err != nil {
 		return nil, err
 	}

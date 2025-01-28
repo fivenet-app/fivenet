@@ -55,7 +55,7 @@ watch(tab, () => updateQuery(), { deep: true });
                 >
                     <template #default="{ link }">
                         <span
-                            class="group-hover:text-primary relative truncate text-left"
+                            class="text-primary relative truncate text-left"
                             :class="[
                                 'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
                             ]"

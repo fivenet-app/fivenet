@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
+	DomainService_ListTLDs_FullMethodName                = "/services.internet.DomainService/ListTLDs"
 	DomainService_CheckDomainAvailability_FullMethodName = "/services.internet.DomainService/CheckDomainAvailability"
 	DomainService_ListDomains_FullMethodName             = "/services.internet.DomainService/ListDomains"
 	DomainService_RegisterDomain_FullMethodName          = "/services.internet.DomainService/RegisterDomain"
@@ -30,6 +31,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DomainServiceClient interface {
+	// @perm: Name=Any
+	ListTLDs(ctx context.Context, in *ListTLDsRequest, opts ...grpc.CallOption) (*ListTLDsResponse, error)
 	// @perm: Name=Any
 	CheckDomainAvailability(ctx context.Context, in *CheckDomainAvailabilityRequest, opts ...grpc.CallOption) (*CheckDomainAvailabilityResponse, error)
 	// @perm: Name=Any
@@ -48,6 +51,16 @@ type domainServiceClient struct {
 
 func NewDomainServiceClient(cc grpc.ClientConnInterface) DomainServiceClient {
 	return &domainServiceClient{cc}
+}
+
+func (c *domainServiceClient) ListTLDs(ctx context.Context, in *ListTLDsRequest, opts ...grpc.CallOption) (*ListTLDsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTLDsResponse)
+	err := c.cc.Invoke(ctx, DomainService_ListTLDs_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *domainServiceClient) CheckDomainAvailability(ctx context.Context, in *CheckDomainAvailabilityRequest, opts ...grpc.CallOption) (*CheckDomainAvailabilityResponse, error) {
@@ -105,6 +118,8 @@ func (c *domainServiceClient) TransferDomain(ctx context.Context, in *TransferDo
 // for forward compatibility.
 type DomainServiceServer interface {
 	// @perm: Name=Any
+	ListTLDs(context.Context, *ListTLDsRequest) (*ListTLDsResponse, error)
+	// @perm: Name=Any
 	CheckDomainAvailability(context.Context, *CheckDomainAvailabilityRequest) (*CheckDomainAvailabilityResponse, error)
 	// @perm: Name=Any
 	ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error)
@@ -124,6 +139,9 @@ type DomainServiceServer interface {
 // pointer dereference when methods are called.
 type UnimplementedDomainServiceServer struct{}
 
+func (UnimplementedDomainServiceServer) ListTLDs(context.Context, *ListTLDsRequest) (*ListTLDsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListTLDs not implemented")
+}
 func (UnimplementedDomainServiceServer) CheckDomainAvailability(context.Context, *CheckDomainAvailabilityRequest) (*CheckDomainAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckDomainAvailability not implemented")
 }
@@ -158,6 +176,24 @@ func RegisterDomainServiceServer(s grpc.ServiceRegistrar, srv DomainServiceServe
 		t.testEmbeddedByValue()
 	}
 	s.RegisterService(&DomainService_ServiceDesc, srv)
+}
+
+func _DomainService_ListTLDs_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTLDsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DomainServiceServer).ListTLDs(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DomainService_ListTLDs_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DomainServiceServer).ListTLDs(ctx, req.(*ListTLDsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _DomainService_CheckDomainAvailability_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -257,6 +293,10 @@ var DomainService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.internet.DomainService",
 	HandlerType: (*DomainServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListTLDs",
+			Handler:    _DomainService_ListTLDs_Handler,
+		},
 		{
 			MethodName: "CheckDomainAvailability",
 			Handler:    _DomainService_CheckDomainAvailability_Handler,

@@ -7,11 +7,10 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-func (s *Server) Stream(req *pbsync.StreamRequest, srv grpc.ServerStreamingServer[pbsync.StreamResponse]) error {
+func (s *Server) Stream(req *pbsync.StreamRequest, srv pbsync.SyncService_StreamServer) error {
 	// Setup consumer
 	c, err := s.js.CreateConsumer(srv.Context(), strings.ToUpper(string(BaseSubject)), jetstream.ConsumerConfig{
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),

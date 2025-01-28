@@ -216,6 +216,7 @@ export const grpcMethods = [
 	'DocStoreService/ListDocumentPins',
 	'DocStoreService/ToggleDocumentPin',
 	'DocStoreService/SetDocumentReminder',
+	'DomainService/ListTLDs',
 	'DomainService/CheckDomainAvailability',
 	'DomainService/ListDomains',
 	'DomainService/RegisterDomain',

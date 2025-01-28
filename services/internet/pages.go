@@ -9,7 +9,7 @@ import (
 )
 
 func (s *Server) GetPage(ctx context.Context, req *pbinternet.GetPageRequest) (*pbinternet.GetPageResponse, error) {
-	domain, err := s.getDomainByName(ctx, req.Domain)
+	domain, err := s.getDomainByName(ctx, s.db, req.Domain)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}

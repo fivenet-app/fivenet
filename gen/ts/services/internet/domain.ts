@@ -2,18 +2,33 @@
 // @generated from protobuf file "services/internet/domain.proto" (package "services.internet", syntax proto3)
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Domain } from "../../resources/internet/domain";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
+import { TLD } from "../../resources/internet/domain";
+/**
+ * @generated from protobuf message services.internet.ListTLDsResponse
+ */
+export interface ListTLDsResponse {
+}
+/**
+ * @generated from protobuf message services.internet.ListTLDsRequest
+ */
+export interface ListTLDsRequest {
+    /**
+     * @generated from protobuf field: repeated resources.internet.TLD tlds = 1;
+     */
+    tlds: TLD[];
+}
 /**
  * @generated from protobuf message services.internet.CheckDomainAvailabilityRequest
  */
@@ -112,6 +127,78 @@ export interface TransferDomainRequest {
  */
 export interface TransferDomainResponse {
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListTLDsResponse$Type extends MessageType<ListTLDsResponse> {
+    constructor() {
+        super("services.internet.ListTLDsResponse", []);
+    }
+    create(value?: PartialMessage<ListTLDsResponse>): ListTLDsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListTLDsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsResponse): ListTLDsResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: ListTLDsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.internet.ListTLDsResponse
+ */
+export const ListTLDsResponse = new ListTLDsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
+    constructor() {
+        super("services.internet.ListTLDsRequest", [
+            { no: 1, name: "tlds", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TLD }
+        ]);
+    }
+    create(value?: PartialMessage<ListTLDsRequest>): ListTLDsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.tlds = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListTLDsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsRequest): ListTLDsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.internet.TLD tlds */ 1:
+                    message.tlds.push(TLD.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListTLDsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.internet.TLD tlds = 1; */
+        for (let i = 0; i < message.tlds.length; i++)
+            TLD.internalBinaryWrite(message.tlds[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.internet.ListTLDsRequest
+ */
+export const ListTLDsRequest = new ListTLDsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailabilityRequest> {
     constructor() {
@@ -574,6 +661,7 @@ export const TransferDomainResponse = new TransferDomainResponse$Type();
  * @generated ServiceType for protobuf service services.internet.DomainService
  */
 export const DomainService = new ServiceType("services.internet.DomainService", [
+    { name: "ListTLDs", options: {}, I: ListTLDsRequest, O: ListTLDsResponse },
     { name: "CheckDomainAvailability", options: {}, I: CheckDomainAvailabilityRequest, O: CheckDomainAvailabilityResponse },
     { name: "ListDomains", options: {}, I: ListDomainsRequest, O: ListDomainsResponse },
     { name: "RegisterDomain", options: {}, I: RegisterDomainRequest, O: RegisterDomainResponse },
