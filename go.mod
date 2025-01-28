@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet
 
-go 1.23.4
+go 1.23.5
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -26,7 +26,7 @@ require (
 	github.com/go-jet/jet/v2 v2.12.1-0.20250110132723-4ab24b38ff15
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
-	github.com/golang-migrate/migrate/v4 v4.18.1
+	github.com/golang-migrate/migrate/v4 v4.18.2
 	github.com/golang/protobuf v1.5.4
 	github.com/google/uuid v1.6.0
 	github.com/gosimple/slug v1.15.0
