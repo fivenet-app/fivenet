@@ -8,11 +8,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_tlds` (
   `deleted_at` datetime(3) DEFAULT NULL,
   `name` varchar(64) NOT NULL,
   `internal` tinyint(1) DEFAULT 0 NULL,
+  `description` varchar(1024) DEFAULT NULL,
   `creator_id`int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_internet_tlds_name` (`name`),
   CONSTRAINT `fk_fivenet_internet_tlds_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+INSERT INTO `fivenet_internet_tlds` (`name`, `internal`) VALUES('ls', 1);
 
 -- Table: fivenet_internet_domains
 CREATE TABLE IF NOT EXISTS `fivenet_internet_domains` (
