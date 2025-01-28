@@ -45,13 +45,6 @@ const state = reactive<Schema>({
     search: '',
 });
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-
-    await searchInternet(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
-
 async function searchInternet(values: Schema): Promise<SearchResponse> {
     try {
         const call = getGRPCInternetClient().search({
@@ -67,6 +60,13 @@ async function searchInternet(values: Schema): Promise<SearchResponse> {
         throw e;
     }
 }
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+
+    await searchInternet(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 
 const searchResults = ref<undefined | SearchResponse>(undefined);
 

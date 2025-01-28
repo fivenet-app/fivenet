@@ -76,7 +76,9 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Domains); err != nil {
-		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
 	}
 
 	resp.Pagination.Update(len(resp.Domains))
@@ -169,7 +171,7 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: pbinternet.InternetService_ServiceDesc.ServiceName,
-		Method:  "RegisterDomain",
+		Method:  "UpdateDomain",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),

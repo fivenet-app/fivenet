@@ -12,6 +12,7 @@ import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.c
 import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
 import { DocStoreServiceClient } from '~~/gen/ts/services/docstore/docstore.client';
 import { AdsServiceClient } from '~~/gen/ts/services/internet/ads.client';
+import { DomainServiceClient } from '~~/gen/ts/services/internet/domain.client';
 import { InternetServiceClient } from '~~/gen/ts/services/internet/internet.client';
 import { JobsConductServiceClient } from '~~/gen/ts/services/jobs/conduct.client';
 import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
@@ -298,6 +299,10 @@ export function getGRPCWikiClient(): WikiServiceClient {
 // Internet
 export function getGRPCInternetClient(): InternetServiceClient {
     return new InternetServiceClient(grpcWebsocketTransport);
+}
+
+export function getGRPCInternetDomainsClient(): DomainServiceClient {
+    return new DomainServiceClient(grpcWebsocketTransport);
 }
 
 export function getGRPCInternetAdsClient(): AdsServiceClient {

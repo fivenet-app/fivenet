@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import type { Tab } from '~/store/internet';
+import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
 
 const props = defineProps<{
     modelValue?: Tab;
@@ -35,12 +36,26 @@ const state = reactive<Schema>({
     search: '',
 });
 
+async function checkDomainAvailability(values: Schema): Promise<CheckDomainAvailabilityResponse> {
+    try {
+        const call = getGRPCInternetDomainsClient().checkDomainAvailability({
+            name: values.search,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
     // TODO check availability
-    await new Promise(() => undefined).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await checkDomainAvailability(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 // TODO

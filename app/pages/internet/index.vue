@@ -12,53 +12,24 @@ definePageMeta({
 });
 
 const internetStore = useInternetStore();
-const { activeTab, tabs } = storeToRefs(internetStore);
+const { tab } = storeToRefs(internetStore);
 
 // Set thread as query param for persistence between reloads
-const route = useRoute();
 const router = useRouter();
 
 function updateQuery(): void {
-    if (!activeTab.value) {
-        router.replace({ query: {} });
-    } else {
-        // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({
-            query: { tab: activeTab.value.id, url: joinURL(activeTab.value.domain, activeTab.value.path) },
-            hash: '#',
-        });
-    }
+    // Hash is specified here to prevent the page from scrolling to the top
+    router.replace({
+        query: { url: joinURL(tab.value.domain, tab.value.path) },
+        hash: '#',
+    });
 }
 
 onMounted(async () => {
-    if (tabs.value.length === 0) {
-        internetStore.newTab(true);
-    }
-
-    if (!activeTab.value && tabs.value[0]) {
-        internetStore.selectTab(tabs.value[0].id);
-    }
-
     updateQuery();
 });
 
-const selectedTab = computed({
-    get() {
-        const tabId = parseInt(route.query.tab as string);
-        const index = tabs.value.findIndex((item) => item.id === tabId);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
-    },
-    set(value) {
-        // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: tabs.value[value]?.id }, hash: '#' });
-    },
-});
-
-watch(activeTab, () => updateQuery(), { deep: true });
+watch(tab, () => updateQuery(), { deep: true });
 </script>
 
 <template>
@@ -68,74 +39,36 @@ watch(activeTab, () => updateQuery(), { deep: true });
                 :ui="{
                     wrapper: 'p-0 gap-x-0',
                     container:
-                        'gap-x-0 gap-y-0 justify-stretch items-stretch h-full flex flex-row bg-gray-100 p-0 px dark:bg-gray-800 overflow-x-hidden',
+                        'gap-x-0 gap-y-0 justify-stretch items-stretch h-full flex flex-row p-0 px bg-gray-100 dark:bg-gray-800 overflow-x-hidden',
                 }"
             >
                 <UDashboardNavbarToggle class="px-4 py-2" />
 
                 <UHorizontalNavigation
-                    :links="
-                        tabs.map((t) => ({
-                            ...t,
-                            click: () => internetStore.selectTab(t.id),
-                        }))
-                    "
+                    :links="[tab]"
                     :ui="{
-                        container: 'divide-x divide-gray-200 dark:divide-gray-600',
-                        inner: 'min-w-60 max-w-60',
+                        container: 'flex-1 divide-x divide-gray-200 dark:divide-gray-600',
+                        inner: 'flex-1',
+                        base: 'justify-center',
                         wrapper: 'overflow-x-auto h-[60px]',
                     }"
                 >
                     <template #default="{ link }">
                         <span
-                            class="group-hover:text-primary relative flex-1 truncate text-left"
+                            class="group-hover:text-primary relative truncate text-left"
                             :class="[
-                                link.id === activeTab?.id &&
-                                    'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
+                                'after:bg-primary-500 dark:after:bg-primary-400 text-gray-900 after:rounded-full dark:text-white',
                             ]"
                         >
-                            <span v-if="link.id === activeTab?.id" class="sr-only"> Current page: </span>
+                            <span class="sr-only"> Current page: </span>
                             {{ link.label === '' ? $t('common.home') : link.label }}
                         </span>
                     </template>
-
-                    <template #badge="{ link }">
-                        <UButton
-                            icon="i-mdi-close"
-                            variant="ghost"
-                            color="black"
-                            @click="
-                                $event.stopPropagation();
-                                internetStore.closeTab(link.id);
-                            "
-                        />
-                    </template>
                 </UHorizontalNavigation>
-
-                <ClientOnly>
-                    <UTooltip :text="$t('components.internet.new_tab')">
-                        <UButton icon="i-mdi-plus" variant="ghost" color="black" @click="internetStore.newTab()" />
-                    </UTooltip>
-                </ClientOnly>
             </UDashboardToolbar>
 
             <UDashboardPanelContent class="p-0">
-                <UTabs
-                    v-model="selectedTab"
-                    :items="tabs"
-                    :ui="{
-                        wrapper: 'space-y-0 h-full',
-                        list: { base: 'hidden' },
-                        padding: 'p-0',
-                        container: 'h-full',
-                        base: 'h-full',
-                    }"
-                    :unmount="false"
-                >
-                    <template #item="{ item }">
-                        <InternetTab :tab-id="item.id" />
-                    </template>
-                </UTabs>
+                <InternetTab v-model="tab" />
             </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>

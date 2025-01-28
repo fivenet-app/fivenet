@@ -11,6 +11,7 @@ import (
 
 type Server struct {
 	pbinternet.InternetServiceServer
+	pbinternet.DomainServiceServer
 	pbinternet.AdsServiceServer
 
 	db  *sql.DB
@@ -34,6 +35,7 @@ func NewServer(p Params) *Server {
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
 	pbinternet.RegisterInternetServiceServer(srv, s)
+	pbinternet.RegisterDomainServiceServer(srv, s)
 	pbinternet.RegisterAdsServiceServer(srv, s)
 }
 
