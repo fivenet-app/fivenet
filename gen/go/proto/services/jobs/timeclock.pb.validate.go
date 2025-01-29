@@ -107,6 +107,17 @@ func (m *ListTimeclockRequest) validate(all bool) error {
 
 	// no validation rules for PerDay
 
+	if len(m.GetUserIds()) > 15 {
+		err := ListTimeclockRequestValidationError{
+			field:  "UserIds",
+			reason: "value must contain no more than 15 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Sort != nil {
 
 		if all {

@@ -8,9 +8,11 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
 
-message ListTLDsResponse {}
-
 message ListTLDsRequest {
+  optional bool internal = 1;
+}
+
+message ListTLDsResponse {
   repeated resources.internet.TLD tlds = 1;
 }
 

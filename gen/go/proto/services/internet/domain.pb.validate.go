@@ -35,106 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on ListTLDsResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *ListTLDsResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on ListTLDsResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// ListTLDsResponseMultiError, or nil if none found.
-func (m *ListTLDsResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *ListTLDsResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return ListTLDsResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// ListTLDsResponseMultiError is an error wrapping multiple validation errors
-// returned by ListTLDsResponse.ValidateAll() if the designated constraints
-// aren't met.
-type ListTLDsResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m ListTLDsResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m ListTLDsResponseMultiError) AllErrors() []error { return m }
-
-// ListTLDsResponseValidationError is the validation error returned by
-// ListTLDsResponse.Validate if the designated constraints aren't met.
-type ListTLDsResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e ListTLDsResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e ListTLDsResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e ListTLDsResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e ListTLDsResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e ListTLDsResponseValidationError) ErrorName() string { return "ListTLDsResponseValidationError" }
-
-// Error satisfies the builtin error interface
-func (e ListTLDsResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sListTLDsResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = ListTLDsResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = ListTLDsResponseValidationError{}
-
 // Validate checks the field values on ListTLDsRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
@@ -157,38 +57,8 @@ func (m *ListTLDsRequest) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetTlds() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListTLDsRequestValidationError{
-						field:  fmt.Sprintf("Tlds[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListTLDsRequestValidationError{
-						field:  fmt.Sprintf("Tlds[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListTLDsRequestValidationError{
-					field:  fmt.Sprintf("Tlds[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+	if m.Internal != nil {
+		// no validation rules for Internal
 	}
 
 	if len(errors) > 0 {
@@ -268,6 +138,140 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListTLDsRequestValidationError{}
+
+// Validate checks the field values on ListTLDsResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ListTLDsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListTLDsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListTLDsResponseMultiError, or nil if none found.
+func (m *ListTLDsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListTLDsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetTlds() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTLDsResponseValidationError{
+						field:  fmt.Sprintf("Tlds[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTLDsResponseValidationError{
+						field:  fmt.Sprintf("Tlds[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTLDsResponseValidationError{
+					field:  fmt.Sprintf("Tlds[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListTLDsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListTLDsResponseMultiError is an error wrapping multiple validation errors
+// returned by ListTLDsResponse.ValidateAll() if the designated constraints
+// aren't met.
+type ListTLDsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListTLDsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListTLDsResponseMultiError) AllErrors() []error { return m }
+
+// ListTLDsResponseValidationError is the validation error returned by
+// ListTLDsResponse.Validate if the designated constraints aren't met.
+type ListTLDsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListTLDsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListTLDsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListTLDsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListTLDsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListTLDsResponseValidationError) ErrorName() string { return "ListTLDsResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ListTLDsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListTLDsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListTLDsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListTLDsResponseValidationError{}
 
 // Validate checks the field values on CheckDomainAvailabilityRequest with the
 // rules defined in the proto definition for this message. If any rules are

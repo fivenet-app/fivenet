@@ -213,7 +213,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				tTimeClock.UserID,
 				tTimeClock.StartTime,
 				tTimeClock.EndTime,
-				tTimeClock.SpentTime,
+				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
 				tUser.ID,
 				tUser.Job,
 				tUser.JobGrade,
@@ -276,6 +276,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			SELECT(
 				tTimeClock.UserID,
 				tTimeClock.Date,
+				tTimeClock.StartTime,
+				tTimeClock.EndTime,
 				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
 				tUser.ID,
 				tUser.Job,
@@ -339,6 +341,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			SELECT(
 				tTimeClock.UserID,
 				tTimeClock.Date,
+				tTimeClock.StartTime,
+				tTimeClock.EndTime,
 				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
 				tUser.ID,
 				tUser.Job,
@@ -371,6 +375,68 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			WHERE(condition).
 			OFFSET(req.Pagination.Offset).
 			GROUP_BY(groupBys...).
+			ORDER_BY(orderBys...).
+			LIMIT(limit)
+
+		data := resp.GetRange()
+		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+			}
+		}
+
+		data.Date = req.Date.End
+		for i := 0; i < len(data.Entries); i++ {
+			if data.Entries[i].User != nil {
+				jobInfoFn(data.Entries[i].User)
+			}
+
+			data.Sum += data.Entries[i].SpentTime
+		}
+
+		resp.Pagination.Update(len(data.Entries))
+	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_TIMELINE {
+		resp.Entries = &pbjobs.ListTimeclockResponse_Range{
+			Range: &pbjobs.TimeclockRange{},
+		}
+
+		stmt := tTimeClock.
+			SELECT(
+				tTimeClock.UserID,
+				tTimeClock.Date,
+				tTimeClock.StartTime,
+				tTimeClock.EndTime,
+				tTimeClock.SpentTime,
+				tUser.ID,
+				tUser.Job,
+				tUser.JobGrade,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.PhoneNumber,
+				tUserProps.Avatar.AS("colleague.avatar"),
+				tJobsUserProps.UserID,
+				tJobsUserProps.Job,
+				tJobsUserProps.AbsenceBegin,
+				tJobsUserProps.AbsenceEnd,
+				tJobsUserProps.NamePrefix,
+				tJobsUserProps.NameSuffix,
+			).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					).
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					),
+			).
+			WHERE(condition).
+			OFFSET(req.Pagination.Offset).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
 

@@ -2,12 +2,12 @@
 // @generated from protobuf file "services/internet/domain.proto" (package "services.internet", syntax proto3)
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -16,14 +16,18 @@ import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { TLD } from "../../resources/internet/domain";
 /**
- * @generated from protobuf message services.internet.ListTLDsResponse
- */
-export interface ListTLDsResponse {
-}
-/**
  * @generated from protobuf message services.internet.ListTLDsRequest
  */
 export interface ListTLDsRequest {
+    /**
+     * @generated from protobuf field: optional bool internal = 1;
+     */
+    internal?: boolean;
+}
+/**
+ * @generated from protobuf message services.internet.ListTLDsResponse
+ */
+export interface ListTLDsResponse {
     /**
      * @generated from protobuf field: repeated resources.internet.TLD tlds = 1;
      */
@@ -128,20 +132,41 @@ export interface TransferDomainRequest {
 export interface TransferDomainResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class ListTLDsResponse$Type extends MessageType<ListTLDsResponse> {
+class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
     constructor() {
-        super("services.internet.ListTLDsResponse", []);
+        super("services.internet.ListTLDsRequest", [
+            { no: 1, name: "internal", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
-    create(value?: PartialMessage<ListTLDsResponse>): ListTLDsResponse {
+    create(value?: PartialMessage<ListTLDsRequest>): ListTLDsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<ListTLDsResponse>(this, message, value);
+            reflectionMergePartial<ListTLDsRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsResponse): ListTLDsResponse {
-        return target ?? this.create();
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsRequest): ListTLDsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional bool internal */ 1:
+                    message.internal = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
-    internalBinaryWrite(message: ListTLDsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListTLDsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional bool internal = 1; */
+        if (message.internal !== undefined)
+            writer.tag(1, WireType.Varint).bool(message.internal);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -149,24 +174,24 @@ class ListTLDsResponse$Type extends MessageType<ListTLDsResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.internet.ListTLDsResponse
+ * @generated MessageType for protobuf message services.internet.ListTLDsRequest
  */
-export const ListTLDsResponse = new ListTLDsResponse$Type();
+export const ListTLDsRequest = new ListTLDsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
+class ListTLDsResponse$Type extends MessageType<ListTLDsResponse> {
     constructor() {
-        super("services.internet.ListTLDsRequest", [
+        super("services.internet.ListTLDsResponse", [
             { no: 1, name: "tlds", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TLD }
         ]);
     }
-    create(value?: PartialMessage<ListTLDsRequest>): ListTLDsRequest {
+    create(value?: PartialMessage<ListTLDsResponse>): ListTLDsResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.tlds = [];
         if (value !== undefined)
-            reflectionMergePartial<ListTLDsRequest>(this, message, value);
+            reflectionMergePartial<ListTLDsResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsRequest): ListTLDsRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListTLDsResponse): ListTLDsResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -185,7 +210,7 @@ class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
         }
         return message;
     }
-    internalBinaryWrite(message: ListTLDsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ListTLDsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated resources.internet.TLD tlds = 1; */
         for (let i = 0; i < message.tlds.length; i++)
             TLD.internalBinaryWrite(message.tlds[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -196,9 +221,9 @@ class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.internet.ListTLDsRequest
+ * @generated MessageType for protobuf message services.internet.ListTLDsResponse
  */
-export const ListTLDsRequest = new ListTLDsRequest$Type();
+export const ListTLDsResponse = new ListTLDsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailabilityRequest> {
     constructor() {

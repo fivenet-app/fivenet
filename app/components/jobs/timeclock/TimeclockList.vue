@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { addDays, addWeeks, isBefore, isFuture, subDays, subWeeks } from 'date-fns';
+import { addDays, addWeeks, isBefore, isFuture, subDays, subMonths, subWeeks } from 'date-fns';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -14,6 +14,7 @@ import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/serv
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 import TimeclockStatsBlock from './TimeclockStatsBlock.vue';
+import TimeclockTimeline from './TimeclockTimeline.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -45,7 +46,7 @@ const dateLowerLimit = new Date(2022, 1, 1);
 const schema = z.object({
     userMode: z.nativeEnum(TimeclockUserMode),
     mode: z.nativeEnum(TimeclockMode),
-    users: z.custom<Colleague>().array().max(5),
+    users: z.custom<Colleague>().array().max(10),
     date: z.object({
         start: z.date(),
         end: z.date(),
@@ -71,7 +72,6 @@ const query = reactive<Schema>({
     },
     perDay: true,
 });
-
 function setFromProps(): void {
     if (props.userId === undefined) {
         return;
@@ -128,7 +128,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             },
             sort: sort.value,
             userMode: query.userMode,
-            mode: query.userMode === TimeclockUserMode.SELF ? TimeclockMode.RANGE : query.mode,
+            mode: query.mode,
             date: {
                 start: {
                     timestamp: googleProtobufTimestamp.Timestamp.fromDate(
@@ -171,15 +171,16 @@ const entries = computed(() => {
 });
 
 const totalTimeSum = computed(() => {
+    let sum = 0;
     if (data.value?.entries.oneofKind === 'daily') {
-        return data.value.entries.daily.sum;
+        sum = data.value.entries.daily.sum;
     } else if (data.value?.entries.oneofKind === 'weekly') {
-        return data.value.entries.weekly.sum;
+        sum = data.value.entries.weekly.sum;
     } else if (data.value?.entries.oneofKind === 'range') {
-        return data.value.entries.range.sum;
+        sum = data.value.entries.range.sum;
     }
 
-    return 0;
+    return (Math.round(sum * 100) / 100) * 60 * 60;
 });
 
 const columns = computed(() => [
@@ -225,8 +226,6 @@ const columns = computed(() => [
     },
 ]);
 
-const selfPerDaySum = ref<number>(0);
-
 const router = useRouter();
 
 watch(query, () =>
@@ -238,32 +237,6 @@ watch(query, () =>
         hash: '#',
     }),
 );
-
-watch(data, () => {
-    if (data.value?.entries.oneofKind !== 'range') {
-        selfPerDaySum.value = 0;
-        return;
-    }
-
-    selfPerDaySum.value = parseFloat(
-        ((Math.round((data.value?.entries.range.entries[0]?.spentTime ?? 0) * 100) / 100) * 60 * 60).toPrecision(2),
-    );
-});
-
-const selectedTab = computed({
-    get() {
-        const index = items.value.findIndex((item) => item.userMode === query.userMode);
-        if (index === -1) {
-            return 0;
-        }
-
-        return index;
-    },
-    set(value) {
-        // Hash is specified here to prevent the page from scrolling to the top
-        query.userMode = items.value[value]?.userMode ?? TimeclockUserMode.SELF;
-    },
-});
 
 const items = computed(() =>
     [
@@ -279,6 +252,53 @@ const items = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
+const selectedUserMode = computed({
+    get() {
+        const index = items.value.findIndex((item) => item.userMode === query.userMode);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        query.userMode = items.value[value]?.userMode ?? TimeclockUserMode.SELF;
+
+        // Select range mode when user self mode is selected
+        if (query.userMode === TimeclockUserMode.SELF && query.mode < TimeclockMode.RANGE) {
+            query.mode = TimeclockMode.RANGE;
+        }
+    },
+});
+
+const selfTimeRangeModes = computed(() => [
+    { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
+    { label: t('common.timeline'), icon: 'i-mdi-chart-timeline', mode: TimeclockMode.TIMELINE },
+]);
+
+const selectedSelfMode = computed({
+    get() {
+        const index = selfTimeRangeModes.value.findIndex((item) => item.mode === query.mode);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        query.mode = selfTimeRangeModes.value[value]?.mode ?? TimeclockMode.RANGE;
+    },
+});
+
+const timeRangeModes = computed(() => [
+    { label: t('common.day_view'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
+    { label: t('common.week_view'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
+    { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
+    { label: t('common.timeline'), icon: 'i-mdi-chart-timeline', mode: TimeclockMode.TIMELINE },
+]);
+
 const selectedMode = computed({
     get() {
         const index = timeRangeModes.value.findIndex((item) => item.mode === query.mode);
@@ -293,17 +313,11 @@ const selectedMode = computed({
         query.mode = timeRangeModes.value[value]?.mode ?? TimeclockMode.DAILY;
     },
 });
-
-const timeRangeModes = computed(() => [
-    { label: t('common.day_view'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
-    { label: t('common.week_view'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
-    { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
-]);
 </script>
 
 <template>
     <UTabs
-        v-model="selectedTab"
+        v-model="selectedUserMode"
         :items="items"
         :ui="{
             list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
@@ -312,28 +326,44 @@ const timeRangeModes = computed(() => [
 
     <UDashboardToolbar>
         <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
-            <div v-if="query.userMode === TimeclockUserMode.SELF" class="flex flex-1 justify-between gap-2">
-                <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
-                    <DateRangePickerPopoverClient
-                        v-model="query.date"
-                        mode="date"
-                        class="flex-1"
-                        :popover="{ class: 'flex-1' }"
-                        :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
+            <template v-if="query.userMode === TimeclockUserMode.SELF">
+                <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
+                    <UTabs
+                        v-model="selectedSelfMode"
+                        :items="selfTimeRangeModes.filter((m) => m.mode >= TimeclockMode.RANGE)"
+                        :ui="{ wrapper: 'relative space-y-0 flex-1', container: '' }"
                     />
-                </UFormGroup>
+                </div>
 
-                <UFormGroup
-                    name="day"
-                    :label="$t('common.per_day')"
-                    class="flex flex-initial flex-col"
-                    :ui="{ container: 'flex-1 flex' }"
-                >
-                    <div class="flex flex-1 items-center">
-                        <UToggle v-model="query.perDay" />
-                    </div>
-                </UFormGroup>
-            </div>
+                <div class="flex flex-1 justify-between gap-2">
+                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                        <DateRangePickerPopoverClient
+                            v-model="query.date"
+                            mode="date"
+                            class="flex-1"
+                            :popover="{ class: 'flex-1' }"
+                            :date-picker="{
+                                disabledDates: [
+                                    { start: addDays(new Date(), 1), end: null },
+                                    { end: subMonths(new Date(), 6) },
+                                ],
+                            }"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup
+                        v-if="query.mode !== TimeclockMode.TIMELINE"
+                        name="perDay"
+                        :label="$t('common.per_day')"
+                        class="flex flex-initial flex-col"
+                        :ui="{ container: 'flex-1 flex' }"
+                    >
+                        <div class="flex flex-1 items-center">
+                            <UToggle v-model="query.perDay" />
+                        </div>
+                    </UFormGroup>
+                </div>
+            </template>
 
             <template v-if="query.userMode === TimeclockUserMode.ALL">
                 <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
@@ -410,12 +440,10 @@ const timeRangeModes = computed(() => [
                                 name="end"
                                 :label="
                                     query.mode === TimeclockMode.WEEKLY
-                                        ? $t('common.time_ago.week')
+                                        ? $t('common.week_view')
                                         : query.mode === TimeclockMode.DAILY
-                                          ? $t('common.time_ago.day')
-                                          : query.mode === TimeclockMode.RANGE
-                                            ? $t('common.time_range')
-                                            : ''
+                                          ? $t('common.day_view')
+                                          : $t('common.time_range')
                                 "
                                 class="flex-1"
                             >
@@ -432,7 +460,10 @@ const timeRangeModes = computed(() => [
                                         v-model="query.date.end"
                                         :popover="{ class: 'flex-1' }"
                                         :date-picker="{
-                                            disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                            disabledDates: [
+                                                { start: addDays(new Date(), 1), end: null },
+                                                { end: subMonths(new Date(), 6) },
+                                            ],
                                         }"
                                     />
 
@@ -461,7 +492,10 @@ const timeRangeModes = computed(() => [
                                         :popover="{ class: 'flex-1' }"
                                         :date-format="`yyyy '${$t('common.calendar_week')}' w`"
                                         :date-picker="{
-                                            disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                            disabledDates: [
+                                                { start: addDays(new Date(), 1), end: null },
+                                                { end: subMonths(new Date(), 6) },
+                                            ],
                                         }"
                                     />
 
@@ -479,11 +513,22 @@ const timeRangeModes = computed(() => [
                                     mode="date"
                                     class="flex-1"
                                     :popover="{ class: 'flex-1' }"
-                                    :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
+                                    :date-picker="{
+                                        disabledDates: [
+                                            { start: addDays(new Date(), 1), end: null },
+                                            { end: subMonths(new Date(), 6) },
+                                        ],
+                                    }"
                                 />
                             </UFormGroup>
 
-                            <UFormGroup v-if="query.mode !== TimeclockMode.DAILY" name="day" :label="$t('common.per_day')">
+                            <UFormGroup
+                                v-if="query.mode !== TimeclockMode.DAILY && query.mode !== TimeclockMode.TIMELINE"
+                                name="perDay"
+                                :label="$t('common.per_day')"
+                                class="flex flex-initial flex-col"
+                                :ui="{ container: 'flex-1 flex' }"
+                            >
                                 <div class="flex flex-1 items-center">
                                     <UToggle v-model="query.perDay" />
                                 </div>
@@ -505,9 +550,9 @@ const timeRangeModes = computed(() => [
     <UCard v-else-if="query.userMode === TimeclockUserMode.SELF && !query.perDay">
         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
             {{
-                selfPerDaySum === 0
+                totalTimeSum === 0
                     ? $t('common.not_found', [$t('common.entry', 2)])
-                    : fromSecondsToFormattedDuration(selfPerDaySum, {
+                    : fromSecondsToFormattedDuration(totalTimeSum, {
                           seconds: false,
                       })
             }}
@@ -515,7 +560,7 @@ const timeRangeModes = computed(() => [
     </UCard>
 
     <UTable
-        v-else
+        v-else-if="query.mode !== TimeclockMode.TIMELINE"
         v-model:sort="sort"
         :loading="loading"
         :columns="columns"
@@ -529,15 +574,10 @@ const timeRangeModes = computed(() => [
     >
         <template #caption>
             <caption>
-                <p class="text-right">
+                <p class="px-1 text-right">
                     <span class="font-semibold">{{ $t('common.sum') }}:</span>
 
-                    {{
-                        fromSecondsToFormattedDuration(
-                            parseFloat(((Math.round(totalTimeSum * 100) / 100) * 60 * 60).toPrecision(2)),
-                            { seconds: false },
-                        )
-                    }}
+                    {{ fromSecondsToFormattedDuration(totalTimeSum, { seconds: false }) }}
                 </p>
             </caption>
         </template>
@@ -581,6 +621,20 @@ const timeRangeModes = computed(() => [
             </div>
         </template>
     </UTable>
+
+    <TimeclockTimeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
+        <template #caption>
+            <p>
+                <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
+                {{
+                    fromSecondsToFormattedDuration(totalTimeSum, {
+                        seconds: false,
+                    })
+                }}
+            </p>
+        </template>
+    </TimeclockTimeline>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 

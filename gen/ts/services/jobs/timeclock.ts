@@ -215,7 +215,7 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
             { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
             { no: 5, name: "date", kind: "message", T: () => DateRange },
             { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { repeated: { maxItems: "15" } } } }
         ]);
     }
     create(value?: PartialMessage<ListTimeclockRequest>): ListTimeclockRequest {

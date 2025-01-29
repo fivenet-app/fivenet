@@ -1364,6 +1364,17 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if len(m.GetDocumentIds()) > 5 {
+		err := ListDocumentsRequestValidationError{
+			field:  "DocumentIds",
+			reason: "value must contain no more than 5 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Sort != nil {
 
 		if all {

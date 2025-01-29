@@ -517,7 +517,7 @@
         "label": "Label | Labels",
         "additional_recipients": "Weitere Empfänger",
         "last_updated": "Zuletzt Aktualisiert",
-        "domain": "Domain",
+        "domain": "Domain | Domains",
         "address_book": "Adressbuch",
         "unavailable": "Nicht verfügbar",
         "internet": "Internet",
@@ -552,7 +552,9 @@
         "selected": "Keine ausgewählt | {n} ausgewählt",
         "image_caching": "Bitte beachten Sie, dass es aufgrund des Browser-Cachings bis zu 4 Stunden dauern kann, bis das Bild für alle aktualisiert wurde.",
         "day_view": "Tagesansicht",
-        "week_view": "Wochenansicht"
+        "week_view": "Wochenansicht",
+        "domains": "Keine Domain | {n} Domains | {n} Domains",
+        "timeline": "Zeitstrahl"
     },
     "components": {
         "partials": {
@@ -920,7 +922,10 @@
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
                 },
-                "colleagues": "Kollegium"
+                "colleagues": "Kollegium",
+                "timeline": {
+                    "hover": "Bewegen Sie den Mauszeiger über die Zeitleiste, um die Uhrzeit zu sehen"
+                }
             },
             "self_service": {
                 "title": "Eigenverwaltung",
@@ -1284,7 +1289,20 @@
                 },
                 "nic_registrar": {
                     "title": "Netzwerk-Informationszentrum",
-                    "description": "Network Information Center, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst."
+                    "description": "Network Information Center, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst.",
+                    "search": {
+                        "button": "Domains suchen"
+                    },
+                    "cards": {
+                        "builder": {
+                            "title": "Website-Builder",
+                            "description": "Unser praktischer Website-Builder hilft Ihnen, schnell mit Ihrer Website zu beginnen."
+                        },
+                        "access": {
+                            "title": "Zugriffskontrolle",
+                            "description": "Verwalten Sie mit unserem benutzerfreundlichen Zugangskontrollmanager, wer Ihre Website bearbeiten darf."
+                        }
+                    }
                 }
             },
             "ads": {

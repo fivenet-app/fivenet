@@ -517,7 +517,7 @@
         "label": "Label | Labels",
         "additional_recipients": "Additional Recipients",
         "last_updated": "Last Updated",
-        "domain": "Domain",
+        "domain": "Domain | Domains",
         "address_book": "Address Book",
         "unavailable": "Unavailable",
         "internet": "Internet",
@@ -553,7 +553,8 @@
         "image_caching": "Please note that due to browser caching it can take up to 4 hours for the image to have updated for everyone.",
         "day_view": "Daily View",
         "week_view": "Weekly View",
-        "domains": "No Domain | {n} Domain | {n} Domains"
+        "domains": "No Domain | {n} Domain | {n} Domains",
+        "timeline": "Timeline"
     },
     "components": {
         "partials": {
@@ -921,7 +922,10 @@
                     "avg": "Average on duty time",
                     "max": "Longest on duty time"
                 },
-                "colleagues": "Colleagues"
+                "colleagues": "Colleagues",
+                "timeline": {
+                    "hover": "Hover over the timeline to see the time"
+                }
             },
             "self_service": {
                 "title": "Self Service",

@@ -55,6 +55,7 @@
         "vue-countup-v3": "1.4.2",
         "vue-draggable-plus": "0.6.0",
         "vue-json-pretty": "2.4.0",
+        "vue-timeline-chart": "^2.8.1",
         "vue3-colorpicker": "2.3.0",
         "zod": "3.24.1"
     },

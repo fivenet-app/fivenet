@@ -77,6 +77,14 @@ func (m *ListTLDsRequest) Sanitize() error {
 		return nil
 	}
 
+	return nil
+}
+
+func (m *ListTLDsResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
 	// Field: Tlds
 	for idx, item := range m.Tlds {
 		_, _ = idx, item
@@ -87,14 +95,6 @@ func (m *ListTLDsRequest) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *ListTLDsResponse) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

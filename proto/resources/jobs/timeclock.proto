@@ -13,6 +13,7 @@ enum TimeclockMode {
   TIMECLOCK_MODE_DAILY = 1;
   TIMECLOCK_MODE_WEEKLY = 2;
   TIMECLOCK_MODE_RANGE = 3;
+  TIMECLOCK_MODE_TIMELINE = 4;
 }
 
 enum TimeclockUserMode {
@@ -26,7 +27,7 @@ message TimeclockEntry {
   string job = 2;
   resources.timestamp.Timestamp date = 3; // @gotags: sql:"primary_key"
   optional resources.jobs.Colleague user = 4;
-  optional resources.timestamp.Timestamp start_time = 5;
+  optional resources.timestamp.Timestamp start_time = 5; // @gotags: sql:"primary_key"
   optional resources.timestamp.Timestamp end_time = 6;
   float spent_time = 7;
 }

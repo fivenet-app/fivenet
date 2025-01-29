@@ -116,6 +116,9 @@ importers:
       vue-json-pretty:
         specifier: 2.4.0
         version: 2.4.0(vue@3.5.13(typescript@5.7.3))
+      vue-timeline-chart:
+        specifier: ^2.8.1
+        version: 2.8.1(vue@3.5.13(typescript@5.7.3))
       vue3-colorpicker:
         specifier: 2.3.0
         version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@12.5.0(typescript@5.7.3))(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
@@ -6826,6 +6829,12 @@ packages:
     resolution: {integrity: sha512-EJ/8TANKhFj+LefDuOvZykwMr3rrLFPLNb++lNBqPOpVigT2ActRg6icH9RFQVm4nHwlHIHSGm5OY/Clar9yIg==}
     peerDependencies:
       vue: ^3.2.0
+
+  vue-timeline-chart@2.8.1:
+    resolution: {integrity: sha512-bB1TB2ruWbPS/tjOyL9yjCU+shseK2ibRM71DbDP7Iux8+p13aSwNeNhsX37NhnhQH3PYcOuhCaQWyalGfu8KQ==}
+    engines: {node: '>=18.12.0'}
+    peerDependencies:
+      vue: ^3.0.0
 
   vue-tsc@2.2.0:
     resolution: {integrity: sha512-gtmM1sUuJ8aSb0KoAFmK9yMxb8TxjewmxqTJ1aKphD5Cbu0rULFY6+UQT51zW7SpUcenfPUuflKyVwyx9Qdnxg==}
@@ -15024,6 +15033,10 @@ snapshots:
       vue: 3.5.13(typescript@5.7.3)
 
   vue-screen-utils@1.0.0-beta.13(vue@3.5.13(typescript@5.7.3)):
+    dependencies:
+      vue: 3.5.13(typescript@5.7.3)
+
+  vue-timeline-chart@2.8.1(vue@3.5.13(typescript@5.7.3)):
     dependencies:
       vue: 3.5.13(typescript@5.7.3)
 

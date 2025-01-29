@@ -1364,7 +1364,7 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
             { no: 6, name: "from", kind: "message", T: () => Timestamp },
             { no: 7, name: "to", kind: "message", T: () => Timestamp },
             { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { repeated: { maxItems: "5" } } } }
         ]);
     }
     create(value?: PartialMessage<ListDocumentsRequest>): ListDocumentsRequest {

@@ -29,7 +29,7 @@ CREATE TABLE
         `start_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `end_time` datetime(3) DEFAULT NULL,
         `spent_time` decimal(10,2) DEFAULT 0.0,
-        PRIMARY KEY (`job`, `user_id`, `date`),
+        UNIQUE KEY `idx_fivenet_jobs_timeclock_unique` (`job`, `user_id`, `date`, `start_time`),
         CONSTRAINT `fk_fivenet_jobs_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 

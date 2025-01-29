@@ -20,7 +20,7 @@ message ListTimeclockRequest {
   resources.jobs.TimeclockMode mode = 4;
   optional resources.common.database.DateRange date = 5;
   bool per_day = 6;
-  repeated int32 user_ids = 7;
+  repeated int32 user_ids = 7 [(validate.rules).repeated.max_items = 15];
 }
 
 message ListTimeclockResponse {

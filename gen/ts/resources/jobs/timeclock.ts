@@ -35,7 +35,7 @@ export interface TimeclockEntry {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
      */
-    startTime?: Timestamp;
+    startTime?: Timestamp; // @gotags: sql:"primary_key"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 6;
      */
@@ -110,7 +110,11 @@ export enum TimeclockMode {
     /**
      * @generated from protobuf enum value: TIMECLOCK_MODE_RANGE = 3;
      */
-    RANGE = 3
+    RANGE = 3,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_MODE_TIMELINE = 4;
+     */
+    TIMELINE = 4
 }
 /**
  * @generated from protobuf enum resources.jobs.TimeclockUserMode

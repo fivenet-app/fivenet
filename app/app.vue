@@ -21,18 +21,7 @@ useHead({
     htmlAttrs: {
         lang: 'en',
     },
-    meta: [
-        { charset: 'utf-8' },
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { key: 'theme-color', name: 'theme-color', content: color },
-    ],
-    link: [
-        {
-            rel: 'icon',
-            type: 'image/png',
-            href: '/favicon.png',
-        },
-    ],
+    meta: [{ key: 'theme-color', name: 'theme-color', content: color }],
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
             title = t(title);
