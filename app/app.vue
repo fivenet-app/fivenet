@@ -7,7 +7,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { logger, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from './store/auth';
 
-const { t, locale, setLocale, finalizePendingLocaleChange } = useI18n();
+const { t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
@@ -55,12 +55,6 @@ appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
 setTabletColors(appConfig.ui.primary, appConfig.ui.gray);
 
-logger.info('Setting user locale to', userLocale.value);
-if (userLocale.value !== null) {
-    locale.value = userLocale.value;
-    await setLocale(userLocale.value);
-}
-
 const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
 };
@@ -87,6 +81,13 @@ async function clickListener(event: MouseEvent): Promise<void> {
         },
     });
 }
+
+onBeforeMount(async () => {
+    logger.info('Setting user locale to', userLocale.value);
+    if (userLocale.value !== null) {
+        await setLocale(userLocale.value);
+    }
+});
 
 onMounted(async () => {
     if (!import.meta.client) {
