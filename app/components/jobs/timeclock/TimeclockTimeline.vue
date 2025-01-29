@@ -28,11 +28,17 @@ const items = computed<TimelineItem[]>(() =>
                   start: toDate(d.startTime).getTime(),
                   end: toDate(d.endTime).getTime(),
               }
-            : {
-                  type: 'point',
-                  group: d.userId.toString(),
-                  start: toDate(d.date).getTime(),
-              },
+            : d.startTime
+              ? {
+                    type: 'point',
+                    group: d.userId.toString(),
+                    start: toDate(d.startTime).getTime(),
+                }
+              : {
+                    type: 'point',
+                    group: d.userId.toString(),
+                    start: toDate(d.date).getTime(),
+                },
     ),
 );
 
