@@ -4,7 +4,6 @@ package services.sync;
 
 import "resources/centrum/dispatches.proto";
 import "resources/jobs/activity.proto";
-import "resources/jobs/timeclock.proto";
 import "resources/sync/activity.proto";
 import "resources/sync/data.proto";
 import "resources/users/activity.proto";
@@ -40,7 +39,7 @@ message AddActivityRequest {
     // Setting props will cause activity to be created automtically
     resources.sync.JobsUserProps jobs_user_props = 6;
     // Timeclock user entry
-    resources.jobs.TimeclockEntry jobs_timeclock = 7;
+    resources.sync.TimeclockUpdate jobs_timeclock = 7;
 
     // User/Char info updates that aren't tracked by activity (yet)
     resources.sync.UserUpdate user_update = 8;

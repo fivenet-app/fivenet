@@ -451,6 +451,7 @@
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
     - [JobsUserProps](#resources-sync-JobsUserProps)
+    - [TimeclockUpdate](#resources-sync-TimeclockUpdate)
     - [UserOAuth2Conn](#resources-sync-UserOAuth2Conn)
     - [UserProps](#resources-sync-UserProps)
     - [UserUpdate](#resources-sync-UserUpdate)
@@ -7294,6 +7295,23 @@ TODO
 | ----- | ---- | ----- | ----------- |
 | reason | [string](#string) | optional |  |
 | props | [resources.jobs.JobsUserProps](#resources-jobs-JobsUserProps) |  |  |
+
+
+
+
+
+
+<a name="resources-sync-TimeclockUpdate"></a>
+
+### TimeclockUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| user_id | [int32](#int32) |  |  |
+| start | [bool](#bool) |  |  |
 
 
 
@@ -14200,7 +14218,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | user_props | [resources.sync.UserProps](#resources-sync-UserProps) |  | Setting props will cause activity to be created automtically |
 | jobs_user_activity | [resources.jobs.JobsUserActivity](#resources-jobs-JobsUserActivity) |  | Jobs user activity |
 | jobs_user_props | [resources.sync.JobsUserProps](#resources-sync-JobsUserProps) |  | Setting props will cause activity to be created automtically |
-| jobs_timeclock | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) |  | Timeclock user entry |
+| jobs_timeclock | [resources.sync.TimeclockUpdate](#resources-sync-TimeclockUpdate) |  | Timeclock user entry |
 | user_update | [resources.sync.UserUpdate](#resources-sync-UserUpdate) |  | User/Char info updates that aren't tracked by activity (yet) |
 
 

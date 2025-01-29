@@ -20,6 +20,14 @@ func (m *JobsUserProps) Sanitize() error {
 	return nil
 }
 
+func (m *TimeclockUpdate) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *UserOAuth2Conn) Sanitize() error {
 	if m == nil {
 		return nil

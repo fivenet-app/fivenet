@@ -11,6 +11,7 @@ const props = withDefaults(
         refresh?: () => Promise<void>;
         loading?: boolean;
         hideText?: boolean;
+        hideButtons?: boolean;
     }>(),
     {
         infinite: false,
@@ -18,6 +19,7 @@ const props = withDefaults(
         refresh: undefined,
         loading: false,
         hideText: false,
+        hideButtons: false,
     },
 );
 
@@ -89,6 +91,7 @@ watchDebounced(
                     </template>
                 </I18nT>
             </div>
+            <div v-else></div>
 
             <UTooltip v-if="refresh" :text="$t('common.refresh')">
                 <UButton
@@ -106,10 +109,12 @@ watchDebounced(
             </UTooltip>
 
             <UPagination
+                v-if="!hideButtons"
                 v-model="page"
                 :page-count="pagination?.pageSize ?? 0"
                 :total="!infinite ? (pagination?.totalCount ?? 0) : (page + 1) * (pagination?.pageSize ?? 0)"
             />
+            <div v-else></div>
         </div>
     </div>
 </template>

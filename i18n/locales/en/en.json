@@ -924,7 +924,8 @@
                 },
                 "colleagues": "Colleagues",
                 "timeline": {
-                    "hover": "Hover over the timeline to see the time"
+                    "hover": "Hover over the timeline to see the time",
+                    "select_users": "Please select at least one colleague."
                 }
             },
             "self_service": {

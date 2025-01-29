@@ -93,6 +93,23 @@ export interface UserUpdate {
      */
     lastname?: string;
 }
+/**
+ * @generated from protobuf message resources.sync.TimeclockUpdate
+ */
+export interface TimeclockUpdate {
+    /**
+     * @generated from protobuf field: string job = 1;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: bool start = 3;
+     */
+    start: boolean;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class UserOAuth2Conn$Type extends MessageType<UserOAuth2Conn> {
     constructor() {
@@ -352,3 +369,66 @@ class UserUpdate$Type extends MessageType<UserUpdate> {
  * @generated MessageType for protobuf message resources.sync.UserUpdate
  */
 export const UserUpdate = new UserUpdate$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockUpdate$Type extends MessageType<TimeclockUpdate> {
+    constructor() {
+        super("resources.sync.TimeclockUpdate", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "start", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TimeclockUpdate>): TimeclockUpdate {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.job = "";
+        message.userId = 0;
+        message.start = false;
+        if (value !== undefined)
+            reflectionMergePartial<TimeclockUpdate>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TimeclockUpdate): TimeclockUpdate {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string job */ 1:
+                    message.job = reader.string();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                case /* bool start */ 3:
+                    message.start = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TimeclockUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string job = 1; */
+        if (message.job !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* bool start = 3; */
+        if (message.start !== false)
+            writer.tag(3, WireType.Varint).bool(message.start);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.sync.TimeclockUpdate
+ */
+export const TimeclockUpdate = new TimeclockUpdate$Type();

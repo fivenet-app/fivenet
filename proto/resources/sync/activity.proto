@@ -37,3 +37,9 @@ message UserUpdate {
   optional string firstname = 5;
   optional string lastname = 6;
 }
+
+message TimeclockUpdate {
+  string job = 1;
+  int32 user_id = 2;
+  bool start = 3;
+}
