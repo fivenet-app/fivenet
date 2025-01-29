@@ -170,6 +170,18 @@ const entries = computed(() => {
     return [];
 });
 
+const totalTimeSum = computed(() => {
+    if (data.value?.entries.oneofKind === 'daily') {
+        return data.value.entries.daily.sum;
+    } else if (data.value?.entries.oneofKind === 'weekly') {
+        return data.value.entries.weekly.sum;
+    } else if (data.value?.entries.oneofKind === 'range') {
+        return data.value.entries.range.sum;
+    }
+
+    return 0;
+});
+
 const columns = computed(() => [
     {
         key: 'date',
@@ -522,14 +534,7 @@ const timeRangeModes = computed(() => [
 
                     {{
                         fromSecondsToFormattedDuration(
-                            parseFloat(
-                                (
-                                    (Math.round((data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100) /
-                                        100) *
-                                    60 *
-                                    60
-                                ).toPrecision(2),
-                            ),
+                            parseFloat(((Math.round(totalTimeSum * 100) / 100) * 60 * 60).toPrecision(2)),
                             { seconds: false },
                         )
                     }}
