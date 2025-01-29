@@ -96,6 +96,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				))
 			}
 		}
+
+		// TODO make sure the date start and end aren't more than 6 months apart from each other
 	}
 
 	var countStmt jet.SelectStatement
@@ -436,9 +438,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					),
 			).
 			WHERE(condition).
-			OFFSET(req.Pagination.Offset).
-			ORDER_BY(orderBys...).
-			LIMIT(limit)
+			ORDER_BY(orderBys...)
 
 		data := resp.GetRange()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {

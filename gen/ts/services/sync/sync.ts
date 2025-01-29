@@ -19,7 +19,7 @@ import { DataUsers } from "../../resources/sync/data";
 import { DataLicenses } from "../../resources/sync/data";
 import { DataJobs } from "../../resources/sync/data";
 import { UserUpdate } from "../../resources/sync/activity";
-import { TimeclockEntry } from "../../resources/jobs/timeclock";
+import { TimeclockUpdate } from "../../resources/sync/activity";
 import { JobsUserProps } from "../../resources/sync/activity";
 import { JobsUserActivity } from "../../resources/jobs/activity";
 import { UserProps } from "../../resources/sync/activity";
@@ -109,9 +109,9 @@ export interface AddActivityRequest {
         /**
          * Timeclock user entry
          *
-         * @generated from protobuf field: resources.jobs.TimeclockEntry jobs_timeclock = 7;
+         * @generated from protobuf field: resources.sync.TimeclockUpdate jobs_timeclock = 7;
          */
-        jobsTimeclock: TimeclockEntry;
+        jobsTimeclock: TimeclockUpdate;
     } | {
         oneofKind: "userUpdate";
         /**
@@ -379,7 +379,7 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
             { no: 4, name: "user_props", kind: "message", oneof: "activity", T: () => UserProps },
             { no: 5, name: "jobs_user_activity", kind: "message", oneof: "activity", T: () => JobsUserActivity },
             { no: 6, name: "jobs_user_props", kind: "message", oneof: "activity", T: () => JobsUserProps },
-            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockEntry },
+            { no: 7, name: "jobs_timeclock", kind: "message", oneof: "activity", T: () => TimeclockUpdate },
             { no: 8, name: "user_update", kind: "message", oneof: "activity", T: () => UserUpdate }
         ]);
     }
@@ -431,10 +431,10 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
                         jobsUserProps: JobsUserProps.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsUserProps)
                     };
                     break;
-                case /* resources.jobs.TimeclockEntry jobs_timeclock */ 7:
+                case /* resources.sync.TimeclockUpdate jobs_timeclock */ 7:
                     message.activity = {
                         oneofKind: "jobsTimeclock",
-                        jobsTimeclock: TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
+                        jobsTimeclock: TimeclockUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.activity as any).jobsTimeclock)
                     };
                     break;
                 case /* resources.sync.UserUpdate user_update */ 8:
@@ -473,9 +473,9 @@ class AddActivityRequest$Type extends MessageType<AddActivityRequest> {
         /* resources.sync.JobsUserProps jobs_user_props = 6; */
         if (message.activity.oneofKind === "jobsUserProps")
             JobsUserProps.internalBinaryWrite(message.activity.jobsUserProps, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockEntry jobs_timeclock = 7; */
+        /* resources.sync.TimeclockUpdate jobs_timeclock = 7; */
         if (message.activity.oneofKind === "jobsTimeclock")
-            TimeclockEntry.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            TimeclockUpdate.internalBinaryWrite(message.activity.jobsTimeclock, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* resources.sync.UserUpdate user_update = 8; */
         if (message.activity.oneofKind === "userUpdate")
             UserUpdate.internalBinaryWrite(message.activity.userUpdate, writer.tag(8, WireType.LengthDelimited).fork(), options).join();

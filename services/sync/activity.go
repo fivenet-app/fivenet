@@ -203,31 +203,66 @@ func (s *Server) handleJobsUserProps(ctx context.Context, data *pbsync.AddActivi
 func (s *Server) handleTimeclockEntry(ctx context.Context, data *pbsync.AddActivityRequest_JobsTimeclock) error {
 	tTimeClock := table.FivenetJobsTimeclock
 
-	stmt := tTimeClock.
-		INSERT(
-			tTimeClock.Job,
-			tTimeClock.UserID,
-			tTimeClock.Date,
-			tTimeClock.StartTime,
-			tTimeClock.EndTime,
-			tTimeClock.SpentTime,
-		).
-		VALUES(
-			data.JobsTimeclock.Job,
-			data.JobsTimeclock.UserId,
-			data.JobsTimeclock.Date,
-			data.JobsTimeclock.StartTime,
-			data.JobsTimeclock.EndTime,
-			data.JobsTimeclock.SpentTime,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tTimeClock.StartTime.SET(jet.TimestampExp(jet.Raw("VALUES(`start_time`)"))),
-			tTimeClock.EndTime.SET(jet.TimestampExp(jet.Raw("VALUES(`end_time`)"))),
-			tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("VALUES(`spent_time`)"))),
-		)
+	if data.JobsTimeclock.Start {
+		// Run select query to see if a timeclock entry needs to be created
+		stmt := tTimeClock.
+			SELECT(
+				tTimeClock.UserID,
+				tTimeClock.Date,
+				tTimeClock.EndTime,
+			).
+			FROM(tTimeClock).
+			WHERE(jet.AND(
+				tTimeClock.Job.EQ(jet.String(data.JobsTimeclock.Job)),
+				tTimeClock.UserID.EQ(jet.Int32(data.JobsTimeclock.UserId)),
+			)).
+			ORDER_BY(tTimeClock.Date.DESC()).
+			LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
+		dest := &jobs.TimeclockEntry{}
+		if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return err
+			}
+		}
+
+		// Found an entry, no need to create a new one
+		if dest.UserId > 0 {
+			return nil
+		}
+
+		updateStmt := tTimeClock.
+			INSERT(
+				tTimeClock.Job,
+				tTimeClock.UserID,
+				tTimeClock.Date,
+			).
+			VALUES(
+				data.JobsTimeclock.Job,
+				data.JobsTimeclock.UserId,
+				jet.CURRENT_DATE,
+			)
+
+		if _, err := updateStmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return err
+			}
+		}
+	} else {
+		stmt := tTimeClock.
+			UPDATE().
+			SET(
+				tTimeClock.SpentTime.SET(jet.FloatExp(jet.Raw("`spent_time` + CAST((TIMESTAMPDIFF(SECOND, `start_time`, `end_time`) / 3600) AS DECIMAL(10,2))"))),
+				tTimeClock.EndTime.SET(jet.CURRENT_TIMESTAMP()),
+			).
+			WHERE(jet.AND(
+				tTimeClock.StartTime.IS_NOT_NULL(),
+				tTimeClock.EndTime.IS_NULL(),
+			))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
 	}
 
 	return nil

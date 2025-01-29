@@ -3,6 +3,7 @@ import { addDays, addWeeks, isBefore, isFuture, subDays, subMonths, subWeeks } f
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -540,12 +541,9 @@ const selectedMode = computed({
         </UForm>
     </UDashboardToolbar>
 
-    <DataErrorBlock
-        v-if="error"
-        :title="$t('common.unable_to_load', [$t('common.entry', 2)])"
-        :error="error"
-        :retry="refresh"
-    />
+    <div v-if="error" class="flex-1">
+        <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :error="error" :retry="refresh" />
+    </div>
 
     <UCard v-else-if="query.userMode === TimeclockUserMode.SELF && !query.perDay">
         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
@@ -622,21 +620,34 @@ const selectedMode = computed({
         </template>
     </UTable>
 
-    <TimeclockTimeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
-        <template #caption>
-            <p>
-                <span class="font-semibold">{{ $t('common.sum') }}:</span>
+    <template v-else>
+        <div v-if="query.userMode !== TimeclockUserMode.SELF && query.users.length === 0" class="flex-1">
+            <DataNoDataBlock :description="$t('components.jobs.timeclock.timeline.select_users')" />
+        </div>
 
-                {{
-                    fromSecondsToFormattedDuration(totalTimeSum, {
-                        seconds: false,
-                    })
-                }}
-            </p>
-        </template>
-    </TimeclockTimeline>
+        <TimeclockTimeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
+            <template #caption>
+                <p>
+                    <span class="font-semibold">{{ $t('common.sum') }}:</span>
 
-    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                    {{
+                        fromSecondsToFormattedDuration(totalTimeSum, {
+                            seconds: false,
+                        })
+                    }}
+                </p>
+            </template>
+        </TimeclockTimeline>
+    </template>
+
+    <Pagination
+        v-model="page"
+        :pagination="data?.pagination"
+        :loading="loading"
+        :refresh="refresh"
+        :hide-text="query.mode === TimeclockMode.TIMELINE"
+        :hide-buttons="query.mode === TimeclockMode.TIMELINE"
+    />
 
     <UAccordion
         v-if="showStats && data && data.stats"
