@@ -1056,7 +1056,13 @@
                     "label": "Label Format",
                     "description": "Use %abbr% for the abbreviation and %name% for the qualification name. Should the name be longer than 64 characters, it will be cut."
                 }
-            }
+            },
+            "add_requirement": "Add Requirement",
+            "remove_requirement": "Remove Requirement",
+            "add_question": "Add Question",
+            "remove_question": "Remove Question",
+            "add_option": "Add Option",
+            "remove_option": "Remove Option"
         },
         "language_switcher": {
             "title": "Switch language"

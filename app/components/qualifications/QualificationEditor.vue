@@ -494,12 +494,14 @@ const selectedTab = computed({
                                 @remove="qualiRequirements.splice(idx, 1)"
                             />
 
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                :disabled="!canSubmit"
-                                icon="i-mdi-plus"
-                                @click="qualiRequirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
-                            />
+                            <UTooltip :text="$t('components.qualifications.add_requirement')">
+                                <UButton
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    :disabled="!canSubmit"
+                                    icon="i-mdi-plus"
+                                    @click="qualiRequirements.push({ id: 0, qualificationId: 0, targetQualificationId: 0 })"
+                                />
+                            </UTooltip>
                         </div>
 
                         <div>

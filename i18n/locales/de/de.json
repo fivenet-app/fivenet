@@ -1056,7 +1056,13 @@
                     "label": "Label Format",
                     "description": "Nutze %abbr% für die Abkürzung und %name% für den Namen der Qualifizierung. Sollte der Label Name länger als 64 Zeichen werden, so wird dieser abgeschnitten."
                 }
-            }
+            },
+            "add_requirement": "Anforderung hinzufügen",
+            "remove_requirement": "Anforderung entfernen",
+            "add_question": "Frage hinzufügen",
+            "remove_question": "Frage entfernen",
+            "add_option": "Option hinzufügen",
+            "remove_option": "Option entfernen"
         },
         "language_switcher": {
             "title": "Sprache wechseln"

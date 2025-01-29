@@ -302,21 +302,25 @@ function changeQuestionType(qt: string): void {
                                         />
                                     </UFormGroup>
 
-                                    <UButton
-                                        icon="i-mdi-close"
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        class="flex-initial"
-                                        @click="question.data!.data.singleChoice.choices.splice(idx, 1)"
-                                    />
+                                    <UTooltip :text="$t('components.qualifications.remove_option')">
+                                        <UButton
+                                            icon="i-mdi-close"
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            class="flex-initial"
+                                            @click="question.data!.data.singleChoice.choices.splice(idx, 1)"
+                                        />
+                                    </UTooltip>
                                 </div>
                             </VueDraggable>
 
-                            <UButton
-                                icon="i-mdi-plus"
-                                :ui="{ rounded: 'rounded-full' }"
-                                :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
-                                @click="question.data!.data.singleChoice.choices.push('')"
-                            />
+                            <UTooltip :text="$t('components.qualifications.add_option')">
+                                <UButton
+                                    icon="i-mdi-plus"
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    :class="question.data!.data.singleChoice.choices.length ? 'mt-2' : ''"
+                                    @click="question.data!.data.singleChoice.choices.push('')"
+                                />
+                            </UTooltip>
                         </UFormGroup>
                     </div>
                 </template>
@@ -348,21 +352,25 @@ function changeQuestionType(qt: string): void {
                                         class="w-full"
                                     />
 
-                                    <UButton
-                                        icon="i-mdi-close"
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        class="flex-initial"
-                                        @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
-                                    />
+                                    <UTooltip :text="$t('components.qualifications.remove_option')">
+                                        <UButton
+                                            icon="i-mdi-close"
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            class="flex-initial"
+                                            @click="question.data!.data.multipleChoice.choices.splice(idx, 1)"
+                                        />
+                                    </UTooltip>
                                 </div>
                             </VueDraggable>
 
-                            <UButton
-                                icon="i-mdi-plus"
-                                :ui="{ rounded: 'rounded-full' }"
-                                :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
-                                @click="question.data!.data.multipleChoice.choices.push('')"
-                            />
+                            <UTooltip :text="$t('components.qualifications.add_option')">
+                                <UButton
+                                    icon="i-mdi-plus"
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    :class="question.data!.data.multipleChoice.choices.length ? 'mt-2' : ''"
+                                    @click="question.data!.data.multipleChoice.choices.push('')"
+                                />
+                            </UTooltip>
                         </UFormGroup>
                     </div>
                 </template>
@@ -382,11 +390,13 @@ function changeQuestionType(qt: string): void {
             </div>
         </div>
 
-        <UButton
-            icon="i-mdi-close"
-            :ui="{ rounded: 'rounded-full' }"
-            class="mt-1 flex-initial self-start"
-            @click="$emit('delete')"
-        />
+        <UTooltip :text="$t('components.qualifications.remove_question')">
+            <UButton
+                icon="i-mdi-close"
+                :ui="{ rounded: 'rounded-full' }"
+                class="mt-1 flex-initial self-start"
+                @click="$emit('delete')"
+            />
+        </UTooltip>
     </UForm>
 </template>

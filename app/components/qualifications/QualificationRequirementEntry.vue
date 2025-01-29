@@ -79,6 +79,8 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
             </ClientOnly>
         </UFormGroup>
 
-        <UButton :ui="{ rounded: 'rounded-full' }" class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />
+        <UTooltip :text="$t('components.qualifications.remove_requirement')">
+            <UButton :ui="{ rounded: 'rounded-full' }" class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />
+        </UTooltip>
     </div>
 </template>
