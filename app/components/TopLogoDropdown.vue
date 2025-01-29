@@ -45,7 +45,7 @@ watch(notificationsCount, () => {
                 <UIcon
                     :name="
                         doNotDisturb
-                            ? 'i-mdi-notifications-off'
+                            ? 'i-mdi-bell-off-outline'
                             : notificationsCount === 0
                               ? 'i-mdi-notifications-none'
                               : 'i-mdi-notifications'

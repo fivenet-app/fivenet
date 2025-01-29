@@ -41,6 +41,7 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
         qualificationsLoading.value = false;
     }
 }
+
 const selectedQualification = ref<QualificationShort | undefined>(props.requirement.targetQualification);
 
 watch(selectedQualification, () => emit('update-qualification', selectedQualification.value));
