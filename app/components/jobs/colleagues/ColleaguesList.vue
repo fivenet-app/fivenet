@@ -173,6 +173,8 @@ const columns = [
         : undefined,
 ].filter((c) => c !== undefined) as { key: string; label: string; sortable?: boolean }[];
 
+const { game } = useAppConfig();
+
 const input = useTemplateRef('input');
 
 defineShortcuts({
@@ -381,13 +383,15 @@ defineShortcuts({
                 <dl class="font-normal lg:hidden">
                     <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
                     <dd class="mt-1 truncate">
-                        {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                        {{ colleague.jobGradeLabel }}
+                        <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }})</template>
                     </dd>
                 </dl>
             </template>
 
             <template #rank-data="{ row: colleague }">
-                {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                {{ colleague.jobGradeLabel }}
+                <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }})</template>
             </template>
 
             <template #absence-data="{ row: colleague }">
@@ -500,8 +504,10 @@ defineShortcuts({
                     <template #description>
                         <div class="flex flex-col gap-1">
                             <span>
-                                {{ colleague.jobGradeLabel
-                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                                {{ colleague.jobGradeLabel }}
+                                <template v-if="colleague.job !== game.unemployedJobName">
+                                    ({{ colleague.jobGrade }})
+                                </template>
                             </span>
 
                             <PhoneNumberBlock :number="colleague.phoneNumber" />

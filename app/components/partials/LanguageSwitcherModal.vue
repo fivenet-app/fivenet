@@ -37,8 +37,8 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         return;
     }
 
-    useLogger('⚙️ Settings').info('Switching language to:', lang.code);
     preventClose.value = true;
+    useLogger('⚙️ Settings').info('Switching language to:', lang.code);
 
     userLocale.value = lang.code;
 
@@ -46,7 +46,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         title: { key: 'notifications.language_switched.title', parameters: {} },
         description: { key: 'notifications.language_switched.content', parameters: { name: lang.name ?? lang.code } },
         type: NotificationType.SUCCESS,
-        timeout: 1750,
+        timeout: 1650,
         callback: () => reloadNuxtApp({ persistState: false, force: true }),
     });
 }

@@ -6,7 +6,7 @@ export const logger = useLogger('⚙️ Settings');
 export interface SettingsState {
     updateAvailable: false | string;
     version: string;
-    locale: Locale | null;
+    locale: Locale | undefined;
 
     nuiEnabled: boolean;
     nuiResourceName: string | undefined;

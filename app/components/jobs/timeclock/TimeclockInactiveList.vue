@@ -109,6 +109,8 @@ const columns = [
         permission: 'JobsService.GetColleague' as Perms,
     },
 ].filter((c) => c.permission === undefined || can(c.permission).value);
+
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -170,13 +172,15 @@ const columns = [
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
                 <dd class="mt-1 truncate">
-                    {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                    {{ colleague.jobGradeLabel }}
+                    <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }}) </template>
                 </dd>
             </dl>
         </template>
 
         <template #rank-data="{ row: colleague }">
-            {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+            {{ colleague.jobGradeLabel }}
+            <template v-if="colleague.job !== game.unemployedJobName"> ({{ colleague.jobGrade }}) </template>
         </template>
 
         <template #phoneNumber-data="{ row: colleague }">

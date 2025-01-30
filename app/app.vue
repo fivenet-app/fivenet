@@ -22,12 +22,7 @@ useHead({
         lang: 'en',
     },
     meta: [{ key: 'theme-color', name: 'theme-color', content: color }],
-    titleTemplate: (title?: string) => {
-        if (title?.includes('.')) {
-            title = t(title);
-        }
-        return title ? `${title} - FiveNet` : 'FiveNet';
-    },
+    titleTemplate: (title?: string) => (title ? `${title?.includes('.') ? t(title) : title} - FiveNet` : 'FiveNet'),
 });
 
 useSeoMeta({
@@ -82,12 +77,14 @@ async function clickListener(event: MouseEvent): Promise<void> {
     });
 }
 
-onBeforeMount(async () => {
+async function setUserLocale(): Promise<void> {
     logger.info('Setting user locale to', userLocale.value);
-    if (userLocale.value !== null) {
+    if (userLocale.value !== undefined) {
         await setLocale(userLocale.value);
     }
-});
+}
+setUserLocale();
+watch(userLocale, () => setUserLocale());
 
 onMounted(async () => {
     if (!import.meta.client) {

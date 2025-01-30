@@ -19,6 +19,8 @@ defineEmits<{
 const modal = useModal();
 
 const { attr, can, activeChar } = useAuth();
+
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -38,11 +40,11 @@ const { attr, can, activeChar } = useAuth();
             </div>
 
             <div class="inline-flex flex-col gap-2 lg:flex-row">
-                <UBadge>
+                <UBadge class="truncate">
                     {{ colleague.jobLabel }}
-                    <span v-if="colleague.jobGrade > 0" class="ml-1 truncate">
-                        ({{ $t('common.rank') }}: {{ colleague.jobGradeLabel }})</span
-                    >
+                    <template v-if="colleague.job !== game.unemployedJobName">
+                        ({{ $t('common.rank') }}: {{ colleague.jobGradeLabel }})
+                    </template>
                 </UBadge>
 
                 <UBadge

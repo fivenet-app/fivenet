@@ -171,7 +171,7 @@ const isOpen = ref(false);
                             <div class="inline-flex gap-2">
                                 <UBadge>
                                     {{ user.jobLabel }}
-                                    <template v-if="user.jobGrade > 0 && user.job !== game.unemployedJobName">
+                                    <template v-if="user.job !== game.unemployedJobName">
                                         ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
                                     </template>
                                     {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}

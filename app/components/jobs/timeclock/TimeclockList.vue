@@ -314,6 +314,8 @@ const selectedMode = computed({
         query.mode = timeRangeModes.value[value]?.mode ?? TimeclockMode.DAILY;
     },
 });
+
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -599,7 +601,8 @@ const selectedMode = computed({
         </template>
 
         <template #rank-data="{ row: entry }">
-            {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+            {{ entry.user.jobGradeLabel }}
+            <template v-if="entry.user.job !== game.unemployedJobName"> ({{ entry.user.jobGrade }})</template>
         </template>
 
         <template #time-data="{ row: entry }">
