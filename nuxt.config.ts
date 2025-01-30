@@ -164,16 +164,17 @@ export default defineNuxtConfig({
     },
 
     i18n: {
+        lazy: true,
+        parallelPlugin: true,
         strategy: STRATEGIES.NO_PREFIX,
         detectBrowserLanguage: false,
-        skipSettingLocaleOnNavigate: true,
+        defaultLocale: 'en',
         locales: [
             {
-                name: 'English',
-                dir: 'ltr',
-                isCatchallLocale: true,
                 code: 'en',
                 language: 'en',
+                name: 'English',
+                isCatchallLocale: true,
                 files: ['en/en.json', 'en/zod.json'],
                 icon: 'i-flagpack-gb-ukm',
             },
@@ -185,15 +186,11 @@ export default defineNuxtConfig({
                 icon: 'i-flagpack-de',
             },
         ],
-        lazy: true,
-        defaultLocale: 'de',
-        defaultDirection: 'ltr',
         baseUrl: '',
         trailingSlash: false,
         compilation: {
             strictMessage: false,
         },
-        parallelPlugin: true,
     },
 
     zodI18n: {

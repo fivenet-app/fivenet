@@ -7,7 +7,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { logger, useSettingsStore } from '~/store/settings';
 import { useAuthStore } from './store/auth';
 
-const { t, setLocale, finalizePendingLocaleChange } = useI18n();
+const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
@@ -54,6 +54,16 @@ const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
 };
 
+async function setUserLocale(): Promise<void> {
+    logger.info('Setting user locale to', userLocale.value);
+    if (userLocale.value !== undefined) {
+        locale.value = userLocale.value;
+        await setLocale(userLocale.value);
+    }
+}
+setUserLocale();
+watch(userLocale, () => setUserLocale());
+
 async function clickListener(event: MouseEvent): Promise<void> {
     if (!event.target || event.defaultPrevented) {
         return;
@@ -76,15 +86,6 @@ async function clickListener(event: MouseEvent): Promise<void> {
         },
     });
 }
-
-async function setUserLocale(): Promise<void> {
-    logger.info('Setting user locale to', userLocale.value);
-    if (userLocale.value !== undefined) {
-        await setLocale(userLocale.value);
-    }
-}
-setUserLocale();
-watch(userLocale, () => setUserLocale());
 
 onMounted(async () => {
     if (!import.meta.client) {
