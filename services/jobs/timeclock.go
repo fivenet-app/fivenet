@@ -13,6 +13,7 @@ import (
 	permsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
@@ -25,6 +26,14 @@ import (
 )
 
 var tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:      table.FivenetJobsTimeclock,
+		DateColumn: table.FivenetJobsTimeclock.Date,
+		MinDays:    365, // One year
+	})
+}
 
 func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockRequest) (*pbjobs.ListTimeclockResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.timeclock.user_ids", utils.SliceInt32ToInt(req.UserIds)))

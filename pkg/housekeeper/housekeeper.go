@@ -123,12 +123,24 @@ func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCron
 		return nil
 	}
 
-	condition := jet.AND(
-		tbl.TimestampColumn.IS_NOT_NULL(),
-		tbl.TimestampColumn.LT_EQ(
-			jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
-		),
-	)
+	var condition jet.BoolExpression
+	if tbl.TimestampColumn != nil {
+		condition = jet.AND(
+			tbl.TimestampColumn.IS_NOT_NULL(),
+			tbl.TimestampColumn.LT_EQ(
+				jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
+			),
+		)
+	} else {
+		condition = jet.AND(
+			tbl.DateColumn.IS_NOT_NULL(),
+			tbl.DateColumn.LT_EQ(
+				jet.CAST(
+					jet.CURRENT_DATE().SUB(jet.INTERVAL(tbl.MinDays, jet.DAY)),
+				).AS_DATE(),
+			),
+		)
+	}
 
 	if tbl.Condition != nil {
 		condition = condition.AND(tbl.Condition)

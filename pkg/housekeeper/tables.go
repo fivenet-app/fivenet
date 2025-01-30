@@ -14,6 +14,7 @@ var (
 type Table struct {
 	Table           jet.Table
 	TimestampColumn jet.ColumnTimestamp
+	DateColumn      jet.ColumnDate
 	Condition       jet.BoolExpression
 	MinDays         int
 }
