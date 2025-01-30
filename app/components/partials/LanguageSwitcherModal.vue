@@ -23,8 +23,8 @@ onMounted(async () => {
 
         languages.value.push({
             code: lang.code,
-            name: lang.name!,
             language: lang.language!,
+            name: lang.name!,
             icon: lang.icon ?? 'i-mdi-question',
         });
     });

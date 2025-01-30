@@ -35,7 +35,7 @@ useSeoMeta({
 });
 
 const settings = useSettingsStore();
-const { locale: userLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
+const { getUserLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 if (APP_VERSION !== settings.version) {
     logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
@@ -55,14 +55,14 @@ const onBeforeEnter = async () => {
 };
 
 async function setUserLocale(): Promise<void> {
-    logger.info('Setting user locale to', userLocale.value);
-    if (userLocale.value !== undefined) {
-        locale.value = userLocale.value;
-        await setLocale(userLocale.value);
+    logger.info('Setting user locale to', getUserLocale.value);
+    if (getUserLocale.value !== undefined) {
+        locale.value = getUserLocale.value;
+        await setLocale(getUserLocale.value);
     }
 }
 setUserLocale();
-watch(userLocale, () => setUserLocale());
+watch(getUserLocale, () => setUserLocale());
 
 async function clickListener(event: MouseEvent): Promise<void> {
     if (!event.target || event.defaultPrevented) {

@@ -42,16 +42,11 @@ export interface SettingsState {
 }
 
 export const useSettingsStore = defineStore('settings', {
-    state: () => {
-        let defaultLocale = useAppConfig().defaultLocale;
-        if (defaultLocale === '') {
-            defaultLocale = 'en';
-        }
-
-        return {
+    state: () =>
+        ({
             version: APP_VERSION,
             updateAvailable: false,
-            locale: defaultLocale,
+            locale: undefined,
 
             nuiEnabled: false,
             nuiResourceName: undefined,
@@ -85,8 +80,7 @@ export const useSettingsStore = defineStore('settings', {
             jobsService: {
                 cardView: true,
             },
-        } as SettingsState;
-    },
+        }) as SettingsState,
     persist: {
         omit: ['updateAvailable'],
     },
@@ -105,6 +99,13 @@ export const useSettingsStore = defineStore('settings', {
     getters: {
         isNUIAvailable(state): boolean {
             return state.nuiEnabled ?? false;
+        },
+        getUserLocale(state): Locale {
+            return state.locale !== undefined
+                ? state.locale
+                : useAppConfig().defaultLocale !== ''
+                  ? (useAppConfig().defaultLocale as Locale)
+                  : 'en';
         },
     },
 });
