@@ -925,7 +925,8 @@
                 "colleagues": "Kollegium",
                 "timeline": {
                     "hover": "Bewegen Sie den Mauszeiger über den Zeitstrahl, um die Uhrzeit zu sehen",
-                    "select_users": "Bitte wählen Sie mindestens einen Kollegen aus."
+                    "select_users": "Bitte wählen Sie mindestens einen Kollegen aus.",
+                    "tooltip": "Vergrößern/Verkleinern des Zeitstrahl"
                 }
             },
             "self_service": {

@@ -33,7 +33,7 @@ watch(notificationsCount, () => {
         </UButton>
     </UDropdown>
 
-    <UTooltip text="Notifications" :shortcuts="['B']">
+    <UTooltip :text="$t('components.partials.sidebar_notifications')" :shortcuts="['B']">
         <UChip
             :show="notificationsCount > 0"
             color="red"

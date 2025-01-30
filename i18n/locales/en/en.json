@@ -925,7 +925,8 @@
                 "colleagues": "Colleagues",
                 "timeline": {
                     "hover": "Hover over the timeline to see the time",
-                    "select_users": "Please select at least one colleague."
+                    "select_users": "Please select at least one colleague.",
+                    "tooltip": "Increase/decrease timeline resolution"
                 }
             },
             "self_service": {

@@ -68,22 +68,24 @@ const minViewportDuration = 60000 * 60 * 4;
 
 <template>
     <div class="flex flex-1 flex-col divide-y divide-gray-300 dark:divide-gray-700">
-        <div class="flex min-w-full px-1">
-            <p class="flex-1 text-left">
-                <span class="font-semibold">{{ $t('common.date') }}:</span>
+        <div class="flex min-w-full gap-1 px-1">
+            <UTooltip class="flex-1" :text="$t('components.jobs.timeclock.timeline.tooltip')" :shortcuts="['CTRL', '🖱']">
+                <p class="line-clamp-1 text-left hover:line-clamp-none">
+                    <span class="font-semibold">{{ $t('common.date') }}:</span>
 
-                {{
-                    mouseHoverPosition
-                        ? $d(new Date(mouseHoverPosition), 'long')
-                        : $t('components.jobs.timeclock.timeline.hover')
-                }}
-            </p>
+                    {{
+                        mouseHoverPosition
+                            ? $d(new Date(mouseHoverPosition), 'long')
+                            : $t('components.jobs.timeclock.timeline.hover')
+                    }}
+                </p>
+            </UTooltip>
 
             <slot name="caption" />
         </div>
 
         <Timeline
-            class="flex-1"
+            class="timeclockTimeline flex-1"
             :groups="groups"
             :items="items"
             :markers="markers"
@@ -95,3 +97,13 @@ const minViewportDuration = 60000 * 60 * 4;
         />
     </div>
 </template>
+
+<style scoped>
+.timeclockTimeline :deep(.timeline) {
+    height: 100%;
+
+    .groups {
+        height: 100%;
+    }
+}
+</style>

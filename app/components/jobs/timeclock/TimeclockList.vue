@@ -629,7 +629,7 @@ const { game } = useAppConfig();
 
         <TimeclockTimeline v-else :data="entries" :from="query.date.start" :to="query.date.end">
             <template #caption>
-                <p>
+                <p class="shrink-0 text-right">
                     <span class="font-semibold">{{ $t('common.sum') }}:</span>
 
                     {{
