@@ -181,7 +181,7 @@ const totalTimeSum = computed(() => {
         sum = data.value.entries.range.sum;
     }
 
-    return (Math.round(sum * 100) / 100) * 60 * 60;
+    return sum;
 });
 
 const columns = computed(() => [
@@ -606,10 +606,9 @@ const selectedMode = computed({
             <div class="text-right">
                 {{
                     entry.spentTime > 0
-                        ? fromSecondsToFormattedDuration(
-                              parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                              { seconds: false },
-                          )
+                        ? fromSecondsToFormattedDuration(Math.round(entry.spentTime * 60 * 60), {
+                              seconds: false,
+                          })
                         : ''
                 }}
 

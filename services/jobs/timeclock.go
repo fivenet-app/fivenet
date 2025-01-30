@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"math"
 	"slices"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -246,6 +247,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			).
 			WHERE(condition).
 			OFFSET(req.Pagination.Offset).
+			GROUP_BY(groupBys...).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
 
@@ -265,7 +267,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					s.enricher.EnrichJobInfo(data.Entries[i].User)
 				}
 			}
-			data.Sum += data.Entries[i].SpentTime
+			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
 		}
 
 		resp.Pagination.Update(len(data.Entries))
@@ -330,7 +332,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					s.enricher.EnrichJobInfo(data.Entries[i].User)
 				}
 			}
-			data.Sum += data.Entries[i].SpentTime
+			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
 		}
 
 		resp.Pagination.Update(len(data.Entries))
@@ -393,7 +395,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				jobInfoFn(data.Entries[i].User)
 			}
 
-			data.Sum += data.Entries[i].SpentTime
+			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
 		}
 
 		resp.Pagination.Update(len(data.Entries))
@@ -453,7 +455,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				jobInfoFn(data.Entries[i].User)
 			}
 
-			data.Sum += data.Entries[i].SpentTime
+			data.Sum += int64(math.Round(float64(data.Entries[i].SpentTime * 60 * 60)))
 		}
 
 		resp.Pagination.Update(len(data.Entries))

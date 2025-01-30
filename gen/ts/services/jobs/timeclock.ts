@@ -113,7 +113,7 @@ export interface TimeclockDay {
      */
     entries: TimeclockEntry[];
     /**
-     * @generated from protobuf field: float sum = 3;
+     * @generated from protobuf field: int64 sum = 3;
      */
     sum: number;
 }
@@ -130,7 +130,7 @@ export interface TimeclockWeekly {
      */
     entries: TimeclockEntry[];
     /**
-     * @generated from protobuf field: float sum = 3;
+     * @generated from protobuf field: int64 sum = 3;
      */
     sum: number;
 }
@@ -147,7 +147,7 @@ export interface TimeclockRange {
      */
     entries: TimeclockEntry[];
     /**
-     * @generated from protobuf field: float sum = 3;
+     * @generated from protobuf field: int64 sum = 3;
      */
     sum: number;
 }
@@ -403,7 +403,7 @@ class TimeclockDay$Type extends MessageType<TimeclockDay> {
         super("services.jobs.TimeclockDay", [
             { no: 1, name: "date", kind: "message", T: () => Timestamp },
             { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
-            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "sum", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockDay>): TimeclockDay {
@@ -425,8 +425,8 @@ class TimeclockDay$Type extends MessageType<TimeclockDay> {
                 case /* repeated resources.jobs.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* float sum */ 3:
-                    message.sum = reader.float();
+                case /* int64 sum */ 3:
+                    message.sum = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -446,9 +446,9 @@ class TimeclockDay$Type extends MessageType<TimeclockDay> {
         /* repeated resources.jobs.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* float sum = 3; */
+        /* int64 sum = 3; */
         if (message.sum !== 0)
-            writer.tag(3, WireType.Bit32).float(message.sum);
+            writer.tag(3, WireType.Varint).int64(message.sum);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -465,7 +465,7 @@ class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
         super("services.jobs.TimeclockWeekly", [
             { no: 1, name: "date", kind: "message", T: () => Timestamp },
             { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
-            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "sum", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockWeekly>): TimeclockWeekly {
@@ -487,8 +487,8 @@ class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
                 case /* repeated resources.jobs.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* float sum */ 3:
-                    message.sum = reader.float();
+                case /* int64 sum */ 3:
+                    message.sum = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -508,9 +508,9 @@ class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
         /* repeated resources.jobs.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* float sum = 3; */
+        /* int64 sum = 3; */
         if (message.sum !== 0)
-            writer.tag(3, WireType.Bit32).float(message.sum);
+            writer.tag(3, WireType.Varint).int64(message.sum);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -527,7 +527,7 @@ class TimeclockRange$Type extends MessageType<TimeclockRange> {
         super("services.jobs.TimeclockRange", [
             { no: 1, name: "date", kind: "message", T: () => Timestamp },
             { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
-            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "sum", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockRange>): TimeclockRange {
@@ -549,8 +549,8 @@ class TimeclockRange$Type extends MessageType<TimeclockRange> {
                 case /* repeated resources.jobs.TimeclockEntry entries */ 2:
                     message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* float sum */ 3:
-                    message.sum = reader.float();
+                case /* int64 sum */ 3:
+                    message.sum = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -570,9 +570,9 @@ class TimeclockRange$Type extends MessageType<TimeclockRange> {
         /* repeated resources.jobs.TimeclockEntry entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* float sum = 3; */
+        /* int64 sum = 3; */
         if (message.sum !== 0)
-            writer.tag(3, WireType.Bit32).float(message.sum);
+            writer.tag(3, WireType.Varint).int64(message.sum);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

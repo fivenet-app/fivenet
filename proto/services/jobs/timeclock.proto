@@ -40,19 +40,19 @@ message ListTimeclockResponse {
 message TimeclockDay {
   resources.timestamp.Timestamp date = 1;
   repeated resources.jobs.TimeclockEntry entries = 2;
-  float sum = 3;
+  int64 sum = 3;
 }
 
 message TimeclockWeekly {
   resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
   repeated resources.jobs.TimeclockEntry entries = 2;
-  float sum = 3;
+  int64 sum = 3;
 }
 
 message TimeclockRange {
   resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
   repeated resources.jobs.TimeclockEntry entries = 2;
-  float sum = 3;
+  int64 sum = 3;
 }
 
 message GetTimeclockStatsRequest {
