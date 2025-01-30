@@ -133,6 +133,7 @@ export default defineNuxtConfig({
             APP_VERSION: `"${appVersion}"`,
         },
         build: {
+            target: 'es2016',
             terserOptions: {
                 compress: {
                     // Only drop certain console log calls

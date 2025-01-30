@@ -1,5 +1,6 @@
 import 'vue-router';
 import type { Perms } from '~~/gen/ts/perms';
+
 declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
