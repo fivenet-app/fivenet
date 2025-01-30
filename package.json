@@ -34,7 +34,6 @@
         "@unovis/vue": "1.5.0",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
-        "array.prototype.tosorted": "^1.1.4",
         "browser-headers": "0.4.1",
         "consola": "3.4.0",
         "date-fns": "4.1.0",
