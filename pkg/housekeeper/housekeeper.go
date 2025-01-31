@@ -77,7 +77,7 @@ func New(p Params) *Housekeeper {
 		}
 
 		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
-			h.logger.Error("failed to unmarshal document workflow cron data", zap.Error(err))
+			h.logger.Error("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
 		if err := h.runHousekeeper(ctx, dest); err != nil {
@@ -85,7 +85,7 @@ func New(p Params) *Housekeeper {
 		}
 
 		if err := data.Data.MarshalFrom(dest); err != nil {
-			return fmt.Errorf("failed to marshal updated document workflow cron data. %w", err)
+			return fmt.Errorf("failed to marshal updated housekeeper cron data. %w", err)
 		}
 
 		return nil

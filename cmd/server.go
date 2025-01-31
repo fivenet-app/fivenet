@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/fivenet-app/fivenet/pkg/croner"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/server"
 	pbjobs "github.com/fivenet-app/fivenet/services/jobs"
 	"go.uber.org/fx"
@@ -18,6 +19,7 @@ func (c *ServerCmd) Run(ctx *Context) error {
 	if c.ModuleCronAgent {
 		fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
 		fxOpts = append(fxOpts, fx.Invoke(func(*pbjobs.Housekeeper) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*housekeeper.Housekeeper) {}))
 	}
 
 	app := fx.New(fxOpts...)
