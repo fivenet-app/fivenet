@@ -72,4 +72,6 @@ message GroupSyncSettings {
   repeated string ignored_role_ids = 1 [(validate.rules).repeated = { items { string { max_len: 24 } }, max_items: 25 }];
 }
 
-message JobSettings {}
+message JobSettings {
+  int32 absence_past_days = 1 [(validate.rules).int32.gte = 0];
+}

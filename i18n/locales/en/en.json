@@ -2481,7 +2481,8 @@
             "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
             "ErrNotFoundOrNoPerms": "Colleague not found!",
             "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
-            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!"
+            "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
+            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

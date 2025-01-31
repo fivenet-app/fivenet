@@ -5,6 +5,7 @@ import (
 	"errors"
 	"math"
 	"slices"
+	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
@@ -24,6 +25,8 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 )
+
+const TimeclockMaxDays = (365 / 2) * 24 * time.Hour // Half a year
 
 var tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 
@@ -107,7 +110,14 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			}
 		}
 
-		// TODO make sure the date start and end aren't more than 6 months apart from each other
+		// Make sure the provided dates are not "out of range"
+		now := time.Now()
+		if req.Date.Start != nil && now.Sub(req.Date.Start.AsTime()) >= TimeclockMaxDays {
+			return nil, errorsjobs.ErrTimeclockOutOfRange
+		}
+		if req.Date.End != nil && now.Sub(req.Date.End.AsTime()) >= TimeclockMaxDays {
+			return nil, errorsjobs.ErrTimeclockOutOfRange
+		}
 	}
 
 	var countStmt jet.SelectStatement

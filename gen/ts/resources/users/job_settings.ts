@@ -161,6 +161,10 @@ export interface GroupSyncSettings {
  * @generated from protobuf message resources.users.JobSettings
  */
 export interface JobSettings {
+    /**
+     * @generated from protobuf field: int32 absence_past_days = 1;
+     */
+    absencePastDays: number;
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -697,18 +701,40 @@ export const GroupSyncSettings = new GroupSyncSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobSettings$Type extends MessageType<JobSettings> {
     constructor() {
-        super("resources.users.JobSettings", []);
+        super("resources.users.JobSettings", [
+            { no: 1, name: "absence_past_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
+        ]);
     }
     create(value?: PartialMessage<JobSettings>): JobSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.absencePastDays = 0;
         if (value !== undefined)
             reflectionMergePartial<JobSettings>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobSettings): JobSettings {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int32 absence_past_days */ 1:
+                    message.absencePastDays = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: JobSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int32 absence_past_days = 1; */
+        if (message.absencePastDays !== 0)
+            writer.tag(1, WireType.Varint).int32(message.absencePastDays);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

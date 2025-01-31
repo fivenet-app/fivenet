@@ -13,4 +13,6 @@ var (
 	ErrPropsNameDenied    = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrPropsNameDenied"}, nil)
 	ErrReasonRequired     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrReasonRequired"}, nil)
 	ErrNotFoundOrNoPerms  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrNotFoundOrNoPerms"}, nil)
+
+	ErrTimeclockOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrTimeclockOutOfRange"}, nil)
 )

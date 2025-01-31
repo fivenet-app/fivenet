@@ -2481,7 +2481,8 @@
             "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
             "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
             "ErrPropsLabelsDenied": "Sie haben keine Berechtigung die Labels des Kollegen zusetzen!",
-            "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!"
+            "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!",
+            "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",

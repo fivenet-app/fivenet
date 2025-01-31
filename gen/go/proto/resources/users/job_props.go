@@ -101,6 +101,12 @@ func (x *JobProps) Default(job string) {
 	if x.DiscordSyncSettings.QualificationsRoleFormat == "" {
 		x.DiscordSyncSettings.QualificationsRoleFormat = DefaultQualificationsRoleFormat
 	}
+
+	// Job Settings
+	if x.Settings == nil {
+		x.Settings = &JobSettings{}
+	}
+	x.Settings.Default()
 }
 
 // Scan implements driver.Valuer for protobuf QuickButtons.
@@ -172,27 +178,6 @@ func (x *CitizenLabels) Value() (driver.Value, error) {
 
 func (x *CitizenLabel) Equal(a *CitizenLabel) bool {
 	return x.Name == a.Name
-}
-
-// Scan implements driver.Valuer for protobuf JobSettings.
-func (x *JobSettings) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *JobSettings) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
 }
 
 // Scan implements driver.Valuer for protobuf DiscordSyncChanges.

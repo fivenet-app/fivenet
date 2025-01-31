@@ -1227,6 +1227,17 @@ func (m *JobSettings) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetAbsencePastDays() < 0 {
+		err := JobSettingsValidationError{
+			field:  "AbsencePastDays",
+			reason: "value must be greater than or equal to 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return JobSettingsMultiError(errors)
 	}
