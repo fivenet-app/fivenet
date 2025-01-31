@@ -45,8 +45,8 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 
 	tUser := tables.Users().AS("colleague")
 
-	condition := jet.AND(tUser.Job.EQ(jet.String(userInfo.Job)))
-	statsCondition := jet.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
+	condition := tUser.Job.EQ(jet.String(userInfo.Job))
+	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsTimeclockServicePerm, permsjobs.JobsTimeclockServiceListTimeclockPerm, permsjobs.JobsTimeclockServiceListTimeclockAccessPermField)

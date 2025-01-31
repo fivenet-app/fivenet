@@ -139,6 +139,11 @@ async function setJobProps(values: Schema): Promise<void> {
     if (values.logoUrl && values.logoUrl[0]) {
         jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
     }
+    if (!jobProps.value.settings) {
+        jobProps.value.settings = {
+            absencePastDays: 0,
+        };
+    }
     // TODO past absence days option
 
     try {
