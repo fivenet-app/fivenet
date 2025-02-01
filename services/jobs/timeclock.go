@@ -120,11 +120,18 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	}
 
+	groupBys := []jet.GroupByClause{}
+	if req.PerDay {
+		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
+	} else {
+		groupBys = append(groupBys, tTimeClock.UserID)
+	}
+
 	var countStmt jet.SelectStatement
 	if req.UserMode == jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_ALL {
 		if req.PerDay {
 			countStmt = tTimeClock.
-				SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
+				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
 				FROM(
 					tTimeClock.
 						INNER_JOIN(tUser,
@@ -134,7 +141,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 				WHERE(condition)
 		} else {
 			countStmt = tTimeClock.
-				SELECT(jet.COUNT(jet.DISTINCT(tTimeClock.UserID)).AS("datacount.totalcount")).
+				SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
 				FROM(
 					tTimeClock.
 						INNER_JOIN(tUser,
@@ -145,7 +152,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		}
 	} else {
 		countStmt = tTimeClock.
-			SELECT(jet.COUNT(tTimeClock.UserID).AS("datacount.totalcount")).
+			SELECT(jet.RawString("COUNT(DISTINCT timeclock_entry.`date`, timeclock_entry.user_id)").AS("datacount.totalcount")).
 			FROM(
 				tTimeClock.
 					INNER_JOIN(tUser,
@@ -181,6 +188,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		return resp, nil
 	}
 
+	spentTimeColumn := jet.StringColumn("timeclock_entry.spent_time")
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
@@ -198,29 +206,30 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 		case "time":
 			fallthrough
 		default:
-			columns = append(columns, tTimeClock.SpentTime)
+			columns = append(columns, spentTimeColumn)
 		}
 
 		for _, column := range columns {
 			if req.Sort.Direction == database.AscSortDirection {
-				orderBys = append(orderBys, column.ASC(), tTimeClock.SpentTime.DESC())
+				if column == spentTimeColumn {
+					orderBys = append(orderBys, column.ASC())
+				} else {
+					orderBys = append(orderBys, column.ASC(), spentTimeColumn.DESC())
+				}
 			} else {
-				orderBys = append(orderBys, column.DESC(), tTimeClock.SpentTime.DESC())
+				if column == spentTimeColumn {
+					orderBys = append(orderBys, column.DESC())
+				} else {
+					orderBys = append(orderBys, column.DESC(), spentTimeColumn.DESC())
+				}
 			}
 		}
 		orderBys = append(staticColumns, orderBys...)
 	} else {
 		orderBys = append(orderBys,
 			tTimeClock.Date.DESC(),
-			tTimeClock.SpentTime.DESC(),
+			spentTimeColumn.DESC(),
 		)
-	}
-
-	groupBys := []jet.GroupByClause{}
-	if req.PerDay {
-		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
-	} else {
-		groupBys = append(groupBys, tTimeClock.UserID)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
@@ -459,7 +468,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 					),
 			).
 			WHERE(condition).
-			ORDER_BY(orderBys...)
+			ORDER_BY(tTimeClock.Date.DESC(), tTimeClock.UserID.DESC())
 
 		data := resp.GetRange()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
