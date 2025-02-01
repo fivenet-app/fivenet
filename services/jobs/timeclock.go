@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"fmt"
 	"math"
 	"slices"
 	"time"
@@ -401,8 +400,6 @@ func (s *Server) ListTimeclock(ctx context.Context, req *pbjobs.ListTimeclockReq
 			GROUP_BY(groupBys...).
 			ORDER_BY(orderBys...).
 			LIMIT(limit)
-
-		fmt.Println(stmt.DebugSql())
 
 		data := resp.GetRange()
 		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
