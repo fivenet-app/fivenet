@@ -65,7 +65,7 @@ const query = reactive<Schema>({
         TimeclockUserMode.SELF,
     mode:
         TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
-        (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.DAILY),
+        (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.RANGE),
     users: [],
     date: {
         start: subDays(new Date(), 7),
@@ -73,6 +73,7 @@ const query = reactive<Schema>({
     },
     perDay: true,
 });
+
 function setFromProps(): void {
     if (props.userId === undefined) {
         return;
@@ -615,7 +616,7 @@ const { game } = useAppConfig();
                         : ''
                 }}
 
-                <UBadge v-if="entry.startTime !== undefined" color="green">
+                <UBadge v-if="entry.startTime !== undefined && entry.endTime === undefined" color="green">
                     {{ $t('common.active') }}
                 </UBadge>
             </div>

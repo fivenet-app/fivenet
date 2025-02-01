@@ -70,6 +70,9 @@ const schema = z.object({
         qualificationsRoleFormat: z.string().max(64),
     }),
     logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
+    settings: z.object({
+        absencePastDays: z.number().nonnegative(),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -110,6 +113,9 @@ const state = reactive<Schema>({
         qualificationsRoleFormat: '',
     },
     logoUrl: undefined,
+    settings: {
+        absencePastDays: 0,
+    },
 });
 
 async function getJobProps(): Promise<JobProps> {
