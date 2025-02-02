@@ -1227,10 +1227,21 @@ func (m *JobSettings) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetAbsencePastDays() < 0 {
+	if val := m.GetAbsencePastDays(); val < 0 || val > 31 {
 		err := JobSettingsValidationError{
 			field:  "AbsencePastDays",
-			reason: "value must be greater than or equal to 0",
+			reason: "value must be inside range [0, 31]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if val := m.GetAbsenceFutureDays(); val < 3 || val > 186 {
+		err := JobSettingsValidationError{
+			field:  "AbsenceFutureDays",
+			reason: "value must be inside range [3, 186]",
 		}
 		if !all {
 			return err

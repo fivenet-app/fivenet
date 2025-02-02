@@ -71,7 +71,8 @@ const schema = z.object({
     }),
     logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
     settings: z.object({
-        absencePastDays: z.number().nonnegative(),
+        absencePastDays: z.number().int().nonnegative().min(0).max(31),
+        absenceFutureDays: z.number().int().nonnegative().min(0).max(186),
     }),
 });
 
@@ -114,7 +115,8 @@ const state = reactive<Schema>({
     },
     logoUrl: undefined,
     settings: {
-        absencePastDays: 0,
+        absencePastDays: 7,
+        absenceFutureDays: 93,
     },
 });
 
@@ -147,10 +149,12 @@ async function setJobProps(values: Schema): Promise<void> {
     }
     if (!jobProps.value.settings) {
         jobProps.value.settings = {
-            absencePastDays: 0,
+            absencePastDays: 7,
+            absenceFutureDays: 93,
         };
     }
-    // TODO past absence days option
+    jobProps.value.settings.absencePastDays = values.settings.absencePastDays;
+    jobProps.value.settings.absenceFutureDays = values.settings.absenceFutureDays;
 
     try {
         const { response } = await getGRPCRectorClient().setJobProps({
@@ -213,6 +217,10 @@ function setSettingsValues(): void {
         );
 
         state.discordSyncSettings.qualificationsRoleFormat = jobProps.value.discordSyncSettings.qualificationsRoleFormat;
+
+        if (jobProps.value.settings) {
+            state.settings = jobProps.value.settings;
+        }
     }
 }
 
@@ -413,6 +421,48 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :description="$t('common.image_caching')"
                                             />
                                         </div>
+                                    </div>
+                                </UFormGroup>
+                            </UDashboardSection>
+
+                            <UDivider class="mb-4" />
+
+                            <UDashboardSection :title="$t('components.rector.job_props.settings.absence.title')">
+                                <UFormGroup
+                                    name="settings.absencePastDays"
+                                    :label="$t('components.rector.job_props.settings.absence.past_days')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <div class="flex items-center gap-1">
+                                        <UInput
+                                            v-model="state.settings.absencePastDays"
+                                            type="number"
+                                            :placeholder="$t('common.day', 2)"
+                                            :label="$t('common.day', 2)"
+                                            class="flex-1"
+                                        />
+                                        <span>{{ $t('common.day', 2) }}</span>
+                                    </div>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="settings.absenceFutureDays"
+                                    :label="$t('components.rector.job_props.settings.absence.future_days')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <div class="flex items-center gap-1">
+                                        <UInput
+                                            v-model="state.settings.absenceFutureDays"
+                                            type="number"
+                                            :min="7"
+                                            :max="186"
+                                            :placeholder="$t('common.day', 2)"
+                                            :label="$t('common.day', 2)"
+                                            class="flex-1"
+                                        />
+                                        <span>{{ $t('common.day', 2) }}</span>
                                     </div>
                                 </UFormGroup>
                             </UDashboardSection>

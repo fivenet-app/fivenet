@@ -165,6 +165,10 @@ export interface JobSettings {
      * @generated from protobuf field: int32 absence_past_days = 1;
      */
     absencePastDays: number;
+    /**
+     * @generated from protobuf field: int32 absence_future_days = 2;
+     */
+    absenceFutureDays: number;
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -702,12 +706,14 @@ export const GroupSyncSettings = new GroupSyncSettings$Type();
 class JobSettings$Type extends MessageType<JobSettings> {
     constructor() {
         super("resources.users.JobSettings", [
-            { no: 1, name: "absence_past_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
+            { no: 1, name: "absence_past_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { lte: 31, gte: 0 } } } },
+            { no: 2, name: "absence_future_days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { lte: 186, gte: 3 } } } }
         ]);
     }
     create(value?: PartialMessage<JobSettings>): JobSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.absencePastDays = 0;
+        message.absenceFutureDays = 0;
         if (value !== undefined)
             reflectionMergePartial<JobSettings>(this, message, value);
         return message;
@@ -719,6 +725,9 @@ class JobSettings$Type extends MessageType<JobSettings> {
             switch (fieldNo) {
                 case /* int32 absence_past_days */ 1:
                     message.absencePastDays = reader.int32();
+                    break;
+                case /* int32 absence_future_days */ 2:
+                    message.absenceFutureDays = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -735,6 +744,9 @@ class JobSettings$Type extends MessageType<JobSettings> {
         /* int32 absence_past_days = 1; */
         if (message.absencePastDays !== 0)
             writer.tag(1, WireType.Varint).int32(message.absencePastDays);
+        /* int32 absence_future_days = 2; */
+        if (message.absenceFutureDays !== 0)
+            writer.tag(2, WireType.Varint).int32(message.absenceFutureDays);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

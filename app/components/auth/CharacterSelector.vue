@@ -78,6 +78,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             <div class="flex items-center justify-between">
                 <UButton
                     class="absolute start-4 top-1/2 -translate-y-1/2 transform rounded-full rtl:[&_span:first-child]:rotate-180"
+                    color="gray"
                     icon="i-mdi-arrow-left"
                     aria-label="Prev"
                     @click="cardsRef?.scrollLeft !== null && (cardsRef!.scrollLeft -= 395)"
@@ -85,6 +86,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
 
                 <UButton
                     class="absolute end-4 top-1/2 -translate-y-1/2 transform rounded-full rtl:[&_span:last-child]:rotate-180"
+                    color="gray"
                     icon="i-mdi-arrow-right"
                     aria-label="Next"
                     @click="cardsRef?.scrollLeft !== null && (cardsRef!.scrollLeft += 395)"

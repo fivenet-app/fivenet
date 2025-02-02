@@ -5,6 +5,7 @@ import (
 	"errors"
 	"slices"
 	"strings"
+	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
@@ -19,6 +20,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/utils/timeutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsjobs "github.com/fivenet-app/fivenet/services/jobs/errors"
@@ -582,6 +584,22 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 		// Allow users to set their own absence date regardless of types perms check
 		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
+		}
+
+		props, err := users.GetJobProps(ctx, s.db, userInfo.Job)
+		if err != nil {
+			return nil, err
+		}
+
+		// Check if absence begin and end are "valid"
+		minStart := time.Now().Add(-(time.Duration(props.Settings.AbsencePastDays) * 24 * time.Hour))
+		maxEnd := time.Now().Add(time.Duration(props.Settings.AbsenceFutureDays) * 24 * time.Hour)
+
+		if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceBegin.AsTime()) {
+			return nil, errorsjobs.ErrAbsenceBeginOutOfRange
+		}
+		if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceEnd.AsTime()) {
+			return nil, errorsjobs.ErrAbsenceBeginOutOfRange
 		}
 	}
 

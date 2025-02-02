@@ -554,7 +554,8 @@
         "day_view": "Tagesansicht",
         "week_view": "Wochenansicht",
         "domains": "Keine Domain | {n} Domains | {n} Domains",
-        "timeline": "Zeitstrahl"
+        "timeline": "Zeitstrahl",
+        "day": "Tag | Tage"
     },
     "components": {
         "partials": {
@@ -731,8 +732,12 @@
                         "description": "Format der Discord Rolle. Nutze %abbr% für die Abkürzung und %name% für den Rollen-Namen der Qualifizierungen."
                     }
                 },
-                "citizen_labels": {
-                    "title": "Bürger-Labels"
+                "settings": {
+                    "absence": {
+                        "title": "Abwesenheit",
+                        "past_days": "Maximale Rückdatierung einer Abwesenheit in Tagen",
+                        "future_days": "Maximale Vordatierung einer Abwesenheit in Tagen"
+                    }
                 }
             },
             "role_view": {
@@ -787,6 +792,9 @@
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
                 }
+            },
+            "citizen_labels": {
+                "title": "Bürger-Labels"
             }
         },
         "debug_info": {
@@ -2482,7 +2490,9 @@
             "ErrNotFoundOrNoPerms": "Kollege nicht gefunden!",
             "ErrPropsLabelsDenied": "Sie haben keine Berechtigung die Labels des Kollegen zusetzen!",
             "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!",
-            "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!"
+            "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!",
+            "ErrAbsenceBeginOutOfRange": "Begin der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
+            "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne."
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",

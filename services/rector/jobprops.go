@@ -2,7 +2,6 @@ package rector
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -18,7 +17,6 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsrector "github.com/fivenet-app/fivenet/services/rector/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -38,39 +36,14 @@ func (s *Server) GetJobProps(ctx context.Context, req *pbrector.GetJobPropsReque
 }
 
 func (s *Server) getJobProps(ctx context.Context, job string) (*users.JobProps, error) {
-	tJobProps := table.FivenetJobProps.AS("jobprops")
-	stmt := tJobProps.
-		SELECT(
-			tJobProps.Job,
-			tJobProps.UpdatedAt,
-			tJobProps.Theme,
-			tJobProps.LivemapMarkerColor,
-			tJobProps.RadioFrequency,
-			tJobProps.QuickButtons,
-			tJobProps.DiscordGuildID,
-			tJobProps.DiscordLastSync,
-			tJobProps.DiscordSyncSettings,
-			tJobProps.DiscordSyncChanges,
-			tJobProps.LogoURL,
-		).
-		FROM(tJobProps).
-		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
-		).
-		LIMIT(1)
-
-	dest := &users.JobProps{}
-	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
+	props, err := users.GetJobProps(ctx, s.db, job)
+	if err != nil {
+		return nil, err
 	}
 
-	dest.Default(job)
+	s.enricher.EnrichJobName(props)
 
-	s.enricher.EnrichJobName(dest)
-
-	return dest, nil
+	return props, nil
 }
 
 func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsRequest) (*pbrector.SetJobPropsResponse, error) {
@@ -134,6 +107,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsReque
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordSyncSettings,
 			tJobProps.LogoURL,
+			tJobProps.Settings,
 		).
 		VALUES(
 			req.JobProps.Job,
@@ -144,6 +118,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsReque
 			req.JobProps.DiscordGuildId,
 			req.JobProps.DiscordSyncSettings,
 			req.JobProps.LogoUrl,
+			req.JobProps.Settings,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobProps.Theme.SET(jet.String(req.JobProps.Theme)),
@@ -153,6 +128,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsReque
 			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
 			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`logo_url`)"))),
+			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`settings`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

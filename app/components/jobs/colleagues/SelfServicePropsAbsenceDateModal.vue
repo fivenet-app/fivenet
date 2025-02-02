@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { addDays, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -21,14 +22,18 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
+const authStore = useAuthStore();
+const { jobProps } = storeToRefs(authStore);
+
 const today = new Date();
-const minimumDay = subDays(today, 7);
+const minStart = subDays(today, jobProps.value?.settings?.absencePastDays ?? 7);
+const maxEnd = addDays(today, jobProps.value?.settings?.absenceFutureDays ?? 93);
 
 const schema = z.union([
     z.object({
         reason: z.string().min(3).max(255),
-        absenceBegin: z.date().min(minimumDay),
-        absenceEnd: z.date().min(today),
+        absenceBegin: z.date().min(minStart),
+        absenceEnd: z.date().min(today).max(maxEnd),
         reset: z.literal(false),
     }),
     z.object({
@@ -132,7 +137,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <PartialsDatePickerPopover
                                 v-model="state.absenceBegin"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{ disabledDates: [{ start: null, end: minimumDay }] }"
+                                :date-picker="{
+                                    disabledDates: [
+                                        { start: null, end: minStart },
+                                        { start: maxEnd, end: null },
+                                    ],
+                                }"
                             />
                         </UFormGroup>
 
@@ -140,7 +150,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <DatePickerPopoverClient
                                 v-model="state.absenceEnd"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
-                                :date-picker="{ disabledDates: [{ start: null, end: subDays(today, 1) }] }"
+                                :date-picker="{
+                                    disabledDates: [
+                                        { start: null, end: subDays(today, 1) },
+                                        { start: maxEnd, end: null },
+                                    ],
+                                }"
                             />
                         </UFormGroup>
                     </div>

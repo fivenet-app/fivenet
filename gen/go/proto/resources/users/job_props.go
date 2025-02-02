@@ -1,10 +1,15 @@
 package users
 
 import (
+	"context"
 	"database/sql/driver"
+	"errors"
 	"slices"
 
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -19,6 +24,40 @@ const (
 
 	DefaultQualificationsRoleFormat = "%name% Qualification"
 )
+
+func GetJobProps(ctx context.Context, tx qrm.DB, job string) (*JobProps, error) {
+	tJobProps := table.FivenetJobProps.AS("jobprops")
+	stmt := tJobProps.
+		SELECT(
+			tJobProps.Job,
+			tJobProps.UpdatedAt,
+			tJobProps.Theme,
+			tJobProps.LivemapMarkerColor,
+			tJobProps.RadioFrequency,
+			tJobProps.QuickButtons,
+			tJobProps.DiscordGuildID,
+			tJobProps.DiscordLastSync,
+			tJobProps.DiscordSyncSettings,
+			tJobProps.DiscordSyncChanges,
+			tJobProps.LogoURL,
+		).
+		FROM(tJobProps).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		).
+		LIMIT(1)
+
+	dest := &JobProps{}
+	if err := stmt.QueryContext(ctx, tx, dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	dest.Default(job)
+
+	return dest, nil
+}
 
 func (x *JobProps) SetJobLabel(label string) {
 	x.JobLabel = &label

@@ -8,12 +8,16 @@ import (
 )
 
 const (
-	DefaultJobAbsencePastDays = 7
+	DefaultJobAbsencePastDays   = 7
+	DefaultJobAbsenceFutureDays = 93 // ~3 months
 )
 
 func (x *JobSettings) Default() {
 	if x.AbsencePastDays <= 0 {
 		x.AbsencePastDays = DefaultJobAbsencePastDays
+	}
+	if x.AbsenceFutureDays <= 0 {
+		x.AbsenceFutureDays = DefaultJobAbsenceFutureDays
 	}
 }
 

@@ -14,5 +14,8 @@ var (
 	ErrReasonRequired     = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrReasonRequired"}, nil)
 	ErrNotFoundOrNoPerms  = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrNotFoundOrNoPerms"}, nil)
 
+	ErrAbsenceBeginOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrAbsenceBeginOutOfRange"}, nil)
+	ErrAbsenceEndOutOfRange   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrAbsenceEndOutOfRange"}, nil)
+
 	ErrTimeclockOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrTimeclockOutOfRange"}, nil)
 )

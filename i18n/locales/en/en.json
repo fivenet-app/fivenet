@@ -554,7 +554,8 @@
         "day_view": "Daily View",
         "week_view": "Weekly View",
         "domains": "No Domain | {n} Domain | {n} Domains",
-        "timeline": "Timeline"
+        "timeline": "Timeline",
+        "day": "Day | Days"
     },
     "components": {
         "partials": {
@@ -731,9 +732,16 @@
                         "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
                     }
                 },
-                "citizen_labels": {
-                    "title": "Citizen Labels"
+                "settings": {
+                    "absence": {
+                        "title": "Absence",
+                        "past_days": "Maximum backdating of an absence in days",
+                        "future_days": "Maximum days in the future an absence can be dated"
+                    }
                 }
+            },
+            "citizen_labels": {
+                "title": "Citizen Labels"
             },
             "role_view": {
                 "add_permission": "Add Permission"
@@ -2482,7 +2490,9 @@
             "ErrNotFoundOrNoPerms": "Colleague not found!",
             "ErrPropsLabelsDenied": "You are not allowed to set your colleague's labels!",
             "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
-            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!"
+            "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
+            "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
+            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range."
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",
