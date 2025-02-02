@@ -7,7 +7,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.36.0
 	github.com/adhocore/gronx v1.19.5
-	github.com/alecthomas/kong v1.6.1
+	github.com/alecthomas/kong v1.7.0
 	github.com/aymanbagabas/go-udiff v0.2.0
 	github.com/bep/debounce v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.4
@@ -41,7 +41,7 @@ require (
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.10.25
 	github.com/nats-io/nats.go v1.38.0
-	github.com/nicksnyder/go-i18n/v2 v2.5.0
+	github.com/nicksnyder/go-i18n/v2 v2.5.1
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
