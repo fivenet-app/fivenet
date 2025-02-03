@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -72,6 +73,7 @@ type BotParams struct {
 
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
+	JS        *events.JSWrapper
 	DB        *sql.DB
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
@@ -86,6 +88,7 @@ type Bot struct {
 	ctx      context.Context
 	logger   *zap.Logger
 	tracer   trace.Tracer
+	js       *events.JSWrapper
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
@@ -130,6 +133,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		ctx:      cancelCtx,
 		logger:   p.Logger,
 		tracer:   p.TP.Tracer("discord_bot"),
+		js:       p.JS,
 		db:       p.DB,
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord,
@@ -145,7 +149,11 @@ func NewBot(p BotParams) (*Bot, error) {
 		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := registerStreams(ctxStartup, b.js); err != nil {
+			return err
+		}
+
 		go func() {
 			if err := state.Connect(cancelCtx); err != nil {
 				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))

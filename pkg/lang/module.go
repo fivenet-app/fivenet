@@ -17,6 +17,8 @@ var Module = fx.Module("lang",
 //go:embed *.json
 var langFS embed.FS
 
+var defaultLanguage = "en"
+
 func New() (*I18n, error) {
 	bundle := i18n.NewBundle(language.English)
 	bundle.RegisterUnmarshalFunc("json", json.Unmarshal)
@@ -47,7 +49,9 @@ type I18n struct {
 }
 
 func (i *I18n) I18n(lang string) *i18n.Localizer {
-	return i18n.NewLocalizer(i.bundle, lang)
+	// Include default language for fallback to not error/panic
+	// https://github.com/nicksnyder/go-i18n/issues/234#issuecomment-722796413
+	return i18n.NewLocalizer(i.bundle, lang, defaultLanguage)
 }
 
 func (i *I18n) Langs() []string {

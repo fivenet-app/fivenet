@@ -8,14 +8,6 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/internet;internet";
 
-message ListTLDsRequest {
-  optional bool internal = 1;
-}
-
-message ListTLDsResponse {
-  repeated resources.internet.TLD tlds = 1;
-}
-
 message CheckDomainAvailabilityRequest {
   // @sanitize: method=StripTags
   string name = 1 [(validate.rules).string = {
@@ -65,9 +57,6 @@ message TransferDomainRequest {
 message TransferDomainResponse {}
 
 service DomainService {
-  // @perm: Name=Any
-  rpc ListTLDs(ListTLDsRequest) returns (ListTLDsResponse);
-
   // @perm: Name=Any
   rpc CheckDomainAvailability(CheckDomainAvailabilityRequest) returns (CheckDomainAvailabilityResponse);
 

@@ -11,6 +11,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"go.uber.org/fx"
@@ -18,6 +19,7 @@ import (
 )
 
 type CommandParams struct {
+	JS       *events.JSWrapper
 	DB       *sql.DB
 	L        *lang.I18n
 	BotState types.BotState

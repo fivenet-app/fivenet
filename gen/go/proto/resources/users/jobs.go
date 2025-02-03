@@ -1,8 +1,13 @@
 package users
 
+import "google.golang.org/protobuf/proto"
+
 func (x *Job) Merge(in *Job) *Job {
 	if in != nil {
-		x = in
+		// Nil grades list to ensure it is updated
+		x.Grades = nil
+
+		proto.Merge(x, in)
 	}
 
 	return x

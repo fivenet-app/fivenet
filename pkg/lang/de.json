@@ -52,8 +52,8 @@
                         "desc": "Dieser Discord ist nicht als Fraktionsdiscord registriert. Bitte kontaktieren sie die Leitung dieses Discord."
                     },
                     "no_user_found": {
-                        "title": "",
-                        "desc": ""
+                        "title": "Kein Character gefunden!",
+                        "desc": "Der FiveNet Bot konnte keinen Charakter finden, der Ihrer Discord ID verbunden ist.\nVergewisseren Sie sich, dass Ihr Discord-Konto mit Ihrem FiveNet-Konto verbunden ist und versuchen Sie es erneut."
                     },
                     "no_perms": {
                         "title": "Keine Berechtigung!",

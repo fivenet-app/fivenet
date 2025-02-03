@@ -142,7 +142,7 @@ func NewCache(p Params) (*Cache, error) {
 
 		if err := p.Cron.RegisterCronjob(ctxStartup, &cron.Cronjob{
 			Name:     "mstlystcdata.cache",
-			Schedule: "@10minutes",
+			Schedule: "@5minutes", // Every 5 minutes
 		}); err != nil {
 			return err
 		}
