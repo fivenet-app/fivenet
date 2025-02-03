@@ -335,23 +335,24 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     />
                 </div>
 
-                <UDivider :label="$t('common.attributes', 2)" />
+                <UDivider :label="$t('common.attributes', 2)" class="mb-1" />
 
-                <div class="flex flex-col gap-4 py-2">
+                <div class="flex flex-col gap-2">
                     <div class="flex flex-row gap-1">
                         <UButton
                             class="flex-1"
                             :disabled="!changed || !canSubmit"
                             :loading="!canSubmit"
+                            icon="i-mdi-content-save"
                             @click="onSubmitThrottle"
                         >
                             {{ $t('common.save', 1) }}
                         </UButton>
 
                         <UPopover>
-                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">{{
-                                $t('common.paste')
-                            }}</UButton>
+                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">
+                                {{ $t('common.paste') }}
+                            </UButton>
 
                             <template #panel>
                                 <div class="p-4">
@@ -368,30 +369,27 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">{{
-                            $t('common.copy')
-                        }}</UButton>
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">
+                            {{ $t('common.copy') }}
+                        </UButton>
                     </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">
-                            <div class="flex flex-col gap-2 divide-y divide-gray-100 dark:divide-gray-800">
+                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
-                                    <div class="flex flex-row gap-2">
-                                        <div class="my-auto flex flex-1 flex-col">
-                                            <span
-                                                :title="`${$t('common.id')}: ${perm.id}`"
-                                                class="text-gray-900 dark:text-white"
-                                            >
+                                    <div class="flex flex-row items-center gap-2">
+                                        <div class="flex-1">
+                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
-                                            </span>
-                                            <span class="text-base-500">
+                                            </p>
+                                            <p class="text-base-500">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
-                                            </span>
+                                            </p>
                                         </div>
 
                                         <UButtonGroup class="inline-flex flex-initial">
@@ -414,14 +412,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         </UButtonGroup>
                                     </div>
 
-                                    <AttrViewAttr
+                                    <template
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
                                         :key="attr.attrId"
-                                        v-model:states="attrStates"
-                                        :attribute="attr"
-                                        :permission="perm"
-                                        @changed="changed = true"
-                                    />
+                                    >
+                                        <AttrViewAttr
+                                            v-model:states="attrStates"
+                                            :attribute="attr"
+                                            :permission="perm"
+                                            @changed="changed = true"
+                                        />
+                                    </template>
                                 </div>
                             </div>
                         </template>

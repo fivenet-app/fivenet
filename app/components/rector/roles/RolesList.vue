@@ -104,113 +104,102 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <div class="relative overflow-x-auto">
-        <div class="px-1 sm:px-2">
-            <div class="flex flex-col lg:flex-row">
-                <div class="mt-2 flow-root basis-1/3">
-                    <template v-if="can('RectorService.CreateRole').value">
-                        <div class="sm:flex sm:items-center">
-                            <div class="sm:flex-auto">
-                                <UForm :schema="schema" :state="state" @submit="refresh()">
-                                    <div class="flex flex-row gap-2">
-                                        <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
-                                            <ClientOnly>
-                                                <USelectMenu
-                                                    v-model="state.jobGrade"
-                                                    :options="availableJobGrades"
-                                                    by="grade"
-                                                    searchable
-                                                    :searchable-placeholder="$t('common.search_field')"
-                                                >
-                                                    <template #label>
-                                                        <template v-if="state.jobGrade">
-                                                            <span class="truncate"
-                                                                >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
-                                                            >
-                                                        </template>
-                                                    </template>
+    <UDashboardPanelContent class="flex flex-col gap-2 lg:flex-row">
+        <div class="basis-1/3">
+            <UForm
+                v-if="can('RectorService.CreateRole').value"
+                :schema="schema"
+                :state="state"
+                class="flex flex-row gap-2"
+                @submit="refresh()"
+            >
+                <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.jobGrade"
+                            :options="availableJobGrades"
+                            by="grade"
+                            searchable
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #label>
+                                <template v-if="state.jobGrade">
+                                    <span class="truncate">{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span>
+                                </template>
+                            </template>
 
-                                                    <template #option="{ option: jobGrade }">
-                                                        <span class="truncate"
-                                                            >{{ jobGrade.label }} ({{ jobGrade.grade }})</span
-                                                        >
-                                                    </template>
-                                                </USelectMenu>
-                                            </ClientOnly>
-                                        </UFormGroup>
+                            <template #option="{ option: jobGrade }">
+                                <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                            </template>
+                        </USelectMenu>
+                    </ClientOnly>
+                </UFormGroup>
 
-                                        <div class="flex flex-initial flex-col justify-end">
-                                            <UButton
-                                                :disabled="
-                                                    state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit
-                                                "
-                                                :loading="!canSubmit"
-                                                icon="i-mdi-plus"
-                                                @click="onSubmitThrottle"
-                                            >
-                                                {{ $t('common.create') }}
-                                            </UButton>
-                                        </div>
-                                    </div>
-                                </UForm>
-                            </div>
+                <UFormGroup name="submit" label="&nbsp;">
+                    <UButton
+                        :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
+                        :loading="!canSubmit"
+                        icon="i-mdi-plus"
+                        class="flex-initial justify-end"
+                        @click="onSubmitThrottle"
+                    >
+                        {{ $t('common.create') }}
+                    </UButton>
+                </UFormGroup>
+            </UForm>
+
+            <div>
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.role', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <UTable
+                    v-else
+                    :columns="columns"
+                    :rows="sortedRoles"
+                    :loading="loading"
+                    :empty-state="{
+                        icon: 'i-mdi-account-group',
+                        label: $t('common.not_found', [$t('common.role', 2)]),
+                    }"
+                >
+                    <template #rank-data="{ row: role }">
+                        <div class="text-gray-900 dark:text-white">
+                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
                         </div>
                     </template>
 
-                    <div class="-my-2 mx-0 overflow-x-auto">
-                        <div class="inline-block min-w-full px-1 py-2 align-middle">
-                            <DataErrorBlock
-                                v-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.role', 2)])"
-                                :error="error"
-                                :retry="refresh"
-                            />
-                            <UTable
-                                v-else
-                                :columns="columns"
-                                :rows="sortedRoles"
-                                :loading="loading"
-                                :empty-state="{
-                                    icon: 'i-mdi-account-group',
-                                    label: $t('common.not_found', [$t('common.role', 2)]),
-                                }"
-                            >
-                                <template #rank-data="{ row: role }">
-                                    <div class="text-gray-900 dark:text-white">
-                                        {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
-                                    </div>
-                                </template>
-
-                                <template #actions-data="{ row: role }">
-                                    <div class="text-right">
-                                        <UTooltip :text="$t('common.show')">
-                                            <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
-                                        </UTooltip>
-                                    </div>
-                                </template>
-                            </UTable>
-
-                            <SingleHint class="mt-2" hint-id="rector_roles_list" />
-
-                            <SingleHint class="mt-2" hint-id="rector_roles_superuser" />
+                    <template #actions-data="{ row: role }">
+                        <div class="text-right">
+                            <UTooltip :text="$t('common.show')">
+                                <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                            </UTooltip>
                         </div>
-                    </div>
-                </div>
-
-                <div class="mt-0 mt-4 w-full basis-2/3 lg:ml-2">
-                    <RoleView
-                        v-if="selectedRole"
-                        :role-id="selectedRole.id"
-                        @deleted="
-                            selectedRole = undefined;
-                            refresh();
-                        "
-                    />
-                    <template v-else>
-                        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.role')])" />
                     </template>
-                </div>
+                </UTable>
+
+                <SingleHint class="mt-2" hint-id="rector_roles_list" />
+
+                <SingleHint class="mt-2" hint-id="rector_roles_superuser" />
             </div>
         </div>
-    </div>
+
+        <div class="w-full basis-2/3">
+            <DataNoDataBlock
+                v-if="!selectedRole"
+                icon="i-mdi-select"
+                :message="$t('common.none_selected', [$t('common.role')])"
+            />
+            <RoleView
+                v-else
+                :role-id="selectedRole.id"
+                @deleted="
+                    selectedRole = undefined;
+                    refresh();
+                "
+            />
+        </div>
+    </UDashboardPanelContent>
 </template>

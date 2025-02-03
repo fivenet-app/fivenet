@@ -8,6 +8,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+import { isEmptyAttributes } from './helpers';
 
 const props = defineProps<{
     roleId: number;
@@ -284,14 +285,15 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     />
                 </div>
 
-                <UDivider :label="$t('common.permission', 2)" />
+                <UDivider :label="$t('common.permission', 2)" class="mb-1" />
 
-                <div class="flex flex-col gap-4 py-2">
+                <div class="flex flex-col gap-2">
                     <UButton
                         v-if="can('RectorService.UpdateRolePerms').value"
                         block
                         :disabled="!changed || !canSubmit"
                         :loading="!canSubmit"
+                        icon="i-mdi-content-save"
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.save', 1) }}
@@ -299,23 +301,20 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">
-                            <div class="flex flex-col gap-2 divide-y divide-gray-100 dark:divide-gray-800">
+                            <div class="flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
                                 <div
                                     v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
-                                    <div class="flex flex-row gap-2">
-                                        <div class="my-auto flex flex-1 flex-col">
-                                            <span
-                                                :title="`${$t('common.id')}: ${perm.id}`"
-                                                class="text-gray-900 dark:text-white"
-                                            >
+                                    <div class="flex flex-row items-center gap-2">
+                                        <div class="flex-1">
+                                            <p :title="`${$t('common.id')}: ${perm.id}`" class="text-gray-900 dark:text-white">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
-                                            </span>
-                                            <span class="text-base-500">
+                                            </p>
+                                            <p class="text-base-500">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
-                                            </span>
+                                            </p>
                                         </div>
 
                                         <UButtonGroup class="inline-flex flex-initial">
@@ -350,15 +349,19 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         </UButtonGroup>
                                     </div>
 
-                                    <RoleViewAttr
+                                    <template
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
                                         :key="attr.attrId"
-                                        v-model:states="attrStates"
-                                        :attribute="attr"
-                                        :permission="perm"
-                                        :disabled="permStates.get(perm.id) !== true"
-                                        @changed="changed = true"
-                                    />
+                                    >
+                                        <RoleViewAttr
+                                            v-if="!isEmptyAttributes(attr.maxValues)"
+                                            v-model:states="attrStates"
+                                            :attribute="attr"
+                                            :permission="perm"
+                                            :disabled="permStates.get(perm.id) !== true"
+                                            @changed="changed = true"
+                                        />
+                                    </template>
                                 </div>
                             </div>
                         </template>

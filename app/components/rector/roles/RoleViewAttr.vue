@@ -210,6 +210,8 @@ onBeforeMount(async () => {
         });
     }
 });
+
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -227,7 +229,7 @@ onBeforeMount(async () => {
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'stringList'
                         "
-                        class="flex flex-row flex-wrap gap-4"
+                        class="flex flex-row flex-wrap gap-3"
                     >
                         <span v-if="maxValues.validValues.stringList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -236,15 +238,14 @@ onBeforeMount(async () => {
                             <div
                                 v-for="value in maxValues.validValues.stringList.strings"
                                 :key="value"
-                                class="flex flex-initial flex-row flex-nowrap"
+                                class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UCheckbox
+                                <UToggle
                                     :name="value"
                                     :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                    class="my-auto size-4 rounded border-base-300"
                                     @click="toggleStringListValue(value)"
                                 />
-                                <span class="ml-1">{{
+                                <span>{{
                                     $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
                                 }}</span>
                             </div>
@@ -256,7 +257,7 @@ onBeforeMount(async () => {
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'jobList'
                         "
-                        class="flex flex-row flex-wrap gap-4"
+                        class="flex flex-row flex-wrap gap-3"
                     >
                         <span v-if="maxValues.validValues.jobList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -270,15 +271,14 @@ onBeforeMount(async () => {
                                             maxValues.validValues?.jobList?.strings.includes(j.name)),
                                 )"
                                 :key="job.name"
-                                class="flex flex-initial flex-row flex-nowrap"
+                                class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UCheckbox
+                                <UToggle
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                    class="my-auto size-4 rounded border-base-300"
                                     @click="toggleJobListValue(job.name)"
                                 />
-                                <span class="ml-1">{{ job.label }}</span>
+                                <span>{{ job.label }}</span>
                             </div>
                         </template>
                     </div>
@@ -302,24 +302,28 @@ onBeforeMount(async () => {
                                         maxValues.validValues.jobGradeList.jobs[j.name],
                                 )"
                                 :key="job.name"
-                                class="flex flex-initial flex-row flex-nowrap gap-2"
+                                class="flex flex-initial flex-row flex-nowrap items-center gap-2"
                             >
-                                <UCheckbox
+                                <UToggle
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                    class="my-auto size-4 rounded border-base-300"
                                     @change="toggleJobGradeValue(job, ($event.target as any)?.checked)"
                                 />
-                                <span class="my-auto flex-1">{{ job.label }}</span>
+
+                                <span class="flex-1">{{ job.label }}</span>
 
                                 <ClientOnly>
                                     <USelectMenu
+                                        class="flex-1"
+                                        :disabled="!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                         :options="
                                             job.grades.filter(
                                                 (g) =>
                                                     maxValues &&
                                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? 1) + 1 > g.grade,
+                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) +
+                                                        1 >
+                                                        g.grade,
                                             )
                                         "
                                         :search-attributes="['label']"
@@ -331,8 +335,10 @@ onBeforeMount(async () => {
                                         <template #label>
                                             <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
                                                 <span class="truncate">{{
-                                                    job.grades[(currentValue.validValues.jobGradeList.jobs[job.name] ?? 1) - 1]
-                                                        ?.label ?? $t('common.na')
+                                                    job.grades[
+                                                        (currentValue.validValues.jobGradeList.jobs[job.name] ??
+                                                            game.startJobGrade) - 1
+                                                    ]?.label ?? $t('common.na')
                                                 }}</span>
                                             </template>
                                         </template>

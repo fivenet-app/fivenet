@@ -106,105 +106,91 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <div class="relative overflow-x-auto">
-        <div class="px-1 sm:px-2">
-            <div class="flex flex-col lg:flex-row">
-                <div class="mt-2 flow-root basis-1/3">
-                    <div v-if="can('RectorService.CreateRole').value" class="sm:flex sm:items-center">
-                        <div class="sm:flex-auto">
-                            <UForm :schema="schema" :state="state" @submit="refresh()">
-                                <div class="flex flex-row gap-2">
-                                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.job"
-                                                :options="availableJobs"
-                                                by="name"
-                                                searchable
-                                                :searchable-placeholder="$t('common.search_field')"
-                                            >
-                                                <template #label>
-                                                    <template v-if="state.job">
-                                                        <span class="truncate"
-                                                            >{{ state.job?.label }} ({{ state.job.name }})</span
-                                                        >
-                                                    </template>
-                                                </template>
-
-                                                <template #option="{ option: job }">
-                                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormGroup>
-
-                                    <div class="flex flex-initial flex-col justify-end">
-                                        <UButton
-                                            :disabled="state.job === undefined || !canSubmit"
-                                            :loading="!canSubmit"
-                                            icon="i-mdi-plus"
-                                            @click="onSubmitThrottle"
-                                        >
-                                            {{ $t('common.create') }}
-                                        </UButton>
-                                    </div>
-                                </div>
-                            </UForm>
-                        </div>
-                    </div>
-
-                    <div class="-my-2 mx-0 overflow-x-auto">
-                        <div class="inline-block min-w-full px-1 py-2 align-middle">
-                            <DataErrorBlock
-                                v-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.job', 2)])"
-                                :error="error"
-                                :retry="refresh"
-                            />
-                            <UTable
-                                v-else
-                                :columns="columns"
-                                :rows="sortedRoles"
-                                :loading="loading"
-                                :empty-state="{
-                                    icon: 'i-mdi-account-group',
-                                    label: $t('common.not_found', [$t('common.role', 2)]),
-                                }"
+    <UDashboardPanelContent class="flex flex-col gap-2 lg:flex-row">
+        <div class="basis-1/3">
+            <UForm v-if="can('RectorService.CreateRole').value" :schema="schema" :state="state" @submit="refresh()">
+                <div class="flex flex-row gap-2">
+                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.job"
+                                :options="availableJobs"
+                                by="name"
+                                searchable
+                                :searchable-placeholder="$t('common.search_field')"
                             >
-                                <template #job-data="{ row: role }">
-                                    <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
+                                <template #label>
+                                    <template v-if="state.job">
+                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                    </template>
                                 </template>
 
-                                <template #actions-data="{ row: role }">
-                                    <div class="text-right">
-                                        <UTooltip :text="$t('common.show')">
-                                            <UButton
-                                                class="place-self-end"
-                                                variant="link"
-                                                icon="i-mdi-eye"
-                                                @click="selectedRole = role"
-                                            />
-                                        </UTooltip>
-                                    </div>
+                                <template #option="{ option: job }">
+                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                 </template>
-                            </UTable>
-                        </div>
-                    </div>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
+
+                    <UFormGroup name="submit" label="&nbsp;">
+                        <UButton
+                            :disabled="state.job === undefined || !canSubmit"
+                            :loading="!canSubmit"
+                            icon="i-mdi-plus"
+                            @click="onSubmitThrottle"
+                        >
+                            {{ $t('common.create') }}
+                        </UButton>
+                    </UFormGroup>
                 </div>
-                <div class="mt-0 mt-4 w-full basis-2/3 lg:ml-2">
-                    <AttrView
-                        v-if="selectedRole"
-                        :role-id="selectedRole.id"
-                        @deleted="
-                            selectedRole = undefined;
-                            refresh();
-                        "
-                    />
-                    <template v-else>
-                        <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
+            </UForm>
+
+            <div>
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.job', 2)])"
+                    :error="error"
+                    :retry="refresh"
+                />
+                <UTable
+                    v-else
+                    :columns="columns"
+                    :rows="sortedRoles"
+                    :loading="loading"
+                    :empty-state="{
+                        icon: 'i-mdi-account-group',
+                        label: $t('common.not_found', [$t('common.role', 2)]),
+                    }"
+                >
+                    <template #job-data="{ row: role }">
+                        <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
                     </template>
-                </div>
+
+                    <template #actions-data="{ row: role }">
+                        <div class="text-right">
+                            <UTooltip :text="$t('common.show')">
+                                <UButton class="place-self-end" variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                            </UTooltip>
+                        </div>
+                    </template>
+                </UTable>
             </div>
         </div>
-    </div>
+
+        <div class="w-full basis-2/3">
+            <DataNoDataBlock
+                v-if="!selectedRole"
+                icon="i-mdi-select"
+                :message="$t('common.none_selected', [$t('common.job', 2)])"
+            />
+            <AttrView
+                v-else
+                :role-id="selectedRole.id"
+                @deleted="
+                    selectedRole = undefined;
+                    refresh();
+                "
+            />
+        </div>
+    </UDashboardPanelContent>
 </template>

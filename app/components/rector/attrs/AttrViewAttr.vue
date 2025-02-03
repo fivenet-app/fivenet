@@ -166,6 +166,8 @@ onBeforeMount(async () => {
         });
     }
 });
+
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -183,20 +185,19 @@ onBeforeMount(async () => {
                             validValues?.validValues &&
                             validValues?.validValues.oneofKind === 'stringList'
                         "
-                        class="flex flex-row flex-wrap gap-4"
+                        class="flex flex-row flex-wrap gap-3"
                     >
                         <div
                             v-for="value in validValues.validValues.stringList.strings"
                             :key="value"
-                            class="flex flex-initial flex-row flex-nowrap"
+                            class="flex flex-initial flex-row flex-nowrap gap-1"
                         >
-                            <UCheckbox
+                            <UToggle
                                 :name="value"
                                 :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                class="my-auto size-4 rounded border-base-300"
                                 @click="toggleStringListValue(value)"
                             />
-                            <span class="ml-1">{{
+                            <span>{{
                                 $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
                             }}</span>
                         </div>
@@ -208,16 +209,15 @@ onBeforeMount(async () => {
                             validValues?.validValues.oneofKind === 'jobList' &&
                             jobs !== undefined
                         "
-                        class="flex flex-row flex-wrap gap-4"
+                        class="flex flex-row flex-wrap gap-3"
                     >
-                        <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap">
-                            <UCheckbox
+                        <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
+                            <UToggle
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                class="my-auto size-4 rounded border-base-300"
                                 @click="toggleJobListValue(job.name)"
                             />
-                            <span class="ml-1">{{ job.label }}</span>
+                            <span>{{ job.label }}</span>
                         </div>
                     </div>
                     <div
@@ -228,18 +228,24 @@ onBeforeMount(async () => {
                         "
                         class="flex flex-col gap-2"
                     >
-                        <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-2">
-                            <UCheckbox
+                        <div
+                            v-for="job in jobs"
+                            :key="job.name"
+                            class="flex flex-initial flex-row flex-nowrap items-center gap-2"
+                        >
+                            <UToggle
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                class="my-auto size-4 rounded border-base-300"
                                 @change="toggleJobGradeValue(job, $event)"
                             />
-                            <span class="my-auto flex-1">{{ job.label }}</span>
+
+                            <span class="flex-1">{{ job.label }}</span>
 
                             <ClientOnly>
                                 <USelectMenu
+                                    class="flex-1"
                                     nullable
+                                    :disabled="!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                     :options="job.grades"
                                     :search-attributes="['label']"
                                     by="grade"
@@ -250,8 +256,10 @@ onBeforeMount(async () => {
                                     <template #label>
                                         <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
                                             <span class="truncate">{{
-                                                job.grades[(currentValue.validValues.jobGradeList.jobs[job.name] ?? 1) - 1]
-                                                    ?.label ?? $t('common.na')
+                                                job.grades[
+                                                    (currentValue.validValues.jobGradeList.jobs[job.name] ??
+                                                        game.startJobGrade) - 1
+                                                ]?.label ?? $t('common.na')
                                             }}</span>
                                         </template>
                                     </template>
