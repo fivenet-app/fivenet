@@ -11,7 +11,7 @@ RUN rm -rf ./.nuxt/ && \
         -exec rm -rf {} + && \
     apk add --no-cache git && \
     corepack enable && \
-    corepack prepare pnpm@10.0.0 --activate && \
+    corepack prepare pnpm@10.2.0 --activate && \
     pnpm install && \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 
