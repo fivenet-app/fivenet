@@ -54,7 +54,7 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
-    // TODO check availability
+    // TODO display availability check response
     await checkDomainAvailability(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 

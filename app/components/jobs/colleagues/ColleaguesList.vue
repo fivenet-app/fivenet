@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TableColumn } from '#ui/types';
 import { isFuture } from 'date-fns';
 import { z } from 'zod';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
@@ -171,7 +172,7 @@ const columns = [
               sortable: false,
           }
         : undefined,
-].filter((c) => c !== undefined) as { key: string; label: string; sortable?: boolean }[];
+].filter((c) => c !== undefined) as TableColumn[];
 
 const { game } = useAppConfig();
 

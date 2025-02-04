@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TableColumn } from '#ui/types';
 import { vMaska } from 'maska/vue';
 import { z } from 'zod';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
@@ -167,7 +168,7 @@ const columns = [
               sortable: false,
           }
         : undefined,
-].filter((c) => c !== undefined) as { key: string; label: string; class?: string; rowClass?: string; sortable?: boolean }[];
+].filter((c) => c !== undefined) as TableColumn[];
 
 const input = useTemplateRef('input');
 

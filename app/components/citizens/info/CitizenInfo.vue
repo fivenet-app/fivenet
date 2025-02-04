@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabItem } from '#ui/types';
 import CitizenActivityFeed from '~/components/citizens/info/CitizenActivityFeed.vue';
 import CitizenDocuments from '~/components/citizens/info/CitizenDocuments.vue';
 import CitizenProfile from '~/components/citizens/info/CitizenProfile.vue';
@@ -28,7 +29,7 @@ const { attr, can } = useAuth();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
 
-const items: { slot: string; label: string; icon: string; permission: Perms }[] = [
+const items: TabItem[] = [
     {
         slot: 'profile',
         label: t('common.profile'),
@@ -53,7 +54,7 @@ const items: { slot: string; label: string; icon: string; permission: Perms }[] 
         icon: 'i-mdi-pulse',
         permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
-].filter((item) => can(item.permission).value);
+].flatMap((item) => (can(item.permission).value ? [item] : []));
 
 const {
     data: user,
@@ -195,19 +196,19 @@ const isOpen = ref(false);
                             </UContainer>
                         </template>
 
-                        <template v-if="can('DMVService.ListVehicles').value" #vehicles>
+                        <template #vehicles>
                             <UContainer>
                                 <CitizenVehicles :user-id="user.userId" />
                             </UContainer>
                         </template>
 
-                        <template v-if="can('DocStoreService.ListUserDocuments').value" #documents>
+                        <template #documents>
                             <UContainer>
                                 <CitizenDocuments :user-id="user.userId" />
                             </UContainer>
                         </template>
 
-                        <template v-if="can('CitizenStoreService.ListUserActivity').value" #activity>
+                        <template #activity>
                             <UContainer>
                                 <CitizenActivityFeed :user-id="user.userId" />
                             </UContainer>

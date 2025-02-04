@@ -232,7 +232,7 @@ async function initializeRoleView(): Promise<void> {
 
 watch(role, async () => initializeRoleView());
 
-watch(props, () => {
+watch(props, async () => {
     if (!role.value || role.value?.id !== props.roleId) {
         refresh();
     }

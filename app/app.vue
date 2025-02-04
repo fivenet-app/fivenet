@@ -46,13 +46,13 @@ if (APP_VERSION !== settings.version) {
 }
 
 // Set locale and theme colors in app config
-appConfig.ui.primary = design.value.ui.primary;
-appConfig.ui.gray = design.value.ui.gray;
-setTabletColors(appConfig.ui.primary, appConfig.ui.gray);
-
-const onBeforeEnter = async () => {
-    await finalizePendingLocaleChange();
-};
+async function setThemeColors(): Promise<void> {
+    appConfig.ui.primary = design.value.ui.primary;
+    appConfig.ui.gray = design.value.ui.gray;
+    setTabletColors(appConfig.ui.primary, appConfig.ui.gray);
+}
+setThemeColors();
+watch(design.value, setThemeColors);
 
 async function setUserLocale(): Promise<void> {
     logger.info('Setting user locale to', getUserLocale.value);
@@ -62,7 +62,7 @@ async function setUserLocale(): Promise<void> {
     }
 }
 setUserLocale();
-watch(getUserLocale, () => setUserLocale());
+watch(getUserLocale, setUserLocale);
 
 async function clickListener(event: MouseEvent): Promise<void> {
     if (!event.target || event.defaultPrevented) {
@@ -157,6 +157,10 @@ async function handleAuthedStateChange(): Promise<void> {
 
 watch(authedState, handleAuthedStateChange);
 handleAuthedStateChange();
+
+const onBeforeEnter = async () => {
+    await finalizePendingLocaleChange();
+};
 
 const router = useRouter();
 const route = router.currentRoute;

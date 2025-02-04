@@ -16,6 +16,7 @@ const props = withDefaults(
         showAvatar?: boolean;
         showAvatarInName?: boolean;
         trailing?: boolean;
+        showBirthdate?: boolean;
     }>(),
     {
         userId: undefined,
@@ -24,6 +25,7 @@ const props = withDefaults(
         showAvatar: undefined,
         showAvatarInName: false,
         trailing: true,
+        showBirthdate: false,
     },
 );
 
@@ -94,7 +96,12 @@ watchOnce(opened, async () => {
             </template>
 
             <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
-            <span v-else class="truncate" :class="textClass"> {{ user?.firstname }} {{ user?.lastname }} </span>
+            <span v-else class="truncate" :class="textClass">
+                <slot name="name" :user="user">
+                    {{ user?.firstname }} {{ user?.lastname }}
+                    <template v-if="showBirthdate && user.dateofbirth">({{ user.dateofbirth }})</template>
+                </slot>
+            </span>
         </UButton>
 
         <template #panel>

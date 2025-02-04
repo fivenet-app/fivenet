@@ -1,13 +1,13 @@
 <script setup lang="ts">
+import type { TabItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { ClipboardDocument } from '~/store/clipboard';
-import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
+import { getDocument, useClipboardStore } from '~/store/clipboard';
 import type { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { DocReference } from '~~/gen/ts/resources/documents/documents';
+import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 
 const props = defineProps<{
     open: boolean;
@@ -24,21 +24,21 @@ const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
 
-const tabs = ref<{ key: string; label: string; icon: string }[]>([
+const items = ref<TabItem[]>([
     {
-        key: 'current',
         label: t('components.documents.document_managers.view_current'),
         icon: 'i-mdi-file-search',
+        slot: 'current',
     },
     {
-        key: 'clipboard',
         label: t('common.clipboard'),
         icon: 'i-mdi-clipboard-list',
+        slot: 'clipboard',
     },
     {
-        key: 'new',
         label: t('components.documents.document_managers.add_new'),
         icon: 'i-mdi-file-document-plus',
+        slot: 'new',
     },
 ]);
 
@@ -82,7 +82,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
     }
 }
 
-function addReference(doc: DocumentShort, reference: DocReference): void {
+async function addReference(doc: DocumentShort, reference: DocReference): Promise<void> {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
 
@@ -93,7 +93,8 @@ function addReference(doc: DocumentShort, reference: DocReference): void {
         targetDocumentId: doc.id,
         targetDocument: doc,
     });
-    refresh();
+
+    await refresh();
 }
 
 function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference): void {
@@ -104,6 +105,66 @@ function removeReference(id: number): void {
     props.modelValue.delete(id);
     listDocuments();
 }
+
+const columnsCurrent = [
+    {
+        key: 'title',
+        label: t('common.title'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'reference',
+        label: t('common.reference', 1),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+];
+
+const columnsClipboard = [
+    {
+        key: 'title',
+        label: t('common.title'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'createdAt',
+        label: t('common.created_at'),
+    },
+    {
+        key: 'references',
+        label: t('components.documents.document_managers.add_reference'),
+        sortable: false,
+    },
+];
+
+const columnsNew = [
+    {
+        key: 'title',
+        label: t('common.title'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'createdAt',
+        label: t('common.created_at'),
+    },
+    {
+        key: 'references',
+        label: t('components.documents.document_managers.add_reference'),
+        sortable: false,
+    },
+];
 </script>
 
 <template>
@@ -121,329 +182,192 @@ function removeReference(id: number): void {
             </template>
 
             <div>
-                <UTabs :items="tabs">
-                    <template #item="{ item }">
-                        <template v-if="item.key === 'current'">
-                            <div class="flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <table class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.title') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.state') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.creator') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.reference') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.action', 2) }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="[key, reference] in modelValue" :key="key.toString()">
-                                                    <td
-                                                        class="max-w-xl truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ reference.targetDocument?.title }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ reference.targetDocument?.state }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <CitizenInfoPopover
-                                                            :user="reference.targetDocument?.creator"
-                                                            :trailing="false"
-                                                        />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{
-                                                            $t(
-                                                                `enums.docstore.DocReference.${
-                                                                    DocReference[reference.reference]
-                                                                }`,
-                                                            )
-                                                        }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="
-                                                                    $t('components.documents.document_managers.open_document')
-                                                                "
-                                                            >
-                                                                <UButton
-                                                                    :to="{
-                                                                        name: 'documents-id',
-                                                                        params: {
-                                                                            id: reference.targetDocumentId,
-                                                                        },
-                                                                    }"
-                                                                    target="_blank"
-                                                                    variant="link"
-                                                                    icon="i-mdi-open-in-new"
-                                                                />
-                                                            </UTooltip>
+                <UTabs :items="items">
+                    <template #current>
+                        <UTable
+                            :columns="columnsCurrent"
+                            :rows="[...modelValue.values()]"
+                            :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.reference', 2)]) }"
+                        >
+                            <template #title-data="{ row }">
+                                <DocumentInfoPopover :document="row.targetDocument" />
+                            </template>
 
-                                                            <UTooltip
-                                                                :text="
-                                                                    $t(
-                                                                        'components.documents.document_managers.remove_reference',
-                                                                    )
-                                                                "
-                                                            >
-                                                                <UButton
-                                                                    icon="i-mdi-file-document-minus"
-                                                                    color="red"
-                                                                    @click="removeReference(reference.id!)"
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            <template #creator-data="{ row }">
+                                <CitizenInfoPopover :user="row.targetDocument?.creator" :trailing="false" />
+                            </template>
+
+                            <template #reference-data="{ row }">
+                                {{ $t(`enums.docstore.DocReference.${DocReference[row.reference]}`) }}
+                            </template>
+
+                            <template #actions-data="{ row }">
+                                <div class="flex flex-row gap-2">
+                                    <UTooltip :text="$t('components.documents.document_managers.open_document')">
+                                        <UButton
+                                            :to="{
+                                                name: 'documents-id',
+                                                params: {
+                                                    id: row.targetDocumentId,
+                                                },
+                                            }"
+                                            target="_blank"
+                                            variant="link"
+                                            icon="i-mdi-open-in-new"
+                                        />
+                                    </UTooltip>
+
+                                    <UTooltip :text="$t('components.documents.document_managers.remove_reference')">
+                                        <UButton
+                                            icon="i-mdi-file-document-minus"
+                                            variant="link"
+                                            color="red"
+                                            @click="removeReference(row.id!)"
+                                        />
+                                    </UTooltip>
                                 </div>
-                            </div>
-                        </template>
-                        <template v-else-if="item.key === 'clipboard'">
-                            <div class="mt-2 flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <DataNoDataBlock
-                                            v-if="clipboardStore.$state.documents.length === 0"
-                                            :type="$t('common.reference', 2)"
-                                            icon="i-mdi-file-document-multiple"
-                                        />
-                                        <table v-else class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.title') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.state') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.creator') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.created_at') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('components.documents.document_managers.add_reference') }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="document in clipboardStore.$state.documents" :key="document.id">
-                                                    <td
-                                                        class="max-w-xl truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ document.title }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ document.state }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <CitizenInfoPopover
-                                                            :user="getUser(document.creator)"
-                                                            :trailing="false"
-                                                        />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ $t('common.created') }}
-                                                        <GenericTime :value="new Date(Date.parse(document.createdAt ?? ''))" />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.links')"
-                                                            >
-                                                                <UButton
-                                                                    color="blue"
-                                                                    icon="i-mdi-link"
-                                                                    @click="
-                                                                        addReferenceClipboard(document, DocReference.LINKED)
-                                                                    "
-                                                                />
-                                                            </UTooltip>
+                            </template>
+                        </UTable>
+                    </template>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.solves')"
-                                                            >
-                                                                <UButton
-                                                                    color="green"
-                                                                    icon="i-mdi-check"
-                                                                    @click="
-                                                                        addReferenceClipboard(document, DocReference.SOLVES)
-                                                                    "
-                                                                />
-                                                            </UTooltip>
+                    <template #clipboard>
+                        <div>
+                            <UTable
+                                :columns="columnsClipboard"
+                                :rows="clipboardStore.$state.documents"
+                                :empty-state="{
+                                    icon: 'i-mdi-file',
+                                    label: $t('common.not_found', [$t('common.document', 2)]),
+                                }"
+                            >
+                                <template #title-data="{ row }">
+                                    <DocumentInfoPopover :document="getDocument(row)" />
+                                </template>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.closes')"
-                                                            >
-                                                                <UButton
-                                                                    color="red"
-                                                                    icon="i-mdi-close-box"
-                                                                    @click="
-                                                                        addReferenceClipboard(document, DocReference.CLOSES)
-                                                                    "
-                                                                />
-                                                            </UTooltip>
+                                <template #creator-data="{ row }">
+                                    <CitizenInfoPopover :user="row.creator" :trailing="false" />
+                                </template>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.deprecates')"
-                                                            >
-                                                                <UButton
-                                                                    color="amber"
-                                                                    icon="i-mdi-lock-clock"
-                                                                    @click="
-                                                                        addReferenceClipboard(document, DocReference.DEPRECATES)
-                                                                    "
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
-                        <template v-else-if="item.key === 'new'">
-                            <UFormGroup name="title" :label="$t('common.search')">
-                                <UInput
-                                    v-model="queryDoc"
-                                    type="text"
-                                    name="title"
-                                    :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
-                                    leading-icon="i-mdi-search"
-                                />
-                            </UFormGroup>
+                                <template #createdAt-data="{ row }">
+                                    <GenericTime :value="row.createdAt" ago />
+                                </template>
 
-                            <div class="mt-2 flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <DataPendingBlock
-                                            v-if="loading"
-                                            :message="$t('common.loading', [$t('common.document', 2)])"
-                                        />
-                                        <DataErrorBlock
-                                            v-else-if="error"
-                                            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
-                                            :error="error"
-                                            :retry="refresh"
-                                        />
-                                        <DataNoDataBlock
-                                            v-else-if="!documents || documents.length === 0"
-                                            :message="$t('components.citizens.CitizensList.no_citizens')"
-                                        />
-                                        <table v-else class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.title') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.state') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.creator') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.created_at') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('components.documents.document_managers.add_reference') }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="document in documents.slice(0, 8)" :key="document.id">
-                                                    <td
-                                                        class="max-w-xl truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ document.title }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ document.state }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <CitizenInfoPopover :user="document.creator" :trailing="false" />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <GenericTime :value="document.createdAt" ago />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.links')"
-                                                            >
-                                                                <UButton
-                                                                    color="blue"
-                                                                    icon="i-mdi-link"
-                                                                    @click="addReference(document, DocReference.LINKED)"
-                                                                />
-                                                            </UTooltip>
+                                <template #references-data="{ row }">
+                                    <UButtonGroup>
+                                        <UTooltip :text="$t('components.documents.document_managers.links')">
+                                            <UButton
+                                                color="blue"
+                                                icon="i-mdi-link"
+                                                @click="addReferenceClipboard(row, DocReference.LINKED)"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.solves')"
-                                                            >
-                                                                <UButton
-                                                                    color="green"
-                                                                    icon="i-mdi-check"
-                                                                    @click="addReference(document, DocReference.SOLVES)"
-                                                                />
-                                                            </UTooltip>
+                                        <UTooltip :text="$t('components.documents.document_managers.solves')">
+                                            <UButton
+                                                color="green"
+                                                icon="i-mdi-check"
+                                                @click="addReferenceClipboard(row, DocReference.SOLVES)"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.closes')"
-                                                            >
-                                                                <UButton
-                                                                    color="red"
-                                                                    icon="i-mdi-close-box"
-                                                                    @click="addReference(document, DocReference.CLOSES)"
-                                                                />
-                                                            </UTooltip>
+                                        <UTooltip :text="$t('components.documents.document_managers.closes')">
+                                            <UButton
+                                                color="red"
+                                                icon="i-mdi-close-box"
+                                                @click="addReferenceClipboard(row, DocReference.CLOSES)"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.deprecates')"
-                                                            >
-                                                                <UButton
-                                                                    color="amber"
-                                                                    icon="i-mdi-lock-clock"
-                                                                    @click="addReference(document, DocReference.DEPRECATES)"
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                                        <UTooltip :text="$t('components.documents.document_managers.deprecates')">
+                                            <UButton
+                                                color="amber"
+                                                icon="i-mdi-lock-clock"
+                                                @click="addReferenceClipboard(row, DocReference.DEPRECATES)"
+                                            />
+                                        </UTooltip>
+                                    </UButtonGroup>
+                                </template>
+                            </UTable>
+                        </div>
+                    </template>
+
+                    <template #new>
+                        <UFormGroup name="title" :label="$t('common.search')" class="mb-2">
+                            <UInput
+                                v-model="queryDoc"
+                                type="text"
+                                name="title"
+                                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
+                                leading-icon="i-mdi-search"
+                            />
+                        </UFormGroup>
+
+                        <div>
+                            <DataErrorBlock
+                                v-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                                :error="error"
+                                :retry="refresh"
+                            />
+                            <UTable
+                                v-else
+                                :columns="columnsNew"
+                                :loading="loading"
+                                :rows="documents"
+                                :empty-state="{
+                                    icon: 'i-mdi-file',
+                                    label: $t('common.not_found', [$t('common.reference', 2)]),
+                                }"
+                            >
+                                <template #title-data="{ row }">
+                                    <DocumentInfoPopover :document="row" />
+                                </template>
+
+                                <template #creator-data="{ row }">
+                                    <CitizenInfoPopover :user="row.creator" :trailing="false" />
+                                </template>
+
+                                <template #createdAt-data="{ row }">
+                                    <GenericTime :value="row.createdAt" ago />
+                                </template>
+
+                                <template #references-data="{ row }">
+                                    <UButtonGroup>
+                                        <UTooltip :text="$t('components.documents.document_managers.links')">
+                                            <UButton
+                                                color="blue"
+                                                icon="i-mdi-link"
+                                                @click="addReference(row, DocReference.LINKED)"
+                                            />
+                                        </UTooltip>
+
+                                        <UTooltip :text="$t('components.documents.document_managers.solves')">
+                                            <UButton
+                                                color="green"
+                                                icon="i-mdi-check"
+                                                @click="addReference(row, DocReference.SOLVES)"
+                                            />
+                                        </UTooltip>
+
+                                        <UTooltip :text="$t('components.documents.document_managers.closes')">
+                                            <UButton
+                                                color="red"
+                                                icon="i-mdi-close-box"
+                                                @click="addReference(row, DocReference.CLOSES)"
+                                            />
+                                        </UTooltip>
+
+                                        <UTooltip :text="$t('components.documents.document_managers.deprecates')">
+                                            <UButton
+                                                color="amber"
+                                                icon="i-mdi-lock-clock"
+                                                @click="addReference(row, DocReference.DEPRECATES)"
+                                            />
+                                        </UTooltip>
+                                    </UButtonGroup>
+                                </template>
+                            </UTable>
+                        </div>
                     </template>
                 </UTabs>
             </div>

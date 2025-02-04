@@ -65,6 +65,12 @@ export default defineNuxtConfig({
         ],
     },
 
+    postcss: {
+        plugins: {
+            './internal/postcss/postcss-oklch-fallback': {},
+        },
+    },
+
     uiPro: {
         routerOptions: false,
     },

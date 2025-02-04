@@ -1,8 +1,7 @@
 <script setup lang="ts">
+import type { TabItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
@@ -28,21 +27,21 @@ const clipboardStore = useClipboardStore();
 
 const { activeChar } = storeToRefs(authStore);
 
-const tabs = ref<{ key: string; label: string; icon: string }[]>([
+const items = ref<TabItem[]>([
     {
-        key: 'current',
         label: t('components.documents.document_managers.view_current'),
         icon: 'i-mdi-view-list-outline',
+        slot: 'current',
     },
     {
-        key: 'clipboard',
         label: t('common.clipboard'),
         icon: 'i-mdi-clipboard-list',
+        slot: 'clipboard',
     },
     {
-        key: 'new',
         label: t('components.documents.document_managers.add_new'),
         icon: 'i-mdi-account-search',
+        slot: 'new',
     },
 ]);
 
@@ -80,7 +79,7 @@ async function listCitizens(): Promise<User[]> {
     }
 }
 
-function addRelation(user: User, relation: DocRelation): void {
+async function addRelation(user: User, relation: DocRelation): Promise<void> {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1 : keys[keys.length - 1]! + 1;
 
@@ -93,13 +92,66 @@ function addRelation(user: User, relation: DocRelation): void {
         targetUser: user,
         relation,
     });
-    refresh();
+
+    await refresh();
 }
 
-function removeRelation(id: number): void {
+async function removeRelation(id: number): Promise<void> {
     props.modelValue.delete(id);
     refresh();
 }
+
+const columnsCurrent = [
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'relation',
+        label: t('common.relation', 1),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+        sortable: false,
+    },
+];
+
+const columnsClipboard = [
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'job',
+        label: t('common.job'),
+    },
+    {
+        key: 'relations',
+        label: t('components.documents.document_managers.add_relation'),
+        sortable: false,
+    },
+];
+
+const columnsNew = [
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'job',
+        label: t('common.job'),
+    },
+    {
+        key: 'relations',
+        label: t('components.documents.document_managers.add_relation'),
+        sortable: false,
+    },
+];
 </script>
 
 <template>
@@ -117,269 +169,164 @@ function removeRelation(id: number): void {
             </template>
 
             <div>
-                <UTabs :items="tabs">
-                    <template #item="{ item }">
-                        <template v-if="item.key === 'current'">
-                            <div class="flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <table class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.name') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.creator') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.relation', 1) }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.action', 2) }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="[key, relation] in modelValue" :key="key.toString()">
-                                                    <td
-                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        <span class="inline-flex items-center gap-1">
-                                                            <CitizenInfoPopover :user="relation.targetUser" :trailing="false" />
-                                                            ({{ relation.targetUser?.dateofbirth }})
-                                                        </span>
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <CitizenInfoPopover :user="relation.sourceUser" :trailing="false" />
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="
-                                                                    $t('components.documents.document_managers.open_citizen')
-                                                                "
-                                                            >
-                                                                <UButton
-                                                                    :to="{
-                                                                        name: 'citizens-id',
-                                                                        params: {
-                                                                            id: relation.targetUserId,
-                                                                        },
-                                                                    }"
-                                                                    target="_blank"
-                                                                    variant="link"
-                                                                    icon="i-mdi-open-in-new"
-                                                                />
-                                                            </UTooltip>
+                <UTabs :items="items">
+                    <template #current>
+                        <div>
+                            <UTable
+                                :columns="columnsCurrent"
+                                :rows="[...modelValue.values()]"
+                                :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.relation', 2)]) }"
+                            >
+                                <template #name-data="{ row }">
+                                    <CitizenInfoPopover :user="row.targetUser" show-birthdate />
+                                </template>
 
-                                                            <UTooltip
-                                                                :text="
-                                                                    $t('components.documents.document_managers.remove_relation')
-                                                                "
-                                                            >
-                                                                <UButton
-                                                                    variant="link"
-                                                                    icon="i-mdi-account-minus"
-                                                                    color="red"
-                                                                    @click="removeRelation(relation.id!)"
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                                <template #creator-data="{ row }">
+                                    <CitizenInfoPopover :user="row.sourceUser" :trailing="false" />
+                                </template>
 
-                        <template v-else-if="item.key === 'clipboard'">
-                            <div class="mt-2 flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <DataNoDataBlock
-                                            v-if="clipboardStore.$state.users.length === 0"
-                                            :type="$t('common.citizen', 2)"
-                                            icon="i-mdi-account-multiple"
-                                        />
-                                        <table v-else class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.name') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.job', 1) }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('components.documents.document_managers.add_relation') }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="user in clipboardStore.$state.users" :key="user.userId">
-                                                    <td
-                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        <span class="inline-flex items-center gap-1">
-                                                            <CitizenInfoPopover :user="user" :trailing="false" />
-                                                            ({{ user.dateofbirth }})
-                                                        </span>
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ user.jobLabel }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.mentioned')"
-                                                            >
-                                                                <UButton
-                                                                    color="blue"
-                                                                    icon="i-mdi-at"
-                                                                    @click="addRelation(getUser(user), DocRelation.MENTIONED)"
-                                                                />
-                                                            </UTooltip>
+                                <template #relation-data="{ row }">
+                                    {{ $t(`enums.docstore.DocRelation.${DocRelation[row.relation]}`) }}
+                                </template>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.targets')"
-                                                            >
-                                                                <UButton
-                                                                    color="amber"
-                                                                    icon="i-mdi-target"
-                                                                    @click="addRelation(getUser(user), DocRelation.TARGETS)"
-                                                                />
-                                                            </UTooltip>
+                                <template #actions-data="{ row }">
+                                    <UButtonGroup>
+                                        <UTooltip :text="$t('components.documents.document_managers.open_citizen')">
+                                            <UButton
+                                                :to="{
+                                                    name: 'citizens-id',
+                                                    params: {
+                                                        id: row.targetUserId,
+                                                    },
+                                                }"
+                                                target="_blank"
+                                                variant="link"
+                                                icon="i-mdi-open-in-new"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.caused')"
-                                                            >
-                                                                <UButton
-                                                                    color="red"
-                                                                    icon="i-mdi-source-commit-start"
-                                                                    @click="addRelation(getUser(user), DocRelation.CAUSED)"
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                                        <UTooltip :text="$t('components.documents.document_managers.remove_relation')">
+                                            <UButton
+                                                variant="link"
+                                                icon="i-mdi-account-minus"
+                                                color="red"
+                                                @click="removeRelation(row.id!)"
+                                            />
+                                        </UTooltip>
+                                    </UButtonGroup>
+                                </template>
+                            </UTable>
+                        </div>
+                    </template>
 
-                        <template v-else-if="item.key === 'new'">
-                            <UFormGroup name="name" :label="$t('common.search')">
-                                <UInput
-                                    v-model="queryCitizens"
-                                    type="text"
-                                    name="name"
-                                    :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                    leading-icon="i-mdi-search"
-                                />
-                            </UFormGroup>
+                    <template #clipboard>
+                        <div>
+                            <UTable
+                                :columns="columnsClipboard"
+                                :rows="clipboardStore.$state.users"
+                                :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+                            >
+                                <template #name-data="{ row }">
+                                    <CitizenInfoPopover :user="row.targetUser" show-birthdate />
+                                </template>
 
-                            <div class="mt-2 flow-root">
-                                <div class="-my-2 mx-0 overflow-x-auto">
-                                    <div class="inline-block min-w-full py-2 align-middle">
-                                        <DataPendingBlock
-                                            v-if="loading"
-                                            :message="$t('common.loading', [$t('common.citizen', 2)])"
-                                        />
-                                        <DataErrorBlock
-                                            v-else-if="error"
-                                            :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
-                                            :error="error"
-                                            :retry="refresh"
-                                        />
-                                        <DataNoDataBlock
-                                            v-else-if="!citizens || citizens.length === 0"
-                                            :message="$t('components.citizens.CitizensList.no_citizens')"
-                                        />
+                                <template #job-data="{ row }">
+                                    {{ row.jobLabel }}
+                                </template>
 
-                                        <table v-else class="min-w-full divide-y divide-base-200">
-                                            <thead>
-                                                <tr>
-                                                    <th
-                                                        scope="col"
-                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
-                                                    >
-                                                        {{ $t('common.name') }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('common.job', 1) }}
-                                                    </th>
-                                                    <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
-                                                        {{ $t('components.documents.document_managers.add_relation') }}
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <tbody class="divide-y divide-base-500">
-                                                <tr v-for="user in citizens.slice(0, 8)" :key="user.userId">
-                                                    <td
-                                                        class="truncate whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
-                                                    >
-                                                        <span class="inline-flex items-center gap-1">
-                                                            <CitizenInfoPopover :user="user" :trailing="false" />
-                                                            ({{ user.dateofbirth }})
-                                                        </span>
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        {{ user.jobLabel }}
-                                                    </td>
-                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
-                                                        <div class="flex flex-row gap-2">
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.mentioned')"
-                                                            >
-                                                                <UButton
-                                                                    color="blue"
-                                                                    icon="i-mdi-at"
-                                                                    @click="addRelation(user, DocRelation.MENTIONED)"
-                                                                />
-                                                            </UTooltip>
+                                <template #relations-data="{ row }">
+                                    <UButtonGroup>
+                                        <UTooltip :text="$t('components.documents.document_managers.mentioned')">
+                                            <UButton
+                                                color="blue"
+                                                icon="i-mdi-at"
+                                                @click="addRelation(getUser(row), DocRelation.MENTIONED)"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.targets')"
-                                                            >
-                                                                <UButton
-                                                                    color="amber"
-                                                                    icon="i-mdi-target"
-                                                                    @click="addRelation(user, DocRelation.TARGETS)"
-                                                                />
-                                                            </UTooltip>
+                                        <UTooltip :text="$t('components.documents.document_managers.targets')">
+                                            <UButton
+                                                color="amber"
+                                                icon="i-mdi-target"
+                                                @click="addRelation(getUser(row), DocRelation.TARGETS)"
+                                            />
+                                        </UTooltip>
 
-                                                            <UTooltip
-                                                                :text="$t('components.documents.document_managers.caused')"
-                                                            >
-                                                                <UButton
-                                                                    color="red"
-                                                                    icon="i-mdi-source-commit-start"
-                                                                    @click="addRelation(user, DocRelation.CAUSED)"
-                                                                />
-                                                            </UTooltip>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </template>
+                                        <UTooltip :text="$t('components.documents.document_managers.caused')">
+                                            <UButton
+                                                color="red"
+                                                icon="i-mdi-source-commit-start"
+                                                @click="addRelation(getUser(row), DocRelation.CAUSED)"
+                                            />
+                                        </UTooltip>
+                                    </UButtonGroup>
+                                </template>
+                            </UTable>
+                        </div>
+                    </template>
+
+                    <template #new>
+                        <UFormGroup name="name" :label="$t('common.search')" class="mb-2">
+                            <UInput
+                                v-model="queryCitizens"
+                                type="text"
+                                name="name"
+                                :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                                leading-icon="i-mdi-search"
+                            />
+                        </UFormGroup>
+
+                        <div>
+                            <DataErrorBlock
+                                v-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
+                                :error="error"
+                                :retry="refresh"
+                            />
+
+                            <UTable
+                                v-else
+                                :columns="columnsNew"
+                                :rows="citizens"
+                                :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+                            >
+                                <template #name-data="{ row }">
+                                    <CitizenInfoPopover :user="row" show-birthdate />
+                                </template>
+
+                                <template #job-data="{ row }">
+                                    {{ row.jobLabel }}
+                                </template>
+
+                                <template #relations-data="{ row }">
+                                    <UButtonGroup>
+                                        <UTooltip :text="$t('components.documents.document_managers.mentioned')">
+                                            <UButton
+                                                color="blue"
+                                                icon="i-mdi-at"
+                                                @click="addRelation(row, DocRelation.MENTIONED)"
+                                            />
+                                        </UTooltip>
+
+                                        <UTooltip :text="$t('components.documents.document_managers.targets')">
+                                            <UButton
+                                                color="amber"
+                                                icon="i-mdi-target"
+                                                @click="addRelation(row, DocRelation.TARGETS)"
+                                            />
+                                        </UTooltip>
+
+                                        <UTooltip :text="$t('components.documents.document_managers.caused')">
+                                            <UButton
+                                                color="red"
+                                                icon="i-mdi-source-commit-start"
+                                                @click="addRelation(row, DocRelation.CAUSED)"
+                                            />
+                                        </UTooltip>
+                                    </UButtonGroup>
+                                </template>
+                            </UTable>
+                        </div>
                     </template>
                 </UTabs>
             </div>

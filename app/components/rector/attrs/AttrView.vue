@@ -221,7 +221,7 @@ watch(role, async () => {
     initializeRoleView();
 });
 
-watch(props, () => {
+watch(props, async () => {
     if (!role.value || role.value?.id !== props.roleId) {
         refresh();
     }
@@ -266,6 +266,7 @@ async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
     attrList.value.length = 0;
     attrList.value.push(...parsed.attrList);
 
+    state.input = '';
     changed.value = true;
 }
 

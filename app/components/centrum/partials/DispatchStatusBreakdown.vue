@@ -76,39 +76,42 @@ defineOptions({
         <template #panel>
             <div class="p-4">
                 <UIcon v-if="!counts" name="i-mdi-refresh" class="size-4 animate-spin" />
-                <ul v-else role="list" class="text-nowrap text-sm font-normal">
-                    <li>
-                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEW)"
-                            >{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}:</span
-                        >
-                        {{ counts?.unassigned }}
-                    </li>
-                    <li>
-                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)">{{
-                            $t('enums.centrum.StatusDispatch.EN_ROUTE')
-                        }}</span
-                        >: {{ counts.enRoute }}
-                    </li>
-                    <li>
-                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)">{{
-                            $t('enums.centrum.StatusDispatch.ON_SCENE')
-                        }}</span
-                        >: {{ counts.onScene }}
-                    </li>
-                    <li>
-                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)">{{
-                            $t('enums.centrum.StatusDispatch.NEED_ASSISTANCE')
-                        }}</span
-                        >: {{ counts.needAssistance }}
-                    </li>
-                    <li>
-                        <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)"
-                            >{{ $t('enums.centrum.StatusDispatch.COMPLETED') }}:</span
-                        >
-                        {{ counts.completed }}
-                    </li>
-                    <li class="underline">{{ $t('common.total_count') }}: {{ dispatches.size }}</li>
-                </ul>
+                <div v-else class="flex flex-col gap-1 text-nowrap text-sm font-normal">
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.UNASSIGNED)" size="sm">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.UNASSIGNED]}`) }}
+                        </UBadge>
+                        <p class="font-semibold">{{ counts?.unassigned }}</p>
+                    </div>
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)" size="sm">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.EN_ROUTE]}`) }}
+                        </UBadge>
+                        <p class="font-semibold">{{ counts.enRoute }}</p>
+                    </div>
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.ON_SCENE)" size="sm">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.ON_SCENE]}`) }}
+                        </UBadge>
+                        <p class="font-semibold">{{ counts.onScene }}</p>
+                    </div>
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.NEED_ASSISTANCE)" size="sm">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.NEED_ASSISTANCE]}`) }}
+                        </UBadge>
+                        <p class="font-semibold">{{ counts.needAssistance }}</p>
+                    </div>
+                    <div class="inline-flex justify-between gap-1.5">
+                        <UBadge class="px-2 py-1" :class="dispatchStatusToBGColor(StatusDispatch.COMPLETED)" size="sm">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[StatusDispatch.COMPLETED]}`) }}
+                        </UBadge>
+                        <p class="font-semibold">{{ counts.completed }}</p>
+                    </div>
+                    <div class="flex justify-between font-semibold">
+                        <span>{{ $t('common.total_count') }}</span>
+                        <span>{{ dispatches.size }}</span>
+                    </div>
+                </div>
             </div>
         </template>
     </UPopover>

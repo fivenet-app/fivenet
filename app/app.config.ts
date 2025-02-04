@@ -1,6 +1,7 @@
 import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, WebsiteConfig } from '~/typings';
 
 export default defineAppConfig({
+    // BEGIN Server provided App Config
     version: '',
 
     defaultLocale: 'en',
@@ -21,6 +22,7 @@ export default defineAppConfig({
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
     } as GameConfig,
+    // END Server provided App Config
 
     // File upload related config
     fileUpload: {

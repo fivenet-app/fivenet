@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { TabItem } from '#ui/types';
 import QualificationsList from '~/components/qualifications/QualificationsList.vue';
 import QualificationsRequestsList from '~/components/qualifications/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/QualificationsResultsList.vue';
@@ -16,7 +17,7 @@ const { t } = useI18n();
 
 const { can } = useAuth();
 
-const items: { key: string; slot: string; label: string; icon: string }[] = [
+const items: TabItem[] = [
     {
         key: 'yours',
         slot: 'yours',

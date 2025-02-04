@@ -3,6 +3,7 @@ import type { RoutePathSchema } from '@typed-router';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
+import { reminderTimes } from './helpers';
 
 const { t } = useI18n();
 
@@ -13,6 +14,7 @@ const { startpage, design, streamerMode, audio, calendar } = storeToRefs(setting
 
 const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
     { name: t('common.overview'), path: '/overview' },
+    { name: t('common.mail'), path: '/mail', permission: 'MailerService.ListEmails' },
     { name: t('pages.citizens.title'), path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
     { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'DMVService.ListVehicles' },
     { name: t('pages.documents.title'), path: '/documents', permission: 'DocStoreService.ListDocuments' },
@@ -26,8 +28,6 @@ const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] =
 const selectedHomepage = ref<(typeof homepages)[0]>();
 watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
 
-onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
-
 const designDocumentsListStyle = ref(design.value.documents.listStyle === 'double');
 
 watch(designDocumentsListStyle, async () => {
@@ -38,16 +38,6 @@ watch(designDocumentsListStyle, async () => {
     }
 });
 
-const { ui } = useAppConfig();
-
-watch(design.value, async () => {
-    ui.primary = design.value.ui.primary;
-    ui.gray = design.value.ui.gray;
-
-    setTabletColors(ui.primary, ui.gray);
-});
-
-const reminderTimes = [300, 600, 900, 1800];
 const calendarReminderTimes = [
     { label: t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.start'), value: 0 },
     ...reminderTimes.map((n) => ({ label: `${n / 60} ${t('common.time_ago.minute', n / 60)}`, value: n })),
@@ -83,6 +73,8 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
+
+onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
 </script>
 
 <template>
