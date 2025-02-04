@@ -29,12 +29,12 @@ func (s *State) ListDispatches(ctx context.Context, job string) ([]*centrum.Disp
 
 		// Remove broken dispatches
 		if dsp.Id == 0 || dsp.Job == "" {
-			dId, err := strconv.Atoi(id)
+			dispatchId, err := strconv.ParseInt(id, 10, 64)
 			if err != nil {
 				return ds, false
 			}
 
-			if err := s.DeleteDispatch(ctx, job, uint64(dId)); err != nil {
+			if err := s.DeleteDispatch(ctx, job, uint64(dispatchId)); err != nil {
 				return ds, false
 			}
 

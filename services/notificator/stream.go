@@ -210,7 +210,7 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 				if len(parts) < 2 {
 					continue
 				}
-				grade, err := strconv.Atoi(parts[1])
+				grade, err := strconv.ParseInt(parts[1], 10, 32)
 				if err != nil {
 					continue
 				}
