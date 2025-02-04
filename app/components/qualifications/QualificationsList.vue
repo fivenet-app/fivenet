@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationsListEntry from '~/components/qualifications/QualificationsListEntry.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import SortButton from '../partials/SortButton.vue';
 
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));

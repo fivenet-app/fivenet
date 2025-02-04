@@ -3,10 +3,10 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import QualificationsResultsListEntry from '~/components/qualifications/QualificationsResultsListEntry.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import SortButton from '../partials/SortButton.vue';
 
 const props = withDefaults(
     defineProps<{

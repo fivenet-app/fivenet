@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import TiptapEditor from '../partials/editor/TiptapEditor.vue';
+import DocumentCommentEntry from './DocumentCommentEntry.vue';
 
 const props = withDefaults(
     defineProps<{

@@ -81,6 +81,7 @@ const modal = useModal();
                     <template #title>
                         <USkeleton class="h-6 w-[275px]" />
                     </template>
+
                     <template #description>
                         <USkeleton class="h-11 w-[350px]" />
                     </template>
@@ -93,7 +94,7 @@ const modal = useModal();
             :error="error"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
+        <DataNoDataBlock v-else-if="!categories || categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
 
         <div v-else class="flex justify-center">
             <CardsList :items="items" @selected="categorySelected($event)" />

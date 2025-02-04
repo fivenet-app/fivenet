@@ -3,6 +3,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import type { ClassProp } from '~/typings';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
 
@@ -17,6 +18,7 @@ const props = withDefaults(
         hideTrailing?: boolean;
         hideCategory?: boolean;
         loadOnOpen?: boolean;
+        buttonClass?: ClassProp;
     }>(),
     {
         documentId: undefined,
@@ -24,6 +26,7 @@ const props = withDefaults(
         hideTrailing: false,
         hideCategory: false,
         loadOnOpen: false,
+        buttonClass: '',
     },
 );
 
@@ -76,6 +79,7 @@ watchOnce(opened, async () => {
             variant="link"
             :padded="false"
             class="line-clamp-2 inline-flex w-full items-center gap-1 whitespace-normal break-words p-px"
+            :class="buttonClass"
             :trailing-icon="!hideTrailing ? 'i-mdi-chevron-down' : undefined"
             @click="opened = true"
         >

@@ -8,13 +8,13 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { JobProps } from '~~/gen/ts/resources/users/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_settings';
-import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t } = useI18n();
 

@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -19,9 +22,6 @@ import type {
     UpdateQualificationRequest,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import AccessManager from '../partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums, type AccessType } from '../partials/access/helpers';
-import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import ExamEditor from './exam/ExamEditor.vue';
 
 const props = defineProps<{

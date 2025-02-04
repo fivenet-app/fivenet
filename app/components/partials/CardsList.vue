@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import type { CardElement } from '~/utils/types';
+import { availableIcons, fallbackIcon } from './icons';
 
 withDefaults(
     defineProps<{
@@ -38,7 +38,7 @@ const { can } = useAuth();
             <template v-if="showIcon && module.icon" #icon>
                 <template v-if="!module.icon.startsWith('i-')">
                     <component
-                        :is="markerIcons.find((item) => item.name === module.icon) ?? markerFallbackIcon"
+                        :is="availableIcons.find((item) => item.name === module.icon) ?? fallbackIcon"
                         v-if="module.icon"
                         class="text-primary h-10 w-10 shrink-0"
                         :class="module.color && `text-${module.color}-500 dark:text-${module.color}-400`"

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCookiesStore } from '~/store/cookies';
 import { useSettingsStore } from '~/store/settings';
-import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     modelValue: boolean;

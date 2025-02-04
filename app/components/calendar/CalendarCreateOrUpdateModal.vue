@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -9,9 +12,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type CalendarJobAccess, type CalendarUserAccess } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import ColorPickerTW from '../partials/ColorPickerTW.vue';
-import AccessManager from '../partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '../partials/access/helpers';
 
 const props = defineProps<{
     calendarId?: number;

@@ -1,20 +1,23 @@
 <script lang="ts" setup>
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import DocumentActivityList from '~/components/documents/DocumentActivityList.vue';
-import DocumentComments from '~/components/documents/DocumentComments.vue';
+import DocumentActivityList from '~/components/documents/activity/DocumentActivityList.vue';
+import DocumentComments from '~/components/documents/comments/DocumentComments.vue';
 import DocumentReferences from '~/components/documents/DocumentReferences.vue';
 import DocumentRelations from '~/components/documents/DocumentRelations.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
 import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
+import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
@@ -23,9 +26,6 @@ import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
-import AccessBadges from '../partials/access/AccessBadges.vue';
-import HTMLContent from '../partials/content/HTMLContent.vue';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import DocumentReminderModal from './DocumentReminderModal.vue';
 
 const props = defineProps<{

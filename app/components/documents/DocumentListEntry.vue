@@ -2,9 +2,9 @@
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 
 defineProps<{
     document: DocumentShort;

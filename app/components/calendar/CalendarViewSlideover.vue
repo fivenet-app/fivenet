@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import AccessBadges from '~/components/partials/access/AccessBadges.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -7,7 +8,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useCalendarStore } from '~/store/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
-import AccessBadges from '../partials/access/AccessBadges.vue';
 import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
 import { checkCalendarAccess } from './helpers';
 

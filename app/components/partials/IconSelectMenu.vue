@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { DefineComponent } from 'vue';
-import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
+import { availableIcons, fallbackIcon as defaultIcon } from './icons';
 
 const props = withDefaults(
     defineProps<{
@@ -10,7 +10,7 @@ const props = withDefaults(
     }>(),
     {
         color: undefined,
-        fallbackIcon: markerFallbackIcon,
+        fallbackIcon: defaultIcon,
     },
 );
 
@@ -24,11 +24,11 @@ defineOptions({
 
 const icon = useVModel(props, 'modelValue', emit);
 
-async function markerIconSearch(query: string): Promise<DefineComponent[]> {
+async function iconSearch(query: string): Promise<DefineComponent[]> {
     // Remove spaces from query as icon names don't have spaces
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
-    return markerIcons.filter((icon) => {
+    return availableIcons.filter((icon) => {
         if (count < 35 && icon.name?.toLowerCase()?.startsWith(query)) {
             count++;
             return true;
@@ -43,14 +43,14 @@ async function markerIconSearch(query: string): Promise<DefineComponent[]> {
         <USelectMenu
             v-bind="$attrs"
             v-model="icon"
-            :searchable="markerIconSearch"
+            :searchable="iconSearch"
             searchable-lazy
             :searchable-placeholder="$t('common.search_field')"
             value-attribute="name"
         >
             <template #label>
                 <component
-                    :is="markerIcons.find((item) => item.name === icon) ?? fallbackIcon"
+                    :is="availableIcons.find((item) => item.name === icon) ?? fallbackIcon"
                     class="size-5"
                     :style="{ fill: color }"
                 />

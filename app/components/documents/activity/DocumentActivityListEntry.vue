@@ -5,7 +5,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { DocActivity } from '~~/gen/ts/resources/documents/activity';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import { getDocAtivityIcon } from './helpers';
+import { getDocAtivityIcon } from '../helpers';
 
 defineProps<{
     entry: DocActivity;

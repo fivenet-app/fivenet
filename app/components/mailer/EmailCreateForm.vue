@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { type Access, AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetEmailProposalsResponse } from '~~/gen/ts/services/mailer/mailer';
-import AccessManager from '../partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '../partials/access/helpers';
-import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = withDefaults(
     defineProps<{

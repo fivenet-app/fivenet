@@ -6,6 +6,7 @@ import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -16,7 +17,6 @@ import { EventType } from '~~/gen/ts/resources/rector/audit';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
-import DateRangePickerPopoverClient from '../partials/DateRangePickerPopover.client.vue';
 import { eventTypeToBadgeColor } from './helpers';
 
 const { d, t } = useI18n();

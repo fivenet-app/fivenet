@@ -2,6 +2,7 @@
 import type { TableColumn } from '#ui/types';
 import { vMaska } from 'maska/vue';
 import { z } from 'zod';
+import { sexToTextColor } from '~/components/partials/citizens/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -11,7 +12,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import { sexToTextColor } from '../partials/citizens/helpers';
 
 const { t } = useI18n();
 

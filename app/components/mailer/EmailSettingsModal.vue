@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/store/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
-import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 import { canAccess } from './helpers';
 
 withDefaults(

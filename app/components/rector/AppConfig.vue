@@ -4,6 +4,7 @@ import type { LocaleObject } from '@nuxtjs/i18n';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
@@ -12,7 +13,6 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/rector/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
-import StreamerModeAlert from '../partials/StreamerModeAlert.vue';
 
 const { t, locales } = useI18n();
 

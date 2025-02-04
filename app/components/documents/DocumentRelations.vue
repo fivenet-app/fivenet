@@ -3,10 +3,10 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import { relationToBadge } from './helpers';
 
 const props = withDefaults(

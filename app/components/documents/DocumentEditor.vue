@@ -4,6 +4,10 @@ import { z } from 'zod';
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess, logger } from '~/components/documents/helpers';
+import AccessManager from '~/components/partials/access/AccessManager.vue';
+import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
+import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
+import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -17,10 +21,6 @@ import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documen
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
-import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
-import AccessManager from '../partials/access/AccessManager.vue';
-import { enumToAccessLevelEnums } from '../partials/access/helpers';
-import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const props = defineProps<{
     documentId?: number;
@@ -551,9 +551,9 @@ logger.info(
                                                     >
                                                         <component
                                                             :is="
-                                                                markerIcons.find(
+                                                                availableIcons.find(
                                                                     (item) => item.name === state.category?.icon,
-                                                                ) ?? markerFallbackIcon
+                                                                ) ?? fallbackIcon
                                                             "
                                                             v-if="state.category.icon"
                                                             class="size-5"
@@ -567,8 +567,8 @@ logger.info(
                                                     <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                                         <component
                                                             :is="
-                                                                markerIcons.find((item) => item.name === option.icon) ??
-                                                                markerFallbackIcon
+                                                                availableIcons.find((item) => item.name === option.icon) ??
+                                                                fallbackIcon
                                                             "
                                                             v-if="option.icon"
                                                             class="size-5"

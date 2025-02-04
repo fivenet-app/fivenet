@@ -3,7 +3,10 @@ export default defineNuxtPlugin(() => {
         return;
     }
 
-    // toSorted polyfill
+    /* FiveM NUI uses Chromium Embedded Framework version 103.x - As of now requires following polyfills:
+     *
+     * toSorted polyfill
+     */
     if (!Array.prototype.toSorted) {
         console.info('Adding Polyfill');
         Object.defineProperty(Array.prototype, 'toSorted', {

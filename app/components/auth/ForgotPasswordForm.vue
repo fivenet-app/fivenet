@@ -2,9 +2,9 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     modelValue: boolean;

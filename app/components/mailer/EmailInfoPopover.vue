@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { ButtonColor, ButtonVariant } from '#ui/types';
+import EmailBlock from '~/components/partials/citizens/EmailBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { ClassProp } from '~/typings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import EmailBlock from '../partials/citizens/EmailBlock.vue';
 
 const props = withDefaults(
     defineProps<{

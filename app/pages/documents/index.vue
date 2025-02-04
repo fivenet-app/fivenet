@@ -4,7 +4,6 @@ import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue'
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import type { ListDocumentPinsResponse } from '~~/gen/ts/services/docstore/docstore';
 
@@ -126,58 +125,41 @@ const isOpen = ref(false);
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardPanelContent>
-                <div class="flex flex-1 flex-col">
-                    <UDashboardSection
-                        :ui="{
-                            wrapper: 'divide-y space-y-0 *:pt-0 first:*:pt-0 first:*:pt-0 mb-6',
-                        }"
-                        :title="$t('common.pinned_document', 2)"
-                    >
-                        <div>
-                            <DataErrorBlock
-                                v-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
-                                :error="error"
-                                :retry="refresh"
+            <UDashboardPanelContent class="p-2">
+                <UDashboardSection
+                    :ui="{
+                        wrapper: 'divide-y space-y-0 *:pt-2 first:*:pt-2 first:*:pt-2 mb-6',
+                    }"
+                    :title="$t('common.pinned_document', 2)"
+                >
+                    <div class="flex flex-col gap-2">
+                        <DataErrorBlock
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
+                            :error="error"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock
+                            v-else-if="!data || data.documents.length === 0"
+                            icon="i-mdi-pin-outline"
+                            :type="$t('common.pinned_document', 0)"
+                        />
+
+                        <template v-else-if="loading">
+                            <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
+                        </template>
+
+                        <template v-else>
+                            <DocumentInfoPopover
+                                v-for="doc in data?.documents"
+                                :key="doc.id"
+                                :document="doc"
+                                button-class="line-clamp-3 hyphens-auto break-words flex flex-col items-start"
+                                hide-trailing
                             />
-                            <DataNoDataBlock
-                                v-else-if="!data || data.documents.length === 0"
-                                icon="i-mdi-pin-outline"
-                                :type="$t('common.pinned_document', 0)"
-                            />
-
-                            <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
-                                <template v-if="loading">
-                                    <li v-for="idx in 10" :key="idx">
-                                        <USkeleton class="h-16 w-full" />
-                                    </li>
-                                </template>
-
-                                <template v-else>
-                                    <li v-for="doc in data?.documents" :key="doc.id" class="flex flex-col px-1">
-                                        <DocumentInfoPopover :document="doc">
-                                            <template #title="{ document, loading: docLoading }">
-                                                <USkeleton v-if="!document && docLoading" class="h-8 w-[125px]" />
-
-                                                <div v-else class="flex flex-col">
-                                                    <DocumentCategoryBadge
-                                                        v-if="document?.category"
-                                                        :category="document?.category"
-                                                    />
-
-                                                    <span class="line-clamp-3 hyphens-auto break-words text-left">
-                                                        {{ document?.title }}
-                                                    </span>
-                                                </div>
-                                            </template>
-                                        </DocumentInfoPopover>
-                                    </li>
-                                </template>
-                            </ul>
-                        </div>
-                    </UDashboardSection>
-                </div>
+                        </template>
+                    </div>
+                </UDashboardSection>
             </UDashboardPanelContent>
 
             <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />

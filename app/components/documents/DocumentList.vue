@@ -5,7 +5,10 @@ import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
+import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
 import type { OpenClose } from '~/typings';
@@ -13,9 +16,6 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
-import DateRangePickerPopoverClient from '../partials/DateRangePickerPopover.client.vue';
-import SortButton from '../partials/SortButton.vue';
 
 const { t } = useI18n();
 
@@ -191,8 +191,8 @@ defineShortcuts({
                                                 <span class="inline-flex gap-1" :class="`bg-${category.color}-500`">
                                                     <component
                                                         :is="
-                                                            markerIcons.find((item) => item.name === category?.icon) ??
-                                                            markerFallbackIcon
+                                                            availableIcons.find((item) => item.name === category?.icon) ??
+                                                            fallbackIcon
                                                         "
                                                         v-if="category.icon"
                                                         class="size-5"
@@ -207,9 +207,7 @@ defineShortcuts({
                                     <template #option="{ option }">
                                         <span class="inline-flex gap-1" :class="`bg-${option.color}-500`">
                                             <component
-                                                :is="
-                                                    markerIcons.find((item) => item.name === option.icon) ?? markerFallbackIcon
-                                                "
+                                                :is="availableIcons.find((item) => item.name === option.icon) ?? fallbackIcon"
                                                 v-if="option.icon"
                                                 class="size-5"
                                             />

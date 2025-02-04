@@ -4,10 +4,10 @@ import { HelpIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
-import IconSelectMenu from '../partials/IconSelectMenu.vue';
 
 const props = defineProps<{
     location?: Coordinate;
