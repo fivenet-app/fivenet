@@ -128,22 +128,6 @@ func (m *RegisterDomainResponse) Sanitize() error {
 	return nil
 }
 
-func (m *TransferDomainRequest) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
-func (m *TransferDomainResponse) Sanitize() error {
-	if m == nil {
-		return nil
-	}
-
-	return nil
-}
-
 func (m *UpdateDomainRequest) Sanitize() error {
 	if m == nil {
 		return nil

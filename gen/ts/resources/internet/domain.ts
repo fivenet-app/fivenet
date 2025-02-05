@@ -81,11 +81,23 @@ export interface Domain {
      */
     name: string;
     /**
-     * @generated from protobuf field: optional string creator_job = 9;
+     * @generated from protobuf field: optional string transfer_code = 9;
+     */
+    transferCode?: string;
+    /**
+     * @generated from protobuf field: optional string approver_job = 10;
+     */
+    approverJob?: string;
+    /**
+     * @generated from protobuf field: optional int32 approver_id = 11;
+     */
+    approverId?: number;
+    /**
+     * @generated from protobuf field: optional string creator_job = 12;
      */
     creatorJob?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
+     * @generated from protobuf field: optional int32 creator_id = 13;
      */
     creatorId?: number;
 }
@@ -192,8 +204,11 @@ class Domain$Type extends MessageType<Domain> {
             { no: 6, name: "tld", kind: "message", T: () => TLD },
             { no: 7, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 9, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 9, name: "transfer_code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10", pattern: "^[0-9A-Z]{6}$" } } } },
+            { no: 10, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<Domain>): Domain {
@@ -235,10 +250,19 @@ class Domain$Type extends MessageType<Domain> {
                 case /* string name */ 8:
                     message.name = reader.string();
                     break;
-                case /* optional string creator_job */ 9:
+                case /* optional string transfer_code */ 9:
+                    message.transferCode = reader.string();
+                    break;
+                case /* optional string approver_job */ 10:
+                    message.approverJob = reader.string();
+                    break;
+                case /* optional int32 approver_id */ 11:
+                    message.approverId = reader.int32();
+                    break;
+                case /* optional string creator_job */ 12:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional int32 creator_id */ 10:
+                case /* optional int32 creator_id */ 13:
                     message.creatorId = reader.int32();
                     break;
                 default:
@@ -277,12 +301,21 @@ class Domain$Type extends MessageType<Domain> {
         /* string name = 8; */
         if (message.name !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.name);
-        /* optional string creator_job = 9; */
+        /* optional string transfer_code = 9; */
+        if (message.transferCode !== undefined)
+            writer.tag(9, WireType.LengthDelimited).string(message.transferCode);
+        /* optional string approver_job = 10; */
+        if (message.approverJob !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.approverJob);
+        /* optional int32 approver_id = 11; */
+        if (message.approverId !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.approverId);
+        /* optional string creator_job = 12; */
         if (message.creatorJob !== undefined)
-            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional int32 creator_id = 10; */
+            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 13; */
         if (message.creatorId !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
+            writer.tag(13, WireType.Varint).int32(message.creatorId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -15,11 +15,16 @@ import (
 
 var tDomains = table.FivenetInternetDomains.AS("domain")
 
-func cleanupDomainName(in string) string {
-	return strings.ToLower(strings.Replace(
+func cleanAndSplitDomain(in string) (string, string) {
+	full := strings.ToLower(strings.Replace(
 		strings.TrimSpace(in),
 		"www.", "", 1),
 	)
+
+	idx := strings.LastIndex(full, ".")
+	tld := full[idx+1:]
+	domain := full[:idx]
+	return domain, tld
 }
 
 func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition jet.BoolExpression) (*internet.Domain, error) {
@@ -35,13 +40,20 @@ func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition
 			tDomains.TldID,
 			tDomains.Name,
 			tDomains.Active,
+			tDomains.TransferCode,
 			tDomains.ApproverJob,
 			tDomains.ApproverID,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,
+			tTLDs.ID,
+			tTLDs.Name,
+			tTLDs.Internal,
 		).
 		FROM(
 			tDomains.
+				INNER_JOIN(tTLDs,
+					tTLDs.ID.EQ(tDomains.TldID),
+				).
 				LEFT_JOIN(tCreator,
 					tDomains.CreatorID.EQ(tCreator.ID),
 				),
@@ -64,9 +76,13 @@ func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition
 }
 
 func (s *Server) getDomainByName(ctx context.Context, tx *sql.DB, name string) (*internet.Domain, error) {
+	domain, tld := cleanAndSplitDomain(name)
 	return s.getDomainByCondition(ctx, tx,
-		tDomains.Name.EQ(jet.String(cleanupDomainName(name))).
-			AND(tDomains.DeletedAt.IS_NULL()),
+		jet.AND(
+			tTLDs.Name.EQ(jet.String(tld)),
+			tDomains.Name.EQ(jet.String(domain)),
+			tDomains.DeletedAt.IS_NULL(),
+		),
 	)
 }
 

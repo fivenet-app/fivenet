@@ -38,9 +38,13 @@ export interface ListTLDsResponse {
  */
 export interface CheckDomainAvailabilityRequest {
     /**
+     * @generated from protobuf field: uint64 tld_id = 1;
+     */
+    tldId: number;
+    /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string name = 1;
+     * @generated from protobuf field: string name = 2;
      */
     name: string;
 }
@@ -52,6 +56,10 @@ export interface CheckDomainAvailabilityResponse {
      * @generated from protobuf field: bool available = 1;
      */
     available: boolean;
+    /**
+     * @generated from protobuf field: optional bool transferable = 2;
+     */
+    transferable?: boolean;
 }
 /**
  * @generated from protobuf message services.internet.ListDomainsRequest
@@ -85,6 +93,12 @@ export interface RegisterDomainRequest {
      * @generated from protobuf field: string name = 1;
      */
     name: string;
+    /**
+     * In case a domain will be transfered
+     *
+     * @generated from protobuf field: optional string transfer_code = 2;
+     */
+    transferCode?: string;
 }
 /**
  * @generated from protobuf message services.internet.RegisterDomainResponse
@@ -112,24 +126,6 @@ export interface UpdateDomainResponse {
      * @generated from protobuf field: resources.internet.Domain domain = 1;
      */
     domain?: Domain;
-}
-/**
- * @generated from protobuf message services.internet.TransferDomainRequest
- */
-export interface TransferDomainRequest {
-    /**
-     * @generated from protobuf field: uint64 domain_id = 1;
-     */
-    domainId: number;
-    /**
-     * @generated from protobuf field: optional bool accept = 2;
-     */
-    accept?: boolean;
-}
-/**
- * @generated from protobuf message services.internet.TransferDomainResponse
- */
-export interface TransferDomainResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTLDsRequest$Type extends MessageType<ListTLDsRequest> {
@@ -228,11 +224,13 @@ export const ListTLDsResponse = new ListTLDsResponse$Type();
 class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailabilityRequest> {
     constructor() {
         super("services.internet.CheckDomainAvailabilityRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } }
+            { no: 1, name: "tld_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } }
         ]);
     }
     create(value?: PartialMessage<CheckDomainAvailabilityRequest>): CheckDomainAvailabilityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.tldId = 0;
         message.name = "";
         if (value !== undefined)
             reflectionMergePartial<CheckDomainAvailabilityRequest>(this, message, value);
@@ -243,7 +241,10 @@ class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailab
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string name */ 1:
+                case /* uint64 tld_id */ 1:
+                    message.tldId = reader.uint64().toNumber();
+                    break;
+                case /* string name */ 2:
                     message.name = reader.string();
                     break;
                 default:
@@ -258,9 +259,12 @@ class CheckDomainAvailabilityRequest$Type extends MessageType<CheckDomainAvailab
         return message;
     }
     internalBinaryWrite(message: CheckDomainAvailabilityRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string name = 1; */
+        /* uint64 tld_id = 1; */
+        if (message.tldId !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.tldId);
+        /* string name = 2; */
         if (message.name !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.name);
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -275,7 +279,8 @@ export const CheckDomainAvailabilityRequest = new CheckDomainAvailabilityRequest
 class CheckDomainAvailabilityResponse$Type extends MessageType<CheckDomainAvailabilityResponse> {
     constructor() {
         super("services.internet.CheckDomainAvailabilityResponse", [
-            { no: 1, name: "available", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "available", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "transferable", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<CheckDomainAvailabilityResponse>): CheckDomainAvailabilityResponse {
@@ -293,6 +298,9 @@ class CheckDomainAvailabilityResponse$Type extends MessageType<CheckDomainAvaila
                 case /* bool available */ 1:
                     message.available = reader.bool();
                     break;
+                case /* optional bool transferable */ 2:
+                    message.transferable = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -308,6 +316,9 @@ class CheckDomainAvailabilityResponse$Type extends MessageType<CheckDomainAvaila
         /* bool available = 1; */
         if (message.available !== false)
             writer.tag(1, WireType.Varint).bool(message.available);
+        /* optional bool transferable = 2; */
+        if (message.transferable !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.transferable);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -422,7 +433,8 @@ export const ListDomainsResponse = new ListDomainsResponse$Type();
 class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
     constructor() {
         super("services.internet.RegisterDomainRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } }
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } },
+            { no: 2, name: "transfer_code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10", pattern: "^[0-9A-Z]{6}$" } } } }
         ]);
     }
     create(value?: PartialMessage<RegisterDomainRequest>): RegisterDomainRequest {
@@ -440,6 +452,9 @@ class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
                 case /* string name */ 1:
                     message.name = reader.string();
                     break;
+                case /* optional string transfer_code */ 2:
+                    message.transferCode = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -455,6 +470,9 @@ class RegisterDomainRequest$Type extends MessageType<RegisterDomainRequest> {
         /* string name = 1; */
         if (message.name !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* optional string transfer_code = 2; */
+        if (message.transferCode !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.transferCode);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -603,85 +621,6 @@ class UpdateDomainResponse$Type extends MessageType<UpdateDomainResponse> {
  * @generated MessageType for protobuf message services.internet.UpdateDomainResponse
  */
 export const UpdateDomainResponse = new UpdateDomainResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TransferDomainRequest$Type extends MessageType<TransferDomainRequest> {
-    constructor() {
-        super("services.internet.TransferDomainRequest", [
-            { no: 1, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "accept", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<TransferDomainRequest>): TransferDomainRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.domainId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<TransferDomainRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TransferDomainRequest): TransferDomainRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 domain_id */ 1:
-                    message.domainId = reader.uint64().toNumber();
-                    break;
-                case /* optional bool accept */ 2:
-                    message.accept = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: TransferDomainRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 domain_id = 1; */
-        if (message.domainId !== 0)
-            writer.tag(1, WireType.Varint).uint64(message.domainId);
-        /* optional bool accept = 2; */
-        if (message.accept !== undefined)
-            writer.tag(2, WireType.Varint).bool(message.accept);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.internet.TransferDomainRequest
- */
-export const TransferDomainRequest = new TransferDomainRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TransferDomainResponse$Type extends MessageType<TransferDomainResponse> {
-    constructor() {
-        super("services.internet.TransferDomainResponse", []);
-    }
-    create(value?: PartialMessage<TransferDomainResponse>): TransferDomainResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<TransferDomainResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TransferDomainResponse): TransferDomainResponse {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: TransferDomainResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.internet.TransferDomainResponse
- */
-export const TransferDomainResponse = new TransferDomainResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.internet.DomainService
  */
@@ -690,6 +629,5 @@ export const DomainService = new ServiceType("services.internet.DomainService", 
     { name: "CheckDomainAvailability", options: {}, I: CheckDomainAvailabilityRequest, O: CheckDomainAvailabilityResponse },
     { name: "ListDomains", options: {}, I: ListDomainsRequest, O: ListDomainsResponse },
     { name: "RegisterDomain", options: {}, I: RegisterDomainRequest, O: RegisterDomainResponse },
-    { name: "UpdateDomain", options: {}, I: UpdateDomainRequest, O: UpdateDomainResponse },
-    { name: "TransferDomain", options: {}, I: TransferDomainRequest, O: TransferDomainResponse }
+    { name: "UpdateDomain", options: {}, I: UpdateDomainRequest, O: UpdateDomainResponse }
 ]);

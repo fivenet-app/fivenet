@@ -937,8 +937,6 @@
     - [ListTLDsResponse](#services-internet-ListTLDsResponse)
     - [RegisterDomainRequest](#services-internet-RegisterDomainRequest)
     - [RegisterDomainResponse](#services-internet-RegisterDomainResponse)
-    - [TransferDomainRequest](#services-internet-TransferDomainRequest)
-    - [TransferDomainResponse](#services-internet-TransferDomainResponse)
     - [UpdateDomainRequest](#services-internet-UpdateDomainRequest)
     - [UpdateDomainResponse](#services-internet-UpdateDomainResponse)
   
@@ -7246,6 +7244,9 @@ TODO
 | tld | [TLD](#resources-internet-TLD) | optional |  |
 | active | [bool](#bool) |  |  |
 | name | [string](#string) |  |  |
+| transfer_code | [string](#string) | optional |  |
+| approver_job | [string](#string) | optional |  |
+| approver_id | [int32](#int32) | optional |  |
 | creator_job | [string](#string) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 
@@ -13922,6 +13923,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| tld_id | [uint64](#uint64) |  |  |
 | name | [string](#string) |  | @sanitize: method=StripTags |
 
 
@@ -13938,6 +13940,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | available | [bool](#bool) |  |  |
+| transferable | [bool](#bool) | optional |  |
 
 
 
@@ -14014,6 +14017,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | name | [string](#string) |  | @sanitize: method=StripTags |
+| transfer_code | [string](#string) | optional | In case a domain will be transfered |
 
 
 
@@ -14029,32 +14033,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | domain | [resources.internet.Domain](#resources-internet-Domain) |  |  |
-
-
-
-
-
-
-<a name="services-internet-TransferDomainRequest"></a>
-
-### TransferDomainRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| domain_id | [uint64](#uint64) |  |  |
-| accept | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-internet-TransferDomainResponse"></a>
-
-### TransferDomainResponse
-
 
 
 
@@ -14109,7 +14087,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ListDomains | [ListDomainsRequest](#services-internet-ListDomainsRequest) | [ListDomainsResponse](#services-internet-ListDomainsResponse) | @perm: Name=Any |
 | RegisterDomain | [RegisterDomainRequest](#services-internet-RegisterDomainRequest) | [RegisterDomainResponse](#services-internet-RegisterDomainResponse) | @perm: Name=Any |
 | UpdateDomain | [UpdateDomainRequest](#services-internet-UpdateDomainRequest) | [UpdateDomainResponse](#services-internet-UpdateDomainResponse) | @perm: Name=Any |
-| TransferDomain | [TransferDomainRequest](#services-internet-TransferDomainRequest) | [TransferDomainResponse](#services-internet-TransferDomainResponse) | @perm: Name=Any |
 
  <!-- end services -->
 

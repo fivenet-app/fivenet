@@ -18,7 +18,6 @@ var PermsRemap = map[string]string{
 	"DomainService/ListDomains":             "Any",
 	"DomainService/ListTLDs":                "Any",
 	"DomainService/RegisterDomain":          "Any",
-	"DomainService/TransferDomain":          "Any",
 	"DomainService/UpdateDomain":            "Any",
 
 	// Service: InternetService

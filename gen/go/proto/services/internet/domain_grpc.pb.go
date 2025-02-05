@@ -24,7 +24,6 @@ const (
 	DomainService_ListDomains_FullMethodName             = "/services.internet.DomainService/ListDomains"
 	DomainService_RegisterDomain_FullMethodName          = "/services.internet.DomainService/RegisterDomain"
 	DomainService_UpdateDomain_FullMethodName            = "/services.internet.DomainService/UpdateDomain"
-	DomainService_TransferDomain_FullMethodName          = "/services.internet.DomainService/TransferDomain"
 )
 
 // DomainServiceClient is the client API for DomainService service.
@@ -41,8 +40,6 @@ type DomainServiceClient interface {
 	RegisterDomain(ctx context.Context, in *RegisterDomainRequest, opts ...grpc.CallOption) (*RegisterDomainResponse, error)
 	// @perm: Name=Any
 	UpdateDomain(ctx context.Context, in *UpdateDomainRequest, opts ...grpc.CallOption) (*UpdateDomainResponse, error)
-	// @perm: Name=Any
-	TransferDomain(ctx context.Context, in *TransferDomainRequest, opts ...grpc.CallOption) (*TransferDomainResponse, error)
 }
 
 type domainServiceClient struct {
@@ -103,16 +100,6 @@ func (c *domainServiceClient) UpdateDomain(ctx context.Context, in *UpdateDomain
 	return out, nil
 }
 
-func (c *domainServiceClient) TransferDomain(ctx context.Context, in *TransferDomainRequest, opts ...grpc.CallOption) (*TransferDomainResponse, error) {
-	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(TransferDomainResponse)
-	err := c.cc.Invoke(ctx, DomainService_TransferDomain_FullMethodName, in, out, cOpts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // DomainServiceServer is the server API for DomainService service.
 // All implementations must embed UnimplementedDomainServiceServer
 // for forward compatibility.
@@ -127,8 +114,6 @@ type DomainServiceServer interface {
 	RegisterDomain(context.Context, *RegisterDomainRequest) (*RegisterDomainResponse, error)
 	// @perm: Name=Any
 	UpdateDomain(context.Context, *UpdateDomainRequest) (*UpdateDomainResponse, error)
-	// @perm: Name=Any
-	TransferDomain(context.Context, *TransferDomainRequest) (*TransferDomainResponse, error)
 	mustEmbedUnimplementedDomainServiceServer()
 }
 
@@ -153,9 +138,6 @@ func (UnimplementedDomainServiceServer) RegisterDomain(context.Context, *Registe
 }
 func (UnimplementedDomainServiceServer) UpdateDomain(context.Context, *UpdateDomainRequest) (*UpdateDomainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDomain not implemented")
-}
-func (UnimplementedDomainServiceServer) TransferDomain(context.Context, *TransferDomainRequest) (*TransferDomainResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TransferDomain not implemented")
 }
 func (UnimplementedDomainServiceServer) mustEmbedUnimplementedDomainServiceServer() {}
 func (UnimplementedDomainServiceServer) testEmbeddedByValue()                       {}
@@ -268,24 +250,6 @@ func _DomainService_UpdateDomain_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_TransferDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TransferDomainRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DomainServiceServer).TransferDomain(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DomainService_TransferDomain_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).TransferDomain(ctx, req.(*TransferDomainRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // DomainService_ServiceDesc is the grpc.ServiceDesc for DomainService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -312,10 +276,6 @@ var DomainService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDomain",
 			Handler:    _DomainService_UpdateDomain_Handler,
-		},
-		{
-			MethodName: "TransferDomain",
-			Handler:    _DomainService_TransferDomain_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

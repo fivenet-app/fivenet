@@ -17,8 +17,9 @@ message ListTLDsResponse {
 }
 
 message CheckDomainAvailabilityRequest {
+  uint64 tld_id = 1;
   // @sanitize: method=StripTags
-  string name = 1 [(validate.rules).string = {
+  string name = 2 [(validate.rules).string = {
     min_len: 3,
     max_len: 60
   }];
@@ -26,6 +27,24 @@ message CheckDomainAvailabilityRequest {
 
 message CheckDomainAvailabilityResponse {
   bool available = 1;
+  optional bool transferable = 2;
+}
+
+message RegisterDomainRequest {
+  // @sanitize: method=StripTags
+  string name = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 60
+  }];
+  // In case a domain will be transfered
+  optional string transfer_code = 2 [(validate.rules).string = {
+    len: 10,
+    pattern: "^[0-9A-Z]{6}$",
+  }];
+}
+
+message RegisterDomainResponse {
+  resources.internet.Domain domain = 1;
 }
 
 message ListDomainsRequest {
@@ -37,18 +56,6 @@ message ListDomainsResponse {
   repeated resources.internet.Domain domains = 2;
 }
 
-message RegisterDomainRequest {
-  // @sanitize: method=StripTags
-  string name = 1 [(validate.rules).string = {
-    min_len: 3,
-    max_len: 60
-  }];
-}
-
-message RegisterDomainResponse {
-  resources.internet.Domain domain = 1;
-}
-
 message UpdateDomainRequest {
   resources.internet.Domain domain = 1;
 }
@@ -57,26 +64,17 @@ message UpdateDomainResponse {
   resources.internet.Domain domain = 1;
 }
 
-message TransferDomainRequest {
-  uint64 domain_id = 1;
-  optional bool accept = 2;
-}
-
-message TransferDomainResponse {}
-
 service DomainService {
   // @perm: Name=Any
   rpc ListTLDs(ListTLDsRequest) returns (ListTLDsResponse);
 
   // @perm: Name=Any
   rpc CheckDomainAvailability(CheckDomainAvailabilityRequest) returns (CheckDomainAvailabilityResponse);
+  // @perm: Name=Any
+  rpc RegisterDomain(RegisterDomainRequest) returns (RegisterDomainResponse);
 
   // @perm: Name=Any
   rpc ListDomains(ListDomainsRequest) returns (ListDomainsResponse);
   // @perm: Name=Any
-  rpc RegisterDomain(RegisterDomainRequest) returns (RegisterDomainResponse);
-  // @perm: Name=Any
   rpc UpdateDomain(UpdateDomainRequest) returns (UpdateDomainResponse);
-  // @perm: Name=Any
-  rpc TransferDomain(TransferDomainRequest) returns (TransferDomainResponse);
 }

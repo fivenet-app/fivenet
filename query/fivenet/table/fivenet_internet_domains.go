@@ -17,18 +17,19 @@ type fivenetInternetDomainsTable struct {
 	mysql.Table
 
 	// Columns
-	ID          mysql.ColumnInteger
-	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
-	DeletedAt   mysql.ColumnTimestamp
-	ExpiresAt   mysql.ColumnTimestamp
-	TldID       mysql.ColumnInteger
-	Name        mysql.ColumnString
-	Active      mysql.ColumnBool
-	ApproverJob mysql.ColumnString
-	ApproverID  mysql.ColumnInteger
-	CreatorJob  mysql.ColumnString
-	CreatorID   mysql.ColumnInteger
+	ID           mysql.ColumnInteger
+	CreatedAt    mysql.ColumnTimestamp
+	UpdatedAt    mysql.ColumnTimestamp
+	DeletedAt    mysql.ColumnTimestamp
+	ExpiresAt    mysql.ColumnTimestamp
+	TldID        mysql.ColumnInteger
+	Name         mysql.ColumnString
+	Active       mysql.ColumnBool
+	TransferCode mysql.ColumnString
+	ApproverJob  mysql.ColumnString
+	ApproverID   mysql.ColumnInteger
+	CreatorJob   mysql.ColumnString
+	CreatorID    mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,38 +70,40 @@ func newFivenetInternetDomainsTable(schemaName, tableName, alias string) *Fivene
 
 func newFivenetInternetDomainsTableImpl(schemaName, tableName, alias string) fivenetInternetDomainsTable {
 	var (
-		IDColumn          = mysql.IntegerColumn("id")
-		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
-		ExpiresAtColumn   = mysql.TimestampColumn("expires_at")
-		TldIDColumn       = mysql.IntegerColumn("tld_id")
-		NameColumn        = mysql.StringColumn("name")
-		ActiveColumn      = mysql.BoolColumn("active")
-		ApproverJobColumn = mysql.StringColumn("approver_job")
-		ApproverIDColumn  = mysql.IntegerColumn("approver_id")
-		CreatorJobColumn  = mysql.StringColumn("creator_job")
-		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, TldIDColumn, NameColumn, ActiveColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, TldIDColumn, NameColumn, ActiveColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
+		IDColumn           = mysql.IntegerColumn("id")
+		CreatedAtColumn    = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
+		ExpiresAtColumn    = mysql.TimestampColumn("expires_at")
+		TldIDColumn        = mysql.IntegerColumn("tld_id")
+		NameColumn         = mysql.StringColumn("name")
+		ActiveColumn       = mysql.BoolColumn("active")
+		TransferCodeColumn = mysql.StringColumn("transfer_code")
+		ApproverJobColumn  = mysql.StringColumn("approver_job")
+		ApproverIDColumn   = mysql.IntegerColumn("approver_id")
+		CreatorJobColumn   = mysql.StringColumn("creator_job")
+		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, TldIDColumn, NameColumn, ActiveColumn, TransferCodeColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, ExpiresAtColumn, TldIDColumn, NameColumn, ActiveColumn, TransferCodeColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
 	)
 
 	return fivenetInternetDomainsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:          IDColumn,
-		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
-		DeletedAt:   DeletedAtColumn,
-		ExpiresAt:   ExpiresAtColumn,
-		TldID:       TldIDColumn,
-		Name:        NameColumn,
-		Active:      ActiveColumn,
-		ApproverJob: ApproverJobColumn,
-		ApproverID:  ApproverIDColumn,
-		CreatorJob:  CreatorJobColumn,
-		CreatorID:   CreatorIDColumn,
+		ID:           IDColumn,
+		CreatedAt:    CreatedAtColumn,
+		UpdatedAt:    UpdatedAtColumn,
+		DeletedAt:    DeletedAtColumn,
+		ExpiresAt:    ExpiresAtColumn,
+		TldID:        TldIDColumn,
+		Name:         NameColumn,
+		Active:       ActiveColumn,
+		TransferCode: TransferCodeColumn,
+		ApproverJob:  ApproverJobColumn,
+		ApproverID:   ApproverIDColumn,
+		CreatorJob:   CreatorJobColumn,
+		CreatorID:    CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -29,6 +29,12 @@ message Domain {
   optional TLD tld = 6;
   bool active = 7;
   string name = 8 [(validate.rules).string.max_len = 128];
-  optional string creator_job = 9;
-  optional int32 creator_id = 10;
+  optional string transfer_code = 9 [(validate.rules).string = {
+    len: 10,
+    pattern: "^[0-9A-Z]{6}$",
+  }];
+  optional string approver_job = 10;
+  optional int32 approver_id = 11;
+  optional string creator_job = 12;
+  optional int32 creator_id = 13;
 }

@@ -12,16 +12,17 @@ import (
 )
 
 type FivenetInternetDomains struct {
-	ID          uint64     `sql:"primary_key" json:"id"`
-	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
-	DeletedAt   *time.Time `json:"deleted_at"`
-	ExpiresAt   *time.Time `json:"expires_at"`
-	TldID       uint64     `json:"tld_id"`
-	Name        string     `json:"name"`
-	Active      *bool      `json:"active"`
-	ApproverJob *string    `json:"approver_job"`
-	ApproverID  *int32     `json:"approver_id"`
-	CreatorJob  *string    `json:"creator_job"`
-	CreatorID   *int32     `json:"creator_id"`
+	ID           uint64     `sql:"primary_key" json:"id"`
+	CreatedAt    *time.Time `json:"created_at"`
+	UpdatedAt    *time.Time `json:"updated_at"`
+	DeletedAt    *time.Time `json:"deleted_at"`
+	ExpiresAt    *time.Time `json:"expires_at"`
+	TldID        uint64     `json:"tld_id"`
+	Name         string     `json:"name"`
+	Active       *bool      `json:"active"`
+	TransferCode *string    `json:"transfer_code"`
+	ApproverJob  *string    `json:"approver_job"`
+	ApproverID   *int32     `json:"approver_id"`
+	CreatorJob   *string    `json:"creator_job"`
+	CreatorID    *int32     `json:"creator_id"`
 }

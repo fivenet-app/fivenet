@@ -70,7 +70,7 @@ func newFivenetJobsTimeclockTableImpl(schemaName, tableName, alias string) fiven
 		EndTimeColumn   = mysql.TimestampColumn("end_time")
 		SpentTimeColumn = mysql.FloatColumn("spent_time")
 		allColumns      = mysql.ColumnList{JobColumn, UserIDColumn, DateColumn, StartTimeColumn, EndTimeColumn, SpentTimeColumn}
-		mutableColumns  = mysql.ColumnList{StartTimeColumn, EndTimeColumn, SpentTimeColumn}
+		mutableColumns  = mysql.ColumnList{JobColumn, UserIDColumn, DateColumn, StartTimeColumn, EndTimeColumn, SpentTimeColumn}
 	)
 
 	return fivenetJobsTimeclockTable{

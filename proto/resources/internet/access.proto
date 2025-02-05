@@ -16,12 +16,12 @@ enum AccessLevel {
   ACCESS_LEVEL_OWNER = 4;
 }
 
-message DomainAccess {
-  repeated DomainJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
-  repeated DomainUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
+message PageAccess {
+  repeated PageJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
+  repeated PageUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
 }
 
-message DomainJobAccess {
+message PageJobAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 3; // @gotags: alias:"page_id"
@@ -32,7 +32,7 @@ message DomainJobAccess {
   AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
 }
 
-message DomainUserAccess {
+message PageUserAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 target_id = 3; // @gotags: alias:"page_id"

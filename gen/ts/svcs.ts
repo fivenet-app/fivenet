@@ -221,7 +221,6 @@ export const grpcMethods = [
 	'DomainService/ListDomains',
 	'DomainService/RegisterDomain',
 	'DomainService/UpdateDomain',
-	'DomainService/TransferDomain',
 	'InternetService/Search',
 	'InternetService/GetPage',
 	'JobsConductService/ListConductEntries',

@@ -12,9 +12,9 @@ import (
 )
 
 type FivenetJobsTimeclock struct {
-	Job       string     `sql:"primary_key" json:"job"`
-	UserID    int32      `sql:"primary_key" json:"user_id"`
-	Date      time.Time  `sql:"primary_key" json:"date"`
+	Job       string     `json:"job"`
+	UserID    int32      `json:"user_id"`
+	Date      time.Time  `json:"date"`
 	StartTime *time.Time `json:"start_time"`
 	EndTime   *time.Time `json:"end_time"`
 	SpentTime *float64   `json:"spent_time"`

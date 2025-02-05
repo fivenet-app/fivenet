@@ -413,6 +413,41 @@ func (m *Domain) validate(all bool) error {
 
 	}
 
+	if m.TransferCode != nil {
+
+		if utf8.RuneCountInString(m.GetTransferCode()) != 10 {
+			err := DomainValidationError{
+				field:  "TransferCode",
+				reason: "value length must be 10 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_Domain_TransferCode_Pattern.MatchString(m.GetTransferCode()) {
+			err := DomainValidationError{
+				field:  "TransferCode",
+				reason: "value does not match regex pattern \"^[0-9A-Z]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.ApproverJob != nil {
+		// no validation rules for ApproverJob
+	}
+
+	if m.ApproverId != nil {
+		// no validation rules for ApproverId
+	}
+
 	if m.CreatorJob != nil {
 		// no validation rules for CreatorJob
 	}
@@ -497,3 +532,5 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DomainValidationError{}
+
+var _Domain_TransferCode_Pattern = regexp.MustCompile("^[0-9A-Z]{6}$")

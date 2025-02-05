@@ -4,8 +4,6 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { DomainService } from "./domain";
-import type { TransferDomainResponse } from "./domain";
-import type { TransferDomainRequest } from "./domain";
 import type { UpdateDomainResponse } from "./domain";
 import type { UpdateDomainRequest } from "./domain";
 import type { RegisterDomainResponse } from "./domain";
@@ -53,12 +51,6 @@ export interface IDomainServiceClient {
      * @generated from protobuf rpc: UpdateDomain(services.internet.UpdateDomainRequest) returns (services.internet.UpdateDomainResponse);
      */
     updateDomain(input: UpdateDomainRequest, options?: RpcOptions): UnaryCall<UpdateDomainRequest, UpdateDomainResponse>;
-    /**
-     * @perm: Name=Any
-     *
-     * @generated from protobuf rpc: TransferDomain(services.internet.TransferDomainRequest) returns (services.internet.TransferDomainResponse);
-     */
-    transferDomain(input: TransferDomainRequest, options?: RpcOptions): UnaryCall<TransferDomainRequest, TransferDomainResponse>;
 }
 /**
  * @generated from protobuf service services.internet.DomainService
@@ -113,14 +105,5 @@ export class DomainServiceClient implements IDomainServiceClient, ServiceInfo {
     updateDomain(input: UpdateDomainRequest, options?: RpcOptions): UnaryCall<UpdateDomainRequest, UpdateDomainResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateDomainRequest, UpdateDomainResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Any
-     *
-     * @generated from protobuf rpc: TransferDomain(services.internet.TransferDomainRequest) returns (services.internet.TransferDomainResponse);
-     */
-    transferDomain(input: TransferDomainRequest, options?: RpcOptions): UnaryCall<TransferDomainRequest, TransferDomainResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<TransferDomainRequest, TransferDomainResponse>("unary", this._transport, method, opt, input);
     }
 }

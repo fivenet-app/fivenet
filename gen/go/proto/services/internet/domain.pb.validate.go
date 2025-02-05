@@ -295,6 +295,8 @@ func (m *CheckDomainAvailabilityRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for TldId
+
 	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 60 {
 		err := CheckDomainAvailabilityRequestValidationError{
 			field:  "Name",
@@ -410,6 +412,10 @@ func (m *CheckDomainAvailabilityResponse) validate(all bool) error {
 	var errors []error
 
 	// no validation rules for Available
+
+	if m.Transferable != nil {
+		// no validation rules for Transferable
+	}
 
 	if len(errors) > 0 {
 		return CheckDomainAvailabilityResponseMultiError(errors)
@@ -843,6 +849,33 @@ func (m *RegisterDomainRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.TransferCode != nil {
+
+		if utf8.RuneCountInString(m.GetTransferCode()) != 10 {
+			err := RegisterDomainRequestValidationError{
+				field:  "TransferCode",
+				reason: "value length must be 10 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_RegisterDomainRequest_TransferCode_Pattern.MatchString(m.GetTransferCode()) {
+			err := RegisterDomainRequestValidationError{
+				field:  "TransferCode",
+				reason: "value does not match regex pattern \"^[0-9A-Z]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return RegisterDomainRequestMultiError(errors)
 	}
@@ -922,6 +955,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RegisterDomainRequestValidationError{}
+
+var _RegisterDomainRequest_TransferCode_Pattern = regexp.MustCompile("^[0-9A-Z]{6}$")
 
 // Validate checks the field values on RegisterDomainResponse with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1315,213 +1350,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateDomainResponseValidationError{}
-
-// Validate checks the field values on TransferDomainRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *TransferDomainRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on TransferDomainRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// TransferDomainRequestMultiError, or nil if none found.
-func (m *TransferDomainRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *TransferDomainRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for DomainId
-
-	if m.Accept != nil {
-		// no validation rules for Accept
-	}
-
-	if len(errors) > 0 {
-		return TransferDomainRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// TransferDomainRequestMultiError is an error wrapping multiple validation
-// errors returned by TransferDomainRequest.ValidateAll() if the designated
-// constraints aren't met.
-type TransferDomainRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m TransferDomainRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m TransferDomainRequestMultiError) AllErrors() []error { return m }
-
-// TransferDomainRequestValidationError is the validation error returned by
-// TransferDomainRequest.Validate if the designated constraints aren't met.
-type TransferDomainRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e TransferDomainRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e TransferDomainRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e TransferDomainRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e TransferDomainRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e TransferDomainRequestValidationError) ErrorName() string {
-	return "TransferDomainRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e TransferDomainRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sTransferDomainRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = TransferDomainRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = TransferDomainRequestValidationError{}
-
-// Validate checks the field values on TransferDomainResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *TransferDomainResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on TransferDomainResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// TransferDomainResponseMultiError, or nil if none found.
-func (m *TransferDomainResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *TransferDomainResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if len(errors) > 0 {
-		return TransferDomainResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// TransferDomainResponseMultiError is an error wrapping multiple validation
-// errors returned by TransferDomainResponse.ValidateAll() if the designated
-// constraints aren't met.
-type TransferDomainResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m TransferDomainResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m TransferDomainResponseMultiError) AllErrors() []error { return m }
-
-// TransferDomainResponseValidationError is the validation error returned by
-// TransferDomainResponse.Validate if the designated constraints aren't met.
-type TransferDomainResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e TransferDomainResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e TransferDomainResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e TransferDomainResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e TransferDomainResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e TransferDomainResponseValidationError) ErrorName() string {
-	return "TransferDomainResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e TransferDomainResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sTransferDomainResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = TransferDomainResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = TransferDomainResponseValidationError{}

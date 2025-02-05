@@ -19,9 +19,22 @@ import (
 )
 
 func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.CheckDomainAvailabilityRequest) (*pbinternet.CheckDomainAvailabilityResponse, error) {
-	// TODO
+	domain, err := s.getDomainByName(ctx, s.db, req.Name)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
 
-	return nil, nil
+	// Check if domain is transferable (transfer code set)
+	var transferable *bool
+	if domain != nil && domain.TransferCode != nil {
+		boolTrue := true
+		transferable = &boolTrue
+	}
+
+	return &pbinternet.CheckDomainAvailabilityResponse{
+		Available:    domain == nil,
+		Transferable: transferable,
+	}, nil
 }
 
 func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsRequest) (*pbinternet.ListDomainsResponse, error) {
@@ -108,16 +121,19 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	// TODO handle domain transfers
+
 	stmt := tDomains.
 		INSERT(
-			tDomains.Active,
+			tDomains.TldID,
 			tDomains.Name,
+			tDomains.Active,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,
 		).
 		VALUES(
-			false,
 			req.Name,
+			false,
 			userInfo.Job,
 			userInfo.UserId,
 		)
@@ -200,10 +216,4 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	return &pbinternet.UpdateDomainResponse{
 		Domain: domain,
 	}, nil
-}
-
-func (s *Server) TransferDomain(ctx context.Context, req *pbinternet.TransferDomainRequest) (*pbinternet.TransferDomainResponse, error) {
-	// TODO send notification to target user and set flag on domain
-
-	return nil, nil
 }
