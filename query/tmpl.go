@@ -3,6 +3,7 @@ package query
 import (
 	"bytes"
 	"embed"
+	"io"
 	"io/fs"
 	"text/template"
 )
@@ -15,23 +16,26 @@ type templateFile struct {
 	data any
 }
 
-func (t *templateFile) Read(name []byte) (int, error) {
-	if _, err := t.File.Read(name); err != nil {
+func (t *templateFile) Read(p []byte) (int, error) {
+	out, err := io.ReadAll(t.File)
+	if err != nil {
 		return 0, err
 	}
+	if len(out) == 0 {
+		return 0, io.EOF
+	}
 
-	tmpl, err := template.New("").Parse(string(name))
+	tmpl, err := template.New("").Parse(string(out))
 	if err != nil {
 		return 0, err
 	}
 
-	buf := new(bytes.Buffer)
-	err = tmpl.Execute(buf, t.data)
-	if err != nil {
+	var buf bytes.Buffer
+	if err := tmpl.Execute(&buf, t.data); err != nil {
 		return 0, err
 	}
 
-	return copy(name, buf.Bytes()), nil
+	return copy(p, buf.Bytes()), nil
 }
 
 type templateFS struct {
