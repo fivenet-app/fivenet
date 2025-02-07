@@ -20,7 +20,8 @@ export interface UseFileSelectionOptions {
 
 /**
  * File selection composable
- * Copied from <https://github.com/vueuse/vueuse/issues/4085#issuecomment-2221179677>
+ * Based on <https://github.com/vueuse/vueuse/issues/4085#issuecomment-2221179677>
+ * by [adamreisnz](https://github.com/adamreisnz)
  */
 export function useFileSelection(options: UseFileSelectionOptions) {
     // Extract options
@@ -60,7 +61,7 @@ export function useFileSelection(options: UseFileSelectionOptions) {
         onFiles(files);
     };
 
-    //Setup dropzone and file dialog composables
+    // Setup dropzone and file dialog composables
     const { isOverDropZone } = useDropZone(dropzone, { dataTypes: allowedDataTypes, onDrop });
     const { onChange, open } = useFileDialog({
         accept: accept.value,
