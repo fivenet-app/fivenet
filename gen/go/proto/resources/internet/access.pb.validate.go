@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DomainAccess with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on PageAccess with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *DomainAccess) Validate() error {
+func (m *PageAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DomainAccess with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in DomainAccessMultiError, or
+// ValidateAll checks the field values on PageAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageAccessMultiError, or
 // nil if none found.
-func (m *DomainAccess) ValidateAll() error {
+func (m *PageAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DomainAccess) validate(all bool) error {
+func (m *PageAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -58,7 +58,7 @@ func (m *DomainAccess) validate(all bool) error {
 	var errors []error
 
 	if len(m.GetJobs()) > 20 {
-		err := DomainAccessValidationError{
+		err := PageAccessValidationError{
 			field:  "Jobs",
 			reason: "value must contain no more than 20 item(s)",
 		}
@@ -75,7 +75,7 @@ func (m *DomainAccess) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DomainAccessValidationError{
+					errors = append(errors, PageAccessValidationError{
 						field:  fmt.Sprintf("Jobs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -83,7 +83,7 @@ func (m *DomainAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DomainAccessValidationError{
+					errors = append(errors, PageAccessValidationError{
 						field:  fmt.Sprintf("Jobs[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -92,7 +92,7 @@ func (m *DomainAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DomainAccessValidationError{
+				return PageAccessValidationError{
 					field:  fmt.Sprintf("Jobs[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -103,7 +103,7 @@ func (m *DomainAccess) validate(all bool) error {
 	}
 
 	if len(m.GetUsers()) > 20 {
-		err := DomainAccessValidationError{
+		err := PageAccessValidationError{
 			field:  "Users",
 			reason: "value must contain no more than 20 item(s)",
 		}
@@ -120,7 +120,7 @@ func (m *DomainAccess) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DomainAccessValidationError{
+					errors = append(errors, PageAccessValidationError{
 						field:  fmt.Sprintf("Users[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -128,7 +128,7 @@ func (m *DomainAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DomainAccessValidationError{
+					errors = append(errors, PageAccessValidationError{
 						field:  fmt.Sprintf("Users[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -137,7 +137,7 @@ func (m *DomainAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DomainAccessValidationError{
+				return PageAccessValidationError{
 					field:  fmt.Sprintf("Users[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -148,18 +148,18 @@ func (m *DomainAccess) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DomainAccessMultiError(errors)
+		return PageAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// DomainAccessMultiError is an error wrapping multiple validation errors
-// returned by DomainAccess.ValidateAll() if the designated constraints aren't met.
-type DomainAccessMultiError []error
+// PageAccessMultiError is an error wrapping multiple validation errors
+// returned by PageAccess.ValidateAll() if the designated constraints aren't met.
+type PageAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DomainAccessMultiError) Error() string {
+func (m PageAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -168,11 +168,11 @@ func (m DomainAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DomainAccessMultiError) AllErrors() []error { return m }
+func (m PageAccessMultiError) AllErrors() []error { return m }
 
-// DomainAccessValidationError is the validation error returned by
-// DomainAccess.Validate if the designated constraints aren't met.
-type DomainAccessValidationError struct {
+// PageAccessValidationError is the validation error returned by
+// PageAccess.Validate if the designated constraints aren't met.
+type PageAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -180,22 +180,22 @@ type DomainAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e DomainAccessValidationError) Field() string { return e.field }
+func (e PageAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DomainAccessValidationError) Reason() string { return e.reason }
+func (e PageAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DomainAccessValidationError) Cause() error { return e.cause }
+func (e PageAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DomainAccessValidationError) Key() bool { return e.key }
+func (e PageAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DomainAccessValidationError) ErrorName() string { return "DomainAccessValidationError" }
+func (e PageAccessValidationError) ErrorName() string { return "PageAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DomainAccessValidationError) Error() string {
+func (e PageAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -207,14 +207,14 @@ func (e DomainAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDomainAccess.%s: %s%s",
+		"invalid %sPageAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DomainAccessValidationError{}
+var _ error = PageAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -222,24 +222,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DomainAccessValidationError{}
+} = PageAccessValidationError{}
 
-// Validate checks the field values on DomainJobAccess with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DomainJobAccess) Validate() error {
+// Validate checks the field values on PageJobAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PageJobAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DomainJobAccess with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DomainJobAccessMultiError, or nil if none found.
-func (m *DomainJobAccess) ValidateAll() error {
+// ValidateAll checks the field values on PageJobAccess with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageJobAccessMultiError, or
+// nil if none found.
+func (m *PageJobAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DomainJobAccess) validate(all bool) error {
+func (m *PageJobAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -251,7 +251,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 	// no validation rules for TargetId
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
-		err := DomainJobAccessValidationError{
+		err := PageJobAccessValidationError{
 			field:  "Job",
 			reason: "value length must be at most 20 runes",
 		}
@@ -262,7 +262,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 	}
 
 	if m.GetMinimumGrade() < 0 {
-		err := DomainJobAccessValidationError{
+		err := PageJobAccessValidationError{
 			field:  "MinimumGrade",
 			reason: "value must be greater than or equal to 0",
 		}
@@ -273,7 +273,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 	}
 
 	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
-		err := DomainJobAccessValidationError{
+		err := PageJobAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
 		}
@@ -289,7 +289,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DomainJobAccessValidationError{
+					errors = append(errors, PageJobAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -297,7 +297,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DomainJobAccessValidationError{
+					errors = append(errors, PageJobAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -306,7 +306,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DomainJobAccessValidationError{
+				return PageJobAccessValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -319,7 +319,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
-			err := DomainJobAccessValidationError{
+			err := PageJobAccessValidationError{
 				field:  "JobLabel",
 				reason: "value length must be at most 50 runes",
 			}
@@ -334,7 +334,7 @@ func (m *DomainJobAccess) validate(all bool) error {
 	if m.JobGradeLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobGradeLabel()) > 50 {
-			err := DomainJobAccessValidationError{
+			err := PageJobAccessValidationError{
 				field:  "JobGradeLabel",
 				reason: "value length must be at most 50 runes",
 			}
@@ -347,19 +347,19 @@ func (m *DomainJobAccess) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DomainJobAccessMultiError(errors)
+		return PageJobAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// DomainJobAccessMultiError is an error wrapping multiple validation errors
-// returned by DomainJobAccess.ValidateAll() if the designated constraints
+// PageJobAccessMultiError is an error wrapping multiple validation errors
+// returned by PageJobAccess.ValidateAll() if the designated constraints
 // aren't met.
-type DomainJobAccessMultiError []error
+type PageJobAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DomainJobAccessMultiError) Error() string {
+func (m PageJobAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -368,11 +368,11 @@ func (m DomainJobAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DomainJobAccessMultiError) AllErrors() []error { return m }
+func (m PageJobAccessMultiError) AllErrors() []error { return m }
 
-// DomainJobAccessValidationError is the validation error returned by
-// DomainJobAccess.Validate if the designated constraints aren't met.
-type DomainJobAccessValidationError struct {
+// PageJobAccessValidationError is the validation error returned by
+// PageJobAccess.Validate if the designated constraints aren't met.
+type PageJobAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -380,22 +380,22 @@ type DomainJobAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e DomainJobAccessValidationError) Field() string { return e.field }
+func (e PageJobAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DomainJobAccessValidationError) Reason() string { return e.reason }
+func (e PageJobAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DomainJobAccessValidationError) Cause() error { return e.cause }
+func (e PageJobAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DomainJobAccessValidationError) Key() bool { return e.key }
+func (e PageJobAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DomainJobAccessValidationError) ErrorName() string { return "DomainJobAccessValidationError" }
+func (e PageJobAccessValidationError) ErrorName() string { return "PageJobAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DomainJobAccessValidationError) Error() string {
+func (e PageJobAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -407,14 +407,14 @@ func (e DomainJobAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDomainJobAccess.%s: %s%s",
+		"invalid %sPageJobAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DomainJobAccessValidationError{}
+var _ error = PageJobAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -422,24 +422,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DomainJobAccessValidationError{}
+} = PageJobAccessValidationError{}
 
-// Validate checks the field values on DomainUserAccess with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DomainUserAccess) Validate() error {
+// Validate checks the field values on PageUserAccess with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *PageUserAccess) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DomainUserAccess with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DomainUserAccessMultiError, or nil if none found.
-func (m *DomainUserAccess) ValidateAll() error {
+// ValidateAll checks the field values on PageUserAccess with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in PageUserAccessMultiError,
+// or nil if none found.
+func (m *PageUserAccess) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DomainUserAccess) validate(all bool) error {
+func (m *PageUserAccess) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -451,7 +451,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 	// no validation rules for TargetId
 
 	if m.GetUserId() <= 0 {
-		err := DomainUserAccessValidationError{
+		err := PageUserAccessValidationError{
 			field:  "UserId",
 			reason: "value must be greater than 0",
 		}
@@ -462,7 +462,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 	}
 
 	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
-		err := DomainUserAccessValidationError{
+		err := PageUserAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
 		}
@@ -478,7 +478,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DomainUserAccessValidationError{
+					errors = append(errors, PageUserAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -486,7 +486,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DomainUserAccessValidationError{
+					errors = append(errors, PageUserAccessValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -495,7 +495,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DomainUserAccessValidationError{
+				return PageUserAccessValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -511,7 +511,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 			switch v := interface{}(m.GetUser()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DomainUserAccessValidationError{
+					errors = append(errors, PageUserAccessValidationError{
 						field:  "User",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -519,7 +519,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, DomainUserAccessValidationError{
+					errors = append(errors, PageUserAccessValidationError{
 						field:  "User",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -528,7 +528,7 @@ func (m *DomainUserAccess) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return DomainUserAccessValidationError{
+				return PageUserAccessValidationError{
 					field:  "User",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -539,19 +539,19 @@ func (m *DomainUserAccess) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DomainUserAccessMultiError(errors)
+		return PageUserAccessMultiError(errors)
 	}
 
 	return nil
 }
 
-// DomainUserAccessMultiError is an error wrapping multiple validation errors
-// returned by DomainUserAccess.ValidateAll() if the designated constraints
+// PageUserAccessMultiError is an error wrapping multiple validation errors
+// returned by PageUserAccess.ValidateAll() if the designated constraints
 // aren't met.
-type DomainUserAccessMultiError []error
+type PageUserAccessMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DomainUserAccessMultiError) Error() string {
+func (m PageUserAccessMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -560,11 +560,11 @@ func (m DomainUserAccessMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DomainUserAccessMultiError) AllErrors() []error { return m }
+func (m PageUserAccessMultiError) AllErrors() []error { return m }
 
-// DomainUserAccessValidationError is the validation error returned by
-// DomainUserAccess.Validate if the designated constraints aren't met.
-type DomainUserAccessValidationError struct {
+// PageUserAccessValidationError is the validation error returned by
+// PageUserAccess.Validate if the designated constraints aren't met.
+type PageUserAccessValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -572,22 +572,22 @@ type DomainUserAccessValidationError struct {
 }
 
 // Field function returns field value.
-func (e DomainUserAccessValidationError) Field() string { return e.field }
+func (e PageUserAccessValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DomainUserAccessValidationError) Reason() string { return e.reason }
+func (e PageUserAccessValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DomainUserAccessValidationError) Cause() error { return e.cause }
+func (e PageUserAccessValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DomainUserAccessValidationError) Key() bool { return e.key }
+func (e PageUserAccessValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DomainUserAccessValidationError) ErrorName() string { return "DomainUserAccessValidationError" }
+func (e PageUserAccessValidationError) ErrorName() string { return "PageUserAccessValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DomainUserAccessValidationError) Error() string {
+func (e PageUserAccessValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -599,14 +599,14 @@ func (e DomainUserAccessValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDomainUserAccess.%s: %s%s",
+		"invalid %sPageUserAccess.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DomainUserAccessValidationError{}
+var _ error = PageUserAccessValidationError{}
 
 var _ interface {
 	Field() string
@@ -614,4 +614,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DomainUserAccessValidationError{}
+} = PageUserAccessValidationError{}

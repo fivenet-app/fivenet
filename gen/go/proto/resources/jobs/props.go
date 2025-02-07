@@ -214,8 +214,9 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 	}
 
 	// Compare absence dates if any were set
-	if in.AbsenceBegin != nil && (x.AbsenceBegin == nil || in.AbsenceBegin.AsTime().Compare(x.AbsenceBegin.AsTime()) != 0) ||
-		in.AbsenceEnd != nil && (x.AbsenceEnd == nil || in.AbsenceEnd.AsTime().Compare(x.AbsenceEnd.AsTime()) != 0) {
+	if (in.AbsenceBegin == nil && in.AbsenceEnd == nil && x.AbsenceBegin != nil && x.AbsenceEnd != nil) ||
+		(in.AbsenceBegin != nil && (x.AbsenceBegin == nil || in.AbsenceBegin.AsTime().Compare(x.AbsenceBegin.AsTime()) != 0) ||
+			in.AbsenceEnd != nil && (x.AbsenceEnd == nil || in.AbsenceEnd.AsTime().Compare(x.AbsenceEnd.AsTime()) != 0)) {
 		activities = append(activities, &JobsUserActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,

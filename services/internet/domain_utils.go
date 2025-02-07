@@ -75,6 +75,17 @@ func (s *Server) getDomainByCondition(ctx context.Context, tx *sql.DB, condition
 	return dest, nil
 }
 
+func (s *Server) getDomainByTLDAndName(ctx context.Context, tx *sql.DB, tldId uint64, name string) (*internet.Domain, error) {
+	domain, _ := cleanAndSplitDomain(name)
+	return s.getDomainByCondition(ctx, tx,
+		jet.AND(
+			tTLDs.ID.EQ(jet.Uint64(tldId)),
+			tDomains.Name.EQ(jet.String(domain)),
+			tDomains.DeletedAt.IS_NULL(),
+		),
+	)
+}
+
 func (s *Server) getDomainByName(ctx context.Context, tx *sql.DB, name string) (*internet.Domain, error) {
 	domain, tld := cleanAndSplitDomain(name)
 	return s.getDomainByCondition(ctx, tx,

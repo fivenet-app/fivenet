@@ -13,22 +13,22 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
- * @generated from protobuf message resources.internet.DomainAccess
+ * @generated from protobuf message resources.internet.PageAccess
  */
-export interface DomainAccess {
+export interface PageAccess {
     /**
-     * @generated from protobuf field: repeated resources.internet.DomainJobAccess jobs = 1;
+     * @generated from protobuf field: repeated resources.internet.PageJobAccess jobs = 1;
      */
-    jobs: DomainJobAccess[]; // @gotags: alias:"job_access"
+    jobs: PageJobAccess[]; // @gotags: alias:"job_access"
     /**
-     * @generated from protobuf field: repeated resources.internet.DomainUserAccess users = 2;
+     * @generated from protobuf field: repeated resources.internet.PageUserAccess users = 2;
      */
-    users: DomainUserAccess[]; // @gotags: alias:"user_access"
+    users: PageUserAccess[]; // @gotags: alias:"user_access"
 }
 /**
- * @generated from protobuf message resources.internet.DomainJobAccess
+ * @generated from protobuf message resources.internet.PageJobAccess
  */
-export interface DomainJobAccess {
+export interface PageJobAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -63,9 +63,9 @@ export interface DomainJobAccess {
     access: AccessLevel;
 }
 /**
- * @generated from protobuf message resources.internet.DomainUserAccess
+ * @generated from protobuf message resources.internet.PageUserAccess
  */
-export interface DomainUserAccess {
+export interface PageUserAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -117,31 +117,31 @@ export enum AccessLevel {
     OWNER = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class DomainAccess$Type extends MessageType<DomainAccess> {
+class PageAccess$Type extends MessageType<PageAccess> {
     constructor() {
-        super("resources.internet.DomainAccess", [
-            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DomainJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
-            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DomainUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
+        super("resources.internet.PageAccess", [
+            { no: 1, name: "jobs", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PageJobAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PageUserAccess, options: { "validate.rules": { repeated: { maxItems: "20" } } } }
         ]);
     }
-    create(value?: PartialMessage<DomainAccess>): DomainAccess {
+    create(value?: PartialMessage<PageAccess>): PageAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.jobs = [];
         message.users = [];
         if (value !== undefined)
-            reflectionMergePartial<DomainAccess>(this, message, value);
+            reflectionMergePartial<PageAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DomainAccess): DomainAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageAccess): PageAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.internet.DomainJobAccess jobs */ 1:
-                    message.jobs.push(DomainJobAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.internet.PageJobAccess jobs */ 1:
+                    message.jobs.push(PageJobAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* repeated resources.internet.DomainUserAccess users */ 2:
-                    message.users.push(DomainUserAccess.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.internet.PageUserAccess users */ 2:
+                    message.users.push(PageUserAccess.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -154,13 +154,13 @@ class DomainAccess$Type extends MessageType<DomainAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: DomainAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.internet.DomainJobAccess jobs = 1; */
+    internalBinaryWrite(message: PageAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.internet.PageJobAccess jobs = 1; */
         for (let i = 0; i < message.jobs.length; i++)
-            DomainJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.internet.DomainUserAccess users = 2; */
+            PageJobAccess.internalBinaryWrite(message.jobs[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.internet.PageUserAccess users = 2; */
         for (let i = 0; i < message.users.length; i++)
-            DomainUserAccess.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            PageUserAccess.internalBinaryWrite(message.users[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -168,13 +168,13 @@ class DomainAccess$Type extends MessageType<DomainAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.internet.DomainAccess
+ * @generated MessageType for protobuf message resources.internet.PageAccess
  */
-export const DomainAccess = new DomainAccess$Type();
+export const PageAccess = new PageAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DomainJobAccess$Type extends MessageType<DomainJobAccess> {
+class PageJobAccess$Type extends MessageType<PageJobAccess> {
     constructor() {
-        super("resources.internet.DomainJobAccess", [
+        super("resources.internet.PageJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -185,7 +185,7 @@ class DomainJobAccess$Type extends MessageType<DomainJobAccess> {
             { no: 8, name: "access", kind: "enum", T: () => ["resources.internet.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<DomainJobAccess>): DomainJobAccess {
+    create(value?: PartialMessage<PageJobAccess>): PageJobAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
@@ -193,10 +193,10 @@ class DomainJobAccess$Type extends MessageType<DomainJobAccess> {
         message.minimumGrade = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<DomainJobAccess>(this, message, value);
+            reflectionMergePartial<PageJobAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DomainJobAccess): DomainJobAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageJobAccess): PageJobAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -236,7 +236,7 @@ class DomainJobAccess$Type extends MessageType<DomainJobAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: DomainJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PageJobAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -268,13 +268,13 @@ class DomainJobAccess$Type extends MessageType<DomainJobAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.internet.DomainJobAccess
+ * @generated MessageType for protobuf message resources.internet.PageJobAccess
  */
-export const DomainJobAccess = new DomainJobAccess$Type();
+export const PageJobAccess = new PageJobAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DomainUserAccess$Type extends MessageType<DomainUserAccess> {
+class PageUserAccess$Type extends MessageType<PageUserAccess> {
     constructor() {
-        super("resources.internet.DomainUserAccess", [
+        super("resources.internet.PageUserAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "target_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
@@ -283,17 +283,17 @@ class DomainUserAccess$Type extends MessageType<DomainUserAccess> {
             { no: 6, name: "access", kind: "enum", T: () => ["resources.internet.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
-    create(value?: PartialMessage<DomainUserAccess>): DomainUserAccess {
+    create(value?: PartialMessage<PageUserAccess>): PageUserAccess {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = 0;
         message.targetId = 0;
         message.userId = 0;
         message.access = 0;
         if (value !== undefined)
-            reflectionMergePartial<DomainUserAccess>(this, message, value);
+            reflectionMergePartial<PageUserAccess>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DomainUserAccess): DomainUserAccess {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: PageUserAccess): PageUserAccess {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -327,7 +327,7 @@ class DomainUserAccess$Type extends MessageType<DomainUserAccess> {
         }
         return message;
     }
-    internalBinaryWrite(message: DomainUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: PageUserAccess, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1; */
         if (message.id !== 0)
             writer.tag(1, WireType.Varint).uint64(message.id);
@@ -353,6 +353,6 @@ class DomainUserAccess$Type extends MessageType<DomainUserAccess> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.internet.DomainUserAccess
+ * @generated MessageType for protobuf message resources.internet.PageUserAccess
  */
-export const DomainUserAccess = new DomainUserAccess$Type();
+export const PageUserAccess = new PageUserAccess$Type();

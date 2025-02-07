@@ -133,15 +133,6 @@ func (m *UpdateDomainRequest) Sanitize() error {
 		return nil
 	}
 
-	// Field: Domain
-	if m.Domain != nil {
-		if v, ok := interface{}(m.GetDomain()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
 	return nil
 }
 

@@ -498,6 +498,281 @@ var _ interface {
 	ErrorName() string
 } = CheckDomainAvailabilityResponseValidationError{}
 
+// Validate checks the field values on RegisterDomainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RegisterDomainRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterDomainRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterDomainRequestMultiError, or nil if none found.
+func (m *RegisterDomainRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterDomainRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for TldId
+
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 60 {
+		err := RegisterDomainRequestValidationError{
+			field:  "Name",
+			reason: "value length must be between 3 and 60 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.TransferCode != nil {
+
+		if utf8.RuneCountInString(m.GetTransferCode()) != 10 {
+			err := RegisterDomainRequestValidationError{
+				field:  "TransferCode",
+				reason: "value length must be 10 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_RegisterDomainRequest_TransferCode_Pattern.MatchString(m.GetTransferCode()) {
+			err := RegisterDomainRequestValidationError{
+				field:  "TransferCode",
+				reason: "value does not match regex pattern \"^[0-9A-Z]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RegisterDomainRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterDomainRequestMultiError is an error wrapping multiple validation
+// errors returned by RegisterDomainRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterDomainRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterDomainRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterDomainRequestMultiError) AllErrors() []error { return m }
+
+// RegisterDomainRequestValidationError is the validation error returned by
+// RegisterDomainRequest.Validate if the designated constraints aren't met.
+type RegisterDomainRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterDomainRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterDomainRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterDomainRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterDomainRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterDomainRequestValidationError) ErrorName() string {
+	return "RegisterDomainRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RegisterDomainRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterDomainRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterDomainRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterDomainRequestValidationError{}
+
+var _RegisterDomainRequest_TransferCode_Pattern = regexp.MustCompile("^[0-9A-Z]{6}$")
+
+// Validate checks the field values on RegisterDomainResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RegisterDomainResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RegisterDomainResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RegisterDomainResponseMultiError, or nil if none found.
+func (m *RegisterDomainResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RegisterDomainResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDomain()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RegisterDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RegisterDomainResponseValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RegisterDomainResponseValidationError{
+				field:  "Domain",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return RegisterDomainResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RegisterDomainResponseMultiError is an error wrapping multiple validation
+// errors returned by RegisterDomainResponse.ValidateAll() if the designated
+// constraints aren't met.
+type RegisterDomainResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RegisterDomainResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RegisterDomainResponseMultiError) AllErrors() []error { return m }
+
+// RegisterDomainResponseValidationError is the validation error returned by
+// RegisterDomainResponse.Validate if the designated constraints aren't met.
+type RegisterDomainResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RegisterDomainResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RegisterDomainResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RegisterDomainResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RegisterDomainResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RegisterDomainResponseValidationError) ErrorName() string {
+	return "RegisterDomainResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RegisterDomainResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRegisterDomainResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RegisterDomainResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RegisterDomainResponseValidationError{}
+
 // Validate checks the field values on ListDomainsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -816,279 +1091,6 @@ var _ interface {
 	ErrorName() string
 } = ListDomainsResponseValidationError{}
 
-// Validate checks the field values on RegisterDomainRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RegisterDomainRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RegisterDomainRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RegisterDomainRequestMultiError, or nil if none found.
-func (m *RegisterDomainRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RegisterDomainRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 60 {
-		err := RegisterDomainRequestValidationError{
-			field:  "Name",
-			reason: "value length must be between 3 and 60 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.TransferCode != nil {
-
-		if utf8.RuneCountInString(m.GetTransferCode()) != 10 {
-			err := RegisterDomainRequestValidationError{
-				field:  "TransferCode",
-				reason: "value length must be 10 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-
-		}
-
-		if !_RegisterDomainRequest_TransferCode_Pattern.MatchString(m.GetTransferCode()) {
-			err := RegisterDomainRequestValidationError{
-				field:  "TransferCode",
-				reason: "value does not match regex pattern \"^[0-9A-Z]{6}$\"",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return RegisterDomainRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// RegisterDomainRequestMultiError is an error wrapping multiple validation
-// errors returned by RegisterDomainRequest.ValidateAll() if the designated
-// constraints aren't met.
-type RegisterDomainRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RegisterDomainRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RegisterDomainRequestMultiError) AllErrors() []error { return m }
-
-// RegisterDomainRequestValidationError is the validation error returned by
-// RegisterDomainRequest.Validate if the designated constraints aren't met.
-type RegisterDomainRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RegisterDomainRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RegisterDomainRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RegisterDomainRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RegisterDomainRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RegisterDomainRequestValidationError) ErrorName() string {
-	return "RegisterDomainRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e RegisterDomainRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRegisterDomainRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RegisterDomainRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RegisterDomainRequestValidationError{}
-
-var _RegisterDomainRequest_TransferCode_Pattern = regexp.MustCompile("^[0-9A-Z]{6}$")
-
-// Validate checks the field values on RegisterDomainResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *RegisterDomainResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on RegisterDomainResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// RegisterDomainResponseMultiError, or nil if none found.
-func (m *RegisterDomainResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *RegisterDomainResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetDomain()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RegisterDomainResponseValidationError{
-					field:  "Domain",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RegisterDomainResponseValidationError{
-					field:  "Domain",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RegisterDomainResponseValidationError{
-				field:  "Domain",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return RegisterDomainResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// RegisterDomainResponseMultiError is an error wrapping multiple validation
-// errors returned by RegisterDomainResponse.ValidateAll() if the designated
-// constraints aren't met.
-type RegisterDomainResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m RegisterDomainResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m RegisterDomainResponseMultiError) AllErrors() []error { return m }
-
-// RegisterDomainResponseValidationError is the validation error returned by
-// RegisterDomainResponse.Validate if the designated constraints aren't met.
-type RegisterDomainResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e RegisterDomainResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e RegisterDomainResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e RegisterDomainResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e RegisterDomainResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e RegisterDomainResponseValidationError) ErrorName() string {
-	return "RegisterDomainResponseValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e RegisterDomainResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sRegisterDomainResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = RegisterDomainResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = RegisterDomainResponseValidationError{}
-
 // Validate checks the field values on UpdateDomainRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1111,34 +1113,9 @@ func (m *UpdateDomainRequest) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetDomain()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateDomainRequestValidationError{
-					field:  "Domain",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateDomainRequestValidationError{
-					field:  "Domain",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateDomainRequestValidationError{
-				field:  "Domain",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for DomainId
+
+	// no validation rules for Transferable
 
 	if len(errors) > 0 {
 		return UpdateDomainRequestMultiError(errors)

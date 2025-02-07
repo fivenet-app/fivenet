@@ -21,8 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	DomainService_ListTLDs_FullMethodName                = "/services.internet.DomainService/ListTLDs"
 	DomainService_CheckDomainAvailability_FullMethodName = "/services.internet.DomainService/CheckDomainAvailability"
-	DomainService_ListDomains_FullMethodName             = "/services.internet.DomainService/ListDomains"
 	DomainService_RegisterDomain_FullMethodName          = "/services.internet.DomainService/RegisterDomain"
+	DomainService_ListDomains_FullMethodName             = "/services.internet.DomainService/ListDomains"
 	DomainService_UpdateDomain_FullMethodName            = "/services.internet.DomainService/UpdateDomain"
 )
 
@@ -35,9 +35,9 @@ type DomainServiceClient interface {
 	// @perm: Name=Any
 	CheckDomainAvailability(ctx context.Context, in *CheckDomainAvailabilityRequest, opts ...grpc.CallOption) (*CheckDomainAvailabilityResponse, error)
 	// @perm: Name=Any
-	ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error)
-	// @perm: Name=Any
 	RegisterDomain(ctx context.Context, in *RegisterDomainRequest, opts ...grpc.CallOption) (*RegisterDomainResponse, error)
+	// @perm: Name=Any
+	ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error)
 	// @perm: Name=Any
 	UpdateDomain(ctx context.Context, in *UpdateDomainRequest, opts ...grpc.CallOption) (*UpdateDomainResponse, error)
 }
@@ -70,20 +70,20 @@ func (c *domainServiceClient) CheckDomainAvailability(ctx context.Context, in *C
 	return out, nil
 }
 
-func (c *domainServiceClient) ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error) {
+func (c *domainServiceClient) RegisterDomain(ctx context.Context, in *RegisterDomainRequest, opts ...grpc.CallOption) (*RegisterDomainResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ListDomainsResponse)
-	err := c.cc.Invoke(ctx, DomainService_ListDomains_FullMethodName, in, out, cOpts...)
+	out := new(RegisterDomainResponse)
+	err := c.cc.Invoke(ctx, DomainService_RegisterDomain_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *domainServiceClient) RegisterDomain(ctx context.Context, in *RegisterDomainRequest, opts ...grpc.CallOption) (*RegisterDomainResponse, error) {
+func (c *domainServiceClient) ListDomains(ctx context.Context, in *ListDomainsRequest, opts ...grpc.CallOption) (*ListDomainsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(RegisterDomainResponse)
-	err := c.cc.Invoke(ctx, DomainService_RegisterDomain_FullMethodName, in, out, cOpts...)
+	out := new(ListDomainsResponse)
+	err := c.cc.Invoke(ctx, DomainService_ListDomains_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,9 +109,9 @@ type DomainServiceServer interface {
 	// @perm: Name=Any
 	CheckDomainAvailability(context.Context, *CheckDomainAvailabilityRequest) (*CheckDomainAvailabilityResponse, error)
 	// @perm: Name=Any
-	ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error)
-	// @perm: Name=Any
 	RegisterDomain(context.Context, *RegisterDomainRequest) (*RegisterDomainResponse, error)
+	// @perm: Name=Any
+	ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error)
 	// @perm: Name=Any
 	UpdateDomain(context.Context, *UpdateDomainRequest) (*UpdateDomainResponse, error)
 	mustEmbedUnimplementedDomainServiceServer()
@@ -130,11 +130,11 @@ func (UnimplementedDomainServiceServer) ListTLDs(context.Context, *ListTLDsReque
 func (UnimplementedDomainServiceServer) CheckDomainAvailability(context.Context, *CheckDomainAvailabilityRequest) (*CheckDomainAvailabilityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckDomainAvailability not implemented")
 }
-func (UnimplementedDomainServiceServer) ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDomains not implemented")
-}
 func (UnimplementedDomainServiceServer) RegisterDomain(context.Context, *RegisterDomainRequest) (*RegisterDomainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterDomain not implemented")
+}
+func (UnimplementedDomainServiceServer) ListDomains(context.Context, *ListDomainsRequest) (*ListDomainsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDomains not implemented")
 }
 func (UnimplementedDomainServiceServer) UpdateDomain(context.Context, *UpdateDomainRequest) (*UpdateDomainResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDomain not implemented")
@@ -196,24 +196,6 @@ func _DomainService_CheckDomainAvailability_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DomainService_ListDomains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDomainsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(DomainServiceServer).ListDomains(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: DomainService_ListDomains_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DomainServiceServer).ListDomains(ctx, req.(*ListDomainsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _DomainService_RegisterDomain_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RegisterDomainRequest)
 	if err := dec(in); err != nil {
@@ -228,6 +210,24 @@ func _DomainService_RegisterDomain_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DomainServiceServer).RegisterDomain(ctx, req.(*RegisterDomainRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DomainService_ListDomains_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDomainsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DomainServiceServer).ListDomains(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DomainService_ListDomains_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DomainServiceServer).ListDomains(ctx, req.(*ListDomainsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -266,12 +266,12 @@ var DomainService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DomainService_CheckDomainAvailability_Handler,
 		},
 		{
-			MethodName: "ListDomains",
-			Handler:    _DomainService_ListDomains_Handler,
-		},
-		{
 			MethodName: "RegisterDomain",
 			Handler:    _DomainService_RegisterDomain_Handler,
+		},
+		{
+			MethodName: "ListDomains",
+			Handler:    _DomainService_ListDomains_Handler,
 		},
 		{
 			MethodName: "UpdateDomain",

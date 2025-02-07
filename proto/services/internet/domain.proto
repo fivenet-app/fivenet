@@ -31,13 +31,14 @@ message CheckDomainAvailabilityResponse {
 }
 
 message RegisterDomainRequest {
+  uint64 tld_id = 1;
   // @sanitize: method=StripTags
-  string name = 1 [(validate.rules).string = {
+  string name = 2 [(validate.rules).string = {
     min_len: 3,
     max_len: 60
   }];
   // In case a domain will be transfered
-  optional string transfer_code = 2 [(validate.rules).string = {
+  optional string transfer_code = 3 [(validate.rules).string = {
     len: 10,
     pattern: "^[0-9A-Z]{6}$",
   }];
@@ -57,7 +58,8 @@ message ListDomainsResponse {
 }
 
 message UpdateDomainRequest {
-  resources.internet.Domain domain = 1;
+  uint64 domain_id = 1;
+  bool transferable = 2;
 }
 
 message UpdateDomainResponse {

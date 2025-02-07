@@ -11,6 +11,10 @@ import (
 )
 
 func CreateJobsUserActivities(ctx context.Context, tx qrm.DB, activities ...*JobsUserActivity) error {
+	if len(activities) == 0 {
+		return nil
+	}
+
 	tJobsUserActivity := table.FivenetJobsUserActivity
 
 	stmt := tJobsUserActivity.

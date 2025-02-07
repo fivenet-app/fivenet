@@ -11,6 +11,10 @@ import (
 )
 
 func CreateUserActivities(ctx context.Context, tx qrm.DB, activities ...*UserActivity) error {
+	if len(activities) == 0 {
+		return nil
+	}
+
 	tUserActivity := table.FivenetUserActivity
 
 	stmt := tUserActivity.

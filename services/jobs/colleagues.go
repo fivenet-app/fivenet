@@ -586,20 +586,22 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *pbjobs.SetJobsUserPr
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
-		props, err := users.GetJobProps(ctx, s.db, userInfo.Job)
+		jobProps, err := users.GetJobProps(ctx, s.db, userInfo.Job)
 		if err != nil {
 			return nil, err
 		}
 
-		// Check if absence begin and end are "valid"
-		minStart := time.Now().Add(-(time.Duration(props.Settings.AbsencePastDays) * 24 * time.Hour))
-		maxEnd := time.Now().Add(time.Duration(props.Settings.AbsenceFutureDays) * 24 * time.Hour)
+		if req.Props.AbsenceBegin.Timestamp != nil && req.Props.AbsenceEnd.Timestamp != nil {
+			// Check if absence begin and end are "valid"
+			minStart := time.Now().Add(-(time.Duration(jobProps.Settings.AbsencePastDays) * 24 * time.Hour))
+			maxEnd := time.Now().Add(time.Duration(jobProps.Settings.AbsenceFutureDays) * 24 * time.Hour)
 
-		if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceBegin.AsTime()) {
-			return nil, errorsjobs.ErrAbsenceBeginOutOfRange
-		}
-		if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceEnd.AsTime()) {
-			return nil, errorsjobs.ErrAbsenceBeginOutOfRange
+			if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceBegin.AsTime()) {
+				return nil, errorsjobs.ErrAbsenceBeginOutOfRange
+			}
+			if !timeutils.InTimeSpan(minStart, maxEnd, req.Props.AbsenceEnd.AsTime()) {
+				return nil, errorsjobs.ErrAbsenceBeginOutOfRange
+			}
 		}
 	}
 

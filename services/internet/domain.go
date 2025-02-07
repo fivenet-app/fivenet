@@ -121,6 +121,22 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.TldId, req.Name)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
+
+	// Domain exists
+	if domain != nil {
+		if domain.TransferCode == nil {
+			// TODO return domain not transferable error
+		} else if req.TransferCode != nil && *domain.TransferCode != *req.TransferCode {
+			// TODO return wrong transfer code error
+		}
+
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
+
 	// TODO handle domain transfers
 
 	stmt := tDomains.
@@ -148,7 +164,7 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
-	domain, err := s.getDomainById(ctx, s.db, uint64(lastId))
+	domain, err = s.getDomainById(ctx, s.db, uint64(lastId))
 	if err != nil {
 		return nil, err
 	}
@@ -172,9 +188,9 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// TODO check if user has access to domain
+	// TODO check if user owns the domain or is superuser
 
-	domain, err := s.getDomainById(ctx, s.db, req.Domain.Id)
+	domain, err := s.getDomainById(ctx, s.db, req.DomainId)
 	if err != nil {
 		return nil, err
 	}
@@ -182,13 +198,11 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	stmt := tDomains.
 		UPDATE(
 			tDomains.Active,
-			tDomains.Name,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,
 		).
 		SET(
 			false,
-			req.Domain.Name,
 			userInfo.Job,
 			userInfo.UserId,
 		).

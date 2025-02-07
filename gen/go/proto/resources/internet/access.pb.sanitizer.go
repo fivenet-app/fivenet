@@ -3,7 +3,7 @@
 
 package internet
 
-func (m *DomainAccess) Sanitize() error {
+func (m *PageAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -35,7 +35,7 @@ func (m *DomainAccess) Sanitize() error {
 	return nil
 }
 
-func (m *DomainJobAccess) Sanitize() error {
+func (m *PageJobAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -52,7 +52,7 @@ func (m *DomainJobAccess) Sanitize() error {
 	return nil
 }
 
-func (m *DomainUserAccess) Sanitize() error {
+func (m *PageUserAccess) Sanitize() error {
 	if m == nil {
 		return nil
 	}

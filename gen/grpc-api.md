@@ -439,9 +439,9 @@
     - [SearchResult](#resources-internet-SearchResult)
   
 - [resources/internet/access.proto](#resources_internet_access-proto)
-    - [DomainAccess](#resources-internet-DomainAccess)
-    - [DomainJobAccess](#resources-internet-DomainJobAccess)
-    - [DomainUserAccess](#resources-internet-DomainUserAccess)
+    - [PageAccess](#resources-internet-PageAccess)
+    - [PageJobAccess](#resources-internet-PageJobAccess)
+    - [PageUserAccess](#resources-internet-PageUserAccess)
   
     - [AccessLevel](#resources-internet-AccessLevel)
   
@@ -7139,25 +7139,25 @@ TODO
 
 
 
-<a name="resources-internet-DomainAccess"></a>
+<a name="resources-internet-PageAccess"></a>
 
-### DomainAccess
+### PageAccess
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| jobs | [DomainJobAccess](#resources-internet-DomainJobAccess) | repeated | @gotags: alias:"job_access" |
-| users | [DomainUserAccess](#resources-internet-DomainUserAccess) | repeated | @gotags: alias:"user_access" |
+| jobs | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
+| users | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
 
 
 
 
 
 
-<a name="resources-internet-DomainJobAccess"></a>
+<a name="resources-internet-PageJobAccess"></a>
 
-### DomainJobAccess
+### PageJobAccess
 
 
 
@@ -7177,9 +7177,9 @@ TODO
 
 
 
-<a name="resources-internet-DomainUserAccess"></a>
+<a name="resources-internet-PageUserAccess"></a>
 
-### DomainUserAccess
+### PageUserAccess
 
 
 
@@ -14016,6 +14016,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| tld_id | [uint64](#uint64) |  |  |
 | name | [string](#string) |  | @sanitize: method=StripTags |
 | transfer_code | [string](#string) | optional | In case a domain will be transfered |
 
@@ -14047,7 +14048,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| domain | [resources.internet.Domain](#resources-internet-Domain) |  |  |
+| domain_id | [uint64](#uint64) |  |  |
+| transferable | [bool](#bool) |  |  |
 
 
 
@@ -14084,8 +14086,8 @@ Connect an identifier/license to the provider with the specified external id (e.
 | ----------- | ------------ | ------------- | ------------|
 | ListTLDs | [ListTLDsRequest](#services-internet-ListTLDsRequest) | [ListTLDsResponse](#services-internet-ListTLDsResponse) | @perm: Name=Any |
 | CheckDomainAvailability | [CheckDomainAvailabilityRequest](#services-internet-CheckDomainAvailabilityRequest) | [CheckDomainAvailabilityResponse](#services-internet-CheckDomainAvailabilityResponse) | @perm: Name=Any |
-| ListDomains | [ListDomainsRequest](#services-internet-ListDomainsRequest) | [ListDomainsResponse](#services-internet-ListDomainsResponse) | @perm: Name=Any |
 | RegisterDomain | [RegisterDomainRequest](#services-internet-RegisterDomainRequest) | [RegisterDomainResponse](#services-internet-RegisterDomainResponse) | @perm: Name=Any |
+| ListDomains | [ListDomainsRequest](#services-internet-ListDomainsRequest) | [ListDomainsResponse](#services-internet-ListDomainsResponse) | @perm: Name=Any |
 | UpdateDomain | [UpdateDomainRequest](#services-internet-UpdateDomainRequest) | [UpdateDomainResponse](#services-internet-UpdateDomainResponse) | @perm: Name=Any |
 
  <!-- end services -->
