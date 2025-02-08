@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
@@ -227,9 +228,7 @@ function changeQuestionType(qt: string): void {
 
                 <template v-else-if="question.data!.data.oneofKind === 'image'">
                     <div class="flex flex-col gap-2">
-                        <p v-if="isNUIAvailable()" class="text-sm">
-                            {{ $t('system.not_supported_on_tablet.title') }}
-                        </p>
+                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
                         <template v-else>
                             <UInput
                                 type="file"

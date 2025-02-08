@@ -8,7 +8,7 @@ const { metaSymbol } = useShortcuts();
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
-const { isNUIAvailable } = storeToRefs(settingsStore);
+const { isNUIEnabled } = storeToRefs(settingsStore);
 
 const shortcuts = ref(false);
 const query = ref('');
@@ -24,7 +24,7 @@ const links = computed(() =>
                 shortcuts.value = true;
             },
         },
-        !isNUIAvailable.value
+        !isNUIEnabled.value
             ? {
                   label: t('common.help'),
                   icon: 'i-mdi-book-open-blank-variant-outline',

@@ -74,7 +74,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </h2>
 
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-            <UAlert v-if="!isNUIAvailable()" icon="i-mdi-info-circle">
+            <UAlert v-if="!isNUIEnabled().value" icon="i-mdi-info-circle">
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">
                         <template #command>

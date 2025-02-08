@@ -97,7 +97,7 @@ export const useSettingsStore = defineStore('settings', {
         },
     },
     getters: {
-        isNUIAvailable(state): boolean {
+        isNUIEnabled(state): boolean {
             return state.nuiEnabled ?? false;
         },
         getUserLocale(state): Locale {

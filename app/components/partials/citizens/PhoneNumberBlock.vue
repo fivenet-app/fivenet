@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
+import { isNUIEnabled, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -31,7 +31,7 @@ async function doCall(): Promise<void> {
         return;
     }
 
-    if (isNUIAvailable()) {
+    if (isNUIEnabled().value) {
         return phoneCallNumber(props.number);
     } else {
         notifications.add({

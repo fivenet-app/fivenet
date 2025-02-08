@@ -12,7 +12,7 @@ import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { isNUIAvailable, setWaypoint } from '~/composables/nui';
+import { isNUIEnabled, setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
@@ -75,7 +75,7 @@ if (can('LivemapperService.CreateOrUpdateMarker').value) {
         },
     });
 }
-if (isNUIAvailable()) {
+if (isNUIEnabled().value) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.livemap.mark_on_gps'),
         callback: (e: ContextMenuItemClickEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),

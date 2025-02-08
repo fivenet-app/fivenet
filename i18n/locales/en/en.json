@@ -2561,7 +2561,9 @@
             "description": "To view this, you must disable streamer mode in your user settings."
         },
         "not_supported_on_tablet": {
-            "title": "This function isn't supported when using the tablet. Please use your browser to do this!"
+            "title": "This function isn't supported when using the tablet.",
+            "description": "Please use your browser to use this function.",
+            "button": "Open in Browser"
         }
     },
     "enums": {

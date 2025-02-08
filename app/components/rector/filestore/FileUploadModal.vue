@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
@@ -88,13 +89,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             />
                         </ClientOnly>
                     </UFormGroup>
+
                     <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
                         <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
                     </UFormGroup>
+
                     <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
-                        <p v-if="isNUIAvailable()" class="text-sm">
-                            {{ $t('system.not_supported_on_tablet.title') }}
-                        </p>
+                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
                         <template v-else>
                             <UInput
                                 type="file"

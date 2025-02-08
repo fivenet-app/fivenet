@@ -15,6 +15,7 @@ import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { JobProps } from '~~/gen/ts/resources/users/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_settings';
+import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 
 const { t } = useI18n();
 
@@ -392,11 +393,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <div class="flex flex-col">
-                                        <template v-if="isNUIAvailable()">
-                                            <p class="text-sm">
-                                                {{ $t('system.not_supported_on_tablet.title') }}
-                                            </p>
-                                        </template>
+                                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
                                         <template v-else>
                                             <UInput
                                                 name="jobLogo"

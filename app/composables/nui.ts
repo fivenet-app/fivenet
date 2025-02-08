@@ -4,9 +4,14 @@ import { useSettingsStore } from '~/store/settings';
 export const logger = useLogger('🎮 NUI');
 
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
-export function isNUIAvailable(): boolean {
-    return useSettingsStore().isNUIAvailable;
-}
+const _isNUIEnabled = (): ComputedRef<boolean> => {
+    const settingsStore = useSettingsStore();
+    const { isNUIEnabled } = storeToRefs(settingsStore);
+
+    return isNUIEnabled;
+};
+
+export const isNUIEnabled = createSharedComposable(_isNUIEnabled);
 
 function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
@@ -73,7 +78,7 @@ export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<voi
 // NUI Callbacks
 
 export async function toggleTablet(state: boolean): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -81,7 +86,7 @@ export async function toggleTablet(state: boolean): Promise<void> {
 }
 
 export async function focusTablet(state: boolean): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -89,7 +94,7 @@ export async function focusTablet(state: boolean): Promise<void> {
 }
 
 export async function openTokenMgmt(): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -97,7 +102,7 @@ export async function openTokenMgmt(): Promise<void> {
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -105,7 +110,7 @@ export async function setWaypoint(x: number, y: number): Promise<void> {
 }
 
 export async function phoneCallNumber(phoneNumber: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -113,7 +118,7 @@ export async function phoneCallNumber(phoneNumber: string): Promise<void> {
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -121,7 +126,7 @@ export async function copyToClipboard(text: string): Promise<void> {
 }
 
 export async function setRadioFrequency(frequency: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -129,7 +134,7 @@ export async function setRadioFrequency(frequency: string): Promise<void> {
 }
 
 export async function setWaypointPLZ(plz: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -137,7 +142,7 @@ export async function setWaypointPLZ(plz: string): Promise<void> {
 }
 
 export async function openURLInWindow(url: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 
@@ -145,7 +150,7 @@ export async function openURLInWindow(url: string): Promise<void> {
 }
 
 export async function setTabletColors(primary: string, gray: string): Promise<void> {
-    if (!isNUIAvailable()) {
+    if (!isNUIEnabled().value) {
         return;
     }
 

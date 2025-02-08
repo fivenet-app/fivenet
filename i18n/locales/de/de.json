@@ -2561,7 +2561,9 @@
             "description": "Um dies zu sehen, müssen Sie den Streamer-Modus in Ihren Benutzereinstellungen deaktivieren."
         },
         "not_supported_on_tablet": {
-            "title": "Diese Funktion ist im Tablet leider nicht verfügbar. Bitte nutze deinen Browser um diese Funktion zu nutzen!"
+            "title": "Diese Funktion ist im Tablet leider nicht verfügbar.",
+            "description": "Bitte nutze deinen Browser um diese Funktion nutzen zu können.",
+            "button": "Im Browser öffnen"
         }
     },
     "enums": {

@@ -14,7 +14,7 @@ definePageMeta({
 });
 
 const settingsStore = useSettingsStore();
-const { isNUIAvailable } = storeToRefs(settingsStore);
+const { isNUIEnabled } = storeToRefs(settingsStore);
 
 const route = useRoute();
 const router = useRouter();
@@ -24,7 +24,7 @@ if (!route.query || !route.query.target) {
 } else {
     const url = route.query.target as string;
     useTimeoutFn(async () => {
-        if (isNUIAvailable.value) {
+        if (isNUIEnabled.value) {
             openURLInWindow(url);
             router.back();
         } else {
@@ -62,10 +62,10 @@ const target = route.query.target as string;
                             :label="$t('pages.dereferer.goto')"
                             trailing-icon="i-mdi-link-variant"
                             size="lg"
-                            :to="isNUIAvailable ? undefined : target"
+                            :to="isNUIEnabled ? undefined : target"
                             :external="true"
                             rel="noreferrer"
-                            @click="isNUIAvailable ? openURLInWindow(target) : undefined"
+                            @click="isNUIEnabled ? openURLInWindow(target) : undefined"
                         />
 
                         <UButton color="red" icon="i-mdi-arrow-back" :label="$t('common.back')" @click="router.back()" />

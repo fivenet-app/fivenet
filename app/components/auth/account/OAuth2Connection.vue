@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -71,7 +72,7 @@ const modal = useModal();
                     </div>
                 </UButton>
 
-                <div v-if="account !== undefined" class="flex items-center justify-between">
+                <div v-if="account" class="flex items-center justify-between">
                     <UButton
                         icon="i-mdi-close-circle"
                         color="red"
@@ -85,28 +86,23 @@ const modal = useModal();
                     </UButton>
                 </div>
 
-                <div v-else class="flex flex-row-reverse">
-                    <template v-if="isNUIAvailable()">
-                        <p class="ml-4 text-end text-sm">
-                            {{ $t('system.not_supported_on_tablet.title') }}
-                        </p>
-                    </template>
-                    <template v-else>
-                        <OAuth2ConnectButton :provider="provider" />
-                    </template>
-                </div>
+                <OAuth2ConnectButton v-if="!isNUIEnabled().value" :provider="provider" />
             </div>
         </template>
 
-        <template v-if="account" #footer>
+        <template #footer>
             <div class="inline-flex items-center gap-4">
-                <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
+                <template v-if="account">
+                    <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
 
-                <UTooltip :text="`ID: ${account.externalId}`">
-                    <span class="text-left">
-                        {{ account.username }}
-                    </span>
-                </UTooltip>
+                    <UTooltip :text="`ID: ${account.externalId}`">
+                        <span class="text-left">
+                            {{ account.username }}
+                        </span>
+                    </UTooltip>
+                </template>
+
+                <NotSupportedTabletBlock v-else-if="isNUIEnabled().value" class="text-sm" />
             </div>
         </template>
     </UPageCard>

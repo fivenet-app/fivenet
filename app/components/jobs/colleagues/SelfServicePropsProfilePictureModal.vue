@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -69,7 +70,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await setProfilePicture(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const nuiAvailable = ref(isNUIAvailable());
+const nuiAvailable = isNUIEnabled();
 </script>
 
 <template>
@@ -89,9 +90,7 @@ const nuiAvailable = ref(isNUIAvailable());
                 <div>
                     <div>
                         <UFormGroup name="avatar" class="flex-1" :label="$t('common.avatar')">
-                            <p v-if="nuiAvailable" class="text-sm">
-                                {{ $t('system.not_supported_on_tablet.title') }}
-                            </p>
+                            <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
                             <UInput
                                 v-else
                                 type="file"

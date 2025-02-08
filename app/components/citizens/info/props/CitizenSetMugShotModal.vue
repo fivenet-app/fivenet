@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
+import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -109,9 +110,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="mugShot" :label="$t('common.image')">
-                        <p v-if="isNUIAvailable()" class="text-sm">
-                            {{ $t('system.not_supported_on_tablet.title') }}
-                        </p>
+                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
                         <template v-else>
                             <UInput
                                 type="file"
