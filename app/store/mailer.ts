@@ -156,7 +156,7 @@ export const useMailerStore = defineStore('mailer', {
                     type: NotificationType.INFO,
                     actions: this.getNotificationActions(data.id),
                 });
-                useSound().play({ name: 'notification' });
+                useSounds('/sounds/notification.mp3').play();
             } else if (event.data.oneofKind === 'threadDelete') {
                 const id = event.data.threadDelete;
                 if (this.selectedThread?.id === id) {
@@ -224,7 +224,7 @@ export const useMailerStore = defineStore('mailer', {
                     type: NotificationType.INFO,
                     actions: this.getNotificationActions(data.threadId),
                 });
-                useSound().play({ name: 'notification' });
+                useSounds('/sounds/notification.mp3').play();
             } else if (event.data.oneofKind === 'messageDelete') {
                 // Remove message if it is currently in our messagess list
                 const id = event.data.messageDelete;

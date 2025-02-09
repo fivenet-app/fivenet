@@ -1,6 +1,5 @@
 // @ts-check
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-// @ts-ignore no types available yet
 import pluginVue from 'eslint-plugin-vue';
 import withNuxt from './.nuxt/eslint.config.mjs';
 

@@ -120,7 +120,7 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             if (n.category === NotificationCategory.CALENDAR) {
-                                useSound().play({ name: 'notification' });
+                                useSounds('/sounds/notification.mp3').play();
 
                                 if (n.data?.calendar !== undefined) {
                                     const calendarStore = useCalendarStore();

@@ -74,6 +74,8 @@ const selectedTab = computed({
     },
 });
 
+const notificationSound = useSounds('/sounds/notification.mp3');
+
 onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
 </script>
 
@@ -156,7 +158,7 @@ onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path
                     :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
                 >
                     <template #links>
-                        <UButton icon="i-mdi-play" @click="useSound().play({ name: 'notification' })" />
+                        <UButton icon="i-mdi-play" @click="notificationSound.play()" />
                     </template>
 
                     <UFormGroup

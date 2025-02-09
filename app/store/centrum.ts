@@ -342,7 +342,7 @@ export const useCentrumStore = defineStore('centrum', {
                     actions: this.getNotificationActions(),
                 });
 
-                useSound().play({ name: 'centrum/message-incoming' });
+                useSounds('/sounds/centrum/message-incoming.mp3').play();
             }
         },
         removePendingDispatch(id: number): void {
@@ -577,7 +577,7 @@ export const useCentrumStore = defineStore('centrum', {
                             this.removeDispatch(status.id);
                             continue;
                         } else if (status.status === StatusDispatch.NEED_ASSISTANCE) {
-                            useSound().play({ name: 'centrum/morse-sos' });
+                            useSounds('/sounds/centrum/morse-sos.mp3').play();
                         }
 
                         // Only handle dispatch status affecting pending or own dispatches, when

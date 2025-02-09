@@ -269,9 +269,9 @@ onBeforeUnmount(() => stopStream());
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;
 
-const { play } = useSound();
+const { play } = useSounds('/sounds/centrum/attention.mp3');
 const debouncedPlay = useDebounceFn(async () => {
-    play({ name: 'centrum/attention', rate: 1.85 });
+    play({ playbackRate: 1.85 });
 }, 950);
 
 const attentionDebouncedPlay = useDebounceFn(async () => debouncedPlay(), 950);
@@ -313,6 +313,8 @@ async function checkup(): Promise<void> {
     lastCheckupNotification.value = now;
 }
 
+const attentionSound = useSounds('/sounds/centrum/attention.mp3');
+
 function sendRequireUnitNotification(): void {
     if (!userOnDuty.value) {
         return;
@@ -325,7 +327,7 @@ function sendRequireUnitNotification(): void {
         timeout: 12500,
     });
 
-    useSound().play({ name: 'centrum/attention', rate: 1.85 });
+    attentionSound.play({ playbackRate: 1.85 });
 }
 
 function openTakeDispatches(): void {

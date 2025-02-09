@@ -41,103 +41,6 @@ importers:
       '@protobuf-ts/grpcweb-transport':
         specifier: 2.9.4
         version: 2.9.4
-      '@unovis/ts':
-        specifier: 1.5.0
-        version: 1.5.0
-      '@unovis/vue':
-        specifier: 1.5.0
-        version: 1.5.0(@unovis/ts@1.5.0)(vue@3.5.13(typescript@5.7.3))
-      '@vue-leaflet/vue-leaflet':
-        specifier: 0.10.1
-        version: 0.10.1(@types/leaflet@1.9.16)(leaflet@1.9.4)(typescript@5.7.3)
-      '@zxcvbn-ts/core':
-        specifier: 3.0.4
-        version: 3.0.4
-      browser-headers:
-        specifier: 0.4.1
-        version: 0.4.1
-      consola:
-        specifier: 3.4.0
-        version: 3.4.0
-      date-fns:
-        specifier: 4.1.0
-        version: 4.1.0
-      emoji-blast:
-        specifier: 0.10.2
-        version: 0.10.2
-      google-protobuf:
-        specifier: 3.21.4
-        version: 3.21.4
-      grpc-web:
-        specifier: 1.5.0
-        version: 1.5.0
-      howler:
-        specifier: 2.2.4
-        version: 2.2.4
-      leaflet:
-        specifier: 1.9.4
-        version: 1.9.4
-      leaflet-contextmenu:
-        specifier: 1.4.0
-        version: 1.4.0
-      maska:
-        specifier: 3.1.0
-        version: 3.1.0
-      mdi-vue3:
-        specifier: 7.4.47
-        version: 7.4.47(vue@3.5.13(typescript@5.7.3))
-      nuxt-zod-i18n:
-        specifier: 1.11.5
-        version: 1.11.5(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)
-      pinia:
-        specifier: 2.3.1
-        version: 2.3.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
-      slugify:
-        specifier: 1.6.6
-        version: 1.6.6
-      splitpanes:
-        specifier: 3.1.8
-        version: 3.1.8(vue@3.5.13(typescript@5.7.3))
-      uuid:
-        specifier: 11.0.5
-        version: 11.0.5
-      v-calendar:
-        specifier: 3.1.2
-        version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.13(typescript@5.7.3))
-      v-code-diff:
-        specifier: 1.13.1
-        version: 1.13.1(vue@3.5.13(typescript@5.7.3))
-      vue-countup-v3:
-        specifier: 1.4.2
-        version: 1.4.2(vue@3.5.13(typescript@5.7.3))
-      vue-draggable-plus:
-        specifier: 0.6.0
-        version: 0.6.0(@types/sortablejs@1.15.8)
-      vue-json-pretty:
-        specifier: 2.4.0
-        version: 2.4.0(vue@3.5.13(typescript@5.7.3))
-      vue-timeline-chart:
-        specifier: 2.8.1
-        version: 2.8.1(vue@3.5.13(typescript@5.7.3))
-      vue3-colorpicker:
-        specifier: 2.3.0
-        version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@12.5.0(typescript@5.7.3))(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
-      zod:
-        specifier: 3.24.1
-        version: 3.24.1
-    devDependencies:
-      '@nuxt/devtools':
-        specifier: 2.0.0
-        version: 2.0.0(rollup@4.29.1)(vite@6.0.11(@types/node@22.13.1)(jiti@2.4.2)(sass@1.84.0)(terser@5.37.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
-      '@nuxt/eslint':
-        specifier: 1.0.1
-        version: 1.0.1(@vue/compiler-sfc@3.5.13)(eslint@9.20.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vite@6.0.11(@types/node@22.13.1)(jiti@2.4.2)(sass@1.84.0)(terser@5.37.0)(yaml@2.7.0))
-      '@nuxtjs/i18n':
-        specifier: 9.2.0
-        version: 9.2.0(@vue/compiler-dom@3.5.13)(eslint@9.20.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
-      '@protobuf-ts/plugin':
-        specifier: 2.9.4
-        version: 2.9.4
       '@tiptap/extension-character-count':
         specifier: 2.11.5
         version: 2.11.5(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))(@tiptap/pm@2.10.4)
@@ -198,15 +101,118 @@ importers:
       '@tiptap/extension-underline':
         specifier: 2.11.5
         version: 2.11.5(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))
+      '@unovis/ts':
+        specifier: 1.5.0
+        version: 1.5.0
+      '@unovis/vue':
+        specifier: 1.5.0
+        version: 1.5.0(@unovis/ts@1.5.0)(vue@3.5.13(typescript@5.7.3))
+      '@vue-leaflet/vue-leaflet':
+        specifier: 0.10.1
+        version: 0.10.1(@types/leaflet@1.9.16)(leaflet@1.9.4)(typescript@5.7.3)
+      '@vueuse/sound':
+        specifier: ^2.1.3
+        version: 2.1.3(vue@3.5.13(typescript@5.7.3))
+      '@zxcvbn-ts/core':
+        specifier: 3.0.4
+        version: 3.0.4
+      browser-headers:
+        specifier: 0.4.1
+        version: 0.4.1
+      consola:
+        specifier: 3.4.0
+        version: 3.4.0
+      date-fns:
+        specifier: 4.1.0
+        version: 4.1.0
+      emoji-blast:
+        specifier: 0.10.2
+        version: 0.10.2
+      google-protobuf:
+        specifier: 3.21.4
+        version: 3.21.4
+      grpc-web:
+        specifier: 1.5.0
+        version: 1.5.0
+      leaflet:
+        specifier: 1.9.4
+        version: 1.9.4
+      leaflet-contextmenu:
+        specifier: 1.4.0
+        version: 1.4.0
+      maska:
+        specifier: 3.1.0
+        version: 3.1.0
+      mdi-vue3:
+        specifier: 7.4.47
+        version: 7.4.47(vue@3.5.13(typescript@5.7.3))
+      nuxt-zod-i18n:
+        specifier: 1.11.5
+        version: 1.11.5(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)
+      pinia:
+        specifier: 2.3.1
+        version: 2.3.1(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+      slugify:
+        specifier: 1.6.6
+        version: 1.6.6
+      splitpanes:
+        specifier: 3.1.8
+        version: 3.1.8(vue@3.5.13(typescript@5.7.3))
+      tiptap-extension-auto-joiner:
+        specifier: 0.1.3
+        version: 0.1.3
+      tiptap-extension-font-size:
+        specifier: 1.2.0
+        version: 1.2.0(@tiptap/pm@2.10.4)
+      tiptap-unique-id:
+        specifier: 2.10.3
+        version: 2.10.3(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))(@tiptap/pm@2.10.4)
+      uuid:
+        specifier: 11.0.5
+        version: 11.0.5
+      v-calendar:
+        specifier: 3.1.2
+        version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.13(typescript@5.7.3))
+      v-code-diff:
+        specifier: 1.13.1
+        version: 1.13.1(vue@3.5.13(typescript@5.7.3))
+      vue-countup-v3:
+        specifier: 1.4.2
+        version: 1.4.2(vue@3.5.13(typescript@5.7.3))
+      vue-draggable-plus:
+        specifier: 0.6.0
+        version: 0.6.0(@types/sortablejs@1.15.8)
+      vue-json-pretty:
+        specifier: 2.4.0
+        version: 2.4.0(vue@3.5.13(typescript@5.7.3))
+      vue-timeline-chart:
+        specifier: 2.8.1
+        version: 2.8.1(vue@3.5.13(typescript@5.7.3))
+      vue3-colorpicker:
+        specifier: 2.3.0
+        version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@12.5.0(typescript@5.7.3))(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
+      zod:
+        specifier: 3.24.1
+        version: 3.24.1
+    devDependencies:
+      '@nuxt/devtools':
+        specifier: 2.0.0
+        version: 2.0.0(rollup@4.29.1)(vite@6.0.11(@types/node@22.13.1)(jiti@2.4.2)(sass@1.84.0)(terser@5.37.0)(yaml@2.7.0))(vue@3.5.13(typescript@5.7.3))
+      '@nuxt/eslint':
+        specifier: 1.0.1
+        version: 1.0.1(@vue/compiler-sfc@3.5.13)(eslint@9.20.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vite@6.0.11(@types/node@22.13.1)(jiti@2.4.2)(sass@1.84.0)(terser@5.37.0)(yaml@2.7.0))
+      '@nuxtjs/i18n':
+        specifier: 9.2.0
+        version: 9.2.0(@vue/compiler-dom@3.5.13)(eslint@9.20.0(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+      '@protobuf-ts/plugin':
+        specifier: 2.9.4
+        version: 2.9.4
       '@total-typescript/ts-reset':
         specifier: 0.6.1
         version: 0.6.1
       '@types/google-protobuf':
         specifier: 3.15.12
         version: 3.15.12
-      '@types/howler':
-        specifier: 2.2.12
-        version: 2.2.12
       '@types/leaflet':
         specifier: 1.9.16
         version: 1.9.16
@@ -306,15 +312,6 @@ importers:
       tailwindcss:
         specifier: 3.4.17
         version: 3.4.17
-      tiptap-extension-auto-joiner:
-        specifier: 0.1.3
-        version: 0.1.3
-      tiptap-extension-font-size:
-        specifier: 1.2.0
-        version: 1.2.0(@tiptap/pm@2.10.4)
-      tiptap-unique-id:
-        specifier: 2.10.3
-        version: 2.10.3(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))(@tiptap/pm@2.10.4)
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -2055,9 +2052,6 @@ packages:
   '@types/hast@3.0.4':
     resolution: {integrity: sha512-WPs+bbQw5aCj+x6laNGWLH3wviHtoCv/P3+otBhbOhJgG8qtpdAMlTCxLtsTWA7LH1Oh/bFCHsBn0TPS5m30EQ==}
 
-  '@types/howler@2.2.12':
-    resolution: {integrity: sha512-hy769UICzOSdK0Kn1FBk4gN+lswcj1EKRkmiDtMkUGvFfYJzgaDXmVXkSShS2m89ERAatGIPnTUlp2HhfkVo5g==}
-
   '@types/http-proxy@1.17.15':
     resolution: {integrity: sha512-25g5atgiVNTIv0LBDTg1H74Hvayx0ajtJPLLcYE3whFv75J0pWNtOBzaXJQgDTmrX1bx5U9YC2w/n65BN1HwRQ==}
 
@@ -2493,6 +2487,15 @@ packages:
 
   '@vueuse/shared@12.5.0':
     resolution: {integrity: sha512-vMpcL1lStUU6O+kdj6YdHDixh0odjPAUM15uJ9f7MY781jcYkIwFA4iv2EfoIPO6vBmvutI1HxxAwmf0cx5ISQ==}
+
+  '@vueuse/sound@2.1.3':
+    resolution: {integrity: sha512-yZW1dzMJqCp57+ZM1tJ2oPye4RJvWhzkUpGvokB5fhk/jAmOwKGbdvm8O7dJ/YAmP+eLFCBQmELjso6sXSfnAg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   '@zxcvbn-ts/core@3.0.4':
     resolution: {integrity: sha512-aQeiT0F09FuJaAqNrxynlAwZ2mW/1MdXakKWNmGM1Qp/VaY6CnB/GfnMS2T8gB2231Esp1/maCWd8vTG4OuShw==}
@@ -9509,8 +9512,6 @@ snapshots:
     dependencies:
       '@types/unist': 3.0.3
 
-  '@types/howler@2.2.12': {}
-
   '@types/http-proxy@1.17.15':
     dependencies:
       '@types/node': 22.13.1
@@ -10166,6 +10167,12 @@ snapshots:
       vue: 3.5.13(typescript@5.7.3)
     transitivePeerDependencies:
       - typescript
+
+  '@vueuse/sound@2.1.3(vue@3.5.13(typescript@5.7.3))':
+    dependencies:
+      howler: 2.2.4
+      vue: 3.5.13(typescript@5.7.3)
+      vue-demi: 0.14.10(vue@3.5.13(typescript@5.7.3))
 
   '@zxcvbn-ts/core@3.0.4':
     dependencies:
@@ -12950,7 +12957,7 @@ snapshots:
 
   node-abi@3.73.0:
     dependencies:
-      semver: 7.6.3
+      semver: 7.7.1
     optional: true
 
   node-addon-api@7.1.1: {}

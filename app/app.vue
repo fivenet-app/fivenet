@@ -184,7 +184,6 @@ const route = router.currentRoute;
         <USlideovers />
 
         <ClientOnly>
-            <LazyOverlaysSounds />
             <NotificationProvider />
         </ClientOnly>
 

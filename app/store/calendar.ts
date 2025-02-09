@@ -114,7 +114,7 @@ export const useCalendarStore = defineStore('calendar', {
                         ],
                     });
 
-                    useSound().play({ name: 'notification' });
+                    useSounds('/sounds/notification.mp3').play();
                 });
             } catch (e) {
                 logger.error('error while getting upcoming events', e);

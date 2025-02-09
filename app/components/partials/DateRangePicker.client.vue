@@ -64,7 +64,8 @@ const attrs = {
 <style>
 :root {
     /* Font Family override */
-    --vc-font-family: DM Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    --vc-font-family:
+        DM Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji', DM Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --vc-gray-50: rgb(var(--color-gray-50));

@@ -22,6 +22,7 @@ export default defineNuxtConfig({
         '@nuxt/eslint',
         '@nuxt/content',
         'nuxt-tiptap-editor',
+        '@vueuse/sound/nuxt',
     ],
 
     future: {
@@ -214,13 +215,19 @@ export default defineNuxtConfig({
         path: '/api/version',
     },
 
+    tiptap: {},
+
+    sound: {
+        sounds: {
+            scan: true,
+        },
+    },
+
     $production: {
         icon: {
             iconifyApiEndpoint: '/api/icons',
         },
     },
-
-    tiptap: {},
 
     $development: {
         icon: {
