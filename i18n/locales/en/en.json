@@ -2548,7 +2548,15 @@
         },
         "InternetService": {
             "ErrFailedQuery": "Failed to get internet data!",
-            "ErrFailedSearch": "Failed to search internet!"
+            "ErrFailedSearch": "Failed to search internet!",
+            "ErrDomainNotTransferable": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain not transferable, please choose another domain."
+            },
+            "ErrDomainWrongTransferCode": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain transfer code wrong or transfer not enabled."
+            }
         }
     },
     "system": {

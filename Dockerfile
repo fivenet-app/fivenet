@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Frontend Build
-FROM docker.io/library/node:22.13.1-alpine3.20 AS nodebuilder
+FROM docker.io/library/node:23.7.0-alpine3.20 AS nodebuilder
 ARG NUXT_UI_PRO_LICENSE
 WORKDIR /app
 COPY . ./
@@ -11,7 +11,7 @@ RUN rm -rf ./.nuxt/ && \
         -exec rm -rf {} + && \
     apk add --no-cache git && \
     corepack enable && \
-    corepack prepare pnpm@10.0.0 --activate && \
+    corepack prepare pnpm@9.15.5 --activate && \
     pnpm install && \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 

@@ -287,6 +287,7 @@ const columnsNew = [
                             <UTable
                                 v-else
                                 :columns="columnsNew"
+                                :loading="loading"
                                 :rows="citizens"
                                 :empty-state="{ icon: 'i-mdi-file', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
                             >

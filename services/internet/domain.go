@@ -129,9 +129,9 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 	// Domain exists
 	if domain != nil {
 		if domain.TransferCode == nil {
-			// TODO return domain not transferable error
+			return nil, errorsinternet.ErrDomainNotTransferable
 		} else if req.TransferCode != nil && *domain.TransferCode != *req.TransferCode {
-			// TODO return wrong transfer code error
+			return nil, errorsinternet.ErrDomainWrongTransferCode
 		}
 
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)

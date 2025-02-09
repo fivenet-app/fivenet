@@ -18,7 +18,7 @@ function updateTabInfo(): void {
         return;
     }
 
-    tab.value.label = '';
+    tab.value.label = t('components.internet.pages.ads_management.title');
     tab.value.icon = undefined;
 }
 updateTabInfo();

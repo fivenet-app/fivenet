@@ -37,10 +37,10 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.84
+	github.com/minio/minio-go/v7 v7.0.85
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.10.25
-	github.com/nats-io/nats.go v1.38.0
+	github.com/nats-io/nats.go v1.39.0
 	github.com/nicksnyder/go-i18n/v2 v2.5.1
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
@@ -63,16 +63,16 @@ require (
 	go.uber.org/fx v1.23.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/crypto v0.32.0
-	golang.org/x/exp v0.0.0-20250128182459-e0ece0dbea4c
+	golang.org/x/crypto v0.33.0
+	golang.org/x/exp v0.0.0-20250207012021-f9890c6ad9f3
 	golang.org/x/image v0.24.0
 	golang.org/x/net v0.34.0
 	golang.org/x/oauth2 v0.26.0
 	golang.org/x/text v0.22.0
 	google.golang.org/grpc v1.70.0
-	google.golang.org/protobuf v1.36.4
+	google.golang.org/protobuf v1.36.5
 	gopkg.in/yaml.v3 v3.0.1
-	gotest.tools/v3 v3.5.1
+	gotest.tools/v3 v3.5.2
 	willnorris.com/go/imageproxy v0.11.2
 )
 
@@ -206,7 +206,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	go.uber.org/dig v1.18.0 // indirect
 	golang.org/x/arch v0.13.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20250124145028-65684f501c47 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250124145028-65684f501c47 // indirect
