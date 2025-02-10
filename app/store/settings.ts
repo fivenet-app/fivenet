@@ -3,112 +3,102 @@ import type { Locale } from 'vue-i18n';
 
 export const logger = useLogger('⚙️ Settings');
 
-export interface SettingsState {
-    updateAvailable: false | string;
-    version: string;
-    locale: Locale | undefined;
+export const useSettingsStore = defineStore(
+    'settings',
+    () => {
+        // State
+        const version = ref<string>(APP_VERSION);
+        const updateAvailable = ref<false | string>(false);
+        const locale = ref<Locale | undefined>(undefined);
 
-    nuiEnabled: boolean;
-    nuiResourceName: string | undefined;
-    livemap: {
-        markerSize: number;
-        centerSelectedMarker: boolean;
-        showUnitNames: boolean;
-        showUnitStatus: boolean;
-        showAllDispatches: boolean;
-        activeLayers: string[];
-    };
-    startpage: string;
-    design: {
-        documents: {
-            listStyle: 'single' | 'double';
+        const nuiEnabled = ref<boolean>(false);
+        const nuiResourceName = ref<string | undefined>(undefined);
+
+        const livemap = ref({
+            markerSize: 22,
+            centerSelectedMarker: false,
+            showUnitNames: true,
+            showUnitStatus: true,
+            showAllDispatches: false,
+            activeLayers: [] as string[],
+        });
+
+        const startpage = ref<string>('/overview');
+        const design = ref({
+            documents: {
+                listStyle: 'single' as 'single' | 'double',
+            },
+            ui: {
+                primary: 'sky',
+                gray: 'neutral',
+            },
+        });
+
+        const audio = ref({
+            notificationsVolume: 0.15,
+        });
+
+        const calendar = ref({
+            reminderTimes: [0, 900],
+        });
+
+        const streamerMode = ref<boolean>(false);
+        const calculatorPosition = ref<'top' | 'middle' | 'bottom'>('middle');
+        const jobsService = ref({ cardView: true });
+
+        // Actions
+        const setVersion = (newVersion: string): void => {
+            version.value = newVersion;
         };
-        ui: {
-            primary: string;
-            gray: string;
+
+        const setUpdateAvailable = async (newVersion: string): Promise<void> => {
+            updateAvailable.value = newVersion;
         };
-    };
-    audio: {
-        notificationsVolume: number;
-    };
-    calendar: {
-        reminderTimes: number[];
-    };
-    streamerMode: boolean;
-    calculatorPosition: 'top' | 'middle' | 'bottom';
-    jobsService: {
-        cardView: boolean;
-    };
-}
 
-export const useSettingsStore = defineStore('settings', {
-    state: () =>
-        ({
-            version: APP_VERSION,
-            updateAvailable: false,
-            locale: undefined,
+        const setNuiSettings = (enabled: boolean, resourceName: string | undefined): void => {
+            nuiEnabled.value = enabled;
+            nuiResourceName.value = resourceName;
+        };
 
-            nuiEnabled: false,
-            nuiResourceName: undefined,
+        // Getters
+        const getUserLocale = computed<Locale>(() => {
+            if (locale.value !== undefined) {
+                return locale.value;
+            }
+            if (useAppConfig().defaultLocale !== '') {
+                return useAppConfig().defaultLocale as Locale;
+            }
+            return 'en';
+        });
 
-            livemap: {
-                markerSize: 22,
-                centerSelectedMarker: false,
-                showUnitNames: true,
-                showUnitStatus: true,
-                showAllDispatches: false,
-                activeLayers: [],
-            },
-            startpage: '/overview',
-            design: {
-                documents: {
-                    listStyle: 'single',
-                },
-                ui: {
-                    primary: 'sky',
-                    gray: 'neutral',
-                },
-            },
-            audio: {
-                notificationsVolume: 0.15,
-            },
-            calendar: {
-                reminderTimes: [0, 900],
-            },
-            streamerMode: false,
-            calculatorPosition: 'middle',
-            jobsService: {
-                cardView: true,
-            },
-        }) as SettingsState,
-    persist: {
-        omit: ['updateAvailable'],
+        return {
+            version,
+            updateAvailable,
+            locale,
+            nuiEnabled,
+            nuiResourceName,
+            livemap,
+            startpage,
+            design,
+            audio,
+            calendar,
+            streamerMode,
+            calculatorPosition,
+            jobsService,
+
+            setVersion,
+            setUpdateAvailable,
+            setNuiSettings,
+
+            getUserLocale,
+        };
     },
-    actions: {
-        setVersion(version: string): void {
-            this.version = version;
-        },
-        async setUpdateAvailable(version: string): Promise<void> {
-            this.updateAvailable = version;
-        },
-        setNuiSettings(enabled: boolean, resourceName: string | undefined): void {
-            this.nuiEnabled = enabled;
-            this.nuiResourceName = resourceName;
+    {
+        persist: {
+            omit: ['updateAvailable'],
         },
     },
-    getters: {
-        isNUIEnabled(state): boolean {
-            return state.nuiEnabled ?? false;
-        },
-        getUserLocale(state): Locale {
-            return state.locale !== undefined
-                ? state.locale
-                : useAppConfig().defaultLocale !== ''
-                  ? (useAppConfig().defaultLocale as Locale)
-                  : 'en';
-        },
-    },
-});
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useSettingsStore, import.meta.hot));

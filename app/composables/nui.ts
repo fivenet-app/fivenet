@@ -3,15 +3,15 @@ import { useSettingsStore } from '~/store/settings';
 
 export const logger = useLogger('🎮 NUI');
 
-// Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
-const _isNUIEnabled = (): ComputedRef<boolean> => {
+// Use settings store to see if NUI is enabled
+const _isNUIEnabled = (): Ref<boolean> => {
     const settingsStore = useSettingsStore();
-    const { isNUIEnabled } = storeToRefs(settingsStore);
+    const { nuiEnabled } = storeToRefs(settingsStore);
 
-    return isNUIEnabled;
+    return nuiEnabled;
 };
 
-export const isNUIEnabled = createSharedComposable(_isNUIEnabled);
+const isNUIEnabled = createSharedComposable(_isNUIEnabled);
 
 function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';

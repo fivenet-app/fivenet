@@ -27,41 +27,29 @@ import { useSettingsStore } from './settings';
 
 const logger = useLogger('📅 Calendar');
 
-export interface CalendarState {
-    activeCalendarIds: number[];
-    view: 'month' | 'week' | 'summary';
-    currentDate: {
-        year: number;
-        month: number;
-    };
-    calendars: Calendar[];
-    entries: CalendarEntry[];
-    eventReminders: Map<number, number>;
-}
+export const useCalendarStore = defineStore(
+    'calendar',
+    () => {
+        // State
+        const activeCalendarIds = ref<number[]>([]);
+        const view = ref<'month' | 'week' | 'summary'>('month');
+        const currentDate = ref({
+            year: new Date().getFullYear(),
+            month: new Date().getMonth() + 1,
+        });
+        const calendars = ref<Calendar[]>([]);
+        const entries = ref<CalendarEntry[]>([]);
+        const eventReminders = ref<Map<number, number>>(new Map());
 
-export const useCalendarStore = defineStore('calendar', {
-    state: () =>
-        ({
-            activeCalendarIds: [],
-            view: 'month',
-            currentDate: {
-                year: new Date().getFullYear(),
-                month: new Date().getMonth() + 1,
-            },
-            calendars: [],
-            entries: [],
-            eventReminders: new Map<number, number>(),
-        }) as CalendarState,
-    persist: {
-        pick: ['activeCalendarIds', 'view'],
-    },
-    actions: {
-        async checkAppointments(): Promise<void> {
+        const notificationSound = useSounds('/sounds/notification.mp3');
+
+        // Actions
+        const checkAppointments = async (): Promise<void> => {
             try {
                 const reminderTimes = useSettingsStore().calendar.reminderTimes;
                 const highestReminder = Math.max(...reminderTimes);
 
-                const response = await this.getUpcomingEntries({
+                const response = await getUpcomingEntries({
                     seconds: highestReminder + 10,
                 });
 
@@ -74,7 +62,7 @@ export const useCalendarStore = defineStore('calendar', {
                         Math.abs(curr - time) < Math.abs(prev - time) ? curr : prev,
                     );
 
-                    if (this.eventReminders.get(entry.id) === closestTime) {
+                    if (eventReminders.value.get(entry.id) === closestTime) {
                         return;
                     }
 
@@ -83,9 +71,9 @@ export const useCalendarStore = defineStore('calendar', {
                     }
 
                     if (time <= 0) {
-                        this.eventReminders.delete(entry.id);
+                        eventReminders.value.delete(entry.id);
                     } else {
-                        this.eventReminders.set(entry.id, closestTime);
+                        eventReminders.value.set(entry.id, closestTime);
                     }
 
                     useNotificatorStore().add({
@@ -114,29 +102,31 @@ export const useCalendarStore = defineStore('calendar', {
                         ],
                     });
 
-                    useSounds('/sounds/notification.mp3').play();
+                    notificationSound.play();
                 });
             } catch (e) {
                 logger.error('error while getting upcoming events', e);
             }
-        },
+        };
+
         // Calendars
-        async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
+        const getCalendar = async (req: GetCalendarRequest): Promise<GetCalendarResponse> => {
             const call = getGRPCCalendarClient().getCalendar(req);
             const { response } = await call;
 
             if (response.calendar) {
-                const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                const idx = calendars.value.findIndex((c) => c.id === response.calendar!.id);
                 if (idx > -1) {
-                    this.calendars[idx] = response.calendar;
+                    calendars.value[idx] = response.calendar;
                 } else {
-                    this.calendars.push(response.calendar);
+                    calendars.value.push(response.calendar);
                 }
             }
 
             return response;
-        },
-        async listCalendars(req: ListCalendarsRequest): Promise<ListCalendarsResponse> {
+        };
+
+        const listCalendars = async (req: ListCalendarsRequest): Promise<ListCalendarsResponse> => {
             try {
                 const call = getGRPCCalendarClient().listCalendars(req);
                 const { response } = await call;
@@ -146,17 +136,17 @@ export const useCalendarStore = defineStore('calendar', {
                     if (response.calendars.length > 0) {
                         const foundCalendars: number[] = [];
                         response.calendars.forEach((calendar) => {
-                            const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
+                            const idx = calendars.value.findIndex((c) => c.id === calendar!.id);
                             if (idx > -1) {
-                                this.calendars[idx] = calendar;
+                                calendars.value[idx] = calendar;
                             } else {
-                                this.calendars.push(calendar);
+                                calendars.value.push(calendar);
                             }
                             foundCalendars.push(calendar.id);
                         });
 
                         // Remove non-accessible calendars (ignore public ones) and their entries from our list
-                        this.calendars = this.calendars.filter((calendar): boolean => {
+                        calendars.value = calendars.value.filter((calendar): boolean => {
                             if (!calendar.public) {
                                 return true;
                             }
@@ -165,12 +155,12 @@ export const useCalendarStore = defineStore('calendar', {
                                 return true;
                             }
 
-                            this.entries = this.entries.filter((entry) => entry.calendarId === calendar.id);
+                            entries.value = entries.value.filter((entry) => entry.calendarId === calendar.id);
 
                             return false;
                         });
                     } else {
-                        this.calendars.length = 0;
+                        calendars.value.length = 0;
                     }
                 }
 
@@ -179,65 +169,68 @@ export const useCalendarStore = defineStore('calendar', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-        async createOrUpdateCalendar(calendar: Calendar): Promise<CreateOrUpdateCalendarResponse> {
+        };
+
+        const createOrUpdateCalendar = async (calendarParam: Calendar): Promise<CreateOrUpdateCalendarResponse> => {
             const call = getGRPCCalendarClient().createOrUpdateCalendar({
-                calendar: calendar,
+                calendar: calendarParam,
             });
             const { response } = await call;
 
             if (response.calendar) {
-                const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                const idx = calendars.value.findIndex((c) => c.id === response.calendar!.id);
                 if (idx > -1) {
-                    this.calendars[idx] = response.calendar;
+                    calendars.value[idx] = response.calendar;
                 } else {
-                    this.calendars.push(response.calendar);
+                    calendars.value.push(response.calendar);
                 }
 
-                this.activeCalendarIds.push(response.calendar.id);
+                activeCalendarIds.value.push(response.calendar.id);
             }
 
             return response;
-        },
-        async deleteCalendar(id: number): Promise<void> {
+        };
+
+        const deleteCalendar = async (id: number): Promise<void> => {
             try {
                 const call = getGRPCCalendarClient().deleteCalendar({
                     calendarId: id,
                 });
                 await call;
 
-                const idx = this.calendars.findIndex((c) => c.id === id);
+                const idx = calendars.value.findIndex((c) => c.id === id);
                 if (idx > -1) {
-                    this.calendars.splice(idx, 1);
+                    calendars.value.splice(idx, 1);
                 }
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
         // Entries
-        async getCalendarEntry(req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> {
+        const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
             const call = getGRPCCalendarClient().getCalendarEntry(req);
             const { response } = await call;
 
             if (response.entry) {
-                const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
+                const idx = entries.value.findIndex((c) => c.id === response.entry!.id);
                 if (idx > -1) {
-                    this.entries[idx] = response.entry;
+                    entries.value[idx] = response.entry;
                 } else {
-                    this.entries.push(response.entry);
+                    entries.value.push(response.entry);
                 }
             }
 
             return response;
-        },
-        async listCalendarEntries(req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
-            if (req === undefined) {
+        };
+
+        const listCalendarEntries = async (req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> => {
+            if (!req) {
                 req = {
-                    calendarIds: this.activeCalendarIds,
-                    year: this.currentDate.year,
-                    month: this.currentDate.month,
+                    calendarIds: activeCalendarIds.value,
+                    year: currentDate.value.year,
+                    month: currentDate.value.month,
                 };
             }
 
@@ -248,19 +241,19 @@ export const useCalendarStore = defineStore('calendar', {
                 if (response.entries.length > 0) {
                     response.entries.forEach((entry) => {
                         // Make sure that we have the calendar in our list before adding it
-                        if (!this.calendars.find((c) => c.id === entry.calendarId)) {
+                        if (!calendars.value.find((c) => c.id === entry.calendarId)) {
                             return;
                         }
 
-                        const idx = this.entries.findIndex((c) => c.id === entry!.id);
+                        const idx = entries.value.findIndex((c) => c.id === entry!.id);
                         if (idx > -1) {
-                            this.entries[idx] = entry;
+                            entries.value[idx] = entry;
                         } else {
-                            this.entries.push(entry);
+                            entries.value.push(entry);
                         }
                     });
                 } else {
-                    this.entries.length = 0;
+                    entries.value.length = 0;
                 }
 
                 return response;
@@ -268,8 +261,9 @@ export const useCalendarStore = defineStore('calendar', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-        async getUpcomingEntries(req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> {
+        };
+
+        const getUpcomingEntries = async (req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> => {
             try {
                 const call = getGRPCCalendarClient().getUpcomingEntries(req);
                 const { response } = await call;
@@ -279,48 +273,49 @@ export const useCalendarStore = defineStore('calendar', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-        async createOrUpdateCalendarEntry(
-            entry: CalendarEntry,
+        };
+
+        const createOrUpdateCalendarEntry = async (
+            entryParam: CalendarEntry,
             users?: UserShort[],
-        ): Promise<CreateOrUpdateCalendarEntryResponse> {
+        ): Promise<CreateOrUpdateCalendarEntryResponse> => {
             const call = getGRPCCalendarClient().createOrUpdateCalendarEntry({
-                entry: entry,
+                entry: entryParam,
                 userIds: users?.map((u) => u.userId) ?? [],
             });
             const { response } = await call;
 
             if (response.entry) {
-                const idx = this.entries.findIndex((e) => e.id === response.entry?.id);
+                const idx = entries.value.findIndex((e) => e.id === response.entry?.id);
                 if (idx > -1) {
-                    this.entries[idx] = response.entry;
+                    entries.value[idx] = response.entry;
                 } else {
-                    this.entries.push(response.entry);
+                    entries.value.push(response.entry);
                 }
             }
 
             return response;
-        },
+        };
 
-        async deleteCalendarEntry(entryId: number): Promise<void> {
+        const deleteCalendarEntry = async (entryId: number): Promise<void> => {
             try {
                 const call = getGRPCCalendarClient().deleteCalendarEntry({
                     entryId: entryId,
                 });
                 await call;
 
-                const idx = this.entries.findIndex((c) => c.id === entryId);
+                const idx = entries.value.findIndex((c) => c.id === entryId);
                 if (idx > -1) {
-                    this.entries.splice(idx, 1);
+                    entries.value.splice(idx, 1);
                 }
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
         // RSVP
-        async listCalendarEntryRSVP(req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> {
+        const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
             try {
                 const call = getGRPCCalendarClient().listCalendarEntryRSVP(req);
                 const { response } = await call;
@@ -330,19 +325,20 @@ export const useCalendarStore = defineStore('calendar', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-        async rsvpCalendarEntry(req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> {
+        };
+
+        const rsvpCalendarEntry = async (req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> => {
             try {
                 const call = getGRPCCalendarClient().rSVPCalendarEntry(req);
                 const { response } = await call;
 
                 // Retrieve calendar entry if a "should be visible" response and it is not in our list yet
                 if (req.entry?.entryId && response.entry?.response && response.entry.response > RsvpResponses.HIDDEN) {
-                    const entry = this.entries.find((e) => e.id === response.entry?.entryId);
-                    if (!entry) {
-                        await this.getCalendarEntry({ entryId: req.entry?.entryId });
+                    const foundEntry = entries.value.find((e) => e.id === response.entry?.entryId);
+                    if (!foundEntry) {
+                        await getCalendarEntry({ entryId: req.entry?.entryId });
                     } else {
-                        entry.rsvp = response.entry;
+                        foundEntry.rsvp = response.entry;
                     }
                 }
 
@@ -351,15 +347,46 @@ export const useCalendarStore = defineStore('calendar', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-    },
-    getters: {
-        hasPrivateCalendar: (state) => {
+        };
+
+        // Getters
+        const hasPrivateCalendar = computed(() => {
             const { activeChar } = useAuth();
-            return !!state.calendars.find((c) => c.job === undefined && c.creatorId === activeChar.value?.userId);
+            return !!calendars.value.find((c) => c.job === undefined && c.creatorId === activeChar.value?.userId);
+        });
+
+        return {
+            activeCalendarIds,
+            view,
+            currentDate,
+            calendars,
+            entries,
+            eventReminders,
+
+            // Actions
+            checkAppointments,
+            getCalendar,
+            listCalendars,
+            createOrUpdateCalendar,
+            deleteCalendar,
+            getCalendarEntry,
+            listCalendarEntries,
+            getUpcomingEntries,
+            createOrUpdateCalendarEntry,
+            deleteCalendarEntry,
+            listCalendarEntryRSVP,
+            rsvpCalendarEntry,
+
+            // Getters
+            hasPrivateCalendar,
+        };
+    },
+    {
+        persist: {
+            pick: ['activeCalendarIds', 'view'],
         },
     },
-});
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCalendarStore, import.meta.hot));

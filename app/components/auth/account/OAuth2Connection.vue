@@ -3,6 +3,7 @@ import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.v
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -16,6 +17,9 @@ const emit = defineEmits<{
 }>();
 
 const notifications = useNotificatorStore();
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
     try {
@@ -86,7 +90,7 @@ const modal = useModal();
                     </UButton>
                 </div>
 
-                <OAuth2ConnectButton v-if="!isNUIEnabled().value" :provider="provider" />
+                <OAuth2ConnectButton v-if="!nuiEnabled" :provider="provider" />
             </div>
         </template>
 
@@ -102,7 +106,7 @@ const modal = useModal();
                     </UTooltip>
                 </template>
 
-                <NotSupportedTabletBlock v-else-if="isNUIEnabled().value" class="text-sm" />
+                <NotSupportedTabletBlock v-else-if="nuiEnabled" class="text-sm" />
             </div>
         </template>
     </UPageCard>

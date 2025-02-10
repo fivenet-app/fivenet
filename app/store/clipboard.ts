@@ -80,163 +80,6 @@ export function getVehicle(obj: ClipboardVehicle): Vehicle {
     };
 }
 
-export interface ClipboardData {
-    documents: ClipboardDocument[];
-    users: ClipboardUser[];
-    vehicles: ClipboardVehicle[];
-}
-
-export interface ClipboardState extends ClipboardData {
-    activeStack: ClipboardData;
-}
-
-export type ListType = 'users' | 'documents' | 'vehicles';
-
-export const useClipboardStore = defineStore('clipboard', {
-    state: () =>
-        ({
-            users: [],
-            documents: [],
-            vehicles: [],
-            activeStack: {
-                users: [],
-                documents: [],
-                vehicles: [],
-            } as ClipboardData,
-        }) as ClipboardState,
-    persist: true,
-    actions: {
-        getTemplateData(): TemplateData {
-            const data: TemplateData = {
-                documents: [],
-                users: [],
-                vehicles: [],
-            };
-
-            this.activeStack.documents.forEach((v: ClipboardDocument) => {
-                if (v !== undefined) data.documents.push(getDocument(v));
-            });
-            this.activeStack.users.forEach((v: ClipboardUser) => {
-                if (v !== undefined) data.users.push(getUser(v));
-            });
-            this.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
-                if (v !== undefined) data.vehicles.push(getVehicle(v));
-            });
-
-            return data;
-        },
-
-        promoteToActiveStack(listType: ListType): void {
-            switch (listType) {
-                case 'documents':
-                    this.activeStack.documents = JSON.parse(JSON.stringify(this.documents)) as ClipboardDocument[];
-                    break;
-                case 'users':
-                    this.activeStack.users = JSON.parse(JSON.stringify(this.users)) as ClipboardUser[];
-                    break;
-                case 'vehicles':
-                    this.activeStack.vehicles = JSON.parse(JSON.stringify(this.vehicles)) as ClipboardVehicle[];
-                    break;
-            }
-        },
-
-        clearActiveStack(): void {
-            this.activeStack.documents.length = 0;
-            this.activeStack.users.length = 0;
-            this.activeStack.vehicles.length = 0;
-        },
-
-        // Documents
-        addDocument(document: Document): void {
-            const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === document.id;
-            });
-            if (idx === -1) {
-                this.documents.unshift(new ClipboardDocument(document));
-            }
-        },
-        removeDocument(id: number): void {
-            const idx = this.documents.findIndex((o: ClipboardDocument) => {
-                return o.id === id;
-            });
-            if (idx > -1) {
-                this.documents.splice(idx, 1);
-            }
-        },
-        clearDocuments(): void {
-            this.documents.splice(0, this.documents.length);
-        },
-
-        // Users
-        addUser(user: User, active?: boolean): void {
-            const idx = this.users.findIndex((o: ClipboardUser) => {
-                return o.userId === user.userId;
-            });
-            if (idx === -1) {
-                this.users.unshift(new ClipboardUser(user!));
-            }
-
-            if (active === true) {
-                this.promoteToActiveStack('users');
-            }
-        },
-        removeUser(id: number): void {
-            const idx = this.users.findIndex((o: ClipboardUser) => {
-                return o.userId === id;
-            });
-            if (idx > -1) {
-                this.users.splice(idx, 1);
-            }
-        },
-        clearUsers(): void {
-            this.users.splice(0, this.users.length);
-        },
-
-        // Vehicles
-        addVehicle(vehicle: Vehicle): void {
-            const idx = this.vehicles.findIndex((o: ClipboardVehicle) => {
-                return o.plate === vehicle.plate;
-            });
-            if (idx === -1) {
-                this.vehicles.unshift(new ClipboardVehicle(vehicle));
-            }
-        },
-        removeVehicle(plate: string): void {
-            const idx = this.vehicles.findIndex((o: ClipboardVehicle) => {
-                return o.plate === plate;
-            });
-            if (idx > -1) {
-                this.vehicles.splice(idx, 1);
-            }
-        },
-        clearVehicles(): void {
-            this.vehicles.splice(0, this.vehicles.length);
-        },
-
-        clear(): void {
-            this.clearDocuments();
-            this.clearUsers();
-            this.clearVehicles();
-            this.clearActiveStack();
-        },
-
-        checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
-            const length = this[listType].length;
-            if (reqs.required && length <= (reqs.min ?? 1)) {
-                return false;
-            } else if (reqs.min && length < reqs.min && reqs.max && length > reqs.max) {
-                return false;
-            }
-
-            return true;
-        },
-    },
-});
-
-if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore, import.meta.hot));
-}
-
 export function getUser(obj: ClipboardUser): User {
     const u: User = {
         userId: obj.userId!,
@@ -278,4 +121,145 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         doc.createdAt = toTimestamp(fromString(obj.createdAt));
     }
     return doc;
+}
+
+export interface ClipboardData {
+    documents: ClipboardDocument[];
+    users: ClipboardUser[];
+    vehicles: ClipboardVehicle[];
+}
+
+export interface ClipboardState extends ClipboardData {
+    activeStack: ClipboardData;
+}
+
+export type ListType = 'users' | 'documents' | 'vehicles';
+
+export const useClipboardStore = defineStore(
+    'clipboard',
+    () => {
+        const users = ref<ClipboardUser[]>([]);
+        const documents = ref<ClipboardDocument[]>([]);
+        const vehicles = ref<ClipboardVehicle[]>([]);
+        const activeStack = ref<ClipboardData>({
+            users: [],
+            documents: [],
+            vehicles: [],
+        });
+
+        const getTemplateData = (): TemplateData => {
+            return {
+                documents: activeStack.value.documents.map(getDocument),
+                users: activeStack.value.users.map(getUser),
+                vehicles: activeStack.value.vehicles.map(getVehicle),
+            };
+        };
+
+        const promoteToActiveStack = (listType: ListType): void => {
+            switch (listType) {
+                case 'documents':
+                    activeStack.value.documents = JSON.parse(JSON.stringify(documents.value)) as ClipboardDocument[];
+                    break;
+                case 'users':
+                    activeStack.value.users = JSON.parse(JSON.stringify(users.value)) as ClipboardUser[];
+                    break;
+                case 'vehicles':
+                    activeStack.value.vehicles = JSON.parse(JSON.stringify(vehicles.value)) as ClipboardVehicle[];
+                    break;
+            }
+        };
+
+        const clearActiveStack = (): void => {
+            activeStack.value.documents.length = 0;
+            activeStack.value.users.length = 0;
+            activeStack.value.vehicles.length = 0;
+        };
+
+        const addDocument = (document: Document): void => {
+            if (!documents.value.some((o) => o.id === document.id)) {
+                documents.value.unshift(new ClipboardDocument(document));
+            }
+        };
+
+        const removeDocument = (id: number): void => {
+            documents.value = documents.value.filter((o) => o.id !== id);
+        };
+
+        const clearDocuments = (): void => {
+            documents.value = [];
+        };
+
+        const addUser = (user: User, active?: boolean): void => {
+            if (!users.value.some((o) => o.userId === user.userId)) {
+                users.value.unshift(new ClipboardUser(user));
+            }
+            if (active) promoteToActiveStack('users');
+        };
+
+        const removeUser = (id: number): void => {
+            users.value = users.value.filter((o) => o.userId !== id);
+        };
+
+        const clearUsers = (): void => {
+            users.value = [];
+        };
+
+        const addVehicle = (vehicle: Vehicle): void => {
+            if (!vehicles.value.some((o) => o.plate === vehicle.plate)) {
+                vehicles.value.unshift(new ClipboardVehicle(vehicle));
+            }
+        };
+
+        const removeVehicle = (plate: string): void => {
+            vehicles.value = vehicles.value.filter((o) => o.plate !== plate);
+        };
+
+        const clearVehicles = (): void => {
+            vehicles.value = [];
+        };
+
+        const clear = (): void => {
+            clearDocuments();
+            clearUsers();
+            clearVehicles();
+            clearActiveStack();
+        };
+
+        const checkRequirements = (reqs: ObjectSpecs, listType: ListType): boolean => {
+            const length = (listType === 'documents' ? documents.value : listType === 'users' ? users.value : vehicles.value)
+                .length;
+            return (
+                !(reqs.required && length <= (reqs.min ?? 1)) &&
+                !(reqs.min && length < reqs.min && reqs.max && length > reqs.max)
+            );
+        };
+
+        return {
+            users,
+            documents,
+            vehicles,
+            activeStack,
+            getTemplateData,
+            promoteToActiveStack,
+            clearActiveStack,
+            addDocument,
+            removeDocument,
+            clearDocuments,
+            addUser,
+            removeUser,
+            clearUsers,
+            addVehicle,
+            removeVehicle,
+            clearVehicles,
+            clear,
+            checkRequirements,
+        };
+    },
+    {
+        persist: true,
+    },
+);
+
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore, import.meta.hot));
 }

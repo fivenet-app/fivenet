@@ -11,104 +11,80 @@ const logger = useLogger('🗺️ Livemap');
 const maxBackOffTime = 15;
 const initialReconnectBackoffTime = 1.75;
 
-export interface LivemapState {
-    error: RpcError | undefined;
-    abort: AbortController | undefined;
-    reconnecting: boolean;
-    reconnectBackoffTime: number;
+export const useLivemapStore = defineStore(
+    'livemap',
+    () => {
+        // State
+        const error = ref<RpcError | undefined>(undefined);
+        const abort = ref<AbortController | undefined>(undefined);
+        const reconnecting = ref<boolean>(false);
+        const reconnectBackoffTime = ref<number>(0);
 
-    location: Coordinate | undefined;
-    showLocationMarker: boolean;
-    zoom: number;
+        const location = ref<Coordinate>({ x: 0, y: 0 });
+        const showLocationMarker = ref<boolean>(false);
+        const zoom = ref<number>(2);
 
-    initiated: boolean;
+        const initiated = ref<boolean>(false);
+        const userOnDuty = ref<boolean>(false);
 
-    userOnDuty: boolean;
-    jobsMarkers: Job[];
-    jobsUsers: Job[];
+        const jobsMarkers = ref<Job[]>([]);
+        const jobsUsers = ref<Job[]>([]);
 
-    markersMarkers: Map<number, MarkerMarker>;
-    markersUsers: Map<number, UserMarker>;
+        const markersMarkers = ref<Map<number, MarkerMarker>>(new Map());
+        const markersUsers = ref<Map<number, UserMarker>>(new Map());
 
-    selectedMarker: UserMarker | undefined;
-}
+        const selectedMarker = ref<UserMarker | undefined>(undefined);
 
-export const useLivemapStore = defineStore('livemap', {
-    state: () =>
-        ({
-            error: undefined,
-            abort: undefined,
-            reconnecting: false,
-            reconnectBackoffTime: 0,
-
-            location: { x: 0, y: 0 },
-            showLocationMarker: false,
-            zoom: 2,
-
-            initiated: false,
-
-            userOnDuty: false,
-            jobsMarkers: [],
-            jobsUsers: [],
-
-            markersMarkers: new Map<number, MarkerMarker>(),
-            markersUsers: new Map<number, UserMarker>(),
-
-            selectedMarker: undefined,
-        }) as LivemapState,
-    persist: false,
-    actions: {
-        async startStream(): Promise<void> {
-            if (this.abort !== undefined) {
+        // Actions
+        const startStream = async (): Promise<void> => {
+            if (abort.value !== undefined) {
                 return;
             }
 
             logger.debug('Starting Stream');
 
+            // Access settings
             const settingsStore = useSettingsStore();
             const { livemap } = storeToRefs(settingsStore);
 
-            this.abort = new AbortController();
-            this.error = undefined;
-            this.reconnecting = false;
+            abort.value = new AbortController();
+            error.value = undefined;
+            reconnecting.value = false;
 
             try {
-                const call = getGRPCLivemapperClient().stream(
-                    {},
-                    {
-                        abort: this.abort.signal,
-                    },
-                );
+                const call = getGRPCLivemapperClient().stream({}, { abort: abort.value.signal });
 
+                // For partial user updates
                 const foundUsers: number[] = [];
 
                 for await (const resp of call.responses) {
-                    this.error = undefined;
+                    error.value = undefined;
 
-                    if (resp === undefined || !resp.data) {
+                    if (!resp || !resp.data) {
                         continue;
                     }
 
                     if (resp.userOnDuty !== undefined) {
-                        this.userOnDuty = resp.userOnDuty;
+                        userOnDuty.value = resp.userOnDuty;
                     }
 
                     logger.debug('Received change - Kind:', resp.data.oneofKind, resp.data);
 
                     if (resp.data.oneofKind === 'jobs') {
-                        this.jobsMarkers = resp.data.jobs.markers;
-                        this.jobsUsers = resp.data.jobs.users;
+                        jobsMarkers.value = resp.data.jobs.markers;
+                        jobsUsers.value = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
                         const foundMarkers: number[] = [];
                         resp.data.markers.markers.forEach((v) => {
                             foundMarkers.push(v.info!.id);
-                            this.addOrUpdateMarkerMarker(v);
+                            addOrUpdateMarkerMarker(v);
                         });
-                        // Remove marker markers not found in latest state
+
+                        // Remove markers not found in the latest state
                         let removedMarkers = 0;
-                        this.markersMarkers.forEach((_, id) => {
+                        markersMarkers.value.forEach((_, id) => {
                             if (!foundMarkers.includes(id)) {
-                                this.markersMarkers.delete(id);
+                                markersMarkers.value.delete(id);
                                 removedMarkers++;
                             }
                         });
@@ -117,22 +93,23 @@ export const useLivemapStore = defineStore('livemap', {
                     } else if (resp.data.oneofKind === 'users') {
                         resp.data.users.users.forEach((v) => {
                             foundUsers.push(v.info!.id);
-                            this.addOrUpdateUserMarker(v);
+                            addOrUpdateUserMarker(v);
 
-                            if (livemap.value.centerSelectedMarker && v.info!.id === this.selectedMarker?.info?.id) {
-                                this.selectedMarker = v;
+                            // If auto-centering on selected marker
+                            if (livemap.value.centerSelectedMarker && v.info!.id === selectedMarker.value?.info?.id) {
+                                selectedMarker.value = v;
                             }
                         });
 
                         if (resp.data.users.part <= 0) {
-                            // Remove user markers not found in latest state
+                            // Remove user markers not found in the latest state
                             let removedMarkers = 0;
-                            this.markersUsers.forEach((_, id) => {
+                            markersUsers.value.forEach((_, id) => {
                                 if (!foundUsers.includes(id)) {
-                                    this.markersUsers.delete(id);
+                                    markersUsers.value.delete(id);
 
-                                    if (id === this.selectedMarker?.info?.id) {
-                                        this.selectedMarker = undefined;
+                                    if (id === selectedMarker.value?.info?.id) {
+                                        selectedMarker.value = undefined;
                                     }
                                     removedMarkers++;
                                 }
@@ -141,141 +118,144 @@ export const useLivemapStore = defineStore('livemap', {
                             logger.debug(`Removed ${removedMarkers} old user markers`);
                         }
 
-                        this.initiated = true;
+                        initiated.value = true;
                     } else {
                         logger.warn('Unknown data received - Kind: ' + resp.data.oneofKind);
                     }
                 }
             } catch (e) {
-                const error = e as RpcError;
-                // Only restart when not cancelled and abort is still valid
-                if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                    logger.error('Stream failed', error.code, error.message, error.cause);
+                const err = e as RpcError;
 
-                    // Only set error if we don't need to restart
-                    if (!this.abort?.signal.aborted) {
-                        this.restartStream();
+                // Only restart if not CANCELLED or ABORTED
+                if (err.code !== 'CANCELLED' && err.code !== 'ABORTED') {
+                    logger.error('Stream failed', err.code, err.message, err.cause);
+
+                    // If we haven't manually aborted, attempt restart
+                    if (!abort.value?.signal.aborted) {
+                        restartStream();
                     } else {
-                        this.error = error;
+                        error.value = err;
                     }
                 } else {
-                    this.error = undefined;
+                    error.value = undefined;
 
-                    // Only restart stream when not aborted
-                    if (!this.abort?.signal.aborted) {
-                        await this.restartStream();
+                    // Restart only if not manually aborted
+                    if (!abort.value?.signal.aborted) {
+                        await restartStream();
                     }
                 }
             }
 
             logger.debug('Stream ended');
-        },
+        };
 
-        async stopStream(): Promise<void> {
-            if (this.abort === undefined) {
+        const stopStream = async (): Promise<void> => {
+            if (!abort.value) {
                 return;
             }
 
-            this.abort.abort();
-            this.abort = undefined;
+            abort.value.abort();
+            abort.value = undefined;
             logger.debug('Stopping Stream');
-        },
+        };
 
-        async restartStream(): Promise<void> {
-            if (this.abort === undefined || this.abort.signal.aborted) {
+        const restartStream = async (): Promise<void> => {
+            if (!abort.value || abort.value.signal.aborted) {
                 return;
             }
 
-            this.reconnecting = true;
+            reconnecting.value = true;
 
-            // Reset back off time when over 10 seconds
-            if (this.reconnectBackoffTime > maxBackOffTime) {
-                this.reconnectBackoffTime = initialReconnectBackoffTime;
+            // Reset back off time if it exceeds max
+            if (reconnectBackoffTime.value > maxBackOffTime) {
+                reconnectBackoffTime.value = initialReconnectBackoffTime;
             } else {
-                this.reconnectBackoffTime += initialReconnectBackoffTime;
+                reconnectBackoffTime.value += initialReconnectBackoffTime;
             }
 
-            logger.debug('Restart back off time in', this.reconnectBackoffTime, 'seconds');
-            await this.stopStream();
+            logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
+            await stopStream();
 
             setTimeout(async () => {
-                if (this.reconnecting) {
-                    this.startStream();
+                if (reconnecting.value) {
+                    startStream();
                 }
-            }, this.reconnectBackoffTime * 1000);
-        },
+            }, reconnectBackoffTime.value * 1000);
+        };
 
-        addOrUpdateMarkerMarker(marker: MarkerMarker): void {
-            const m = this.markersMarkers.get(marker.info!.id);
-            if (m === undefined) {
-                this.markersMarkers.set(marker.info!.id, marker);
+        const addOrUpdateMarkerMarker = (marker: MarkerMarker): void => {
+            const m = markersMarkers.value.get(marker.info!.id);
+            if (!m) {
+                markersMarkers.value.set(marker.info!.id, marker);
             } else {
-                this.updateMarkerInfo(m.info!, marker.info!);
+                updateMarkerInfo(m.info!, marker.info!);
 
                 if (m.type !== marker.type) {
                     m.type = marker.type;
                 }
                 m.creatorId = marker.creatorId;
                 if (marker.creator !== undefined) {
-                    this.updateUserInfo(m.creator!, marker.creator);
+                    updateUserInfo(m.creator!, marker.creator);
                 }
                 m.data = marker.data;
                 if (m.expiresAt !== marker.expiresAt) {
                     m.expiresAt = marker.expiresAt;
                 }
             }
-        },
-        addOrUpdateUserMarker(marker: UserMarker): void {
-            const m = this.markersUsers.get(marker.info!.id);
-            if (m === undefined) {
-                this.markersUsers.set(marker.info!.id, marker);
+        };
+
+        const addOrUpdateUserMarker = (marker: UserMarker): void => {
+            const m = markersUsers.value.get(marker.info!.id);
+            if (!m) {
+                markersUsers.value.set(marker.info!.id, marker);
             } else {
-                this.updateMarkerInfo(m.info!, marker.info!);
+                updateMarkerInfo(m.info!, marker.info!);
 
                 if (m.userId !== marker.userId) {
                     m.userId = marker.userId;
-                    this.updateUserInfo(m.user!, marker.user!);
+                    updateUserInfo(m.user!, marker.user!);
                 }
                 if (m.unitId !== marker.unitId) {
                     m.unitId = marker.unitId;
                     m.unit = marker.unit;
                 }
             }
-        },
+        };
 
-        updateMarkerInfo(dest: MarkerInfo, src: MarkerInfo): void {
-            if (dest!.updatedAt !== src.updatedAt) {
+        const updateMarkerInfo = (dest: MarkerInfo, src: MarkerInfo): void => {
+            if (dest.updatedAt !== src.updatedAt) {
                 dest.updatedAt = src.updatedAt;
             }
-            if (dest!.job !== src!.job) {
-                dest!.job = src.job;
+            if (dest.job !== src.job) {
+                dest.job = src.job;
             }
-            if (dest!.jobLabel !== src.jobLabel) {
-                dest!.jobLabel = src.jobLabel;
+            if (dest.jobLabel !== src.jobLabel) {
+                dest.jobLabel = src.jobLabel;
             }
-            if (dest!.name !== src.name) {
-                dest!.name = src.name;
+            if (dest.name !== src.name) {
+                dest.name = src.name;
             }
-            if (dest!.description !== src.description) {
-                dest!.description = src.description;
+            if (dest.description !== src.description) {
+                dest.description = src.description;
             }
-            if (dest!.x !== src.x) {
-                dest!.x = src.x;
+            if (dest.x !== src.x) {
+                dest.x = src.x;
             }
-            if (dest!.y !== src.y) {
-                dest!.y = src.y;
+            if (dest.y !== src.y) {
+                dest.y = src.y;
             }
-            if (dest!.postal !== src.postal) {
-                dest!.postal = src.postal;
+            if (dest.postal !== src.postal) {
+                dest.postal = src.postal;
             }
-            if (dest!.color !== src.color) {
-                dest!.color = src.color;
+            if (dest.color !== src.color) {
+                dest.color = src.color;
             }
-            if (dest!.icon !== src.icon) {
-                dest!.icon = src.icon;
+            if (dest.icon !== src.icon) {
+                dest.icon = src.icon;
             }
-        },
-        updateUserInfo(dest: UserShort, src: UserShort): void {
+        };
+
+        const updateUserInfo = (dest: UserShort, src: UserShort): void => {
             if (dest.firstname !== src.firstname) {
                 dest.firstname = src.firstname;
             }
@@ -303,20 +283,52 @@ export const useLivemapStore = defineStore('livemap', {
             if (dest.avatar !== src.avatar) {
                 dest.avatar = src.avatar;
             }
-        },
+        };
 
-        deleteMarkerMarker(id: number): void {
-            this.markersMarkers.delete(id);
-        },
+        const deleteMarkerMarker = (id: number): void => {
+            markersMarkers.value.delete(id);
+        };
 
-        async goto(loc: Coordinate): Promise<void> {
-            this.location = loc;
+        const goto = async (loc: Coordinate): Promise<void> => {
+            location.value = loc;
 
             // Set in-game waypoint via NUI
             return setWaypoint(loc.x, loc.y);
-        },
+        };
+
+        return {
+            // State
+            error,
+            abort,
+            reconnecting,
+            reconnectBackoffTime,
+            location,
+            showLocationMarker,
+            zoom,
+            initiated,
+            userOnDuty,
+            jobsMarkers,
+            jobsUsers,
+            markersMarkers,
+            markersUsers,
+            selectedMarker,
+
+            // Actions
+            startStream,
+            stopStream,
+            restartStream,
+            addOrUpdateMarkerMarker,
+            addOrUpdateUserMarker,
+            updateMarkerInfo,
+            updateUserInfo,
+            deleteMarkerMarker,
+            goto,
+        };
     },
-});
+    {
+        persist: false,
+    },
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useLivemapStore, import.meta.hot));

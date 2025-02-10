@@ -4,6 +4,7 @@ import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
+import { useSettingsStore } from '~/store/settings';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -16,6 +17,9 @@ definePageMeta({
 const { can, activeChar, jobProps } = useAuth();
 
 const { game } = useAppConfig();
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const showRadioFrequency = ref(false);
 </script>
@@ -73,7 +77,7 @@ const showRadioFrequency = ref(false);
                                 </div>
 
                                 <UButton
-                                    v-if="isNUIEnabled().value"
+                                    v-if="nuiEnabled"
                                     block
                                     variant="soft"
                                     @click="setRadioFrequency(jobProps.radioFrequency)"

@@ -9,33 +9,47 @@ export interface DocumentEditorState {
     category?: Category;
 }
 
-export const useDocumentEditorStore = defineStore('documentEditor', {
-    state: () =>
-        ({
-            title: '',
-            content: '',
-            closed: false,
-            state: '',
-            category: undefined,
-        }) as DocumentEditorState,
-    persist: true,
-    actions: {
-        save(doc: DocumentEditorState): void {
-            this.title = doc.title;
-            this.content = doc.content;
-            this.closed = doc.closed;
-            this.state = doc.state;
-            this.category = doc.category;
-        },
-        clear(): void {
-            this.title = '';
-            this.content = '';
-            this.closed = false;
-            this.state = '';
-            this.category = undefined;
-        },
+export const useDocumentEditorStore = defineStore(
+    'documentEditor',
+    () => {
+        // State
+        const title = ref<string>('');
+        const content = ref<string>('');
+        const closed = ref<boolean>(false);
+        const state = ref<string>('');
+        const category = ref<Category | undefined>(undefined);
+
+        // Actions
+        const save = (doc: DocumentEditorState): void => {
+            title.value = doc.title;
+            content.value = doc.content;
+            closed.value = doc.closed;
+            state.value = doc.state;
+            category.value = doc.category;
+        };
+
+        const clear = (): void => {
+            title.value = '';
+            content.value = '';
+            closed.value = false;
+            state.value = '';
+            category.value = undefined;
+        };
+
+        return {
+            title,
+            content,
+            closed,
+            state,
+            category,
+            save,
+            clear,
+        };
     },
-});
+    {
+        persist: true,
+    },
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useDocumentEditorStore, import.meta.hot));

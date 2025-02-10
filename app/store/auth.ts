@@ -11,144 +11,139 @@ import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 export const logger = useLogger('🔑 Auth');
 
-export interface AuthState {
-    // Persisted
-    accessTokenExpiration: null | Date;
-    username: null | string;
-    lastCharID: undefined | number;
+export const useAuthStore = defineStore(
+    'auth',
+    () => {
+        // State
+        const accessTokenExpiration = ref<Date | null>(null);
+        const username = ref<string | null>(null);
+        const lastCharID = ref<number | undefined>(0);
 
-    // Temporary
-    activeChar: null | User;
-    loggingIn: boolean;
-    loginError: null | RpcError;
-    permissions: string[];
-    jobProps: null | JobProps;
-}
+        const activeChar = ref<User | null>(null);
+        const loggingIn = ref<boolean>(false);
+        const loginError = ref<RpcError | null>(null);
+        const permissions = ref<string[]>([]);
+        const jobProps = ref<JobProps | null>({
+            job: '',
+            theme: 'defaultTheme',
+            livemapMarkerColor: '',
+            radioFrequency: undefined,
+            quickButtons: {
+                penaltyCalculator: false,
+                mathCalculator: false,
+                bodyCheckup: false,
+            },
+            logoUrl: undefined,
+        });
 
-export const useAuthStore = defineStore('auth', {
-    state: () =>
-        ({
-            accessTokenExpiration: null,
-            username: null,
-            lastCharID: 0,
+        // Actions
+        const loginStart = (): void => {
+            loggingIn.value = true;
+            loginError.value = null;
+        };
 
-            activeChar: null,
-            loggingIn: false,
-            loginError: null,
-            permissions: [],
-            jobProps: {
-                job: '',
-                theme: 'defaultTheme',
-                radioFrequency: undefined,
-                quickButtons: {},
-                logoUrl: undefined,
-            } as JobProps,
-        }) as AuthState,
-    persist: {
-        pick: ['accessTokenExpiration', 'lastCharID', 'username'],
-    },
-    actions: {
-        loginStart(): void {
-            this.loggingIn = true;
-            this.loginError = null;
-        },
-        loginStop(error: null | RpcError): void {
-            this.loggingIn = false;
-            this.loginError = error;
-        },
-        setAccessTokenExpiration(expiration: null | string | Date): void {
+        const loginStop = (error: RpcError | null): void => {
+            loggingIn.value = false;
+            loginError.value = error;
+        };
+
+        const setAccessTokenExpiration = (expiration: string | Date | null): void => {
             if (typeof expiration === 'string') {
                 expiration = new Date(expiration);
             }
-            this.accessTokenExpiration = expiration;
-        },
-        setActiveChar(char: null | User): void {
-            this.activeChar = char;
-            this.lastCharID = char ? char.userId : this.lastCharID;
+            accessTokenExpiration.value = expiration;
+        };
+
+        const setActiveChar = (char: User | null): void => {
+            activeChar.value = char;
+            lastCharID.value = char ? char.userId : lastCharID.value;
             if (char === null) {
                 useGRPCWebsocketTransport().close();
             }
-        },
-        setPermissions(permissions: string[]): void {
-            this.permissions.length = 0;
-            this.permissions.push(...permissions.sort());
-        },
-        setJobProps(jp: undefined | JobProps): void {
+        };
+
+        const setPermissions = (perms: string[]): void => {
+            permissions.value.length = 0;
+            permissions.value.push(...perms.sort());
+        };
+
+        const setJobProps = (jp: JobProps | undefined): void => {
             if (jp === undefined) {
-                this.jobProps = null;
+                jobProps.value = null;
             } else {
-                if (!this.jobProps) {
-                    this.jobProps = jp;
+                if (!jobProps.value) {
+                    jobProps.value = jp;
                 } else {
-                    this.jobProps.job = jp.job;
-                    this.jobProps.jobLabel = jp.jobLabel;
-                    this.jobProps.theme = jp.theme;
-                    this.jobProps.livemapMarkerColor = jp.livemapMarkerColor;
-                    this.jobProps.radioFrequency = jp.radioFrequency;
-                    this.jobProps.quickButtons = jp.quickButtons;
-                    this.jobProps.discordGuildId = jp.discordGuildId;
-                    this.jobProps.logoUrl = jp.logoUrl;
+                    jobProps.value.job = jp.job;
+                    jobProps.value.jobLabel = jp.jobLabel;
+                    jobProps.value.theme = jp.theme;
+                    jobProps.value.livemapMarkerColor = jp.livemapMarkerColor;
+                    jobProps.value.radioFrequency = jp.radioFrequency;
+                    jobProps.value.quickButtons = jp.quickButtons;
+                    jobProps.value.discordGuildId = jp.discordGuildId;
+                    jobProps.value.logoUrl = jp.logoUrl;
                 }
             }
-        },
-        clearAuthInfo(): void {
-            this.setAccessTokenExpiration(null);
-            this.setActiveChar(null);
-            this.setPermissions([]);
-            this.setJobProps(undefined);
-            this.username = null;
+        };
+
+        const clearAuthInfo = (): void => {
+            setAccessTokenExpiration(null);
+            setActiveChar(null);
+            setPermissions([]);
+            setJobProps(undefined);
+            username.value = null;
             useGRPCWebsocketTransport().close();
-        },
+        };
 
         // GRPC Calls
-        async doLogin(username: string, password: string): Promise<void> {
-            // Start login
-            this.loginStart();
-            this.setActiveChar(null);
-            this.setPermissions([]);
+        const doLogin = async (user: string, pass: string): Promise<void> => {
+            loginStart();
+            setActiveChar(null);
+            setPermissions([]);
 
             try {
-                const call = getGRPCAuthClient().login({ username: username, password: password });
+                const call = getGRPCAuthClient().login({ username: user, password: pass });
                 const { response } = await call;
 
-                this.loginStop(null);
+                loginStop(null);
 
-                this.username = username;
+                username.value = user;
 
                 if (response.char === undefined) {
                     logger.info('Login response without included char, redirecting to char selector');
-                    this.setAccessTokenExpiration(toDate(response.expires));
+                    setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
-
                     await navigateTo({
                         name: 'auth-character-selector',
                         query: route.query,
                     });
                 } else {
                     logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
-                    this.setActiveChar(response.char.char ?? null);
-                    this.setAccessTokenExpiration(toDate(response.char.expires));
-                    this.setPermissions(response.char.permissions);
-                    this.setJobProps(response.char.jobProps);
+                    setActiveChar(response.char.char ?? null);
+                    setAccessTokenExpiration(toDate(response.char.expires));
+                    setPermissions(response.char.permissions);
+                    setJobProps(response.char.jobProps);
 
                     // @ts-expect-error route should be valid, as we test it against a valid URL list
                     const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }
             } catch (e) {
-                this.loginStop(e as RpcError);
-                this.setAccessTokenExpiration(null);
-                handleGRPCError(e as RpcError);
+                const err = e as RpcError;
+                loginStop(err);
+                setAccessTokenExpiration(null);
+                handleGRPCError(err);
             }
-        },
-        async doLogout(): Promise<void> {
-            this.loggingIn = true;
+        };
+
+        const doLogout = async (): Promise<void> => {
+            loggingIn.value = true;
 
             try {
                 await getGRPCAuthClient().logout({});
             } catch (e) {
-                this.clearAuthInfo();
+                clearAuthInfo();
                 handleGRPCError(e as RpcError);
 
                 useNotificatorStore().add({
@@ -160,13 +155,14 @@ export const useAuthStore = defineStore('auth', {
                     type: NotificationType.ERROR,
                 });
             } finally {
-                this.clearAuthInfo();
-                this.loginStop(null);
+                clearAuthInfo();
+                loginStop(null);
             }
-        },
-        async chooseCharacter(charId?: number, redirect?: boolean): Promise<void> {
+        };
+
+        const chooseCharacter = async (charId?: number, redirect?: boolean): Promise<void> => {
             if (charId === undefined) {
-                if (!this.lastCharID) {
+                if (!lastCharID.value) {
                     const route = useRoute();
 
                     await navigateTo({
@@ -176,23 +172,23 @@ export const useAuthStore = defineStore('auth', {
                     return;
                 }
 
-                charId = this.lastCharID;
+                charId = lastCharID.value;
             }
 
             try {
                 const call = getGRPCAuthClient().chooseCharacter({
-                    charId: charId,
+                    charId,
                 });
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
-                this.username = response.username;
-                this.setActiveChar(response.char);
-                this.setAccessTokenExpiration(toDate(response.expires));
-                this.setPermissions(response.permissions);
-                this.setJobProps(response.jobProps);
+                username.value = response.username;
+                setActiveChar(response.char);
+                setAccessTokenExpiration(toDate(response.expires));
+                setPermissions(response.permissions);
+                setJobProps(response.jobProps);
 
                 if (redirect) {
                     const redirectPath = useRoute().query.redirect ?? useSettingsStore().startpage ?? '/overview';
@@ -210,35 +206,38 @@ export const useAuthStore = defineStore('auth', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-        async setSuperUserMode(superuser: boolean, job?: Job): Promise<void> {
+        };
+
+        const setSuperUserMode = async (superuser: boolean, job?: Job): Promise<void> => {
             try {
-                const req = {
-                    superuser: superuser,
-                } as SetSuperUserModeRequest;
+                const req: SetSuperUserModeRequest = {
+                    superuser,
+                };
 
                 if (job) {
-                    req.job = job!.name;
+                    req.job = job.name;
                 }
 
                 const call = getGRPCAuthClient().setSuperUserMode(req);
                 const { response } = await call;
 
                 if (superuser) {
-                    this.permissions.push('superuser');
+                    permissions.value.push('superuser');
                 } else {
-                    this.permissions = this.permissions.filter((p) => p !== 'superuser');
+                    permissions.value = permissions.value.filter((p) => p !== 'superuser');
                 }
 
-                this.setAccessTokenExpiration(toDate(response.expires));
-                this.setActiveChar(response.char!);
-                this.setJobProps(response.jobProps);
+                setAccessTokenExpiration(toDate(response.expires));
+                setActiveChar(response.char!);
+                setJobProps(response.jobProps);
 
                 useNotificatorStore().add({
                     title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
                     description: {
                         key: 'notifications.superuser_menu.setsuperusermode.content',
-                        parameters: { job: job?.label ?? this.activeChar?.jobLabel ?? 'N/A' },
+                        parameters: {
+                            job: job?.label ?? activeChar.value?.jobLabel ?? 'N/A',
+                        },
                     },
                     type: NotificationType.INFO,
                 });
@@ -248,21 +247,55 @@ export const useAuthStore = defineStore('auth', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
-    },
-    getters: {
-        isSuperuser(state): boolean {
-            return state.permissions.includes('superuser');
-        },
-        getAccessTokenExpiration(state): null | Date {
-            if (typeof state.accessTokenExpiration === 'string') {
-                state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));
-            }
+        };
 
-            return state.accessTokenExpiration;
+        // Getters
+        const isSuperuser = computed<boolean>(() => {
+            return permissions.value.includes('superuser');
+        });
+
+        const getAccessTokenExpiration = computed<null | Date>(() => {
+            if (typeof accessTokenExpiration.value === 'string') {
+                accessTokenExpiration.value = new Date(Date.parse(accessTokenExpiration.value as unknown as string));
+            }
+            return accessTokenExpiration.value;
+        });
+
+        return {
+            // State
+            accessTokenExpiration,
+            username,
+            lastCharID,
+            activeChar,
+            loggingIn,
+            loginError,
+            permissions,
+            jobProps,
+
+            // Actions
+            loginStart,
+            loginStop,
+            setAccessTokenExpiration,
+            setActiveChar,
+            setPermissions,
+            setJobProps,
+            clearAuthInfo,
+            doLogin,
+            doLogout,
+            chooseCharacter,
+            setSuperUserMode,
+
+            // Getters
+            isSuperuser,
+            getAccessTokenExpiration,
+        };
+    },
+    {
+        persist: {
+            pick: ['accessTokenExpiration', 'lastCharID', 'username'],
         },
     },
-});
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));

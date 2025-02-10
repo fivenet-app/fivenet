@@ -35,13 +35,13 @@ useSeoMeta({
 });
 
 const settings = useSettingsStore();
-const { getUserLocale, isNUIEnabled, design, updateAvailable } = storeToRefs(settings);
+const { getUserLocale, nuiEnabled, design, updateAvailable } = storeToRefs(settings);
 
 if (APP_VERSION !== settings.version) {
     logger.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
 
-    useClipboardStore().$reset();
-    useDocumentEditorStore().$reset();
+    useClipboardStore().clear();
+    useDocumentEditorStore().clear();
     settings.setVersion(APP_VERSION);
 }
 
@@ -92,7 +92,7 @@ onMounted(async () => {
         return;
     }
 
-    if (isNUIEnabled.value) {
+    if (nuiEnabled.value) {
         // NUI message handling
         window.addEventListener('message', onNUIMessage);
     }
@@ -107,7 +107,7 @@ onBeforeUnmount(async () => {
         return;
     }
 
-    if (isNUIEnabled.value) {
+    if (nuiEnabled.value) {
         // NUI message handling
         window.removeEventListener('message', onNUIMessage);
     }
@@ -187,6 +187,6 @@ const route = router.currentRoute;
             <NotificationProvider />
         </ClientOnly>
 
-        <CookieControl v-if="!isNUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
+        <CookieControl v-if="!nuiEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
     </div>
 </template>

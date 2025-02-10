@@ -20,7 +20,7 @@ import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
-const { streamerMode } = storeToRefs(settingsStore);
+const { nuiEnabled, streamerMode } = storeToRefs(settingsStore);
 
 const appConfig = useAppConfig();
 
@@ -393,7 +393,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <div class="flex flex-col">
-                                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
+                                        <NotSupportedTabletBlock v-if="nuiEnabled" />
                                         <template v-else>
                                             <UInput
                                                 name="jobLogo"

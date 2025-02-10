@@ -5,15 +5,19 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
+
+const { isOpen } = useModal();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
 
-const { isOpen } = useModal();
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const appConfig = useAppConfig();
 
@@ -69,8 +73,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     canSubmit.value = false;
     await setProfilePicture(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-const nuiAvailable = isNUIEnabled();
 </script>
 
 <template>
@@ -90,7 +92,7 @@ const nuiAvailable = isNUIEnabled();
                 <div>
                     <div>
                         <UFormGroup name="avatar" class="flex-1" :label="$t('common.avatar')">
-                            <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
+                            <NotSupportedTabletBlock v-if="nuiEnabled" />
                             <UInput
                                 v-else
                                 type="file"
@@ -124,20 +126,14 @@ const nuiAvailable = isNUIEnabled();
                             block
                             color="red"
                             class="flex-1"
-                            :disabled="nuiAvailable || !canSubmit || !activeChar?.avatar"
+                            :disabled="nuiEnabled || !canSubmit || !activeChar?.avatar"
                             :loading="!canSubmit"
                             @click="state.reset = true"
                         >
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton
-                            type="submit"
-                            block
-                            class="flex-1"
-                            :disabled="nuiAvailable || !canSubmit"
-                            :loading="!canSubmit"
-                        >
+                        <UButton type="submit" block class="flex-1" :disabled="nuiEnabled || !canSubmit" :loading="!canSubmit">
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>

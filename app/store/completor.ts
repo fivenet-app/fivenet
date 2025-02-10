@@ -8,135 +8,132 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 
-export interface CompletorState {
-    jobs: Job[];
-}
+export const useCompletorStore = defineStore(
+    'completor',
+    () => {
+        // State
+        const jobs = ref<Job[]>([]);
 
-export const useCompletorStore = defineStore('completor', {
-    state: () =>
-        ({
-            jobs: [],
-        }) as CompletorState,
-    persist: false,
-    actions: {
-        // Jobs
-        async getJobByName(name: string): Promise<Job | undefined> {
-            return await this.listJobs().then((jobs) => jobs.find((j) => j.name === name));
-        },
-        async listJobs(): Promise<Job[]> {
-            if (this.jobs.length > 0) return this.jobs;
+        // Actions
+        const getJobByName = async (name: string): Promise<Job | undefined> => {
+            return listJobs().then((cachedJobs) => cachedJobs.find((j) => j.name === name));
+        };
 
-            this.jobs = await this.completeJobs({});
-            return this.jobs;
-        },
-        async completeJobs(req: CompleteJobsRequest): Promise<Job[]> {
+        const listJobs = async (): Promise<Job[]> => {
+            if (jobs.value.length > 0) {
+                return jobs.value;
+            }
+            jobs.value = await completeJobs({});
+            return jobs.value;
+        };
+
+        const completeJobs = async (req: CompleteJobsRequest): Promise<Job[]> => {
             try {
                 const call = getGRPCCompletorClient().completeJobs(req);
                 const { response } = await call;
-
                 return response.jobs;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Citizens
-        async findCitizen(userId: number): Promise<UserShort | undefined> {
-            return await this.completeCitizens({ userId, search: '' }).then((users) =>
-                users.length === 0 ? undefined : users[0],
-            );
-        },
-        async completeCitizens(req: CompleteCitizensRequest): Promise<UserShort[]> {
+        const findCitizen = async (userId: number): Promise<UserShort | undefined> => {
+            const users = await completeCitizens({ userId, search: '' });
+            return users.length === 0 ? undefined : users[0];
+        };
+
+        const completeCitizens = async (req: CompleteCitizensRequest): Promise<UserShort[]> => {
             const { can } = useAuth();
             if (!can('CompletorService.CompleteCitizens').value) {
                 return [];
             }
-
             try {
                 const call = getGRPCCompletorClient().completeCitizens(req);
                 const { response } = await call;
-
                 return response.users;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Colleagues
-        async findColleague(userId: number): Promise<Colleague | undefined> {
-            return await this.listColleagues({
-                userId: userId,
-                search: '',
-                labelIds: [],
-            }).then((colleagues) => (colleagues.length === 0 ? undefined : colleagues[0]));
-        },
-        async listColleagues(req: ListColleaguesRequest): Promise<Colleague[]> {
+        const findColleague = async (userId: number): Promise<Colleague | undefined> => {
+            const colleagues = await listColleagues({ userId, search: '', labelIds: [] });
+            return colleagues.length === 0 ? undefined : colleagues[0];
+        };
+
+        const listColleagues = async (req: ListColleaguesRequest): Promise<Colleague[]> => {
             if (!req.pagination) {
                 req.pagination = { offset: 0 };
             }
-
             try {
                 const call = getGRPCJobsClient().listColleagues(req);
                 const { response } = await call;
-
                 return response.colleagues;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Document Categories
-        async completeDocumentCategories(search: string): Promise<Category[]> {
+        const completeDocumentCategories = async (search: string): Promise<Category[]> => {
             const { can } = useAuth();
             if (!can('CompletorService.CompleteDocumentCategories').value) {
                 return [];
             }
-
             try {
-                const call = getGRPCCompletorClient().completeDocumentCategories({
-                    search: search,
-                });
+                const call = getGRPCCompletorClient().completeDocumentCategories({ search });
                 const { response } = await call;
-
                 return response.categories;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Laws
-        async listLawBooks(): Promise<LawBook[]> {
+        const listLawBooks = async (): Promise<LawBook[]> => {
             try {
                 const call = getGRPCCompletorClient().listLawBooks({});
                 const { response } = await call;
-
                 return response.books;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Citizens Labels
-        async completeCitizenLabels(search: string): Promise<CitizenLabel[]> {
+        const completeCitizenLabels = async (search: string): Promise<CitizenLabel[]> => {
             try {
-                const call = getGRPCCompletorClient().completeCitizenLabels({
-                    search: search,
-                });
+                const call = getGRPCCompletorClient().completeCitizenLabels({ search });
                 const { response } = await call;
-
                 return response.labels;
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
+
+        return {
+            // State
+            jobs,
+            // Actions
+            getJobByName,
+            listJobs,
+            completeJobs,
+            findCitizen,
+            completeCitizens,
+            findColleague,
+            listColleagues,
+            completeDocumentCategories,
+            listLawBooks,
+            completeCitizenLabels,
+        };
     },
-});
+    {
+        persist: false,
+    },
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCompletorStore, import.meta.hot));

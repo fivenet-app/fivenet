@@ -266,12 +266,13 @@ onBeforeMount(async () => {
 
 onBeforeUnmount(() => stopStream());
 
+const attentionSound = useSounds('/sounds/centrum/attention.mp3', { playbackRate: 1.85 });
+
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;
 
-const { play } = useSounds('/sounds/centrum/attention.mp3');
 const debouncedPlay = useDebounceFn(async () => {
-    play({ playbackRate: 1.85 });
+    attentionSound.play();
 }, 950);
 
 const attentionDebouncedPlay = useDebounceFn(async () => debouncedPlay(), 950);
@@ -313,8 +314,6 @@ async function checkup(): Promise<void> {
     lastCheckupNotification.value = now;
 }
 
-const attentionSound = useSounds('/sounds/centrum/attention.mp3');
-
 function sendRequireUnitNotification(): void {
     if (!userOnDuty.value) {
         return;
@@ -327,7 +326,7 @@ function sendRequireUnitNotification(): void {
         timeout: 12500,
     });
 
-    attentionSound.play({ playbackRate: 1.85 });
+    attentionSound.play();
 }
 
 function openTakeDispatches(): void {

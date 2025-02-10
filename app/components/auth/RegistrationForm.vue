@@ -5,9 +5,13 @@ import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { openTokenMgmt } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const notifications = useNotificatorStore();
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const accountError = ref<RpcError | undefined>();
 
@@ -74,7 +78,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </h2>
 
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-            <UAlert v-if="!isNUIEnabled().value" icon="i-mdi-info-circle">
+            <UAlert v-if="!nuiEnabled" icon="i-mdi-info-circle">
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">
                         <template #command>

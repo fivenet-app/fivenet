@@ -13,74 +13,56 @@ const logger = useLogger('📣 Notificator');
 const maxBackoffTime = 20;
 const initialReconnectBackoffTime = 2;
 
-export interface NotificationsState {
-    doNotDisturb: boolean;
+export const useNotificatorStore = defineStore(
+    'notifications',
+    () => {
+        // State
+        const doNotDisturb = ref<boolean>(false);
+        const notifications = ref<Notification[]>([]);
+        const notificationsCount = ref<number>(0);
 
-    notifications: Notification[];
-    notificationsCount: number;
+        const abort = ref<AbortController | undefined>(undefined);
+        const reconnecting = ref<boolean>(false);
+        const reconnectBackoffTime = ref<number>(0);
 
-    abort: AbortController | undefined;
-    reconnecting: boolean;
-    reconnectBackoffTime: number;
-}
+        const notificationSound = useSounds('/sounds/notification.mp3');
 
-export const useNotificatorStore = defineStore('notifications', {
-    state: () =>
-        ({
-            doNotDisturb: false,
+        // Actions
+        const remove = (notId: number): void => {
+            notifications.value = notifications.value.filter((n) => n.id !== notId);
+        };
 
-            notifications: [],
-            notificationsCount: 0,
-
-            abort: undefined,
-            reconnecting: false,
-            reconnectBackoffTime: 0,
-        }) as NotificationsState,
-    persist: {
-        pick: ['doNotDisturb'],
-    },
-    actions: {
-        remove(notId: number): void {
-            this.notifications = this.notifications.filter((notification) => notification.id !== notId);
-        },
-        add(notification: Notification): void {
+        const add = (notification: Notification): void => {
             if (notification.timeout === undefined) {
                 notification.timeout = useAppConfig().timeouts.notification;
             }
+            notifications.value.push(notification);
+        };
 
-            this.notifications.push(notification);
-        },
+        const resetData = (): void => {
+            notificationsCount.value = 0;
+            notifications.value = [];
+        };
 
-        resetData(): void {
-            this.notificationsCount = 0;
-            this.notifications = [];
-        },
-
-        async startStream(): Promise<void> {
-            if (this.abort !== undefined) {
+        const startStream = async (): Promise<void> => {
+            if (abort.value !== undefined) {
                 return;
             }
 
             logger.debug('Starting Stream');
-
-            this.abort = new AbortController();
-            this.reconnecting = false;
+            abort.value = new AbortController();
+            reconnecting.value = false;
 
             const authStore = useAuthStore();
             const { can } = useAuth();
 
             try {
-                const call = getGRPCNotificatorClient().stream(
-                    {},
-                    {
-                        abort: this.abort.signal,
-                    },
-                );
+                const call = getGRPCNotificatorClient().stream({}, { abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
-                    this.notificationsCount = resp.notificationCount;
+                    notificationsCount.value = resp.notificationCount;
 
-                    if (resp === undefined || !resp.data || resp.data.oneofKind === undefined) {
+                    if (!resp || !resp.data || resp.data.oneofKind === undefined) {
                         continue;
                     }
 
@@ -89,16 +71,14 @@ export const useNotificatorStore = defineStore('notifications', {
                             logger.info('Refreshing token...');
                             await authStore.chooseCharacter(undefined);
                         } else if (resp.data.userEvent.data.oneofKind === 'notification') {
-                            // Don't display server notifications when do not disturb is on
-                            if (this.doNotDisturb) {
+                            if (doNotDisturb.value) {
                                 continue;
                             }
 
                             const n = resp.data.userEvent.data.notification;
-                            const nType: NotificationType =
-                                n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
+                            const nType = n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
 
-                            if (n.title === undefined || n.content === undefined) {
+                            if (!n.title || !n.content) {
                                 continue;
                             }
 
@@ -120,33 +100,23 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             if (n.category === NotificationCategory.CALENDAR) {
-                                useSounds('/sounds/notification.mp3').play();
+                                notificationSound.play();
 
                                 if (n.data?.calendar !== undefined) {
                                     const calendarStore = useCalendarStore();
-
                                     try {
-                                        if (n.data?.calendar.calendarId !== undefined) {
-                                            calendarStore.getCalendar({
-                                                calendarId: n.data?.calendar.calendarId,
-                                            });
-                                        } else if (n.data?.calendar.calendarEntryId !== undefined) {
-                                            calendarStore.getCalendarEntry({
-                                                entryId: n.data?.calendar.calendarEntryId,
-                                            });
+                                        if (n.data.calendar.calendarId !== undefined) {
+                                            calendarStore.getCalendar({ calendarId: n.data.calendar.calendarId });
+                                        } else if (n.data.calendar.calendarEntryId !== undefined) {
+                                            calendarStore.getCalendarEntry({ entryId: n.data.calendar.calendarEntryId });
                                         }
                                     } catch (e) {
-                                        logger.warn(
-                                            'Error while retrieving calendar/entry for calendar notification, Notification ID:',
-                                            n.id,
-                                            'Error:',
-                                            e,
-                                        );
+                                        logger.warn('Error retrieving calendar notification data:', e);
                                     }
                                 }
                             }
 
-                            this.add(not);
+                            add(not);
                         } else {
                             logger.warn('Unknown userEvent data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
@@ -176,10 +146,10 @@ export const useNotificatorStore = defineStore('notifications', {
 
                     if (resp.restart) {
                         logger.debug('Server requested stream to be restarted');
-                        this.reconnectBackoffTime = 0;
-                        this.stopStream();
+                        reconnectBackoffTime.value = 0;
+                        stopStream();
                         useGRPCWebsocketTransport().close();
-                        this.restartStream();
+                        restartStream();
                         return;
                     }
                 }
@@ -187,56 +157,51 @@ export const useNotificatorStore = defineStore('notifications', {
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     logger.debug('Stream failed', error.code, error.message, error.cause);
-
                     if (error.message.includes('ErrCharLock')) {
                         await handleGRPCError(error);
                     }
                 }
 
-                if (!this.abort?.signal.aborted) {
-                    await this.restartStream();
+                if (!abort.value?.signal.aborted) {
+                    await restartStream();
                 }
             }
 
             logger.debug('Stream ended');
-        },
+        };
 
-        async stopStream(): Promise<void> {
-            if (this.abort === undefined) {
+        const stopStream = async (): Promise<void> => {
+            if (!abort.value) {
                 return;
             }
-
-            this.abort.abort();
-            this.abort = undefined;
+            abort.value.abort();
+            abort.value = undefined;
             logger.debug('Stopping Stream');
-        },
+        };
 
-        async restartStream(): Promise<void> {
-            if (this.abort === undefined || this.abort.signal.aborted) {
+        const restartStream = async (): Promise<void> => {
+            if (!abort.value || abort.value.signal.aborted) {
                 return;
             }
+            reconnecting.value = true;
 
-            this.reconnecting = true;
-
-            // Reset back off time when over the max back off time
-            if (this.reconnectBackoffTime > maxBackoffTime) {
-                this.reconnectBackoffTime = initialReconnectBackoffTime;
+            if (reconnectBackoffTime.value > maxBackoffTime) {
+                reconnectBackoffTime.value = initialReconnectBackoffTime;
             } else {
-                this.reconnectBackoffTime += initialReconnectBackoffTime;
+                reconnectBackoffTime.value += initialReconnectBackoffTime;
             }
 
-            logger.debug('Restart back off time in', this.reconnectBackoffTime, 'seconds');
-            await this.stopStream();
+            logger.debug('Restart back off time in', reconnectBackoffTime.value, 'seconds');
+            await stopStream();
 
             setTimeout(async () => {
-                if (this.reconnecting) {
-                    this.startStream();
+                if (reconnecting.value) {
+                    startStream();
                 }
-            }, this.reconnectBackoffTime * 1000);
-        },
+            }, reconnectBackoffTime.value * 1000);
+        };
 
-        // Notification Actions
-        async markNotifications(req: MarkNotificationsRequest): Promise<void> {
+        const markNotifications = async (req: MarkNotificationsRequest): Promise<void> => {
             try {
                 await getGRPCNotificatorClient().markNotifications(req);
             } catch (e) {
@@ -244,14 +209,38 @@ export const useNotificatorStore = defineStore('notifications', {
                 throw e;
             }
 
-            if (req.all === true || req.ids.length >= this.notificationsCount) {
-                this.notificationsCount = 0;
+            if (req.all === true || req.ids.length >= notificationsCount.value) {
+                notificationsCount.value = 0;
             } else {
-                this.notificationsCount -= req.ids.length;
+                notificationsCount.value -= req.ids.length;
             }
+        };
+
+        return {
+            // State
+            doNotDisturb,
+            notifications,
+            notificationsCount,
+            abort,
+            reconnecting,
+            reconnectBackoffTime,
+
+            // Actions
+            remove,
+            add,
+            resetData,
+            startStream,
+            stopStream,
+            restartStream,
+            markNotifications,
+        };
+    },
+    {
+        persist: {
+            pick: ['doNotDisturb'],
         },
     },
-});
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore, import.meta.hot));

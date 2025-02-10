@@ -4,6 +4,7 @@ import { z } from 'zod';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserProps } from '~~/gen/ts/resources/users/props';
@@ -22,6 +23,9 @@ const { isOpen } = useModal();
 const notifications = useNotificatorStore();
 
 const appConfig = useAppConfig();
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const mugShotSchema = zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images);
 const schema = z
@@ -110,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="mugShot" :label="$t('common.image')">
-                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
                                 type="file"

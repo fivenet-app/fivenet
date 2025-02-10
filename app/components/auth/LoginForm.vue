@@ -23,7 +23,7 @@ const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
 
 const settingsStore = useSettingsStore();
-const { isNUIEnabled } = storeToRefs(settingsStore);
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const cookiesStore = useCookiesStore();
 const { hasCookiesAccepted } = storeToRefs(cookiesStore);
@@ -49,9 +49,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await doLogin(event.data.username, event.data.password).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const socialLoginEnabled = ref(hasCookiesAccepted.value && !isNUIEnabled.value);
+const socialLoginEnabled = ref(hasCookiesAccepted.value && !nuiEnabled.value);
 
-watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !isNUIEnabled.value));
+watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !nuiEnabled.value));
 
 const passwordVisibility = ref(false);
 
@@ -90,7 +90,7 @@ function togglePasswordVisibility() {
             {{ $t('common.login') }}
         </UButton>
 
-        <div v-if="!isNUIEnabled && login.providers.length > 0" class="space-y-2">
+        <div v-if="!nuiEnabled && login.providers.length > 0" class="space-y-2">
             <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
                 {{ $t('components.auth.LoginForm.social_login_disabled') }}
             </p>

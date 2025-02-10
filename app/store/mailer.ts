@@ -29,86 +29,63 @@ import { useNotificatorStore } from './notificator';
 
 const logger = useLogger('💬 Mailer');
 
-export interface MailerState {
-    loaded: boolean;
-    error: Error | undefined;
+export const useMailerStore = defineStore(
+    'mailer',
+    () => {
+        // State
+        const loaded = ref<boolean>(false);
+        const error = ref<Error | undefined>(undefined);
 
-    draft: {
-        title: string;
-        content: string;
-        recipients: { label: string }[];
-    };
+        const draft = ref({
+            title: '',
+            content: '',
+            recipients: [] as { label: string }[],
+        });
 
-    emails: Email[];
-    selectedEmailId: number | undefined;
-    selectedEmail: Email | undefined;
-    selectedThread: Thread | undefined;
+        const emails = ref<Email[]>([]);
+        const selectedEmailId = ref<number | undefined>(undefined);
+        const selectedEmail = ref<Email | undefined>(undefined);
+        const selectedThread = ref<Thread | undefined>(undefined);
 
-    unreadThreadIds: number[];
+        const unreadThreadIds = ref<number[]>([]);
 
-    threads: ListThreadsResponse | undefined;
-    messages: ListThreadMessagesResponse | undefined;
+        const threads = ref<ListThreadsResponse | undefined>(undefined);
+        const messages = ref<ListThreadMessagesResponse | undefined>(undefined);
 
-    addressBook: { label: string; name?: string }[];
-}
+        const addressBook = ref<{ label: string; name?: string }[]>([]);
 
-export const useMailerStore = defineStore('mailer', {
-    state: () =>
-        ({
-            loaded: false,
-            error: undefined,
+        const notificationSound = useSounds('/sounds/notification.mp3');
 
-            draft: {
-                title: '',
-                content: '',
-                recipients: [],
-            },
-
-            emails: [],
-            selectedEmailId: undefined,
-            selectedEmail: undefined,
-            selectedThread: undefined,
-
-            unreadThreadIds: [],
-
-            threads: undefined,
-            messages: undefined,
-
-            addressBook: [],
-        }) as MailerState,
-    persist: {
-        pick: ['draft', 'addressBook'],
-    },
-    actions: {
-        async handleEvent(event: MailerEvent): Promise<void> {
+        // Actions
+        const handleEvent = async (event: MailerEvent): Promise<void> => {
             logger.debug('Received change - Kind:', event.data.oneofKind, event.data);
 
             if (event.data.oneofKind === 'emailUpdate') {
                 const searchId = event.data.emailUpdate.id;
-                const idx = this.emails.findIndex((e) => e.id === searchId);
+                const idx = emails.value.findIndex((e) => e.id === searchId);
                 if (idx > -1) {
-                    this.emails[idx] = event.data.emailUpdate;
+                    emails.value[idx] = event.data.emailUpdate;
                 }
             } else if (event.data.oneofKind === 'emailDelete') {
                 const searchId = event.data.emailDelete;
-                const idx = this.emails.findIndex((e) => e.id === searchId);
+                const idx = emails.value.findIndex((e) => e.id === searchId);
                 if (idx > -1) {
-                    this.emails.splice(idx, 1);
+                    emails.value.splice(idx, 1);
                 }
             } else if (event.data.oneofKind === 'emailSettingsUpdated') {
                 const searchId = event.data.emailSettingsUpdated.emailId;
-                const idx = this.emails.findIndex((e) => e.id === searchId);
-                if (idx > -1 && this.emails[idx]) {
-                    this.emails[idx].settings = event.data.emailSettingsUpdated;
+                const idx = emails.value.findIndex((e) => e.id === searchId);
+                if (idx > -1 && emails.value[idx]) {
+                    emails.value[idx].settings = event.data.emailSettingsUpdated;
                 }
             } else if (event.data.oneofKind === 'threadUpdate') {
                 const data = event.data.threadUpdate;
                 console.log('threadUpdate', data);
 
                 // Handle email sent by blocked email
-                if (data.creatorEmail?.email && this.checkIfEmailBlocked(data.creatorEmail?.email)) {
+                if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
                     // Make sure to set thread state accordingly (locally)
-                    await this.setThreadState({
+                    await setThreadState({
                         threadId: data.id,
                         archived: true,
                         muted: true,
@@ -116,13 +93,16 @@ export const useMailerStore = defineStore('mailer', {
                     return;
                 }
 
-                // Either creator id or email adress matches
-                if (data.creatorEmailId === this.selectedEmail?.id || data.creatorEmail?.email === this.selectedEmail?.email) {
+                // Either creator id or email address matches
+                if (
+                    data.creatorEmailId === selectedEmail.value?.id ||
+                    data.creatorEmail?.email === selectedEmail.value?.email
+                ) {
                     if (data.state) {
                         data.state.unread = false;
                     } else {
                         data.state = {
-                            emailId: this.selectedEmail?.id ?? 0,
+                            emailId: selectedEmail.value?.id ?? 0,
                             threadId: data.id,
                             unread: false,
                         };
@@ -130,18 +110,18 @@ export const useMailerStore = defineStore('mailer', {
                     return;
                 }
 
-                await this.setThreadState({
+                await setThreadState({
                     threadId: data.id,
                     unread: true,
                 });
 
                 // Update thread order in list
-                const threadIdx = this.threads?.threads.findIndex((t) => t.id === data.id);
+                const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.id);
                 if (threadIdx !== undefined && threadIdx > -1) {
-                    const thread = this.threads!.threads[threadIdx]!;
+                    const thread = threads.value!.threads[threadIdx]!;
 
-                    this.threads!.threads.splice(threadIdx, 1);
-                    this.threads!.threads.unshift(thread);
+                    threads.value!.threads.splice(threadIdx, 1);
+                    threads.value!.threads.unshift(thread);
                 }
 
                 useNotificatorStore().add({
@@ -154,44 +134,44 @@ export const useMailerStore = defineStore('mailer', {
                         },
                     },
                     type: NotificationType.INFO,
-                    actions: this.getNotificationActions(data.id),
+                    actions: getNotificationActions(data.id),
                 });
-                useSounds('/sounds/notification.mp3').play();
+                notificationSound.play();
             } else if (event.data.oneofKind === 'threadDelete') {
                 const id = event.data.threadDelete;
-                if (this.selectedThread?.id === id) {
-                    this.selectedThread = undefined;
+                if (selectedThread.value?.id === id) {
+                    selectedThread.value = undefined;
                 }
 
-                // Remove thread if it is currently in our messagess list
-                const idx = this.threads?.threads.findIndex((t) => t.id === id);
+                // Remove thread if it is currently in our threads list
+                const idx = threads.value?.threads.findIndex((t) => t.id === id);
                 if (idx !== undefined && idx > -1) {
-                    this.threads?.threads.splice(idx, 1);
+                    threads.value?.threads.splice(idx, 1);
                 }
             } else if (event.data.oneofKind === 'messageUpdate') {
                 const data = event.data.messageUpdate;
-                // Update thread updated at time and move to begining of list
-                const threadIdx = this.threads?.threads.findIndex((t) => t.id === data.threadId);
+                // Update thread updatedAt time and move to beginning of list
+                const threadIdx = threads.value?.threads.findIndex((t) => t.id === data.threadId);
                 if (threadIdx !== undefined && threadIdx > -1) {
-                    const thread = this.threads!.threads[threadIdx]!;
+                    const thread = threads.value!.threads[threadIdx]!;
                     thread.updatedAt = toTimestamp(new Date());
 
-                    this.threads!.threads.splice(threadIdx, 1);
-                    this.threads!.threads.unshift(thread);
+                    threads.value!.threads.splice(threadIdx, 1);
+                    threads.value!.threads.unshift(thread);
                 }
 
-                if (this.selectedThread?.id === data.threadId) {
-                    this.selectedThread.updatedAt = toTimestamp(new Date());
+                if (selectedThread.value?.id === data.threadId) {
+                    selectedThread.value.updatedAt = toTimestamp(new Date());
 
-                    this.messages?.messages?.unshift(data);
+                    messages.value?.messages?.unshift(data);
                 }
 
                 console.log('messageUpdate', data);
 
                 // Handle email sent by blocked email
-                if (data.sender?.email && this.checkIfEmailBlocked(data.sender?.email)) {
+                if (data.sender?.email && checkIfEmailBlocked(data.sender?.email)) {
                     // Make sure to set thread state accordingly (locally)
-                    await this.setThreadState({
+                    await setThreadState({
                         threadId: data.threadId,
                         archived: true,
                         muted: true,
@@ -199,14 +179,14 @@ export const useMailerStore = defineStore('mailer', {
                     return;
                 }
 
-                if (data.senderId === this.selectedEmail?.id) {
+                if (data.senderId === selectedEmail.value?.id) {
                     return;
                 }
 
                 // Only set unread state when message isn't from same email and the user isn't active on that thread
-                const state = await this.setThreadState({
+                const state = await setThreadState({
                     threadId: data.threadId,
-                    unread: data.threadId !== this.selectedThread?.id,
+                    unread: data.threadId !== selectedThread.value?.id,
                 });
                 if (state?.muted) {
                     return;
@@ -222,103 +202,108 @@ export const useMailerStore = defineStore('mailer', {
                         },
                     },
                     type: NotificationType.INFO,
-                    actions: this.getNotificationActions(data.threadId),
+                    actions: getNotificationActions(data.threadId),
                 });
-                useSounds('/sounds/notification.mp3').play();
+                notificationSound.play();
             } else if (event.data.oneofKind === 'messageDelete') {
-                // Remove message if it is currently in our messagess list
+                // Remove message if it is currently in our messages list
                 const id = event.data.messageDelete;
-                const idx = this.messages?.messages.findIndex((t) => t.id === id);
+                const idx = messages.value?.messages.findIndex((t) => t.id === id);
                 if (idx !== undefined && idx > -1) {
-                    this.messages?.messages.splice(idx, 1);
+                    messages.value?.messages.splice(idx, 1);
                 }
             } else if (event.data.oneofKind === 'threadStateUpdate') {
-                const state = event.data.threadStateUpdate;
+                const newState = event.data.threadStateUpdate;
 
-                // Add/Remove thread from unread thread list
-                const unreadThreadIdx = this.unreadThreadIds.findIndex((t) => t === state.threadId);
-                if (!state.unread) {
+                // Add/Remove thread from unreadThreadIds
+                const unreadThreadIdx = unreadThreadIds.value.findIndex((t) => t === newState.threadId);
+                if (!newState.unread) {
                     if (unreadThreadIdx > -1) {
-                        this.unreadThreadIds.splice(unreadThreadIdx, 1);
+                        unreadThreadIds.value.splice(unreadThreadIdx, 1);
                     }
                 } else {
                     if (unreadThreadIdx === -1) {
-                        this.unreadThreadIds.push(state.threadId);
+                        unreadThreadIds.value.push(newState.threadId);
                     }
                 }
 
-                if (this.selectedEmail?.id !== state.emailId) {
+                if (selectedEmail.value?.id !== newState.emailId) {
                     return;
                 }
 
-                if (this.selectedThread?.id === state.threadId) {
-                    this.selectedThread.state = state;
+                if (selectedThread.value?.id === newState.threadId) {
+                    selectedThread.value.state = newState;
                 }
 
-                const thread = this.threads?.threads.find((t) => t.id === state.threadId);
+                const thread = threads.value?.threads.find((t) => t.id === newState.threadId);
                 if (thread) {
-                    thread.state = state;
+                    thread.state = newState;
                 }
             } else {
                 logger.debug('Unknown MailerEvent type received:', event.data.oneofKind);
             }
-        },
+        };
 
-        async checkEmails(): Promise<void> {
+        const checkEmails = async (): Promise<void> => {
             try {
-                if (this.emails.length === 0) {
+                if (emails.value.length === 0) {
                     // Reset unread thread ids list
-                    this.unreadThreadIds.length = 0;
-                    await this.listEmails(true, 0, false);
+                    unreadThreadIds.value.length = 0;
+                    await listEmails(true, 0, false);
                 }
 
                 // Still no email addresses?
-                if (this.emails.length === 0) {
+                if (emails.value.length === 0) {
                     return;
                 }
 
                 const { isSuperuser } = useAuth();
                 // If superuser and doesn't have a private email to check
-                if (isSuperuser.value && this.getPrivateEmail === undefined) {
+                if (isSuperuser.value && getPrivateEmail.value === undefined) {
                     return;
                 }
 
                 // Load unread threads for all emails
-                const threads = await this.listThreads(
+                const threadsResponse = await listThreads(
                     {
                         pagination: {
                             offset: 0,
                         },
-                        emailIds: isSuperuser.value ? [this.getPrivateEmail!.id] : this.emails.map((e) => e.id),
+                        emailIds: isSuperuser.value ? [getPrivateEmail.value!.id] : emails.value.map((e) => e.id),
                         unread: true,
                     },
                     false,
                 );
-                this.unreadThreadIds = threads?.threads.map((t) => t.id) ?? [];
+
+                unreadThreadIds.value = threadsResponse?.threads.map((t) => t.id) ?? [];
             } catch (_) {
-                // Empty
+                // empty
             }
-        },
+        };
 
         // Emails
-        async listEmails(all: boolean = false, offset: number = 0, redirect: boolean = true): Promise<ListEmailsResponse> {
-            this.error = undefined;
+        const listEmails = async (
+            all: boolean = false,
+            offset: number = 0,
+            redirect: boolean = true,
+        ): Promise<ListEmailsResponse> => {
+            error.value = undefined;
 
-            if (this.addressBook.length > 30) {
-                this.addressBook.length = 30;
+            if (addressBook.value.length > 30) {
+                addressBook.value.length = 30;
             }
 
             try {
                 const call = getGRPCMailerClient().listEmails({
                     pagination: {
-                        offset: offset,
+                        offset,
                     },
-                    all: all,
+                    all,
                 });
                 const { response } = await call;
 
-                this.emails = response.emails;
-                if (this.emails.length === 0 || !this.hasPrivateEmail) {
+                emails.value = response.emails;
+                if (emails.value.length === 0 || !hasPrivateEmail.value) {
                     if (redirect) {
                         await navigateTo({
                             name: 'mail-manage',
@@ -328,44 +313,44 @@ export const useMailerStore = defineStore('mailer', {
                             hash: '#',
                         });
                     }
-                } else if (this.emails.length > 0) {
+                } else if (emails.value.length > 0) {
                     // Check if previously selected email is available
-                    const previousEmail = this.emails.find((e) => e.id === this.selectedEmail?.id);
+                    const previousEmail = emails.value.find((e) => e.id === selectedEmail.value?.id);
                     if (previousEmail) {
-                        this.selectedEmail = previousEmail;
-                    } else if (this.emails[0] && this.emails[0].settings === undefined) {
-                        this.selectedEmail = await this.getEmail(this.emails[0].id);
+                        selectedEmail.value = previousEmail;
+                    } else if (emails.value[0] && emails.value[0].settings === undefined) {
+                        selectedEmail.value = await getEmail(emails.value[0].id);
                     } else {
-                        this.selectedEmail = this.emails[0];
+                        selectedEmail.value = emails.value[0];
                     }
 
-                    this.selectedEmailId = this.selectedEmail?.id;
+                    selectedEmailId.value = selectedEmail.value?.id;
                 }
 
-                this.loaded = true;
+                loaded.value = true;
                 return response;
             } catch (e) {
-                this.error = e as RpcError;
+                error.value = e as RpcError;
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async getEmail(id: number): Promise<Email | undefined> {
+        const getEmail = async (id: number): Promise<Email | undefined> => {
             try {
                 const call = getGRPCMailerClient().getEmail({
-                    id: id,
+                    id,
                 });
                 const { response } = await call;
 
-                const email = this.emails.find((e) => e.id === id);
-                if (email) {
-                    email.settings = response.email?.settings;
-                    email.access = response.email?.access;
+                const emailObj = emails.value.find((e) => e.id === id);
+                if (emailObj) {
+                    emailObj.settings = response.email?.settings;
+                    emailObj.access = response.email?.access;
                 }
-                if (this.selectedEmail && this.selectedEmail.id === response.email?.id) {
-                    this.selectedEmail.settings = response.email.settings;
-                    this.selectedEmail.access = response.email.access;
+                if (selectedEmail.value && selectedEmail.value.id === response.email?.id) {
+                    selectedEmail.value.settings = response.email.settings;
+                    selectedEmail.value.access = response.email.access;
                 }
 
                 return response.email;
@@ -373,23 +358,23 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async createOrUpdateEmail(req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> {
+        const createOrUpdateEmail = async (req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> => {
             try {
                 const call = getGRPCMailerClient().createOrUpdateEmail(req);
                 const { response } = await call;
 
                 if (response.email) {
-                    const idx = this.emails.findIndex((e) => e.id === response.email!.id);
+                    const idx = emails.value.findIndex((e) => e.id === response.email!.id);
                     if (idx === -1) {
-                        this.emails.unshift(response.email);
+                        emails.value.unshift(response.email);
                     } else {
-                        this.emails[idx] = response.email;
+                        emails.value[idx] = response.email;
                     }
 
-                    if (this.selectedEmail === undefined) {
-                        this.selectedEmail = response.email;
+                    if (!selectedEmail.value) {
+                        selectedEmail.value = response.email;
                     }
                 }
 
@@ -398,20 +383,20 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async deleteEmail(req: DeleteEmailRequest): Promise<DeleteEmailResponse> {
+        const deleteEmail = async (req: DeleteEmailRequest): Promise<DeleteEmailResponse> => {
             try {
                 const call = getGRPCMailerClient().deleteEmail(req);
                 const { response } = await call;
 
-                if (this.selectedEmail?.id === req.id) {
-                    this.selectedEmail = undefined;
+                if (selectedEmail.value?.id === req.id) {
+                    selectedEmail.value = undefined;
                 }
 
-                const idx = this.emails.findIndex((e) => e.id === req.id);
+                const idx = emails.value.findIndex((e) => e.id === req.id);
                 if (idx > -1) {
-                    this.emails.slice(idx, 1);
+                    emails.value.slice(idx, 1);
                 }
 
                 useNotificatorStore().restartStream();
@@ -427,10 +412,13 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        // Thread
-        async listThreads(req: ListThreadsRequest, store: boolean = true): Promise<ListThreadsResponse | undefined> {
+        // Threads
+        const listThreads = async (
+            req: ListThreadsRequest,
+            store: boolean = true,
+        ): Promise<ListThreadsResponse | undefined> => {
             try {
                 const call = getGRPCMailerClient().listThreads(req);
                 const { response } = await call;
@@ -440,29 +428,29 @@ export const useMailerStore = defineStore('mailer', {
                     for (let i = 0; i < response.threads.length; i++) {
                         const thread = response.threads[i]!;
 
-                        // Make sure to keep unread thread ids list uptodate
-                        const idx = this.unreadThreadIds.findIndex((t) => t === thread.id);
+                        // Keep unreadThreadIds up to date
+                        const idx = unreadThreadIds.value.findIndex((t) => t === thread.id);
                         if (thread.state?.unread !== true) {
                             if (idx > -1) {
-                                this.unreadThreadIds.splice(idx, 1);
+                                unreadThreadIds.value.splice(idx, 1);
                             }
                             continue;
                         }
 
                         if (idx === -1) {
-                            this.unreadThreadIds.push(thread.id);
+                            unreadThreadIds.value.push(thread.id);
                         }
                     }
                 }
 
                 if (store) {
-                    this.threads = response;
+                    threads.value = response;
 
                     // Add selected thread to list to ensure there is no flickering between tab switches
-                    if (this.selectedThread) {
-                        const thread = response?.threads.filter((t) => t.id === this.selectedThread?.id);
-                        if (!thread) {
-                            response?.threads.unshift(this.selectedThread);
+                    if (selectedThread.value) {
+                        const existing = response?.threads.filter((t) => t.id === selectedThread.value?.id);
+                        if (!existing || existing.length === 0) {
+                            response?.threads.unshift(selectedThread.value);
                         }
                     }
                 }
@@ -472,23 +460,23 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async getThread(threadId: number): Promise<Thread | undefined> {
-            if (!this.selectedEmail) {
+        const getThread = async (threadId: number): Promise<Thread | undefined> => {
+            if (!selectedEmail.value) {
                 return;
             }
 
             try {
                 const call = getGRPCMailerClient().getThread({
-                    emailId: this.selectedEmail?.id,
-                    threadId: threadId,
+                    emailId: selectedEmail.value.id,
+                    threadId,
                 });
                 const { response } = await call;
 
                 if (response.thread && !response.thread.state) {
                     response.thread.state = {
-                        emailId: this.selectedEmail.id,
+                        emailId: selectedEmail.value.id,
                         threadId: response.thread.id,
                         unread: false,
                         favorite: false,
@@ -505,24 +493,24 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Switch away from thread if inaccessible
                 if (error?.message?.includes('.ErrThreadAccessDenied')) {
-                    if (this.selectedThread?.id === threadId) {
-                        this.selectedThread = undefined;
+                    if (selectedThread.value?.id === threadId) {
+                        selectedThread.value = undefined;
                     }
                 }
             }
-        },
+        };
 
-        async createThread(req: CreateThreadRequest): Promise<CreateThreadResponse> {
+        const createThread = async (req: CreateThreadRequest): Promise<CreateThreadResponse> => {
             try {
                 const call = getGRPCMailerClient().createThread(req);
                 const { response } = await call;
 
                 if (response.thread) {
-                    req.recipients.forEach((r) => this.addToAddressBook(r));
+                    req.recipients.forEach((r) => addToAddressBook(r));
 
-                    this.threads?.threads.unshift(response.thread);
-                    if (this.threads?.pagination) {
-                        this.threads.pagination.totalCount++;
+                    threads.value?.threads.unshift(response.thread);
+                    if (threads.value?.pagination) {
+                        threads.value.pagination.totalCount++;
                     }
                 }
 
@@ -531,15 +519,15 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async deleteThread(req: DeleteThreadRequest): Promise<DeleteThreadResponse> {
+        const deleteThread = async (req: DeleteThreadRequest): Promise<DeleteThreadResponse> => {
             try {
                 const call = getGRPCMailerClient().deleteThread(req);
                 const { response } = await call;
 
-                if (this.selectedThread?.id === req.threadId) {
-                    this.selectedThread = undefined;
+                if (selectedThread.value?.id === req.threadId) {
+                    selectedThread.value = undefined;
                 }
 
                 useNotificatorStore().add({
@@ -553,14 +541,14 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
         // Thread User State
-        async getThreadState(threadId: number): Promise<ThreadState | undefined> {
+        const getThreadState = async (threadId: number): Promise<ThreadState | undefined> => {
             try {
                 const call = getGRPCMailerClient().getThreadState({
-                    emailId: this.selectedEmail!.id,
-                    threadId: threadId,
+                    emailId: selectedEmail.value!.id,
+                    threadId,
                 });
                 const { response } = await call;
 
@@ -569,10 +557,13 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async setThreadState(state: Partial<ThreadState>, notify: boolean = false): Promise<ThreadState | undefined> {
-            if (!this.selectedEmail) {
+        const setThreadState = async (
+            state: Partial<ThreadState>,
+            notify: boolean = false,
+        ): Promise<ThreadState | undefined> => {
+            if (!selectedEmail.value) {
                 return;
             }
 
@@ -580,28 +571,28 @@ export const useMailerStore = defineStore('mailer', {
                 state: {
                     ...state,
                     threadId: state.threadId!,
-                    emailId: this.selectedEmail?.id,
+                    emailId: selectedEmail.value.id,
                 },
             });
 
-            if (this.selectedThread && this.selectedThread?.id === state.threadId) {
-                this.selectedThread.state = response.state;
+            if (selectedThread.value && selectedThread.value?.id === state.threadId) {
+                selectedThread.value.state = response.state;
             }
 
-            const thread = this.threads?.threads.find((t) => t.id === state.threadId);
+            const thread = threads.value?.threads.find((t) => t.id === state.threadId);
             if (thread) {
                 thread.state = response.state;
             }
 
-            // Add/Remove thread from unread thread list
-            const unreadThreadIdx = this.unreadThreadIds.findIndex((t) => t === state.threadId);
+            // Add/Remove thread from unreadThreadIds
+            const unreadThreadIdx = unreadThreadIds.value.findIndex((t) => t === state.threadId);
             if (!response.state?.unread) {
                 if (unreadThreadIdx > -1) {
-                    this.unreadThreadIds.splice(unreadThreadIdx, 1);
+                    unreadThreadIds.value.splice(unreadThreadIdx, 1);
                 }
             } else {
                 if (unreadThreadIdx === -1) {
-                    this.unreadThreadIds.push(response.state.threadId);
+                    unreadThreadIds.value.push(response.state.threadId);
                 }
             }
 
@@ -614,11 +605,11 @@ export const useMailerStore = defineStore('mailer', {
             }
 
             return response.state;
-        },
+        };
 
         // Messages
-        async listThreadMessages(req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> {
-            if (!this.selectedEmail) {
+        const listThreadMessages = async (req: ListThreadMessagesRequest): Promise<ListThreadMessagesResponse | undefined> => {
+            if (!selectedEmail.value) {
                 return;
             }
 
@@ -626,7 +617,7 @@ export const useMailerStore = defineStore('mailer', {
                 const call = getGRPCMailerClient().listThreadMessages(req);
                 const { response } = await call;
 
-                this.messages = response;
+                messages.value = response;
 
                 return response;
             } catch (e) {
@@ -635,22 +626,22 @@ export const useMailerStore = defineStore('mailer', {
 
                 // Switch away from thread if inaccessible
                 if (error?.message?.includes('.ErrThreadAccessDenied')) {
-                    if (this.selectedThread?.id === req.threadId) {
-                        this.selectedThread = undefined;
+                    if (selectedThread.value?.id === req.threadId) {
+                        selectedThread.value = undefined;
                     }
                 }
             }
-        },
+        };
 
-        async postMessage(req: PostMessageRequest): Promise<PostMessageResponse> {
+        const postMessage = async (req: PostMessageRequest): Promise<PostMessageResponse> => {
             try {
                 const call = getGRPCMailerClient().postMessage(req);
                 const { response } = await call;
 
                 if (response.message) {
-                    req.recipients.forEach((r) => this.addToAddressBook(r));
+                    req.recipients.forEach((r) => addToAddressBook(r));
 
-                    this.messages?.messages?.unshift(response.message);
+                    messages.value?.messages?.unshift(response.message);
                 }
 
                 return response;
@@ -658,9 +649,9 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async deleteMessage(req: DeleteMessageRequest): Promise<DeleteMessageResponse> {
+        const deleteMessage = async (req: DeleteMessageRequest): Promise<DeleteMessageResponse> => {
             try {
                 const call = getGRPCMailerClient().deleteMessage(req);
                 const { response } = await call;
@@ -676,16 +667,16 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
         // User Settings
-        async getEmailSettings(req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> {
+        const getEmailSettings = async (req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> => {
             try {
                 const call = getGRPCMailerClient().getEmailSettings(req);
                 const { response } = await call;
 
-                if (response.settings && this.selectedEmail) {
-                    this.selectedEmail.settings = response.settings;
+                if (response.settings && selectedEmail.value) {
+                    selectedEmail.value.settings = response.settings;
                 }
 
                 return response;
@@ -693,15 +684,15 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        async setEmailSettings(req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> {
+        const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
             try {
                 const call = getGRPCMailerClient().setEmailSettings(req);
                 const { response } = await call;
 
-                if (response.settings && this.selectedEmail) {
-                    this.selectedEmail.settings = response.settings;
+                if (response.settings && selectedEmail.value) {
+                    selectedEmail.value.settings = response.settings;
                 }
 
                 useNotificatorStore().add({
@@ -715,54 +706,101 @@ export const useMailerStore = defineStore('mailer', {
                 handleGRPCError(e as RpcError);
                 throw e;
             }
-        },
+        };
 
-        checkIfEmailBlocked(email: string): boolean {
-            if (!this.selectedEmail?.settings?.blockedEmails) {
+        // Utility
+        const checkIfEmailBlocked = (emailAddress: string): boolean => {
+            if (!selectedEmail.value?.settings?.blockedEmails) {
                 return false;
             }
+            return selectedEmail.value.settings.blockedEmails.includes(emailAddress.toLowerCase());
+        };
 
-            return this.selectedEmail.settings.blockedEmails.includes(email.toLowerCase());
-        },
-
-        getNotificationActions(threadId?: number): NotificationActionI18n[] {
+        const getNotificationActions = (threadId?: number): NotificationActionI18n[] => {
             return [
                 {
                     label: { key: 'common.click_here' },
                     to: threadId ? { name: 'mail', query: { thread: threadId }, hash: '#' } : { name: 'mail' },
                 },
             ];
-        },
+        };
 
         // Address book
-        addToAddressBook(email: string, label?: string): void {
-            email = email.trim();
-            label = label?.trim();
+        const addToAddressBook = (emailAddress: string, label?: string): void => {
+            const email = emailAddress.trim();
+            const name = label?.trim();
 
-            const idx = this.addressBook.findIndex((a) => a.label === email);
-            if (idx > -1 && this.addressBook[idx]) {
-                this.addressBook[idx].label = email;
-                this.addressBook[idx].name = label;
+            const idx = addressBook.value.findIndex((a) => a.label === email);
+            if (idx > -1 && addressBook.value[idx]) {
+                addressBook.value[idx].label = email;
+                addressBook.value[idx].name = name;
                 return;
             }
 
-            this.addressBook.unshift({ label: email, name: label });
+            addressBook.value.unshift({ label: email, name });
+        };
+
+        // Getters
+        const hasPrivateEmail = computed<boolean>(() => {
+            const { activeChar } = useAuth();
+            return !!emails.value.find((e) => e.userId === activeChar.value?.userId);
+        });
+
+        const getPrivateEmail = computed<Email | undefined>(() => {
+            const { activeChar } = useAuth();
+            return emails.value.find((e) => e.userId === activeChar.value!.userId);
+        });
+
+        const unreadCount = computed<number>(() => unreadThreadIds.value.length);
+
+        return {
+            // State
+            loaded,
+            error,
+            draft,
+            emails,
+            selectedEmailId,
+            selectedEmail,
+            selectedThread,
+            unreadThreadIds,
+            threads,
+            messages,
+            addressBook,
+
+            // Actions
+            handleEvent,
+            checkEmails,
+            listEmails,
+            getEmail,
+            createOrUpdateEmail,
+            deleteEmail,
+            listThreads,
+            getThread,
+            createThread,
+            deleteThread,
+            getThreadState,
+            setThreadState,
+            listThreadMessages,
+            postMessage,
+            deleteMessage,
+            getEmailSettings,
+            setEmailSettings,
+            checkIfEmailBlocked,
+            getNotificationActions,
+            addToAddressBook,
+
+            // Getters
+            hasPrivateEmail,
+            getPrivateEmail,
+            unreadCount,
+        };
+    },
+    {
+        persist: {
+            pick: ['draft', 'addressBook'],
         },
     },
-    getters: {
-        hasPrivateEmail: (state) => {
-            const { activeChar } = useAuth();
-            return !!state.emails.find((e) => e.userId === activeChar.value?.userId);
-        },
-
-        getPrivateEmail: (state) => {
-            const { activeChar } = useAuth();
-            return state.emails.find((e) => e.userId === activeChar.value!.userId);
-        },
-
-        unreadCount: (state) => state.unreadThreadIds.length,
-    },
-});
+);
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useMailerStore, import.meta.hot));

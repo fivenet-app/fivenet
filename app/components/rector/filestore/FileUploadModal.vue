@@ -2,6 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { useSettingsStore } from '~/store/settings';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
@@ -12,6 +13,9 @@ const emit = defineEmits<{
 const { isOpen } = useModal();
 
 const appConfig = useAppConfig();
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
     category: z.string().min(3).max(255),
@@ -95,7 +99,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
-                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
                                 type="file"

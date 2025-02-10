@@ -2,6 +2,7 @@
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { useSettingsStore } from '~/store/settings';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
@@ -14,6 +15,9 @@ const emit = defineEmits<{
 }>();
 
 const question = useVModel(props, 'modelValue', emit);
+
+const settingsStore = useSettingsStore();
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const schema = z.object({
     id: z.number(),
@@ -228,7 +232,7 @@ function changeQuestionType(qt: string): void {
 
                 <template v-else-if="question.data!.data.oneofKind === 'image'">
                     <div class="flex flex-col gap-2">
-                        <NotSupportedTabletBlock v-if="isNUIEnabled().value" />
+                        <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
                                 type="file"

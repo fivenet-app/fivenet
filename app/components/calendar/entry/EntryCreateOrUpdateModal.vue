@@ -239,6 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
                             <DatePickerPopoverClient
                                 v-model="state.startTime"
+                                date-format="dd.MM.yyyy HH:mm"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
                                 :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                             />
@@ -247,6 +248,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
                             <DatePickerPopoverClient
                                 v-model="state.endTime"
+                                date-format="dd.MM.yyyy HH:mm"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
                                 :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                             />
