@@ -460,7 +460,7 @@ const quickAccessButtons = computed(() =>
         <slot />
 
         <ClientOnly>
-            <WebSocketStatusOverlay />
+            <WebSocketStatusOverlay hide-overlay />
 
             <!-- Events -->
             <LazyPartialsEventsLayer />

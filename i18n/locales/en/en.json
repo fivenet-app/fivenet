@@ -688,7 +688,7 @@
                 "quick_buttons": "Quick Access Buttons",
                 "discord_sync_settings": {
                     "title": "Discord Sync Settings",
-                    "subtitle": "Manage the Discord Bot Sync settings.",
+                    "subtitle": "Manage the Discord Bot Sync settings. To get started with the Discord bot, invite the bot, set your Discord server ID below and configure the settings as you want.",
                     "discord_guild_id": "Discord Guild/ Server ID",
                     "invite_bot": "Invite Bot",
                     "last_sync": "Last Sync",
@@ -739,9 +739,6 @@
                         "future_days": "Maximum days in the future an absence can be dated"
                     }
                 }
-            },
-            "citizen_labels": {
-                "title": "Citizen Labels"
             },
             "role_view": {
                 "add_permission": "Add Permission"
@@ -795,6 +792,9 @@
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
                 }
+            },
+            "citizen_labels": {
+                "title": "Citizen Labels"
             }
         },
         "debug_info": {
@@ -1307,7 +1307,19 @@
                     "title": "NIC.ls",
                     "description": "Network Information Center handling the registration and management of domains and websites on the internet.",
                     "search": {
-                        "button": "Search Domain"
+                        "button": "Search Domain",
+                        "available": {
+                            "title": "Domain is available",
+                            "description": "You can register the domain by following the steps below."
+                        },
+                        "transferable": {
+                            "title": "Domain is transferable",
+                            "description": "The domain is already registered by someone else, but can be transfered with a transfer code."
+                        },
+                        "not_available": {
+                            "title": "Domain is not available",
+                            "description": "The domain is already registered and not available for transfer. Please try another domain name."
+                        }
                     },
                     "cards": {
                         "builder": {
@@ -1318,7 +1330,8 @@
                             "title": "Access Control",
                             "description": "Manage who can edit your website with our easy to use access control manager."
                         }
-                    }
+                    },
+                    "control_panel": "Control Panel"
                 }
             },
             "ads": {

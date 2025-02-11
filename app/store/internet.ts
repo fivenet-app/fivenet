@@ -32,6 +32,12 @@ export const useInternetStore = defineStore(
 
         // Actions
         const goTo = (domain: string, path: string = '', disableHistory: boolean = false): void => {
+            if (path.length === 0) {
+                path = '/';
+            } else if (!path.startsWith('/')) {
+                path = '/' + path;
+            }
+
             logger.debug('goto, domain:', domain, 'path:', path);
 
             if (!disableHistory) {

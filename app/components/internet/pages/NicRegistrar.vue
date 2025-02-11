@@ -4,6 +4,7 @@ import { z } from 'zod';
 import type { Tab } from '~/store/internet';
 import type { TLD } from '~~/gen/ts/resources/internet/domain';
 import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
+import DomainList from './nic/DomainList.vue';
 
 const props = defineProps<{
     modelValue?: Tab;
@@ -29,7 +30,7 @@ updateTabInfo();
 
 const schema = z.object({
     tldID: z.number().positive().min(1),
-    search: z.string().max(40),
+    search: z.string().min(3).max(40),
 });
 
 type Schema = z.output<typeof schema>;
@@ -53,11 +54,15 @@ async function listTLDs(): Promise<TLD[]> {
     }
 }
 
-async function checkDomainAvailability(values: Schema): Promise<CheckDomainAvailabilityResponse> {
+const { data: domain, refresh } = useLazyAsyncData('internet-domain-check', () => checkDomainAvailability(), {
+    immediate: false,
+});
+
+async function checkDomainAvailability(): Promise<CheckDomainAvailabilityResponse> {
     try {
         const call = getGRPCInternetDomainsClient().checkDomainAvailability({
-            tldId: 1, // TODO
-            name: values.search,
+            tldId: state.tldID,
+            name: state.search,
         });
         const { response } = await call;
 
@@ -69,14 +74,26 @@ async function checkDomainAvailability(values: Schema): Promise<CheckDomainAvail
 }
 
 const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+const onSubmitThrottle = useThrottleFn(async (_: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
     // TODO display availability check response
-    await checkDomainAvailability(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await refresh().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-// TODO
+// TODO "admin cp" for user listing all their domains
+const items = [
+    {
+        label: t('components.internet.pages.nic_registrar.search.button'),
+        icon: 'i-mdi-search',
+        slot: 'search',
+    },
+    {
+        label: t('components.internet.pages.nic_registrar.control_panel'),
+        icon: 'i-mdi-administrator',
+        slot: 'admin',
+    },
+];
 </script>
 
 <template>
@@ -87,38 +104,57 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :ui="{
                 wrapper: 'py-6 sm:py-16 md:py-16',
             }"
-        >
-            <template #links>
-                <UForm :schema="schema" :state="state" class="inline-flex gap-1" @submit="onSubmitThrottle">
-                    <UFormGroup name="search">
-                        <UInput
-                            v-model="state.search"
-                            type="text"
-                            class="w-full"
-                            size="xl"
-                            :placeholder="$t('common.domain')"
-                        />
-                    </UFormGroup>
+        />
 
-                    <UFormGroup name="tldId">
-                        <USelectMenu
-                            v-model="state.tldID"
-                            :options="tlds"
-                            value-attribute="id"
-                            option-attribute="name"
+        <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
+            <UTabs :items="items" :unmount="true">
+                <template #search>
+                    <UForm :schema="schema" :state="state" class="flex place-content-center gap-1" @submit="onSubmitThrottle">
+                        <UFormGroup name="search">
+                            <UInput
+                                v-model="state.search"
+                                type="text"
+                                class="w-full"
+                                size="xl"
+                                :placeholder="$t('common.domain')"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup name="tldId">
+                            <USelectMenu
+                                v-model="state.tldID"
+                                :options="tlds"
+                                value-attribute="id"
+                                option-attribute="name"
+                                size="xl"
+                            />
+                        </UFormGroup>
+
+                        <UButton
+                            type="submit"
+                            :label="$t('components.internet.pages.nic_registrar.search.button')"
+                            trailing-icon="i-mdi-search"
                             size="xl"
                         />
-                    </UFormGroup>
+                    </UForm>
 
-                    <UButton
-                        type="submit"
-                        :label="$t('components.internet.pages.nic_registrar.search.button')"
-                        trailing-icon="i-mdi-search"
-                        size="xl"
-                    />
-                </UForm>
-            </template>
-        </ULandingHero>
+                    <UContainer v-if="domain">
+                        <UAlert v-if="domain.transferable" />
+                        <UAlert
+                            v-else-if="domain.available"
+                            :title="$t('components.internet.pages.nic_registrar.search.available.title')"
+                            :description="$t('components.internet.pages.nic_registrar.search.available.description')"
+                            color="green"
+                        />
+                        <UAlert v-else color="red" />
+                    </UContainer>
+                </template>
+
+                <template #admin>
+                    <DomainList />
+                </template>
+            </UTabs>
+        </ULandingSection>
 
         <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
             <UPageGrid :ui="{ wrapper: 'sm:grid-cols-2 xl:grid-cols-2' }">

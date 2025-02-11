@@ -30,6 +30,10 @@ const {
 });
 
 async function getPage(): Promise<GetPageResponse | undefined> {
+    if (localPages[tab.value.domain]) {
+        return;
+    }
+
     try {
         const call = getGRPCInternetClient().getPage({
             domain: tab.value.domain,
@@ -46,18 +50,22 @@ async function getPage(): Promise<GetPageResponse | undefined> {
     }
 }
 
-watch(tab, async () => {
-    state.url = tab.value.domain + (tab.value.path && tab.value.path !== '' ? tab.value.path : '/');
+watch(
+    tab,
+    async () => {
+        state.url = tab.value.domain + (tab.value.path && tab.value.path !== '' ? tab.value.path : '/');
 
-    // Skip local pages
-    if (localPagesDomains.includes(tab.value?.domain)) {
-        return;
-    }
+        // Skip local pages
+        if (localPagesDomains.includes(tab.value?.domain)) {
+            return;
+        }
 
-    if (tab.value.active) {
-        refresh();
-    }
-});
+        if (tab.value.active) {
+            refresh();
+        }
+    },
+    { deep: true },
+);
 
 function goToPage(domain: string, path?: string): void {
     state.url = domain + (path && path !== '' ? path : '/');

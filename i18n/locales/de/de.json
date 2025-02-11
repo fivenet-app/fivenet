@@ -688,7 +688,7 @@
                 "quick_buttons": "Schnellzugriff Knöpfe",
                 "discord_sync_settings": {
                     "title": "Discord-Bot-Synchronisations-Einstellungen",
-                    "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen.",
+                    "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen. Um mit dem Discord-Bot loszulegen, laden Sie den Bot ein, legen Sie unten Ihre Discord-Server-ID fest und konfigurieren Sie die Einstellungen nach Wunsch.",
                     "discord_guild_id": "Discord Guild/Server ID",
                     "invite_bot": "Bot einladen",
                     "last_sync": "Letzte Synchronisation",
@@ -1307,7 +1307,19 @@
                     "title": "Netzwerk-Informationszentrum",
                     "description": "Network Information Center, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst.",
                     "search": {
-                        "button": "Domains suchen"
+                        "button": "Domains suchen",
+                        "available": {
+                            "title": "Domain is available",
+                            "description": "You can register the domain by following the steps below."
+                        },
+                        "transferable": {
+                            "title": "Domain is transferable",
+                            "description": "The domain is already registered by someone else, but can be transfered with a transfer code."
+                        },
+                        "not_available": {
+                            "title": "Domain is not available",
+                            "description": "The domain is already registered and not available for transfer. Please try another domain name."
+                        }
                     },
                     "cards": {
                         "builder": {
@@ -1318,7 +1330,8 @@
                             "title": "Zugriffskontrolle",
                             "description": "Verwalten Sie mit unserem benutzerfreundlichen Zugangskontrollmanager, wer Ihre Website bearbeiten darf."
                         }
-                    }
+                    },
+                    "control_panel": "Kontrollzentrum"
                 }
             },
             "ads": {
@@ -2548,7 +2561,15 @@
         },
         "InternetService": {
             "ErrFailedQuery": "Fehler beim Laden der Internet Daten!",
-            "ErrFailedSearch": "Fehler beim Durchsuchen des Internet!"
+            "ErrFailedSearch": "Fehler beim Durchsuchen des Internet!",
+            "ErrDomainNotTransferable": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain not transferable, please choose another domain."
+            },
+            "ErrDomainWrongTransferCode": {
+                "title": "NIC Service - Domain Registration",
+                "content": "Domain transfer code wrong or transfer not enabled."
+            }
         }
     },
     "system": {

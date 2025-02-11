@@ -54,6 +54,9 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 			jet.COUNT(tDomains.ID).AS("datacount.totalcount"),
 		).
 		FROM(tDomains.
+			INNER_JOIN(tTLDs,
+				tTLDs.ID.EQ(tDomains.TldID),
+			).
 			LEFT_JOIN(tCreator,
 				tDomains.CreatorID.EQ(tCreator.ID),
 			),
@@ -92,8 +95,16 @@ func (s *Server) ListDomains(ctx context.Context, req *pbinternet.ListDomainsReq
 			tDomains.ApproverID,
 			tDomains.CreatorJob,
 			tDomains.CreatorID,
+			tTLDs.ID,
+			tTLDs.Name,
+			tTLDs.Internal,
 		).
-		FROM(tDomains).
+		FROM(
+			tDomains.
+				INNER_JOIN(tTLDs,
+					tTLDs.ID.EQ(tDomains.TldID),
+				),
+		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
@@ -126,47 +137,66 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
+	domainId := uint64(0)
 	// Domain exists
 	if domain != nil {
-		if domain.TransferCode == nil {
+		if domain.CreatorId != nil && *domain.CreatorId == userInfo.UserId {
+			return nil, errorsinternet.ErrDomainNotTransferable
+		} else if domain.TransferCode == nil {
 			return nil, errorsinternet.ErrDomainNotTransferable
 		} else if req.TransferCode != nil && *domain.TransferCode != *req.TransferCode {
 			return nil, errorsinternet.ErrDomainWrongTransferCode
 		}
 
-		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		stmt := tDomains.
+			UPDATE(
+				tDomains.TransferCode,
+				tDomains.CreatorID,
+			).
+			SET(
+				jet.NULL,
+				userInfo.UserId,
+			).
+			WHERE(
+				tDomains.ID.EQ(jet.Uint64(domain.Id)),
+			)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
+
+		domainId = domain.Id
+	} else {
+		stmt := tDomains.
+			INSERT(
+				tDomains.TldID,
+				tDomains.Name,
+				tDomains.Active,
+				tDomains.CreatorJob,
+				tDomains.CreatorID,
+			).
+			VALUES(
+				req.Name,
+				false,
+				userInfo.Job,
+				userInfo.UserId,
+			)
+
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
+
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
+		domainId = uint64(lastId)
 	}
 
-	// TODO handle domain transfers
-
-	stmt := tDomains.
-		INSERT(
-			tDomains.TldID,
-			tDomains.Name,
-			tDomains.Active,
-			tDomains.CreatorJob,
-			tDomains.CreatorID,
-		).
-		VALUES(
-			req.Name,
-			false,
-			userInfo.Job,
-			userInfo.UserId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
+	domain, err = s.getDomainById(ctx, s.db, domainId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
-	}
-
-	domain, err = s.getDomainById(ctx, s.db, uint64(lastId))
-	if err != nil {
-		return nil, err
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -188,23 +218,22 @@ func (s *Server) UpdateDomain(ctx context.Context, req *pbinternet.UpdateDomainR
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// TODO check if user owns the domain or is superuser
-
 	domain, err := s.getDomainById(ctx, s.db, req.DomainId)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+	}
+
+	// Check if user owns the domain or is superuser
+	if domain == nil || ((domain.CreatorId == nil && !userInfo.SuperUser) || *domain.CreatorId != userInfo.UserId) {
+		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
 	stmt := tDomains.
 		UPDATE(
-			tDomains.Active,
-			tDomains.CreatorJob,
-			tDomains.CreatorID,
+			tDomains.TransferCode,
 		).
 		SET(
-			false,
-			userInfo.Job,
-			userInfo.UserId,
+			req.Transferable,
 		).
 		WHERE(
 			tDomains.ID.EQ(jet.Uint64(domain.Id)),

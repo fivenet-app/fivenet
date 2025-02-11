@@ -476,6 +476,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :title="$t('components.rector.job_props.discord_sync_settings.title')"
                                 :description="$t('components.rector.job_props.discord_sync_settings.subtitle')"
                             >
+                                <template #links>
+                                    <UButton
+                                        v-if="appConfig.discord.botInviteURL !== undefined"
+                                        block
+                                        class="mt-1"
+                                        color="white"
+                                        trailing-icon="i-mdi-robot"
+                                        :to="appConfig.discord.botInviteURL"
+                                        :external="true"
+                                    >
+                                        {{ $t('components.rector.job_props.discord_sync_settings.invite_bot') }}
+                                    </UButton>
+                                </template>
+
                                 <UFormGroup
                                     name="discordGuildId"
                                     :label="$t('components.rector.job_props.discord_sync_settings.discord_guild_id')"
@@ -489,15 +503,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('components.rector.job_props.discord_sync_settings.discord_guild_id')"
                                         maxlength="70"
                                     />
-                                    <UButton
-                                        v-if="appConfig.discord.botInviteURL !== undefined"
-                                        block
-                                        class="mt-1"
-                                        :to="appConfig.discord.botInviteURL"
-                                        :external="true"
-                                    >
-                                        {{ $t('components.rector.job_props.discord_sync_settings.invite_bot') }}
-                                    </UButton>
                                     <p v-if="jobProps.discordLastSync" class="mt-2 text-xs">
                                         {{ $t('components.rector.job_props.discord_sync_settings.last_sync') }}:
                                         <GenericTime :value="jobProps.discordLastSync" />

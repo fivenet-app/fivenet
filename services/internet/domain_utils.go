@@ -22,6 +22,10 @@ func cleanAndSplitDomain(in string) (string, string) {
 	)
 
 	idx := strings.LastIndex(full, ".")
+	if idx == -1 {
+		return full, ""
+	}
+
 	tld := full[idx+1:]
 	domain := full[:idx]
 	return domain, tld
