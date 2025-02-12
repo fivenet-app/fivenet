@@ -66,7 +66,7 @@
         "maska": "3.1.0",
         "mdi-vue3": "7.4.47",
         "nuxt-zod-i18n": "1.11.5",
-        "pinia": "2.3.1",
+        "pinia": "3.0.1",
         "slugify": "1.6.6",
         "splitpanes": "3.1.8",
         "tiptap-extension-auto-joiner": "0.1.3",
