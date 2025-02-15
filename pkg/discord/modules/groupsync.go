@@ -149,11 +149,11 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		if groupCfg.NotSameJob {
 			has, err := g.checkIfUserIsPartOfJob(ctx, user.License, g.job)
 			if err != nil {
-				g.logger.Error(fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID), zap.Error(err))
+				g.logger.Error(fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID), zap.String("group", user.Group), zap.Error(err))
 				continue
 			}
 			if has {
-				g.logger.Debug(fmt.Sprintf("member is part of same job, not setting group %s", user.ExternalID))
+				g.logger.Debug(fmt.Sprintf("member %s is part of same job, not setting to group", user.ExternalID), zap.String("group", user.Group))
 				user.SameJob = true
 				continue
 			}

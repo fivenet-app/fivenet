@@ -21,7 +21,7 @@ const props = defineProps<{
     >
         <template #title>
             <div class="inline-flex items-center gap-2">
-                <UIcon name="i-mdi-information-slab-circle" class="size-6" />
+                <UIcon name="i-mdi-information-outline" class="size-6" />
                 <span class="shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</span>
             </div>
         </template>

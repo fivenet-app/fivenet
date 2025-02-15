@@ -97,7 +97,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
         <UContainer v-if="charLockActive" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
             <UAlert
                 :ui="{ wrapper: 'relative overflow-hidden' }"
-                icon="i-mdi-information-slab-circle"
+                icon="i-mdi-information-outline"
                 color="primary"
                 variant="subtle"
                 :title="$t('components.auth.CharacterSelectorCard.char_lock_alert.title')"

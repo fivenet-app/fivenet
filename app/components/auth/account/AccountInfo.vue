@@ -44,7 +44,7 @@ const items = computed(() =>
         {
             slot: 'accountInfo',
             label: t('components.auth.AccountInfo.title'),
-            icon: 'i-mdi-information-slab-circle',
+            icon: 'i-mdi-information-outline',
         },
         account.value?.oauth2Providers && account.value.oauth2Providers.length > 0
             ? {

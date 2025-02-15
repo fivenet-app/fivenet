@@ -1331,7 +1331,10 @@
                             "description": "Manage who can edit your website with our easy to use access control manager."
                         }
                     },
-                    "control_panel": "Control Panel"
+                    "control_panel": "Control Panel",
+                    "register_form": {
+                        "submit": "Are you sure you want to register this domain?"
+                    }
                 }
             },
             "ads": {
@@ -1340,7 +1343,8 @@
             "not_found": {
                 "title": "Server not Found",
                 "description": "Can't find the server at \"{domain}\". Check the address for typing errors. If you are unable to load any pages, check your internet connection."
-            }
+            },
+            "transfer_code": "Transfer Code"
         },
         "access": {
             "add_entry": "Add Access",

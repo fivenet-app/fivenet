@@ -253,7 +253,7 @@ const columns = [
                                                 </span>
 
                                                 <UTooltip v-if="law.hint" :text="law.hint">
-                                                    <UIcon name="i-mdi-information-slab-circle-outline" class="size-5" />
+                                                    <UIcon name="i-mdi-information-outline" class="size-5" />
                                                 </UTooltip>
                                             </div>
                                         </template>

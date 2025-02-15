@@ -33,7 +33,7 @@ watch(tab, () => updateTabInfo());
         <ULandingCard
             v-if="modelValue"
             :title="$t('components.internet.not_found.title')"
-            icon="i-mdi-information-slab-circle-outline"
+            icon="i-mdi-information-outline"
             class="w-screen max-w-md"
             orientation="vertical"
         >

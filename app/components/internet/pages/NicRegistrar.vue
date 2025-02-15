@@ -5,6 +5,7 @@ import type { Tab } from '~/store/internet';
 import type { TLD } from '~~/gen/ts/resources/internet/domain';
 import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
 import DomainList from './nic/DomainList.vue';
+import RegisterForm from './nic/RegisterForm.vue';
 
 const props = defineProps<{
     modelValue?: Tab;
@@ -54,9 +55,13 @@ async function listTLDs(): Promise<TLD[]> {
     }
 }
 
-const { data: domain, refresh } = useLazyAsyncData('internet-domain-check', () => checkDomainAvailability(), {
-    immediate: false,
-});
+const { data: domain, refresh } = useLazyAsyncData(
+    `internet-domain-check-${state.tldID}-${state.search}`,
+    () => checkDomainAvailability(),
+    {
+        immediate: false,
+    },
+);
 
 async function checkDomainAvailability(): Promise<CheckDomainAvailabilityResponse> {
     try {
@@ -77,11 +82,9 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
-    // TODO display availability check response
     await refresh().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-// TODO "admin cp" for user listing all their domains
 const items = [
     {
         label: t('components.internet.pages.nic_registrar.search.button'),
@@ -109,7 +112,12 @@ const items = [
         <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
             <UTabs :items="items" :unmount="true">
                 <template #search>
-                    <UForm :schema="schema" :state="state" class="flex place-content-center gap-1" @submit="onSubmitThrottle">
+                    <UForm
+                        :schema="schema"
+                        :state="state"
+                        class="mb-2 flex place-content-center gap-1"
+                        @submit="onSubmitThrottle"
+                    >
                         <UFormGroup name="search">
                             <UInput
                                 v-model="state.search"
@@ -138,15 +146,31 @@ const items = [
                         />
                     </UForm>
 
-                    <UContainer v-if="domain">
-                        <UAlert v-if="domain.transferable" />
+                    <UContainer v-if="domain !== undefined" class="flex flex-col gap-2">
                         <UAlert
-                            v-else-if="domain.available"
-                            :title="$t('components.internet.pages.nic_registrar.search.available.title')"
-                            :description="$t('components.internet.pages.nic_registrar.search.available.description')"
-                            color="green"
+                            v-if="!domain.transferable && !domain.available"
+                            icon="i-mdi-information-outline"
+                            color="red"
+                            :title="$t('components.internet.pages.nic_registrar.search.not_available.title')"
+                            :description="$t('components.internet.pages.nic_registrar.search.not_available.description')"
                         />
-                        <UAlert v-else color="red" />
+                        <template v-else>
+                            <UAlert
+                                v-if="domain.transferable"
+                                icon="i-mdi-information-outline"
+                                :title="$t('components.internet.pages.nic_registrar.search.transferable.title')"
+                                :description="$t('components.internet.pages.nic_registrar.search.transferable.description')"
+                            />
+                            <UAlert
+                                v-else-if="domain.available"
+                                icon="i-mdi-information-outline"
+                                :title="$t('components.internet.pages.nic_registrar.search.available.title')"
+                                :description="$t('components.internet.pages.nic_registrar.search.available.description')"
+                                color="green"
+                            />
+
+                            <RegisterForm :status="domain" />
+                        </template>
                     </UContainer>
                 </template>
 

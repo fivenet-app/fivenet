@@ -75,7 +75,7 @@ const links = computed(() =>
         {
             label: t('common.info'),
             to: { name: 'jobs-colleagues-id-info', params: { id: route.params?.id ?? 0 } },
-            icon: 'i-mdi-information-slab-circle',
+            icon: 'i-mdi-information-outline',
             permission: 'JobsService.GetColleague' as Perms,
         },
         {

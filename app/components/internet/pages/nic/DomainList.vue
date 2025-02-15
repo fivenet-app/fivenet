@@ -11,7 +11,7 @@ const internetStore = useInternetStore();
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh } = useLazyAsyncData('internet-domain-check', () => listDomains());
+const { data, pending: loading, refresh } = useLazyAsyncData(`internet-domain-list-${page.value}`, () => listDomains());
 
 async function listDomains(): Promise<ListDomainsResponse> {
     try {

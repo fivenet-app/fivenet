@@ -414,7 +414,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
 
                                             <UAlert
-                                                icon="i-mdi-information-slab-circle"
+                                                icon="i-mdi-information-outline"
                                                 :description="$t('common.image_caching')"
                                             />
                                         </div>

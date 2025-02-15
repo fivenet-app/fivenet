@@ -60,7 +60,7 @@ const leeway = computed(() => props.reduction / 100);
                 </p>
 
                 <UTooltip v-if="law.law.hint" :text="law.law.hint">
-                    <UIcon name="i-mdi-information-slab-circle-outline" class="size-5" />
+                    <UIcon name="i-mdi-information-outline" class="size-5" />
                 </UTooltip>
             </div>
         </template>

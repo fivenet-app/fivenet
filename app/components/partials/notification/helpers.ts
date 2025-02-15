@@ -11,7 +11,7 @@ export function notificationTypeToIcon(t?: NotificationType): string {
             return 'i-mdi-close-circle';
         case NotificationType.INFO:
         default:
-            return 'i-mdi-information-slab-circle';
+            return 'i-mdi-information-outline';
     }
 }
 
@@ -36,6 +36,6 @@ export function notificationCategoryToIcon(category: NotificationCategory): stri
         case NotificationCategory.CALENDAR:
             return 'i-mdi-calendar-outline';
         default:
-            return 'i-mdi-information-slab-circle';
+            return 'i-mdi-information-outline';
     }
 }
