@@ -310,8 +310,8 @@ importers:
         specifier: 1.85.0
         version: 1.85.0
       tailwindcss:
-        specifier: 3.4.17
-        version: 3.4.17
+        specifier: 4.0.6
+        version: 4.0.6
       typescript:
         specifier: 5.7.3
         version: 5.7.3
@@ -5680,6 +5680,7 @@ packages:
 
   protoc-gen-js@3.21.4:
     resolution: {integrity: sha512-GGUkE4fwesiwq8cWkJ+pU6DqJiokXS8nkDGZe7SscxKBSALUnXxNaBwfXODkbi4Cji8E/s+71zNKJoEEza/M7Q==}
+    deprecated: Upgrade to 3.21.4-4
     hasBin: true
 
   protoc@1.1.3:
@@ -6254,6 +6255,9 @@ packages:
     resolution: {integrity: sha512-w33E2aCvSDP0tW9RZuNXadXlkHXqFzSkQew/aIa2i/Sj8fThxwovwlXHSPXTbAHwEIhBFXAedUhP2tueAKP8Og==}
     engines: {node: '>=14.0.0'}
     hasBin: true
+
+  tailwindcss@4.0.6:
+    resolution: {integrity: sha512-mysewHYJKaXgNOW6pp5xon/emCsfAMnO8WMaGKZZ35fomnR/T5gYnRg2/yRTTrtXiEl1tiVkeRt0eMO6HxEZqw==}
 
   tapable@2.2.1:
     resolution: {integrity: sha512-GNzQvQTOIP6RyTfE2Qxb8ZVlNmw0n88vp1szwWRimP02mnTsx3Wtn5qRdqY9w2XduFNUgvOwhNnQsjwCp+kqaQ==}
@@ -14649,6 +14653,8 @@ snapshots:
       sucrase: 3.35.0
     transitivePeerDependencies:
       - ts-node
+
+  tailwindcss@4.0.6: {}
 
   tapable@2.2.1: {}
 
