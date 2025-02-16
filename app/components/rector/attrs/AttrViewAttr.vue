@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { UCheckbox } from '#components';
 import { useCompletorStore } from '~/store/completor';
 import type { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -226,14 +227,14 @@ const { game } = useAppConfig();
                             validValues?.validValues &&
                             validValues.validValues.oneofKind === 'jobGradeList'
                         "
-                        class="flex flex-col gap-2"
+                        class="flex flex-col flex-wrap gap-3"
                     >
                         <div
                             v-for="job in jobs"
                             :key="job.name"
-                            class="flex flex-initial flex-row flex-nowrap items-center gap-2"
+                            class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                         >
-                            <UToggle
+                            <UCheckbox
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                 @change="toggleJobGradeValue(job, $event)"

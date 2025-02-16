@@ -288,7 +288,7 @@ const { game } = useAppConfig();
                             maxValues?.validValues &&
                             maxValues.validValues.oneofKind === 'jobGradeList'
                         "
-                        class="flex flex-col gap-2"
+                        class="flex flex-col flex-wrap gap-3"
                     >
                         <span v-if="Object.keys(maxValues.validValues.jobGradeList.jobs).length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -302,9 +302,9 @@ const { game } = useAppConfig();
                                         maxValues.validValues.jobGradeList.jobs[j.name],
                                 )"
                                 :key="job.name"
-                                class="flex flex-initial flex-row flex-nowrap items-center gap-2"
+                                class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
-                                <UToggle
+                                <UCheckbox
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                     @change="toggleJobGradeValue(job, ($event.target as any)?.checked)"
