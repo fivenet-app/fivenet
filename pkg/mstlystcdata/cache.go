@@ -378,6 +378,10 @@ func (c *Cache) GetLawBooks() []*laws.LawBook {
 	return lawBooks
 }
 
+func (c *Cache) ListJobs() ([]*users.Job, error) {
+	return c.jobs.List()
+}
+
 func (c *Cache) GetHighestJobGrade(job string) *users.JobGrade {
 	j, ok := c.jobs.Get(job)
 	if !ok {

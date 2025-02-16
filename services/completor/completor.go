@@ -119,10 +119,18 @@ func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobs
 	}
 
 	resp := &pbcompletor.CompleteJobsResponse{}
-	var err error
-	resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
+	if search != "" {
+		var err error
+		resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
+		}
+	} else {
+		jobs, err := s.data.ListJobs()
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
+		}
+		resp.Jobs = jobs
 	}
 
 	return resp, nil
