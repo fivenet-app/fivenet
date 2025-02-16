@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Frontend Build
-FROM docker.io/library/node:23.7.0-alpine3.20 AS nodebuilder
+FROM docker.io/library/node:23.8.0-alpine3.20 AS nodebuilder
 ARG NUXT_UI_PRO_LICENSE
 WORKDIR /app
 COPY . ./
@@ -24,7 +24,7 @@ RUN apt-get update && \
     make build-go
 
 # Final Image
-FROM docker.io/library/alpine:3.21.2
+FROM docker.io/library/alpine:3.21.3
 WORKDIR /app
 RUN apk --no-cache add ca-certificates tini tzdata && \
     mkdir -p ./.output/public

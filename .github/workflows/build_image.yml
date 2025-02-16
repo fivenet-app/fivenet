@@ -1,4 +1,4 @@
-name: Build Image
+name: Build Container Image
 on:
   push:
     branches:
@@ -9,6 +9,7 @@ on:
 
 jobs:
   build-image:
+    name: Build Container Image
     runs-on: ubuntu-latest
     permissions:
       contents: read
