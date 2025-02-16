@@ -376,6 +376,9 @@ func (s *Store[T, U]) List() ([]U, error) {
 			return true
 		}
 
+		if s.prefix != "" {
+			key, _ = strings.CutPrefix(key, s.prefix)
+		}
 		item, ok := s.Get(key)
 		if !ok {
 			return true
