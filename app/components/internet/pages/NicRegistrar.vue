@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { Tab } from '~/store/internet';
 import type { TLD } from '~~/gen/ts/resources/internet/domain';
 import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
@@ -55,13 +56,13 @@ async function listTLDs(): Promise<TLD[]> {
     }
 }
 
-const { data: domain, refresh } = useLazyAsyncData(
-    `internet-domain-check-${state.tldID}-${state.search}`,
-    () => checkDomainAvailability(),
-    {
-        immediate: false,
-    },
-);
+const {
+    data: domain,
+    error,
+    refresh,
+} = useLazyAsyncData(`internet-domain-check-${state.tldID}-${state.search}`, () => checkDomainAvailability(), {
+    immediate: false,
+});
 
 async function checkDomainAvailability(): Promise<CheckDomainAvailabilityResponse> {
     try {
@@ -146,7 +147,8 @@ const items = [
                         />
                     </UForm>
 
-                    <UContainer v-if="domain !== undefined" class="flex flex-col gap-2">
+                    <DataErrorBlock v-if="error" :error="error" />
+                    <UContainer v-else-if="domain !== undefined" class="flex flex-col gap-2">
                         <UAlert
                             v-if="!domain.transferable && !domain.available"
                             icon="i-mdi-information-outline"

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
+import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
+import type { CheckDomainAvailabilityResponse, RegisterDomainResponse } from '~~/gen/ts/services/internet/domain';
 
-defineProps<{
+const props = defineProps<{
     status?: CheckDomainAvailabilityResponse | undefined;
 }>();
 
@@ -14,15 +15,38 @@ const schema = z.object({
     transferCode: z.string().length(6).optional(),
 });
 
+type Schema = z.output<typeof schema>;
+
 const state = reactive({
     transferCode: undefined,
 });
 
-// TODO
+async function registerDomain(values: Schema): Promise<RegisterDomainResponse> {
+    try {
+        const call = getGRPCInternetDomainsClient().registerDomain({
+            tldId: 1,
+            name: '',
+            transferCode: values.transferCode,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+
+    await registerDomain(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state">
+    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UFormGroup v-if="status?.transferable" :label="$t('components.internet.transfer_code')">
             <UInput v-model="state.transferCode" type="text" />
         </UFormGroup>
@@ -30,7 +54,7 @@ const state = reactive({
         <!-- Even without a transfer code "are you sure" confirmation -->
         <UFormGroup :label="$t('components.internet.pages.nic_registrar.register_form.submit')">
             <div class="flex gap-2">
-                <UButton :label="$t('common.yes')" color="green" />
+                <UButton :label="$t('common.yes')" type="submit" />
 
                 <UButton :label="$t('common.cancel')" color="red" class="flex-1" @click="$emit('cancel')" />
             </div>

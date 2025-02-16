@@ -99,11 +99,18 @@ useTimeoutFn(() => {
 </script>
 
 <template>
-    <div v-if="notificationId" ref="overlay" class="relative z-[999999]">
-        <div v-if="!hideOverlay" class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
+    <div
+        v-if="notificationId && !hideOverlay"
+        ref="overlay"
+        class="relative z-[999999]"
+        :class="hideOverlay && 'pointer-events-none'"
+    >
+        <div class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
 
         <div class="fixed inset-0 overflow-y-auto">
-            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"></div>
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <UIcon name="i-mdi-loading" class="size-32 animate-spin" />
+            </div>
         </div>
     </div>
 </template>
