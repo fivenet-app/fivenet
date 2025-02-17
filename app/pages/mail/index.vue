@@ -430,14 +430,16 @@ onBeforeMount(async () => {
                                 variant="ghost"
                                 @click="
                                     modal.open(ConfirmModal, {
-                                        confirm: async () =>
-                                            (selectedThread!.state = await mailerStore.setThreadState(
+                                        confirm: async () => {
+                                            selectedThread!.state = await mailerStore.setThreadState(
                                                 {
                                                     threadId: selectedThread!.id,
                                                     archived: !threadState?.archived,
                                                 },
                                                 true,
-                                            )),
+                                            );
+                                            await refresh();
+                                        },
                                     })
                                 "
                             />

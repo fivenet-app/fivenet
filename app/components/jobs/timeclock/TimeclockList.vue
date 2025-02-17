@@ -643,14 +643,27 @@ const { game } = useAppConfig();
         </TimeclockTimeline>
     </template>
 
-    <Pagination
-        v-model="page"
-        :pagination="data?.pagination"
-        :loading="loading"
-        :refresh="refresh"
-        :hide-text="query.mode === TimeclockMode.TIMELINE"
-        :hide-buttons="query.mode === TimeclockMode.TIMELINE"
-    />
+    <div class="flex flex-row items-center">
+        <Pagination
+            v-model="page"
+            :pagination="data?.pagination"
+            :loading="loading"
+            :refresh="refresh"
+            :hide-text="query.mode === TimeclockMode.TIMELINE"
+            :hide-buttons="query.mode === TimeclockMode.TIMELINE"
+            class="flex-1"
+        >
+            <template #default>
+                <UTooltip
+                    :text="$t('components.jobs.timeclock.timeline.tooltip')"
+                    :shortcuts="['CTRL', '🖱']"
+                    :ui="{ shortcuts: 'inline-flex' }"
+                >
+                    <UIcon name="i-mdi-information-outline" class="size-4" />
+                </UTooltip>
+            </template>
+        </Pagination>
+    </div>
 
     <UAccordion
         v-if="showStats && data && data.stats"

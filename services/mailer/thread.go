@@ -64,6 +64,9 @@ func (s *Server) ListThreads(ctx context.Context, req *pbmailer.ListThreadsReque
 	}
 	if req.Archived != nil {
 		wheres = append(wheres, tThreadsState.Archived.IS_NOT_NULL().AND(tThreadsState.Archived.EQ(jet.Bool(*req.Archived))))
+	} else {
+		// Skip archived emails by default
+		wheres = append(wheres, tThreadsState.Archived.IS_NULL().OR(tThreadsState.Archived.EQ(jet.Bool(false))))
 	}
 
 	countStmt := tThreads.

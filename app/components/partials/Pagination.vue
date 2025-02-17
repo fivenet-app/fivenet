@@ -117,6 +117,8 @@ watchDebounced(
                 :total="!infinite ? (pagination?.totalCount ?? 0) : (page + 1) * (pagination?.pageSize ?? 0)"
             />
             <div v-else></div>
+
+            <slot />
         </div>
     </div>
 </template>

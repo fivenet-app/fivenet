@@ -581,6 +581,11 @@ export const useMailerStore = defineStore(
 
             if (selectedThread.value && selectedThread.value?.id === state.threadId) {
                 selectedThread.value.state = response.state;
+
+                // Reset selected thread when archived
+                if (state.archived === true) {
+                    selectedThread.value = undefined;
+                }
             }
 
             const thread = threads.value?.threads.find((t) => t.id === state.threadId);

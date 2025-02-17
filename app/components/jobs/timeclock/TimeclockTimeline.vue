@@ -69,17 +69,15 @@ const minViewportDuration = 60000 * 60 * 4;
 <template>
     <div class="flex flex-1 flex-col divide-y divide-gray-300 dark:divide-gray-700">
         <div class="flex min-w-full gap-1 px-1">
-            <UTooltip class="flex-1" :text="$t('components.jobs.timeclock.timeline.tooltip')" :shortcuts="['CTRL', '🖱']">
-                <p class="line-clamp-1 text-left hover:line-clamp-none">
-                    <span class="font-semibold">{{ $t('common.date') }}:</span>
+            <p class="line-clamp-1 text-left hover:line-clamp-none">
+                <span class="font-semibold">{{ $t('common.date') }}:</span>
 
-                    {{
-                        mouseHoverPosition
-                            ? $d(new Date(mouseHoverPosition), 'long')
-                            : $t('components.jobs.timeclock.timeline.hover')
-                    }}
-                </p>
-            </UTooltip>
+                {{
+                    mouseHoverPosition
+                        ? $d(new Date(mouseHoverPosition), 'long')
+                        : $t('components.jobs.timeclock.timeline.hover')
+                }}
+            </p>
 
             <slot name="caption" />
         </div>

@@ -35,8 +35,6 @@ type Cache struct {
 	logger *zap.Logger
 	db     *sql.DB
 
-	refreshTime time.Duration
-
 	tracer             trace.Tracer
 	jobs               *store.Store[users.Job, *users.Job]
 	docCategories      *store.Store[documents.Category, *documents.Category]
@@ -67,8 +65,6 @@ func NewCache(p Params) (*Cache, error) {
 	cc := &Cache{
 		logger: p.Logger,
 		db:     p.DB,
-
-		refreshTime: p.Config.Cache.RefreshTime,
 
 		tracer:             p.TP.Tracer("mstlystcdata-cache"),
 		docCategoriesByJob: xsync.NewMapOf[string, []*documents.Category](),
