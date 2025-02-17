@@ -27,7 +27,8 @@ type Params struct {
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		db: p.DB,
+		db:  p.DB,
+		aud: p.Aud,
 	}
 
 	return s

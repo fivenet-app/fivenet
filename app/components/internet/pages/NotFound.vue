@@ -7,6 +7,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'update:modelValue', value: Tab): void;
+    (e: 'refresh'): void;
 }>();
 
 const { t } = useI18n();
@@ -26,6 +27,14 @@ function updateTabInfo(): void {
 
 updateTabInfo();
 watch(tab, () => updateTabInfo());
+
+const canSubmit = ref(true);
+function refresh(): void {
+    canSubmit.value = false;
+
+    emit('refresh');
+    useTimeoutFn(() => (canSubmit.value = true), 800);
+}
 </script>
 
 <template>
@@ -41,8 +50,17 @@ watch(tab, () => updateTabInfo());
                 {{ $t('components.internet.not_found.description', { domain: modelValue.domain }) }}
             </template>
 
-            <div>
+            <div class="flex justify-between gap-2">
                 <UButton :label="$t('common.back')" color="black" icon="i-mdi-arrow-back" @click="internetStore.back()" />
+
+                <UButton
+                    :label="$t('common.refresh')"
+                    color="white"
+                    icon="i-mdi-refresh"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    @click="refresh"
+                />
             </div>
         </ULandingCard>
     </UContainer>

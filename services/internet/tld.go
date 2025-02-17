@@ -18,7 +18,9 @@ func (s *Server) ListTLDs(ctx context.Context, req *pbinternet.ListTLDsRequest) 
 	stmt := tTLDs.
 		SELECT(
 			tTLDs.ID,
+			tTLDs.CreatedAt,
 			tTLDs.Name,
+			tTLDs.Internal,
 		).
 		FROM(tTLDs)
 

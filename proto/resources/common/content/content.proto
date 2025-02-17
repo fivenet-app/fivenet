@@ -21,16 +21,25 @@ message Content {
   }];
 }
 
+enum NodeType {
+  NODE_TYPE_UNSPECIFIED = 0;
+
+  NODE_TYPE_DOC = 1;
+
+  NODE_TYPE_ELEMENT = 2;
+  NODE_TYPE_TEXT = 3;
+  NODE_TYPE_COMMENT = 4;
+}
+
 message JSONNode {
+  NodeType type = 1 [(validate.rules).enum.defined_only = true];
   // @sanitize: method=StripTags
-  string type = 1;
-  // @sanitize: method=StripTags
-  string id = 2;
+  optional string id = 2;
   // @sanitize: method=StripTags
   string tag = 3;
   // @sanitize: method=StripTags
   map<string, string> attrs = 4;
   // @sanitize: method=StripTags
-  string text = 5;
+  optional string text = 5;
   repeated JSONNode content = 6;
 }

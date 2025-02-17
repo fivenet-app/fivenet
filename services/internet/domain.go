@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/services/calendar/errors"
 	errorsinternet "github.com/fivenet-app/fivenet/services/internet/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -19,7 +20,7 @@ import (
 )
 
 func (s *Server) CheckDomainAvailability(ctx context.Context, req *pbinternet.CheckDomainAvailabilityRequest) (*pbinternet.CheckDomainAvailabilityResponse, error) {
-	domain, err := s.getDomainByName(ctx, s.db, req.Name)
+	domain, err := s.getDomainByTLDAndName(ctx, s.db, req.TldId, req.Name)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
@@ -137,6 +138,8 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 		return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
 	}
 
+	tDomains := table.FivenetInternetDomains
+
 	domainId := uint64(0)
 	// Domain exists
 	if domain != nil {
@@ -167,6 +170,16 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 
 		domainId = domain.Id
 	} else {
+		tld, err := s.getTLD(ctx, s.db, req.TldId)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
+
+		// If TLD is not found or internal and user is not superuser
+		if tld == nil || (tld.Internal && !userInfo.SuperUser) {
+			return nil, errswrap.NewError(err, errorsinternet.ErrFailedQuery)
+		}
+
 		stmt := tDomains.
 			INSERT(
 				tDomains.TldID,
@@ -176,8 +189,9 @@ func (s *Server) RegisterDomain(ctx context.Context, req *pbinternet.RegisterDom
 				tDomains.CreatorID,
 			).
 			VALUES(
+				req.TldId,
 				req.Name,
-				false,
+				userInfo.SuperUser, // Set domain active based on if user is superuser (no approval needed)
 				userInfo.Job,
 				userInfo.UserId,
 			)

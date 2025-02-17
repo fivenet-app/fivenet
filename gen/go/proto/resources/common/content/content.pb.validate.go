@@ -218,15 +218,20 @@ func (m *JSONNode) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Type
-
-	// no validation rules for Id
+	if _, ok := NodeType_name[int32(m.GetType())]; !ok {
+		err := JSONNodeValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Tag
 
 	// no validation rules for Attrs
-
-	// no validation rules for Text
 
 	for idx, item := range m.GetContent() {
 		_, _ = idx, item
@@ -260,6 +265,14 @@ func (m *JSONNode) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Text != nil {
+		// no validation rules for Text
 	}
 
 	if len(errors) > 0 {

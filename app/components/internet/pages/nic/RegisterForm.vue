@@ -1,15 +1,20 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { CheckDomainAvailabilityResponse, RegisterDomainResponse } from '~~/gen/ts/services/internet/domain';
 
 const props = defineProps<{
+    domain: { tldId: number; search: string };
     status?: CheckDomainAvailabilityResponse | undefined;
 }>();
 
 defineEmits<{
     (e: 'cancel'): void;
 }>();
+
+const notifications = useNotificatorStore();
 
 const schema = z.object({
     transferCode: z.string().length(6).optional(),
@@ -24,11 +29,17 @@ const state = reactive({
 async function registerDomain(values: Schema): Promise<RegisterDomainResponse> {
     try {
         const call = getGRPCInternetDomainsClient().registerDomain({
-            tldId: 1,
-            name: '',
+            tldId: props.domain.tldId,
+            name: props.domain.search,
             transferCode: values.transferCode,
         });
         const { response } = await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         return response;
     } catch (e) {

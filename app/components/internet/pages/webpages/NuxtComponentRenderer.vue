@@ -1,0 +1,43 @@
+<script lang="ts" setup>
+import { UCard, ULandingHero, ULandingSection, UPage } from '#components';
+import type { Component } from 'vue';
+import type { ContentNode } from '~~/gen/ts/resources/internet/page';
+
+const props = defineProps<{
+    value: ContentNode;
+}>();
+
+const availableComponents: Record<string, Component> = {
+    UPage: UPage,
+    UCard: UCard,
+    ULandingHero: ULandingHero,
+    ULandingSection: ULandingSection,
+};
+
+// TODO
+
+const component = availableComponents[Object.keys(availableComponents).find((c) => c === props.value.tag) ?? ''];
+
+defineOptions({
+    inheritAttrs: false,
+});
+</script>
+
+<template>
+    <template v-if="value.text">
+        {{ value.text }}
+    </template>
+    <component
+        :is="value.tag === 'body' ? 'div' : (component ?? value.tag)"
+        v-else
+        :id="!!value.id ? value.id : undefined"
+        :disabled="value.tag === 'input' ? true : undefined"
+        v-bind="value.attrs"
+    >
+        <template v-for="(slot, slotIdx) in value.slots" #[slot.tag] :key="slotIdx">
+            <NuxtComponentRenderer :value="slot" />
+        </template>
+
+        <NuxtComponentRenderer v-for="(child, idx) in value.content" :key="idx" :value="child" />
+    </component>
+</template>

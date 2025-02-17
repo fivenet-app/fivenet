@@ -31,14 +31,14 @@ function updateTabInfo(): void {
 updateTabInfo();
 
 const schema = z.object({
-    tldID: z.number().positive().min(1),
+    tldId: z.number().positive().min(1),
     search: z.string().min(3).max(40),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    tldID: 1,
+    tldId: 1,
     search: '',
 });
 
@@ -57,17 +57,17 @@ async function listTLDs(): Promise<TLD[]> {
 }
 
 const {
-    data: domain,
+    data: domainAvailability,
     error,
     refresh,
-} = useLazyAsyncData(`internet-domain-check-${state.tldID}-${state.search}`, () => checkDomainAvailability(), {
+} = useLazyAsyncData(`internet-domain-check-${state.tldId}-${state.search}`, () => checkDomainAvailability(), {
     immediate: false,
 });
 
 async function checkDomainAvailability(): Promise<CheckDomainAvailabilityResponse> {
     try {
         const call = getGRPCInternetDomainsClient().checkDomainAvailability({
-            tldId: state.tldID,
+            tldId: state.tldId,
             name: state.search,
         });
         const { response } = await call;
@@ -125,32 +125,53 @@ const items = [
                                 type="text"
                                 class="w-full"
                                 size="xl"
-                                :placeholder="$t('common.domain')"
+                                :placeholder="$t('common.domain', 1)"
                             />
                         </UFormGroup>
 
                         <UFormGroup name="tldId">
                             <USelectMenu
-                                v-model="state.tldID"
+                                v-model="state.tldId"
+                                :disabled="!tlds || tlds?.length === 0"
                                 :options="tlds"
                                 value-attribute="id"
                                 option-attribute="name"
                                 size="xl"
-                            />
+                            >
+                                <template #label="{ selected }">
+                                    <template v-if="selected">
+                                        <span class="truncate">.{{ selected.name }}</span>
+                                    </template>
+                                </template>
+
+                                <template #option="{ option: tld }">
+                                    <span class="truncate">.{{ tld.name }}</span>
+                                </template>
+
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.tld', 2)]) }}
+                                </template>
+                            </USelectMenu>
                         </UFormGroup>
 
-                        <UButton
-                            type="submit"
-                            :label="$t('components.internet.pages.nic_registrar.search.button')"
-                            trailing-icon="i-mdi-search"
-                            size="xl"
-                        />
+                        <UFormGroup>
+                            <UButton
+                                type="submit"
+                                :label="$t('components.internet.pages.nic_registrar.search.button')"
+                                trailing-icon="i-mdi-search"
+                                size="xl"
+                            />
+                        </UFormGroup>
                     </UForm>
 
                     <DataErrorBlock v-if="error" :error="error" />
-                    <UContainer v-else-if="domain !== undefined" class="flex flex-col gap-2">
+                    <UContainer v-else-if="domainAvailability !== undefined" class="flex flex-col gap-2">
                         <UAlert
-                            v-if="!domain.transferable && !domain.available"
+                            v-if="!domainAvailability.transferable && !domainAvailability.available"
                             icon="i-mdi-information-outline"
                             color="red"
                             :title="$t('components.internet.pages.nic_registrar.search.not_available.title')"
@@ -158,20 +179,20 @@ const items = [
                         />
                         <template v-else>
                             <UAlert
-                                v-if="domain.transferable"
+                                v-if="domainAvailability.transferable"
                                 icon="i-mdi-information-outline"
                                 :title="$t('components.internet.pages.nic_registrar.search.transferable.title')"
                                 :description="$t('components.internet.pages.nic_registrar.search.transferable.description')"
                             />
                             <UAlert
-                                v-else-if="domain.available"
+                                v-else-if="domainAvailability.available"
                                 icon="i-mdi-information-outline"
                                 :title="$t('components.internet.pages.nic_registrar.search.available.title')"
                                 :description="$t('components.internet.pages.nic_registrar.search.available.description')"
                                 color="green"
                             />
 
-                            <RegisterForm :status="domain" />
+                            <RegisterForm :domain="state" :status="domainAvailability" />
                         </template>
                     </UContainer>
                 </template>
@@ -189,6 +210,7 @@ const items = [
                     :title="$t('components.internet.pages.nic_registrar.cards.builder.title')"
                     :description="$t('components.internet.pages.nic_registrar.cards.builder.description')"
                 />
+
                 <ULandingCard
                     icon="i-mdi-user-access-control"
                     :title="$t('components.internet.pages.nic_registrar.cards.access.title')"

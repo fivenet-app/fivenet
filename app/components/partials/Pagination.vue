@@ -4,8 +4,8 @@ import type { PaginationResponse } from '~~/gen/ts/resources/common/database/dat
 
 const props = withDefaults(
     defineProps<{
-        modelValue: number;
-        pagination: PaginationResponse | undefined | null;
+        modelValue?: number;
+        pagination?: PaginationResponse | undefined | null;
         infinite?: boolean;
         disableBorder?: boolean;
         refresh?: () => Promise<void>;
@@ -14,6 +14,8 @@ const props = withDefaults(
         hideButtons?: boolean;
     }>(),
     {
+        modelValue: 0,
+        pagination: undefined,
         infinite: false,
         disableBorder: false,
         refresh: undefined,

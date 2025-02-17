@@ -34,17 +34,15 @@ export interface Content {
  */
 export interface JSONNode {
     /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string type = 1;
+     * @generated from protobuf field: resources.common.content.NodeType type = 1;
      */
-    type: string;
+    type: NodeType;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string id = 2;
+     * @generated from protobuf field: optional string id = 2;
      */
-    id: string;
+    id?: string;
     /**
      * @sanitize: method=StripTags
      *
@@ -62,9 +60,9 @@ export interface JSONNode {
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string text = 5;
+     * @generated from protobuf field: optional string text = 5;
      */
-    text: string;
+    text?: string;
     /**
      * @generated from protobuf field: repeated resources.common.content.JSONNode content = 6;
      */
@@ -86,6 +84,31 @@ export enum ContentType {
      * @generated from protobuf enum value: CONTENT_TYPE_PLAIN = 2;
      */
     PLAIN = 2
+}
+/**
+ * @generated from protobuf enum resources.common.content.NodeType
+ */
+export enum NodeType {
+    /**
+     * @generated from protobuf enum value: NODE_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: NODE_TYPE_DOC = 1;
+     */
+    DOC = 1,
+    /**
+     * @generated from protobuf enum value: NODE_TYPE_ELEMENT = 2;
+     */
+    ELEMENT = 2,
+    /**
+     * @generated from protobuf enum value: NODE_TYPE_TEXT = 3;
+     */
+    TEXT = 3,
+    /**
+     * @generated from protobuf enum value: NODE_TYPE_COMMENT = 4;
+     */
+    COMMENT = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Content$Type extends MessageType<Content> {
@@ -151,21 +174,19 @@ export const Content = new Content$Type();
 class JSONNode$Type extends MessageType<JSONNode> {
     constructor() {
         super("resources.common.content.JSONNode", [
-            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "id", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.common.content.NodeType", NodeType, "NODE_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "tag", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "attrs", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
-            { no: 5, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "text", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "content", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JSONNode }
         ]);
     }
     create(value?: PartialMessage<JSONNode>): JSONNode {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.type = "";
-        message.id = "";
+        message.type = 0;
         message.tag = "";
         message.attrs = {};
-        message.text = "";
         message.content = [];
         if (value !== undefined)
             reflectionMergePartial<JSONNode>(this, message, value);
@@ -176,10 +197,10 @@ class JSONNode$Type extends MessageType<JSONNode> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string type */ 1:
-                    message.type = reader.string();
+                case /* resources.common.content.NodeType type */ 1:
+                    message.type = reader.int32();
                     break;
-                case /* string id */ 2:
+                case /* optional string id */ 2:
                     message.id = reader.string();
                     break;
                 case /* string tag */ 3:
@@ -188,7 +209,7 @@ class JSONNode$Type extends MessageType<JSONNode> {
                 case /* map<string, string> attrs */ 4:
                     this.binaryReadMap4(message.attrs, reader, options);
                     break;
-                case /* string text */ 5:
+                case /* optional string text */ 5:
                     message.text = reader.string();
                     break;
                 case /* repeated resources.common.content.JSONNode content */ 6:
@@ -222,11 +243,11 @@ class JSONNode$Type extends MessageType<JSONNode> {
         map[key ?? ""] = val ?? "";
     }
     internalBinaryWrite(message: JSONNode, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string type = 1; */
-        if (message.type !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.type);
-        /* string id = 2; */
-        if (message.id !== "")
+        /* resources.common.content.NodeType type = 1; */
+        if (message.type !== 0)
+            writer.tag(1, WireType.Varint).int32(message.type);
+        /* optional string id = 2; */
+        if (message.id !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.id);
         /* string tag = 3; */
         if (message.tag !== "")
@@ -234,8 +255,8 @@ class JSONNode$Type extends MessageType<JSONNode> {
         /* map<string, string> attrs = 4; */
         for (let k of globalThis.Object.keys(message.attrs))
             writer.tag(4, WireType.LengthDelimited).fork().tag(1, WireType.LengthDelimited).string(k).tag(2, WireType.LengthDelimited).string(message.attrs[k]).join();
-        /* string text = 5; */
-        if (message.text !== "")
+        /* optional string text = 5; */
+        if (message.text !== undefined)
             writer.tag(5, WireType.LengthDelimited).string(message.text);
         /* repeated resources.common.content.JSONNode content = 6; */
         for (let i = 0; i < message.content.length; i++)

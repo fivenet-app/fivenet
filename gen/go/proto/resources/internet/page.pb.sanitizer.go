@@ -7,6 +7,61 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
+func (m *ContentNode) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Attrs
+	for idx, item := range m.Attrs {
+		_, _ = idx, item
+
+		m.Attrs[idx] = htmlsanitizer.StripTags(m.Attrs[idx])
+
+	}
+
+	// Field: Content
+	for idx, item := range m.Content {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Id
+
+	if m.Id != nil {
+		*m.Id = htmlsanitizer.StripTags(*m.Id)
+	}
+
+	// Field: Slots
+	for idx, item := range m.Slots {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	// Field: Tag
+	m.Tag = htmlsanitizer.StripTags(m.Tag)
+
+	// Field: Text
+
+	if m.Text != nil {
+		*m.Text = htmlsanitizer.StripTags(*m.Text)
+	}
+
+	return nil
+}
+
 func (m *Page) Sanitize() error {
 	if m == nil {
 		return nil
@@ -63,6 +118,15 @@ func (m *Page) Sanitize() error {
 func (m *PageData) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: Node
+	if m.Node != nil {
+		if v, ok := interface{}(m.GetNode()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -4,6 +4,10 @@ import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 defineProps<{
     value: JSONNode;
 }>();
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <template>
@@ -23,7 +27,7 @@ defineProps<{
     <component
         :is="value.tag === 'body' ? 'div' : value.tag"
         v-else
-        :id="value.id !== '' ? value.id : undefined"
+        :id="!!value.id ? value.id : undefined"
         :disabled="value.tag === 'input' ? true : undefined"
         v-bind="value.attrs"
     >

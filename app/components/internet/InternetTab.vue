@@ -149,7 +149,7 @@ const input = useTemplateRef('input');
         <template v-else-if="tab?.domain && localPages[tab.domain]">
             <component :is="localPages[tab.domain]" v-model="tab" />
         </template>
-        <NotFound v-else-if="!page?.page" v-model="tab" />
+        <NotFound v-else-if="!page?.page" v-model="tab" @refresh="refresh" />
         <WebPage v-else v-model="tab" :page="page.page" />
     </UDashboardPanelContent>
 </template>

@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	content "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/content"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = content.NodeType(0)
 )
 
 // Validate checks the field values on Page with the rules defined in the proto
@@ -335,6 +339,41 @@ func (m *PageData) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for LayoutType
+
+	if m.Node != nil {
+
+		if all {
+			switch v := interface{}(m.GetNode()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, PageDataValidationError{
+						field:  "Node",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, PageDataValidationError{
+						field:  "Node",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetNode()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return PageDataValidationError{
+					field:  "Node",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return PageDataMultiError(errors)
 	}
@@ -411,3 +450,193 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PageDataValidationError{}
+
+// Validate checks the field values on ContentNode with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ContentNode) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ContentNode with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ContentNodeMultiError, or
+// nil if none found.
+func (m *ContentNode) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ContentNode) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if _, ok := content.NodeType_name[int32(m.GetType())]; !ok {
+		err := ContentNodeValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Tag
+
+	// no validation rules for Attrs
+
+	for idx, item := range m.GetContent() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ContentNodeValidationError{
+						field:  fmt.Sprintf("Content[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ContentNodeValidationError{
+						field:  fmt.Sprintf("Content[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ContentNodeValidationError{
+					field:  fmt.Sprintf("Content[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetSlots() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ContentNodeValidationError{
+						field:  fmt.Sprintf("Slots[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ContentNodeValidationError{
+						field:  fmt.Sprintf("Slots[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ContentNodeValidationError{
+					field:  fmt.Sprintf("Slots[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Id != nil {
+		// no validation rules for Id
+	}
+
+	if m.Text != nil {
+		// no validation rules for Text
+	}
+
+	if len(errors) > 0 {
+		return ContentNodeMultiError(errors)
+	}
+
+	return nil
+}
+
+// ContentNodeMultiError is an error wrapping multiple validation errors
+// returned by ContentNode.ValidateAll() if the designated constraints aren't met.
+type ContentNodeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ContentNodeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ContentNodeMultiError) AllErrors() []error { return m }
+
+// ContentNodeValidationError is the validation error returned by
+// ContentNode.Validate if the designated constraints aren't met.
+type ContentNodeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ContentNodeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ContentNodeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ContentNodeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ContentNodeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ContentNodeValidationError) ErrorName() string { return "ContentNodeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ContentNodeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sContentNode.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ContentNodeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ContentNodeValidationError{}

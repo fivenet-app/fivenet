@@ -56,16 +56,19 @@ func (m *JSONNode) Sanitize() error {
 	}
 
 	// Field: Id
-	m.Id = htmlsanitizer.StripTags(m.Id)
+
+	if m.Id != nil {
+		*m.Id = htmlsanitizer.StripTags(*m.Id)
+	}
 
 	// Field: Tag
 	m.Tag = htmlsanitizer.StripTags(m.Tag)
 
 	// Field: Text
-	m.Text = htmlsanitizer.StripTags(m.Text)
 
-	// Field: Type
-	m.Type = htmlsanitizer.StripTags(m.Type)
+	if m.Text != nil {
+		*m.Text = htmlsanitizer.StripTags(*m.Text)
+	}
 
 	return nil
 }

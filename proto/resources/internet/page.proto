@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.internet;
 
+import "resources/common/content/content.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -31,5 +32,20 @@ enum PageLayoutType {
 }
 
 message PageData {
-  // TODO
+  PageLayoutType layout_type = 1;
+  optional ContentNode node = 2;
+}
+
+message ContentNode {
+  resources.common.content.NodeType type = 1 [(validate.rules).enum.defined_only = true];
+  // @sanitize: method=StripTags
+  optional string id = 2;
+  // @sanitize: method=StripTags
+  string tag = 3;
+  // @sanitize: method=StripTags
+  map<string, string> attrs = 4;
+  // @sanitize: method=StripTags
+  optional string text = 5;
+  repeated ContentNode content = 6;
+  repeated ContentNode slots = 7;
 }

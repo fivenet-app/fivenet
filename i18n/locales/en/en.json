@@ -555,7 +555,8 @@
         "week_view": "Weekly View",
         "domains": "No Domain | {n} Domain | {n} Domains",
         "timeline": "Timeline",
-        "day": "Day | Days"
+        "day": "Day | Days",
+        "tld": "TLD | TLDs"
     },
     "components": {
         "partials": {
@@ -961,7 +962,8 @@
                 "content": "You can enable a dark mode for the document editor."
             },
             "rector_roles_list": {
-                "content": "Permissions are inherited from low to high grades. If grade 1 can view documents, all grades including grade 1 can do so too. If grade 4 is denied to view documents, grade 4 and higher can not view documents."
+                "content": "Permissions are inherited from low to high grades. If grade 1 can view documents, all grades including grade 1 can do so too. If grade 4 is denied to view documents, grade 4 and higher can not view documents.",
+                "title": "Information about Permission Inheritance"
             },
             "template_editor_templating": {
                 "content": "You can use Golang HTML templating in the above field. For template snippets follow the link."

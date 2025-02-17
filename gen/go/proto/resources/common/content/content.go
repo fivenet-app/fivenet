@@ -16,16 +16,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-type NodeType string
-
 const (
 	Version_v0 = "v0"
-
-	DocNodeType NodeType = "doc"
-
-	ElementNodeType NodeType = "element"
-	TextNodeType    NodeType = "text"
-	CommentNodeType NodeType = "comment"
 )
 
 var headerTagRegex = regexp.MustCompile(`(?i)^h[1-6]$`)
@@ -127,9 +119,9 @@ func (x *Content) Populate() error {
 
 func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	if htmlNode.Parent == nil {
-		n.Type = string(DocNodeType)
+		n.Type = NodeType_NODE_TYPE_DOC
 	} else {
-		n.Type = string(ElementNodeType)
+		n.Type = NodeType_NODE_TYPE_ELEMENT
 	}
 
 	switch htmlNode.Type {
@@ -156,7 +148,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 					continue
 				}
 
-				n.Id = a.Val
+				n.Id = &a.Val
 
 			case "style":
 				// Skip empty style attribute
@@ -191,14 +183,14 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	for e != nil {
 		switch e.Type {
 		case html.TextNode:
-			n.Type = string(TextNodeType)
+			n.Type = NodeType_NODE_TYPE_TEXT
 
 			data := strings.TrimSpace(e.Data)
 			// If text data is not empty after timming spaces
 			if len(data) > 0 {
 				n.Content = append(n.Content, &JSONNode{
-					Type: string(TextNodeType),
-					Text: e.Data,
+					Type: NodeType_NODE_TYPE_TEXT,
+					Text: &e.Data,
 				})
 			}
 
@@ -220,11 +212,13 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 
 	if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
 		// Either empty id or "broken" id tag
-		if n.Id == "" || headerTagRegex.MatchString(n.Id) {
-			if n.Text != "" {
-				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
+		if n.Id == nil || *n.Id == "" || headerTagRegex.MatchString(n.Tag) {
+			if n.Text != nil && *n.Text != "" {
+				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
+				n.Id = &id
 			} else if len(n.Content) > 0 {
-				n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+				n.Id = &id
 			}
 		}
 	}
@@ -236,10 +230,10 @@ func walkContentForText(ns []*JSONNode) string {
 	text := ""
 	for i := 0; i < len(ns); i++ {
 		element := ns[i]
-		if element.Text == "" {
+		if element.Text == nil || *element.Text == "" {
 			text += walkContentForText(element.Content)
 		} else {
-			text += element.Text
+			text += *element.Text
 			break
 		}
 	}
@@ -255,22 +249,24 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 		htmlNode.Type = html.DocumentNode
 	}
 
-	if n.Id != "" {
+	if n.Id != nil && *n.Id != "" {
 		// Make sure that headers have id
 		if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
 			// Either empty id or "broken" id tag
-			if n.Id == "" || headerTagRegex.MatchString(n.Id) {
-				if n.Text != "" {
-					n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, n.Text))
+			if *n.Id == "" || headerTagRegex.MatchString(*n.Id) {
+				if n.Text != nil && *n.Text != "" {
+					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
+					n.Id = &id
 				} else if len(n.Content) > 0 {
-					n.Id = utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, walkContentForText(n.Content)))
+					n.Id = &id
 				}
 			}
 		}
 
 		htmlNode.Attr = append(htmlNode.Attr, html.Attribute{
 			Key: "id",
-			Val: n.Id,
+			Val: *n.Id,
 		})
 	}
 
@@ -286,10 +282,10 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 		})
 	}
 
-	if n.Text != "" {
+	if n.Text != nil && *n.Text != "" {
 		htmlNode.AppendChild(&html.Node{
 			Type: html.TextNode,
-			Data: n.Text,
+			Data: *n.Text,
 		})
 	}
 

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Tab } from '~/store/internet';
 import type { Page } from '~~/gen/ts/resources/internet/page';
+import NuxtComponentRenderer from './webpages/NuxtComponentRenderer.vue';
 
 const props = defineProps<{
     modelValue?: Tab;
@@ -32,5 +33,7 @@ onBeforeUnmount(() => console.log('unmount base page', props.page));
 </script>
 
 <template>
-    <div>Page: {{ page }}</div>
+    <div>
+        <NuxtComponentRenderer v-if="page.data?.node" :value="page.data.node" />
+    </div>
 </template>

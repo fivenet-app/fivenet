@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { ButtonColor } from '#ui/types';
+
 withDefaults(
     defineProps<{
         title?: string;
@@ -6,12 +8,16 @@ withDefaults(
         cancel?: () => Promise<unknown> | unknown;
         confirm: () => Promise<unknown> | unknown;
         icon?: string;
+        color?: ButtonColor;
+        iconClass?: string;
     }>(),
     {
         title: undefined,
         description: undefined,
         cancel: undefined,
         icon: 'i-mdi-warning-circle',
+        color: 'red',
+        iconClass: 'text-red-500 dark:text-red-400',
     },
 );
 
@@ -24,7 +30,7 @@ const { isOpen } = useModal();
         :description="description ?? $t('components.partials.confirm_dialog.description')"
         :icon="icon"
         :ui="{
-            icon: { base: 'text-red-500 dark:text-red-400' } as any,
+            icon: { base: iconClass },
             footer: { base: 'ml-16' },
         }"
         @update:model-value="cancel && cancel()"
@@ -32,7 +38,7 @@ const { isOpen } = useModal();
         <template #footer>
             <UButtonGroup class="inline-flex w-full">
                 <UButton
-                    color="red"
+                    :color="color"
                     :label="$t('common.confirm')"
                     @click="
                         confirm();

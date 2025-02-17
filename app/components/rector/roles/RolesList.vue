@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import RoleView from '~/components/rector/roles/RoleView.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -10,6 +12,8 @@ import type { Role } from '~~/gen/ts/resources/permissions/permissions';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const { t } = useI18n();
+
+const modal = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -141,7 +145,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         :loading="!canSubmit"
                         icon="i-mdi-plus"
                         class="flex-initial justify-end"
-                        @click="onSubmitThrottle"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                title: $t('components.hints.rector_roles_list.title'),
+                                description: $t('components.hints.rector_roles_list.content'),
+                                icon: 'i-mdi-information-outline',
+                                color: 'amber',
+                                iconClass: 'text-amber-500 dark:text-amber-400',
+                                confirm: onSubmitThrottle,
+                            })
+                        "
                     >
                         {{ $t('common.create') }}
                     </UButton>
@@ -149,6 +162,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </UForm>
 
             <div>
+                <SingleHint class="my-2" hint-id="rector_roles_list" />
+
                 <DataErrorBlock
                     v-if="error"
                     :title="$t('common.unable_to_load', [$t('common.role', 2)])"
@@ -180,7 +195,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </template>
                 </UTable>
 
-                <SingleHint class="mt-2" hint-id="rector_roles_list" />
+                <Pagination :loading="loading" :refresh="refresh" hide-buttons />
 
                 <SingleHint class="mt-2" hint-id="rector_roles_superuser" />
             </div>
