@@ -229,7 +229,7 @@ const { game } = useAppConfig();
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'stringList'
                         "
-                        class="flex flex-row flex-wrap gap-3"
+                        class="flex flex-row flex-wrap gap-2"
                     >
                         <span v-if="maxValues.validValues.stringList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -243,7 +243,7 @@ const { game } = useAppConfig();
                                 <UToggle
                                     :name="value"
                                     :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                    @click="toggleStringListValue(value)"
+                                    @update:model-value="toggleStringListValue(value)"
                                 />
                                 <span>{{
                                     $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
@@ -257,7 +257,7 @@ const { game } = useAppConfig();
                             maxValues?.validValues &&
                             maxValues?.validValues.oneofKind === 'jobList'
                         "
-                        class="flex flex-row flex-wrap gap-3"
+                        class="flex flex-row flex-wrap gap-2"
                     >
                         <span v-if="maxValues.validValues.jobList.strings.length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -276,7 +276,7 @@ const { game } = useAppConfig();
                                 <UToggle
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                    @click="toggleJobListValue(job.name)"
+                                    @update:model-value="toggleJobListValue(job.name)"
                                 />
                                 <span>{{ job.label }}</span>
                             </div>
@@ -288,7 +288,7 @@ const { game } = useAppConfig();
                             maxValues?.validValues &&
                             maxValues.validValues.oneofKind === 'jobGradeList'
                         "
-                        class="flex flex-col flex-wrap gap-3"
+                        class="flex flex-col flex-wrap gap-2"
                     >
                         <span v-if="Object.keys(maxValues.validValues.jobGradeList.jobs).length === 0">
                             {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
@@ -304,10 +304,10 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
-                                <UCheckbox
+                                <UToggle
                                     :name="job.name"
                                     :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                    @change="toggleJobGradeValue(job, ($event.target as any)?.checked)"
+                                    @update:model-value="toggleJobGradeValue(job, $event)"
                                 />
 
                                 <span class="flex-1">{{ job.label }}</span>
@@ -334,7 +334,7 @@ const { game } = useAppConfig();
                                     >
                                         <template #label>
                                             <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
-                                                <span class="truncate">{{
+                                                <span class="truncate text-gray-900 dark:text-white">{{
                                                     job.grades[
                                                         (currentValue.validValues.jobGradeList.jobs[job.name] ??
                                                             game.startJobGrade) - 1

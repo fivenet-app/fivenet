@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { UCheckbox } from '#components';
 import { useCompletorStore } from '~/store/completor';
 import type { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -186,7 +185,7 @@ const { game } = useAppConfig();
                             validValues?.validValues &&
                             validValues?.validValues.oneofKind === 'stringList'
                         "
-                        class="flex flex-row flex-wrap gap-3"
+                        class="flex flex-row flex-wrap gap-2"
                     >
                         <div
                             v-for="value in validValues.validValues.stringList.strings"
@@ -196,7 +195,7 @@ const { game } = useAppConfig();
                             <UToggle
                                 :name="value"
                                 :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                @click="toggleStringListValue(value)"
+                                @update:model-value="toggleStringListValue(value)"
                             />
                             <span>{{
                                 $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
@@ -210,13 +209,13 @@ const { game } = useAppConfig();
                             validValues?.validValues.oneofKind === 'jobList' &&
                             jobs !== undefined
                         "
-                        class="flex flex-row flex-wrap gap-3"
+                        class="flex flex-row flex-wrap gap-2"
                     >
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
                             <UToggle
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                @click="toggleJobListValue(job.name)"
+                                @update:model-value="toggleJobListValue(job.name)"
                             />
                             <span>{{ job.label }}</span>
                         </div>
@@ -227,17 +226,17 @@ const { game } = useAppConfig();
                             validValues?.validValues &&
                             validValues.validValues.oneofKind === 'jobGradeList'
                         "
-                        class="flex flex-col flex-wrap gap-3"
+                        class="flex flex-col flex-wrap gap-2"
                     >
                         <div
                             v-for="job in jobs"
                             :key="job.name"
                             class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                         >
-                            <UCheckbox
+                            <UToggle
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                @change="toggleJobGradeValue(job, $event)"
+                                @update:model-value="toggleJobGradeValue(job, $event)"
                             />
 
                             <span class="flex-1">{{ job.label }}</span>

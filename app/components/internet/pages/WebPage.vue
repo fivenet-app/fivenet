@@ -33,7 +33,7 @@ onBeforeUnmount(() => console.log('unmount base page', props.page));
 </script>
 
 <template>
-    <div>
+    <UPage>
         <NuxtComponentRenderer v-if="page.data?.node" :value="page.data.node" />
-    </div>
+    </UPage>
 </template>

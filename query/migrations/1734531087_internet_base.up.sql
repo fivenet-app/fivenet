@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_tlds` (
   CONSTRAINT `fk_fivenet_internet_tlds_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 
-INSERT INTO `fivenet_internet_tlds` (`name`, `internal`) VALUES('ls', 1);
+INSERT INTO `fivenet_internet_tlds` (`name`, `internal`) VALUES('ls', 0);
+INSERT INTO `fivenet_internet_tlds` (`name`, `internal`) VALUES('search', 1);
 
 -- Table: fivenet_internet_domains
 CREATE TABLE IF NOT EXISTS `fivenet_internet_domains` (
@@ -36,6 +37,11 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_domains` (
   CONSTRAINT `fk_fivenet_internet_domains_tld_id` FOREIGN KEY (`tld_id`) REFERENCES `fivenet_internet_tlds` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_internet_domains_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES(1, 'nic', 1);
+INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES(1, 'ads', 1);
+INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES(2, 'internet', 1);
+INSERT INTO `fivenet_internet_domains` (`tld_id`, `name`, `active`) VALUES(1, 'example', 1);
 
 -- Table: fivenet_internet_domains_job_access
 CREATE TABLE IF NOT EXISTS `fivenet_internet_domains_job_access` (
@@ -85,6 +91,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_internet_pages` (
   CONSTRAINT `fk_fivenet_internet_pages_domain_id` FOREIGN KEY (`domain_id`) REFERENCES `fivenet_internet_domains` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_internet_pages_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- Table: fivenet_internet_pages - Insert `example.ls` page entry
+INSERT INTO fivenet_internet_pages (id, domain_id, `path`, title, description, `data`, creator_job, creator_id) VALUES(1, 4, '/', 'Example Domain', 'Example Domain for demonstration purposes.', '{"layoutType":"PAGE_LAYOUT_TYPE_LANDING_PAGE","node":{"type":"NODE_TYPE_ELEMENT","tag":"ULandingSection","attrs":{},"content":[{"type":"NODE_TYPE_ELEMENT","tag":"ULandingCard","attrs":{"title":"Example Domain","description":"Example Domain for demonstration purposes."},"content":[],"slots":[]}],"slots":[]}}', NULL, NULL);
 
 -- Table: fivenet_internet_ads
 CREATE TABLE IF NOT EXISTS `fivenet_internet_ads` (

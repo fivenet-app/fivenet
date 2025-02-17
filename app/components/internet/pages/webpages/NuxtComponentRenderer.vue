@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UCard, ULandingHero, ULandingSection, UPage } from '#components';
+import { UCard, UContainer, ULandingCard, ULandingHero, ULandingSection, UPage, UPageGrid } from '#components';
 import type { Component } from 'vue';
 import type { ContentNode } from '~~/gen/ts/resources/internet/page';
 
@@ -9,12 +9,13 @@ const props = defineProps<{
 
 const availableComponents: Record<string, Component> = {
     UPage: UPage,
+    UPageGrid: UPageGrid,
+    UContainer: UContainer,
     UCard: UCard,
     ULandingHero: ULandingHero,
     ULandingSection: ULandingSection,
+    ULandingCard: ULandingCard,
 };
-
-// TODO
 
 const component = availableComponents[Object.keys(availableComponents).find((c) => c === props.value.tag) ?? ''];
 
@@ -37,7 +38,6 @@ defineOptions({
         <template v-for="(slot, slotIdx) in value.slots" #[slot.tag] :key="slotIdx">
             <NuxtComponentRenderer :value="slot" />
         </template>
-
         <NuxtComponentRenderer v-for="(child, idx) in value.content" :key="idx" :value="child" />
     </component>
 </template>
