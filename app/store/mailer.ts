@@ -252,16 +252,20 @@ export const useMailerStore = defineStore(
                     await listEmails(true, 0, false);
                 }
 
-                // Still no email addresses?
+                // Still no email addresses? Return here.
                 if (emails.value.length === 0) {
                     return;
                 }
 
                 const { isSuperuser } = useAuth();
-                // If superuser and doesn't have a private email to check
+                // If is superuser and doesn't have a private email to check
                 if (isSuperuser.value && getPrivateEmail.value === undefined) {
                     return;
                 }
+
+                const emailIds = isSuperuser.value ? [getPrivateEmail.value!.id] : emails.value.map((e) => e.id);
+                // Truncate email ids to 10 if needed
+                emailIds.length = Math.min(emailIds.length, 10);
 
                 // Load unread threads for all emails
                 const threadsResponse = await listThreads(
@@ -269,7 +273,7 @@ export const useMailerStore = defineStore(
                         pagination: {
                             offset: 0,
                         },
-                        emailIds: isSuperuser.value ? [getPrivateEmail.value!.id] : emails.value.map((e) => e.id),
+                        emailIds: emailIds,
                         unread: true,
                     },
                     false,
