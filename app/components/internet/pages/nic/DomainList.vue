@@ -35,6 +35,10 @@ const columns = [
         key: 'name',
     },
     {
+        label: t('common.approve', 2),
+        key: 'active',
+    },
+    {
         label: t('common.expires_at'),
         key: 'expiresAt',
     },
@@ -56,6 +60,13 @@ const columns = [
         >
             <template #name-data="{ row }">
                 <p class="text-gray-900 dark:text-white">{{ row.name }}.{{ row.tld.name }}</p>
+            </template>
+
+            <template #active-data="{ row }">
+                <UBadge
+                    :color="row.active ? 'green' : 'orange'"
+                    :label="row.active ? $t('common.approve', 2) : $t('common.decline', 2)"
+                />
             </template>
 
             <template #expiresAt-data="{ row }">

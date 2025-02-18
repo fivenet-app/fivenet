@@ -4,10 +4,6 @@ import type { JSONNode } from '~~/gen/ts/resources/common/content/content';
 defineProps<{
     value: JSONNode;
 }>();
-
-defineOptions({
-    inheritAttrs: false,
-});
 </script>
 
 <template>
