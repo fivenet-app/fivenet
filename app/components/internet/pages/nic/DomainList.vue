@@ -70,7 +70,8 @@ const columns = [
             </template>
 
             <template #expiresAt-data="{ row }">
-                <GenericTime :value="row.expiresAt" />
+                <GenericTime v-if="row.expiresAt" :value="row.expiresAt" />
+                <span v-else>∞</span>
             </template>
 
             <template #actions-data="{ row }">
