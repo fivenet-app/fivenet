@@ -66,10 +66,9 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 
 	pr := &PlanRoles{}
 	for _, role := range s.Roles {
-		idx := slices.IndexFunc(roles, func(a discord.Role) bool {
+		if idx := slices.IndexFunc(roles, func(a discord.Role) bool {
 			return a.Name == role.Name
-		})
-		if idx == -1 {
+		}); idx == -1 {
 			pr.ToCreate = append(pr.ToCreate, role)
 		} else {
 			dcRole := roles[idx]

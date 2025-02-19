@@ -69,7 +69,7 @@ const minViewportDuration = 60000 * 60 * 4;
 <template>
     <div class="flex flex-1 flex-col divide-y divide-gray-300 dark:divide-gray-700">
         <div class="flex min-w-full gap-1 px-1">
-            <p class="line-clamp-1 text-left hover:line-clamp-none">
+            <p class="line-clamp-1 flex-1 text-left hover:line-clamp-none">
                 <span class="font-semibold">{{ $t('common.date') }}:</span>
 
                 {{

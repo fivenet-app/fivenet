@@ -33,6 +33,8 @@ const (
 	userInfoRoleModuleAbsence            = "UserInfo-Absence"
 	userInfoRoleModuleJobGradePrefix     = "UserInfo-Grade-"
 	userInfoRoleModuleGroupMappingPrefix = "UserInfo-GroupMapping-"
+
+	DiscordNicknameMaxLength = 32
 )
 
 type UserInfo struct {
@@ -356,8 +358,7 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 		return nil // Can't change owner's nickname
 	}
 
-	// Build nickname as it should be based on the input
-	targetNickname := strings.TrimSpace(prefix + " " + firstname + " " + lastname + " " + suffix)
+	targetNickname := g.constructUserNickname(firstname, lastname, prefix+" ", " "+suffix)
 
 	// No need to set nickname when they are already equal
 	if member.Nick == targetNickname {
@@ -365,6 +366,58 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 	}
 
 	return &targetNickname
+}
+
+// constructUserNickname constructs a user's nickname based on the provided input and ensures that it isn't longer than what Discord allows (32 chars)
+func (g *UserInfo) constructUserNickname(firstname string, lastname string, prefix string, suffix string) string {
+	maxLength := DiscordNicknameMaxLength
+
+	firstname = strings.TrimSpace(firstname)
+	lastname = strings.TrimSpace(lastname)
+
+	if prefix != "" {
+		prefix = strings.TrimSpace(prefix) + " "
+	}
+	if suffix != "" {
+		suffix = " " + strings.TrimSpace(suffix)
+	}
+
+	baseName := fmt.Sprintf("%s%s %s%s", prefix, firstname, lastname, suffix)
+	fullName := baseName
+
+	// If within limit, return as is
+	if len(fullName) <= maxLength {
+		return fullName
+	}
+
+	// Truncate the firstname progressively
+	firstParts := strings.Split(firstname, " ")
+	truncatedFirst := ""
+	for i := 0; i < len(firstParts); i++ {
+		if i == len(firstParts)-1 {
+			truncatedFirst += string(firstParts[i][0]) + "."
+		} else {
+			truncatedFirst += firstParts[i] + " "
+		}
+	}
+	truncatedFirst = strings.TrimSpace(truncatedFirst)
+
+	baseName = fmt.Sprintf("%s%s %s%s", prefix, truncatedFirst, lastname, suffix)
+	fullName = baseName
+
+	if len(fullName) <= maxLength {
+		return fullName
+	}
+
+	// As a last resort, truncate the last name
+	availableLength := maxLength - len(prefix) - len(suffix) // Ensure spacing
+	if availableLength > 0 {
+		truncatedBase := truncatedFirst + " " + lastname[:availableLength-len(truncatedFirst)-1]
+		return fmt.Sprintf("%s%s%s", prefix, truncatedBase, suffix)
+	}
+
+	// If even the prefix and suffix alone exceed the limit, just truncate everything
+	return (prefix + suffix)[:maxLength]
 }
 
 func (g *UserInfo) getUserRoles(job string, grade int32) (types.Roles, error) {
