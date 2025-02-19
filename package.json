@@ -110,7 +110,7 @@
         "nuxt-tiptap-editor": "2.1.4",
         "nuxt-typed-router": "3.7.3",
         "pinia-plugin-persistedstate": "4.2.0",
-        "postcss": "8.5.2",
+        "postcss": "8.5.3",
         "postcss-custom-properties": "14.0.4",
         "postcss-import": "16.1.0",
         "postcss-nesting": "13.0.1",
@@ -133,5 +133,5 @@
     "pnpm": {
         "onlyBuiltDependencies": ["v-code-diff"]
     },
-    "packageManager": "pnpm@10.4.0+sha512.6b849d0787d97f8f4e1f03a9b8ff8f038e79e153d6f11ae539ae7c435ff9e796df6a862c991502695c7f9e8fac8aeafc1ac5a8dab47e36148d183832d886dd52"
+    "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af"
 }
