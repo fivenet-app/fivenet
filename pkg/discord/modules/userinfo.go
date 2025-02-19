@@ -255,7 +255,8 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
 				).
 				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID),
+					tJobsUserProps.UserID.EQ(tUsers.ID).
+						AND(tJobsUserProps.Job.EQ(jet.String(g.job))),
 				),
 		).
 		WHERE(jet.AND(
