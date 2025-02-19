@@ -208,7 +208,6 @@ type DiscordUserInfoSync struct {
 	Enabled             bool   `default:"false" yaml:"enabled"`
 	GradeRoleFormat     string `default:"[%grade%] %grade_label%" yaml:"gradeRoleFormat"`
 	EmployeeRoleFormat  string `default:"%s Personal" yaml:"employeeRoleFormat"`
-	NicknameRegex       string `default:"^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?" yaml:"nicknameRegex"`
 	UnemployedRoleName  string `default:"Citizen" yaml:"unemployedRoleName"`
 	JobsAbsceneRoleName string `default:"Absent" yaml:"jobsAbsceneRoleName"`
 }

@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"regexp"
 	"slices"
 	"strconv"
 	"strings"
@@ -41,8 +40,6 @@ type UserInfo struct {
 
 	mu sync.Mutex
 
-	nicknameRegex *regexp.Regexp
-
 	employeeRole   *types.Role
 	unemployedRole *types.Role
 	absenceRole    *types.Role
@@ -51,13 +48,17 @@ type UserInfo struct {
 }
 
 type userRoleMapping struct {
-	AccountID    uint64               `alias:"account_id"`
-	ExternalID   string               `alias:"external_id"`
-	UserID       int32                `alias:"user_id"`
-	JobGrade     int32                `alias:"job_grade"`
-	Firstname    string               `alias:"firstname"`
-	Lastname     string               `alias:"lastname"`
-	Job          string               `alias:"job"`
+	AccountID  uint64 `alias:"account_id"`
+	ExternalID string `alias:"external_id"`
+	UserID     int32  `alias:"user_id"`
+	Job        string `alias:"job"`
+	JobGrade   int32  `alias:"job_grade"`
+	Firstname  string `alias:"firstname"`
+	Lastname   string `alias:"lastname"`
+
+	// Job Props
+	NamePrefix   string               `alias:"name_prefix"`
+	NameSuffix   string               `alias:"name_suffix"`
 	AbsenceBegin *timestamp.Timestamp `alias:"absence_begin"`
 	AbsenceEnd   *timestamp.Timestamp `alias:"absence_end"`
 }
@@ -67,17 +68,10 @@ func init() {
 }
 
 func NewUserInfo(base *BaseModule, events *broker.Broker[interface{}]) (Module, error) {
-	nicknameRegex, err := regexp.Compile(base.cfg.UserInfoSync.NicknameRegex)
-	if err != nil {
-		return nil, err
-	}
-
 	ui := &UserInfo{
 		BaseModule: base,
 
 		mu: sync.Mutex{},
-
-		nicknameRegex: nicknameRegex,
 
 		jobGradeRoles: map[int32]*types.Role{},
 		groupRoles:    map[string]*types.Role{},
@@ -242,10 +236,13 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
 			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
 			tUsers.ID.AS("userrolemapping.user_id"),
+			tUsers.Job.AS("userrolemapping.job"),
 			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
 			tUsers.Lastname.AS("userrolemapping.lastname"),
-			tUsers.Job.AS("userrolemapping.job"),
+			// Job Props
+			tJobsUserProps.NamePrefix.AS("userrolemapping.name_prefix"),
+			tJobsUserProps.NameSuffix.AS("userrolemapping.name_suffix"),
 			tJobsUserProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
 			tJobsUserProps.AbsenceEnd.AS("userrolemapping.absence_end"),
 		).
@@ -313,8 +310,7 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 		}
 
 		if settings.UserInfoSyncSettings.SyncNicknames {
-			name := g.getUserNickname(member, u.Firstname, u.Lastname)
-			if name != nil {
+			if name := g.getUserNickname(member, strings.TrimSpace(u.Firstname), strings.TrimSpace(u.Lastname), u.NamePrefix, u.NameSuffix); name != nil {
 				user.Nickname = name
 			}
 		}
@@ -354,42 +350,15 @@ func (g *UserInfo) planUsers(ctx context.Context) (types.Users, []discord.Embed,
 	return users, logs, errs
 }
 
-func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, lastname string) *string {
+func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, lastname string, prefix string, suffix string) *string {
 	if g.guild.OwnerID == member.User.ID {
-		return nil
+		return nil // Can't change owner's nickname
 	}
 
-	fullName := strings.TrimSpace(firstname + " " + lastname)
+	// Build nickname as it should be based on the input
+	targetNickname := strings.TrimSpace(prefix + " " + firstname + " " + lastname + " " + suffix)
 
-	nickname := fullName
-	if member.Nick != "" {
-		match := g.nicknameRegex.FindStringSubmatch(member.Nick)
-		result := make(map[string]string)
-		for i, name := range g.nicknameRegex.SubexpNames() {
-			if i != 0 && name != "" {
-				if len(match) >= i {
-					result[name] = match[i]
-				}
-			}
-		}
-
-		var ok bool
-		nickname, ok = result["name"]
-		if !ok {
-			g.logger.Warn("failed to extract name from discord nickname", zap.String("dc_nick", member.Nick))
-			nickname = member.Nick
-		}
-	}
-
-	if strings.TrimSpace(nickname) == fullName {
-		return &fullName
-	}
-
-	// Last space on the name is lost due to the space trimming combined with the regex capture
-	fullName = g.nicknameRegex.ReplaceAllString(member.Nick, "${prefix}"+fullName+" ${suffix}")
-	fullName = strings.TrimSpace(fullName)
-
-	return &fullName
+	return &targetNickname
 }
 
 func (g *UserInfo) getUserRoles(job string, grade int32) (types.Roles, error) {

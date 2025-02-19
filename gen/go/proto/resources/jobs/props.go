@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
@@ -142,11 +143,13 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 
 	if in.NamePrefix != nil || in.NameSuffix != nil {
 		if in.NamePrefix != nil {
+			*in.NamePrefix = strings.TrimSpace(*in.NamePrefix) // Trim spaces
 			updateSets = append(updateSets, tJobsUserProps.NamePrefix.SET(jet.String(*in.NamePrefix)))
 		} else {
 			in.NamePrefix = x.NamePrefix
 		}
 		if in.NameSuffix != nil {
+			*in.NameSuffix = strings.TrimSpace(*in.NameSuffix) // Trim spaces
 			updateSets = append(updateSets, tJobsUserProps.NameSuffix.SET(jet.String(*in.NameSuffix)))
 		} else {
 			in.NameSuffix = x.NameSuffix
