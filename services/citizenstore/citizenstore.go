@@ -615,7 +615,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *pbcitizenstore.SetUserPr
 	resp.Props = user.User.Props
 	// Set Job info if set
 	if resp.Props != nil && resp.Props.JobName != nil {
-		grade := int32(1)
+		grade := s.cfg.Game.StartJobGrade
 		if resp.Props.JobGradeNumber != nil {
 			grade = *resp.Props.JobGradeNumber
 		}
