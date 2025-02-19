@@ -358,6 +358,11 @@ func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, las
 	// Build nickname as it should be based on the input
 	targetNickname := strings.TrimSpace(prefix + " " + firstname + " " + lastname + " " + suffix)
 
+	// No need to set nickname when they are already equal
+	if member.Nick == targetNickname {
+		return nil
+	}
+
 	return &targetNickname
 }
 

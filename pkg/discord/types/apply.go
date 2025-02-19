@@ -93,19 +93,13 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 			continue
 		}
 
-		if user.Nickname != nil && *user.Nickname == "" {
+		// Set member user name if nickname isn't empty
+		if user.Nickname != nil && *user.Nickname != "" {
 			if err := dc.ModifyMember(p.GuildID, user.ID, api.ModifyMemberData{
 				Nick: user.Nickname,
 			}); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
 				continue
-			}
-		}
-
-		if len(user.Roles.ToRemove) > 0 {
-			out := ""
-			for _, role := range user.Roles.ToRemove.ToSlice() {
-				out += "Role Name: " + role.Name + " (ID: " + role.ID.String() + ", " + role.Module + "); "
 			}
 		}
 
