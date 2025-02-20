@@ -90,7 +90,7 @@ const modal = useModal();
                     </UButton>
                 </div>
 
-                <OAuth2ConnectButton v-if="!nuiEnabled" :provider="provider" />
+                <OAuth2ConnectButton v-if="!account && !nuiEnabled" :provider="provider" />
             </div>
         </template>
 
