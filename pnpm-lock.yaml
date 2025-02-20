@@ -102,11 +102,11 @@ importers:
         specifier: 2.11.5
         version: 2.11.5(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))
       '@unovis/ts':
-        specifier: 1.5.0
-        version: 1.5.0
+        specifier: 1.5.1
+        version: 1.5.1
       '@unovis/vue':
-        specifier: 1.5.0
-        version: 1.5.0(@unovis/ts@1.5.0)(vue@3.5.13(typescript@5.7.3))
+        specifier: 1.5.1
+        version: 1.5.1(@unovis/ts@1.5.1)(vue@3.5.13(typescript@5.7.3))
       '@vue-leaflet/vue-leaflet':
         specifier: 0.10.1
         version: 0.10.1(@types/leaflet@1.9.16)(leaflet@1.9.4)(typescript@5.7.3)
@@ -168,8 +168,8 @@ importers:
         specifier: 2.10.3
         version: 2.10.3(@tiptap/core@2.10.4(@tiptap/pm@2.10.4))(@tiptap/pm@2.10.4)
       uuid:
-        specifier: 11.0.5
-        version: 11.0.5
+        specifier: 11.1.0
+        version: 11.1.0
       v-calendar:
         specifier: 3.1.2
         version: 3.1.2(@popperjs/core@2.11.8)(vue@3.5.13(typescript@5.7.3))
@@ -202,8 +202,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0(@vue/compiler-sfc@3.5.13)(eslint@9.20.1(jiti@2.4.2))(magicast@0.3.5)(typescript@5.7.3)(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(sass@1.85.0)(terser@5.37.0)(yaml@2.7.0))
       '@nuxtjs/i18n':
-        specifier: 9.2.0
-        version: 9.2.0(@vue/compiler-dom@3.5.13)(eslint@9.20.1(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
+        specifier: 9.2.1
+        version: 9.2.1(@vue/compiler-dom@3.5.13)(eslint@9.20.1(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))
       '@protobuf-ts/plugin':
         specifier: 2.9.4
         version: 2.9.4
@@ -262,8 +262,8 @@ importers:
         specifier: 9.32.0
         version: 9.32.0(eslint@9.20.1(jiti@2.4.2))
       nuxi:
-        specifier: 3.21.1
-        version: 3.21.1
+        specifier: 3.22.2
+        version: 3.22.2
       nuxt:
         specifier: 3.15.4
         version: 3.15.4(@libsql/client@0.14.0)(@parcel/watcher@2.5.0)(@types/node@22.13.4)(better-sqlite3@11.8.1)(db0@0.2.1(@libsql/client@0.14.0)(better-sqlite3@11.8.1))(eslint@9.20.1(jiti@2.4.2))(ioredis@5.4.2)(magicast@0.3.5)(optionator@0.9.4)(rollup@4.29.1)(sass@1.85.0)(terser@5.37.0)(typescript@5.7.3)(vite@6.0.11(@types/node@22.13.4)(jiti@2.4.2)(sass@1.85.0)(terser@5.37.0)(yaml@2.7.0))(vue-tsc@2.2.2(typescript@5.7.3))(yaml@2.7.0)
@@ -1253,8 +1253,8 @@ packages:
   '@nuxtjs/color-mode@3.5.2':
     resolution: {integrity: sha512-cC6RfgZh3guHBMLLjrBB2Uti5eUoGM9KyauOaYS9ETmxNWBMTvpgjvSiSJp1OFljIXPIqVTJ3xtJpSNZiO3ZaA==}
 
-  '@nuxtjs/i18n@9.2.0':
-    resolution: {integrity: sha512-R7azgNji8jIZdimlylK1CU4plO1OjRPZduTyjS9SHHasMCzxrPM+LBJLRzjt9NUNatquLeCcVfHAYvxIxPHCmg==}
+  '@nuxtjs/i18n@9.2.1':
+    resolution: {integrity: sha512-rSIZ0p97A/II5P1Rf5f7oboWvViQKU23rP4iOD0KrNpIDnmO796C1g+4ifTpMo38SskwVxdGVWqvcuxOJ/XmyA==}
     engines: {node: ^14.16.0 || >=16.11.0}
 
   '@nuxtjs/mdc@0.9.5':
@@ -2158,10 +2158,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <5.8.0'
 
-  '@typescript-eslint/scope-manager@8.22.0':
-    resolution: {integrity: sha512-/lwVV0UYgkj7wPSw0o8URy6YI64QmcOdwHuGuxWIYznO6d45ER0wXUbksr9pYdViAofpUCNJx/tAzNukgvaaiQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@typescript-eslint/scope-manager@8.23.0':
     resolution: {integrity: sha512-OGqo7+dXHqI7Hfm+WqkZjKjsiRtFUQHPdGMXzk5mYXhJUedO7e/Y7i8AK3MyLMgZR93TX4bIzYrfyVjLC+0VSw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -2177,10 +2173,6 @@ packages:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <5.8.0'
 
-  '@typescript-eslint/types@8.22.0':
-    resolution: {integrity: sha512-0S4M4baNzp612zwpD4YOieP3VowOARgK2EkN/GBn95hpyF8E2fbMT55sRHWBq+Huaqk3b3XK+rxxlM8sPgGM6A==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
   '@typescript-eslint/types@8.23.0':
     resolution: {integrity: sha512-1sK4ILJbCmZOTt9k4vkoulT6/y5CHJ1qUYxqpF1K/DBAd8+ZUL4LlSCxOssuH5m4rUaaN0uS0HlVPvd45zjduQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
@@ -2188,12 +2180,6 @@ packages:
   '@typescript-eslint/types@8.24.1':
     resolution: {integrity: sha512-9kqJ+2DkUXiuhoiYIUvIYjGcwle8pcPpdlfkemGvTObzgmYfJ5d0Qm6jwb4NBXP9W1I5tss0VIAnWFumz3mC5A==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-
-  '@typescript-eslint/typescript-estree@8.22.0':
-    resolution: {integrity: sha512-SJX99NAS2ugGOzpyhMza/tX+zDwjvwAtQFLsBo3GQxiGcvaKlqGBkmZ+Y1IdiSi9h4Q0Lr5ey+Cp9CGWNY/F/w==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <5.8.0'
 
   '@typescript-eslint/typescript-estree@8.23.0':
     resolution: {integrity: sha512-LcqzfipsB8RTvH8FX24W4UUFk1bl+0yTOf9ZA08XngFwMg4Kj8A+9hwz8Cr/ZS4KwHrmo9PJiLZkOt49vPnuvQ==}
@@ -2220,10 +2206,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
       typescript: '>=4.8.4 <5.8.0'
-
-  '@typescript-eslint/visitor-keys@8.22.0':
-    resolution: {integrity: sha512-AWpYAXnUgvLNabGTy3uBylkgZoosva/miNd1I8Bz3SjotmQPbVqhO4Cczo8AsZ44XVErEBPr/CRSgaj8sG7g0w==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@typescript-eslint/visitor-keys@8.23.0':
     resolution: {integrity: sha512-oWWhcWDLwDfu++BGTZcmXWqpwtkwb5o7fxUIGksMQQDSdPW9prsSnfIOZMlsj4vBOSrcnjIUZMiIjODgGosFhQ==}
@@ -2259,13 +2241,13 @@ packages:
   '@unovis/graphlibrary@2.2.0-2':
     resolution: {integrity: sha512-HeEzpd/vDyWiIJt0rnh+2ICXUIuF2N0+Z9OJJiKg0DB+eFUcD+bk+9QPhYHwkFwfxdjDA9fHi1DZ/O/bbV58Nw==}
 
-  '@unovis/ts@1.5.0':
-    resolution: {integrity: sha512-dMRlhBKwazkGxg65xXl4KHvmqX0+2C5qJsUqTFjcg/59G9RCjej9uFF4qsk0x3zY/FnAvK4AjKQYygQfBWzd+w==}
+  '@unovis/ts@1.5.1':
+    resolution: {integrity: sha512-cNCVZUz3RagftEOw+HDvbbGTkmtpDNSv1Mw7C4wBBeRKQGzztI5TVL18IWFbKo/0VD6zP/jv+GKwJXZTGl6w0w==}
 
-  '@unovis/vue@1.5.0':
-    resolution: {integrity: sha512-ZHdHPTpefhggJZEWJJI/q7N0mJbRj1TgItt4uzObXzrq0TadxrzSstXMUw4cPgbJcfi8d622YDQhRpr4tApKBw==}
+  '@unovis/vue@1.5.1':
+    resolution: {integrity: sha512-JHpytN/usD4YzxVpSWTaqFMX667KjIYtjV/JK+iTAujn4a3xstAaySbZpP55qoANf9qEKUvM1EuRWs+qjqQGPQ==}
     peerDependencies:
-      '@unovis/ts': 1.5.0
+      '@unovis/ts': 1.5.1
       vue: ^3
 
   '@vercel/nft@0.27.10':
@@ -4963,8 +4945,8 @@ packages:
   nth-check@2.1.1:
     resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
-  nuxi@3.21.1:
-    resolution: {integrity: sha512-72OhQHeQg15SKZaoDjBTdrki4zqjShgVo69Dou7jm/euXchoss+VOU4/s73lvAXiVN2g84ogGdNSe0112N7ldA==}
+  nuxi@3.22.2:
+    resolution: {integrity: sha512-QaxSecieGbh6aTrKC6czb73Lgb/OyV4Y+nXmrS1oAD/e2o2vWQ20uv9fSCBuHjwnAMADLdbKuhAK9EmJpLi0Ag==}
     engines: {node: ^16.10.0 || >=18.0.0}
     hasBin: true
 
@@ -6368,12 +6350,6 @@ packages:
   trough@2.2.0:
     resolution: {integrity: sha512-tmMpK00BjZiUyVyvrBK7knerNgmgvcV/KLVyuma/SC+TQN167GrMRciANTz09+k3zW8L8t60jWO1GpfkZdjTaw==}
 
-  ts-api-utils@2.0.0:
-    resolution: {integrity: sha512-xCt/TOAc+EOHS1XPnijD3/yzpH6qg2xppZO1YDqGoVsNXfQfzHpOdNuXwrwOU8u4ITXJyDCTyt8w5g1sZv9ynQ==}
-    engines: {node: '>=18.12'}
-    peerDependencies:
-      typescript: '>=4.8.4'
-
   ts-api-utils@2.0.1:
     resolution: {integrity: sha512-dnlgjFSVetynI8nzgJ+qF62efpglpWRk8isUEWZGWlJYySCTD6aKvbUDu+zbPeDakk3bg5H4XpitHukgfL1m9w==}
     engines: {node: '>=18.12'}
@@ -6700,8 +6676,8 @@ packages:
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
 
-  uuid@11.0.5:
-    resolution: {integrity: sha512-508e6IcKLrhxKdBbcA2b4KQZlLVp2+J5UwQ6F7Drckkc5N9ZJwFa4TgWtsww9UG8fGHbm6gbV19TdM5pQ4GaIA==}
+  uuid@11.1.0:
+    resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
     hasBin: true
 
   uuid@9.0.1:
@@ -7786,8 +7762,8 @@ snapshots:
       '@intlify/shared': 11.1.1
       '@intlify/vue-i18n-extensions': 8.0.0(@intlify/shared@11.1.1)(@vue/compiler-dom@3.5.13)(vue-i18n@10.0.5(vue@3.5.13(typescript@5.7.3)))(vue@3.5.13(typescript@5.7.3))
       '@rollup/pluginutils': 5.1.4(rollup@4.29.1)
-      '@typescript-eslint/scope-manager': 8.22.0
-      '@typescript-eslint/typescript-estree': 8.22.0(typescript@5.7.3)
+      '@typescript-eslint/scope-manager': 8.24.1
+      '@typescript-eslint/typescript-estree': 8.24.1(typescript@5.7.3)
       debug: 4.4.0(supports-color@9.4.0)
       fast-glob: 3.3.3
       js-yaml: 4.1.0
@@ -8582,7 +8558,7 @@ snapshots:
       - magicast
       - supports-color
 
-  '@nuxtjs/i18n@9.2.0(@vue/compiler-dom@3.5.13)(eslint@9.20.1(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))':
+  '@nuxtjs/i18n@9.2.1(@vue/compiler-dom@3.5.13)(eslint@9.20.1(jiti@2.4.2))(magicast@0.3.5)(rollup@4.29.1)(typescript@5.7.3)(vue@3.5.13(typescript@5.7.3))':
     dependencies:
       '@intlify/h3': 0.6.1
       '@intlify/shared': 10.0.5
@@ -9590,11 +9566,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/scope-manager@8.22.0':
-    dependencies:
-      '@typescript-eslint/types': 8.22.0
-      '@typescript-eslint/visitor-keys': 8.22.0
-
   '@typescript-eslint/scope-manager@8.23.0':
     dependencies:
       '@typescript-eslint/types': 8.23.0
@@ -9616,25 +9587,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/types@8.22.0': {}
-
   '@typescript-eslint/types@8.23.0': {}
 
   '@typescript-eslint/types@8.24.1': {}
-
-  '@typescript-eslint/typescript-estree@8.22.0(typescript@5.7.3)':
-    dependencies:
-      '@typescript-eslint/types': 8.22.0
-      '@typescript-eslint/visitor-keys': 8.22.0
-      debug: 4.4.0(supports-color@9.4.0)
-      fast-glob: 3.3.3
-      is-glob: 4.0.3
-      minimatch: 9.0.5
-      semver: 7.7.1
-      ts-api-utils: 2.0.0(typescript@5.7.3)
-      typescript: 5.7.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@typescript-eslint/typescript-estree@8.23.0(typescript@5.7.3)':
     dependencies:
@@ -9686,11 +9641,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@typescript-eslint/visitor-keys@8.22.0':
-    dependencies:
-      '@typescript-eslint/types': 8.22.0
-      eslint-visitor-keys: 4.2.0
-
   '@typescript-eslint/visitor-keys@8.23.0':
     dependencies:
       '@typescript-eslint/types': 8.23.0
@@ -9740,7 +9690,7 @@ snapshots:
     dependencies:
       lodash-es: 4.17.21
 
-  '@unovis/ts@1.5.0':
+  '@unovis/ts@1.5.1':
     dependencies:
       '@emotion/css': 11.13.5
       '@juggle/resize-observer': 3.4.0
@@ -9777,9 +9727,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@unovis/vue@1.5.0(@unovis/ts@1.5.0)(vue@3.5.13(typescript@5.7.3))':
+  '@unovis/vue@1.5.1(@unovis/ts@1.5.1)(vue@3.5.13(typescript@5.7.3))':
     dependencies:
-      '@unovis/ts': 1.5.0
+      '@unovis/ts': 1.5.1
       vue: 3.5.13(typescript@5.7.3)
 
   '@vercel/nft@0.27.10(rollup@4.29.1)':
@@ -12967,7 +12917,7 @@ snapshots:
     dependencies:
       boolbase: 1.0.0
 
-  nuxi@3.21.1: {}
+  nuxi@3.22.2: {}
 
   nuxt-site-config-kit@3.1.0(magicast@0.3.5)(vue@3.5.13(typescript@5.7.3)):
     dependencies:
@@ -14680,10 +14630,6 @@ snapshots:
 
   trough@2.2.0: {}
 
-  ts-api-utils@2.0.0(typescript@5.7.3):
-    dependencies:
-      typescript: 5.7.3
-
   ts-api-utils@2.0.1(typescript@5.7.3):
     dependencies:
       typescript: 5.7.3
@@ -15030,7 +14976,7 @@ snapshots:
 
   util-deprecate@1.0.2: {}
 
-  uuid@11.0.5: {}
+  uuid@11.1.0: {}
 
   uuid@9.0.1: {}
 

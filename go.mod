@@ -37,10 +37,10 @@ require (
 	github.com/jinzhu/now v1.1.5
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.86
+	github.com/minio/minio-go/v7 v7.0.87
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.10.25
-	github.com/nats-io/nats.go v1.39.0
+	github.com/nats-io/nats.go v1.39.1
 	github.com/nicksnyder/go-i18n/v2 v2.5.1
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
@@ -157,7 +157,7 @@ require (
 	github.com/magiconair/properties v1.8.9 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mb0/diff v0.0.0-20131118162322-d8d9a906c24d // indirect
-	github.com/minio/crc64nvme v1.0.0 // indirect
+	github.com/minio/crc64nvme v1.0.1 // indirect
 	github.com/minio/highwayhash v1.0.3 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect

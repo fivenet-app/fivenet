@@ -90,7 +90,7 @@ func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch boo
 		searchRequest.Size = 32
 	}
 	searchRequest.Fields = []string{"label", "name"}
-	searchRequest.SortBy([]string{"label", "_id"})
+	searchRequest.SortBy([]string{"_score", "label", "_id"})
 
 	searchResult, err := s.jobs.SearchInContext(ctx, searchRequest)
 	if err != nil {
