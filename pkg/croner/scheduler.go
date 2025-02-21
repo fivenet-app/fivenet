@@ -111,7 +111,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		}
 		s.store = st
 
-		if err := st.Start(ctxCancel); err != nil {
+		if err := st.Start(ctxCancel, true); err != nil {
 			return err
 		}
 

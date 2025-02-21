@@ -81,7 +81,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *pbrector.Create
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	s.cache.RefreshLaws(ctx, lawBook.Id)
+	s.laws.Refresh(ctx, lawBook.Id)
 
 	return &pbrector.CreateOrUpdateLawBookResponse{
 		LawBook: lawBook,
@@ -116,7 +116,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *pbrector.DeleteLawBookR
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	if err := s.cache.RefreshLaws(ctx, lawBook.Id); err != nil {
+	if err := s.laws.Refresh(ctx, lawBook.Id); err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
@@ -229,7 +229,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *pbrector.CreateOrUp
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	if err := s.cache.RefreshLaws(ctx, req.Law.LawbookId); err != nil {
+	if err := s.laws.Refresh(ctx, req.Law.LawbookId); err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
@@ -266,7 +266,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *pbrector.DeleteLawRequest) 
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
-	s.cache.RefreshLaws(ctx, law.LawbookId)
+	s.laws.Refresh(ctx, law.LawbookId)
 
 	return &pbrector.DeleteLawResponse{}, nil
 }

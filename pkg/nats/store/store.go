@@ -338,7 +338,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 	return nil
 }
 
-func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
+func (s *Store[T, U]) Keys(ctx context.Context, prefix string) []string {
 	hasPrefix := (s.prefix + prefix) != ""
 	if hasPrefix {
 		if prefix != "" {
@@ -365,10 +365,10 @@ func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error)
 		return true
 	})
 
-	return keys, nil
+	return keys
 }
 
-func (s *Store[T, U]) List() ([]U, error) {
+func (s *Store[T, U]) List() []U {
 	list := []U{}
 
 	s.data.Range(func(key string, value U) bool {
@@ -388,16 +388,21 @@ func (s *Store[T, U]) List() ([]U, error) {
 		return true
 	})
 
-	return list, nil
+	return list
 }
 
-func (s *Store[T, U]) Start(ctx context.Context) error {
+func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 	watcher, err := s.kv.WatchAll(ctx)
 	if err != nil {
 		return err
 	}
 
+	var wg sync.WaitGroup
+
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
+
 		updateCh := watcher.Updates()
 		for {
 			select {
@@ -426,6 +431,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+					// Handle delete and purge operations
 					func() {
 						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
 						mu.Lock()
@@ -442,6 +448,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 					}()
 
 				case jetstream.KeyValuePut:
+					// Handle put operations
 					func() {
 						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
 						mu.Lock()
@@ -459,7 +466,10 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 		}
 	}()
 
+	wg.Add(1)
 	go func() {
+		defer wg.Done()
+
 		for {
 			select {
 			case <-ctx.Done():
@@ -471,14 +481,15 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 		}
 	}()
 
+	if wait {
+		wg.Wait()
+	}
+
 	return nil
 }
 
-func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) error {
-	keys, err := s.Keys(ctx, "")
-	if err != nil {
-		return err
-	}
+func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bool) {
+	keys := s.Keys(ctx, "")
 
 	for _, key := range keys {
 		v, ok := s.Get(key)
@@ -490,15 +501,10 @@ func (s *Store[T, U]) Range(ctx context.Context, fn func(key string, value U) bo
 			break
 		}
 	}
-
-	return nil
 }
 
 func (s *Store[T, U]) Clear(ctx context.Context) error {
-	keys, err := s.Keys(ctx, "")
-	if err != nil {
-		return err
-	}
+	keys := s.Keys(ctx, "")
 
 	errs := multierr.Combine()
 	for _, key := range keys {
@@ -508,4 +514,16 @@ func (s *Store[T, U]) Clear(ctx context.Context) error {
 	}
 
 	return errs
+}
+
+func (s *Store[T, U]) ReadOnly() StoreRO[T, U] {
+	return s
+}
+
+// (Mostly) Read Only store version
+type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
+	Get(key string) (U, bool)
+	Keys(ctx context.Context, prefix string) []string
+	List() []U
+	Range(ctx context.Context, fn func(key string, value U) bool)
 }

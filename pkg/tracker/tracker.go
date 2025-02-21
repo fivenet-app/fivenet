@@ -111,7 +111,7 @@ func New(p Params) (ITracker, error) {
 			return err
 		}
 
-		if err := userIDs.Start(ctxCancel); err != nil {
+		if err := userIDs.Start(ctxCancel, false); err != nil {
 			return err
 		}
 		t.userStore = userIDs

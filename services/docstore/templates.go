@@ -459,7 +459,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *pbdocstore.DeleteTempl
 		}
 
 		// Make sure the highest job grade can delete the template
-		grade := s.cache.GetHighestJobGrade(userInfo.Job)
+		grade := s.jobs.GetHighestJobGrade(userInfo.Job)
 		if grade == nil || (userInfo.Job == dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
 			return nil, errorsdocstore.ErrTemplateNoPerms
 		}

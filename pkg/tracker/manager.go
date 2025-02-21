@@ -19,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/services/centrum/centrumstate"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -79,7 +78,7 @@ func NewManager(p ManagerParams) (*Manager, error) {
 			return err
 		}
 
-		if err := userStore.Start(ctxCancel); err != nil {
+		if err := userStore.Start(ctxCancel, false); err != nil {
 			return err
 		}
 		m.userStore = userStore
@@ -129,11 +128,7 @@ func (m *Manager) refreshCache(ctx context.Context) {
 func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{}) error {
 	event := &livemap.UsersUpdateEvent{}
 
-	keys, err := m.userStore.Keys(ctx, "")
-	if err != nil && !errors.Is(err, jetstream.ErrNoKeysFound) {
-		return err
-	}
-
+	keys := m.userStore.Keys(ctx, "")
 	for _, key := range keys {
 		idKey, err := strconv.ParseInt(key, 10, 32)
 		if err != nil {

@@ -16,11 +16,7 @@ func (s *State) GetUnit(ctx context.Context, job string, id uint64) (*centrum.Un
 func (s *State) ListUnits(ctx context.Context, job string) ([]*centrum.Unit, bool) {
 	us := []*centrum.Unit{}
 
-	ids, err := s.units.Keys(ctx, job)
-	if err != nil {
-		return us, false
-	}
-
+	ids := s.units.Keys(ctx, job)
 	for _, id := range ids {
 		unit, err := s.units.GetOrLoad(ctx, id)
 		if unit == nil || err != nil {

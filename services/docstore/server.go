@@ -54,7 +54,7 @@ type Server struct {
 
 	db       *sql.DB
 	ps       perms.Permissions
-	cache    *mstlystcdata.Cache
+	jobs     *mstlystcdata.Jobs
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
@@ -70,7 +70,7 @@ type Params struct {
 
 	DB         *sql.DB
 	Perms      perms.Permissions
-	Cache      *mstlystcdata.Cache
+	Jobs       *mstlystcdata.Jobs
 	Enricher   *mstlystcdata.UserAwareEnricher
 	Aud        audit.IAuditer
 	Ui         userinfo.UserInfoRetriever
@@ -82,7 +82,7 @@ func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
 		ps:       p.Perms,
-		cache:    p.Cache,
+		jobs:     p.Jobs,
 		enricher: p.Enricher,
 		aud:      p.Aud,
 		ui:       p.Ui,

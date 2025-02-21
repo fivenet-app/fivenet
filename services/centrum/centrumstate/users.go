@@ -36,11 +36,7 @@ func (s *State) UnsetUnitIDForUser(ctx context.Context, userId int32) error {
 }
 
 func (s *State) ListUserUnitMappings(ctx context.Context) (map[int32]*centrum.UserUnitMapping, error) {
-	mappings, err := s.userIDToUnitID.List()
-	if err != nil {
-		return nil, err
-	}
-
+	mappings := s.userIDToUnitID.List()
 	ids := map[int32]*centrum.UserUnitMapping{}
 	for _, m := range mappings {
 		ids[m.UserId] = m

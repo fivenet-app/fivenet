@@ -18,21 +18,48 @@ const (
 )
 
 type Enricher struct {
-	cache *Cache
+	jobs          *Jobs
+	docCategories *DocumentCategories
 
 	appCfg appconfig.IConfig
 }
 
-func NewEnricher(cache *Cache, appCfg appconfig.IConfig) *Enricher {
+func NewEnricher(jobs *Jobs, docCategories *DocumentCategories, appCfg appconfig.IConfig) *Enricher {
 	return &Enricher{
-		cache: cache,
+		jobs:          jobs,
+		docCategories: docCategories,
 
 		appCfg: appCfg,
 	}
 }
 
+// Document Categories
+
+func (e *Enricher) EnrichCategory(doc common.ICategory) {
+	cId := doc.GetCategoryId()
+
+	// No category
+	if cId == 0 {
+		return
+	}
+
+	dc, ok := e.docCategories.Get(strconv.FormatUint(cId, 10))
+	if !ok {
+		job := NotAvailablePlaceholder
+		doc.SetCategory(&documents.Category{
+			Id:   0,
+			Name: NotAvailablePlaceholder,
+			Job:  &job,
+		})
+	} else {
+		doc.SetCategory(dc)
+	}
+}
+
+// Jobs
+
 func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
-	job, ok := e.cache.jobs.Get(usr.GetJob())
+	job, ok := e.jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)
 
@@ -56,7 +83,7 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 }
 
 func (e *Enricher) EnrichJobName(usr common.IJobName) {
-	job, ok := e.cache.jobs.Get(usr.GetJob())
+	job, ok := e.jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)
 	} else {
@@ -64,29 +91,8 @@ func (e *Enricher) EnrichJobName(usr common.IJobName) {
 	}
 }
 
-func (e *Enricher) EnrichCategory(doc common.ICategory) {
-	cId := doc.GetCategoryId()
-
-	// No category
-	if cId == 0 {
-		return
-	}
-
-	dc, ok := e.cache.docCategories.Get(strconv.FormatUint(cId, 10))
-	if !ok {
-		job := NotAvailablePlaceholder
-		doc.SetCategory(&documents.Category{
-			Id:   0,
-			Name: NotAvailablePlaceholder,
-			Job:  &job,
-		})
-	} else {
-		doc.SetCategory(dc)
-	}
-}
-
 func (e *Enricher) GetJobByName(job string) *users.Job {
-	j, ok := e.cache.jobs.Get(job)
+	j, ok := e.jobs.Get(job)
 	if !ok {
 		return nil
 	}

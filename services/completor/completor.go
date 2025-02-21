@@ -121,16 +121,12 @@ func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobs
 	resp := &pbcompletor.CompleteJobsResponse{}
 	if search != "" {
 		var err error
-		resp.Jobs, err = s.data.GetSearcher().SearchJobs(ctx, search, exactMatch)
+		resp.Jobs, err = s.jobs.Search(ctx, search, exactMatch)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	} else {
-		jobs, err := s.data.ListJobs()
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
-		}
-		resp.Jobs = jobs
+		resp.Jobs = s.jobs.List()
 	}
 
 	return resp, nil
@@ -197,7 +193,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompleto
 
 func (s *Server) ListLawBooks(ctx context.Context, req *pbcompletor.ListLawBooksRequest) (*pbcompletor.ListLawBooksResponse, error) {
 	return &pbcompletor.ListLawBooksResponse{
-		Books: s.data.GetLawBooks(),
+		Books: s.laws.GetLawBooks(),
 	}, nil
 }
 

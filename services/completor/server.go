@@ -17,7 +17,8 @@ type Server struct {
 
 	db       *sql.DB
 	p        perms.Permissions
-	data     *mstlystcdata.Cache
+	jobs     *mstlystcdata.Jobs
+	laws     *mstlystcdata.Laws
 	tracker  tracker.ITracker
 	enricher *mstlystcdata.UserAwareEnricher
 
@@ -29,7 +30,8 @@ type Params struct {
 
 	DB       *sql.DB
 	Perms    perms.Permissions
-	Data     *mstlystcdata.Cache
+	Jobs     *mstlystcdata.Jobs
+	Laws     *mstlystcdata.Laws
 	Tracker  tracker.ITracker
 	Enricher *mstlystcdata.UserAwareEnricher
 	Config   *config.Config
@@ -39,7 +41,8 @@ func NewServer(p Params) *Server {
 	s := &Server{
 		db:       p.DB,
 		p:        p.Perms,
-		data:     p.Data,
+		jobs:     p.Jobs,
+		laws:     p.Laws,
 		tracker:  p.Tracker,
 		enricher: p.Enricher,
 

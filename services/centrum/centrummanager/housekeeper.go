@@ -390,12 +390,9 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 }
 
 func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
-	dsps, err := s.State.DispatchesStore().List()
-	if err != nil {
-		return fmt.Errorf("failed to list dispatches for old dispatch kv cleanup. %w", err)
-	}
-
 	errs := multierr.Combine()
+
+	dsps := s.State.DispatchesStore().List()
 	for _, dsp := range dsps {
 		if dsp == nil {
 			continue

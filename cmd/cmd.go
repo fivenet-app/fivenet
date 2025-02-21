@@ -120,9 +120,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		dbsync.Module,
 
 		fx.Provide(
-			mstlystcdata.NewCache,
+			mstlystcdata.NewDocumentCategories,
+			mstlystcdata.NewJobs,
+			mstlystcdata.NewLaws,
 			mstlystcdata.NewEnricher,
-			mstlystcdata.NewSearcher,
 			mstlystcdata.NewUserAwareEnricher,
 			notifi.New,
 			postals.New,

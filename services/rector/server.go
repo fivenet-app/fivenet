@@ -27,7 +27,7 @@ type Server struct {
 	ps       perms.Permissions
 	aud      audit.IAuditer
 	enricher *mstlystcdata.Enricher
-	cache    *mstlystcdata.Cache
+	laws     *mstlystcdata.Laws
 	st       storage.IStorage
 	cfg      *config.Config
 	appCfg   appconfig.IConfig
@@ -42,7 +42,7 @@ type Params struct {
 	PS        perms.Permissions
 	Aud       audit.IAuditer
 	Enricher  *mstlystcdata.Enricher
-	Cache     *mstlystcdata.Cache
+	Laws      *mstlystcdata.Laws
 	Storage   storage.IStorage
 	Config    *config.Config
 	AppConfig appconfig.IConfig
@@ -56,7 +56,7 @@ func NewServer(p Params) *Server {
 		ps:       p.PS,
 		aud:      p.Aud,
 		enricher: p.Enricher,
-		cache:    p.Cache,
+		laws:     p.Laws,
 		st:       p.Storage,
 		cfg:      p.Config,
 		appCfg:   p.AppConfig,
