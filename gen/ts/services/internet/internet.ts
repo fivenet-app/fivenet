@@ -21,6 +21,10 @@ export interface SearchRequest {
      * @generated from protobuf field: string search = 1;
      */
     search: string;
+    /**
+     * @generated from protobuf field: optional uint64 domain_id = 2;
+     */
+    domainId?: number;
 }
 /**
  * @generated from protobuf message services.internet.SearchResponse
@@ -57,7 +61,8 @@ export interface GetPageResponse {
 class SearchRequest$Type extends MessageType<SearchRequest> {
     constructor() {
         super("services.internet.SearchRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "60" } } } }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "60" } } } },
+            { no: 2, name: "domain_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<SearchRequest>): SearchRequest {
@@ -75,6 +80,9 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
                 case /* string search */ 1:
                     message.search = reader.string();
                     break;
+                case /* optional uint64 domain_id */ 2:
+                    message.domainId = reader.uint64().toNumber();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -90,6 +98,9 @@ class SearchRequest$Type extends MessageType<SearchRequest> {
         /* string search = 1; */
         if (message.search !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.search);
+        /* optional uint64 domain_id = 2; */
+        if (message.domainId !== undefined)
+            writer.tag(2, WireType.Varint).uint64(message.domainId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

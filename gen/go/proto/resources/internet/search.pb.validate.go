@@ -63,7 +63,42 @@ func (m *SearchResult) validate(all bool) error {
 
 	// no validation rules for Description
 
-	// no validation rules for Url
+	// no validation rules for DomainId
+
+	// no validation rules for Path
+
+	if m.Domain != nil {
+
+		if all {
+			switch v := interface{}(m.GetDomain()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SearchResultValidationError{
+						field:  "Domain",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SearchResultValidationError{
+						field:  "Domain",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDomain()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SearchResultValidationError{
+					field:  "Domain",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return SearchResultMultiError(errors)

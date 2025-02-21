@@ -6621,7 +6621,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | id | [uint64](#uint64) |  |  |
 | title | [string](#string) |  |  |
 | description | [string](#string) |  |  |
-| url | [string](#string) |  |  |
+| domain_id | [uint64](#uint64) |  |  |
+| domain | [Domain](#resources-internet-Domain) | optional |  |
+| path | [string](#string) |  |  |
 
 
 
@@ -13343,6 +13345,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | search | [string](#string) |  |  |
+| domain_id | [uint64](#uint64) | optional |  |
 
 
 

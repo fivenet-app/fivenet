@@ -2,11 +2,15 @@ syntax = "proto3";
 
 package resources.internet;
 
+import "resources/internet/domain.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/internet;internet";
 
 message SearchResult {
   uint64 id = 1;
   string title = 2;
   string description = 3;
-  string url = 4;
+  uint64 domain_id = 4;
+  optional resources.internet.Domain domain = 5;
+  string path = 6;
 }

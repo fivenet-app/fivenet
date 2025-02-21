@@ -68,6 +68,10 @@ func (m *SearchRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.DomainId != nil {
+		// no validation rules for DomainId
+	}
+
 	if len(errors) > 0 {
 		return SearchRequestMultiError(errors)
 	}

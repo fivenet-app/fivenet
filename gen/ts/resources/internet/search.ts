@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Domain } from "./domain";
 /**
  * @generated from protobuf message resources.internet.SearchResult
  */
@@ -27,9 +28,17 @@ export interface SearchResult {
      */
     description: string;
     /**
-     * @generated from protobuf field: string url = 4;
+     * @generated from protobuf field: uint64 domain_id = 4;
      */
-    url: string;
+    domainId: number;
+    /**
+     * @generated from protobuf field: optional resources.internet.Domain domain = 5;
+     */
+    domain?: Domain;
+    /**
+     * @generated from protobuf field: string path = 6;
+     */
+    path: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class SearchResult$Type extends MessageType<SearchResult> {
@@ -38,7 +47,9 @@ class SearchResult$Type extends MessageType<SearchResult> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "url", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "domain_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 5, name: "domain", kind: "message", T: () => Domain },
+            { no: 6, name: "path", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<SearchResult>): SearchResult {
@@ -46,7 +57,8 @@ class SearchResult$Type extends MessageType<SearchResult> {
         message.id = 0;
         message.title = "";
         message.description = "";
-        message.url = "";
+        message.domainId = 0;
+        message.path = "";
         if (value !== undefined)
             reflectionMergePartial<SearchResult>(this, message, value);
         return message;
@@ -65,8 +77,14 @@ class SearchResult$Type extends MessageType<SearchResult> {
                 case /* string description */ 3:
                     message.description = reader.string();
                     break;
-                case /* string url */ 4:
-                    message.url = reader.string();
+                case /* uint64 domain_id */ 4:
+                    message.domainId = reader.uint64().toNumber();
+                    break;
+                case /* optional resources.internet.Domain domain */ 5:
+                    message.domain = Domain.internalBinaryRead(reader, reader.uint32(), options, message.domain);
+                    break;
+                case /* string path */ 6:
+                    message.path = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -89,9 +107,15 @@ class SearchResult$Type extends MessageType<SearchResult> {
         /* string description = 3; */
         if (message.description !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.description);
-        /* string url = 4; */
-        if (message.url !== "")
-            writer.tag(4, WireType.LengthDelimited).string(message.url);
+        /* uint64 domain_id = 4; */
+        if (message.domainId !== 0)
+            writer.tag(4, WireType.Varint).uint64(message.domainId);
+        /* optional resources.internet.Domain domain = 5; */
+        if (message.domain)
+            Domain.internalBinaryWrite(message.domain, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* string path = 6; */
+        if (message.path !== "")
+            writer.tag(6, WireType.LengthDelimited).string(message.path);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
