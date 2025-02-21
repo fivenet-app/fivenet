@@ -5,7 +5,6 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
@@ -30,29 +29,6 @@ func NewEnricher(jobs *Jobs, docCategories *DocumentCategories, appCfg appconfig
 		docCategories: docCategories,
 
 		appCfg: appCfg,
-	}
-}
-
-// Document Categories
-
-func (e *Enricher) EnrichCategory(doc common.ICategory) {
-	cId := doc.GetCategoryId()
-
-	// No category
-	if cId == 0 {
-		return
-	}
-
-	dc, ok := e.docCategories.Get(strconv.FormatUint(cId, 10))
-	if !ok {
-		job := NotAvailablePlaceholder
-		doc.SetCategory(&documents.Category{
-			Id:   0,
-			Name: NotAvailablePlaceholder,
-			Job:  &job,
-		})
-	} else {
-		doc.SetCategory(dc)
 	}
 }
 

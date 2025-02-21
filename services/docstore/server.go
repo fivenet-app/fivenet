@@ -52,14 +52,15 @@ func init() {
 type Server struct {
 	pbdocstore.DocStoreServiceServer
 
-	db       *sql.DB
-	ps       perms.Permissions
-	jobs     *mstlystcdata.Jobs
-	enricher *mstlystcdata.UserAwareEnricher
-	aud      audit.IAuditer
-	ui       userinfo.UserInfoRetriever
-	notif    notifi.INotifi
-	htmlDiff *htmldiffer.Differ
+	db            *sql.DB
+	ps            perms.Permissions
+	jobs          *mstlystcdata.Jobs
+	docCategories *mstlystcdata.DocumentCategories
+	enricher      *mstlystcdata.UserAwareEnricher
+	aud           audit.IAuditer
+	ui            userinfo.UserInfoRetriever
+	notif         notifi.INotifi
+	htmlDiff      *htmldiffer.Differ
 
 	access         *access.Grouped[documents.DocumentJobAccess, *documents.DocumentJobAccess, documents.DocumentUserAccess, *documents.DocumentUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
 	templateAccess *access.Grouped[documents.TemplateJobAccess, *documents.TemplateJobAccess, documents.TemplateUserAccess, *documents.TemplateUserAccess, access.DummyQualificationAccess[documents.AccessLevel], *access.DummyQualificationAccess[documents.AccessLevel], documents.AccessLevel]
@@ -68,26 +69,28 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	DB         *sql.DB
-	Perms      perms.Permissions
-	Jobs       *mstlystcdata.Jobs
-	Enricher   *mstlystcdata.UserAwareEnricher
-	Aud        audit.IAuditer
-	Ui         userinfo.UserInfoRetriever
-	Notif      notifi.INotifi
-	HTMLDiffer *htmldiffer.Differ
+	DB            *sql.DB
+	Perms         perms.Permissions
+	Jobs          *mstlystcdata.Jobs
+	DocCategories *mstlystcdata.DocumentCategories
+	Enricher      *mstlystcdata.UserAwareEnricher
+	Aud           audit.IAuditer
+	Ui            userinfo.UserInfoRetriever
+	Notif         notifi.INotifi
+	HTMLDiffer    *htmldiffer.Differ
 }
 
 func NewServer(p Params) *Server {
 	return &Server{
-		db:       p.DB,
-		ps:       p.Perms,
-		jobs:     p.Jobs,
-		enricher: p.Enricher,
-		aud:      p.Aud,
-		ui:       p.Ui,
-		notif:    p.Notif,
-		htmlDiff: p.HTMLDiffer,
+		db:            p.DB,
+		ps:            p.Perms,
+		jobs:          p.Jobs,
+		docCategories: p.DocCategories,
+		enricher:      p.Enricher,
+		aud:           p.Aud,
+		ui:            p.Ui,
+		notif:         p.Notif,
+		htmlDiff:      p.HTMLDiffer,
 
 		access: newAccess(p.DB),
 

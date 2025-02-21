@@ -185,12 +185,12 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocstore.GetD
 			jobInfoFn(dest[i].Creator)
 		}
 
-		s.enricher.EnrichCategory(dest[i].SourceDocument)
+		s.docCategories.Enrich(dest[i].SourceDocument)
 		if dest[i].SourceDocument.Creator != nil {
 			jobInfoFn(dest[i].SourceDocument.Creator)
 		}
 
-		s.enricher.EnrichCategory(dest[i].TargetDocument)
+		s.docCategories.Enrich(dest[i].TargetDocument)
 	}
 
 	resp.References = dest
