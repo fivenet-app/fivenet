@@ -37,8 +37,8 @@ func NewDocumentCategories(p Params) *DocumentCategories {
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		docCategories, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
-			store.WithLocks[documents.Category, *documents.Category](nil),
-			store.WithKVPrefix[documents.Category, *documents.Category]("doc_categories"),
+			store.WithLocks[documents.Category](nil),
+			store.WithKVPrefix[documents.Category]("doc_categories"),
 		)
 		if err != nil {
 			return err

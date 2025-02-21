@@ -98,6 +98,9 @@
     - [TranslateItem](#resources-common-TranslateItem)
     - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
   
+- [resources/common/tests/objects.proto](#resources_common_tests_objects-proto)
+    - [SimpleObject](#resources-common-tests-SimpleObject)
+  
 - [resources/documents/workflow.proto](#resources_documents_workflow-proto)
     - [AutoCloseSettings](#resources-documents-AutoCloseSettings)
     - [Reminder](#resources-documents-Reminder)
@@ -158,10 +161,6 @@
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
   
-- [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
-    - [Colleague](#resources-jobs-Colleague)
-    - [JobsUserProps](#resources-jobs-JobsUserProps)
-  
 - [resources/jobs/activity.proto](#resources_jobs_activity-proto)
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
     - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
@@ -171,6 +170,10 @@
     - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
   
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
+  
+- [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
+    - [Colleague](#resources-jobs-Colleague)
+    - [JobsUserProps](#resources-jobs-JobsUserProps)
   
 - [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
     - [ConductEntry](#resources-jobs-ConductEntry)
@@ -274,6 +277,11 @@
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
   
+- [resources/rector/audit.proto](#resources_rector_audit-proto)
+    - [AuditEntry](#resources-rector-AuditEntry)
+  
+    - [EventType](#resources-rector-EventType)
+  
 - [resources/rector/config.proto](#resources_rector_config-proto)
     - [AppConfig](#resources-rector-AppConfig)
     - [Auth](#resources-rector-Auth)
@@ -289,32 +297,8 @@
   
     - [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType)
   
-- [resources/rector/audit.proto](#resources_rector_audit-proto)
-    - [AuditEntry](#resources-rector-AuditEntry)
-  
-    - [EventType](#resources-rector-EventType)
-  
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
-  
-- [resources/users/job_props.proto](#resources_users_job_props-proto)
-    - [JobProps](#resources-users-JobProps)
-    - [QuickButtons](#resources-users-QuickButtons)
-  
-- [resources/users/jobs.proto](#resources_users_jobs-proto)
-    - [Job](#resources-users-Job)
-    - [JobGrade](#resources-users-JobGrade)
-  
-- [resources/users/users.proto](#resources_users_users-proto)
-    - [User](#resources-users-User)
-    - [UserShort](#resources-users-UserShort)
-  
-- [resources/users/props.proto](#resources_users_props-proto)
-    - [UserProps](#resources-users-UserProps)
-  
-- [resources/users/licenses.proto](#resources_users_licenses-proto)
-    - [License](#resources-users-License)
-    - [UserLicenses](#resources-users-UserLicenses)
   
 - [resources/users/activity.proto](#resources_users_activity-proto)
     - [UserActivity](#resources-users-UserActivity)
@@ -332,9 +316,9 @@
   
     - [UserActivityType](#resources-users-UserActivityType)
   
-- [resources/users/labels.proto](#resources_users_labels-proto)
-    - [CitizenLabel](#resources-users-CitizenLabel)
-    - [CitizenLabels](#resources-users-CitizenLabels)
+- [resources/users/job_props.proto](#resources_users_job_props-proto)
+    - [JobProps](#resources-users-JobProps)
+    - [QuickButtons](#resources-users-QuickButtons)
   
 - [resources/users/job_settings.proto](#resources_users_job_settings-proto)
     - [DiscordSyncChange](#resources-users-DiscordSyncChange)
@@ -348,6 +332,25 @@
     - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
   
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
+  
+- [resources/users/jobs.proto](#resources_users_jobs-proto)
+    - [Job](#resources-users-Job)
+    - [JobGrade](#resources-users-JobGrade)
+  
+- [resources/users/labels.proto](#resources_users_labels-proto)
+    - [CitizenLabel](#resources-users-CitizenLabel)
+    - [CitizenLabels](#resources-users-CitizenLabels)
+  
+- [resources/users/licenses.proto](#resources_users_licenses-proto)
+    - [License](#resources-users-License)
+    - [UserLicenses](#resources-users-UserLicenses)
+  
+- [resources/users/props.proto](#resources_users_props-proto)
+    - [UserProps](#resources-users-UserProps)
+  
+- [resources/users/users.proto](#resources_users_users-proto)
+    - [User](#resources-users-User)
+    - [UserShort](#resources-users-UserShort)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -372,13 +375,17 @@
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
   
+- [resources/internet/access.proto](#resources_internet_access-proto)
+    - [PageAccess](#resources-internet-PageAccess)
+    - [PageJobAccess](#resources-internet-PageJobAccess)
+    - [PageUserAccess](#resources-internet-PageUserAccess)
+  
+    - [AccessLevel](#resources-internet-AccessLevel)
+  
 - [resources/internet/ads.proto](#resources_internet_ads-proto)
     - [Ad](#resources-internet-Ad)
   
     - [AdType](#resources-internet-AdType)
-  
-- [resources/internet/search.proto](#resources_internet_search-proto)
-    - [SearchResult](#resources-internet-SearchResult)
   
 - [resources/internet/domain.proto](#resources_internet_domain-proto)
     - [Domain](#resources-internet-Domain)
@@ -392,12 +399,8 @@
   
     - [PageLayoutType](#resources-internet-PageLayoutType)
   
-- [resources/internet/access.proto](#resources_internet_access-proto)
-    - [PageAccess](#resources-internet-PageAccess)
-    - [PageJobAccess](#resources-internet-PageJobAccess)
-    - [PageUserAccess](#resources-internet-PageUserAccess)
-  
-    - [AccessLevel](#resources-internet-AccessLevel)
+- [resources/internet/search.proto](#resources_internet_search-proto)
+    - [SearchResult](#resources-internet-SearchResult)
   
 - [resources/mailer/access.proto](#resources_mailer_access-proto)
     - [Access](#resources-mailer-Access)
@@ -869,14 +872,6 @@
   
     - [AdsService](#services-internet-AdsService)
   
-- [services/internet/internet.proto](#services_internet_internet-proto)
-    - [GetPageRequest](#services-internet-GetPageRequest)
-    - [GetPageResponse](#services-internet-GetPageResponse)
-    - [SearchRequest](#services-internet-SearchRequest)
-    - [SearchResponse](#services-internet-SearchResponse)
-  
-    - [InternetService](#services-internet-InternetService)
-  
 - [services/internet/domain.proto](#services_internet_domain-proto)
     - [CheckDomainAvailabilityRequest](#services-internet-CheckDomainAvailabilityRequest)
     - [CheckDomainAvailabilityResponse](#services-internet-CheckDomainAvailabilityResponse)
@@ -890,6 +885,14 @@
     - [UpdateDomainResponse](#services-internet-UpdateDomainResponse)
   
     - [DomainService](#services-internet-DomainService)
+  
+- [services/internet/internet.proto](#services_internet_internet-proto)
+    - [GetPageRequest](#services-internet-GetPageRequest)
+    - [GetPageResponse](#services-internet-GetPageResponse)
+    - [SearchRequest](#services-internet-SearchRequest)
+    - [SearchResponse](#services-internet-SearchResponse)
+  
+    - [InternetService](#services-internet-InternetService)
   
 - [services/mailer/mailer.proto](#services_mailer_mailer-proto)
     - [CreateOrUpdateEmailRequest](#services-mailer-CreateOrUpdateEmailRequest)
@@ -2251,6 +2254,38 @@
 
 
 
+<a name="resources_common_tests_objects-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/tests/objects.proto
+
+
+
+<a name="resources-common-tests-SimpleObject"></a>
+
+### SimpleObject
+INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages are required.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| field1 | [string](#string) |  |  |
+| field2 | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_documents_workflow-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3171,71 +3206,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_jobs_colleagues-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/colleagues.proto
-
-
-
-<a name="resources-jobs-Colleague"></a>
-
-### Colleague
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:"id" |
-| identifier | [string](#string) | optional |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| phone_number | [string](#string) | optional |  |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"jobs_user_props" |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserProps"></a>
-
-### JobsUserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| job | [string](#string) |  |  |
-| absence_begin | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| note | [string](#string) | optional | @sanitize: method=StripTags |
-| labels | [Labels](#resources-jobs-Labels) | optional |  |
-| name_prefix | [string](#string) | optional |  |
-| name_suffix | [string](#string) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_jobs_activity-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3368,6 +3338,71 @@ Dummy - DO NOT USE!
 | JOBS_USER_ACTIVITY_TYPE_LABELS | 7 |  |
 | JOBS_USER_ACTIVITY_TYPE_NAME | 8 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_colleagues-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/colleagues.proto
+
+
+
+<a name="resources-jobs-Colleague"></a>
+
+### Colleague
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:"id" |
+| identifier | [string](#string) | optional |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| phone_number | [string](#string) | optional |  |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| props | [JobsUserProps](#resources-jobs-JobsUserProps) |  | @gotags: alias:"jobs_user_props" |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-jobs-JobsUserProps"></a>
+
+### JobsUserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| job | [string](#string) |  |  |
+| absence_begin | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| absence_end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| note | [string](#string) | optional | @sanitize: method=StripTags |
+| labels | [Labels](#resources-jobs-Labels) | optional |  |
+| name_prefix | [string](#string) | optional |  |
+| name_suffix | [string](#string) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -4855,6 +4890,64 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_rector_audit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/rector/audit.proto
+
+
+
+<a name="resources-rector-AuditEntry"></a>
+
+### AuditEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:"id" |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| user_id | [uint64](#uint64) |  | @gotags: alias:"user_id" |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| user_job | [string](#string) |  | @gotags: alias:"user_job" |
+| target_user_id | [int32](#int32) | optional | @gotags: alias:"target_user_id" |
+| target_user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| target_user_job | [string](#string) |  | @gotags: alias:"target_user_job" |
+| service | [string](#string) |  | @gotags: alias:"service" |
+| method | [string](#string) |  | @gotags: alias:"method" |
+| state | [EventType](#resources-rector-EventType) |  | @gotags: alias:"state" |
+| data | [string](#string) | optional | @gotags: alias:"data" |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-rector-EventType"></a>
+
+### EventType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| EVENT_TYPE_UNSPECIFIED | 0 |  |
+| EVENT_TYPE_ERRORED | 1 |  |
+| EVENT_TYPE_VIEWED | 2 |  |
+| EVENT_TYPE_CREATED | 3 |  |
+| EVENT_TYPE_UPDATED | 4 |  |
+| EVENT_TYPE_DELETED | 5 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_rector_config-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5073,64 +5166,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_rector_audit-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/rector/audit.proto
-
-
-
-<a name="resources-rector-AuditEntry"></a>
-
-### AuditEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:"id" |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| user_id | [uint64](#uint64) |  | @gotags: alias:"user_id" |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| user_job | [string](#string) |  | @gotags: alias:"user_job" |
-| target_user_id | [int32](#int32) | optional | @gotags: alias:"target_user_id" |
-| target_user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| target_user_job | [string](#string) |  | @gotags: alias:"target_user_job" |
-| service | [string](#string) |  | @gotags: alias:"service" |
-| method | [string](#string) |  | @gotags: alias:"method" |
-| state | [EventType](#resources-rector-EventType) |  | @gotags: alias:"state" |
-| data | [string](#string) | optional | @gotags: alias:"data" |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-rector-EventType"></a>
-
-### EventType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| EVENT_TYPE_UNSPECIFIED | 0 |  |
-| EVENT_TYPE_ERRORED | 1 |  |
-| EVENT_TYPE_VIEWED | 2 |  |
-| EVENT_TYPE_CREATED | 3 |  |
-| EVENT_TYPE_UPDATED | 4 |  |
-| EVENT_TYPE_DELETED | 5 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_timestamp_timestamp-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5147,280 +5182,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | timestamp | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_job_props-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/job_props.proto
-
-
-
-<a name="resources-users-JobProps"></a>
-
-### JobProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| theme | [string](#string) |  |  |
-| livemap_marker_color | [string](#string) |  |  |
-| quick_buttons | [QuickButtons](#resources-users-QuickButtons) |  |  |
-| radio_frequency | [string](#string) | optional |  |
-| discord_guild_id | [string](#string) | optional |  |
-| discord_last_sync | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| discord_sync_settings | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
-| discord_sync_changes | [DiscordSyncChanges](#resources-users-DiscordSyncChanges) | optional |  |
-| motd | [string](#string) | optional |  |
-| logo_url | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| settings | [JobSettings](#resources-users-JobSettings) |  |  |
-
-
-
-
-
-
-<a name="resources-users-QuickButtons"></a>
-
-### QuickButtons
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| penalty_calculator | [bool](#bool) |  |  |
-| body_checkup | [bool](#bool) |  |  |
-| math_calculator | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_jobs-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/jobs.proto
-
-
-
-<a name="resources-users-Job"></a>
-
-### Job
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
-| label | [string](#string) |  |  |
-| grades | [JobGrade](#resources-users-JobGrade) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-JobGrade"></a>
-
-### JobGrade
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job_name | [string](#string) | optional |  |
-| grade | [int32](#int32) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_users-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/users.proto
-
-
-
-<a name="resources-users-User"></a>
-
-### User
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:"id" |
-| identifier | [string](#string) | optional |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| sex | [string](#string) | optional |  |
-| height | [string](#string) | optional |  |
-| phone_number | [string](#string) | optional |  |
-| visum | [int32](#int32) | optional |  |
-| playtime | [int32](#int32) | optional |  |
-| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
-| licenses | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| group | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserShort"></a>
-
-### UserShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:"id" |
-| identifier | [string](#string) | optional |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| phone_number | [string](#string) | optional |  |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_props-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/props.proto
-
-
-
-<a name="resources-users-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| wanted | [bool](#bool) | optional |  |
-| job_name | [string](#string) | optional | @gotags: alias:"job" |
-| job | [Job](#resources-users-Job) | optional |  |
-| job_grade_number | [int32](#int32) | optional | @gotags: alias:"job_grade" |
-| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
-| traffic_infraction_points | [uint32](#uint32) | optional |  |
-| open_fines | [int64](#int64) | optional |  |
-| blood_type | [string](#string) | optional |  |
-| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| labels | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
-| email | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_licenses-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/licenses.proto
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenses"></a>
-
-### UserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| licenses | [License](#resources-users-License) | repeated |  |
 
 
 
@@ -5689,40 +5450,51 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_users_labels-proto"></a>
+<a name="resources_users_job_props-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/users/labels.proto
+## resources/users/job_props.proto
 
 
 
-<a name="resources-users-CitizenLabel"></a>
+<a name="resources-users-JobProps"></a>
 
-### CitizenLabel
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-users-CitizenLabels"></a>
-
-### CitizenLabels
+### JobProps
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| list | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| theme | [string](#string) |  |  |
+| livemap_marker_color | [string](#string) |  |  |
+| quick_buttons | [QuickButtons](#resources-users-QuickButtons) |  |  |
+| radio_frequency | [string](#string) | optional |  |
+| discord_guild_id | [string](#string) | optional |  |
+| discord_last_sync | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| discord_sync_settings | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
+| discord_sync_changes | [DiscordSyncChanges](#resources-users-DiscordSyncChanges) | optional |  |
+| motd | [string](#string) | optional |  |
+| logo_url | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| settings | [JobSettings](#resources-users-JobSettings) |  |  |
+
+
+
+
+
+
+<a name="resources-users-QuickButtons"></a>
+
+### QuickButtons
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| penalty_calculator | [bool](#bool) |  |  |
+| body_checkup | [bool](#bool) |  |  |
+| math_calculator | [bool](#bool) |  |  |
 
 
 
@@ -5912,6 +5684,269 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE | 1 |  |
 | USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_jobs-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/jobs.proto
+
+
+
+<a name="resources-users-Job"></a>
+
+### Job
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
+| label | [string](#string) |  |  |
+| grades | [JobGrade](#resources-users-JobGrade) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-JobGrade"></a>
+
+### JobGrade
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_name | [string](#string) | optional |  |
+| grade | [int32](#int32) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_labels-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/labels.proto
+
+
+
+<a name="resources-users-CitizenLabel"></a>
+
+### CitizenLabel
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-users-CitizenLabels"></a>
+
+### CitizenLabels
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_licenses-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/licenses.proto
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [string](#string) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserLicenses"></a>
+
+### UserLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| licenses | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_props-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/props.proto
+
+
+
+<a name="resources-users-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| wanted | [bool](#bool) | optional |  |
+| job_name | [string](#string) | optional | @gotags: alias:"job" |
+| job | [Job](#resources-users-Job) | optional |  |
+| job_grade_number | [int32](#int32) | optional | @gotags: alias:"job_grade" |
+| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
+| traffic_infraction_points | [uint32](#uint32) | optional |  |
+| open_fines | [int64](#int64) | optional |  |
+| blood_type | [string](#string) | optional |  |
+| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| labels | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
+| email | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_users-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/users.proto
+
+
+
+<a name="resources-users-User"></a>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:"id" |
+| identifier | [string](#string) | optional |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| sex | [string](#string) | optional |  |
+| height | [string](#string) | optional |  |
+| phone_number | [string](#string) | optional |  |
+| visum | [int32](#int32) | optional |  |
+| playtime | [int32](#int32) | optional |  |
+| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
+| licenses | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| group | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserShort"></a>
+
+### UserShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:"id" |
+| identifier | [string](#string) | optional |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| phone_number | [string](#string) | optional |  |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -6248,6 +6283,95 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources_internet_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/access.proto
+
+
+
+<a name="resources-internet-PageAccess"></a>
+
+### PageAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
+| users | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-internet-PageJobAccess"></a>
+
+### PageJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-internet-PageUserAccess"></a>
+
+### PageUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-internet-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_EDIT | 3 |  |
+| ACCESS_LEVEL_OWNER | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_internet_ads-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6299,40 +6423,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | AD_TYPE_CONTENT_MAIN | 3 |  |
 | AD_TYPE_CONTENT_ASIDE | 4 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_internet_search-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/internet/search.proto
-
-
-
-<a name="resources-internet-SearchResult"></a>
-
-### SearchResult
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| title | [string](#string) |  |  |
-| description | [string](#string) |  |  |
-| url | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -6513,86 +6603,31 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_internet_access-proto"></a>
+<a name="resources_internet_search-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/internet/access.proto
+## resources/internet/search.proto
 
 
 
-<a name="resources-internet-PageAccess"></a>
+<a name="resources-internet-SearchResult"></a>
 
-### PageAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
-| users | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
-
-
-
-
-
-
-<a name="resources-internet-PageJobAccess"></a>
-
-### PageJobAccess
+### SearchResult
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-internet-PageUserAccess"></a>
-
-### PageUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_id | [uint64](#uint64) |  | @gotags: alias:"page_id" |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+| title | [string](#string) |  |  |
+| description | [string](#string) |  |  |
+| url | [string](#string) |  |  |
 
 
 
 
 
  <!-- end messages -->
-
-
-<a name="resources-internet-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_EDIT | 3 |  |
-| ACCESS_LEVEL_OWNER | 4 |  |
-
 
  <!-- end enums -->
 
@@ -13075,94 +13110,6 @@ Connect an identifier/license to the provider with the specified external id (e.
 
 
 
-<a name="services_internet_internet-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/internet/internet.proto
-
-
-
-<a name="services-internet-GetPageRequest"></a>
-
-### GetPageRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| domain | [string](#string) |  |  |
-| path | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-internet-GetPageResponse"></a>
-
-### GetPageResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| page | [resources.internet.Page](#resources-internet-Page) | optional |  |
-
-
-
-
-
-
-<a name="services-internet-SearchRequest"></a>
-
-### SearchRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| search | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="services-internet-SearchResponse"></a>
-
-### SearchResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| results | [resources.internet.SearchResult](#resources-internet-SearchResult) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
-
-<a name="services-internet-InternetService"></a>
-
-### InternetService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| Search | [SearchRequest](#services-internet-SearchRequest) | [SearchResponse](#services-internet-SearchResponse) | @perm: Name=Any |
-| GetPage | [GetPageRequest](#services-internet-GetPageRequest) | [GetPageResponse](#services-internet-GetPageResponse) | @perm: Name=Any |
-
- <!-- end services -->
-
-
-
 <a name="services_internet_domain-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -13344,6 +13291,94 @@ Connect an identifier/license to the provider with the specified external id (e.
 | RegisterDomain | [RegisterDomainRequest](#services-internet-RegisterDomainRequest) | [RegisterDomainResponse](#services-internet-RegisterDomainResponse) | @perm: Name=Any |
 | ListDomains | [ListDomainsRequest](#services-internet-ListDomainsRequest) | [ListDomainsResponse](#services-internet-ListDomainsResponse) | @perm: Name=Any |
 | UpdateDomain | [UpdateDomainRequest](#services-internet-UpdateDomainRequest) | [UpdateDomainResponse](#services-internet-UpdateDomainResponse) | @perm: Name=Any |
+
+ <!-- end services -->
+
+
+
+<a name="services_internet_internet-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/internet/internet.proto
+
+
+
+<a name="services-internet-GetPageRequest"></a>
+
+### GetPageRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| domain | [string](#string) |  |  |
+| path | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-internet-GetPageResponse"></a>
+
+### GetPageResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| page | [resources.internet.Page](#resources-internet-Page) | optional |  |
+
+
+
+
+
+
+<a name="services-internet-SearchRequest"></a>
+
+### SearchRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| search | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services-internet-SearchResponse"></a>
+
+### SearchResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| results | [resources.internet.SearchResult](#resources-internet-SearchResult) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="services-internet-InternetService"></a>
+
+### InternetService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| Search | [SearchRequest](#services-internet-SearchRequest) | [SearchResponse](#services-internet-SearchResponse) | @perm: Name=Any |
+| GetPage | [GetPageRequest](#services-internet-GetPageRequest) | [GetPageResponse](#services-internet-GetPageResponse) | @perm: Name=Any |
 
  <!-- end services -->
 

@@ -82,7 +82,7 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 			Storage:     jetstream.MemoryStorage,
 		})
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to create kv (bucket %s) for store. %w", bucket, err)
 		}
 
 		s.kv = storeKV
@@ -401,8 +401,6 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 
 	wg.Add(1)
 	go func() {
-		defer wg.Done()
-
 		updateCh := watcher.Updates()
 		for {
 			select {
@@ -419,6 +417,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 			case entry := <-updateCh:
 				// After all initial keys have been received, a nil entry is returned
 				if entry == nil {
+					wg.Done()
 					continue
 				}
 
@@ -466,10 +465,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 		}
 	}()
 
-	wg.Add(1)
 	go func() {
-		defer wg.Done()
-
 		for {
 			select {
 			case <-ctx.Done():

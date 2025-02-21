@@ -69,8 +69,8 @@ func NewJobs(p Params) (*Jobs, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		jobs, err := store.New(ctxStartup, p.Logger, p.JS, "cache",
-			store.WithLocks[users.Job, *users.Job](nil),
-			store.WithKVPrefix[users.Job, *users.Job]("jobs"),
+			store.WithLocks[users.Job](nil),
+			store.WithKVPrefix[users.Job]("jobs"),
 		)
 		if err != nil {
 			return err
