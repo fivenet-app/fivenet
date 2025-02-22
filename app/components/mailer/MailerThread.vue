@@ -11,6 +11,7 @@ import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import EmailInfoPopover from './EmailInfoPopover.vue';
 import { canAccess, generateResponseTitle } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
@@ -127,7 +128,7 @@ async function postMessage(values: Schema): Promise<void> {
                 rawContent: values.content,
             },
             data: {
-                entry: [],
+                attachments: [],
             },
         },
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
@@ -143,6 +144,7 @@ async function postMessage(values: Schema): Promise<void> {
     state.value.title = '';
     state.value.content = '';
     state.value.recipients = [];
+    state.value.attachments = [];
 
     resetForm();
 }
@@ -290,6 +292,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div class="mx-auto w-full max-w-screen-xl break-words rounded-lg bg-neutral-100 dark:bg-base-900">
                     <HTMLContent v-if="message.content?.content" class="px-4 py-2" :value="message.content.content" />
                 </div>
+
+                <UAccordion
+                    v-if="message.data?.attachments && message.data?.attachments.length > 0"
+                    class="mt-1"
+                    :items="[{ slot: 'attachments', label: $t('common.attachment', 2), color: 'white', variant: 'outline' }]"
+                >
+                    <template #attachments>
+                        <div class="flex flex-col gap-1">
+                            <template v-for="(attachment, idx) in message.data.attachments" :key="idx">
+                                <DocumentInfoPopover
+                                    v-if="attachment.data.oneofKind === 'documentId'"
+                                    :document-id="attachment.data.documentId"
+                                    class="flex-1"
+                                    button-class="flex-1"
+                                    show-id
+                                />
+                            </template>
+                        </div>
+                    </template>
+                </UAccordion>
             </div>
         </div>
 

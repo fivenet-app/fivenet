@@ -72,13 +72,21 @@ func (m *Message) Sanitize() error {
 	return nil
 }
 
+func (m *MessageAttachment) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *MessageData) Sanitize() error {
 	if m == nil {
 		return nil
 	}
 
-	// Field: Entry
-	for idx, item := range m.Entry {
+	// Field: Attachments
+	for idx, item := range m.Attachments {
 		_, _ = idx, item
 
 		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
@@ -87,14 +95,6 @@ func (m *MessageData) Sanitize() error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *MessageDataEntry) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	return nil

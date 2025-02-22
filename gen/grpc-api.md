@@ -418,8 +418,8 @@
   
 - [resources/mailer/message.proto](#resources_mailer_message-proto)
     - [Message](#resources-mailer-Message)
+    - [MessageAttachment](#resources-mailer-MessageAttachment)
     - [MessageData](#resources-mailer-MessageData)
-    - [MessageDataEntry](#resources-mailer-MessageDataEntry)
   
 - [resources/mailer/settings.proto](#resources_mailer_settings-proto)
     - [EmailSettings](#resources-mailer-EmailSettings)
@@ -6864,6 +6864,21 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources-mailer-MessageAttachment"></a>
+
+### MessageAttachment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
 <a name="resources-mailer-MessageData"></a>
 
 ### MessageData
@@ -6872,22 +6887,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| entry | [MessageDataEntry](#resources-mailer-MessageDataEntry) | repeated |  |
-
-
-
-
-
-
-<a name="resources-mailer-MessageDataEntry"></a>
-
-### MessageDataEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| document_id | [uint64](#uint64) |  |  |
+| attachments | [MessageAttachment](#resources-mailer-MessageAttachment) | repeated |  |
 
 
 

@@ -75,14 +75,14 @@ export interface Message {
  */
 export interface MessageData {
     /**
-     * @generated from protobuf field: repeated resources.mailer.MessageDataEntry entry = 1;
+     * @generated from protobuf field: repeated resources.mailer.MessageAttachment attachments = 1;
      */
-    entry: MessageDataEntry[];
+    attachments: MessageAttachment[];
 }
 /**
- * @generated from protobuf message resources.mailer.MessageDataEntry
+ * @generated from protobuf message resources.mailer.MessageAttachment
  */
-export interface MessageDataEntry {
+export interface MessageAttachment {
     /**
      * @generated from protobuf oneof: data
      */
@@ -227,12 +227,12 @@ export const Message = new Message$Type();
 class MessageData$Type extends MessageType<MessageData> {
     constructor() {
         super("resources.mailer.MessageData", [
-            { no: 1, name: "entry", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MessageDataEntry, options: { "validate.rules": { repeated: { maxItems: "3" } } } }
+            { no: 1, name: "attachments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MessageAttachment, options: { "validate.rules": { repeated: { maxItems: "3" } } } }
         ]);
     }
     create(value?: PartialMessage<MessageData>): MessageData {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.entry = [];
+        message.attachments = [];
         if (value !== undefined)
             reflectionMergePartial<MessageData>(this, message, value);
         return message;
@@ -242,8 +242,8 @@ class MessageData$Type extends MessageType<MessageData> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.mailer.MessageDataEntry entry */ 1:
-                    message.entry.push(MessageDataEntry.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.mailer.MessageAttachment attachments */ 1:
+                    message.attachments.push(MessageAttachment.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -257,9 +257,9 @@ class MessageData$Type extends MessageType<MessageData> {
         return message;
     }
     internalBinaryWrite(message: MessageData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.mailer.MessageDataEntry entry = 1; */
-        for (let i = 0; i < message.entry.length; i++)
-            MessageDataEntry.internalBinaryWrite(message.entry[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.mailer.MessageAttachment attachments = 1; */
+        for (let i = 0; i < message.attachments.length; i++)
+            MessageAttachment.internalBinaryWrite(message.attachments[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -271,20 +271,20 @@ class MessageData$Type extends MessageType<MessageData> {
  */
 export const MessageData = new MessageData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class MessageDataEntry$Type extends MessageType<MessageDataEntry> {
+class MessageAttachment$Type extends MessageType<MessageAttachment> {
     constructor() {
-        super("resources.mailer.MessageDataEntry", [
+        super("resources.mailer.MessageAttachment", [
             { no: 1, name: "document_id", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
-    create(value?: PartialMessage<MessageDataEntry>): MessageDataEntry {
+    create(value?: PartialMessage<MessageAttachment>): MessageAttachment {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.data = { oneofKind: undefined };
         if (value !== undefined)
-            reflectionMergePartial<MessageDataEntry>(this, message, value);
+            reflectionMergePartial<MessageAttachment>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageDataEntry): MessageDataEntry {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageAttachment): MessageAttachment {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -306,7 +306,7 @@ class MessageDataEntry$Type extends MessageType<MessageDataEntry> {
         }
         return message;
     }
-    internalBinaryWrite(message: MessageDataEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: MessageAttachment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 document_id = 1; */
         if (message.data.oneofKind === "documentId")
             writer.tag(1, WireType.Varint).uint64(message.data.documentId);
@@ -317,6 +317,6 @@ class MessageDataEntry$Type extends MessageType<MessageDataEntry> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.mailer.MessageDataEntry
+ * @generated MessageType for protobuf message resources.mailer.MessageAttachment
  */
-export const MessageDataEntry = new MessageDataEntry$Type();
+export const MessageAttachment = new MessageAttachment$Type();

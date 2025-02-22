@@ -4,10 +4,11 @@ import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
-import type { MessageDataEntry } from '~~/gen/ts/resources/mailer/message';
+import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import TemplateSelector from './TemplateSelector.vue';
 import { defaultEmptyContent } from './helpers';
+import TemplateSelector from './TemplateSelector.vue';
+import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
 const { isOpen } = useModal();
 
@@ -26,7 +27,7 @@ const schema = z.object({
         .array()
         .min(1)
         .max(20),
-    attachments: z.custom<MessageDataEntry>().array().max(3),
+    attachments: z.custom<MessageAttachment>().array().max(3),
 });
 
 type Schema = z.output<typeof schema>;
@@ -35,6 +36,19 @@ async function createThread(values: Schema): Promise<void> {
     if (!selectedEmail.value?.id) {
         return;
     }
+
+    console.log(
+        'attachments',
+        values.attachments
+            .filter((a) => {
+                if (a.data.oneofKind === 'documentId') {
+                    return a.data.documentId > 0;
+                }
+
+                return false;
+            })
+            .map((a) => toRaw(a)),
+    );
 
     await mailerStore.createThread({
         thread: {
@@ -56,7 +70,15 @@ async function createThread(values: Schema): Promise<void> {
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             data: {
-                entry: values.attachments,
+                attachments: values.attachments
+                    .filter((a) => {
+                        if (a.data.oneofKind === 'documentId') {
+                            return a.data.documentId > 0;
+                        }
+
+                        return false;
+                    })
+                    .map((a) => toRaw(a)),
             },
         },
 
@@ -73,6 +95,7 @@ async function createThread(values: Schema): Promise<void> {
     state.value.title = '';
     state.value.content = '';
     state.value.recipients = [];
+    state.value.attachments = [];
 
     isOpen.value = false;
 }
@@ -306,48 +329,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <!-- TODO split out to a separate component
-                        <UFormGroup name="attachments" :label="$t('common.attachment', 2)">
-                            <div class="flex flex-col gap-1">
-                                <div v-for="(_, idx) in state.attachments" :key="idx" class="flex items-center gap-1">
-                                    <template v-if="state.attachments[idx]?.data.oneofKind === 'documentId'">
-                                        <UFormGroup
-                                            :name="`attachments.${idx}`"
-                                            class="grid grid-cols-2 items-center gap-2"
-                                            :ui="{ container: '' }"
-                                        >
-                                            <USelectMenu
-                                                v-model="state.attachments[idx].data.documentId"
-                                                value-attribute="id"
-                                                option-attribute="title"
-                                                class="w-full flex-1"
-                                                :placeholder="$t('common.document')"
-                                            />
-                                        </UFormGroup>
-                                    </template>
-
-                                    <UButton
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-close"
-                                        :disabled="!canSubmit"
-                                        @click="state.attachments.splice(idx, 1)"
-                                    />
-                                </div>
-                            </div>
-
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-plus"
-                                :disabled="!canSubmit || state.attachments.length >= 8"
-                                :class="state.attachments.length ? 'mt-2' : ''"
-                                @click="
-                                    state.attachments.push({
-                                        data: { oneofKind: 'documentId', documentId: 0 },
-                                    })
-                                "
-                            />
-                        </UFormGroup>
-                        -->
+                        <ThreadAttachmentsForm v-model="state.attachments" :can-submit="canSubmit" />
                     </div>
                 </div>
 

@@ -30,10 +30,10 @@ message Message {
 }
 
 message MessageData {
-  repeated MessageDataEntry entry = 1 [(validate.rules).repeated.max_items = 3];
+  repeated MessageAttachment attachments = 1 [(validate.rules).repeated.max_items = 3];
 }
 
-message MessageDataEntry {
+message MessageAttachment {
   oneof data {
     option (validate.required) = true;
 

@@ -17,7 +17,9 @@ const props = withDefaults(
         document?: Document | DocumentShort;
         hideTrailing?: boolean;
         hideCategory?: boolean;
+        showId?: boolean;
         loadOnOpen?: boolean;
+        loadOnVisible?: boolean;
         buttonClass?: ClassProp;
     }>(),
     {
@@ -25,7 +27,9 @@ const props = withDefaults(
         document: undefined,
         hideTrailing: false,
         hideCategory: false,
+        showId: false,
         loadOnOpen: false,
+        loadOnVisible: false,
         buttonClass: '',
     },
 );
@@ -42,7 +46,7 @@ const {
     pending: loading,
     error,
 } = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), {
-    immediate: !props.loadOnOpen,
+    immediate: !props.loadOnOpen && !props.loadOnVisible,
 });
 
 async function getDocument(id: number): Promise<Document> {
@@ -84,12 +88,16 @@ watchOnce(opened, async () => {
             @click="opened = true"
         >
             <slot name="title" :document="document" :loading="loading">
-                <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
+                <template v-if="!document && loading">
+                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon />
+                    <USkeleton v-else class="h-8 w-full min-w-[125px]" />
+                </template>
 
                 <template v-else>
+                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon />
                     <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
-                    <span v-bind="$attrs"> {{ document?.title }} </span>
+                    <span v-bind="$attrs">{{ document.title }} </span>
                 </template>
             </slot>
         </UButton>
