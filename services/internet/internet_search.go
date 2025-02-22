@@ -51,11 +51,16 @@ func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pb
 			tPage.Path,
 			tDomains.ID,
 			tDomains.Name,
+			tTLDs.ID,
+			tTLDs.Name,
 		).
 		FROM(
 			tPage.
 				INNER_JOIN(tDomains,
 					tDomains.ID.EQ(tPage.DomainID),
+				).
+				INNER_JOIN(tTLDs,
+					tTLDs.ID.EQ(tDomains.TldID),
 				),
 		).
 		WHERE(condition).

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { getGRPCInternetClient } from '~/composables/grpc';
 import { useInternetStore, type Tab } from '~/store/internet';
 import { AdType } from '~~/gen/ts/resources/internet/ads';
@@ -46,13 +45,17 @@ const state = reactive<Schema>({
 });
 
 async function searchInternet(values: Schema): Promise<SearchResponse> {
+    if (values.search === '') {
+        return {
+            results: [],
+        };
+    }
+
     try {
         const call = getGRPCInternetClient().search({
             search: values.search,
         });
         const { response } = await call;
-
-        searchResults.value = response;
 
         return response;
     } catch (e) {
@@ -65,7 +68,8 @@ const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
 
-    await searchInternet(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    const response = await searchInternet(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    searchResults.value = response;
 }, 1000);
 
 const searchResults = ref<undefined | SearchResponse>(undefined);
@@ -83,14 +87,16 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
         <ULandingHero
             :description="$t('components.internet.pages.homepage.description')"
             :ui="{
-                wrapper: 'py-6 sm:py-16 md:py-16',
+                wrapper: 'py-6 sm:py-6 md:py-6',
             }"
         >
             <template #title>
                 <img src="/images/components/internet/homepage/logo.png" :alt="$t('common.logo')" class="mx-auto h-48" />
             </template>
+        </ULandingHero>
 
-            <template #links>
+        <ULandingSection :ui="{ wrapper: 'pt-0 sm:pt-0 pb-6 sm:pb-6' }">
+            <div class="flex w-full flex-1 flex-col items-center gap-1">
                 <UForm :schema="schema" :state="state" class="inline-flex gap-1" @submit="onSubmitThrottle">
                     <UFormGroup name="search">
                         <UInput
@@ -100,30 +106,61 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                             size="xl"
                             :placeholder="$t('common.search')"
                             :disabled="!canSubmit"
-                        />
+                            autocomplete="off"
+                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                        >
+                            <template #trailing>
+                                <UButton
+                                    v-show="state.search !== ''"
+                                    color="gray"
+                                    variant="link"
+                                    icon="i-heroicons-x-mark-20-solid"
+                                    :padded="false"
+                                    @click="state.search = ''"
+                                />
+                            </template>
+                        </UInput>
                     </UFormGroup>
 
                     <UButton type="submit" icon="i-mdi-search" size="xl" :disabled="!canSubmit" />
                 </UForm>
-            </template>
-        </ULandingHero>
 
-        <ULandingSection v-if="searchResults" :ui="{ wrapper: 'py-6 sm:py-6' }">
-            <DataNoDataBlock v-if="searchResults.results.length === 0" :type="$t('common.result', 2)" />
+                <div>
+                    <p v-if="searchResults" class="text-sm">
+                        {{ $t('common.found', [$t('common.search_results', searchResults.results.length)]) }}
+                    </p>
+                </div>
 
-            <template v-else>
-                <UCard v-for="result in searchResults.results" :key="result.url">
-                    <template #header>
-                        <h3 class="text-xl font-semibold">{{ result.title }}</h3>
-                    </template>
+                <div
+                    v-if="searchResults"
+                    class="grid w-full max-w-lg grid-cols-1 divide-y divide-gray-200 dark:divide-gray-800"
+                >
+                    <UCard
+                        v-for="result in searchResults.results"
+                        :key="result.id"
+                        :ui="{
+                            divide: '',
+                            ring: '',
+                            shadow: '',
+                            header: { padding: 'px-4 py-1 sm:p-1 sm:px-4' },
+                            body: { padding: 'px-4 py-1 sm:p-1 sm:px-4' },
+                            footer: { padding: 'px-4 py-1 sm:p-1 sm:px-4' },
+                        }"
+                    >
+                        <template #header>
+                            <ULink
+                                class="inline-flex items-center gap-1 hover:underline"
+                                @click="internetStore.goTo(`${result.domain?.name}.${result.domain?.tld?.name}`, result.path)"
+                            >
+                                <UIcon name="i-mdi-web" class="size-6" />
+                                <h3 class="text-xl font-semibold">{{ result.title }}</h3>
+                            </ULink>
+                        </template>
 
-                    <p class="">{{ result.description }}</p>
-
-                    <template #footer>
-                        <p class="text-sm">{{ result.url }}</p>
-                    </template>
-                </UCard>
-            </template>
+                        <p class="text-sm">{{ result.description }}</p>
+                    </UCard>
+                </div>
+            </div>
         </ULandingSection>
 
         <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">

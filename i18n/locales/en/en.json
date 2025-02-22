@@ -556,7 +556,10 @@
         "domains": "No Domain | {n} Domain | {n} Domains",
         "timeline": "Timeline",
         "day": "Day | Days",
-        "tld": "TLD | TLDs"
+        "tld": "TLD | TLDs",
+        "search_result": "Search Result | Search Results",
+        "search_results": "No Search Results | {n} Search Result | {n} Search Results",
+        "found": "Found {0}"
     },
     "components": {
         "partials": {
