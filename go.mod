@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet
 
-go 1.23.5
+go 1.24.0
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -62,7 +62,7 @@ require (
 	go.uber.org/fx v1.23.0
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/crypto v0.33.0
+	golang.org/x/crypto v0.34.0
 	golang.org/x/exp v0.0.0-20250218142911-aa4b98e5adaa
 	golang.org/x/image v0.24.0
 	golang.org/x/net v0.35.0

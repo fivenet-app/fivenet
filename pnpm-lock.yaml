@@ -5654,6 +5654,7 @@ packages:
 
   protoc-gen-js@3.21.4:
     resolution: {integrity: sha512-GGUkE4fwesiwq8cWkJ+pU6DqJiokXS8nkDGZe7SscxKBSALUnXxNaBwfXODkbi4Cji8E/s+71zNKJoEEza/M7Q==}
+    deprecated: Upgrade to 3.21.4-4
     hasBin: true
 
   protoc@1.1.3:
