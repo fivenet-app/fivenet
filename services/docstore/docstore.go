@@ -31,8 +31,6 @@ import (
 const (
 	DocsDefaultPageSize = 16
 	DocSummaryLength    = 128
-
-	housekeeperMinDays = 60
 )
 
 var (
@@ -595,6 +593,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *pbdocstore.DeleteDocum
 		ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_DELETED,
 		CreatorId:    &userInfo.UserId,
 		CreatorJob:   userInfo.Job,
+		Reason:       req.Reason,
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}

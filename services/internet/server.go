@@ -3,11 +3,28 @@ package internet
 import (
 	"database/sql"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/internet"
 	pbinternet "github.com/fivenet-app/fivenet/gen/go/proto/services/internet"
+	"github.com/fivenet-app/fivenet/pkg/access"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetInternetPages,
+		TimestampColumn: table.FivenetInternetPages.DeletedAt,
+		MinDays:         60,
+	})
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetInternetAds,
+		TimestampColumn: table.FivenetInternetAds.DeletedAt,
+		MinDays:         60,
+	})
+}
 
 type Server struct {
 	pbinternet.InternetServiceServer
@@ -16,6 +33,8 @@ type Server struct {
 
 	db  *sql.DB
 	aud audit.IAuditer
+
+	access *access.Grouped[internet.PageJobAccess, *internet.PageJobAccess, internet.PageUserAccess, *internet.PageUserAccess, access.DummyQualificationAccess[internet.AccessLevel], *access.DummyQualificationAccess[internet.AccessLevel], internet.AccessLevel]
 }
 
 type Params struct {
@@ -35,8 +54,8 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	pbinternet.RegisterInternetServiceServer(srv, s)
 	pbinternet.RegisterDomainServiceServer(srv, s)
+	pbinternet.RegisterInternetServiceServer(srv, s)
 	pbinternet.RegisterAdsServiceServer(srv, s)
 }
 

@@ -68,10 +68,11 @@ async function getDocument(id: number): Promise<Document> {
     }
 }
 
-async function deleteDocument(id: number): Promise<void> {
+async function deleteDocument(id: number, reason?: string): Promise<void> {
     try {
         await getGRPCDocStoreClient().deleteDocument({
             documentId: id,
+            reason: reason,
         });
 
         notifications.add({

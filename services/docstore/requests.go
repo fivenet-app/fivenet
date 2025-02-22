@@ -371,6 +371,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *pbdocstore.UpdateDo
 
 			if _, err := s.DeleteDocument(ctx, &pbdocstore.DeleteDocumentRequest{
 				DocumentId: request.DocumentId,
+				Reason:     request.Reason,
 			}); err != nil {
 				return nil, err
 			}

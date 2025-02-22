@@ -171,6 +171,8 @@ message UpdateDocumentResponse {
 
 message DeleteDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
+  // @sanitize: method=StripTags
+  optional string reason = 2 [(validate.rules).string.max_len = 255];
 }
 
 message DeleteDocumentResponse {}

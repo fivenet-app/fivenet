@@ -1,5 +1,6 @@
 import type { Email } from '~~/gen/ts/resources/mailer/email';
 import type { MailerEvent } from '~~/gen/ts/resources/mailer/events';
+import type { MessageDataEntry } from '~~/gen/ts/resources/mailer/message';
 import type { Thread, ThreadState } from '~~/gen/ts/resources/mailer/thread';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type {
@@ -40,6 +41,7 @@ export const useMailerStore = defineStore(
             title: '',
             content: '',
             recipients: [] as { label: string }[],
+            attachments: [] as MessageDataEntry[],
         });
 
         const emails = ref<Email[]>([]);

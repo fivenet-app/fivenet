@@ -559,7 +559,8 @@
         "tld": "TLD | TLDs",
         "search_result": "Search Result | Search Results",
         "search_results": "No Search Results | {n} Search Result | {n} Search Results",
-        "found": "Found {0}"
+        "found": "Found {0}",
+        "attachment": "Attachment | Attachments"
     },
     "components": {
         "partials": {

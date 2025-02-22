@@ -4,6 +4,7 @@ import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
+import type { MessageDataEntry } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import TemplateSelector from './TemplateSelector.vue';
 import { defaultEmptyContent } from './helpers';
@@ -25,6 +26,7 @@ const schema = z.object({
         .array()
         .min(1)
         .max(20),
+    attachments: z.custom<MessageDataEntry>().array().max(3),
 });
 
 type Schema = z.output<typeof schema>;
@@ -53,6 +55,9 @@ async function createThread(values: Schema): Promise<void> {
             },
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
+            data: {
+                entry: values.attachments,
+            },
         },
 
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
@@ -300,6 +305,49 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 />
                             </ClientOnly>
                         </UFormGroup>
+
+                        <!-- TODO split out to a separate component
+                        <UFormGroup name="attachments" :label="$t('common.attachment', 2)">
+                            <div class="flex flex-col gap-1">
+                                <div v-for="(_, idx) in state.attachments" :key="idx" class="flex items-center gap-1">
+                                    <template v-if="state.attachments[idx]?.data.oneofKind === 'documentId'">
+                                        <UFormGroup
+                                            :name="`attachments.${idx}`"
+                                            class="grid grid-cols-2 items-center gap-2"
+                                            :ui="{ container: '' }"
+                                        >
+                                            <USelectMenu
+                                                v-model="state.attachments[idx].data.documentId"
+                                                value-attribute="id"
+                                                option-attribute="title"
+                                                class="w-full flex-1"
+                                                :placeholder="$t('common.document')"
+                                            />
+                                        </UFormGroup>
+                                    </template>
+
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-close"
+                                        :disabled="!canSubmit"
+                                        @click="state.attachments.splice(idx, 1)"
+                                    />
+                                </div>
+                            </div>
+
+                            <UButton
+                                :ui="{ rounded: 'rounded-full' }"
+                                icon="i-mdi-plus"
+                                :disabled="!canSubmit || state.attachments.length >= 8"
+                                :class="state.attachments.length ? 'mt-2' : ''"
+                                @click="
+                                    state.attachments.push({
+                                        data: { oneofKind: 'documentId', documentId: 0 },
+                                    })
+                                "
+                            />
+                        </UFormGroup>
+                        -->
                     </div>
                 </div>
 

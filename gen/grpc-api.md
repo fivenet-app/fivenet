@@ -6885,6 +6885,11 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+
+
 
 
 
@@ -9421,6 +9426,7 @@ Connect an identifier/license to the provider with the specified external id (e.
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | document_id | [uint64](#uint64) |  | @gotags: alias:"id" |
+| reason | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 

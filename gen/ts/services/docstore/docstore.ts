@@ -407,6 +407,12 @@ export interface DeleteDocumentRequest {
      * @generated from protobuf field: uint64 document_id = 1;
      */
     documentId: number; // @gotags: alias:"id"
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string reason = 2;
+     */
+    reason?: string;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteDocumentResponse
@@ -2575,7 +2581,8 @@ export const UpdateDocumentResponse = new UpdateDocumentResponse$Type();
 class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.docstore.DeleteDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }
     create(value?: PartialMessage<DeleteDocumentRequest>): DeleteDocumentRequest {
@@ -2593,6 +2600,9 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
                 case /* uint64 document_id */ 1:
                     message.documentId = reader.uint64().toNumber();
                     break;
+                case /* optional string reason */ 2:
+                    message.reason = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2608,6 +2618,9 @@ class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
         /* uint64 document_id = 1; */
         if (message.documentId !== 0)
             writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* optional string reason = 2; */
+        if (message.reason !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.reason);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

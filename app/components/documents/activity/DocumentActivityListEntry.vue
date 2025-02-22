@@ -30,6 +30,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
             </div>
+
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
@@ -47,14 +48,27 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                             </span>
                         </span>
                     </h3>
+
                     <p class="text-sm text-gray-400">
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
-                <p class="inline-flex text-sm">
-                    {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                </p>
+
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm">
+                        <template v-if="!!entry.reason">
+                            <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                            <span>
+                                {{ entry.reason }}
+                            </span>
+                        </template>
+                    </p>
+
+                    <p class="inline-flex text-sm">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" :user="entry.creator" />
+                    </p>
+                </div>
             </div>
         </div>
 
@@ -64,6 +78,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
                         <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
                     </div>
+
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
@@ -81,10 +96,22 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>
-                        <p class="inline-flex text-sm">
-                            {{ $t('common.created_by') }}
-                            <CitizenInfoPopover class="ml-1" :user="entry.creator" />
-                        </p>
+
+                        <div class="flex items-center justify-between">
+                            <p class="inline-flex gap-1 text-sm">
+                                <template v-if="!!entry.reason">
+                                    <span class="font-semibold">{{ $t('common.reason', 1) }}:</span>
+                                    <span>
+                                        {{ entry.reason }}
+                                    </span>
+                                </template>
+                            </p>
+
+                            <p class="inline-flex text-sm">
+                                {{ $t('common.created_by') }}
+                                <CitizenInfoPopover class="ml-1" :user="entry.creator" />
+                            </p>
+                        </div>
                     </div>
                 </div>
             </template>

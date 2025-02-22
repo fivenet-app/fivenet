@@ -18,6 +18,8 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
+const housekeeperMinDays = 60
+
 func init() {
 	housekeeper.AddTable(&housekeeper.Table{
 		Table:           table.FivenetDocuments,

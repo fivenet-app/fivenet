@@ -4601,6 +4601,21 @@ func (m *DeleteDocumentRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := DeleteDocumentRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return DeleteDocumentRequestMultiError(errors)
 	}

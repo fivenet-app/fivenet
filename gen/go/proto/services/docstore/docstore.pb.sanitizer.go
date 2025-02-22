@@ -256,6 +256,12 @@ func (m *DeleteDocumentRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: Reason
+
+	if m.Reason != nil {
+		*m.Reason = htmlsanitizer.StripTags(*m.Reason)
+	}
+
 	return nil
 }
 

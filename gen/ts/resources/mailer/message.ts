@@ -83,6 +83,18 @@ export interface MessageData {
  * @generated from protobuf message resources.mailer.MessageDataEntry
  */
 export interface MessageDataEntry {
+    /**
+     * @generated from protobuf oneof: data
+     */
+    data: {
+        oneofKind: "documentId";
+        /**
+         * @generated from protobuf field: uint64 document_id = 1;
+         */
+        documentId: number;
+    } | {
+        oneofKind: undefined;
+    };
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Message$Type extends MessageType<Message> {
@@ -261,18 +273,43 @@ export const MessageData = new MessageData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class MessageDataEntry$Type extends MessageType<MessageDataEntry> {
     constructor() {
-        super("resources.mailer.MessageDataEntry", []);
+        super("resources.mailer.MessageDataEntry", [
+            { no: 1, name: "document_id", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
     }
     create(value?: PartialMessage<MessageDataEntry>): MessageDataEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<MessageDataEntry>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageDataEntry): MessageDataEntry {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id */ 1:
+                    message.data = {
+                        oneofKind: "documentId",
+                        documentId: reader.uint64().toNumber()
+                    };
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: MessageDataEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1; */
+        if (message.data.oneofKind === "documentId")
+            writer.tag(1, WireType.Varint).uint64(message.data.documentId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

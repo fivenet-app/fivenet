@@ -514,6 +514,35 @@ func (m *MessageDataEntry) validate(all bool) error {
 
 	var errors []error
 
+	oneofDataPresent := false
+	switch v := m.Data.(type) {
+	case *MessageDataEntry_DocumentId:
+		if v == nil {
+			err := MessageDataEntryValidationError{
+				field:  "Data",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		oneofDataPresent = true
+		// no validation rules for DocumentId
+	default:
+		_ = v // ensures v is used
+	}
+	if !oneofDataPresent {
+		err := MessageDataEntryValidationError{
+			field:  "Data",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return MessageDataEntryMultiError(errors)
 	}

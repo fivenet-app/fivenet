@@ -36,28 +36,24 @@ const { isOpen } = useModal();
         @update:model-value="cancel && cancel()"
     >
         <template #footer>
-            <UButtonGroup class="inline-flex w-full">
-                <UButton
-                    :color="color"
-                    :label="$t('common.confirm')"
-                    @click="
-                        confirm();
-                        isOpen = false;
-                    "
-                />
-                <UButton
-                    block
-                    class="flex-1"
-                    color="white"
-                    :label="$t('common.cancel')"
-                    @click="
-                        if (cancel) {
-                            cancel();
-                        }
-                        isOpen = false;
-                    "
-                />
-            </UButtonGroup>
+            <UButton
+                :color="color"
+                :label="$t('common.confirm')"
+                @click="
+                    confirm();
+                    isOpen = false;
+                "
+            />
+            <UButton
+                color="white"
+                :label="$t('common.cancel')"
+                @click="
+                    if (cancel) {
+                        cancel();
+                    }
+                    isOpen = false;
+                "
+            />
         </template>
     </UDashboardModal>
 </template>

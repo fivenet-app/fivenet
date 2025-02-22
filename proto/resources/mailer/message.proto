@@ -33,4 +33,10 @@ message MessageData {
   repeated MessageDataEntry entry = 1 [(validate.rules).repeated.max_items = 3];
 }
 
-message MessageDataEntry {}
+message MessageDataEntry {
+  oneof data {
+    option (validate.required) = true;
+
+    uint64 document_id = 1;
+  }
+}
