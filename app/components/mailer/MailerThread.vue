@@ -131,7 +131,13 @@ async function postMessage(values: Schema): Promise<void> {
                 rawContent: values.content,
             },
             data: {
-                attachments: [],
+                attachments: values.attachments.filter((a) => {
+                    if (a.data.oneofKind === 'document') {
+                        return a.data.document.id > 0;
+                    }
+
+                    return false;
+                }),
             },
         },
         recipients: [...new Set(values.recipients.map((r) => r.label.trim()))],
