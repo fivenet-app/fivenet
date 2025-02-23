@@ -181,6 +181,13 @@ func (s *Server) PostMessage(ctx context.Context, req *pbmailer.PostMessageReque
 	req.Message.CreatorId = &userInfo.UserId
 	req.Message.CreatorJob = &userInfo.Job
 
+	// Remove titles from attached documents
+	for _, attachment := range req.Message.Data.Attachments {
+		if a, ok := attachment.Data.(*mailer.MessageAttachment_Document); ok {
+			a.Document.Title = nil
+		}
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

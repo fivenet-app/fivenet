@@ -19,8 +19,8 @@ const props = withDefaults(
         hideCategory?: boolean;
         showId?: boolean;
         loadOnOpen?: boolean;
-        loadOnVisible?: boolean;
         buttonClass?: ClassProp;
+        disableTooltip?: boolean;
     }>(),
     {
         documentId: undefined,
@@ -29,8 +29,8 @@ const props = withDefaults(
         hideCategory: false,
         showId: false,
         loadOnOpen: false,
-        loadOnVisible: false,
         buttonClass: '',
+        disableTooltip: false,
     },
 );
 
@@ -46,7 +46,7 @@ const {
     pending: loading,
     error,
 } = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), {
-    immediate: !props.loadOnOpen && !props.loadOnVisible,
+    immediate: !props.loadOnOpen,
 });
 
 async function getDocument(id: number): Promise<Document> {
@@ -89,12 +89,12 @@ watchOnce(opened, async () => {
         >
             <slot name="title" :document="document" :loading="loading">
                 <template v-if="!document && loading">
-                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon />
+                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
                     <USkeleton v-else class="h-8 w-full min-w-[125px]" />
                 </template>
 
                 <template v-else>
-                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon />
+                    <IDCopyBadge v-if="showId" :id="documentId" prefix="DOC" hide-icon :disable-tooltip="disableTooltip" />
                     <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
                     <span v-bind="$attrs">{{ document.title }} </span>

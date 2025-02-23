@@ -555,7 +555,12 @@
         "week_view": "Wochenansicht",
         "domains": "Keine Domain | {n} Domains | {n} Domains",
         "timeline": "Zeitstrahl",
-        "day": "Tag | Tage"
+        "day": "Tag | Tage",
+        "tld": "TLD | TLDs",
+        "search_result": "Suchergebnis | Suchergebnisse",
+        "search_results": "Keine Suchergebnisse | {n} Suchergebnis | {n} Suchergebnisse",
+        "found": "{0} gefunden",
+        "attachment": "Anhang | Anhänge"
     },
     "components": {
         "partials": {
@@ -1290,6 +1295,9 @@
             },
             "settings": {
                 "clear_address_book": "Adressbuch leeren"
+            },
+            "ThreadAttachmentsForm": {
+                "document_title_warning": "Durch das Anhängen von Dokumenten an eine E-Mail können die Titel der Dokumente für den Empfänger sichtbar sein, auch wenn dieser keinen Zugriff auf das Dokument hat."
             }
         },
         "internet": {
@@ -1306,7 +1314,7 @@
                 },
                 "nic_registrar": {
                     "title": "Netzwerk-Informationszentrum",
-                    "description": "Network Information Center, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst.",
+                    "description": "Netzwerk-Informationszentrum, das sich mit der Registrierung und Verwaltung von Domains und Websites im Internet befasst.",
                     "search": {
                         "button": "Domains suchen",
                         "available": {

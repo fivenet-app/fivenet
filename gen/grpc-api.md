@@ -419,6 +419,7 @@
 - [resources/mailer/message.proto](#resources_mailer_message-proto)
     - [Message](#resources-mailer-Message)
     - [MessageAttachment](#resources-mailer-MessageAttachment)
+    - [MessageAttachmentDocument](#resources-mailer-MessageAttachmentDocument)
     - [MessageData](#resources-mailer-MessageData)
   
 - [resources/mailer/settings.proto](#resources_mailer_settings-proto)
@@ -6872,7 +6873,23 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| document_id | [uint64](#uint64) |  |  |
+| document | [MessageAttachmentDocument](#resources-mailer-MessageAttachmentDocument) |  |  |
+
+
+
+
+
+
+<a name="resources-mailer-MessageAttachmentDocument"></a>
+
+### MessageAttachmentDocument
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| title | [string](#string) | optional |  |
 
 
 

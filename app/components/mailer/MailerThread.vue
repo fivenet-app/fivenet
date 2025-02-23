@@ -10,11 +10,13 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useMailerStore } from '~/store/mailer';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
+import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import DocumentInfoPopover from '../partials/documents/DocumentInfoPopover.vue';
 import EmailInfoPopover from './EmailInfoPopover.vue';
 import { canAccess, generateResponseTitle } from './helpers';
 import TemplateSelector from './TemplateSelector.vue';
+import ThreadAttachmentsModal from './ThreadAttachmentsModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -28,7 +30,7 @@ const props = withDefaults(
 
 const modal = useModal();
 
-const { isSuperuser } = useAuth();
+const { can, isSuperuser } = useAuth();
 
 const notifications = useNotificatorStore();
 
@@ -42,6 +44,7 @@ const schema = z.object({
         .object({ label: z.string().min(6).max(80) })
         .array()
         .max(20),
+    attachments: z.custom<MessageAttachment>().array().max(3),
 });
 
 type Schema = z.output<typeof schema>;
@@ -302,11 +305,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <div class="flex flex-col gap-1">
                             <template v-for="(attachment, idx) in message.data.attachments" :key="idx">
                                 <DocumentInfoPopover
-                                    v-if="attachment.data.oneofKind === 'documentId'"
-                                    :document-id="attachment.data.documentId"
+                                    v-if="attachment.data.oneofKind === 'document'"
+                                    :document-id="attachment.data.document.id"
                                     class="flex-1"
                                     button-class="flex-1"
                                     show-id
+                                    load-on-open
+                                    disable-tooltip
                                 />
                             </template>
                         </div>
@@ -423,14 +428,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </ClientOnly>
                     </UFormGroup>
 
-                    <UButton
-                        type="submit"
-                        :disabled="!canSubmit"
-                        block
-                        class="flex-1"
-                        :label="$t('components.mailer.send')"
-                        trailing-icon="i-mdi-paper-airplane"
-                    />
+                    <div class="inline-flex gap-1">
+                        <UButton
+                            type="submit"
+                            :disabled="!canSubmit"
+                            class="flex-1"
+                            :label="$t('components.mailer.send')"
+                            trailing-icon="i-mdi-paper-airplane"
+                        />
+
+                        <UTooltip v-if="can('DocStoreService.ListDocuments').value" :text="$t('common.attachment', 2)">
+                            <UButton
+                                color="white"
+                                trailing-icon="i-mdi-attach-file"
+                                @click="
+                                    modal.open(ThreadAttachmentsModal, {
+                                        attachments: state.attachments,
+                                        canSubmit: canSubmit,
+                                        'onUpdate:attachments': ($event) => (state.attachments = $event),
+                                    })
+                                "
+                            />
+                        </UTooltip>
+                    </div>
                 </UForm>
             </template>
         </UAccordion>

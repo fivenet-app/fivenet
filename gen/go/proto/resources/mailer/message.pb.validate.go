@@ -516,7 +516,7 @@ func (m *MessageAttachment) validate(all bool) error {
 
 	oneofDataPresent := false
 	switch v := m.Data.(type) {
-	case *MessageAttachment_DocumentId:
+	case *MessageAttachment_Document:
 		if v == nil {
 			err := MessageAttachmentValidationError{
 				field:  "Data",
@@ -528,7 +528,36 @@ func (m *MessageAttachment) validate(all bool) error {
 			errors = append(errors, err)
 		}
 		oneofDataPresent = true
-		// no validation rules for DocumentId
+
+		if all {
+			switch v := interface{}(m.GetDocument()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MessageAttachmentValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MessageAttachmentValidationError{
+						field:  "Document",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDocument()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MessageAttachmentValidationError{
+					field:  "Document",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}
@@ -622,3 +651,122 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MessageAttachmentValidationError{}
+
+// Validate checks the field values on MessageAttachmentDocument with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *MessageAttachmentDocument) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on MessageAttachmentDocument with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// MessageAttachmentDocumentMultiError, or nil if none found.
+func (m *MessageAttachmentDocument) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *MessageAttachmentDocument) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if m.Title != nil {
+
+		if utf8.RuneCountInString(m.GetTitle()) > 768 {
+			err := MessageAttachmentDocumentValidationError{
+				field:  "Title",
+				reason: "value length must be at most 768 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return MessageAttachmentDocumentMultiError(errors)
+	}
+
+	return nil
+}
+
+// MessageAttachmentDocumentMultiError is an error wrapping multiple validation
+// errors returned by MessageAttachmentDocument.ValidateAll() if the
+// designated constraints aren't met.
+type MessageAttachmentDocumentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m MessageAttachmentDocumentMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m MessageAttachmentDocumentMultiError) AllErrors() []error { return m }
+
+// MessageAttachmentDocumentValidationError is the validation error returned by
+// MessageAttachmentDocument.Validate if the designated constraints aren't met.
+type MessageAttachmentDocumentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e MessageAttachmentDocumentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e MessageAttachmentDocumentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e MessageAttachmentDocumentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e MessageAttachmentDocumentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e MessageAttachmentDocumentValidationError) ErrorName() string {
+	return "MessageAttachmentDocumentValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e MessageAttachmentDocumentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sMessageAttachmentDocument.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = MessageAttachmentDocumentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = MessageAttachmentDocumentValidationError{}

@@ -37,6 +37,11 @@ message MessageAttachment {
   oneof data {
     option (validate.required) = true;
 
-    uint64 document_id = 1;
+    MessageAttachmentDocument document = 1;
   }
+}
+
+message MessageAttachmentDocument {
+  uint64 id = 1;
+  optional string title = 2 [(validate.rules).string.max_len = 768];
 }

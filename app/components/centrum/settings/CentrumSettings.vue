@@ -284,11 +284,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             >
                                 <div class="flex flex-col gap-1">
                                     <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
-                                        <UFormGroup
-                                            :name="`unitStatus.${idx}`"
-                                            class="grid grid-cols-2 items-center gap-2"
-                                            :ui="{ container: '' }"
-                                        >
+                                        <UFormGroup :name="`unitStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
                                                 v-model="state.unitStatus[idx]"
                                                 type="text"
@@ -323,11 +319,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             >
                                 <div class="flex flex-col gap-1">
                                     <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
-                                        <UFormGroup
-                                            :name="`dispatchStatus.${idx}`"
-                                            class="grid grid-cols-2 items-center gap-2"
-                                            :ui="{ container: '' }"
-                                        >
+                                        <UFormGroup :name="`dispatchStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
                                                 v-model="state.dispatchStatus[idx]"
                                                 type="text"

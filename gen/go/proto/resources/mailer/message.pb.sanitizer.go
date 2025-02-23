@@ -77,6 +77,26 @@ func (m *MessageAttachment) Sanitize() error {
 		return nil
 	}
 
+	// Field: Document
+	switch v := m.Data.(type) {
+
+	case *MessageAttachment_Document:
+		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *MessageAttachmentDocument) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
 	return nil
 }
 

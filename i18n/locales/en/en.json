@@ -1295,6 +1295,9 @@
             },
             "settings": {
                 "clear_address_book": "Clear Address Book"
+            },
+            "ThreadAttachmentsForm": {
+                "document_title_warning": "By attaching documents to an email, the document titles might be visible to the receiving party even if they don't have access to the document."
             }
         },
         "internet": {

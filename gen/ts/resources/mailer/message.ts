@@ -87,14 +87,27 @@ export interface MessageAttachment {
      * @generated from protobuf oneof: data
      */
     data: {
-        oneofKind: "documentId";
+        oneofKind: "document";
         /**
-         * @generated from protobuf field: uint64 document_id = 1;
+         * @generated from protobuf field: resources.mailer.MessageAttachmentDocument document = 1;
          */
-        documentId: number;
+        document: MessageAttachmentDocument;
     } | {
         oneofKind: undefined;
     };
+}
+/**
+ * @generated from protobuf message resources.mailer.MessageAttachmentDocument
+ */
+export interface MessageAttachmentDocument {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: number;
+    /**
+     * @generated from protobuf field: optional string title = 2;
+     */
+    title?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Message$Type extends MessageType<Message> {
@@ -274,7 +287,7 @@ export const MessageData = new MessageData$Type();
 class MessageAttachment$Type extends MessageType<MessageAttachment> {
     constructor() {
         super("resources.mailer.MessageAttachment", [
-            { no: 1, name: "document_id", kind: "scalar", oneof: "data", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "document", kind: "message", oneof: "data", T: () => MessageAttachmentDocument }
         ]);
     }
     create(value?: PartialMessage<MessageAttachment>): MessageAttachment {
@@ -289,10 +302,10 @@ class MessageAttachment$Type extends MessageType<MessageAttachment> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 document_id */ 1:
+                case /* resources.mailer.MessageAttachmentDocument document */ 1:
                     message.data = {
-                        oneofKind: "documentId",
-                        documentId: reader.uint64().toNumber()
+                        oneofKind: "document",
+                        document: MessageAttachmentDocument.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).document)
                     };
                     break;
                 default:
@@ -307,9 +320,9 @@ class MessageAttachment$Type extends MessageType<MessageAttachment> {
         return message;
     }
     internalBinaryWrite(message: MessageAttachment, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 document_id = 1; */
-        if (message.data.oneofKind === "documentId")
-            writer.tag(1, WireType.Varint).uint64(message.data.documentId);
+        /* resources.mailer.MessageAttachmentDocument document = 1; */
+        if (message.data.oneofKind === "document")
+            MessageAttachmentDocument.internalBinaryWrite(message.data.document, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -320,3 +333,57 @@ class MessageAttachment$Type extends MessageType<MessageAttachment> {
  * @generated MessageType for protobuf message resources.mailer.MessageAttachment
  */
 export const MessageAttachment = new MessageAttachment$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class MessageAttachmentDocument$Type extends MessageType<MessageAttachmentDocument> {
+    constructor() {
+        super("resources.mailer.MessageAttachmentDocument", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "title", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "768" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<MessageAttachmentDocument>): MessageAttachmentDocument {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = 0;
+        if (value !== undefined)
+            reflectionMergePartial<MessageAttachmentDocument>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: MessageAttachmentDocument): MessageAttachmentDocument {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 id */ 1:
+                    message.id = reader.uint64().toNumber();
+                    break;
+                case /* optional string title */ 2:
+                    message.title = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: MessageAttachmentDocument, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 id = 1; */
+        if (message.id !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional string title = 2; */
+        if (message.title !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.title);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.mailer.MessageAttachmentDocument
+ */
+export const MessageAttachmentDocument = new MessageAttachmentDocument$Type();

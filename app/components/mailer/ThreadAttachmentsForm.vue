@@ -42,22 +42,21 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
     <UFormGroup name="attachments" :label="$t('common.attachment', 2)">
         <div class="flex flex-col gap-1">
             <div v-for="(_, idx) in attachments" :key="idx" class="flex items-center gap-1">
-                <template v-if="attachments[idx]?.data.oneofKind === 'documentId'">
+                <template v-if="attachments[idx]?.data.oneofKind === 'document'">
                     <UFormGroup :name="`attachments.${idx}.data.documentId`" class="flex-1">
                         <USelectMenu
-                            value-attribute="id"
                             option-attribute="title"
                             :disabled="!canSubmit"
                             class="w-full flex-1"
                             :searchable="listDocuments"
                             searchable-lazy
                             :placeholder="$t('common.document')"
-                            :model-value="attachments[idx].data.documentId"
-                            @update:model-value="attachments[idx] = { data: { oneofKind: 'documentId', documentId: $event } }"
+                            :model-value="attachments[idx].data.document.id > 0 ? attachments[idx].data.document : undefined"
+                            @update:model-value="attachments[idx] = { data: { oneofKind: 'document', document: $event } }"
                         >
                             <template #label="{ selected }">
                                 <template v-if="selected">
-                                    {{ `DOC-${selected.id}: ${selected?.title}` }}
+                                    {{ `DOC-${attachments[idx].data.document.id}: ${attachments[idx].data.document?.title}` }}
                                 </template>
                             </template>
 
@@ -90,9 +89,15 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
             :class="attachments.length ? 'mt-2' : ''"
             @click="
                 attachments.push({
-                    data: { oneofKind: 'documentId', documentId: 0 },
+                    data: { oneofKind: 'document', document: { id: 0 } },
                 })
             "
+        />
+
+        <UAlert
+            class="mt-2"
+            icon="i-mdi-information-outline"
+            :description="$t('components.mailer.ThreadAttachmentsForm.document_title_warning')"
         />
     </UFormGroup>
 </template>

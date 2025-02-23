@@ -77,17 +77,15 @@ const props = defineProps<{
                             {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
                         </template>
 
-                        <DocumentInfoPopover
-                            :document-id="activity.data.data.documentRelation.documentId"
-                            hide-trailing
-                            load-on-open
-                        >
+                        <DocumentInfoPopover :document-id="activity.data.data.documentRelation.documentId" load-on-open>
                             <template #title>
                                 <IDCopyBadge
                                     :id="activity.data.data.documentRelation.documentId"
                                     prefix="DOC"
                                     size="xs"
                                     disable-tooltip
+                                    variant="link"
+                                    :padded="false"
                                     hide-icon
                                 />
                             </template>

@@ -12,7 +12,7 @@ import ThreadAttachmentsForm from './ThreadAttachmentsForm.vue';
 
 const { isOpen } = useModal();
 
-const { activeChar, isSuperuser } = useAuth();
+const { can, activeChar, isSuperuser } = useAuth();
 
 const notifications = useNotificatorStore();
 
@@ -37,19 +37,6 @@ async function createThread(values: Schema): Promise<void> {
         return;
     }
 
-    console.log(
-        'attachments',
-        values.attachments
-            .filter((a) => {
-                if (a.data.oneofKind === 'documentId') {
-                    return a.data.documentId > 0;
-                }
-
-                return false;
-            })
-            .map((a) => toRaw(a)),
-    );
-
     await mailerStore.createThread({
         thread: {
             id: 0,
@@ -70,15 +57,13 @@ async function createThread(values: Schema): Promise<void> {
             creatorId: activeChar.value!.userId,
             creatorJob: activeChar.value!.job,
             data: {
-                attachments: values.attachments
-                    .filter((a) => {
-                        if (a.data.oneofKind === 'documentId') {
-                            return a.data.documentId > 0;
-                        }
+                attachments: values.attachments.filter((a) => {
+                    if (a.data.oneofKind === 'document') {
+                        return a.data.document.id > 0;
+                    }
 
-                        return false;
-                    })
-                    .map((a) => toRaw(a)),
+                    return false;
+                }),
             },
         },
 
@@ -329,7 +314,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <ThreadAttachmentsForm v-model="state.attachments" :can-submit="canSubmit" />
+                        <ThreadAttachmentsForm
+                            v-if="can('DocStoreService.ListDocuments').value"
+                            v-model="state.attachments"
+                            :can-submit="canSubmit"
+                        />
                     </div>
                 </div>
 
