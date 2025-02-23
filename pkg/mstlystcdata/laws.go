@@ -41,12 +41,17 @@ func NewLaws(p Params) *Laws {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := c.loadLaws(ctxCancel, 0); err != nil {
+			c.logger.Error("failed to loads laws into cache", zap.Error(err))
+			return err
+		}
+
 		p.CronHandlers.Add("mstlystcdata.laws", func(ctx context.Context, data *cron.CronjobData) error {
 			ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
 			defer span.End()
 
 			if err := c.loadLaws(ctxCancel, 0); err != nil {
-				c.logger.Error("failed to refresh laws cache", zap.Error(err))
+				c.logger.Error("failed to refresh laws in cache", zap.Error(err))
 				return err
 			}
 
