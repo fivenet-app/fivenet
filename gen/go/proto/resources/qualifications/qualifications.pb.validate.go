@@ -2141,10 +2141,10 @@ func (m *QualificationResult) validate(all bool) error {
 
 	if m.Score != nil {
 
-		if m.GetScore() >= 1000 {
+		if val := m.GetScore(); val < 0 || val > 1000 {
 			err := QualificationResultValidationError{
 				field:  "Score",
-				reason: "value must be less than 1000",
+				reason: "value must be inside range [0, 1000]",
 			}
 			if !all {
 				return err

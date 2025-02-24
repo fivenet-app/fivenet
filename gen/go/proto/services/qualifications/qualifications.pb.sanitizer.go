@@ -42,6 +42,15 @@ func (m *CreateOrUpdateQualificationResultRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: Grading
+	if m.Grading != nil {
+		if v, ok := interface{}(m.GetGrading()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: Result
 	if m.Result != nil {
 		if v, ok := interface{}(m.GetResult()).(interface{ Sanitize() error }); ok {
@@ -253,6 +262,15 @@ func (m *GetUserExamResponse) Sanitize() error {
 	// Field: ExamUser
 	if m.ExamUser != nil {
 		if v, ok := interface{}(m.GetExamUser()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Grading
+	if m.Grading != nil {
+		if v, ok := interface{}(m.GetGrading()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

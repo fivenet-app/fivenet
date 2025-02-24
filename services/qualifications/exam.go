@@ -275,11 +275,13 @@ func (s *Server) SubmitExam(ctx context.Context, req *pbqualifications.SubmitExa
 			tExamResponses.QualificationID,
 			tExamResponses.UserID,
 			tExamResponses.Responses,
+			tExamResponses.Grading,
 		).
 		VALUES(
 			req.QualificationId,
 			userInfo.UserId,
 			req.Responses,
+			jet.NULL,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tExamResponses.Responses.SET(jet.RawString("VALUES(`responses`)")),
@@ -331,11 +333,10 @@ func (s *Server) GetUserExam(ctx context.Context, req *pbqualifications.GetUserE
 	}
 	resp.Exam = exam
 
-	responses, err := s.getExamResponses(ctx, req.QualificationId, req.UserId)
+	resp.Responses, resp.Grading, err = s.getExamResponses(ctx, req.QualificationId, req.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	resp.Responses = responses
 
 	examUser, err := s.getExamUser(ctx, req.QualificationId, req.UserId)
 	if err != nil {

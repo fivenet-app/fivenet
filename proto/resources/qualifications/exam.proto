@@ -130,3 +130,13 @@ message ExamResponseMultipleChoice {
   // @sanitize: method=StripTags
   repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
 }
+
+message ExamGrading {
+  repeated ExamGradingResponse responses = 1 [(validate.rules).repeated.max_items = 50];
+}
+
+message ExamGradingResponse {
+  uint64 question_id = 1;
+  float points = 2 [(validate.rules).float = {gte: 0, lte: 1000}];
+  optional bool checked = 3;
+}

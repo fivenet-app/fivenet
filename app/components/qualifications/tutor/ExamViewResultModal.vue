@@ -42,8 +42,6 @@ async function getUserExam(): Promise<GetUserExamResponse> {
     });
     const { response } = await call;
 
-    pointsCounter.value.length = 0;
-
     totalQuestions.value =
         response.responses?.responses?.filter((q) => q.question?.data?.data.oneofKind !== 'separator').length ?? 0;
 
@@ -52,9 +50,20 @@ async function getUserExam(): Promise<GetUserExamResponse> {
         .filter((q) => q.question?.data?.data.oneofKind !== 'separator')
         .forEach((q) => (totalPoints.value += q.question?.points ?? 0));
 
+    // Make sure the grading responses list is "valid" for the questions/responses
+    if (!response.grading) {
+        response.grading = {
+            responses: [],
+        };
+    }
     response.responses?.responses.forEach((q) => {
-        pointsCounter.value.push({
-            id: q.questionId,
+        // Check if there is already a grading response
+        if (response.grading?.responses.find((r) => r.questionId === q.questionId)) {
+            return;
+        }
+
+        response.grading?.responses.push({
+            questionId: q.questionId,
             checked: false,
             points: q.question?.points ?? 0,
         });
@@ -63,20 +72,12 @@ async function getUserExam(): Promise<GetUserExamResponse> {
     return response;
 }
 
-const pointsCounter = ref<
-    {
-        id: number;
-        checked: boolean;
-        points: number;
-    }[]
->([]);
-
-function getPointsCounterIndex(id: number): number {
-    return pointsCounter.value.findIndex((a) => a.id === id);
+function getGradingIndex(id: number): number {
+    return data.value!.grading!.responses.findIndex((a) => a.questionId === id);
 }
 
 const totalPoints = ref(0);
-const pointCount = computed(() => pointsCounter.value.map((a) => a.points).reduce((sum, a) => sum + a, 0));
+const pointCount = computed(() => data.value?.grading?.responses.map((a) => a.points).reduce((sum, a) => sum + a, 0));
 
 const totalQuestions = ref(0);
 const correctCount = ref(0);
@@ -90,6 +91,7 @@ const correctCount = ref(0);
             :result-id="resultId"
             :score="pointCount"
             :view-only="viewOnly"
+            :grading="data?.grading"
             @refresh="$emit('refresh')"
             @close="isOpen = false"
         >
@@ -108,7 +110,7 @@ const correctCount = ref(0);
                         <div
                             v-if="
                                 question.question.question?.data?.data.oneofKind !== 'separator' &&
-                                getPointsCounterIndex(question.question.questionId) > -1
+                                getGradingIndex(question.question.questionId) > -1
                             "
                             class="flex flex-col gap-2"
                         >
@@ -117,7 +119,7 @@ const correctCount = ref(0);
                                     <div class="flex flex-col md:items-center">
                                         <UCheckbox
                                             v-model="
-                                                pointsCounter[getPointsCounterIndex(question.question.questionId)]!.checked
+                                                data.grading!.responses[getGradingIndex(question.question.questionId)]!.checked
                                             "
                                         />
                                     </div>
@@ -125,12 +127,12 @@ const correctCount = ref(0);
 
                                 <UFormGroup :label="$t('common.points', 2)">
                                     <UInput
-                                        v-model="pointsCounter[getPointsCounterIndex(question.question.questionId)]!.points"
+                                        v-model="data.grading!.responses[getGradingIndex(question.question.questionId)]!.points"
                                         type="number"
-                                        class="max-w-24"
                                         :step="0.5"
                                         :min="0"
                                         :max="question.question.question?.points"
+                                        class="max-w-24"
                                     />
                                 </UFormGroup>
                             </div>

@@ -121,6 +121,7 @@ message ListQualificationsResultsResponse {
 
 message CreateOrUpdateQualificationResultRequest {
   resources.qualifications.QualificationResult result = 1 [(validate.rules).message.required = true];
+  optional resources.qualifications.ExamGrading grading = 2;
 }
 
 message CreateOrUpdateQualificationResultResponse {
@@ -173,6 +174,7 @@ message GetUserExamResponse {
   resources.qualifications.ExamQuestions exam = 1;
   resources.qualifications.ExamUser exam_user = 2;
   resources.qualifications.ExamResponses responses = 3;
+  resources.qualifications.ExamGrading grading = 4;
 }
 
 service QualificationsService {

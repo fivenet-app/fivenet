@@ -264,6 +264,11 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
+	quali, err := s.getQualification(ctx, req.Result.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Result.QualificationId)), userInfo, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -286,7 +291,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 				tQualiResults.CreatorJob,
 			).
 			VALUES(
-				req.Result.QualificationId,
+				quali.Id,
 				req.Result.UserId,
 				req.Result.Status,
 				req.Result.Score,
@@ -309,7 +314,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, nil, userInfo, req.Result.UserId)
+		result, err := s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo, req.Result.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -325,7 +330,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 				tQualiResults.Summary,
 			).
 			SET(
-				req.Result.QualificationId,
+				quali.Id,
 				req.Result.UserId,
 				req.Result.Status,
 				req.Result.Score,
@@ -343,9 +348,23 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	quali, err := s.getQualification(ctx, req.Result.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Result.QualificationId)), userInfo, false)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	if quali.ExamMode > qualifications.QualificationExamMode_QUALIFICATION_EXAM_MODE_DISABLED && req.Grading != nil { // Only update the exam grading info when
+		// Insert/update exam grading info from tutor
+		stmt := tExamResponses.
+			UPDATE(
+				tExamResponses.Grading,
+			).
+			SET(
+				req.Grading,
+			).
+			WHERE(jet.AND(
+				tExamResponses.QualificationID.EQ(jet.Uint64(quali.Id)),
+				tExamResponses.UserID.EQ(jet.Int32(req.Result.UserId)),
+			))
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	if quali.LabelSyncEnabled {
@@ -360,7 +379,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *pbq
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	// Only send notification when the original result had no score and isn't in pending status
+	// Only send notification when the original result had no score and wasn't in pending status
 	if req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && req.Result.Score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: req.Result.UserId,

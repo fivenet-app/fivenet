@@ -172,7 +172,7 @@ defineExpose({
                         </template>
                     </template>
                     <template #score-data="{ row: result }">
-                        <template v-if="result.score">{{ result.score }}</template>
+                        <template v-if="result.score">{{ $n(result.score) }}</template>
                     </template>
                     <template #summary-data="{ row: result }">
                         <p v-if="result.summary" class="text-sm">

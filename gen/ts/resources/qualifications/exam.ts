@@ -343,6 +343,32 @@ export interface ExamResponseMultipleChoice {
      */
     choices: string[];
 }
+/**
+ * @generated from protobuf message resources.qualifications.ExamGrading
+ */
+export interface ExamGrading {
+    /**
+     * @generated from protobuf field: repeated resources.qualifications.ExamGradingResponse responses = 1;
+     */
+    responses: ExamGradingResponse[];
+}
+/**
+ * @generated from protobuf message resources.qualifications.ExamGradingResponse
+ */
+export interface ExamGradingResponse {
+    /**
+     * @generated from protobuf field: uint64 question_id = 1;
+     */
+    questionId: number;
+    /**
+     * @generated from protobuf field: float points = 2;
+     */
+    points: number;
+    /**
+     * @generated from protobuf field: optional bool checked = 3;
+     */
+    checked?: boolean;
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ExamQuestions$Type extends MessageType<ExamQuestions> {
     constructor() {
@@ -1419,3 +1445,112 @@ class ExamResponseMultipleChoice$Type extends MessageType<ExamResponseMultipleCh
  * @generated MessageType for protobuf message resources.qualifications.ExamResponseMultipleChoice
  */
 export const ExamResponseMultipleChoice = new ExamResponseMultipleChoice$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExamGrading$Type extends MessageType<ExamGrading> {
+    constructor() {
+        super("resources.qualifications.ExamGrading", [
+            { no: 1, name: "responses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamGradingResponse, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ExamGrading>): ExamGrading {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.responses = [];
+        if (value !== undefined)
+            reflectionMergePartial<ExamGrading>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamGrading): ExamGrading {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.qualifications.ExamGradingResponse responses */ 1:
+                    message.responses.push(ExamGradingResponse.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExamGrading, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.qualifications.ExamGradingResponse responses = 1; */
+        for (let i = 0; i < message.responses.length; i++)
+            ExamGradingResponse.internalBinaryWrite(message.responses[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.ExamGrading
+ */
+export const ExamGrading = new ExamGrading$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ExamGradingResponse$Type extends MessageType<ExamGradingResponse> {
+    constructor() {
+        super("resources.qualifications.ExamGradingResponse", [
+            { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "points", kind: "scalar", T: 2 /*ScalarType.FLOAT*/, options: { "validate.rules": { float: { lte: 1000, gte: 0 } } } },
+            { no: 3, name: "checked", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ExamGradingResponse>): ExamGradingResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.questionId = 0;
+        message.points = 0;
+        if (value !== undefined)
+            reflectionMergePartial<ExamGradingResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamGradingResponse): ExamGradingResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 question_id */ 1:
+                    message.questionId = reader.uint64().toNumber();
+                    break;
+                case /* float points */ 2:
+                    message.points = reader.float();
+                    break;
+                case /* optional bool checked */ 3:
+                    message.checked = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ExamGradingResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 question_id = 1; */
+        if (message.questionId !== 0)
+            writer.tag(1, WireType.Varint).uint64(message.questionId);
+        /* float points = 2; */
+        if (message.points !== 0)
+            writer.tag(2, WireType.Bit32).float(message.points);
+        /* optional bool checked = 3; */
+        if (message.checked !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.checked);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.ExamGradingResponse
+ */
+export const ExamGradingResponse = new ExamGradingResponse$Type();

@@ -7,6 +7,34 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
 )
 
+func (m *ExamGrading) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: Responses
+	for idx, item := range m.Responses {
+		_, _ = idx, item
+
+		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ExamGradingResponse) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	return nil
+}
+
 func (m *ExamQuestion) Sanitize() error {
 	if m == nil {
 		return nil

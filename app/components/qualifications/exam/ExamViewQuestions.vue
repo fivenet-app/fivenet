@@ -156,7 +156,7 @@ onBeforeMount(() =>
 const form = ref<Form<Schema> | null>(null);
 
 if (!props.responses) {
-    let timeLow = false;
+    let timeLowNotificationSent = false;
     useIntervalFn(async () => {
         const minutesLeft = differenceInMinutes(endsAtTime, new Date());
         if (isPast(endsAtTime)) {
@@ -172,13 +172,13 @@ if (!props.responses) {
                 name: 'qualifications-id',
                 params: { id: props.qualificationId },
             });
-        } else if (!timeLow && minutesLeft <= 4) {
+        } else if (!timeLowNotificationSent && minutesLeft <= 4) {
             notifications.add({
                 title: { key: 'notifications.qualifications.time_low.title', parameters: {} },
                 description: { key: 'notifications.qualifications.time_low.content', parameters: {} },
                 type: NotificationType.INFO,
             });
-            timeLow = true;
+            timeLowNotificationSent = true;
         }
     }, 1000);
 }

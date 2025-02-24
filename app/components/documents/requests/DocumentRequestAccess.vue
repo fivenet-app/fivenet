@@ -19,6 +19,7 @@ const modal = useModal();
     >
         <UAlert
             color="primary"
+            variant="subtle"
             icon="i-mdi-lock-question"
             :title="$t('components.documents.document_request_access.title')"
             :description="$t('components.documents.document_request_access.message')"

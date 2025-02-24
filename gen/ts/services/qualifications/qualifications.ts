@@ -16,6 +16,7 @@ import { ExamResponses } from "../../resources/qualifications/exam";
 import { ExamQuestions } from "../../resources/qualifications/exam";
 import { ExamUser } from "../../resources/qualifications/exam";
 import { QualificationShort } from "../../resources/qualifications/qualifications";
+import { ExamGrading } from "../../resources/qualifications/exam";
 import { QualificationResult } from "../../resources/qualifications/qualifications";
 import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
@@ -299,6 +300,10 @@ export interface CreateOrUpdateQualificationResultRequest {
      * @generated from protobuf field: resources.qualifications.QualificationResult result = 1;
      */
     result?: QualificationResult;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.ExamGrading grading = 2;
+     */
+    grading?: ExamGrading;
 }
 /**
  * @generated from protobuf message services.qualifications.CreateOrUpdateQualificationResultResponse
@@ -428,6 +433,10 @@ export interface GetUserExamResponse {
      * @generated from protobuf field: resources.qualifications.ExamResponses responses = 3;
      */
     responses?: ExamResponses;
+    /**
+     * @generated from protobuf field: resources.qualifications.ExamGrading grading = 4;
+     */
+    grading?: ExamGrading;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListQualificationsRequest$Type extends MessageType<ListQualificationsRequest> {
@@ -1530,7 +1539,8 @@ export const ListQualificationsResultsResponse = new ListQualificationsResultsRe
 class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOrUpdateQualificationResultRequest> {
     constructor() {
         super("services.qualifications.CreateOrUpdateQualificationResultRequest", [
-            { no: 1, name: "result", kind: "message", T: () => QualificationResult, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "result", kind: "message", T: () => QualificationResult, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "grading", kind: "message", T: () => ExamGrading }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateQualificationResultRequest>): CreateOrUpdateQualificationResultRequest {
@@ -1547,6 +1557,9 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
                 case /* resources.qualifications.QualificationResult result */ 1:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
+                case /* optional resources.qualifications.ExamGrading grading */ 2:
+                    message.grading = ExamGrading.internalBinaryRead(reader, reader.uint32(), options, message.grading);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1562,6 +1575,9 @@ class CreateOrUpdateQualificationResultRequest$Type extends MessageType<CreateOr
         /* resources.qualifications.QualificationResult result = 1; */
         if (message.result)
             QualificationResult.internalBinaryWrite(message.result, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.ExamGrading grading = 2; */
+        if (message.grading)
+            ExamGrading.internalBinaryWrite(message.grading, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2066,7 +2082,8 @@ class GetUserExamResponse$Type extends MessageType<GetUserExamResponse> {
         super("services.qualifications.GetUserExamResponse", [
             { no: 1, name: "exam", kind: "message", T: () => ExamQuestions },
             { no: 2, name: "exam_user", kind: "message", T: () => ExamUser },
-            { no: 3, name: "responses", kind: "message", T: () => ExamResponses }
+            { no: 3, name: "responses", kind: "message", T: () => ExamResponses },
+            { no: 4, name: "grading", kind: "message", T: () => ExamGrading }
         ]);
     }
     create(value?: PartialMessage<GetUserExamResponse>): GetUserExamResponse {
@@ -2089,6 +2106,9 @@ class GetUserExamResponse$Type extends MessageType<GetUserExamResponse> {
                 case /* resources.qualifications.ExamResponses responses */ 3:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
                     break;
+                case /* resources.qualifications.ExamGrading grading */ 4:
+                    message.grading = ExamGrading.internalBinaryRead(reader, reader.uint32(), options, message.grading);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -2110,6 +2130,9 @@ class GetUserExamResponse$Type extends MessageType<GetUserExamResponse> {
         /* resources.qualifications.ExamResponses responses = 3; */
         if (message.responses)
             ExamResponses.internalBinaryWrite(message.responses, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamGrading grading = 4; */
+        if (message.grading)
+            ExamGrading.internalBinaryWrite(message.grading, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

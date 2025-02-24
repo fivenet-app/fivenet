@@ -274,7 +274,11 @@ defineShortcuts({
     <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 2)])" />
     <template v-else-if="error">
         <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :error="error" :retry="refresh" />
-        <DocumentRequestAccess v-if="error.message.includes('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
+        <DocumentRequestAccess
+            v-if="error.message.includes('ErrDocViewDenied')"
+            :document-id="documentId"
+            class="mt-2 w-full"
+        />
     </template>
     <DataNoDataBlock v-else-if="!doc" icon="i-mdi-file-search" :message="$t('common.not_found', [$t('common.document', 2)])" />
 

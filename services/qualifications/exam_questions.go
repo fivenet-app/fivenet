@@ -270,15 +270,17 @@ func (s *Server) compareExamQuestions(current, in []*qualifications.ExamQuestion
 
 type examResponses struct {
 	ExamResponses *qualifications.ExamResponses `alias:"responses"`
+	ExamGrading   *qualifications.ExamGrading   `alias:"grading"`
 }
 
-func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, userId int32) (*qualifications.ExamResponses, error) {
+func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, userId int32) (*qualifications.ExamResponses, *qualifications.ExamGrading, error) {
 	tExamResponses := tExamResponses.AS("examresponses")
 	stmt := tExamResponses.
 		SELECT(
 			tExamResponses.QualificationID,
 			tExamResponses.UserID,
 			tExamResponses.Responses,
+			tExamResponses.Grading,
 		).
 		FROM(tExamResponses).
 		WHERE(jet.AND(
@@ -287,17 +289,18 @@ func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, u
 		)).
 		LIMIT(1)
 
-	dest := examResponses{
+	dest := &examResponses{
 		ExamResponses: &qualifications.ExamResponses{},
+		ExamGrading:   &qualifications.ExamGrading{},
 	}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	dest.ExamResponses.QualificationId = qualificationId
 	dest.ExamResponses.UserId = userId
 
-	return dest.ExamResponses, nil
+	return dest.ExamResponses, dest.ExamGrading, nil
 }

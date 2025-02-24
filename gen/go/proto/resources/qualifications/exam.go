@@ -69,3 +69,24 @@ func (x *ExamQuestionAnswerData) Value() (driver.Value, error) {
 	out, err := protoutils.Marshal(x)
 	return string(out), err
 }
+
+// Scan implements driver.Valuer for protobuf ExamGrading.
+func (x *ExamGrading) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the value into driver.Valuer.
+func (x *ExamGrading) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.Marshal(x)
+	return string(out), err
+}

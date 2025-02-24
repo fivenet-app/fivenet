@@ -3139,6 +3139,39 @@ func (m *CreateOrUpdateQualificationResultRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Grading != nil {
+
+		if all {
+			switch v := interface{}(m.GetGrading()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CreateOrUpdateQualificationResultRequestValidationError{
+						field:  "Grading",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CreateOrUpdateQualificationResultRequestValidationError{
+						field:  "Grading",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetGrading()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CreateOrUpdateQualificationResultRequestValidationError{
+					field:  "Grading",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return CreateOrUpdateQualificationResultRequestMultiError(errors)
 	}
@@ -4584,6 +4617,35 @@ func (m *GetUserExamResponse) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return GetUserExamResponseValidationError{
 				field:  "Responses",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetGrading()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetUserExamResponseValidationError{
+					field:  "Grading",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetUserExamResponseValidationError{
+					field:  "Grading",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetGrading()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetUserExamResponseValidationError{
+				field:  "Grading",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}

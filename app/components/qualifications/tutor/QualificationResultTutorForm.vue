@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -16,12 +17,14 @@ const props = withDefaults(
         resultId?: number;
         score?: number;
         viewOnly?: boolean;
+        grading?: ExamGrading | undefined;
     }>(),
     {
         userId: undefined,
         resultId: undefined,
         score: undefined,
         viewOnly: false,
+        grading: undefined,
     },
 );
 
@@ -75,6 +78,7 @@ async function createOrUpdateQualificationResult(
                 creatorId: activeChar.value!.userId,
                 creatorJob: activeChar.value!.job,
             },
+            grading: props.grading,
         });
         const { response } = await call;
 
@@ -207,6 +211,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             type="number"
                             :min="0"
                             :max="100"
+                            :step="0.1"
                             :placeholder="$t('common.score')"
                             :label="$t('common.score')"
                             trailing-icon="i-mdi-star-check"

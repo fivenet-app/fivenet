@@ -3052,3 +3052,266 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ExamResponseMultipleChoiceValidationError{}
+
+// Validate checks the field values on ExamGrading with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ExamGrading) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExamGrading with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ExamGradingMultiError, or
+// nil if none found.
+func (m *ExamGrading) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExamGrading) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(m.GetResponses()) > 50 {
+		err := ExamGradingValidationError{
+			field:  "Responses",
+			reason: "value must contain no more than 50 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetResponses() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamGradingValidationError{
+						field:  fmt.Sprintf("Responses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamGradingValidationError{
+						field:  fmt.Sprintf("Responses[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamGradingValidationError{
+					field:  fmt.Sprintf("Responses[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ExamGradingMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExamGradingMultiError is an error wrapping multiple validation errors
+// returned by ExamGrading.ValidateAll() if the designated constraints aren't met.
+type ExamGradingMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExamGradingMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExamGradingMultiError) AllErrors() []error { return m }
+
+// ExamGradingValidationError is the validation error returned by
+// ExamGrading.Validate if the designated constraints aren't met.
+type ExamGradingValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExamGradingValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExamGradingValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExamGradingValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExamGradingValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExamGradingValidationError) ErrorName() string { return "ExamGradingValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ExamGradingValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExamGrading.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExamGradingValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExamGradingValidationError{}
+
+// Validate checks the field values on ExamGradingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExamGradingResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExamGradingResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExamGradingResponseMultiError, or nil if none found.
+func (m *ExamGradingResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExamGradingResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QuestionId
+
+	if val := m.GetPoints(); val < 0 || val > 1000 {
+		err := ExamGradingResponseValidationError{
+			field:  "Points",
+			reason: "value must be inside range [0, 1000]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Checked != nil {
+		// no validation rules for Checked
+	}
+
+	if len(errors) > 0 {
+		return ExamGradingResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExamGradingResponseMultiError is an error wrapping multiple validation
+// errors returned by ExamGradingResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ExamGradingResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExamGradingResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExamGradingResponseMultiError) AllErrors() []error { return m }
+
+// ExamGradingResponseValidationError is the validation error returned by
+// ExamGradingResponse.Validate if the designated constraints aren't met.
+type ExamGradingResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExamGradingResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExamGradingResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExamGradingResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExamGradingResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExamGradingResponseValidationError) ErrorName() string {
+	return "ExamGradingResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExamGradingResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExamGradingResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExamGradingResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExamGradingResponseValidationError{}

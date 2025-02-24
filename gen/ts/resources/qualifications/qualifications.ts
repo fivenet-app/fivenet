@@ -353,7 +353,7 @@ export interface QualificationResult {
      */
     status: ResultStatus;
     /**
-     * @generated from protobuf field: optional uint32 score = 9;
+     * @generated from protobuf field: optional float score = 9;
      */
     score?: number;
     /**
@@ -1162,7 +1162,7 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 6, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
             { no: 7, name: "user", kind: "message", T: () => UserShort },
             { no: 8, name: "status", kind: "enum", T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "score", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 1000 } } } },
+            { no: 9, name: "score", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/, options: { "validate.rules": { float: { lte: 1000, gte: 0 } } } },
             { no: 10, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
             { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 12, name: "creator", kind: "message", T: () => UserShort },
@@ -1211,8 +1211,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
                 case /* resources.qualifications.ResultStatus status */ 8:
                     message.status = reader.int32();
                     break;
-                case /* optional uint32 score */ 9:
-                    message.score = reader.uint32();
+                case /* optional float score */ 9:
+                    message.score = reader.float();
                     break;
                 case /* string summary */ 10:
                     message.summary = reader.string();
@@ -1262,9 +1262,9 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
         /* resources.qualifications.ResultStatus status = 8; */
         if (message.status !== 0)
             writer.tag(8, WireType.Varint).int32(message.status);
-        /* optional uint32 score = 9; */
+        /* optional float score = 9; */
         if (message.score !== undefined)
-            writer.tag(9, WireType.Varint).uint32(message.score);
+            writer.tag(9, WireType.Bit32).float(message.score);
         /* string summary = 10; */
         if (message.summary !== "")
             writer.tag(10, WireType.LengthDelimited).string(message.summary);

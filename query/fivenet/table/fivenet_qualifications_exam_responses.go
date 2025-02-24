@@ -20,6 +20,7 @@ type fivenetQualificationsExamResponsesTable struct {
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
 	Responses       mysql.ColumnString
+	Grading         mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,8 +64,9 @@ func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
 		ResponsesColumn       = mysql.StringColumn("responses")
-		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, ResponsesColumn}
-		mutableColumns        = mysql.ColumnList{ResponsesColumn}
+		GradingColumn         = mysql.StringColumn("grading")
+		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, ResponsesColumn, GradingColumn}
+		mutableColumns        = mysql.ColumnList{ResponsesColumn, GradingColumn}
 	)
 
 	return fivenetQualificationsExamResponsesTable{
@@ -74,6 +76,7 @@ func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias
 		QualificationID: QualificationIDColumn,
 		UserID:          UserIDColumn,
 		Responses:       ResponsesColumn,
+		Grading:         GradingColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

@@ -1199,6 +1199,110 @@ func (x *ExamResponseMultipleChoice) GetChoices() []string {
 	return nil
 }
 
+type ExamGrading struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Responses     []*ExamGradingResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamGrading) Reset() {
+	*x = ExamGrading{}
+	mi := &file_resources_qualifications_exam_proto_msgTypes[19]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamGrading) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamGrading) ProtoMessage() {}
+
+func (x *ExamGrading) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_qualifications_exam_proto_msgTypes[19]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamGrading.ProtoReflect.Descriptor instead.
+func (*ExamGrading) Descriptor() ([]byte, []int) {
+	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{19}
+}
+
+func (x *ExamGrading) GetResponses() []*ExamGradingResponse {
+	if x != nil {
+		return x.Responses
+	}
+	return nil
+}
+
+type ExamGradingResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	QuestionId    uint64                 `protobuf:"varint,1,opt,name=question_id,json=questionId,proto3" json:"question_id,omitempty"`
+	Points        float32                `protobuf:"fixed32,2,opt,name=points,proto3" json:"points,omitempty"`
+	Checked       *bool                  `protobuf:"varint,3,opt,name=checked,proto3,oneof" json:"checked,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ExamGradingResponse) Reset() {
+	*x = ExamGradingResponse{}
+	mi := &file_resources_qualifications_exam_proto_msgTypes[20]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ExamGradingResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ExamGradingResponse) ProtoMessage() {}
+
+func (x *ExamGradingResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_qualifications_exam_proto_msgTypes[20]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ExamGradingResponse.ProtoReflect.Descriptor instead.
+func (*ExamGradingResponse) Descriptor() ([]byte, []int) {
+	return file_resources_qualifications_exam_proto_rawDescGZIP(), []int{20}
+}
+
+func (x *ExamGradingResponse) GetQuestionId() uint64 {
+	if x != nil {
+		return x.QuestionId
+	}
+	return 0
+}
+
+func (x *ExamGradingResponse) GetPoints() float32 {
+	if x != nil {
+		return x.Points
+	}
+	return 0
+}
+
+func (x *ExamGradingResponse) GetChecked() bool {
+	if x != nil && x.Checked != nil {
+		return *x.Checked
+	}
+	return false
+}
+
 var File_resources_qualifications_exam_proto protoreflect.FileDescriptor
 
 var file_resources_qualifications_exam_proto_rawDesc = string([]byte{
@@ -1407,13 +1511,28 @@ var file_resources_qualifications_exam_proto_rawDesc = string([]byte{
 	0x6e, 0x73, 0x65, 0x4d, 0x75, 0x6c, 0x74, 0x69, 0x70, 0x6c, 0x65, 0x43, 0x68, 0x6f, 0x69, 0x63,
 	0x65, 0x12, 0x22, 0x0a, 0x07, 0x63, 0x68, 0x6f, 0x69, 0x63, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03,
 	0x28, 0x09, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02, 0x10, 0x0a, 0x52, 0x07, 0x63, 0x68,
-	0x6f, 0x69, 0x63, 0x65, 0x73, 0x42, 0x55, 0x5a, 0x53, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e,
-	0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f,
-	0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x71,
-	0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x3b, 0x71, 0x75,
-	0x61, 0x6c, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x6f, 0x69, 0x63, 0x65, 0x73, 0x22, 0x64, 0x0a, 0x0b, 0x45, 0x78, 0x61, 0x6d, 0x47, 0x72, 0x61,
+	0x64, 0x69, 0x6e, 0x67, 0x12, 0x55, 0x0a, 0x09, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72,
+	0x63, 0x65, 0x73, 0x2e, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x2e, 0x45, 0x78, 0x61, 0x6d, 0x47, 0x72, 0x61, 0x64, 0x69, 0x6e, 0x67, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02, 0x10, 0x32,
+	0x52, 0x09, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x22, 0x8a, 0x01, 0x0a, 0x13,
+	0x45, 0x78, 0x61, 0x6d, 0x47, 0x72, 0x61, 0x64, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x0b, 0x71, 0x75, 0x65, 0x73, 0x74, 0x69, 0x6f, 0x6e, 0x5f,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x71, 0x75, 0x65, 0x73, 0x74, 0x69,
+	0x6f, 0x6e, 0x49, 0x64, 0x12, 0x27, 0x0a, 0x06, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x02, 0x42, 0x0f, 0xfa, 0x42, 0x0c, 0x0a, 0x0a, 0x1d, 0x00, 0x00, 0x7a, 0x44,
+	0x2d, 0x00, 0x00, 0x00, 0x00, 0x52, 0x06, 0x70, 0x6f, 0x69, 0x6e, 0x74, 0x73, 0x12, 0x1d, 0x0a,
+	0x07, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00,
+	0x52, 0x07, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x65, 0x64, 0x88, 0x01, 0x01, 0x42, 0x0a, 0x0a, 0x08,
+	0x5f, 0x63, 0x68, 0x65, 0x63, 0x6b, 0x65, 0x64, 0x42, 0x55, 0x5a, 0x53, 0x67, 0x69, 0x74, 0x68,
+	0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61,
+	0x70, 0x70, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67,
+	0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x73, 0x2f, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
+	0x3b, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 })
 
 var (
@@ -1428,7 +1547,7 @@ func file_resources_qualifications_exam_proto_rawDescGZIP() []byte {
 	return file_resources_qualifications_exam_proto_rawDescData
 }
 
-var file_resources_qualifications_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
+var file_resources_qualifications_exam_proto_msgTypes = make([]protoimpl.MessageInfo, 21)
 var file_resources_qualifications_exam_proto_goTypes = []any{
 	(*ExamQuestions)(nil),              // 0: resources.qualifications.ExamQuestions
 	(*ExamQuestion)(nil),               // 1: resources.qualifications.ExamQuestion
@@ -1449,13 +1568,15 @@ var file_resources_qualifications_exam_proto_goTypes = []any{
 	(*ExamResponseText)(nil),           // 16: resources.qualifications.ExamResponseText
 	(*ExamResponseSingleChoice)(nil),   // 17: resources.qualifications.ExamResponseSingleChoice
 	(*ExamResponseMultipleChoice)(nil), // 18: resources.qualifications.ExamResponseMultipleChoice
-	(*timestamp.Timestamp)(nil),        // 19: resources.timestamp.Timestamp
-	(*filestore.File)(nil),             // 20: resources.filestore.File
+	(*ExamGrading)(nil),                // 19: resources.qualifications.ExamGrading
+	(*ExamGradingResponse)(nil),        // 20: resources.qualifications.ExamGradingResponse
+	(*timestamp.Timestamp)(nil),        // 21: resources.timestamp.Timestamp
+	(*filestore.File)(nil),             // 22: resources.filestore.File
 }
 var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	1,  // 0: resources.qualifications.ExamQuestions.questions:type_name -> resources.qualifications.ExamQuestion
-	19, // 1: resources.qualifications.ExamQuestion.created_at:type_name -> resources.timestamp.Timestamp
-	19, // 2: resources.qualifications.ExamQuestion.updated_at:type_name -> resources.timestamp.Timestamp
+	21, // 1: resources.qualifications.ExamQuestion.created_at:type_name -> resources.timestamp.Timestamp
+	21, // 2: resources.qualifications.ExamQuestion.updated_at:type_name -> resources.timestamp.Timestamp
 	2,  // 3: resources.qualifications.ExamQuestion.data:type_name -> resources.qualifications.ExamQuestionData
 	9,  // 4: resources.qualifications.ExamQuestion.answer:type_name -> resources.qualifications.ExamQuestionAnswerData
 	3,  // 5: resources.qualifications.ExamQuestionData.separator:type_name -> resources.qualifications.ExamQuestionSeparator
@@ -1464,11 +1585,11 @@ var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	6,  // 8: resources.qualifications.ExamQuestionData.free_text:type_name -> resources.qualifications.ExamQuestionText
 	7,  // 9: resources.qualifications.ExamQuestionData.single_choice:type_name -> resources.qualifications.ExamQuestionSingleChoice
 	8,  // 10: resources.qualifications.ExamQuestionData.multiple_choice:type_name -> resources.qualifications.ExamQuestionMultipleChoice
-	20, // 11: resources.qualifications.ExamQuestionImage.image:type_name -> resources.filestore.File
-	19, // 12: resources.qualifications.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
-	19, // 13: resources.qualifications.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
-	19, // 14: resources.qualifications.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
-	19, // 15: resources.qualifications.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
+	22, // 11: resources.qualifications.ExamQuestionImage.image:type_name -> resources.filestore.File
+	21, // 12: resources.qualifications.ExamUser.created_at:type_name -> resources.timestamp.Timestamp
+	21, // 13: resources.qualifications.ExamUser.started_at:type_name -> resources.timestamp.Timestamp
+	21, // 14: resources.qualifications.ExamUser.ends_at:type_name -> resources.timestamp.Timestamp
+	21, // 15: resources.qualifications.ExamUser.ended_at:type_name -> resources.timestamp.Timestamp
 	12, // 16: resources.qualifications.ExamResponses.responses:type_name -> resources.qualifications.ExamResponse
 	1,  // 17: resources.qualifications.ExamResponse.question:type_name -> resources.qualifications.ExamQuestion
 	13, // 18: resources.qualifications.ExamResponse.response:type_name -> resources.qualifications.ExamResponseData
@@ -1477,11 +1598,12 @@ var file_resources_qualifications_exam_proto_depIdxs = []int32{
 	16, // 21: resources.qualifications.ExamResponseData.free_text:type_name -> resources.qualifications.ExamResponseText
 	17, // 22: resources.qualifications.ExamResponseData.single_choice:type_name -> resources.qualifications.ExamResponseSingleChoice
 	18, // 23: resources.qualifications.ExamResponseData.multiple_choice:type_name -> resources.qualifications.ExamResponseMultipleChoice
-	24, // [24:24] is the sub-list for method output_type
-	24, // [24:24] is the sub-list for method input_type
-	24, // [24:24] is the sub-list for extension type_name
-	24, // [24:24] is the sub-list for extension extendee
-	0,  // [0:24] is the sub-list for field type_name
+	20, // 24: resources.qualifications.ExamGrading.responses:type_name -> resources.qualifications.ExamGradingResponse
+	25, // [25:25] is the sub-list for method output_type
+	25, // [25:25] is the sub-list for method input_type
+	25, // [25:25] is the sub-list for extension type_name
+	25, // [25:25] is the sub-list for extension extendee
+	0,  // [0:25] is the sub-list for field type_name
 }
 
 func init() { file_resources_qualifications_exam_proto_init() }
@@ -1508,13 +1630,14 @@ func file_resources_qualifications_exam_proto_init() {
 		(*ExamResponseData_SingleChoice)(nil),
 		(*ExamResponseData_MultipleChoice)(nil),
 	}
+	file_resources_qualifications_exam_proto_msgTypes[20].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_resources_qualifications_exam_proto_rawDesc), len(file_resources_qualifications_exam_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   19,
+			NumMessages:   21,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
