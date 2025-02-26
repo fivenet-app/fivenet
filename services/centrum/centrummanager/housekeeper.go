@@ -819,6 +819,11 @@ func (s *Housekeeper) watchUserChanges() {
 			return
 
 		case event := <-userCh:
+			if event == nil {
+				s.logger.Error("received nil user changes event, skipping")
+				continue
+			}
+
 			func() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
 				defer span.End()
