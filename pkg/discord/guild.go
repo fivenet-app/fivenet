@@ -25,15 +25,22 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const discordLogsEmbedChunkSize = 5
+const (
+	minimumSyncWaitTime       = 30 * time.Second
+	discordLogsEmbedChunkSize = 5
+)
+
+var SyncCooldownTimeErr = errors.New("guild still in sync cooldown time")
 
 type Guild struct {
-	mutex  sync.Mutex
-	ctx    context.Context
-	cancel context.CancelFunc
+	running atomic.Bool
+	mu      sync.Mutex
+	ctx     context.Context
+	cancel  context.CancelFunc
 
-	job string
-	id  discord.GuildID
+	job      string
+	id       discord.GuildID
+	lastSync time.Time
 
 	logger *zap.Logger
 	bot    *Bot
@@ -43,19 +50,20 @@ type Guild struct {
 	modules []modules.Module
 
 	settings *atomic.Pointer[users.DiscordSyncSettings]
-	events   *broker.Broker[interface{}]
+	events   *broker.Broker[any]
 }
 
-func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guild, error) {
+func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string, lastSync time.Time) (*Guild, error) {
 	ctx, cancel := context.WithCancel(c)
 
-	events := broker.New[interface{}]()
+	events := broker.New[any]()
 	go events.Start(ctx)
 
 	g := &Guild{
-		mutex:  sync.Mutex{},
-		ctx:    ctx,
-		cancel: cancel,
+		running: atomic.Bool{},
+		mu:      sync.Mutex{},
+		ctx:     ctx,
+		cancel:  cancel,
 
 		job: job,
 		id:  guild.ID,
@@ -105,9 +113,26 @@ func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guil
 	return g, errs
 }
 
-func (g *Guild) Run() error {
-	g.mutex.Lock()
-	defer g.mutex.Unlock()
+func (g *Guild) IsRunning() bool {
+	return g.running.Load()
+}
+
+func (g *Guild) Run(ignoreCooldown bool) error {
+	// If the sync is already running, return
+	if g.running.Load() {
+		return nil
+	}
+
+	// Set running "flag" and acquire lock
+	g.running.Store(true)
+	g.mu.Lock()
+	defer g.mu.Unlock()
+	defer g.running.Store(false)
+
+	// Make sure that the minimum wait time is over
+	if !ignoreCooldown && time.Since(g.lastSync) <= minimumSyncWaitTime {
+		return SyncCooldownTimeErr
+	}
 
 	start := time.Now()
 
@@ -166,7 +191,6 @@ func (g *Guild) Run() error {
 		return errs
 	}
 	logs = append(logs, ls...)
-	plan.DryRun = settings.DryRun
 
 	// Encode plan as yaml for our "change list"
 	b := bytes.Buffer{}
@@ -241,13 +265,9 @@ func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed)
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
 
-	// Split logs embeds into chunks
+	// Split log embeds into chunks
 	for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
-		end := i + discordLogsEmbedChunkSize
-
-		if end > len(logs) {
-			end = len(logs)
-		}
+		end := min(i+discordLogsEmbedChunkSize, len(logs))
 
 		if _, err := g.bot.dc.SendEmbeds(channel.ID, logs[i:end]...); err != nil {
 			return fmt.Errorf("failed to send status log embeds. %w", err)
@@ -316,6 +336,8 @@ func (g *Guild) getSyncSettings(ctx context.Context) (*users.DiscordSyncSettings
 }
 
 func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *users.DiscordSyncChanges) error {
+	t := time.Now()
+
 	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		UPDATE(
@@ -323,7 +345,7 @@ func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *user
 			tJobProps.DiscordSyncChanges,
 		).
 		SET(
-			jet.CURRENT_TIMESTAMP(),
+			t,
 			pDiff,
 		).
 		WHERE(
@@ -333,6 +355,8 @@ func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *user
 	if _, err := stmt.ExecContext(ctx, g.bot.db); err != nil {
 		return fmt.Errorf("failed to update job last sync data. %w", err)
 	}
+
+	g.lastSync = t
 
 	return nil
 }

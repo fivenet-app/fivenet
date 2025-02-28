@@ -99,6 +99,7 @@ func NewAbsentCommand(router *cmdroute.Router, cfg *config.Config, p CommandPara
 					MaxLength:   option.NewInt(200),
 				},
 			},
+			DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 		},
 		nil
 }

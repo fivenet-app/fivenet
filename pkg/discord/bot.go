@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"slices"
-	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -14,6 +13,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
@@ -35,6 +35,8 @@ import (
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
+
+const botWorkerCount = 3
 
 var tJobProps = table.FivenetJobProps.AS("jobprops")
 
@@ -98,7 +100,8 @@ type Bot struct {
 
 	cmds *commands.Cmds
 
-	wg sync.WaitGroup
+	wg     sync.WaitGroup
+	workCh chan *Guild
 
 	syncTimer *time.Timer
 
@@ -143,13 +146,43 @@ func NewBot(p BotParams) (*Bot, error) {
 
 		cmds: cmds,
 
-		wg: sync.WaitGroup{},
+		wg:     sync.WaitGroup{},
+		workCh: make(chan *Guild, 3),
 
 		dc:           state,
 		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Start bot workers
+		for range botWorkerCount {
+			b.wg.Add(1)
+			go func() {
+				defer b.wg.Done()
+
+				for {
+					select {
+					case <-cancelCtx.Done():
+						return
+
+					case guild := <-b.workCh:
+						func() {
+							logger := b.logger.With(zap.String("job", guild.job), zap.Uint64("discord_guild_id", uint64(guild.id)))
+
+							// Ignore the cooldown for the periodic sync
+							if err := guild.Run(true); err != nil {
+								logger.Error("error during discord sync", zap.Error(err))
+
+								metricLastSync.WithLabelValues(guild.job, "failed").SetToCurrentTime()
+							} else {
+								metricLastSync.WithLabelValues(guild.job, "success").SetToCurrentTime()
+							}
+						}()
+					}
+				}
+			}()
+		}
+
 		if err := registerStreams(ctxStartup, b.js); err != nil {
 			return err
 		}
@@ -157,6 +190,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		go func() {
 			if err := state.Connect(cancelCtx); err != nil {
 				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))
+
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
 				}
@@ -313,65 +347,60 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 		return fmt.Errorf("failed to get guilds from dc state. %w", err)
 	}
 
-	for job, guildID := range jobGuilds {
+	for _, guildInfo := range jobGuilds {
 		idx := slices.IndexFunc(guilds, func(in discord.Guild) bool {
-			return in.ID == guildID
+			return in.ID == guildInfo.GuildID
 		})
 		if idx == -1 {
 			// Make sure to stop any active stuff with the previously active guild
-			if g, ok := b.activeGuilds.Load(guildID); ok {
+			if g, ok := b.activeGuilds.Load(guildInfo.GuildID); ok {
 				g.Stop()
 
-				b.activeGuilds.Delete(guildID)
+				b.activeGuilds.Delete(guildInfo.GuildID)
 			}
 
-			b.logger.Warn("didn't find bot in guild (anymore?)", zap.Uint64("discord_guild_id", uint64(guildID)), zap.String("job", job))
+			b.logger.Warn("didn't find bot in guild (anymore?)", zap.Uint64("discord_guild_id", uint64(guildInfo.GuildID)), zap.String("job", guildInfo.Job))
 			continue
 		}
 
-		if _, ok := b.activeGuilds.Load(guildID); ok {
+		// Check if the guild is already existing and therefore active
+		if _, ok := b.activeGuilds.Load(guildInfo.GuildID); ok {
 			continue
 		}
 
-		g, err := NewGuild(b.ctx, b, guilds[idx], job)
+		g, err := NewGuild(b.ctx, b, guilds[idx], guildInfo.Job, guildInfo.LastSync.AsTime())
 		if err != nil {
 			return err
 		}
-		b.activeGuilds.Store(guildID, g)
+		b.activeGuilds.Store(guildInfo.GuildID, g)
 	}
 
 	return nil
 }
 
-func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]discord.GuildID, error) {
+type jobGuild struct {
+	Job      string               `alias:"job"`
+	GuildID  discord.GuildID      `alias:"id"`
+	LastSync *timestamp.Timestamp `alias:"last_sync"`
+}
+
+func (b *Bot) getJobGuildsFromDB(ctx context.Context) ([]*jobGuild, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("job"),
 			tJobProps.DiscordGuildID.AS("id"),
+			tJobProps.DiscordLastSync.AS("last_sync"),
 		).
 		FROM(tJobProps).
 		WHERE(jet.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
 		))
 
-	var dest []*struct {
-		Job string `alias:"job"`
-		ID  string `alias:"id"`
-	}
-	if err := stmt.QueryContext(ctx, b.db, &dest); err != nil {
+	var guilds []*jobGuild
+	if err := stmt.QueryContext(ctx, b.db, &guilds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
-	}
-
-	guilds := map[string]discord.GuildID{}
-	for _, g := range dest {
-		id, err := strconv.ParseUint(g.ID, 10, 64)
-		if err != nil {
-			return nil, fmt.Errorf("failed to parse guild id %s as uint64. %w", g.ID, err)
-		}
-
-		guilds[g.Job] = discord.GuildID(id)
 	}
 
 	return guilds, nil
@@ -388,38 +417,11 @@ func (b *Bot) runSync(ctx context.Context) error {
 
 	errs := multierr.Combine()
 
-	// Run at max 3 syncs at once
-	workChannel := make(chan *Guild, 3)
-
-	// Retrieve guilds via channel
-	b.wg.Add(1)
-	go func() {
-		defer b.wg.Done()
-
-		for guild := range workChannel {
-			b.wg.Add(1)
-			go func(g *Guild) {
-				defer b.wg.Done()
-				logger := b.logger.With(zap.String("job", g.job), zap.Uint64("discord_guild_id", uint64(g.id)))
-
-				if err := g.Run(); err != nil {
-					logger.Error("error during sync", zap.Error(err))
-					errs = multierr.Append(errs, err)
-
-					metricLastSync.WithLabelValues(g.job, "failed").SetToCurrentTime()
-				} else {
-					metricLastSync.WithLabelValues(g.job, "success").SetToCurrentTime()
-				}
-			}(guild)
-		}
-	}()
-
+	// Submit guilds to sync via work channel
 	b.activeGuilds.Range(func(_ discord.GuildID, guild *Guild) bool {
-		workChannel <- guild
+		b.workCh <- guild
 		return true
 	})
-
-	close(workChannel)
 
 	b.wg.Wait()
 
@@ -443,6 +445,8 @@ func (b *Bot) stop() error {
 	return b.dc.Close()
 }
 
+// State helpers for commands and modules
+
 func (b *Bot) GetJobFromGuildID(guildId discord.GuildID) (string, bool) {
 	guild, ok := b.activeGuilds.Load(guildId)
 	if !ok || guild == nil {
@@ -450,4 +454,25 @@ func (b *Bot) GetJobFromGuildID(guildId discord.GuildID) (string, bool) {
 	}
 
 	return guild.job, true
+}
+
+func (b *Bot) RunSync(guildID discord.GuildID) (bool, error) {
+	// Submit guild to sync queue via work channel
+	guild, ok := b.activeGuilds.Load(guildID)
+	if !ok {
+		return false, errors.New("no active guild found for guild ID")
+	}
+
+	b.workCh <- guild
+
+	return false, nil
+}
+
+func (b *Bot) IsUserGuildAdmin(ctx context.Context, channelId discord.ChannelID, userId discord.UserID) (bool, error) {
+	perms, err := b.dc.Permissions(channelId, userId)
+	if err != nil {
+		return false, err
+	}
+
+	return perms.Has(discord.PermissionAdministrator), nil
 }

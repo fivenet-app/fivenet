@@ -76,6 +76,30 @@
                         "desc": "You already have an absence for the same dates.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
                     }
                 }
+            },
+            "sync": {
+                "results": {
+                    "wrong_discord": {
+                        "title": "Sync command must be run on a FiveNet enabled Discord server!",
+                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "permission_denied": {
+                        "title": "Discord admin permission required",
+                        "desc": "Discord admin permission is required to run the sync command."
+                    },
+                    "start_error": {
+                        "title": "Failed to start manual sync",
+                        "desc": "There was an error to start the manual sync."
+                    },
+                    "already_running": {
+                        "title": "Sync is already running",
+                        "desc": "Please wait for the current sync to finish before trying to start the sync manually."
+                    },
+                    "started": {
+                        "title": "Sync successfully requested!",
+                        "desc": "The sync will start in a moment."
+                    }
+                }
             }
         }
     }
