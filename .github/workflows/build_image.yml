@@ -1,4 +1,4 @@
-name: Build Binaries and Container Image
+name: Build Container Image
 on:
   push:
     branches:
@@ -51,29 +51,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             NUXT_UI_PRO_LICENSE=${{ secrets.NUXT_UI_PRO_LICENSE }}
-
-  build-binaries:
-    name: Build Binaries
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
-    strategy:
-      matrix:
-        # build and publish in parallel: linux/386, linux/amd64, linux/arm64, windows/386, windows/amd64
-        goos: [linux, windows]
-        goarch: ['386', amd64, arm64]
-        exclude:
-          - goarch: arm64
-            goos: windows
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: wangyoucao577/go-release-action@v1.53
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          goos: ${{ matrix.goos }}
-          goarch: ${{ matrix.goarch }}
-          goversion: '1.23.5'
-          binary_name: 'fivenet'
-          extra_files: LICENSE README.md VERSION config.example.yaml dbsync.example.yaml
