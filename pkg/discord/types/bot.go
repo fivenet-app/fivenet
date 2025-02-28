@@ -9,7 +9,7 @@ import (
 type BotState interface {
 	GetJobFromGuildID(guildId discord.GuildID) (string, bool)
 
-	RunSync(job string) (bool, error)
+	RunSync(guildID discord.GuildID) (bool, error)
 
 	IsUserGuildAdmin(ctx context.Context, channelId discord.ChannelID, userId discord.UserID) (bool, error)
 }

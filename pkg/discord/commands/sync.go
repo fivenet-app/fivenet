@@ -94,16 +94,8 @@ func (c *SyncCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandDat
 		return resp
 	}
 
-	job, ok := c.b.GetJobFromGuildID(cmd.Event.GuildID)
-	if !ok {
-		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.sync.results.wrong_discord.title"})
-		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.sync.results.wrong_discord.desc"})
-		(*resp.Embeds)[0].Color = embeds.ColorInfo
-		return resp
-	}
-
 	// Try to run sync
-	running, err := c.b.RunSync(job)
+	running, err := c.b.RunSync(cmd.Event.GuildID)
 	if err != nil {
 		(*resp.Embeds)[0].Title = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.sync.results.start_error.title"})
 		(*resp.Embeds)[0].Description = localizer.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.sync.results.start_error.desc"})
