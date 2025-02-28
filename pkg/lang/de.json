@@ -76,6 +76,30 @@
                         "desc": "Eine Abwesenheit für den gleichen Zeitraum ist bereits hinterlegt.\n({{.AbsenceBegin}} - {{.AbsenceEnd}})"
                     }
                 }
+            },
+            "sync": {
+                "results": {
+                    "wrong_discord": {
+                        "title": "Sync Befehl muss auf einem Discord Server mit FiveNet-Verbindung ausgeführt werden!",
+                        "desc": "Either you are sending a DM or this Discord isn't FiveNet enabled. Please contact the Discord server administrator."
+                    },
+                    "permission_denied": {
+                        "title": "Discord Admin Rechte benötigt",
+                        "desc": "Discord Admin Rechte sind benötigt um den Sync Befehl auszuführen."
+                    },
+                    "start_error": {
+                        "title": "Fehler beim manuellen starten des Syncs",
+                        "desc": "Es ist ein Fehler aufgetreten den Sync manuell zu starten."
+                    },
+                    "already_running": {
+                        "title": "Der Sync läuft bereits",
+                        "desc": "Bitte warten Sie bis der momentane Sync abgeschlossen ist, bevor Sie es probieren können den Sync erneut manuell zustarten."
+                    },
+                    "started": {
+                        "title": "Sync Anfrage erfolgreich!",
+                        "desc": "Der Sync sollte in wenigen Momenten starten."
+                    }
+                }
             }
         }
     }

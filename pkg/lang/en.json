@@ -97,7 +97,7 @@
                     },
                     "started": {
                         "title": "Sync successfully requested!",
-                        "desc": "The sync will start in a moment."
+                        "desc": "The sync should start in a moment."
                     }
                 }
             }

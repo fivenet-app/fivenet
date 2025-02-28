@@ -123,10 +123,10 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 		return nil
 	}
 
-	// Set running "flag" and acquire lock
-	g.running.Store(true)
+	// Acquire lock and set running "flag"
 	g.mu.Lock()
 	defer g.mu.Unlock()
+	g.running.Store(true)
 	defer g.running.Store(false)
 
 	// Make sure that the minimum wait time is over
@@ -185,7 +185,8 @@ func (g *Guild) Run(ignoreCooldown bool) error {
 		logs = append(logs, mLogs...)
 	}
 
-	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, settings.DryRun)
+	// Allow config to force dry run mode
+	plan, ls, err := state.Calculate(g.ctx, g.bot.dc, g.bot.cfg.DryRun || settings.DryRun)
 	if err != nil {
 		errs = multierr.Append(errs, fmt.Errorf("error during plan calculation. %w", err))
 		return errs

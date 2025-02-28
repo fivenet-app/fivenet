@@ -190,6 +190,7 @@ type DispatchCenter struct {
 
 type Discord struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
+	DryRun       bool                `default:"false" yaml:"dryRun"`
 	Token        string              `yaml:"token"`
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
 	GroupSync    DiscordGroupSync    `yaml:"groupSync"`

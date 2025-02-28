@@ -253,8 +253,9 @@ const canSubmit = ref(true);
                         <UButton
                             v-else
                             class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold"
+                            variant="soft"
                             :disabled="!canSubmit"
-                            icon="i-mdi-check-read"
+                            icon="i-mdi-read"
                             @click="markUnread(true, not.id).finally(timeoutFn)"
                         >
                             <span class="sr-only">{{ $t('components.notifications.mark_unread') }}</span>
