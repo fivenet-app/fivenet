@@ -47,7 +47,7 @@ const { attr } = useAuth();
                         {{ $t('common.height') }}
                     </dt>
                     <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
-                        {{ user?.height }}cm
+                        {{ user?.height ? user.height + 'cm' : '?' }}
                     </dd>
                 </div>
 

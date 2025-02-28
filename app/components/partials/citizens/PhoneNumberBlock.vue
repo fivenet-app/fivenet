@@ -12,12 +12,14 @@ const props = withDefaults(
         showLabel?: boolean;
         width?: string;
         padded?: boolean;
+        hideNa?: boolean;
     }>(),
     {
         showIcon: true,
         hideNumber: false,
         showLabel: false,
         width: 'w-6',
+        hideNa: false,
     },
 );
 
