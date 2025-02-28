@@ -44,9 +44,9 @@ function copyEmail(): void {
 <template>
     <template v-if="!email">
         <span class="inline-flex items-center">
-            <span v-if="!hideNaText">
+            <template v-if="!hideNaText">
                 {{ $t('common.na') }}
-            </span>
+            </template>
         </span>
     </template>
     <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">

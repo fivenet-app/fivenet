@@ -12,14 +12,14 @@ const props = withDefaults(
         showLabel?: boolean;
         width?: string;
         padded?: boolean;
-        hideNa?: boolean;
+        hideNaText?: boolean;
     }>(),
     {
         showIcon: true,
         hideNumber: false,
         showLabel: false,
         width: 'w-6',
-        hideNa: false,
+        hideNaText: false,
     },
 );
 
@@ -55,7 +55,11 @@ async function doCall(): Promise<void> {
 
 <template>
     <div class="inline-flex items-center" :class="!padded && 'gap-1'">
-        <span v-if="number === undefined">{{ $t('common.na') }}</span>
+        <span v-if="number === undefined">
+            <template v-if="!hideNaText">
+                {{ $t('common.na') }}
+            </template>
+        </span>
         <template v-else>
             <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
                 <span class="sr-only">{{ $t('common.call') }}</span>

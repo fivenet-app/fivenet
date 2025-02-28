@@ -344,7 +344,7 @@ defineShortcuts({
         </template>
 
         <template #phoneNumber-data="{ row: citizen }">
-            <PhoneNumberBlock :number="citizen.phoneNumber" hide-na />
+            <PhoneNumberBlock :number="citizen.phoneNumber" hide-na-text />
         </template>
 
         <template #openFines-data="{ row: citizen }">
