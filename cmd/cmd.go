@@ -3,6 +3,7 @@ package cmd
 import (
 	"time"
 
+	"github.com/alecthomas/kong"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -66,6 +67,8 @@ import (
 type Context struct{}
 
 var Cli struct {
+	Version kong.VersionFlag `help:"Print version information and quit"`
+
 	Config         string        `help:"Config file path" env:"FIVENET_CONFIG_FILE"`
 	StartTimeout   time.Duration `help:"App start timeout duration" default:"180s" env:"FIVENET_START_TIMEOUT"`
 	SkipMigrations *bool         `help:"Disable the automatic DB migrations on startup." env:"FIVENET_SKIP_DB_MIGRATIONS"`

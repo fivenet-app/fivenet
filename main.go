@@ -7,11 +7,9 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-
-	// GRPC Services
 	"github.com/fivenet-app/fivenet/cmd"
 	"github.com/fivenet-app/fivenet/cmd/envs"
-	// Modules
+	"github.com/fivenet-app/fivenet/pkg/version"
 )
 
 func main() {
@@ -20,7 +18,11 @@ func main() {
 	runtime.SetBlockProfileRate(20000)
 	runtime.SetMutexProfileFraction(100)
 
-	ctx := kong.Parse(&cmd.Cli)
+	ctx := kong.Parse(&cmd.Cli,
+		kong.Vars{
+			"version": version.Version,
+		},
+	)
 
 	// Cli flag overrides env var
 	if cmd.Cli.Config != "" {
