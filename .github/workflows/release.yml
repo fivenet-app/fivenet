@@ -21,6 +21,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set APP_VERSION env
+        run: echo APP_VERSION=$(git describe --tags --exclude='fivenet-*') >> ${GITHUB_ENV}
+
       - uses: wangyoucao577/go-release-action@v1.53
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -29,3 +32,4 @@ jobs:
           goversion: '1.23.5'
           binary_name: 'fivenet'
           extra_files: LICENSE README.md VERSION config.example.yaml dbsync.example.yaml
+          ldflags: '-X github.com/fivenet-app/fivenet/pkg/version.Version=${{ env.APP_VERSION }}'
