@@ -1,9 +1,5 @@
 import { defineStore } from 'pinia';
 
-export interface CookiesState {
-    cookiesState: null | boolean;
-}
-
 export const useCookiesStore = defineStore(
     'cookies',
     () => {

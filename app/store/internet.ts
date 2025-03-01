@@ -13,10 +13,6 @@ export type Tab = {
     history: string[];
 };
 
-export interface InternetState {
-    tab: Tab;
-}
-
 export const useInternetStore = defineStore(
     'internet',
     () => {

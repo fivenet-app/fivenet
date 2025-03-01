@@ -129,10 +129,6 @@ export interface ClipboardData {
     vehicles: ClipboardVehicle[];
 }
 
-export interface ClipboardState extends ClipboardData {
-    activeStack: ClipboardData;
-}
-
 export type ListType = 'users' | 'documents' | 'vehicles';
 
 export const useClipboardStore = defineStore(
