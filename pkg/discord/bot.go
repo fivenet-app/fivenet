@@ -345,17 +345,17 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 }
 
 type jobGuild struct {
-	Job      string               `alias:"job"`
-	GuildID  discord.GuildID      `alias:"id"`
+	Job      string               `alias:"job" sql:"primary_key"`
+	GuildID  discord.GuildID      `alias:"guild_id"`
 	LastSync *timestamp.Timestamp `alias:"last_sync"`
 }
 
 func (b *Bot) getJobGuildsFromDB(ctx context.Context) ([]*jobGuild, error) {
 	stmt := tJobProps.
 		SELECT(
-			tJobProps.Job.AS("job"),
-			tJobProps.DiscordGuildID.AS("id"),
-			tJobProps.DiscordLastSync.AS("last_sync"),
+			tJobProps.Job.AS("jobguild.job"),
+			tJobProps.DiscordGuildID.AS("jobguild.guild_id"),
+			tJobProps.DiscordLastSync.AS("jobguild.last_sync"),
 		).
 		FROM(tJobProps).
 		WHERE(jet.AND(
