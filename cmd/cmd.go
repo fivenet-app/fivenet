@@ -37,6 +37,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/dbsync"
 	"github.com/fivenet-app/fivenet/pkg/discord"
+	"github.com/fivenet-app/fivenet/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
@@ -103,7 +104,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		croner.HandlerModule,
 		croner.Module,
 		croner.SchedulerModule,
-		discord.BotModule,
 		events.Module,
 		grpc.ServerModule,
 		htmlsanitizer.Module,
@@ -121,6 +121,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		storage.Module,
 		housekeeper.Module,
 		dbsync.Module,
+		// Discord Bot
+		discord.StateModule,
+		discord.BotModule,
+		commands.Module,
 
 		fx.Provide(
 			mstlystcdata.NewDocumentCategories,

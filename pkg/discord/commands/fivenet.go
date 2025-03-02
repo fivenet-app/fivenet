@@ -6,7 +6,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -22,29 +21,32 @@ type FivenetCommand struct {
 	url string
 }
 
-func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
-	lEN := p.L.I18n("en")
-	lDE := p.L.I18n("de")
-
-	router.Add("fivenet", &FivenetCommand{
+func NewFivenetCommand(p CommandParams) (Command, error) {
+	return &FivenetCommand{
 		l:   p.L,
-		url: cfg.HTTP.PublicURL,
-	})
+		url: p.Cfg.HTTP.PublicURL,
+	}, nil
+}
+
+func (c *FivenetCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
+	lEN := c.l.I18n("en")
+	lDE := c.l.I18n("de")
+
+	router.Add("fivenet", c)
 
 	return api.CreateCommandData{
-			Type: discord.ChatInputCommand,
-			Name: "fivenet",
-			Description: lEN.MustLocalize(&i18n.LocalizeConfig{
+		Type: discord.ChatInputCommand,
+		Name: "fivenet",
+		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.fivenet.desc",
+		}),
+		DescriptionLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "discord.commands.fivenet.desc",
 			}),
-			DescriptionLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "discord.commands.fivenet.desc",
-				}),
-			},
-			DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 		},
-		nil
+		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
+	}
 }
 
 func (c *FivenetCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {

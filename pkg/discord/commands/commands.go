@@ -18,7 +18,19 @@ import (
 	"go.uber.org/zap"
 )
 
+func wrapLogger(log *zap.Logger) *zap.Logger {
+	return log.Named("discord_bot").Named("commands")
+}
+
+var Module = fx.Module("discord_bot",
+	fx.Provide(
+		New,
+	),
+	fx.Decorate(wrapLogger),
+)
+
 type CommandParams struct {
+	Cfg      *config.Config
 	JS       *events.JSWrapper
 	DB       *sql.DB
 	L        *lang.I18n
@@ -26,67 +38,77 @@ type CommandParams struct {
 	Perms    perms.Permissions
 }
 
-type CommandFactory = func(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error)
+type CommandFactory = func(p CommandParams) (Command, error)
 
 var CommandsFactories = map[string]CommandFactory{}
 
 type Params struct {
 	fx.In
 
+	LC fx.Lifecycle
+
 	Logger *zap.Logger
-	S      *state.State
 	Cfg    *config.Config
-	I18n   *lang.I18n
+	DC     *state.State
+
+	Commands []Command `group:"discordcommands"`
 }
 
 type Cmds struct {
 	logger *zap.Logger
+	cfg    *config.Config
 
-	router  *cmdroute.Router
-	discord *state.State
-	cfg     *config.Config
-	i18n    *lang.I18n
+	router *cmdroute.Router
+
+	cmds []Command
 }
 
-func New(p Params) (*Cmds, error) {
-	c := &Cmds{
-		logger:  p.Logger,
-		discord: p.S,
-		cfg:     p.Cfg,
-		i18n:    p.I18n,
+func New(p Params) *Cmds {
+	if !p.Cfg.Discord.Commands.Enabled {
+		return nil
 	}
 
-	return c, nil
+	c := &Cmds{
+		logger: p.Logger,
+		cfg:    p.Cfg,
+		router: cmdroute.NewRouter(),
+	}
+
+	c.router.Use(newMiddlewareLogger(c.logger.Named("discord_bot.commands")))
+	// Automatically defer handles if they're slow.
+	c.router.Use(cmdroute.Deferrable(p.DC, cmdroute.DeferOpts{}))
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		if err := c.registerCommands(p.DC); err != nil {
+			return fmt.Errorf("failed to register commands. %w", err)
+		}
+
+		return nil
+	}))
+
+	return c
 }
 
-func (c *Cmds) RegisterCommands(p CommandParams) error {
+func (c *Cmds) registerCommands(dc *state.State) error {
 	c.logger.Info("registering commands", zap.Int("count", len(CommandsFactories)))
 
-	c.router = cmdroute.NewRouter()
-	c.router.Use(Logger(c.logger.Named("discord_bot.commands")))
-	// Automatically defer handles if they're slow.
-	c.router.Use(cmdroute.Deferrable(c.discord, cmdroute.DeferOpts{}))
-
 	commands := []api.CreateCommandData{}
-	for _, fn := range CommandsFactories {
-		cmdData, err := fn(c.router, c.cfg, p)
-		if err != nil {
-			return err
-		}
+	for _, cmd := range c.cmds {
+		cmdData := cmd.RegisterCommand(c.router)
 
 		commands = append(commands, cmdData)
 	}
 
-	if err := cmdroute.OverwriteCommands(c.discord, commands); err != nil {
+	if err := cmdroute.OverwriteCommands(dc, commands); err != nil {
 		return fmt.Errorf("cannot update discord bot commands. %w", err)
 	}
 
-	c.discord.AddInteractionHandler(c.router)
+	dc.AddInteractionHandler(c.router)
 
 	return nil
 }
 
-func Logger(logger *zap.Logger) cmdroute.Middleware {
+func newMiddlewareLogger(logger *zap.Logger) cmdroute.Middleware {
 	return func(next cmdroute.InteractionHandler) cmdroute.InteractionHandler {
 		return cmdroute.InteractionHandlerFunc(func(ctx context.Context, ev *discord.InteractionEvent) *api.InteractionResponse {
 			switch data := ev.Data.(type) {

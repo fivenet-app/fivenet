@@ -17,16 +17,14 @@ const (
 )
 
 type Enricher struct {
-	jobs          *Jobs
-	docCategories *DocumentCategories
+	jobs *Jobs
 
 	appCfg appconfig.IConfig
 }
 
-func NewEnricher(jobs *Jobs, docCategories *DocumentCategories, appCfg appconfig.IConfig) *Enricher {
+func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig) *Enricher {
 	return &Enricher{
-		jobs:          jobs,
-		docCategories: docCategories,
+		jobs: jobs,
 
 		appCfg: appCfg,
 	}
@@ -39,10 +37,7 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	if ok {
 		usr.SetJobLabel(job.Label)
 
-		gradeIndex := usr.GetJobGrade() - 1
-		if gradeIndex < 0 {
-			gradeIndex = 0
-		}
+		gradeIndex := max(usr.GetJobGrade()-1, 0)
 
 		if len(job.Grades) > int(gradeIndex) {
 			usr.SetJobGradeLabel(job.Grades[gradeIndex].Label)
@@ -51,10 +46,12 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 			usr.SetJobGradeLabel(jg)
 		}
 	} else {
+		appCfg := e.appCfg.Get()
+
 		usr.SetJobLabel("N/A")
-		usr.SetJob(e.appCfg.Get().JobInfo.UnemployedJob.Name)
+		usr.SetJob(appCfg.JobInfo.UnemployedJob.Name)
 		usr.SetJobGradeLabel("N/A")
-		usr.SetJobGrade(e.appCfg.Get().JobInfo.UnemployedJob.Grade)
+		usr.SetJobGrade(appCfg.JobInfo.UnemployedJob.Grade)
 	}
 }
 
@@ -82,7 +79,7 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobG
 		return nil, nil
 	}
 
-	for i := 0; i < len(j.Grades); i++ {
+	for i := range j.Grades {
 		if j.Grades[i].Grade == grade {
 			return j, j.Grades[i]
 		}
@@ -122,6 +119,7 @@ func (e *UserAwareEnricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) f
 	appCfg := e.appCfg.Get()
 	publicJobs := appCfg.JobInfo.PublicJobs
 	unemployedJob := appCfg.JobInfo.UnemployedJob
+
 	return func(usr common.IJobInfo) {
 		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 		grade, ok := jobGrades[usr.GetJob()]

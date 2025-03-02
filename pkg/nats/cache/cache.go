@@ -3,9 +3,9 @@ package cache
 import (
 	"context"
 	"errors"
-	"sync/atomic"
+	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -13,31 +13,45 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type Cache[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
+type Cache[T any, U protoutils.ProtoMessage[T]] struct {
 	logger *zap.Logger
 
-	ap   atomic.Pointer[U]
-	data *xsync.MapOf[uint64, *laws.LawBook]
+	data *xsync.MapOf[string, *EntryWrapper[T, U]]
 
-	kv  jetstream.KeyValue
-	key string
+	kv     jetstream.KeyValue
+	prefix string
+	ttl    *time.Duration
 }
 
-func New[T any, U protoutils.ProtoMessageWithMerge[T]](logger *zap.Logger, kv jetstream.KeyValue, prefix string) (*Cache[T, U], error) {
+type EntryWrapper[T any, U protoutils.ProtoMessage[T]] struct {
+	Data    U
+	Created time.Time
+}
+
+type Option[T any, U protoutils.ProtoMessage[T]] func(s *Cache[T, U])
+
+func New[T any, U protoutils.ProtoMessage[T]](logger *zap.Logger, kv jetstream.KeyValue, opts ...Option[T, U]) (*Cache[T, U], error) {
 	c := &Cache[T, U]{
-		logger: logger.Named("cache").With(zap.String("prefix", prefix)),
+		logger: logger.Named("cache").With(zap.String("bucket", kv.Bucket())),
 
-		ap: atomic.Pointer[U]{},
+		data: xsync.NewMapOf[string, *EntryWrapper[T, U]](),
 
-		kv:  kv,
-		key: prefix,
+		kv: kv,
+	}
+
+	for _, opt := range opts {
+		opt(c)
+	}
+
+	if c.prefix != "" {
+		c.prefix = c.prefix + "."
 	}
 
 	return c, nil
 }
 
 func (c *Cache[T, U]) Start(ctx context.Context) error {
-	watcher, err := c.kv.Watch(ctx, c.key)
+	watcher, err := c.kv.Watch(ctx, c.prefix)
 	if err != nil {
 		return err
 	}
@@ -65,19 +79,22 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 					// Value is deleted
-					c.ap.Store(nil)
+					c.data.Delete(entry.Key())
 
 				case jetstream.KeyValuePut:
 					// Parse and set value "locally"
 					data := U(new(T))
 					if err := proto.Unmarshal(entry.Value(), data); err != nil {
-						c.logger.Error("failed to unmarshal store watcher update", zap.Error(err))
+						c.logger.Error("failed to unmarshal store watcher update", zap.String("key", entry.Key()), zap.Error(err))
 					}
 
-					c.ap.Store(&data)
+					c.data.Store(entry.Key(), &EntryWrapper[T, U]{
+						Data:    data,
+						Created: entry.Created(),
+					})
 
 				default:
-					c.logger.Error("unknown key operation received", zap.Uint8("op", uint8(entry.Operation())))
+					c.logger.Error("unknown key operation received", zap.String("key", entry.Key()), zap.Uint8("op", uint8(entry.Operation())))
 				}
 			}
 		}
@@ -86,17 +103,40 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 	return nil
 }
 
-func (c *Cache[T, U]) Get() *U {
-	return c.ap.Load()
+func (c *Cache[T, U]) Get(key string) (U, bool) {
+	key = c.prefix + events.SanitizeKey(key)
+
+	value, ok := c.data.Load(c.prefix + key)
+	if !ok {
+		return nil, false
+	}
+
+	// TTL expired
+	if c.ttl != nil && time.Since(value.Created) > *c.ttl {
+		return nil, false
+	}
+
+	return value.Data, ok
 }
 
-func (c *Cache[T, U]) Set(ctx context.Context, val U) error {
+func (c *Cache[T, U]) Set(ctx context.Context, key string, val U) error {
+	key = c.prefix + events.SanitizeKey(key)
+
 	out, err := protoutils.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	if _, err := c.kv.Put(ctx, c.key, out); err != nil {
+	if _, err := c.kv.Put(ctx, key, out); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Local deletion will happen via the watcher which might be delayed but this is just a cache
+func (c *Cache[T, U]) Delete(ctx context.Context, key string) error {
+	if err := c.kv.Delete(ctx, key); err != nil {
 		return err
 	}
 

@@ -19,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
@@ -46,7 +45,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 
 var BotModule = fx.Module("discord_bot",
 	fx.Provide(
-		NewBot,
+		New,
 	),
 	fx.Decorate(wrapLogger),
 )
@@ -70,8 +69,7 @@ var (
 type BotParams struct {
 	fx.In
 
-	LC         fx.Lifecycle
-	Shutdowner fx.Shutdowner
+	LC fx.Lifecycle
 
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
@@ -80,8 +78,10 @@ type BotParams struct {
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
 	AppConfig appconfig.IConfig
-	I18n      *lang.I18n
 	Perms     perms.Permissions
+
+	Discord *state.State
+	Cmds    *commands.Cmds
 }
 
 type Bot struct {
@@ -95,10 +95,7 @@ type Bot struct {
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
-	i18n     *lang.I18n
 	perms    perms.Permissions
-
-	cmds *commands.Cmds
 
 	wg     sync.WaitGroup
 	workCh chan *Guild
@@ -109,25 +106,17 @@ type Bot struct {
 	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
 }
 
-func NewBot(p BotParams) (*Bot, error) {
+type Result struct {
+	fx.Out
+
+	Bot      *Bot
+	BotState types.BotState
+}
+
+func New(p BotParams) Result {
+	// Discord bot not enabled
 	if !p.Config.Discord.Enabled {
-		return nil, nil
-	}
-
-	// Create a new Discord session using the provided login information.
-	state := state.New("Bot " + p.Config.Discord.Token)
-	state.AddIntents(gateway.IntentGuildMembers)
-	state.AddIntents(gateway.IntentGuildPresences)
-	state.AddIntents(gateway.IntentGuildIntegrations)
-
-	cmds, err := commands.New(commands.Params{
-		Logger: p.Logger,
-		S:      state,
-		Cfg:    p.Config,
-		I18n:   p.I18n,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
+		return Result{}
 	}
 
 	cancelCtx, cancel := context.WithCancel(context.Background())
@@ -141,15 +130,12 @@ func NewBot(p BotParams) (*Bot, error) {
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord,
 		appCfg:   p.AppConfig,
-		i18n:     p.I18n,
 		perms:    p.Perms,
-
-		cmds: cmds,
 
 		wg:     sync.WaitGroup{},
 		workCh: make(chan *Guild, 3),
 
-		dc:           state,
+		dc:           p.Discord,
 		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
@@ -187,16 +173,6 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		go func() {
-			if err := state.Connect(cancelCtx); err != nil {
-				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))
-
-				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
-					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
-				}
-			}
-		}()
-
 		if err := b.start(cancelCtx); err != nil {
 			return err
 		}
@@ -230,14 +206,15 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		state.Close()
-
 		cancel()
 
 		return nil
 	}))
 
-	return b, nil
+	return Result{
+		Bot:      b,
+		BotState: b,
+	}
 }
 
 func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
@@ -280,20 +257,9 @@ func (b *Bot) start(ctx context.Context) error {
 
 		select {
 		case <-ctx.Done():
-			return fmt.Errorf("discord client failed to get ready, version %d", b.dc.Ready().Version)
+			return fmt.Errorf("discord client failed to get ready in time, version %d", b.dc.Ready().Version)
 
 		case <-time.After(750 * time.Millisecond):
-		}
-	}
-
-	if b.cfg.Commands.Enabled {
-		if err := b.cmds.RegisterCommands(commands.CommandParams{
-			DB:       b.db,
-			L:        b.i18n,
-			BotState: b,
-			Perms:    b.perms,
-		}); err != nil {
-			return fmt.Errorf("failed to register commands. %w", err)
 		}
 	}
 

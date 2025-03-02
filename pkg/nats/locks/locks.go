@@ -110,7 +110,7 @@ loop:
 		}
 	}
 
-	// lock doesn't exist, create it
+	// Lock doesn't exist, create it
 	contents := make([]byte, 8)
 	binary.LittleEndian.PutUint64(contents, uint64(time.Now().Add(time.Duration(5*time.Minute)).UnixNano()))
 	nrev, err := l.kv.Create(ctx, lockKey, contents)
@@ -161,5 +161,12 @@ func (l *Locks) getRev(key string) uint64 {
 }
 
 func isWrongSequence(err error) bool {
+	if err, ok := err.(*jetstream.APIError); ok {
+		if err.ErrorCode == jetstream.JSErrCodeStreamWrongLastSequence {
+			return true
+		}
+	}
+
+	// Fallback to checking the error message contents
 	return strings.Contains(err.Error(), "wrong last sequence")
 }

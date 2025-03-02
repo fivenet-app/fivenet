@@ -6,7 +6,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/lang"
@@ -24,30 +23,34 @@ type SyncCommand struct {
 	url string
 }
 
-func NewSyncCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
-	lEN := p.L.I18n("en")
-	lDE := p.L.I18n("de")
-
-	router.Add("sync", &SyncCommand{
-		l:   p.L,
-		b:   p.BotState,
-		url: cfg.HTTP.PublicURL,
-	})
-
-	return api.CreateCommandData{
-			Type: discord.ChatInputCommand,
-			Name: "sync",
-			Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.fivenet.desc",
-			}),
-			DescriptionLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: "discord.commands.fivenet.desc",
-				}),
-			},
-			DefaultMemberPermissions: discord.NewPermissions(discord.PermissionAdministrator),
+func NewSyncCommand(p CommandParams) (Command, error) {
+	return &SyncCommand{
+			l:   p.L,
+			b:   p.BotState,
+			url: p.Cfg.HTTP.PublicURL,
 		},
 		nil
+}
+
+func (c *SyncCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
+	lEN := c.l.I18n("en")
+	lDE := c.l.I18n("de")
+
+	router.Add("sync", c)
+
+	return api.CreateCommandData{
+		Type: discord.ChatInputCommand,
+		Name: "sync",
+		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.fivenet.desc",
+		}),
+		DescriptionLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "discord.commands.fivenet.desc",
+			}),
+		},
+		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionAdministrator),
+	}
 }
 
 func (c *SyncCommand) getBaseResponse() *api.InteractionResponseData {

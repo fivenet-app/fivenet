@@ -9,7 +9,6 @@ import (
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
@@ -30,11 +29,18 @@ type HelpCommand struct {
 	url string
 }
 
-func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
-	lEN := p.L.I18n("en")
-	lDE := p.L.I18n("de")
+func NewHelpCommand(p CommandParams) (Command, error) {
+	return &HelpCommand{
+		l:   p.L,
+		url: p.Cfg.HTTP.PublicURL,
+	}, nil
+}
 
-	cmd := api.CreateCommandData{
+func (c *HelpCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
+	lEN := c.l.I18n("en")
+	lDE := c.l.I18n("de")
+
+	cmdData := api.CreateCommandData{
 		Type: discord.ChatInputCommand,
 		Name: lEN.MustLocalize(&i18n.LocalizeConfig{
 			MessageID: "discord.commands.help.name",
@@ -81,7 +87,7 @@ func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams
 
 		Required: true,
 	}
-	cmd.Options = append(cmd.Options, choices)
+	cmdData.Options = append(cmdData.Options, choices)
 
 	for _, option := range helpTopics {
 		choices.Choices = append(choices.Choices, discord.StringChoice{
@@ -97,12 +103,9 @@ func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams
 		})
 	}
 
-	router.Add("help", &HelpCommand{
-		l:   p.L,
-		url: cfg.HTTP.PublicURL,
-	})
+	router.Add("help", c)
 
-	return cmd, nil
+	return cmdData
 }
 
 func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {

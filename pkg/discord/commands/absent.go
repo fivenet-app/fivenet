@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	permsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
-	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -48,60 +47,63 @@ type AbsentCommand struct {
 	perms perms.Permissions
 }
 
-func NewAbsentCommand(router *cmdroute.Router, cfg *config.Config, p CommandParams) (api.CreateCommandData, error) {
-	lEN := p.L.I18n("en")
-	lDE := p.L.I18n("de")
-
-	router.Add("absent", &AbsentCommand{
+func NewAbsentCommand(p CommandParams) (Command, error) {
+	return &AbsentCommand{
 		l:     p.L,
 		db:    p.DB,
 		b:     p.BotState,
 		perms: p.Perms,
-	})
+	}, nil
+}
+
+func (c *AbsentCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommandData {
+	router.Add("absent", c)
+
+	lEN := c.l.I18n("en")
+	lDE := c.l.I18n("de")
 
 	return api.CreateCommandData{
-			Type: discord.ChatInputCommand,
-			Name: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
-			NameLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
-			},
-			Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
-			DescriptionLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
-			},
-			Options: discord.CommandOptions{
-				&discord.StringOption{
-					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
-					OptionNameLocalizations: discord.StringLocales{
-						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
-					},
-					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.desc"}),
-					Required:    true,
-				},
-				&discord.IntegerOption{
-					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
-					OptionNameLocalizations: discord.StringLocales{
-						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
-					},
-					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.desc"}),
-					Required:    true,
-					Min:         option.NewInt(1),
-					Max:         option.NewInt(31),
-				},
-				&discord.StringOption{
-					OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
-					OptionNameLocalizations: discord.StringLocales{
-						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
-					},
-					Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.desc"}),
-					Required:    true,
-					MinLength:   option.NewInt(3),
-					MaxLength:   option.NewInt(200),
-				},
-			},
-			DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
+		Type: discord.ChatInputCommand,
+		Name: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
+		NameLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.name"}),
 		},
-		nil
+		Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
+		DescriptionLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.desc"}),
+		},
+		Options: discord.CommandOptions{
+			&discord.StringOption{
+				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+				OptionNameLocalizations: discord.StringLocales{
+					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.name"}),
+				},
+				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.start-date.desc"}),
+				Required:    true,
+			},
+			&discord.IntegerOption{
+				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+				OptionNameLocalizations: discord.StringLocales{
+					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.name"}),
+				},
+				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.days.desc"}),
+				Required:    true,
+				Min:         option.NewInt(1),
+				Max:         option.NewInt(31),
+			},
+			&discord.StringOption{
+				OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+				OptionNameLocalizations: discord.StringLocales{
+					discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.name"}),
+				},
+				Description: lEN.MustLocalize(&i18n.LocalizeConfig{MessageID: "discord.commands.absent.options.reason.desc"}),
+				Required:    true,
+				MinLength:   option.NewInt(3),
+				MaxLength:   option.NewInt(200),
+			},
+		},
+		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
+	}
 }
 
 func (c *AbsentCommand) getBaseResponse() *api.InteractionResponseData {

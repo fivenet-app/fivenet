@@ -30,6 +30,14 @@ var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Count of data map entries.",
 }, []string{"bucket"})
 
+// (Mostly) Read Only store version - Technically the `Get` action can result in data being written to the store's internal cache
+type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
+	Get(key string) (U, bool)
+	Keys(ctx context.Context, prefix string) []string
+	List() []U
+	Range(ctx context.Context, fn func(key string, value U) bool)
+}
+
 type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 	logger *zap.Logger
 	bucket string
@@ -439,7 +447,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 						if s.onDelete != nil {
 							item, _ := s.data.LoadAndDelete(entry.Key())
 							if err := s.onDelete(s, entry, item); err != nil {
-								s.logger.Error("failed to run on delete logic in store watcher", zap.Error(err))
+								s.logger.Error("failed to run on delete logic in store watcher", zap.String("key", entry.Key()), zap.Error(err))
 							}
 						}
 
@@ -454,7 +462,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 						defer mu.Unlock()
 
 						if _, err := s.update(entry); err != nil {
-							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
+							s.logger.Error("failed to run on update logic in store watcher", zap.String("key", entry.Key()), zap.Error(err))
 						}
 					}()
 
@@ -514,12 +522,4 @@ func (s *Store[T, U]) Clear(ctx context.Context) error {
 
 func (s *Store[T, U]) ReadOnly() StoreRO[T, U] {
 	return s
-}
-
-// (Mostly) Read Only store version
-type StoreRO[T any, U protoutils.ProtoMessageWithMerge[T]] interface {
-	Get(key string) (U, bool)
-	Keys(ctx context.Context, prefix string) []string
-	List() []U
-	Range(ctx context.Context, fn func(key string, value U) bool)
 }
