@@ -30,6 +30,8 @@ var Module = fx.Module("discord_bot",
 )
 
 type CommandParams struct {
+	fx.In
+
 	Cfg      *config.Config
 	JS       *events.JSWrapper
 	DB       *sql.DB
