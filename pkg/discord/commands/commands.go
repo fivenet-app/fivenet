@@ -22,7 +22,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord_bot").Named("commands")
 }
 
-var Module = fx.Module("discord_bot",
+var Module = fx.Module("discord_commands",
 	fx.Provide(
 		New,
 	),
@@ -79,7 +79,7 @@ func New(p Params) *Cmds {
 		cmds: p.Commands,
 	}
 
-	c.router.Use(newMiddlewareLogger(c.logger.Named("discord_bot.commands")))
+	c.router.Use(newMiddlewareLogger(c.logger))
 	// Automatically defer handles if they're slow.
 	c.router.Use(cmdroute.Deferrable(p.DC, cmdroute.DeferOpts{}))
 

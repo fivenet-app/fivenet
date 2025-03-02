@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/discord/commands"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
@@ -81,7 +80,6 @@ type BotParams struct {
 	Perms     perms.Permissions
 
 	Discord *state.State
-	Cmds    *commands.Cmds
 }
 
 type Bot struct {
