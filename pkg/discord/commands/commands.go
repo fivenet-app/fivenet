@@ -40,8 +40,6 @@ type CommandParams struct {
 
 type CommandFactory = func(p CommandParams) (Command, error)
 
-var CommandsFactories = map[string]CommandFactory{}
-
 type Params struct {
 	fx.In
 

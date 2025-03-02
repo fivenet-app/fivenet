@@ -11,10 +11,6 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func init() {
-	CommandsFactories["fivenet"] = NewFivenetCommand
-}
-
 type FivenetCommand struct {
 	l *lang.I18n
 

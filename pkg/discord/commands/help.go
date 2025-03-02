@@ -14,10 +14,6 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func init() {
-	CommandsFactories["help"] = NewHelpCommand
-}
-
 var helpTopics = []string{
 	"discord",
 	"registration",

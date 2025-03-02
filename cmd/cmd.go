@@ -126,10 +126,10 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		discord.BotModule,
 		commands.Module,
 		fx.Provide(
-			commands.NewAbsentCommand,
-			commands.NewFivenetCommand,
-			commands.NewHelpCommand,
-			commands.NewSyncCommand,
+			commands.AsCommand(commands.NewAbsentCommand),
+			commands.AsCommand(commands.NewFivenetCommand),
+			commands.AsCommand(commands.NewHelpCommand),
+			commands.AsCommand(commands.NewSyncCommand),
 		),
 
 		fx.Provide(

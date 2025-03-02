@@ -34,10 +34,6 @@ var (
 	tJobsUserActivity = table.FivenetJobsUserActivity
 )
 
-func init() {
-	CommandsFactories["absent"] = NewAbsentCommand
-}
-
 const absentDateFormat = "2006-01-02"
 
 type AbsentCommand struct {

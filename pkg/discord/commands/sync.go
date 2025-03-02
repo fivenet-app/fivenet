@@ -12,10 +12,6 @@ import (
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 )
 
-func init() {
-	CommandsFactories["sync"] = NewSyncCommand
-}
-
 type SyncCommand struct {
 	l *lang.I18n
 	b types.BotState
