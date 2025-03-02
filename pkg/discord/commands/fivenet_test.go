@@ -29,6 +29,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	})
 	require.NoError(t, err)
 	require.NotNil(t, cmd)
+	cmd.RegisterCommand(router)
 
 	interactionEvent := &discord.InteractionEvent{
 		ID: discord.NullInteractionID,
@@ -39,7 +40,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 		Locale: discord.EnglishUS,
 	}
 
-	data := &api.InteractionResponseData{
+	expectedData := &api.InteractionResponseData{
 		Embeds: &[]discord.Embed{
 			{
 				Type:        discord.LinkEmbed,
@@ -67,13 +68,13 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	resp := router.HandleInteraction(interactionEvent)
 	require.NotNil(t, resp.Data)
 	assert.Len(t, *resp.Data.Embeds, 1)
-	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*data.Embeds)[0].Description)
+	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*expectedData.Embeds)[0].Description)
 
 	// German
 	interactionEvent.Locale = "de"
-	(*data.Embeds)[0].Description = "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
+	(*expectedData.Embeds)[0].Description = "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
 	resp = router.HandleInteraction(interactionEvent)
 	require.NotNil(t, resp.Data)
 	assert.Len(t, *resp.Data.Embeds, 1)
-	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*data.Embeds)[0].Description)
+	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*expectedData.Embeds)[0].Description)
 }
