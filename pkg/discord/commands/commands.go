@@ -57,6 +57,7 @@ type Params struct {
 type Cmds struct {
 	logger *zap.Logger
 	cfg    *config.Config
+	dc     *state.State
 
 	router *cmdroute.Router
 
@@ -71,7 +72,11 @@ func New(p Params) *Cmds {
 	c := &Cmds{
 		logger: p.Logger,
 		cfg:    p.Cfg,
+		dc:     p.DC,
+
 		router: cmdroute.NewRouter(),
+
+		cmds: p.Commands,
 	}
 
 	c.router.Use(newMiddlewareLogger(c.logger.Named("discord_bot.commands")))
@@ -79,7 +84,7 @@ func New(p Params) *Cmds {
 	c.router.Use(cmdroute.Deferrable(p.DC, cmdroute.DeferOpts{}))
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		if err := c.registerCommands(p.DC); err != nil {
+		if err := c.registerCommands(); err != nil {
 			return fmt.Errorf("failed to register commands. %w", err)
 		}
 
@@ -89,8 +94,8 @@ func New(p Params) *Cmds {
 	return c
 }
 
-func (c *Cmds) registerCommands(dc *state.State) error {
-	c.logger.Info("registering commands", zap.Int("count", len(CommandsFactories)))
+func (c *Cmds) registerCommands() error {
+	c.logger.Info("registering commands", zap.Int("count", len(c.cmds)))
 
 	commands := []api.CreateCommandData{}
 	for _, cmd := range c.cmds {
@@ -99,11 +104,11 @@ func (c *Cmds) registerCommands(dc *state.State) error {
 		commands = append(commands, cmdData)
 	}
 
-	if err := cmdroute.OverwriteCommands(dc, commands); err != nil {
+	if err := cmdroute.OverwriteCommands(c.dc, commands); err != nil {
 		return fmt.Errorf("cannot update discord bot commands. %w", err)
 	}
 
-	dc.AddInteractionHandler(c.router)
+	c.dc.AddInteractionHandler(c.router)
 
 	return nil
 }
