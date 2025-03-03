@@ -14,6 +14,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/query/dsn"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -83,8 +84,13 @@ func New(p Params) (*Sync, error) {
 		return nil, err
 	}
 
+	dsn, err := dsn.PrepareDSN(s.cfg.Source.DSN)
+	if err != nil {
+		return nil, err
+	}
+
 	// Connect to source database
-	db, err := otelsql.Open("mysql", s.cfg.Source.DSN,
+	db, err := otelsql.Open("mysql", dsn,
 		otelsql.WithAttributes(
 			semconv.DBSystemMySQL,
 		),

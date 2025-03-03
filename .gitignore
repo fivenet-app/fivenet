@@ -32,6 +32,8 @@ target/
 vendor/
 __debug_bin*
 /fivenet
+/fivenet.exe
+/fivenet.zip
 
 # Localhost certs
 localhost.*

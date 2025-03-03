@@ -1,5 +1,5 @@
-# Local test database run through `docker-compose`
-dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?charset=utf8mb4&parseTime=True&loc=Local"
+# DSN for local test database run via the `docker-compose.dev.yaml`
+dsn: "fivenet:changeme@tcp(localhost:3306)/fivenet?charset=utf8mb4&loc=Local"
 excludeTables:
   - "fivenet_zschema_migrations"
 includeTables:

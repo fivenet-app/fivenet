@@ -107,7 +107,7 @@ func (m *dbServer) DB() (*sql.DB, error) {
 
 func (m *dbServer) getDSN() string {
 	// Using `root` isn't cool, but a workaround for now to create triggers in the database
-	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&loc=Local", m.resource.GetPort("3306/tcp"))
 }
 
 func (m *dbServer) prepareDBForFirstUse() error {

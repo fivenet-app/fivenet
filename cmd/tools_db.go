@@ -10,6 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/query"
+	"github.com/fivenet-app/fivenet/query/dsn"
 	"go.uber.org/fx"
 )
 
@@ -52,8 +53,13 @@ func (c *VersionCmd) Run(ctx *kong.Context) error {
 }
 
 func (c *VersionCmd) run(_ context.Context, cfg *config.Config) error {
+	dsn, err := dsn.PrepareDSN(cfg.Database.DSN, dsn.WithMultiStatements())
+	if err != nil {
+		return err
+	}
+
 	// Connect to database
-	db, err := sql.Open("mysql", cfg.Database.DSN+"&multiStatements=true")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}
@@ -107,8 +113,13 @@ func (c *UpCmd) Run(ctx *kong.Context) error {
 }
 
 func (c *UpCmd) run(_ context.Context, cfg *config.Config) error {
+	dsn, err := dsn.PrepareDSN(cfg.Database.DSN, dsn.WithMultiStatements())
+	if err != nil {
+		return err
+	}
+
 	// Connect to database
-	db, err := sql.Open("mysql", cfg.Database.DSN+"&multiStatements=true")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}

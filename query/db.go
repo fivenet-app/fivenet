@@ -12,9 +12,10 @@ import (
 	"github.com/fivenet-app/fivenet/cmd/envs"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/query/dsn"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/mysql"
+	mysqlmigrate "github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -42,11 +43,14 @@ func SetupDB(p Params) (*sql.DB, error) {
 		}
 	}
 
-	// Connect to database
-	db, err := otelsql.Open("mysql", p.Config.Database.DSN,
-		otelsql.WithAttributes(
-			semconv.DBSystemMySQL,
-		),
+	dsn, err := dsn.PrepareDSN(p.Config.Database.DSN)
+	if err != nil {
+		return nil, err
+	}
+
+	// Open database connection
+	db, err := otelsql.Open("mysql", dsn,
+		otelsql.WithAttributes(semconv.DBSystemMySQL),
 		otelsql.WithSpanOptions(otelsql.SpanOptions{
 			DisableErrSkip: true,
 		}),
@@ -91,7 +95,7 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 
 	// Setup migrate source and driver
 	source, err := iofs.New(&templateFS{
-		data: map[string]interface{}{
+		data: map[string]any{
 			"UsersTableName": tableName,
 		},
 		FS: migrationsFS,
@@ -100,7 +104,7 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 		return nil, err
 	}
 
-	driver, err := mysql.WithInstance(db, &mysql.Config{
+	driver, err := mysqlmigrate.WithInstance(db, &mysqlmigrate.Config{
 		MigrationsTable: "fivenet_zschema_migrations",
 	})
 	if err != nil {
@@ -117,10 +121,16 @@ func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
 	return m, nil
 }
 
-func MigrateDB(logger *zap.Logger, dsn string, esxCompat bool) error {
+func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
 	logger.Info("starting database migrations")
+
+	dsn, err := dsn.PrepareDSN(dbDSN, dsn.WithMultiStatements())
+	if err != nil {
+		return err
+	}
+
 	// Connect to database
-	db, err := sql.Open("mysql", dsn+"&multiStatements=true")
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return err
 	}
