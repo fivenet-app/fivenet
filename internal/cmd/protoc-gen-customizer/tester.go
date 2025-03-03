@@ -79,7 +79,7 @@ func NewTest{{ $service.Name }}Client(srv {{ $service.Name }}Server) ({{ $servic
 		}
 	}()
 
-	conn, err := grpc.DialContext(ctx, "",
+	conn, err := grpc.NewClient("",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return lis.Dial()
 		}), grpc.WithTransportCredentials(insecure.NewCredentials()))

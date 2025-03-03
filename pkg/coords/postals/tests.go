@@ -5,5 +5,5 @@ import (
 )
 
 func NewForTests() (Postals, error) {
-	return coords.NewReadOnly[*Postal]([]*Postal{})
+	return coords.NewReadOnly([]*Postal{})
 }

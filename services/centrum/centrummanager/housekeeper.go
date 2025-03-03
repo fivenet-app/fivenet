@@ -170,7 +170,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 
 func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobData) error {
 	// Load dispatches with null postal field (they are considered "new")
-	if err := s.LoadDispatchesFromDB(s.ctx, tDispatch.Postal.IS_NULL()); err != nil {
+	if err := s.LoadDispatchesFromDB(ctx, tDispatch.Postal.IS_NULL()); err != nil {
 		s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
 	}
 
@@ -178,7 +178,7 @@ func (s *Housekeeper) loadNewDispatches(ctx context.Context, data *cron.CronjobD
 }
 
 func (s *Housekeeper) runHandleDispatchAssignmentExpiration(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-assignment-expiration")
+	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-assignment-expiration")
 	defer span.End()
 
 	if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
@@ -241,7 +241,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 }
 
 func (s *Housekeeper) runCancelOldDispatches(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-cancel")
+	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-cancel")
 	defer span.End()
 
 	if err := s.cancelOldDispatches(ctx); err != nil {
@@ -434,7 +434,7 @@ func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
 }
 
 func (s *Housekeeper) runDispatchDeduplication(ctx context.Context, data *cron.CronjobData) error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
+	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-deduplicatation")
 	defer span.End()
 
 	if err := s.deduplicateDispatches(ctx); err != nil {

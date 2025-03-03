@@ -35,7 +35,7 @@ func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerPar
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
-	conn, err := grpc.DialContext(ctx, "",
+	conn, err := grpc.NewClient("",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return lis.Dial()
 		}), grpc.WithTransportCredentials(insecure.NewCredentials()))

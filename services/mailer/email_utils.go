@@ -123,9 +123,9 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 
 func getBasicNameEmails(firstname string, lastname string) []string {
 	return []string{ // User fullname: Erika Mustermann
-		utils.Slug(fmt.Sprintf("%s.%s", firstname, lastname)),                                               // erika.mustermann
-		utils.Slug(fmt.Sprintf("%s", firstname)),                                                            // erika
-		utils.Slug(fmt.Sprintf("%s", lastname)),                                                             // mustermann
+		utils.Slug(fmt.Sprintf("%s.%s", firstname, lastname)), // erika.mustermann
+		utils.Slug(firstname), // erika
+		utils.Slug(lastname),  // mustermann
 		utils.Slug(fmt.Sprintf("%s%s", utils.StringFirstN(firstname, 1), lastname)),                         // emustermann
 		utils.Slug(fmt.Sprintf("%s%s", firstname, utils.StringFirstN(lastname, 1))),                         // erikam
 		utils.Slug(fmt.Sprintf("%s.%s", utils.StringFirstN(firstname, 1), utils.StringFirstN(lastname, 3))), // eri.mus

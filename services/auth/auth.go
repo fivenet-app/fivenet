@@ -211,7 +211,9 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 		}
 	}
 
-	s.setTokenCookie(ctx, token)
+	if err := s.setTokenCookie(ctx, token); err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
 
 	return &pbauth.LoginResponse{
 		Expires:   timestamp.New(claims.ExpiresAt.Time),
@@ -345,7 +347,9 @@ func (s *Server) ChangePassword(ctx context.Context, req *pbauth.ChangePasswordR
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	s.setTokenCookie(ctx, newToken)
+	if err := s.setTokenCookie(ctx, newToken); err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
 
 	return &pbauth.ChangePasswordResponse{
 		Expires: timestamp.New(newClaims.ExpiresAt.Time),
@@ -746,7 +750,9 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
 	}, char.UserShort())
 
-	s.setTokenCookie(ctx, newToken)
+	if err := s.setTokenCookie(ctx, newToken); err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
 
 	return &pbauth.ChooseCharacterResponse{
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
@@ -835,7 +841,9 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	s.setTokenCookie(ctx, newToken)
+	if err := s.setTokenCookie(ctx, newToken); err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
 
 	return &pbauth.SetSuperUserModeResponse{
 		Expires:  timestamp.New(newClaims.ExpiresAt.Time),

@@ -343,10 +343,8 @@ func (s *GrpcWebWrapperTestSuite) TestPingList() {
 }
 
 func (s *GrpcWebWrapperTestSuite) getStandardGrpcClient() *grpc.ClientConn {
-	conn, err := grpc.Dial(s.listener.Addr().String(),
+	conn, err := grpc.NewClient(s.listener.Addr().String(),
 		grpc.WithTransportCredentials(credentials.NewTLS(&tls.Config{InsecureSkipVerify: true})),
-		grpc.WithBlock(),
-		grpc.WithTimeout(100*time.Millisecond),
 	)
 	require.NoError(s.T(), err, "grpc dial must succeed")
 	return conn

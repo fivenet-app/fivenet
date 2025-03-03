@@ -27,7 +27,7 @@ func NewTestRectorLawsServiceClient(srv RectorLawsServiceServer) (RectorLawsServ
 		}
 	}()
 
-	conn, err := grpc.DialContext(ctx, "",
+	conn, err := grpc.NewClient("",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return lis.Dial()
 		}), grpc.WithTransportCredentials(insecure.NewCredentials()))

@@ -6,7 +6,7 @@ import (
 	"github.com/diamondburned/arikawa/v3/discord"
 )
 
-type UserProcessorHandler func(ctx context.Context, guildId discord.GuildID, member discord.Member, u *User) (*User, []discord.Embed, error)
+type UserProcessorHandler func(ctx context.Context, guildId discord.GuildID, member discord.Member, u *User) ([]discord.Embed, error)
 
 type Plan struct {
 	GuildID discord.GuildID `yaml:"guildId"`

@@ -116,14 +116,14 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 	settings := g.settings.Load()
 	handlers := []types.UserProcessorHandler{}
 	if settings.UserInfoSyncSettings.UnemployedEnabled {
-		handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) (*types.User, []discord.Embed, error) {
+		handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) ([]discord.Embed, error) {
 			if user.Job == g.job {
-				return user, nil, nil
+				return nil, nil
 			}
 
 			if g.checkIfJobIgnored(user.Job) {
 				user.Job = g.job
-				return user, nil, nil
+				return nil, nil
 			}
 
 			switch settings.UserInfoSyncSettings.UnemployedMode {
@@ -136,7 +136,7 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 				user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
 			}
 
-			return user, nil, nil
+			return nil, nil
 		})
 	}
 

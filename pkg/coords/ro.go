@@ -1,6 +1,8 @@
 package coords
 
 import (
+	"fmt"
+
 	"github.com/paulmach/orb"
 	"github.com/paulmach/orb/quadtree"
 )
@@ -15,7 +17,9 @@ func NewReadOnly[V orb.Pointer](points []V) (*CoordsRO[V], error) {
 	tree := quadtree.New(orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
 
 	for _, point := range points {
-		tree.Add(point)
+		if err := tree.Add(point); err != nil {
+			return nil, fmt.Errorf("failed to add point (%+v) to tree. %w", point, err)
+		}
 	}
 
 	return &CoordsRO[V]{

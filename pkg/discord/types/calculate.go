@@ -116,7 +116,10 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 	}
 
 	for _, fn := range s.UserProcessors {
-		fn(ctx, s.GuildID, member, user)
+		_, err := fn(ctx, s.GuildID, member, user)
+		if err != nil {
+			return nil, fmt.Errorf("error in user processor (dc member id %d). %w", member.User.ID, err)
+		}
 	}
 
 	for _, userRole := range user.Roles.Sum {

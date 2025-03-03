@@ -12,7 +12,9 @@ func PrepareDSN(inDSN string, opts ...mysql.Option) (string, error) {
 		return "", fmt.Errorf("failed to parse database DSN. %w", err)
 	}
 
-	dsn.Apply(opts...)
+	if err := dsn.Apply(opts...); err != nil {
+		return "", fmt.Errorf("failed to apply dsn option. %w", err)
+	}
 
 	// Make sure parse time is enabled
 	dsn.ParseTime = true

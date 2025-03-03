@@ -12,8 +12,6 @@ import (
 )
 
 func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pbinternet.SearchResponse, error) {
-	condition := jet.Bool(true)
-
 	resp := &pbinternet.SearchResponse{
 		Results: []*internet.SearchResult{},
 	}
@@ -24,7 +22,7 @@ func (s *Server) Search(ctx context.Context, req *pbinternet.SearchRequest) (*pb
 
 	tPage := tPage.AS("search_result")
 
-	condition = jet.OR(
+	condition := jet.OR(
 		// Search title and description fields
 		jet.BoolExp(
 			jet.Raw("MATCH(`title`) AGAINST ($search IN BOOLEAN MODE)",
