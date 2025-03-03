@@ -107,6 +107,8 @@ message StreamResponse {
   int32 user_id = 1;
 }
 
+// Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
+// from the plugin (e.g., user activity, user props changes).
 service SyncService {
   // Get basic "sync state" from server side (currently simply the count of records on the server side).
   rpc GetStatus(GetStatusRequest) returns (GetStatusResponse);

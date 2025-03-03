@@ -143,6 +143,8 @@ message SetSuperUserModeResponse {
   resources.users.User char = 3;
 }
 
+// Auth Service handles user authentication, character selection and oauth2 connections
+// Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
 service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse);
   rpc Logout(LogoutRequest) returns (LogoutResponse);

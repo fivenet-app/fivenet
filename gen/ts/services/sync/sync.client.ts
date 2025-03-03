@@ -23,6 +23,9 @@ import type { GetStatusRequest } from "./sync";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
+ * Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
+ * from the plugin (e.g., user activity, user props changes).
+ *
  * @generated from protobuf service services.sync.SyncService
  */
 export interface ISyncServiceClient {
@@ -70,6 +73,9 @@ export interface ISyncServiceClient {
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
 }
 /**
+ * Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
+ * from the plugin (e.g., user activity, user props changes).
+ *
  * @generated from protobuf service services.sync.SyncService
  */
 export class SyncServiceClient implements ISyncServiceClient, ServiceInfo {

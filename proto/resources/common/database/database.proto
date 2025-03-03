@@ -7,27 +7,38 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database;database";
 
+// Pagination for requests to the server
 message PaginationRequest {
-  int64 offset = 1 [jstype = JS_NUMBER, (validate.rules).int64.gte = 0];
-  optional int64 page_size = 2 [jstype = JS_NUMBER,(validate.rules).int64.gte = 0];
+  int64 offset = 1 [(validate.rules).int64.gte = 0];
+  optional int64 page_size = 2 [(validate.rules).int64.gte = 0];
 }
 
+// Server Pagination Response
 message PaginationResponse {
-  int64 total_count = 1 [jstype = JS_NUMBER];
-  int64 offset = 2 [jstype = JS_NUMBER];
-  int64 end = 3 [jstype = JS_NUMBER];
-  int64 page_size = 4 [jstype = JS_NUMBER];
+  int64 total_count = 1;
+  int64 offset = 2;
+  int64 end = 3;
+  int64 page_size = 4;
 }
 
+// Sort by column
 message Sort {
+  // Column name
   string column = 1 [(validate.rules).string = {
     min_len: 1,
     max_len: 64
   }];
+  // Sort direction, must be `asc` (ascending) or `desc` (descending)
   string direction = 2 [(validate.rules).string = { in: ["asc", "desc"] }];
 }
 
+/*
+ * Datetime range (uses Timestamp underneath)
+ * It depends on the API method if it will use date or date + time.
+ */
 message DateRange {
+  // Start time
   resources.timestamp.Timestamp start = 1;
+  // End time
   resources.timestamp.Timestamp end = 2;
 }

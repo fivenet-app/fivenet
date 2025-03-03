@@ -12,61 +12,79 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../../timestamp/timestamp";
 /**
+ * Pagination for requests to the server
+ *
  * @generated from protobuf message resources.common.database.PaginationRequest
  */
 export interface PaginationRequest {
     /**
-     * @generated from protobuf field: int64 offset = 1 [jstype = JS_NUMBER];
+     * @generated from protobuf field: int64 offset = 1;
      */
     offset: number;
     /**
-     * @generated from protobuf field: optional int64 page_size = 2 [jstype = JS_NUMBER];
+     * @generated from protobuf field: optional int64 page_size = 2;
      */
     pageSize?: number;
 }
 /**
+ * Server Pagination Response
+ *
  * @generated from protobuf message resources.common.database.PaginationResponse
  */
 export interface PaginationResponse {
     /**
-     * @generated from protobuf field: int64 total_count = 1 [jstype = JS_NUMBER];
+     * @generated from protobuf field: int64 total_count = 1;
      */
     totalCount: number;
     /**
-     * @generated from protobuf field: int64 offset = 2 [jstype = JS_NUMBER];
+     * @generated from protobuf field: int64 offset = 2;
      */
     offset: number;
     /**
-     * @generated from protobuf field: int64 end = 3 [jstype = JS_NUMBER];
+     * @generated from protobuf field: int64 end = 3;
      */
     end: number;
     /**
-     * @generated from protobuf field: int64 page_size = 4 [jstype = JS_NUMBER];
+     * @generated from protobuf field: int64 page_size = 4;
      */
     pageSize: number;
 }
 /**
+ * Sort by column
+ *
  * @generated from protobuf message resources.common.database.Sort
  */
 export interface Sort {
     /**
+     * Column name
+     *
      * @generated from protobuf field: string column = 1;
      */
     column: string;
     /**
+     * Sort direction, must be `asc` (ascending) or `desc` (descending)
+     *
      * @generated from protobuf field: string direction = 2;
      */
     direction: string;
 }
 /**
+ *
+ * Datetime range (uses Timestamp underneath)
+ * It depends on the API method if it will use date or date + time.
+ *
  * @generated from protobuf message resources.common.database.DateRange
  */
 export interface DateRange {
     /**
+     * Start time
+     *
      * @generated from protobuf field: resources.timestamp.Timestamp start = 1;
      */
     start?: Timestamp;
     /**
+     * End time
+     *
      * @generated from protobuf field: resources.timestamp.Timestamp end = 2;
      */
     end?: Timestamp;
@@ -91,10 +109,10 @@ class PaginationRequest$Type extends MessageType<PaginationRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 offset = 1 [jstype = JS_NUMBER];*/ 1:
+                case /* int64 offset */ 1:
                     message.offset = reader.int64().toNumber();
                     break;
-                case /* optional int64 page_size = 2 [jstype = JS_NUMBER];*/ 2:
+                case /* optional int64 page_size */ 2:
                     message.pageSize = reader.int64().toNumber();
                     break;
                 default:
@@ -109,10 +127,10 @@ class PaginationRequest$Type extends MessageType<PaginationRequest> {
         return message;
     }
     internalBinaryWrite(message: PaginationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 offset = 1 [jstype = JS_NUMBER]; */
+        /* int64 offset = 1; */
         if (message.offset !== 0)
             writer.tag(1, WireType.Varint).int64(message.offset);
-        /* optional int64 page_size = 2 [jstype = JS_NUMBER]; */
+        /* optional int64 page_size = 2; */
         if (message.pageSize !== undefined)
             writer.tag(2, WireType.Varint).int64(message.pageSize);
         let u = options.writeUnknownFields;
@@ -150,16 +168,16 @@ class PaginationResponse$Type extends MessageType<PaginationResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 total_count = 1 [jstype = JS_NUMBER];*/ 1:
+                case /* int64 total_count */ 1:
                     message.totalCount = reader.int64().toNumber();
                     break;
-                case /* int64 offset = 2 [jstype = JS_NUMBER];*/ 2:
+                case /* int64 offset */ 2:
                     message.offset = reader.int64().toNumber();
                     break;
-                case /* int64 end = 3 [jstype = JS_NUMBER];*/ 3:
+                case /* int64 end */ 3:
                     message.end = reader.int64().toNumber();
                     break;
-                case /* int64 page_size = 4 [jstype = JS_NUMBER];*/ 4:
+                case /* int64 page_size */ 4:
                     message.pageSize = reader.int64().toNumber();
                     break;
                 default:
@@ -174,16 +192,16 @@ class PaginationResponse$Type extends MessageType<PaginationResponse> {
         return message;
     }
     internalBinaryWrite(message: PaginationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 total_count = 1 [jstype = JS_NUMBER]; */
+        /* int64 total_count = 1; */
         if (message.totalCount !== 0)
             writer.tag(1, WireType.Varint).int64(message.totalCount);
-        /* int64 offset = 2 [jstype = JS_NUMBER]; */
+        /* int64 offset = 2; */
         if (message.offset !== 0)
             writer.tag(2, WireType.Varint).int64(message.offset);
-        /* int64 end = 3 [jstype = JS_NUMBER]; */
+        /* int64 end = 3; */
         if (message.end !== 0)
             writer.tag(3, WireType.Varint).int64(message.end);
-        /* int64 page_size = 4 [jstype = JS_NUMBER]; */
+        /* int64 page_size = 4; */
         if (message.pageSize !== 0)
             writer.tag(4, WireType.Varint).int64(message.pageSize);
         let u = options.writeUnknownFields;

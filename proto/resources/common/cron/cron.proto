@@ -34,6 +34,7 @@ message Cronjob {
   CronjobData data = 8;
 }
 
+// States of Cronjbo
 enum CronjobState {
   CRONJOB_STATE_UNSPECIFIED = 0;
   CRONJOB_STATE_WAITING = 1;

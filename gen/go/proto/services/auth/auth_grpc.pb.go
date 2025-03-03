@@ -35,6 +35,9 @@ const (
 // AuthServiceClient is the client API for AuthService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Auth Service handles user authentication, character selection and oauth2 connections
+// Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
 type AuthServiceClient interface {
 	Login(ctx context.Context, in *LoginRequest, opts ...grpc.CallOption) (*LoginResponse, error)
 	Logout(ctx context.Context, in *LogoutRequest, opts ...grpc.CallOption) (*LogoutResponse, error)
@@ -171,6 +174,9 @@ func (c *authServiceClient) SetSuperUserMode(ctx context.Context, in *SetSuperUs
 // AuthServiceServer is the server API for AuthService service.
 // All implementations must embed UnimplementedAuthServiceServer
 // for forward compatibility.
+//
+// Auth Service handles user authentication, character selection and oauth2 connections
+// Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
 type AuthServiceServer interface {
 	Login(context.Context, *LoginRequest) (*LoginResponse, error)
 	Logout(context.Context, *LogoutRequest) (*LogoutResponse, error)

@@ -31,6 +31,9 @@ const (
 // SyncServiceClient is the client API for SyncService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+//
+// Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
+// from the plugin (e.g., user activity, user props changes).
 type SyncServiceClient interface {
 	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(ctx context.Context, in *GetStatusRequest, opts ...grpc.CallOption) (*GetStatusResponse, error)
@@ -138,6 +141,9 @@ type SyncService_StreamClient = grpc.ServerStreamingClient[StreamResponse]
 // SyncServiceServer is the server API for SyncService service.
 // All implementations must embed UnimplementedSyncServiceServer
 // for forward compatibility.
+//
+// Sync Service handles the sync of data (e.g., users, jobs) to this FiveNet instance and API calls
+// from the plugin (e.g., user activity, user props changes).
 type SyncServiceServer interface {
 	// Get basic "sync state" from server side (currently simply the count of records on the server side).
 	GetStatus(context.Context, *GetStatusRequest) (*GetStatusResponse, error)

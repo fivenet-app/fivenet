@@ -30,6 +30,9 @@ import type { LoginRequest } from "./auth";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
+ * Auth Service handles user authentication, character selection and oauth2 connections
+ * Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
+ *
  * @generated from protobuf service services.auth.AuthService
  */
 export interface IAuthServiceClient {
@@ -81,6 +84,9 @@ export interface IAuthServiceClient {
     setSuperUserMode(input: SetSuperUserModeRequest, options?: RpcOptions): UnaryCall<SetSuperUserModeRequest, SetSuperUserModeResponse>;
 }
 /**
+ * Auth Service handles user authentication, character selection and oauth2 connections
+ * Some methods **must** be caled via HTTP-based GRPC web request to allow cookies to be set/unset.
+ *
  * @generated from protobuf service services.auth.AuthService
  */
 export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {

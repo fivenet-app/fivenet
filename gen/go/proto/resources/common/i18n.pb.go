@@ -21,6 +21,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// Wrapped translated message for the client
 type TranslateItem struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @sanitize: method=StripTags
