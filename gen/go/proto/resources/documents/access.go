@@ -68,7 +68,7 @@ func (x *DocumentAccess) Value() (driver.Value, error) {
 }
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
-	jobKeys := map[string]interface{}{}
+	jobKeys := map[string]any{}
 	for _, ja := range access.Jobs {
 		key := fmt.Sprintf("%s-%d", ja.GetJob(), ja.GetMinimumGrade())
 		if _, ok := jobKeys[key]; ok {
@@ -77,7 +77,7 @@ func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 		jobKeys[key] = nil
 	}
 
-	userKeys := map[int32]interface{}{}
+	userKeys := map[int32]any{}
 	for _, ja := range access.Users {
 		if _, ok := userKeys[ja.GetUserId()]; ok {
 			return true
@@ -89,7 +89,7 @@ func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
 }
 
 func TemplateAccessHasDuplicates(jobs []*TemplateJobAccess) bool {
-	jobKeys := map[string]interface{}{}
+	jobKeys := map[string]any{}
 	for _, ja := range jobs {
 		key := fmt.Sprintf("%s-%d", ja.GetJob(), ja.GetMinimumGrade())
 		if _, ok := jobKeys[key]; ok {

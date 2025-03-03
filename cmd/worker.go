@@ -3,7 +3,6 @@ package cmd
 import (
 	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/housekeeper"
-	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"github.com/fivenet-app/fivenet/services/centrum/centrumbot"
 	"github.com/fivenet-app/fivenet/services/centrum/centrummanager"
@@ -13,7 +12,6 @@ import (
 )
 
 type WorkerCmd struct {
-	ModuleAuditRetention     bool `help:"Start Audit log retention module" default:"true"`
 	ModuleCentrumBot         bool `help:"Start Centrum bot module" default:"true"`
 	ModuleCentrumHousekeeper bool `help:"Start Centrum Housekeeper module" default:"true"`
 	ModuleUserTracker        bool `help:"Start User tracker module" default:"true"`
@@ -25,9 +23,6 @@ type WorkerCmd struct {
 func (c *WorkerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(Cli.StartTimeout, true)
 
-	if c.ModuleAuditRetention {
-		fxOpts = append(fxOpts, fx.Invoke(func(*audit.Retention) {}))
-	}
 	if c.ModuleCentrumBot {
 		fxOpts = append(fxOpts, fx.Invoke(func(*centrumbot.Manager) {}))
 	}

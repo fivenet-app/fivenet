@@ -9,16 +9,28 @@ import "resources/timestamp/timestamp.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron;cron";
 
 message Cronjob {
+  // Cronjob name
   string name = 1;
+  /*
+   * Cron schedule expression
+   * For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).
+   *
+   * To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/.
+   */
   string schedule = 2;
+  // Cronjob state
   CronjobState state = 3;
-
+  // Next time the cronjob should be run
   resources.timestamp.Timestamp next_schedule_time = 4;
+  // Last attempted start time of Cronjob
   optional resources.timestamp.Timestamp last_attempt_time = 5;
+  // Time current cronjob was started
   optional resources.timestamp.Timestamp started_time = 6;
 
+  // Optional timeout for cronjob execution
   optional google.protobuf.Duration timeout = 7;
 
+  // Cronjob data
   CronjobData data = 8;
 }
 
@@ -35,20 +47,27 @@ message CronjobData {
 }
 
 message CronjobLockOwnerState {
+  // Hostname of the agent the cronjob is running on
   string hostname = 1;
   resources.timestamp.Timestamp updated_at = 2;
 }
 
 message CronjobSchedulerEvent {
+  // Full Cronjob spec
   Cronjob cronjob = 1;
 }
 
 message CronjobCompletedEvent {
+  // Cronjob name
   string name = 1;
+  // Cronjob execution success status
   bool sucess = 2;
+  // Cronjob end time
   resources.timestamp.Timestamp endDate = 3;
+  // Cronjob execution time/elapsed time
   google.protobuf.Duration elapsed = 4;
 
+  // Cronjob data (can be empty if not touched by the Cronjob handler)
   optional CronjobData data = 5;
 }
 

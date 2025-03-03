@@ -18,7 +18,6 @@ type Config struct {
 	JWT         JWT        `yaml:"jwt"`
 	Storage     Storage    `yaml:"storage"`
 	ImageProxy  ImageProxy `yaml:"imageProxy"`
-	Cache       Cache      `yaml:"cache"`
 	Audit       Audit      `yaml:"audit"`
 	OAuth2      OAuth2     `yaml:"oauth2"`
 	PostalsFile string     `default:".output/public/data/postals.json" yaml:"postalsFile"`
@@ -138,7 +137,7 @@ type Cache struct {
 }
 
 type Audit struct {
-	RetentionDays *int `default:"90" yaml:"auditRetentionDays"`
+	RetentionDays int `default:"120" yaml:"auditRetentionDays"`
 }
 
 type OAuth2 struct {

@@ -7,7 +7,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/perms/helpers"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -507,7 +506,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 		case permissions.StringListAttributeType:
 			aKey := BuildGuardWithKey(attr.Category, attr.Name, Key(rAttr.Key))
 			for _, v := range rAttr.Value.GetStringList().Strings {
-				guard := helpers.Guard(aKey + "." + v)
+				guard := Guard(aKey + "." + v)
 				as = append(as, guard)
 			}
 		}

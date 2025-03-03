@@ -94,7 +94,6 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		admin.Module,
 		appconfig.Module,
 		audit.Module,
-		audit.RetentionModule,
 		auth.AuthModule,
 		auth.PermsModule,
 		auth.TokenMgrModule,

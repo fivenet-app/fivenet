@@ -76,8 +76,6 @@ imageProxy:
   options:
     allowHosts: []
     denyHosts: []
-cache:
-  refreshTime: 2m
 audit:
   retentionDays: 90
 oauth2:

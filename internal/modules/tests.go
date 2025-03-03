@@ -2,7 +2,6 @@ package modules
 
 import (
 	"database/sql"
-	"time"
 
 	"github.com/fivenet-app/fivenet/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/pkg/config"
@@ -60,7 +59,6 @@ func TestConfig() (*config.Config, error) {
 
 	if cfg != nil {
 		cfg.NATS.URL = servers.TestNATSServer.GetURL()
-		cfg.Cache.RefreshTime = 1 * time.Hour
 	}
 
 	return cfg, err

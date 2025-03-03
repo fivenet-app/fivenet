@@ -95,6 +95,9 @@ func New(p Params) *Housekeeper {
 }
 
 func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCronData) error {
+	tablesMu.Lock()
+	defer tablesMu.Unlock()
+
 	keys := []string{}
 	for key := range tablesList {
 		keys = append(keys, key)

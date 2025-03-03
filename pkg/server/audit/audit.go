@@ -7,6 +7,8 @@ import (
 	"sync"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/croner"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
@@ -49,10 +51,12 @@ type Params struct {
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
 	Config *config.Config
+
+	Cron croner.ICron
 }
 
 func New(p Params) IAuditer {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctxCancel, cancel := context.WithCancel(context.Background())
 
 	a := &AuditStorer{
 		logger: p.Logger.Named("audit"),
@@ -62,10 +66,22 @@ func New(p Params) IAuditer {
 		input:  make(chan *model.FivenetAuditLog),
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		for i := 0; i < 4; i++ {
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		for range 4 {
 			a.wg.Add(1)
-			go a.worker(ctx)
+			go a.worker(ctxCancel)
+		}
+
+		// Register audit log table in housekeeper
+		housekeeper.AddTable(&housekeeper.Table{
+			Table:           tAudit,
+			TimestampColumn: tAudit.CreatedAt,
+			MinDays:         p.Config.Audit.RetentionDays,
+		})
+
+		// Remove legacy audit log retention cron job
+		if err := p.Cron.UnregisterCronjob(ctxStartup, "auditlog-retention"); err != nil {
+			return err
 		}
 
 		return nil

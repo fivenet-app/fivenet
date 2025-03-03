@@ -70,5 +70,8 @@ func LoadTestConfig() (*Config, error) {
 		return nil, fmt.Errorf("failed to set config defaults: %w", err)
 	}
 
+	// Set audit log retention days high so they won't run in "short" tests
+	c.Audit.RetentionDays = 365
+
 	return c, nil
 }

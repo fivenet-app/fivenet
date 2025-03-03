@@ -147,7 +147,7 @@ func (p *Perms) publishMessage(ctx context.Context, subj events.Type, data any) 
 		return err
 	}
 
-	if _, err := p.js.Publish(ctx, fmt.Sprintf("%s.%s", BaseSubject, subj), out); err != nil {
+	if _, err := p.js.Publish(ctx, string(BaseSubject)+"."+string(subj), out); err != nil {
 		return err
 	}
 

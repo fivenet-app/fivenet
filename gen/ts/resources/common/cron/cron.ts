@@ -18,34 +18,54 @@ import { Timestamp } from "../../timestamp/timestamp";
  */
 export interface Cronjob {
     /**
+     * Cronjob name
+     *
      * @generated from protobuf field: string name = 1;
      */
     name: string;
     /**
+     *
+     * Cron schedule expression
+     * For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).
+     *
+     * To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/.
+     *
      * @generated from protobuf field: string schedule = 2;
      */
     schedule: string;
     /**
+     * Cronjob state
+     *
      * @generated from protobuf field: resources.common.cron.CronjobState state = 3;
      */
     state: CronjobState;
     /**
+     * Next time the cronjob should be run
+     *
      * @generated from protobuf field: resources.timestamp.Timestamp next_schedule_time = 4;
      */
     nextScheduleTime?: Timestamp;
     /**
+     * Last attempted start time of Cronjob
+     *
      * @generated from protobuf field: optional resources.timestamp.Timestamp last_attempt_time = 5;
      */
     lastAttemptTime?: Timestamp;
     /**
+     * Time current cronjob was started
+     *
      * @generated from protobuf field: optional resources.timestamp.Timestamp started_time = 6;
      */
     startedTime?: Timestamp;
     /**
+     * Optional timeout for cronjob execution
+     *
      * @generated from protobuf field: optional google.protobuf.Duration timeout = 7;
      */
     timeout?: Duration;
     /**
+     * Cronjob data
+     *
      * @generated from protobuf field: resources.common.cron.CronjobData data = 8;
      */
     data?: CronjobData;
@@ -68,6 +88,8 @@ export interface CronjobData {
  */
 export interface CronjobLockOwnerState {
     /**
+     * Hostname of the agent the cronjob is running on
+     *
      * @generated from protobuf field: string hostname = 1;
      */
     hostname: string;
@@ -81,6 +103,8 @@ export interface CronjobLockOwnerState {
  */
 export interface CronjobSchedulerEvent {
     /**
+     * Full Cronjob spec
+     *
      * @generated from protobuf field: resources.common.cron.Cronjob cronjob = 1;
      */
     cronjob?: Cronjob;
@@ -90,22 +114,32 @@ export interface CronjobSchedulerEvent {
  */
 export interface CronjobCompletedEvent {
     /**
+     * Cronjob name
+     *
      * @generated from protobuf field: string name = 1;
      */
     name: string;
     /**
+     * Cronjob execution success status
+     *
      * @generated from protobuf field: bool sucess = 2;
      */
     sucess: boolean;
     /**
+     * Cronjob end time
+     *
      * @generated from protobuf field: resources.timestamp.Timestamp endDate = 3;
      */
     endDate?: Timestamp;
     /**
+     * Cronjob execution time/elapsed time
+     *
      * @generated from protobuf field: google.protobuf.Duration elapsed = 4;
      */
     elapsed?: Duration;
     /**
+     * Cronjob data (can be empty if not touched by the Cronjob handler)
+     *
      * @generated from protobuf field: optional resources.common.cron.CronjobData data = 5;
      */
     data?: CronjobData;

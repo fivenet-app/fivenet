@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"path"
 	"path/filepath"
@@ -29,14 +30,14 @@ func (p *PermifyModule) InitContext(c pgs.BuildContext) {
 	p.ModuleBase.InitContext(c)
 	p.ctx = pgsgo.InitContext(c.Parameters())
 
-	tpl := template.New("permify").Funcs(map[string]interface{}{
+	tpl := template.New("permify").Funcs(map[string]any{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
 	})
 
 	p.tpl = template.Must(tpl.Parse(permifyTpl))
 
-	constTpl := template.New("permify_const").Funcs(map[string]interface{}{
+	constTpl := template.New("permify_const").Funcs(map[string]any{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
 	})
@@ -103,11 +104,20 @@ func (p *PermifyModule) generate(fs []pgs.File) {
 				mName = strings.TrimPrefix(mName, "services.")
 
 				comment := m.SourceCodeInfo().LeadingComments()
-				comment = strings.TrimLeft(comment, " ")
-				if !strings.HasPrefix(comment, "@perm") {
+				comment = strings.TrimSpace(comment)
+				if !strings.Contains(comment, "@perm") {
 					continue
 				}
-				comment = strings.TrimRight(comment, "\n")
+
+				// Find comment in multiline comment
+				sc := bufio.NewScanner(strings.NewReader(comment))
+				for sc.Scan() {
+					text := strings.TrimSpace(sc.Text())
+					if strings.HasPrefix(text, "@perm") {
+						comment = text
+						break
+					}
+				}
 
 				perm, err := p.parseComment(sName, mName, comment)
 				if err != nil {

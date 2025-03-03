@@ -1915,14 +1915,16 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| schedule | [string](#string) |  |  |
-| state | [CronjobState](#resources-common-cron-CronjobState) |  |  |
-| next_schedule_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| started_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| timeout | [google.protobuf.Duration](#google-protobuf-Duration) | optional |  |
-| data | [CronjobData](#resources-common-cron-CronjobData) |  |  |
+| name | [string](#string) |  | Cronjob name |
+| schedule | [string](#string) |  | Cron schedule expression For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).
+
+To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/. |
+| state | [CronjobState](#resources-common-cron-CronjobState) |  | Cronjob state |
+| next_schedule_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | Next time the cronjob should be run |
+| last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional | Last attempted start time of Cronjob |
+| started_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional | Time current cronjob was started |
+| timeout | [google.protobuf.Duration](#google-protobuf-Duration) | optional | Optional timeout for cronjob execution |
+| data | [CronjobData](#resources-common-cron-CronjobData) |  | Cronjob data |
 
 
 
@@ -1937,11 +1939,11 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| sucess | [bool](#bool) |  |  |
-| endDate | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| elapsed | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| data | [CronjobData](#resources-common-cron-CronjobData) | optional |  |
+| name | [string](#string) |  | Cronjob name |
+| sucess | [bool](#bool) |  | Cronjob execution success status |
+| endDate | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | Cronjob end time |
+| elapsed | [google.protobuf.Duration](#google-protobuf-Duration) |  | Cronjob execution time/elapsed time |
+| data | [CronjobData](#resources-common-cron-CronjobData) | optional | Cronjob data (can be empty if not touched by the Cronjob handler) |
 
 
 
@@ -1972,7 +1974,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| hostname | [string](#string) |  |  |
+| hostname | [string](#string) |  | Hostname of the agent the cronjob is running on |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
 
@@ -1988,7 +1990,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| cronjob | [Cronjob](#resources-common-cron-Cronjob) |  |  |
+| cronjob | [Cronjob](#resources-common-cron-Cronjob) |  | Full Cronjob spec |
 
 
 

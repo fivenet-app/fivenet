@@ -77,17 +77,28 @@ func (CronjobState) EnumDescriptor() ([]byte, []int) {
 }
 
 type Cronjob struct {
-	state            protoimpl.MessageState `protogen:"open.v1"`
-	Name             string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Schedule         string                 `protobuf:"bytes,2,opt,name=schedule,proto3" json:"schedule,omitempty"`
-	State            CronjobState           `protobuf:"varint,3,opt,name=state,proto3,enum=resources.common.cron.CronjobState" json:"state,omitempty"`
-	NextScheduleTime *timestamp.Timestamp   `protobuf:"bytes,4,opt,name=next_schedule_time,json=nextScheduleTime,proto3" json:"next_schedule_time,omitempty"`
-	LastAttemptTime  *timestamp.Timestamp   `protobuf:"bytes,5,opt,name=last_attempt_time,json=lastAttemptTime,proto3,oneof" json:"last_attempt_time,omitempty"`
-	StartedTime      *timestamp.Timestamp   `protobuf:"bytes,6,opt,name=started_time,json=startedTime,proto3,oneof" json:"started_time,omitempty"`
-	Timeout          *durationpb.Duration   `protobuf:"bytes,7,opt,name=timeout,proto3,oneof" json:"timeout,omitempty"`
-	Data             *CronjobData           `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
-	unknownFields    protoimpl.UnknownFields
-	sizeCache        protoimpl.SizeCache
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Cronjob name
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Cron schedule expression
+	// For available valid expressions, see [adhocore/gronx - Cron Expressions Documentation](https://github.com/adhocore/gronx/blob/fea40e3e90e70476877cfb9b50fac10c7de41c5c/README.md#cron-expression).
+	//
+	// To generate Cronjob schedule expressions, you can also use web tools like https://crontab.guru/.
+	Schedule string `protobuf:"bytes,2,opt,name=schedule,proto3" json:"schedule,omitempty"`
+	// Cronjob state
+	State CronjobState `protobuf:"varint,3,opt,name=state,proto3,enum=resources.common.cron.CronjobState" json:"state,omitempty"`
+	// Next time the cronjob should be run
+	NextScheduleTime *timestamp.Timestamp `protobuf:"bytes,4,opt,name=next_schedule_time,json=nextScheduleTime,proto3" json:"next_schedule_time,omitempty"`
+	// Last attempted start time of Cronjob
+	LastAttemptTime *timestamp.Timestamp `protobuf:"bytes,5,opt,name=last_attempt_time,json=lastAttemptTime,proto3,oneof" json:"last_attempt_time,omitempty"`
+	// Time current cronjob was started
+	StartedTime *timestamp.Timestamp `protobuf:"bytes,6,opt,name=started_time,json=startedTime,proto3,oneof" json:"started_time,omitempty"`
+	// Optional timeout for cronjob execution
+	Timeout *durationpb.Duration `protobuf:"bytes,7,opt,name=timeout,proto3,oneof" json:"timeout,omitempty"`
+	// Cronjob data
+	Data          *CronjobData `protobuf:"bytes,8,opt,name=data,proto3" json:"data,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Cronjob) Reset() {
@@ -229,9 +240,10 @@ func (x *CronjobData) GetData() *anypb.Any {
 }
 
 type CronjobLockOwnerState struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Hostname      string                 `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
-	UpdatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Hostname of the agent the cronjob is running on
+	Hostname      string               `protobuf:"bytes,1,opt,name=hostname,proto3" json:"hostname,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -281,8 +293,9 @@ func (x *CronjobLockOwnerState) GetUpdatedAt() *timestamp.Timestamp {
 }
 
 type CronjobSchedulerEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Cronjob       *Cronjob               `protobuf:"bytes,1,opt,name=cronjob,proto3" json:"cronjob,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Full Cronjob spec
+	Cronjob       *Cronjob `protobuf:"bytes,1,opt,name=cronjob,proto3" json:"cronjob,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -325,12 +338,17 @@ func (x *CronjobSchedulerEvent) GetCronjob() *Cronjob {
 }
 
 type CronjobCompletedEvent struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Sucess        bool                   `protobuf:"varint,2,opt,name=sucess,proto3" json:"sucess,omitempty"`
-	EndDate       *timestamp.Timestamp   `protobuf:"bytes,3,opt,name=endDate,proto3" json:"endDate,omitempty"`
-	Elapsed       *durationpb.Duration   `protobuf:"bytes,4,opt,name=elapsed,proto3" json:"elapsed,omitempty"`
-	Data          *CronjobData           `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Cronjob name
+	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	// Cronjob execution success status
+	Sucess bool `protobuf:"varint,2,opt,name=sucess,proto3" json:"sucess,omitempty"`
+	// Cronjob end time
+	EndDate *timestamp.Timestamp `protobuf:"bytes,3,opt,name=endDate,proto3" json:"endDate,omitempty"`
+	// Cronjob execution time/elapsed time
+	Elapsed *durationpb.Duration `protobuf:"bytes,4,opt,name=elapsed,proto3" json:"elapsed,omitempty"`
+	// Cronjob data (can be empty if not touched by the Cronjob handler)
+	Data          *CronjobData `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

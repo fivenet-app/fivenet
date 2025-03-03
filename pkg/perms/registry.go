@@ -3,7 +3,6 @@ package perms
 import (
 	"context"
 	"errors"
-	"fmt"
 	"reflect"
 	"slices"
 	"sync"
@@ -11,7 +10,6 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/pkg/perms/helpers"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -50,11 +48,11 @@ func AddPermsToList(perms []*Perm) {
 }
 
 func BuildGuard(category Category, name Name) string {
-	return helpers.Guard(fmt.Sprintf("%s.%s", category, name))
+	return Guard(string(category) + "." + string(name))
 }
 
 func BuildGuardWithKey(category Category, name Name, key Key) string {
-	return helpers.Guard(fmt.Sprintf("%s.%s.%s", category, name, key))
+	return Guard(string(category) + "." + string(name) + "." + string(key))
 }
 
 func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {

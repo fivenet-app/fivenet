@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
-	"github.com/fivenet-app/fivenet/pkg/perms/helpers"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -53,7 +52,7 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 }
 
 func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name string) (*model.FivenetPermissions, error) {
-	guard := helpers.Guard(name)
+	guard := Guard(name)
 
 	stmt := tPerms.
 		SELECT(
@@ -78,7 +77,8 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 }
 
 func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Category, name Name) error {
-	guard := helpers.Guard(fmt.Sprintf("%s-%s", category, name))
+	guard := Guard(string(category) + "-" + string(name))
+
 	stmt := tPerms.
 		UPDATE(
 			tPerms.Name,
