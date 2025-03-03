@@ -12,7 +12,7 @@ func (m *AddActivityRequest) Sanitize() error {
 	switch v := m.Activity.(type) {
 
 	case *AddActivityRequest_Dispatch:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -20,7 +20,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: JobsTimeclock
 	case *AddActivityRequest_JobsTimeclock:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: JobsUserActivity
 	case *AddActivityRequest_JobsUserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: JobsUserProps
 	case *AddActivityRequest_JobsUserProps:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: UserActivity
 	case *AddActivityRequest_UserActivity:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: UserOauth2
 	case *AddActivityRequest_UserOauth2:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: UserProps
 	case *AddActivityRequest_UserProps:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ func (m *AddActivityRequest) Sanitize() error {
 
 		// Field: UserUpdate
 	case *AddActivityRequest_UserUpdate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -96,7 +96,7 @@ func (m *DeleteDataRequest) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *DeleteDataRequest_Users:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -104,7 +104,7 @@ func (m *DeleteDataRequest) Sanitize() error {
 
 		// Field: Vehicles
 	case *DeleteDataRequest_Vehicles:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *GetStatusResponse) Sanitize() error {
 
 	// Field: Jobs
 	if m.Jobs != nil {
-		if v, ok := interface{}(m.GetJobs()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -147,7 +147,7 @@ func (m *GetStatusResponse) Sanitize() error {
 
 	// Field: Licenses
 	if m.Licenses != nil {
-		if v, ok := interface{}(m.GetLicenses()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLicenses()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -156,7 +156,7 @@ func (m *GetStatusResponse) Sanitize() error {
 
 	// Field: Users
 	if m.Users != nil {
-		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -165,7 +165,7 @@ func (m *GetStatusResponse) Sanitize() error {
 
 	// Field: Vehicles
 	if m.Vehicles != nil {
-		if v, ok := interface{}(m.GetVehicles()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetVehicles()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -200,7 +200,7 @@ func (m *SendDataRequest) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *SendDataRequest_Jobs:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -208,7 +208,7 @@ func (m *SendDataRequest) Sanitize() error {
 
 		// Field: Licenses
 	case *SendDataRequest_Licenses:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -216,7 +216,7 @@ func (m *SendDataRequest) Sanitize() error {
 
 		// Field: UserLocations
 	case *SendDataRequest_UserLocations:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -224,7 +224,7 @@ func (m *SendDataRequest) Sanitize() error {
 
 		// Field: Users
 	case *SendDataRequest_Users:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -232,7 +232,7 @@ func (m *SendDataRequest) Sanitize() error {
 
 		// Field: Vehicles
 	case *SendDataRequest_Vehicles:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -34,7 +34,7 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 	query := prepareStringQuery(sQuery, s.state, 0, limit)
 
 	licenses := []*users.License{}
-	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &licenses); err != nil {
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &licenses); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}

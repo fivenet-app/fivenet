@@ -51,7 +51,7 @@ func init() {
 	Modules["qualifications"] = NewQualifications
 }
 
-func NewQualifications(base *BaseModule, _ *broker.Broker[interface{}]) (Module, error) {
+func NewQualifications(base *BaseModule, _ *broker.Broker[any]) (Module, error) {
 	return &QualificationsSync{
 		BaseModule: base,
 	}, nil

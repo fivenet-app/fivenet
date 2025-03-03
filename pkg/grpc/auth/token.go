@@ -40,7 +40,7 @@ func (t *TokenMgr) NewWithClaims(claims *CitizenInfoClaims) (string, error) {
 }
 
 func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, error) {
-	token, err := jwt.ParseWithClaims(tokenString, &CitizenInfoClaims{}, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &CitizenInfoClaims{}, func(token *jwt.Token) (any, error) {
 		_, ok := token.Method.(*jwt.SigningMethodHMAC)
 		if !ok {
 			return "", errors.New("failed to verify jwt token method")

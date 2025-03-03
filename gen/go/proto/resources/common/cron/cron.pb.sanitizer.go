@@ -14,7 +14,7 @@ func (m *Cronjob) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Cronjob) Sanitize() error {
 
 	// Field: LastAttemptTime
 	if m.LastAttemptTime != nil {
-		if v, ok := interface{}(m.GetLastAttemptTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLastAttemptTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *Cronjob) Sanitize() error {
 
 	// Field: NextScheduleTime
 	if m.NextScheduleTime != nil {
-		if v, ok := interface{}(m.GetNextScheduleTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetNextScheduleTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ func (m *Cronjob) Sanitize() error {
 
 	// Field: StartedTime
 	if m.StartedTime != nil {
-		if v, ok := interface{}(m.GetStartedTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStartedTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func (m *Cronjob) Sanitize() error {
 
 	// Field: Timeout
 	if m.Timeout != nil {
-		if v, ok := interface{}(m.GetTimeout()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTimeout()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -67,7 +67,7 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 
 	// Field: Elapsed
 	if m.Elapsed != nil {
-		if v, ok := interface{}(m.GetElapsed()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetElapsed()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -85,7 +85,7 @@ func (m *CronjobCompletedEvent) Sanitize() error {
 
 	// Field: EndDate
 	if m.EndDate != nil {
-		if v, ok := interface{}(m.GetEndDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -102,7 +102,7 @@ func (m *CronjobData) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -111,7 +111,7 @@ func (m *CronjobData) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -128,7 +128,7 @@ func (m *CronjobLockOwnerState) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *CronjobSchedulerEvent) Sanitize() error {
 
 	// Field: Cronjob
 	if m.Cronjob != nil {
-		if v, ok := interface{}(m.GetCronjob()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCronjob()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -14,7 +14,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: EmailChanged
 	if m.EmailChanged != nil {
-		if v, ok := interface{}(m.GetEmailChanged()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEmailChanged()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -59,7 +59,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -77,7 +77,7 @@ func (m *Email) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

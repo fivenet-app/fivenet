@@ -14,7 +14,7 @@ func (m *DiscordSyncChange) Sanitize() error {
 
 	// Field: Time
 	if m.Time != nil {
-		if v, ok := interface{}(m.GetTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -33,7 +33,7 @@ func (m *DiscordSyncChanges) Sanitize() error {
 	for idx, item := range m.Changes {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -51,7 +51,7 @@ func (m *DiscordSyncSettings) Sanitize() error {
 
 	// Field: GroupSyncSettings
 	if m.GroupSyncSettings != nil {
-		if v, ok := interface{}(m.GetGroupSyncSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetGroupSyncSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (m *DiscordSyncSettings) Sanitize() error {
 
 	// Field: JobsAbsenceSettings
 	if m.JobsAbsenceSettings != nil {
-		if v, ok := interface{}(m.GetJobsAbsenceSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobsAbsenceSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ func (m *DiscordSyncSettings) Sanitize() error {
 
 	// Field: StatusLogSettings
 	if m.StatusLogSettings != nil {
-		if v, ok := interface{}(m.GetStatusLogSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStatusLogSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ func (m *DiscordSyncSettings) Sanitize() error {
 
 	// Field: UserInfoSyncSettings
 	if m.UserInfoSyncSettings != nil {
-		if v, ok := interface{}(m.GetUserInfoSyncSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUserInfoSyncSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *UserInfoSyncSettings) Sanitize() error {
 	for idx, item := range m.GroupMapping {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

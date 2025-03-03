@@ -12,7 +12,7 @@ func (m *DocAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToCreate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -24,7 +24,7 @@ func (m *DocAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToDelete {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func (m *DocAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *DocAccessUpdated) Sanitize() error {
 
 	// Field: Jobs
 	if m.Jobs != nil {
-		if v, ok := interface{}(m.GetJobs()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -71,7 +71,7 @@ func (m *DocAccessUpdated) Sanitize() error {
 
 	// Field: Users
 	if m.Users != nil {
-		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func (m *DocAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToCreate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -102,7 +102,7 @@ func (m *DocAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToDelete {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func (m *DocAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -132,7 +132,7 @@ func (m *DocActivity) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -141,7 +141,7 @@ func (m *DocActivity) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -150,7 +150,7 @@ func (m *DocActivity) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -169,7 +169,7 @@ func (m *DocActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *DocActivityData_AccessRequested:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -177,7 +177,7 @@ func (m *DocActivityData) Sanitize() error {
 
 		// Field: AccessUpdated
 	case *DocActivityData_AccessUpdated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -185,7 +185,7 @@ func (m *DocActivityData) Sanitize() error {
 
 		// Field: OwnerChanged
 	case *DocActivityData_OwnerChanged:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -193,7 +193,7 @@ func (m *DocActivityData) Sanitize() error {
 
 		// Field: Updated
 	case *DocActivityData_Updated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -211,7 +211,7 @@ func (m *DocOwnerChanged) Sanitize() error {
 
 	// Field: NewOwner
 	if m.NewOwner != nil {
-		if v, ok := interface{}(m.GetNewOwner()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetNewOwner()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

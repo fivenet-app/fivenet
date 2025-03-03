@@ -14,7 +14,7 @@ func (m *Unit) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Unit) Sanitize() error {
 
 	// Field: Attributes
 	if m.Attributes != nil {
-		if v, ok := interface{}(m.GetAttributes()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAttributes()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *Unit) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -56,7 +56,7 @@ func (m *Unit) Sanitize() error {
 
 	// Field: Status
 	if m.Status != nil {
-		if v, ok := interface{}(m.GetStatus()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStatus()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -65,7 +65,7 @@ func (m *Unit) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (m *Unit) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (m *UnitAssignment) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -113,7 +113,7 @@ func (m *UnitAssignments) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -137,7 +137,7 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -146,7 +146,7 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -167,7 +167,7 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: Unit
 	if m.Unit != nil {
-		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -176,7 +176,7 @@ func (m *UnitStatus) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

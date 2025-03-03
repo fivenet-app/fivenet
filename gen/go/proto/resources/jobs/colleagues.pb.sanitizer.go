@@ -14,7 +14,7 @@ func (m *Colleague) Sanitize() error {
 
 	// Field: Avatar
 	if m.Avatar != nil {
-		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -29,7 +29,7 @@ func (m *Colleague) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -46,7 +46,7 @@ func (m *JobsUserProps) Sanitize() error {
 
 	// Field: AbsenceBegin
 	if m.AbsenceBegin != nil {
-		if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -55,7 +55,7 @@ func (m *JobsUserProps) Sanitize() error {
 
 	// Field: AbsenceEnd
 	if m.AbsenceEnd != nil {
-		if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -64,7 +64,7 @@ func (m *JobsUserProps) Sanitize() error {
 
 	// Field: Labels
 	if m.Labels != nil {
-		if v, ok := interface{}(m.GetLabels()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLabels()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

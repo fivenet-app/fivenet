@@ -10,7 +10,7 @@ func (m *TimeclockEntry) Sanitize() error {
 
 	// Field: Date
 	if m.Date != nil {
-		if v, ok := interface{}(m.GetDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *TimeclockEntry) Sanitize() error {
 
 	// Field: EndTime
 	if m.EndTime != nil {
-		if v, ok := interface{}(m.GetEndTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *TimeclockEntry) Sanitize() error {
 
 	// Field: StartTime
 	if m.StartTime != nil {
-		if v, ok := interface{}(m.GetStartTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStartTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -37,7 +37,7 @@ func (m *TimeclockEntry) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

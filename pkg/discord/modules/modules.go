@@ -27,14 +27,14 @@ var (
 
 var Modules = map[string]NewModuleFunc{}
 
-type NewModuleFunc func(*BaseModule, *broker.Broker[interface{}]) (Module, error)
+type NewModuleFunc func(*BaseModule, *broker.Broker[any]) (Module, error)
 
 type Module interface {
 	GetName() string
 	Plan(ctx context.Context) (*types.State, []discord.Embed, error)
 }
 
-func GetModule(name string, base *BaseModule, events *broker.Broker[interface{}]) (Module, error) {
+func GetModule(name string, base *BaseModule, events *broker.Broker[any]) (Module, error) {
 	fn, ok := Modules[name]
 	if !ok {
 		return nil, fmt.Errorf("no module found by name %s", name)

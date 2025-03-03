@@ -10,7 +10,7 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: TargetUser
 	if m.TargetUser != nil {
-		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *AuditEntry) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

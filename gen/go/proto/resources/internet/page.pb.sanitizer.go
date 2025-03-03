@@ -24,7 +24,7 @@ func (m *ContentNode) Sanitize() error {
 	for idx, item := range m.Content {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -42,7 +42,7 @@ func (m *ContentNode) Sanitize() error {
 	for idx, item := range m.Slots {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -87,7 +87,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -105,7 +105,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (m *PageData) Sanitize() error {
 
 	// Field: Node
 	if m.Node != nil {
-		if v, ok := interface{}(m.GetNode()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetNode()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

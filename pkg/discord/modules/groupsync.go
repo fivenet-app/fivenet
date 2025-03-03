@@ -38,7 +38,7 @@ func init() {
 	Modules["groupsync"] = NewGroupSync
 }
 
-func NewGroupSync(base *BaseModule, _ *broker.Broker[interface{}]) (Module, error) {
+func NewGroupSync(base *BaseModule, _ *broker.Broker[any]) (Module, error) {
 	return &GroupSync{
 		BaseModule: base,
 	}, nil

@@ -467,7 +467,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 			}
 
 			removedCount := 0
-			dispatchIds := map[uint64]interface{}{}
+			dispatchIds := map[uint64]any{}
 			for _, dsp := range dsps {
 				// Skip handled dispatches
 				if _, ok := dispatchIds[dsp.Id]; ok {

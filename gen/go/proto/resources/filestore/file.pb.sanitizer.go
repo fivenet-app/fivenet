@@ -20,7 +20,7 @@ func (m *FileInfo) Sanitize() error {
 
 	// Field: LastModified
 	if m.LastModified != nil {
-		if v, ok := interface{}(m.GetLastModified()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLastModified()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

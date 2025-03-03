@@ -46,7 +46,7 @@ func (m *CreateDispatchRequest) Sanitize() error {
 
 	// Field: Dispatch
 	if m.Dispatch != nil {
-		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func (m *CreateDispatchResponse) Sanitize() error {
 
 	// Field: Dispatch
 	if m.Dispatch != nil {
-		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func (m *CreateOrUpdateUnitRequest) Sanitize() error {
 
 	// Field: Unit
 	if m.Unit != nil {
-		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func (m *CreateOrUpdateUnitResponse) Sanitize() error {
 
 	// Field: Unit
 	if m.Unit != nil {
-		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -154,7 +154,7 @@ func (m *GetDispatchResponse) Sanitize() error {
 
 	// Field: Dispatch
 	if m.Dispatch != nil {
-		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -179,7 +179,7 @@ func (m *GetSettingsResponse) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -204,7 +204,7 @@ func (m *JoinUnitResponse) Sanitize() error {
 
 	// Field: Unit
 	if m.Unit != nil {
-		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -223,7 +223,7 @@ func (m *LatestState) Sanitize() error {
 	for idx, item := range m.Dispatches {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -235,7 +235,7 @@ func (m *LatestState) Sanitize() error {
 	for idx, item := range m.Disponents {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -245,7 +245,7 @@ func (m *LatestState) Sanitize() error {
 
 	// Field: ServerTime
 	if m.ServerTime != nil {
-		if v, ok := interface{}(m.GetServerTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetServerTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -254,7 +254,7 @@ func (m *LatestState) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -265,7 +265,7 @@ func (m *LatestState) Sanitize() error {
 	for idx, item := range m.Units {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -283,7 +283,7 @@ func (m *ListDispatchActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -302,7 +302,7 @@ func (m *ListDispatchActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -312,7 +312,7 @@ func (m *ListDispatchActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -335,7 +335,7 @@ func (m *ListDispatchesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -360,7 +360,7 @@ func (m *ListDispatchesResponse) Sanitize() error {
 	for idx, item := range m.Dispatches {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -370,7 +370,7 @@ func (m *ListDispatchesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -387,7 +387,7 @@ func (m *ListUnitActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -406,7 +406,7 @@ func (m *ListUnitActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -416,7 +416,7 @@ func (m *ListUnitActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -449,7 +449,7 @@ func (m *ListUnitsResponse) Sanitize() error {
 	for idx, item := range m.Units {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -477,7 +477,7 @@ func (m *StreamResponse) Sanitize() error {
 	switch v := m.Change.(type) {
 
 	case *StreamResponse_DispatchCreated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -485,7 +485,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: DispatchDeleted
 	case *StreamResponse_DispatchDeleted:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -493,7 +493,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: DispatchStatus
 	case *StreamResponse_DispatchStatus:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -501,7 +501,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: DispatchUpdated
 	case *StreamResponse_DispatchUpdated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -509,7 +509,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Disponents
 	case *StreamResponse_Disponents:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -517,7 +517,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: LatestState
 	case *StreamResponse_LatestState:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -525,7 +525,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Settings
 	case *StreamResponse_Settings:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -533,7 +533,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitCreated
 	case *StreamResponse_UnitCreated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -541,7 +541,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitDeleted
 	case *StreamResponse_UnitDeleted:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -549,7 +549,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitStatus
 	case *StreamResponse_UnitStatus:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -557,7 +557,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UnitUpdated
 	case *StreamResponse_UnitUpdated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -613,7 +613,7 @@ func (m *UpdateDispatchRequest) Sanitize() error {
 
 	// Field: Dispatch
 	if m.Dispatch != nil {
-		if v, ok := interface{}(m.GetDispatch()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDispatch()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -666,7 +666,7 @@ func (m *UpdateSettingsRequest) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -683,7 +683,7 @@ func (m *UpdateSettingsResponse) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

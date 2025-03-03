@@ -12,7 +12,7 @@ func (m *JobEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *JobEvent_JobProps:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -48,7 +48,7 @@ func (m *UserEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *UserEvent_Notification:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

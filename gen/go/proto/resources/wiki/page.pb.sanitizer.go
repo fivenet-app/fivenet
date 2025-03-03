@@ -14,7 +14,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *Page) Sanitize() error {
 
 	// Field: Meta
 	if m.Meta != nil {
-		if v, ok := interface{}(m.GetMeta()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMeta()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *PageMeta) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func (m *PageMeta) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -70,7 +70,7 @@ func (m *PageMeta) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ func (m *PageMeta) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -116,7 +116,7 @@ func (m *PageRootInfo) Sanitize() error {
 
 	// Field: Logo
 	if m.Logo != nil {
-		if v, ok := interface{}(m.GetLogo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLogo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -135,7 +135,7 @@ func (m *PageShort) Sanitize() error {
 	for idx, item := range m.Children {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *PageShort) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -154,7 +154,7 @@ func (m *PageShort) Sanitize() error {
 
 	// Field: RootInfo
 	if m.RootInfo != nil {
-		if v, ok := interface{}(m.GetRootInfo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRootInfo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

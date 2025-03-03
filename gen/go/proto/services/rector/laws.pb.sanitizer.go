@@ -10,7 +10,7 @@ func (m *CreateOrUpdateLawBookRequest) Sanitize() error {
 
 	// Field: LawBook
 	if m.LawBook != nil {
-		if v, ok := interface{}(m.GetLawBook()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLawBook()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *CreateOrUpdateLawBookResponse) Sanitize() error {
 
 	// Field: LawBook
 	if m.LawBook != nil {
-		if v, ok := interface{}(m.GetLawBook()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLawBook()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *CreateOrUpdateLawRequest) Sanitize() error {
 
 	// Field: Law
 	if m.Law != nil {
-		if v, ok := interface{}(m.GetLaw()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLaw()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func (m *CreateOrUpdateLawResponse) Sanitize() error {
 
 	// Field: Law
 	if m.Law != nil {
-		if v, ok := interface{}(m.GetLaw()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLaw()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

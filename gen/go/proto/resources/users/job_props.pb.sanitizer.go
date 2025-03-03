@@ -10,7 +10,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: DiscordLastSync
 	if m.DiscordLastSync != nil {
-		if v, ok := interface{}(m.GetDiscordLastSync()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDiscordLastSync()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: DiscordSyncChanges
 	if m.DiscordSyncChanges != nil {
-		if v, ok := interface{}(m.GetDiscordSyncChanges()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDiscordSyncChanges()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: DiscordSyncSettings
 	if m.DiscordSyncSettings != nil {
-		if v, ok := interface{}(m.GetDiscordSyncSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDiscordSyncSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -37,7 +37,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: LogoUrl
 	if m.LogoUrl != nil {
-		if v, ok := interface{}(m.GetLogoUrl()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLogoUrl()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -46,7 +46,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: QuickButtons
 	if m.QuickButtons != nil {
-		if v, ok := interface{}(m.GetQuickButtons()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetQuickButtons()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -55,7 +55,7 @@ func (m *JobProps) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

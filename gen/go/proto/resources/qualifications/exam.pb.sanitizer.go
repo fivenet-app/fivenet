@@ -16,7 +16,7 @@ func (m *ExamGrading) Sanitize() error {
 	for idx, item := range m.Responses {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -42,7 +42,7 @@ func (m *ExamQuestion) Sanitize() error {
 
 	// Field: Answer
 	if m.Answer != nil {
-		if v, ok := interface{}(m.GetAnswer()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAnswer()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -51,7 +51,7 @@ func (m *ExamQuestion) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (m *ExamQuestion) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ func (m *ExamQuestion) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -105,7 +105,7 @@ func (m *ExamQuestionData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *ExamQuestionData_FreeText:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -113,7 +113,7 @@ func (m *ExamQuestionData) Sanitize() error {
 
 		// Field: Image
 	case *ExamQuestionData_Image:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -121,7 +121,7 @@ func (m *ExamQuestionData) Sanitize() error {
 
 		// Field: MultipleChoice
 	case *ExamQuestionData_MultipleChoice:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -129,7 +129,7 @@ func (m *ExamQuestionData) Sanitize() error {
 
 		// Field: Separator
 	case *ExamQuestionData_Separator:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -137,7 +137,7 @@ func (m *ExamQuestionData) Sanitize() error {
 
 		// Field: SingleChoice
 	case *ExamQuestionData_SingleChoice:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *ExamQuestionData) Sanitize() error {
 
 		// Field: Yesno
 	case *ExamQuestionData_Yesno:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -163,7 +163,7 @@ func (m *ExamQuestionImage) Sanitize() error {
 
 	// Field: Image
 	if m.Image != nil {
-		if v, ok := interface{}(m.GetImage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetImage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -238,7 +238,7 @@ func (m *ExamQuestions) Sanitize() error {
 	for idx, item := range m.Questions {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -256,7 +256,7 @@ func (m *ExamResponse) Sanitize() error {
 
 	// Field: Question
 	if m.Question != nil {
-		if v, ok := interface{}(m.GetQuestion()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetQuestion()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -265,7 +265,7 @@ func (m *ExamResponse) Sanitize() error {
 
 	// Field: Response
 	if m.Response != nil {
-		if v, ok := interface{}(m.GetResponse()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetResponse()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -284,7 +284,7 @@ func (m *ExamResponseData) Sanitize() error {
 	switch v := m.Response.(type) {
 
 	case *ExamResponseData_FreeText:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -292,7 +292,7 @@ func (m *ExamResponseData) Sanitize() error {
 
 		// Field: MultipleChoice
 	case *ExamResponseData_MultipleChoice:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -300,7 +300,7 @@ func (m *ExamResponseData) Sanitize() error {
 
 		// Field: Separator
 	case *ExamResponseData_Separator:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -308,7 +308,7 @@ func (m *ExamResponseData) Sanitize() error {
 
 		// Field: SingleChoice
 	case *ExamResponseData_SingleChoice:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -316,7 +316,7 @@ func (m *ExamResponseData) Sanitize() error {
 
 		// Field: Yesno
 	case *ExamResponseData_Yesno:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -390,7 +390,7 @@ func (m *ExamResponses) Sanitize() error {
 	for idx, item := range m.Responses {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -408,7 +408,7 @@ func (m *ExamUser) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -417,7 +417,7 @@ func (m *ExamUser) Sanitize() error {
 
 	// Field: EndedAt
 	if m.EndedAt != nil {
-		if v, ok := interface{}(m.GetEndedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -426,7 +426,7 @@ func (m *ExamUser) Sanitize() error {
 
 	// Field: EndsAt
 	if m.EndsAt != nil {
-		if v, ok := interface{}(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -435,7 +435,7 @@ func (m *ExamUser) Sanitize() error {
 
 	// Field: StartedAt
 	if m.StartedAt != nil {
-		if v, ok := interface{}(m.GetStartedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStartedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

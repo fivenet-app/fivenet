@@ -22,7 +22,7 @@ func (m *GetUserResponse) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -39,7 +39,7 @@ func (m *ListCitizensRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -48,7 +48,7 @@ func (m *ListCitizensRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -65,7 +65,7 @@ func (m *ListCitizensResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (m *ListCitizensResponse) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (m *ListUserActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -103,7 +103,7 @@ func (m *ListUserActivityRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -128,7 +128,7 @@ func (m *ListUserActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *ListUserActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -157,7 +157,7 @@ func (m *ManageCitizenLabelsRequest) Sanitize() error {
 	for idx, item := range m.Labels {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -177,7 +177,7 @@ func (m *ManageCitizenLabelsResponse) Sanitize() error {
 	for idx, item := range m.Labels {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -195,7 +195,7 @@ func (m *SetProfilePictureRequest) Sanitize() error {
 
 	// Field: Avatar
 	if m.Avatar != nil {
-		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -212,7 +212,7 @@ func (m *SetProfilePictureResponse) Sanitize() error {
 
 	// Field: Avatar
 	if m.Avatar != nil {
-		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -229,7 +229,7 @@ func (m *SetUserPropsRequest) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -249,7 +249,7 @@ func (m *SetUserPropsResponse) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -55,7 +55,7 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 	return nil, ErrPermissionDenied
 }
 
-func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
+func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
 	// Check if the method is from a service otherwise the request must be invalid
 	if strings.HasPrefix(info.FullMethod, "/services") {
 		userInfo, ok := FromContext(ctx)

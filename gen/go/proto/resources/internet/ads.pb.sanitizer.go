@@ -14,7 +14,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: EndsAt
 	if m.EndsAt != nil {
-		if v, ok := interface{}(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndsAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: Image
 	if m.Image != nil {
-		if v, ok := interface{}(m.GetImage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetImage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -53,7 +53,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: StartsAt
 	if m.StartsAt != nil {
-		if v, ok := interface{}(m.GetStartsAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStartsAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -65,7 +65,7 @@ func (m *Ad) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

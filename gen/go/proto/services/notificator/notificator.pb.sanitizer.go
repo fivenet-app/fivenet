@@ -16,7 +16,7 @@ func (m *GetNotificationsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *GetNotificationsResponse) Sanitize() error {
 	for idx, item := range m.Notifications {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -45,7 +45,7 @@ func (m *GetNotificationsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func (m *StreamResponse) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *StreamResponse_JobEvent:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -96,7 +96,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: JobGradeEvent
 	case *StreamResponse_JobGradeEvent:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -104,7 +104,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: MailerEvent
 	case *StreamResponse_MailerEvent:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -112,7 +112,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: SystemEvent
 	case *StreamResponse_SystemEvent:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -120,7 +120,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: UserEvent
 	case *StreamResponse_UserEvent:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

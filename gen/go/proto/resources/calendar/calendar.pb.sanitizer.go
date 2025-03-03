@@ -14,7 +14,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -26,7 +26,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: Subscription
 	if m.Subscription != nil {
-		if v, ok := interface{}(m.GetSubscription()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSubscription()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -71,7 +71,7 @@ func (m *Calendar) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Calendar
 	if m.Calendar != nil {
-		if v, ok := interface{}(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -106,7 +106,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -115,7 +115,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -124,7 +124,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -133,7 +133,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: EndTime
 	if m.EndTime != nil {
-		if v, ok := interface{}(m.GetEndTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEndTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -142,7 +142,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Recurring
 	if m.Recurring != nil {
-		if v, ok := interface{}(m.GetRecurring()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRecurring()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -151,7 +151,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: Rsvp
 	if m.Rsvp != nil {
-		if v, ok := interface{}(m.GetRsvp()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRsvp()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -160,7 +160,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: StartTime
 	if m.StartTime != nil {
-		if v, ok := interface{}(m.GetStartTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStartTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -172,7 +172,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -189,7 +189,7 @@ func (m *CalendarEntryRSVP) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -198,7 +198,7 @@ func (m *CalendarEntryRSVP) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -215,7 +215,7 @@ func (m *CalendarEntryRecurring) Sanitize() error {
 
 	// Field: Until
 	if m.Until != nil {
-		if v, ok := interface{}(m.GetUntil()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUntil()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -235,7 +235,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -253,7 +253,7 @@ func (m *CalendarShort) Sanitize() error {
 
 	// Field: Subscription
 	if m.Subscription != nil {
-		if v, ok := interface{}(m.GetSubscription()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSubscription()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -270,7 +270,7 @@ func (m *CalendarSub) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -279,7 +279,7 @@ func (m *CalendarSub) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

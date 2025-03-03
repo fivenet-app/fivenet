@@ -43,7 +43,7 @@ func (m *MarkerData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *MarkerData_Circle:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -51,7 +51,7 @@ func (m *MarkerData) Sanitize() error {
 
 		// Field: Icon
 	case *MarkerData_Icon:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -75,7 +75,7 @@ func (m *MarkerInfo) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -105,7 +105,7 @@ func (m *MarkerInfo) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (m *MarkerMarker) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -131,7 +131,7 @@ func (m *MarkerMarker) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -140,7 +140,7 @@ func (m *MarkerMarker) Sanitize() error {
 
 	// Field: ExpiresAt
 	if m.ExpiresAt != nil {
-		if v, ok := interface{}(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -149,7 +149,7 @@ func (m *MarkerMarker) Sanitize() error {
 
 	// Field: Info
 	if m.Info != nil {
-		if v, ok := interface{}(m.GetInfo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetInfo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -166,7 +166,7 @@ func (m *UserMarker) Sanitize() error {
 
 	// Field: Info
 	if m.Info != nil {
-		if v, ok := interface{}(m.GetInfo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetInfo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -175,7 +175,7 @@ func (m *UserMarker) Sanitize() error {
 
 	// Field: Unit
 	if m.Unit != nil {
-		if v, ok := interface{}(m.GetUnit()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -184,7 +184,7 @@ func (m *UserMarker) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -18,7 +18,7 @@ func (m *Data) Sanitize() error {
 
 	// Field: Calendar
 	if m.Calendar != nil {
-		if v, ok := interface{}(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *Data) Sanitize() error {
 
 	// Field: CausedBy
 	if m.CausedBy != nil {
-		if v, ok := interface{}(m.GetCausedBy()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCausedBy()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func (m *Data) Sanitize() error {
 
 	// Field: Link
 	if m.Link != nil {
-		if v, ok := interface{}(m.GetLink()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLink()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func (m *Notification) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -70,7 +70,7 @@ func (m *Notification) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -79,7 +79,7 @@ func (m *Notification) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func (m *Notification) Sanitize() error {
 
 	// Field: ReadAt
 	if m.ReadAt != nil {
-		if v, ok := interface{}(m.GetReadAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetReadAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func (m *Notification) Sanitize() error {
 
 	// Field: Title
 	if m.Title != nil {
-		if v, ok := interface{}(m.GetTitle()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTitle()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

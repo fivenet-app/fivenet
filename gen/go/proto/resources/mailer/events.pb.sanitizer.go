@@ -12,7 +12,7 @@ func (m *MailerEvent) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *MailerEvent_EmailSettingsUpdated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -20,7 +20,7 @@ func (m *MailerEvent) Sanitize() error {
 
 		// Field: EmailUpdate
 	case *MailerEvent_EmailUpdate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *MailerEvent) Sanitize() error {
 
 		// Field: MessageUpdate
 	case *MailerEvent_MessageUpdate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func (m *MailerEvent) Sanitize() error {
 
 		// Field: ThreadStateUpdate
 	case *MailerEvent_ThreadStateUpdate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *MailerEvent) Sanitize() error {
 
 		// Field: ThreadUpdate
 	case *MailerEvent_ThreadUpdate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

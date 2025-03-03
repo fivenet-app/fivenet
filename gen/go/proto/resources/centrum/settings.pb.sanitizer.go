@@ -38,7 +38,7 @@ func (m *Settings) Sanitize() error {
 
 	// Field: PredefinedStatus
 	if m.PredefinedStatus != nil {
-		if v, ok := interface{}(m.GetPredefinedStatus()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPredefinedStatus()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func (m *Settings) Sanitize() error {
 
 	// Field: Timings
 	if m.Timings != nil {
-		if v, ok := interface{}(m.GetTimings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTimings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -69,7 +69,7 @@ func (m *UserStatus) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetLastSeen()).(type) {
+		switch v := any(m.GetLastSeen()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UserStatusValidationError{
@@ -87,7 +87,7 @@ func (m *UserStatus) validate(all bool) error {
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetLastSeen()).(interface{ Validate() error }); ok {
+	} else if v, ok := any(m.GetLastSeen()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserStatusValidationError{
 				field:  "LastSeen",

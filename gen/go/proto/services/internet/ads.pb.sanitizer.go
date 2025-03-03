@@ -20,7 +20,7 @@ func (m *GetAdsResponse) Sanitize() error {
 	for idx, item := range m.Ads {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

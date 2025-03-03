@@ -42,8 +42,8 @@ func buildDummyUnaryPermsFunction(t *testing.T, hasRemap bool) func(ctx context.
 	}
 }
 
-func buildDummyStreamPermsFunction(t *testing.T, hasRemap bool) func(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
-	return func(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
+func buildDummyStreamPermsFunction(t *testing.T, hasRemap bool) func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
+	return func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error) {
 		fail, err := failFromMD(ctx)
 		if err != nil {
 			return nil, err

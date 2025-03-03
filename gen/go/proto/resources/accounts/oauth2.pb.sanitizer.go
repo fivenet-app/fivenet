@@ -10,7 +10,7 @@ func (m *OAuth2Account) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *OAuth2Account) Sanitize() error {
 
 	// Field: Provider
 	if m.Provider != nil {
-		if v, ok := interface{}(m.GetProvider()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProvider()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

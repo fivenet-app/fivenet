@@ -21,7 +21,7 @@ func (p *Generic) GetUserInfo(ctx context.Context, code string) (*UserInfo, erro
 		return nil, fmt.Errorf("failed to get user info: %+q", err)
 	}
 	defer res.Body.Close()
-	var dest map[string]interface{}
+	var dest map[string]any
 	if err := json.NewDecoder(res.Body).Decode(&dest); err != nil {
 		return nil, err
 	}

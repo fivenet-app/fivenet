@@ -34,7 +34,7 @@ type ServiceAuthFuncOverride interface {
 // UnaryServerInterceptor returns a new unary server interceptors that performs per-request auth.
 // NOTE(bwplotka): For more complex auth interceptor see https://github.com/grpc/grpc-go/blob/master/authz/grpc_authz_server_interceptors.go.
 func UnaryServerInterceptor(authFunc AuthFunc) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		var newCtx context.Context
 		var err error
 		if overrideSrv, ok := info.Server.(ServiceAuthFuncOverride); ok {
@@ -52,7 +52,7 @@ func UnaryServerInterceptor(authFunc AuthFunc) grpc.UnaryServerInterceptor {
 // StreamServerInterceptor returns a new unary server interceptors that performs per-request auth.
 // NOTE(bwplotka): For more complex auth interceptor see https://github.com/grpc/grpc-go/blob/master/authz/grpc_authz_server_interceptors.go.
 func StreamServerInterceptor(authFunc AuthFunc) grpc.StreamServerInterceptor {
-	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		var newCtx context.Context
 		var err error
 		if overrideSrv, ok := srv.(ServiceAuthFuncOverride); ok {

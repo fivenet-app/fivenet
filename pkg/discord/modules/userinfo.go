@@ -69,7 +69,7 @@ func init() {
 	Modules["userinfo"] = NewUserInfo
 }
 
-func NewUserInfo(base *BaseModule, events *broker.Broker[interface{}]) (Module, error) {
+func NewUserInfo(base *BaseModule, events *broker.Broker[any]) (Module, error) {
 	ui := &UserInfo{
 		BaseModule: base,
 
@@ -441,7 +441,7 @@ func (g *UserInfo) isUserAbsent(beginDate *timestamp.Timestamp, endDate *timesta
 	return !((beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour))
 }
 
-func (g *UserInfo) watchEvents(e interface{}) {
+func (g *UserInfo) watchEvents(e any) {
 	switch ev := e.(type) {
 	case *gateway.GuildMemberAddEvent:
 		settings := g.settings.Load()

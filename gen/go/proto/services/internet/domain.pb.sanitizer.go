@@ -33,7 +33,7 @@ func (m *ListDomainsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *ListDomainsResponse) Sanitize() error {
 	for idx, item := range m.Domains {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *ListDomainsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -89,7 +89,7 @@ func (m *ListTLDsResponse) Sanitize() error {
 	for idx, item := range m.Tlds {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (m *RegisterDomainResponse) Sanitize() error {
 
 	// Field: Domain
 	if m.Domain != nil {
-		if v, ok := interface{}(m.GetDomain()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDomain()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -143,7 +143,7 @@ func (m *UpdateDomainResponse) Sanitize() error {
 
 	// Field: Domain
 	if m.Domain != nil {
-		if v, ok := interface{}(m.GetDomain()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDomain()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

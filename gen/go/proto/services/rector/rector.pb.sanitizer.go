@@ -16,7 +16,7 @@ func (m *AttrsUpdate) Sanitize() error {
 	for idx, item := range m.ToRemove {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -28,7 +28,7 @@ func (m *AttrsUpdate) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -54,7 +54,7 @@ func (m *CreateRoleResponse) Sanitize() error {
 
 	// Field: Role
 	if m.Role != nil {
-		if v, ok := interface{}(m.GetRole()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRole()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -111,7 +111,7 @@ func (m *GetJobPropsResponse) Sanitize() error {
 
 	// Field: JobProps
 	if m.JobProps != nil {
-		if v, ok := interface{}(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *GetPermissionsResponse) Sanitize() error {
 	for idx, item := range m.Attributes {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -150,7 +150,7 @@ func (m *GetPermissionsResponse) Sanitize() error {
 	for idx, item := range m.Permissions {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -176,7 +176,7 @@ func (m *GetRoleResponse) Sanitize() error {
 
 	// Field: Role
 	if m.Role != nil {
-		if v, ok := interface{}(m.GetRole()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRole()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -203,7 +203,7 @@ func (m *GetRolesResponse) Sanitize() error {
 	for idx, item := range m.Roles {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -231,7 +231,7 @@ func (m *PermsUpdate) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -249,7 +249,7 @@ func (m *SetJobPropsRequest) Sanitize() error {
 
 	// Field: JobProps
 	if m.JobProps != nil {
-		if v, ok := interface{}(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -266,7 +266,7 @@ func (m *SetJobPropsResponse) Sanitize() error {
 
 	// Field: JobProps
 	if m.JobProps != nil {
-		if v, ok := interface{}(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -283,7 +283,7 @@ func (m *UpdateRoleLimitsRequest) Sanitize() error {
 
 	// Field: Attrs
 	if m.Attrs != nil {
-		if v, ok := interface{}(m.GetAttrs()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAttrs()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -292,7 +292,7 @@ func (m *UpdateRoleLimitsRequest) Sanitize() error {
 
 	// Field: Perms
 	if m.Perms != nil {
-		if v, ok := interface{}(m.GetPerms()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -317,7 +317,7 @@ func (m *UpdateRolePermsRequest) Sanitize() error {
 
 	// Field: Attrs
 	if m.Attrs != nil {
-		if v, ok := interface{}(m.GetAttrs()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAttrs()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -326,7 +326,7 @@ func (m *UpdateRolePermsRequest) Sanitize() error {
 
 	// Field: Perms
 	if m.Perms != nil {
-		if v, ok := interface{}(m.GetPerms()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -351,7 +351,7 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 
 	// Field: From
 	if m.From != nil {
-		if v, ok := interface{}(m.GetFrom()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetFrom()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -368,7 +368,7 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -385,7 +385,7 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -394,7 +394,7 @@ func (m *ViewAuditLogRequest) Sanitize() error {
 
 	// Field: To
 	if m.To != nil {
-		if v, ok := interface{}(m.GetTo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -413,7 +413,7 @@ func (m *ViewAuditLogResponse) Sanitize() error {
 	for idx, item := range m.Logs {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -423,7 +423,7 @@ func (m *ViewAuditLogResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

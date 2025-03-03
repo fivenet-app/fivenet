@@ -35,7 +35,7 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 	query := prepareStringQuery(sQuery, s.state, 0, limit)
 
 	jobs := []*users.Job{}
-	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &jobs); err != nil {
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &jobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
@@ -78,7 +78,7 @@ func (s *jobsSync) getGrades(ctx context.Context, job string) ([]*users.JobGrade
 	query = strings.ReplaceAll(query, "$jobName", "?")
 
 	grades := []*users.JobGrade{}
-	if _, err := qrm.Query(ctx, s.db, query, []interface{}{
+	if _, err := qrm.Query(ctx, s.db, query, []any{
 		job,
 	}, &grades); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

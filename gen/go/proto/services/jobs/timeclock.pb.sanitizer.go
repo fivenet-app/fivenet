@@ -18,7 +18,7 @@ func (m *GetTimeclockStatsResponse) Sanitize() error {
 
 	// Field: Stats
 	if m.Stats != nil {
-		if v, ok := interface{}(m.GetStats()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStats()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -29,7 +29,7 @@ func (m *GetTimeclockStatsResponse) Sanitize() error {
 	for idx, item := range m.Weekly {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func (m *ListInactiveEmployeesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -56,7 +56,7 @@ func (m *ListInactiveEmployeesRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -75,7 +75,7 @@ func (m *ListInactiveEmployeesResponse) Sanitize() error {
 	for idx, item := range m.Colleagues {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -85,7 +85,7 @@ func (m *ListInactiveEmployeesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -102,7 +102,7 @@ func (m *ListTimeclockRequest) Sanitize() error {
 
 	// Field: Date
 	if m.Date != nil {
-		if v, ok := interface{}(m.GetDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -111,7 +111,7 @@ func (m *ListTimeclockRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -120,7 +120,7 @@ func (m *ListTimeclockRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -139,7 +139,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Daily:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -149,7 +149,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -160,7 +160,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Range:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -170,7 +170,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 
 	// Field: Stats
 	if m.Stats != nil {
-		if v, ok := interface{}(m.GetStats()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStats()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -181,7 +181,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	for idx, item := range m.StatsWeekly {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -193,7 +193,7 @@ func (m *ListTimeclockResponse) Sanitize() error {
 	switch v := m.Entries.(type) {
 
 	case *ListTimeclockResponse_Weekly:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -211,7 +211,7 @@ func (m *TimeclockDay) Sanitize() error {
 
 	// Field: Date
 	if m.Date != nil {
-		if v, ok := interface{}(m.GetDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -222,7 +222,7 @@ func (m *TimeclockDay) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -240,7 +240,7 @@ func (m *TimeclockRange) Sanitize() error {
 
 	// Field: Date
 	if m.Date != nil {
-		if v, ok := interface{}(m.GetDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -251,7 +251,7 @@ func (m *TimeclockRange) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -269,7 +269,7 @@ func (m *TimeclockWeekly) Sanitize() error {
 
 	// Field: Date
 	if m.Date != nil {
-		if v, ok := interface{}(m.GetDate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -280,7 +280,7 @@ func (m *TimeclockWeekly) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -17,7 +17,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -26,7 +26,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -53,7 +53,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: DiscordSettings
 	if m.DiscordSettings != nil {
-		if v, ok := interface{}(m.GetDiscordSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDiscordSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -77,7 +77,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Exam
 	if m.Exam != nil {
-		if v, ok := interface{}(m.GetExam()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExam()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -86,7 +86,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: ExamSettings
 	if m.ExamSettings != nil {
-		if v, ok := interface{}(m.GetExamSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExamSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -101,7 +101,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Request
 	if m.Request != nil {
-		if v, ok := interface{}(m.GetRequest()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRequest()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -112,7 +112,7 @@ func (m *Qualification) Sanitize() error {
 	for idx, item := range m.Requirements {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: Result
 	if m.Result != nil {
-		if v, ok := interface{}(m.GetResult()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetResult()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -134,7 +134,7 @@ func (m *Qualification) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -159,7 +159,7 @@ func (m *QualificationExamSettings) Sanitize() error {
 
 	// Field: Time
 	if m.Time != nil {
-		if v, ok := interface{}(m.GetTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -176,7 +176,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: ApprovedAt
 	if m.ApprovedAt != nil {
-		if v, ok := interface{}(m.GetApprovedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetApprovedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -185,7 +185,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: Approver
 	if m.Approver != nil {
-		if v, ok := interface{}(m.GetApprover()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetApprover()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -200,7 +200,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -209,7 +209,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -218,7 +218,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: Qualification
 	if m.Qualification != nil {
-		if v, ok := interface{}(m.GetQualification()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetQualification()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -227,7 +227,7 @@ func (m *QualificationRequest) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -250,7 +250,7 @@ func (m *QualificationRequirement) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -259,7 +259,7 @@ func (m *QualificationRequirement) Sanitize() error {
 
 	// Field: TargetQualification
 	if m.TargetQualification != nil {
-		if v, ok := interface{}(m.GetTargetQualification()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTargetQualification()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -276,7 +276,7 @@ func (m *QualificationResult) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -285,7 +285,7 @@ func (m *QualificationResult) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -294,7 +294,7 @@ func (m *QualificationResult) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -303,7 +303,7 @@ func (m *QualificationResult) Sanitize() error {
 
 	// Field: Qualification
 	if m.Qualification != nil {
-		if v, ok := interface{}(m.GetQualification()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetQualification()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -315,7 +315,7 @@ func (m *QualificationResult) Sanitize() error {
 
 	// Field: User
 	if m.User != nil {
-		if v, ok := interface{}(m.GetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -335,7 +335,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -344,7 +344,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -353,7 +353,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -368,7 +368,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: ExamSettings
 	if m.ExamSettings != nil {
-		if v, ok := interface{}(m.GetExamSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExamSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -379,7 +379,7 @@ func (m *QualificationShort) Sanitize() error {
 	for idx, item := range m.Requirements {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -389,7 +389,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: Result
 	if m.Result != nil {
-		if v, ok := interface{}(m.GetResult()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetResult()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -401,7 +401,7 @@ func (m *QualificationShort) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

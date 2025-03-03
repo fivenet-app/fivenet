@@ -14,7 +14,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: Auth
 	if m.Auth != nil {
-		if v, ok := interface{}(m.GetAuth()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAuth()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: Discord
 	if m.Discord != nil {
-		if v, ok := interface{}(m.GetDiscord()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDiscord()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: JobInfo
 	if m.JobInfo != nil {
-		if v, ok := interface{}(m.GetJobInfo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobInfo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: Perms
 	if m.Perms != nil {
-		if v, ok := interface{}(m.GetPerms()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPerms()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: UserTracker
 	if m.UserTracker != nil {
-		if v, ok := interface{}(m.GetUserTracker()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUserTracker()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -59,7 +59,7 @@ func (m *AppConfig) Sanitize() error {
 
 	// Field: Website
 	if m.Website != nil {
-		if v, ok := interface{}(m.GetWebsite()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetWebsite()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -84,7 +84,7 @@ func (m *Discord) Sanitize() error {
 
 	// Field: BotPresence
 	if m.BotPresence != nil {
-		if v, ok := interface{}(m.GetBotPresence()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetBotPresence()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -107,7 +107,7 @@ func (m *Discord) Sanitize() error {
 
 	// Field: SyncInterval
 	if m.SyncInterval != nil {
-		if v, ok := interface{}(m.GetSyncInterval()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSyncInterval()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -160,7 +160,7 @@ func (m *JobInfo) Sanitize() error {
 
 	// Field: UnemployedJob
 	if m.UnemployedJob != nil {
-		if v, ok := interface{}(m.GetUnemployedJob()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUnemployedJob()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -213,7 +213,7 @@ func (m *Perms) Sanitize() error {
 	for idx, item := range m.Default {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -239,7 +239,7 @@ func (m *UserTracker) Sanitize() error {
 
 	// Field: DbRefreshTime
 	if m.DbRefreshTime != nil {
-		if v, ok := interface{}(m.GetDbRefreshTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDbRefreshTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -256,7 +256,7 @@ func (m *UserTracker) Sanitize() error {
 
 	// Field: RefreshTime
 	if m.RefreshTime != nil {
-		if v, ok := interface{}(m.GetRefreshTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRefreshTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -273,7 +273,7 @@ func (m *Website) Sanitize() error {
 
 	// Field: Links
 	if m.Links != nil {
-		if v, ok := interface{}(m.GetLinks()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLinks()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

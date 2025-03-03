@@ -18,7 +18,7 @@ func (m *ChangePasswordResponse) Sanitize() error {
 
 	// Field: Expires
 	if m.Expires != nil {
-		if v, ok := interface{}(m.GetExpires()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -59,7 +59,7 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 
 	// Field: Char
 	if m.Char != nil {
-		if v, ok := interface{}(m.GetChar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 
 	// Field: Expires
 	if m.Expires != nil {
-		if v, ok := interface{}(m.GetExpires()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -77,7 +77,7 @@ func (m *ChooseCharacterResponse) Sanitize() error {
 
 	// Field: JobProps
 	if m.JobProps != nil {
-		if v, ok := interface{}(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -150,7 +150,7 @@ func (m *GetAccountInfoResponse) Sanitize() error {
 
 	// Field: Account
 	if m.Account != nil {
-		if v, ok := interface{}(m.GetAccount()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccount()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -161,7 +161,7 @@ func (m *GetAccountInfoResponse) Sanitize() error {
 	for idx, item := range m.Oauth2Connections {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -173,7 +173,7 @@ func (m *GetAccountInfoResponse) Sanitize() error {
 	for idx, item := range m.Oauth2Providers {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -201,7 +201,7 @@ func (m *GetCharactersResponse) Sanitize() error {
 	for idx, item := range m.Chars {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -227,7 +227,7 @@ func (m *LoginResponse) Sanitize() error {
 
 	// Field: Char
 	if m.Char != nil {
-		if v, ok := interface{}(m.GetChar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -236,7 +236,7 @@ func (m *LoginResponse) Sanitize() error {
 
 	// Field: Expires
 	if m.Expires != nil {
-		if v, ok := interface{}(m.GetExpires()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -277,7 +277,7 @@ func (m *SetSuperUserModeResponse) Sanitize() error {
 
 	// Field: Char
 	if m.Char != nil {
-		if v, ok := interface{}(m.GetChar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetChar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -286,7 +286,7 @@ func (m *SetSuperUserModeResponse) Sanitize() error {
 
 	// Field: Expires
 	if m.Expires != nil {
-		if v, ok := interface{}(m.GetExpires()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpires()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -295,7 +295,7 @@ func (m *SetSuperUserModeResponse) Sanitize() error {
 
 	// Field: JobProps
 	if m.JobProps != nil {
-		if v, ok := interface{}(m.GetJobProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

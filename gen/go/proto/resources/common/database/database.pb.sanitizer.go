@@ -10,7 +10,7 @@ func (m *DateRange) Sanitize() error {
 
 	// Field: End
 	if m.End != nil {
-		if v, ok := interface{}(m.GetEnd()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEnd()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *DateRange) Sanitize() error {
 
 	// Field: Start
 	if m.Start != nil {
-		if v, ok := interface{}(m.GetStart()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetStart()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

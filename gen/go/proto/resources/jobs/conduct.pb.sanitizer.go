@@ -14,7 +14,7 @@ func (m *ConductEntry) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *ConductEntry) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *ConductEntry) Sanitize() error {
 
 	// Field: ExpiresAt
 	if m.ExpiresAt != nil {
-		if v, ok := interface{}(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *ConductEntry) Sanitize() error {
 
 	// Field: TargetUser
 	if m.TargetUser != nil {
-		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -53,7 +53,7 @@ func (m *ConductEntry) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

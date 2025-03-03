@@ -26,7 +26,7 @@ func (m *ListFilesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -45,7 +45,7 @@ func (m *ListFilesResponse) Sanitize() error {
 	for idx, item := range m.Files {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -55,7 +55,7 @@ func (m *ListFilesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -72,7 +72,7 @@ func (m *UploadFileRequest) Sanitize() error {
 
 	// Field: File
 	if m.File != nil {
-		if v, ok := interface{}(m.GetFile()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -89,7 +89,7 @@ func (m *UploadFileResponse) Sanitize() error {
 
 	// Field: File
 	if m.File != nil {
-		if v, ok := interface{}(m.GetFile()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetFile()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

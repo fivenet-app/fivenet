@@ -14,7 +14,7 @@ func (m *ColleagueAbsenceDate) Sanitize() error {
 
 	// Field: AbsenceBegin
 	if m.AbsenceBegin != nil {
-		if v, ok := interface{}(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAbsenceBegin()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *ColleagueAbsenceDate) Sanitize() error {
 
 	// Field: AbsenceEnd
 	if m.AbsenceEnd != nil {
-		if v, ok := interface{}(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAbsenceEnd()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -50,7 +50,7 @@ func (m *ColleagueLabelsChange) Sanitize() error {
 	for idx, item := range m.Added {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *ColleagueLabelsChange) Sanitize() error {
 	for idx, item := range m.Removed {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func (m *JobsUserActivity) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func (m *JobsUserActivity) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -109,7 +109,7 @@ func (m *JobsUserActivity) Sanitize() error {
 
 	// Field: SourceUser
 	if m.SourceUser != nil {
-		if v, ok := interface{}(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (m *JobsUserActivity) Sanitize() error {
 
 	// Field: TargetUser
 	if m.TargetUser != nil {
-		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -137,7 +137,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *JobsUserActivityData_AbsenceDate:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 
 		// Field: GradeChange
 	case *JobsUserActivityData_GradeChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -153,7 +153,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 
 		// Field: LabelsChange
 	case *JobsUserActivityData_LabelsChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -161,7 +161,7 @@ func (m *JobsUserActivityData) Sanitize() error {
 
 		// Field: NameChange
 	case *JobsUserActivityData_NameChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

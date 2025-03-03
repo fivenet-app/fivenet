@@ -47,7 +47,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	query := prepareStringQuery(sQuery, s.state, offset, limit)
 
 	users := []*users.User{}
-	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &users); err != nil {
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &users); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
@@ -142,7 +142,7 @@ func (s *usersSync) retrieveLicenses(ctx context.Context, userId int32, identifi
 	sQuery := s.cfg.Tables.UserLicenses
 	query := prepareStringQuery(sQuery, s.state, 0, 100)
 
-	args := []interface{}{}
+	args := []any{}
 	if strings.Contains(query, "$userId") {
 		query = strings.ReplaceAll(query, "$userId", strconv.Itoa(int(userId)))
 		args = append(args, userId)
@@ -165,7 +165,7 @@ func (s *usersSync) SyncUser(ctx context.Context, userId int32) error {
 	query := prepareStringQuery(sQuery, s.state, 0, 1)
 
 	user := &users.User{}
-	if _, err := qrm.Query(ctx, s.db, query, []interface{}{}, &user); err != nil {
+	if _, err := qrm.Query(ctx, s.db, query, []any{}, &user); err != nil {
 		return err
 	}
 

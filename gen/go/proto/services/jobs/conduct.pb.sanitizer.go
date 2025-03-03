@@ -10,7 +10,7 @@ func (m *CreateConductEntryRequest) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *CreateConductEntryResponse) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (m *ListConductEntriesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -69,7 +69,7 @@ func (m *ListConductEntriesRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (m *ListConductEntriesResponse) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -104,7 +104,7 @@ func (m *ListConductEntriesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -121,7 +121,7 @@ func (m *UpdateConductEntryRequest) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *UpdateConductEntryResponse) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

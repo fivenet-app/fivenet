@@ -18,7 +18,7 @@ func (m *GetPageResponse) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -45,7 +45,7 @@ func (m *SearchResponse) Sanitize() error {
 	for idx, item := range m.Results {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

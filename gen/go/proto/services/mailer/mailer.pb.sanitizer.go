@@ -14,7 +14,7 @@ func (m *CreateOrUpdateEmailRequest) Sanitize() error {
 
 	// Field: Email
 	if m.Email != nil {
-		if v, ok := interface{}(m.GetEmail()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEmail()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -31,7 +31,7 @@ func (m *CreateOrUpdateEmailResponse) Sanitize() error {
 
 	// Field: Email
 	if m.Email != nil {
-		if v, ok := interface{}(m.GetEmail()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEmail()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -48,7 +48,7 @@ func (m *CreateOrUpdateTemplateRequest) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -65,7 +65,7 @@ func (m *CreateOrUpdateTemplateResponse) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -82,7 +82,7 @@ func (m *CreateThreadRequest) Sanitize() error {
 
 	// Field: Message
 	if m.Message != nil {
-		if v, ok := interface{}(m.GetMessage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMessage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ func (m *CreateThreadRequest) Sanitize() error {
 
 	// Field: Thread
 	if m.Thread != nil {
-		if v, ok := interface{}(m.GetThread()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetThread()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -116,7 +116,7 @@ func (m *CreateThreadResponse) Sanitize() error {
 
 	// Field: Thread
 	if m.Thread != nil {
-		if v, ok := interface{}(m.GetThread()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetThread()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -221,7 +221,7 @@ func (m *GetEmailResponse) Sanitize() error {
 
 	// Field: Email
 	if m.Email != nil {
-		if v, ok := interface{}(m.GetEmail()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEmail()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -246,7 +246,7 @@ func (m *GetEmailSettingsResponse) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -271,7 +271,7 @@ func (m *GetTemplateResponse) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -296,7 +296,7 @@ func (m *GetThreadResponse) Sanitize() error {
 
 	// Field: Thread
 	if m.Thread != nil {
-		if v, ok := interface{}(m.GetThread()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetThread()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -321,7 +321,7 @@ func (m *GetThreadStateResponse) Sanitize() error {
 
 	// Field: State
 	if m.State != nil {
-		if v, ok := interface{}(m.GetState()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -338,7 +338,7 @@ func (m *ListEmailsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -357,7 +357,7 @@ func (m *ListEmailsResponse) Sanitize() error {
 	for idx, item := range m.Emails {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -367,7 +367,7 @@ func (m *ListEmailsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -394,7 +394,7 @@ func (m *ListTemplatesResponse) Sanitize() error {
 	for idx, item := range m.Templates {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -412,7 +412,7 @@ func (m *ListThreadMessagesRequest) Sanitize() error {
 
 	// Field: After
 	if m.After != nil {
-		if v, ok := interface{}(m.GetAfter()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAfter()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -421,7 +421,7 @@ func (m *ListThreadMessagesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -440,7 +440,7 @@ func (m *ListThreadMessagesResponse) Sanitize() error {
 	for idx, item := range m.Messages {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -450,7 +450,7 @@ func (m *ListThreadMessagesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -467,7 +467,7 @@ func (m *ListThreadsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -484,7 +484,7 @@ func (m *ListThreadsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -495,7 +495,7 @@ func (m *ListThreadsResponse) Sanitize() error {
 	for idx, item := range m.Threads {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -513,7 +513,7 @@ func (m *PostMessageRequest) Sanitize() error {
 
 	// Field: Message
 	if m.Message != nil {
-		if v, ok := interface{}(m.GetMessage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMessage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -538,7 +538,7 @@ func (m *PostMessageResponse) Sanitize() error {
 
 	// Field: Message
 	if m.Message != nil {
-		if v, ok := interface{}(m.GetMessage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMessage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -555,7 +555,7 @@ func (m *SearchThreadsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -574,7 +574,7 @@ func (m *SearchThreadsResponse) Sanitize() error {
 	for idx, item := range m.Messages {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -584,7 +584,7 @@ func (m *SearchThreadsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -601,7 +601,7 @@ func (m *SetEmailSettingsRequest) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -618,7 +618,7 @@ func (m *SetEmailSettingsResponse) Sanitize() error {
 
 	// Field: Settings
 	if m.Settings != nil {
-		if v, ok := interface{}(m.GetSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -635,7 +635,7 @@ func (m *SetThreadStateRequest) Sanitize() error {
 
 	// Field: State
 	if m.State != nil {
-		if v, ok := interface{}(m.GetState()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -652,7 +652,7 @@ func (m *SetThreadStateResponse) Sanitize() error {
 
 	// Field: State
 	if m.State != nil {
-		if v, ok := interface{}(m.GetState()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

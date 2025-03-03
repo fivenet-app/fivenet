@@ -20,7 +20,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: Job
 	if m.Job != nil {
-		if v, ok := interface{}(m.GetJob()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJob()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -29,7 +29,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: JobGrade
 	if m.JobGrade != nil {
-		if v, ok := interface{}(m.GetJobGrade()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobGrade()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -38,7 +38,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: Labels
 	if m.Labels != nil {
-		if v, ok := interface{}(m.GetLabels()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLabels()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: MugShot
 	if m.MugShot != nil {
-		if v, ok := interface{}(m.GetMugShot()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMugShot()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -56,7 +56,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -10,7 +10,7 @@ func (m *JobsUserProps) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -43,7 +43,7 @@ func (m *UserProps) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -9,7 +9,7 @@ import (
 )
 
 func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
 			grpc.SetTrailer(ctx, metadata.Pairs("X-Trace-Id", span.TraceID().String()))
 		}
@@ -26,7 +26,7 @@ func UnaryServerInterceptor() grpc.UnaryServerInterceptor {
 }
 
 func StreamServerInterceptor() grpc.StreamServerInterceptor {
-	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		if span := trace.SpanContextFromContext(stream.Context()); span.IsSampled() {
 			grpc.SetTrailer(stream.Context(), metadata.Pairs("X-Trace-Id", span.TraceID().String()))
 		}

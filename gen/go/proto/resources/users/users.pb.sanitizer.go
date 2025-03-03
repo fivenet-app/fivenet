@@ -10,7 +10,7 @@ func (m *User) Sanitize() error {
 
 	// Field: Avatar
 	if m.Avatar != nil {
-		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -21,7 +21,7 @@ func (m *User) Sanitize() error {
 	for idx, item := range m.Licenses {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -31,7 +31,7 @@ func (m *User) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -48,7 +48,7 @@ func (m *UserShort) Sanitize() error {
 
 	// Field: Avatar
 	if m.Avatar != nil {
-		if v, ok := interface{}(m.GetAvatar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAvatar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

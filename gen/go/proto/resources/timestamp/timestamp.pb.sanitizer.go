@@ -10,7 +10,7 @@ func (m *Timestamp) Sanitize() error {
 
 	// Field: Timestamp
 	if m.Timestamp != nil {
-		if v, ok := interface{}(m.GetTimestamp()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTimestamp()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

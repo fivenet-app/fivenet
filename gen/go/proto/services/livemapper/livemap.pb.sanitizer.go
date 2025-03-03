@@ -10,7 +10,7 @@ func (m *CreateOrUpdateMarkerRequest) Sanitize() error {
 
 	// Field: Marker
 	if m.Marker != nil {
-		if v, ok := interface{}(m.GetMarker()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMarker()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *CreateOrUpdateMarkerResponse) Sanitize() error {
 
 	// Field: Marker
 	if m.Marker != nil {
-		if v, ok := interface{}(m.GetMarker()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMarker()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *JobsList) Sanitize() error {
 	for idx, item := range m.Markers {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func (m *JobsList) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (m *MarkerMarkersUpdates) Sanitize() error {
 	for idx, item := range m.Markers {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (m *StreamResponse) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *StreamResponse_Jobs:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -130,7 +130,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Markers
 	case *StreamResponse_Markers:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *StreamResponse) Sanitize() error {
 
 		// Field: Users
 	case *StreamResponse_Users:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -158,7 +158,7 @@ func (m *UserMarkersUpdates) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

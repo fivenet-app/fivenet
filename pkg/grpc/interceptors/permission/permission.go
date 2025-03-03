@@ -20,7 +20,7 @@ import (
 // (authed, but lacking perms) appropriately.
 type (
 	PermissionUnaryFunc  func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
-	PermissionStreamFunc func(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error)
+	PermissionStreamFunc func(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error)
 )
 
 // ServiceUnaryPermissionFuncOverride
@@ -30,7 +30,7 @@ type ServiceUnaryPermissionFuncOverride interface {
 
 // ServiceStreamPermissionFuncOverride
 type ServiceStreamPermissionFuncOverride interface {
-	PermissionStreamFuncOverride(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error)
+	PermissionStreamFuncOverride(ctx context.Context, srv any, info *grpc.StreamServerInfo) (context.Context, error)
 }
 
 // GetPermsRemap
@@ -40,7 +40,7 @@ type GetPermsRemapFunc interface {
 
 // UnaryServerInterceptor returns a new unary server interceptors that performs per-request permission checks.
 func UnaryServerInterceptor(permissionFunc PermissionUnaryFunc) grpc.UnaryServerInterceptor {
-	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+	return func(ctx context.Context, req any, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (any, error) {
 		var newCtx context.Context
 		var err error
 		if overrideSrv, ok := info.Server.(ServiceUnaryPermissionFuncOverride); ok {
@@ -57,7 +57,7 @@ func UnaryServerInterceptor(permissionFunc PermissionUnaryFunc) grpc.UnaryServer
 
 // StreamServerInterceptor returns a new unary server interceptors that performs per-request permission checks.
 func StreamServerInterceptor(permissionFunc PermissionStreamFunc) grpc.StreamServerInterceptor {
-	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+	return func(srv any, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		var newCtx context.Context
 		var err error
 		if overrideSrv, ok := srv.(ServiceStreamPermissionFuncOverride); ok {

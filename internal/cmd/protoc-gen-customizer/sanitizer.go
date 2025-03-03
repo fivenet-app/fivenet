@@ -23,7 +23,7 @@ func (p *SanitizerModule) InitContext(c pgs.BuildContext) {
 	p.ModuleBase.InitContext(c)
 	p.ctx = pgsgo.InitContext(c.Parameters())
 
-	tpl := template.New("sanitizer").Funcs(map[string]interface{}{
+	tpl := template.New("sanitizer").Funcs(map[string]any{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
 		"fType":   p.ctx.Type,
@@ -156,7 +156,7 @@ func (m *{{ $key }}) Sanitize() error {
             {{ if eq $fType.Element "string" }}
             m.{{ $f.Name }}[idx] = htmlsanitizer.{{ $f.Method }}(m.{{ $f.Name }}[idx])
             {{ else if $f.F.Type.Element.IsEmbed }}
-            if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+            if v, ok := any(item).(interface{ Sanitize() error }); ok {
                 if err := v.Sanitize(); err != nil {
                     return err
                 }
@@ -172,7 +172,7 @@ func (m *{{ $key }}) Sanitize() error {
             {{ if eq $fType.Element "string" }}
             m.{{ $f.Name }}[idx] = htmlsanitizer.{{ $f.Method }}(m.{{ $f.Name }}[idx])
             {{ else if $f.F.Type.Element.IsEmbed }}
-            if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+            if v, ok := any(item).(interface{ Sanitize() error }); ok {
                 if err := v.Sanitize(); err != nil {
                     return err
                 }
@@ -186,7 +186,7 @@ func (m *{{ $key }}) Sanitize() error {
 	        switch v := m.{{ $f.F.OneOf.Name.UpperCamelCase }}.(type) {
             {{ end }}
                 case *{{ $key }}_{{ $f.Name }}:
-                    if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+                    if v, ok := any(v).(interface{ Sanitize() error }); ok {
                         if err := v.Sanitize(); err != nil {
                             return err
                         }
@@ -195,7 +195,7 @@ func (m *{{ $key }}) Sanitize() error {
             {{- $lastOneOf = $f.F.OneOf.Message.Name }}
         {{ else if $f.F.Type.IsEmbed }}
         if m.{{ $f.Name }} != nil {
-            if v, ok := interface{}(m.Get{{ $f.Name }}()).(interface{ Sanitize() error }); ok {
+            if v, ok := any(m.Get{{ $f.Name }}()).(interface{ Sanitize() error }); ok {
                 if err := v.Sanitize(); err != nil {
                     return err
                 }

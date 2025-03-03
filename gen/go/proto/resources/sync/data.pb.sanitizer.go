@@ -12,7 +12,7 @@ func (m *DataJobs) Sanitize() error {
 	for idx, item := range m.Jobs {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *DataLicenses) Sanitize() error {
 	for idx, item := range m.Licenses {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -60,7 +60,7 @@ func (m *DataUserLocations) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func (m *DataUsers) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -100,7 +100,7 @@ func (m *DataVehicles) Sanitize() error {
 	for idx, item := range m.Vehicles {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -134,7 +134,7 @@ func (m *UserLocation) Sanitize() error {
 
 	// Field: Coords
 	if m.Coords != nil {
-		if v, ok := interface{}(m.GetCoords()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCoords()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

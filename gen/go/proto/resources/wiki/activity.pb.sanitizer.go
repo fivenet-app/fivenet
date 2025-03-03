@@ -12,7 +12,7 @@ func (m *PageAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToCreate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -24,7 +24,7 @@ func (m *PageAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToDelete {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -36,7 +36,7 @@ func (m *PageAccessJobsDiff) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -54,7 +54,7 @@ func (m *PageAccessUpdated) Sanitize() error {
 
 	// Field: Jobs
 	if m.Jobs != nil {
-		if v, ok := interface{}(m.GetJobs()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetJobs()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -63,7 +63,7 @@ func (m *PageAccessUpdated) Sanitize() error {
 
 	// Field: Users
 	if m.Users != nil {
-		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -82,7 +82,7 @@ func (m *PageAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToCreate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -94,7 +94,7 @@ func (m *PageAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToDelete {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -106,7 +106,7 @@ func (m *PageAccessUsersDiff) Sanitize() error {
 	for idx, item := range m.ToUpdate {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -124,7 +124,7 @@ func (m *PageActivity) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -133,7 +133,7 @@ func (m *PageActivity) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -142,7 +142,7 @@ func (m *PageActivity) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -161,7 +161,7 @@ func (m *PageActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *PageActivityData_AccessUpdated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -169,7 +169,7 @@ func (m *PageActivityData) Sanitize() error {
 
 		// Field: Updated
 	case *PageActivityData_Updated:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

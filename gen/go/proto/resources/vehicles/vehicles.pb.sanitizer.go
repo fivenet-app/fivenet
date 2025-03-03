@@ -10,7 +10,7 @@ func (m *Vehicle) Sanitize() error {
 
 	// Field: Owner
 	if m.Owner != nil {
-		if v, ok := interface{}(m.GetOwner()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetOwner()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

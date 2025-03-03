@@ -38,7 +38,7 @@ func (m *Failure) Sanitize() error {
 	for idx, item := range m.Headers {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -58,7 +58,7 @@ func (m *GrpcFrame) Sanitize() error {
 	switch v := m.Payload.(type) {
 
 	case *GrpcFrame_Body:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -66,7 +66,7 @@ func (m *GrpcFrame) Sanitize() error {
 
 		// Field: Cancel
 	case *GrpcFrame_Cancel:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func (m *GrpcFrame) Sanitize() error {
 
 		// Field: Complete
 	case *GrpcFrame_Complete:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -82,7 +82,7 @@ func (m *GrpcFrame) Sanitize() error {
 
 		// Field: Failure
 	case *GrpcFrame_Failure:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func (m *GrpcFrame) Sanitize() error {
 
 		// Field: Header
 	case *GrpcFrame_Header:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -98,7 +98,7 @@ func (m *GrpcFrame) Sanitize() error {
 
 		// Field: Ping
 	case *GrpcFrame_Ping:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (m *Header) Sanitize() error {
 	for idx, item := range m.Headers {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

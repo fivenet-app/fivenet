@@ -16,7 +16,7 @@ func (m *AttributeValues) Sanitize() error {
 	switch v := m.ValidValues.(type) {
 
 	case *AttributeValues_JobGradeList:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -24,7 +24,7 @@ func (m *AttributeValues) Sanitize() error {
 
 		// Field: JobList
 	case *AttributeValues_JobList:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *AttributeValues) Sanitize() error {
 
 		// Field: StringList
 	case *AttributeValues_StringList:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -64,7 +64,7 @@ func (m *Permission) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -81,7 +81,7 @@ func (m *RawRoleAttribute) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func (m *RawRoleAttribute) Sanitize() error {
 
 	// Field: ValidValues
 	if m.ValidValues != nil {
-		if v, ok := interface{}(m.GetValidValues()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetValidValues()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -99,7 +99,7 @@ func (m *RawRoleAttribute) Sanitize() error {
 
 	// Field: Value
 	if m.Value != nil {
-		if v, ok := interface{}(m.GetValue()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (m *Role) Sanitize() error {
 	for idx, item := range m.Attributes {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -128,7 +128,7 @@ func (m *Role) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -139,7 +139,7 @@ func (m *Role) Sanitize() error {
 	for idx, item := range m.Permissions {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -157,7 +157,7 @@ func (m *RoleAttribute) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -166,7 +166,7 @@ func (m *RoleAttribute) Sanitize() error {
 
 	// Field: MaxValues
 	if m.MaxValues != nil {
-		if v, ok := interface{}(m.GetMaxValues()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetMaxValues()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -175,7 +175,7 @@ func (m *RoleAttribute) Sanitize() error {
 
 	// Field: ValidValues
 	if m.ValidValues != nil {
-		if v, ok := interface{}(m.GetValidValues()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetValidValues()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -184,7 +184,7 @@ func (m *RoleAttribute) Sanitize() error {
 
 	// Field: Value
 	if m.Value != nil {
-		if v, ok := interface{}(m.GetValue()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetValue()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

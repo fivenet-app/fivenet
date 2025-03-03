@@ -25,7 +25,7 @@ func (m *LabelCount) Sanitize() error {
 
 	// Field: Label
 	if m.Label != nil {
-		if v, ok := interface{}(m.GetLabel()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLabel()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *Labels) Sanitize() error {
 	for idx, item := range m.List {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

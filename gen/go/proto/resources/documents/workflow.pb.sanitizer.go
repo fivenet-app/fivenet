@@ -10,7 +10,7 @@ func (m *AutoCloseSettings) Sanitize() error {
 
 	// Field: Duration
 	if m.Duration != nil {
-		if v, ok := interface{}(m.GetDuration()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDuration()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *Reminder) Sanitize() error {
 
 	// Field: Duration
 	if m.Duration != nil {
-		if v, ok := interface{}(m.GetDuration()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDuration()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -46,7 +46,7 @@ func (m *ReminderSettings) Sanitize() error {
 	for idx, item := range m.Reminders {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -64,7 +64,7 @@ func (m *Workflow) Sanitize() error {
 
 	// Field: AutoCloseSettings
 	if m.AutoCloseSettings != nil {
-		if v, ok := interface{}(m.GetAutoCloseSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAutoCloseSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -73,7 +73,7 @@ func (m *Workflow) Sanitize() error {
 
 	// Field: ReminderSettings
 	if m.ReminderSettings != nil {
-		if v, ok := interface{}(m.GetReminderSettings()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetReminderSettings()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

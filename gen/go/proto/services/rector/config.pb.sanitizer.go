@@ -18,7 +18,7 @@ func (m *GetAppConfigResponse) Sanitize() error {
 
 	// Field: Config
 	if m.Config != nil {
-		if v, ok := interface{}(m.GetConfig()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetConfig()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -35,7 +35,7 @@ func (m *UpdateAppConfigRequest) Sanitize() error {
 
 	// Field: Config
 	if m.Config != nil {
-		if v, ok := interface{}(m.GetConfig()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetConfig()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *UpdateAppConfigResponse) Sanitize() error {
 
 	// Field: Config
 	if m.Config != nil {
-		if v, ok := interface{}(m.GetConfig()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetConfig()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

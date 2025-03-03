@@ -10,7 +10,7 @@ func (m *CreateOrUpdateCalendarEntryRequest) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *CreateOrUpdateCalendarEntryResponse) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -44,7 +44,7 @@ func (m *CreateOrUpdateCalendarRequest) Sanitize() error {
 
 	// Field: Calendar
 	if m.Calendar != nil {
-		if v, ok := interface{}(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -61,7 +61,7 @@ func (m *CreateOrUpdateCalendarResponse) Sanitize() error {
 
 	// Field: Calendar
 	if m.Calendar != nil {
-		if v, ok := interface{}(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -118,7 +118,7 @@ func (m *GetCalendarEntryResponse) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -143,7 +143,7 @@ func (m *GetCalendarResponse) Sanitize() error {
 
 	// Field: Calendar
 	if m.Calendar != nil {
-		if v, ok := interface{}(m.GetCalendar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCalendar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -170,7 +170,7 @@ func (m *GetUpcomingEntriesResponse) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -188,7 +188,7 @@ func (m *ListCalendarEntriesRequest) Sanitize() error {
 
 	// Field: After
 	if m.After != nil {
-		if v, ok := interface{}(m.GetAfter()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAfter()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -207,7 +207,7 @@ func (m *ListCalendarEntriesResponse) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -225,7 +225,7 @@ func (m *ListCalendarEntryRSVPRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -244,7 +244,7 @@ func (m *ListCalendarEntryRSVPResponse) Sanitize() error {
 	for idx, item := range m.Entries {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -254,7 +254,7 @@ func (m *ListCalendarEntryRSVPResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -271,7 +271,7 @@ func (m *ListCalendarsRequest) Sanitize() error {
 
 	// Field: After
 	if m.After != nil {
-		if v, ok := interface{}(m.GetAfter()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAfter()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -280,7 +280,7 @@ func (m *ListCalendarsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -299,7 +299,7 @@ func (m *ListCalendarsResponse) Sanitize() error {
 	for idx, item := range m.Calendars {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -309,7 +309,7 @@ func (m *ListCalendarsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -326,7 +326,7 @@ func (m *ListSubscriptionsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -343,7 +343,7 @@ func (m *ListSubscriptionsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -354,7 +354,7 @@ func (m *ListSubscriptionsResponse) Sanitize() error {
 	for idx, item := range m.Subs {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -372,7 +372,7 @@ func (m *RSVPCalendarEntryRequest) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -389,7 +389,7 @@ func (m *RSVPCalendarEntryResponse) Sanitize() error {
 
 	// Field: Entry
 	if m.Entry != nil {
-		if v, ok := interface{}(m.GetEntry()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEntry()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -422,7 +422,7 @@ func (m *SubscribeToCalendarRequest) Sanitize() error {
 
 	// Field: Sub
 	if m.Sub != nil {
-		if v, ok := interface{}(m.GetSub()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSub()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -439,7 +439,7 @@ func (m *SubscribeToCalendarResponse) Sanitize() error {
 
 	// Field: Sub
 	if m.Sub != nil {
-		if v, ok := interface{}(m.GetSub()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSub()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -14,7 +14,7 @@ func (m *AddDocumentReferenceRequest) Sanitize() error {
 
 	// Field: Reference
 	if m.Reference != nil {
-		if v, ok := interface{}(m.GetReference()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetReference()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -39,7 +39,7 @@ func (m *AddDocumentRelationRequest) Sanitize() error {
 
 	// Field: Relation
 	if m.Relation != nil {
-		if v, ok := interface{}(m.GetRelation()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRelation()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -80,7 +80,7 @@ func (m *CreateCategoryRequest) Sanitize() error {
 
 	// Field: Category
 	if m.Category != nil {
-		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -105,7 +105,7 @@ func (m *CreateDocumentReqRequest) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -128,7 +128,7 @@ func (m *CreateDocumentReqResponse) Sanitize() error {
 
 	// Field: Request
 	if m.Request != nil {
-		if v, ok := interface{}(m.GetRequest()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRequest()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -145,7 +145,7 @@ func (m *CreateDocumentRequest) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -154,7 +154,7 @@ func (m *CreateDocumentRequest) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -185,7 +185,7 @@ func (m *CreateTemplateRequest) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -296,7 +296,7 @@ func (m *EditCommentRequest) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		if v, ok := interface{}(m.GetComment()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -313,7 +313,7 @@ func (m *EditCommentResponse) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		if v, ok := interface{}(m.GetComment()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -330,7 +330,7 @@ func (m *GetCommentsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -349,7 +349,7 @@ func (m *GetCommentsResponse) Sanitize() error {
 	for idx, item := range m.Comments {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -359,7 +359,7 @@ func (m *GetCommentsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -384,7 +384,7 @@ func (m *GetDocumentAccessResponse) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -411,7 +411,7 @@ func (m *GetDocumentReferencesResponse) Sanitize() error {
 	for idx, item := range m.References {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -439,7 +439,7 @@ func (m *GetDocumentRelationsResponse) Sanitize() error {
 	for idx, item := range m.Relations {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -465,7 +465,7 @@ func (m *GetDocumentResponse) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -474,7 +474,7 @@ func (m *GetDocumentResponse) Sanitize() error {
 
 	// Field: Document
 	if m.Document != nil {
-		if v, ok := interface{}(m.GetDocument()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDocument()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -491,7 +491,7 @@ func (m *GetTemplateRequest) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -508,7 +508,7 @@ func (m *GetTemplateResponse) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -535,7 +535,7 @@ func (m *ListCategoriesResponse) Sanitize() error {
 	for idx, item := range m.Categories {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -559,7 +559,7 @@ func (m *ListDocumentActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -578,7 +578,7 @@ func (m *ListDocumentActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -588,7 +588,7 @@ func (m *ListDocumentActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -605,7 +605,7 @@ func (m *ListDocumentPinsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -624,7 +624,7 @@ func (m *ListDocumentPinsResponse) Sanitize() error {
 	for idx, item := range m.Documents {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -634,7 +634,7 @@ func (m *ListDocumentPinsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -651,7 +651,7 @@ func (m *ListDocumentReqsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -668,7 +668,7 @@ func (m *ListDocumentReqsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -679,7 +679,7 @@ func (m *ListDocumentReqsResponse) Sanitize() error {
 	for idx, item := range m.Requests {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -697,7 +697,7 @@ func (m *ListDocumentsRequest) Sanitize() error {
 
 	// Field: From
 	if m.From != nil {
-		if v, ok := interface{}(m.GetFrom()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetFrom()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -706,7 +706,7 @@ func (m *ListDocumentsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -715,7 +715,7 @@ func (m *ListDocumentsRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -724,7 +724,7 @@ func (m *ListDocumentsRequest) Sanitize() error {
 
 	// Field: To
 	if m.To != nil {
-		if v, ok := interface{}(m.GetTo()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTo()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -743,7 +743,7 @@ func (m *ListDocumentsResponse) Sanitize() error {
 	for idx, item := range m.Documents {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -753,7 +753,7 @@ func (m *ListDocumentsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -780,7 +780,7 @@ func (m *ListTemplatesResponse) Sanitize() error {
 	for idx, item := range m.Templates {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -798,7 +798,7 @@ func (m *ListUserDocumentsRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -821,7 +821,7 @@ func (m *ListUserDocumentsResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -832,7 +832,7 @@ func (m *ListUserDocumentsResponse) Sanitize() error {
 	for idx, item := range m.Relations {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -850,7 +850,7 @@ func (m *PostCommentRequest) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		if v, ok := interface{}(m.GetComment()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -867,7 +867,7 @@ func (m *PostCommentResponse) Sanitize() error {
 
 	// Field: Comment
 	if m.Comment != nil {
-		if v, ok := interface{}(m.GetComment()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetComment()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -916,7 +916,7 @@ func (m *SetDocumentAccessRequest) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -947,7 +947,7 @@ func (m *SetDocumentReminderRequest) Sanitize() error {
 
 	// Field: ReminderTime
 	if m.ReminderTime != nil {
-		if v, ok := interface{}(m.GetReminderTime()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetReminderTime()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1004,7 +1004,7 @@ func (m *UpdateCategoryRequest) Sanitize() error {
 
 	// Field: Category
 	if m.Category != nil {
-		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1029,7 +1029,7 @@ func (m *UpdateDocumentReqRequest) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1052,7 +1052,7 @@ func (m *UpdateDocumentReqResponse) Sanitize() error {
 
 	// Field: Request
 	if m.Request != nil {
-		if v, ok := interface{}(m.GetRequest()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRequest()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1069,7 +1069,7 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 
 	// Field: Access
 	if m.Access != nil {
-		if v, ok := interface{}(m.GetAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1078,7 +1078,7 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1109,7 +1109,7 @@ func (m *UpdateTemplateRequest) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -1126,7 +1126,7 @@ func (m *UpdateTemplateResponse) Sanitize() error {
 
 	// Field: Template
 	if m.Template != nil {
-		if v, ok := interface{}(m.GetTemplate()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTemplate()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

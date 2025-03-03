@@ -22,7 +22,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: Category
 	if m.Category != nil {
-		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -37,7 +37,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: ContentAccess
 	if m.ContentAccess != nil {
-		if v, ok := interface{}(m.GetContentAccess()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContentAccess()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -46,7 +46,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -66,7 +66,7 @@ func (m *Template) Sanitize() error {
 	for idx, item := range m.JobAccess {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -76,7 +76,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: Schema
 	if m.Schema != nil {
-		if v, ok := interface{}(m.GetSchema()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSchema()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -88,7 +88,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -97,7 +97,7 @@ func (m *Template) Sanitize() error {
 
 	// Field: Workflow
 	if m.Workflow != nil {
-		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func (m *TemplateData) Sanitize() error {
 
 	// Field: ActiveChar
 	if m.ActiveChar != nil {
-		if v, ok := interface{}(m.GetActiveChar()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetActiveChar()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -125,7 +125,7 @@ func (m *TemplateData) Sanitize() error {
 	for idx, item := range m.Documents {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -137,7 +137,7 @@ func (m *TemplateData) Sanitize() error {
 	for idx, item := range m.Users {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -149,7 +149,7 @@ func (m *TemplateData) Sanitize() error {
 	for idx, item := range m.Vehicles {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -167,7 +167,7 @@ func (m *TemplateJobAccess) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -184,7 +184,7 @@ func (m *TemplateRequirements) Sanitize() error {
 
 	// Field: Documents
 	if m.Documents != nil {
-		if v, ok := interface{}(m.GetDocuments()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDocuments()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -193,7 +193,7 @@ func (m *TemplateRequirements) Sanitize() error {
 
 	// Field: Users
 	if m.Users != nil {
-		if v, ok := interface{}(m.GetUsers()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUsers()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -202,7 +202,7 @@ func (m *TemplateRequirements) Sanitize() error {
 
 	// Field: Vehicles
 	if m.Vehicles != nil {
-		if v, ok := interface{}(m.GetVehicles()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetVehicles()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -219,7 +219,7 @@ func (m *TemplateSchema) Sanitize() error {
 
 	// Field: Requirements
 	if m.Requirements != nil {
-		if v, ok := interface{}(m.GetRequirements()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetRequirements()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -236,7 +236,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: Category
 	if m.Category != nil {
-		if v, ok := interface{}(m.GetCategory()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCategory()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -251,7 +251,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -269,7 +269,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: Schema
 	if m.Schema != nil {
-		if v, ok := interface{}(m.GetSchema()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSchema()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -281,7 +281,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -290,7 +290,7 @@ func (m *TemplateShort) Sanitize() error {
 
 	// Field: Workflow
 	if m.Workflow != nil {
-		if v, ok := interface{}(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetWorkflow()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

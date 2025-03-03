@@ -446,7 +446,7 @@ func (s *Server) CreateOrUpdateEmail(ctx context.Context, req *pbmailer.CreateOr
 			label = jet.String(*req.Email.Label)
 		}
 
-		sets := []interface{}{
+		sets := []any{
 			tEmails.Label.SET(jet.StringExp(label)),
 			tEmails.Internal.SET(jet.Bool(req.Email.Internal)),
 			tEmails.CreatorID.SET(jet.Int32(userInfo.UserId)),

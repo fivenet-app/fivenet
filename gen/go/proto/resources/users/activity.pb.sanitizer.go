@@ -14,7 +14,7 @@ func (m *UserActivity) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *UserActivity) Sanitize() error {
 
 	// Field: Data
 	if m.Data != nil {
-		if v, ok := interface{}(m.GetData()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetData()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -38,7 +38,7 @@ func (m *UserActivity) Sanitize() error {
 
 	// Field: SourceUser
 	if m.SourceUser != nil {
-		if v, ok := interface{}(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSourceUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -47,7 +47,7 @@ func (m *UserActivity) Sanitize() error {
 
 	// Field: TargetUser
 	if m.TargetUser != nil {
-		if v, ok := interface{}(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTargetUser()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -66,7 +66,7 @@ func (m *UserActivityData) Sanitize() error {
 	switch v := m.Data.(type) {
 
 	case *UserActivityData_DocumentRelation:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: FineChange
 	case *UserActivityData_FineChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -82,7 +82,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: JailChange
 	case *UserActivityData_JailChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -90,7 +90,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: JobChange
 	case *UserActivityData_JobChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -98,7 +98,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: LabelsChange
 	case *UserActivityData_LabelsChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -106,7 +106,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: LicensesChange
 	case *UserActivityData_LicensesChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: MugshotChange
 	case *UserActivityData_MugshotChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -122,7 +122,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: NameChange
 	case *UserActivityData_NameChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -130,7 +130,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: TrafficInfractionPointsChange
 	case *UserActivityData_TrafficInfractionPointsChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -138,7 +138,7 @@ func (m *UserActivityData) Sanitize() error {
 
 		// Field: WantedChange
 	case *UserActivityData_WantedChange:
-		if v, ok := interface{}(v).(interface{ Sanitize() error }); ok {
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -190,7 +190,7 @@ func (m *UserLabelsChange) Sanitize() error {
 	for idx, item := range m.Added {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -202,7 +202,7 @@ func (m *UserLabelsChange) Sanitize() error {
 	for idx, item := range m.Removed {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -222,7 +222,7 @@ func (m *UserLicenseChange) Sanitize() error {
 	for idx, item := range m.Licenses {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

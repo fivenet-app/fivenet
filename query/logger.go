@@ -20,7 +20,7 @@ func NewMigrateLogger(logger *zap.Logger) *MigrateLogger {
 	}
 }
 
-func (l *MigrateLogger) Printf(format string, v ...interface{}) {
+func (l *MigrateLogger) Printf(format string, v ...any) {
 	l.logger.Info(fmt.Sprintf(strings.TrimRight(format, "\n"), v...))
 }
 

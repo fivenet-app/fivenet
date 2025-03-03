@@ -125,7 +125,7 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	}
 }
 
-func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{}) error {
+func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) error {
 	event := &livemap.UsersUpdateEvent{}
 
 	keys := m.userStore.Keys(ctx, "")
@@ -135,7 +135,7 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{
 			continue
 		}
 
-		if _, ok := found[int32(idKey)]; ok {
+		if _, ok := foundUserIDs[int32(idKey)]; ok {
 			continue
 		}
 
@@ -217,7 +217,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 		}
 	}
 
-	foundUserIds := map[int32]interface{}{}
+	foundUserIds := map[int32]any{}
 
 	errs := multierr.Combine()
 

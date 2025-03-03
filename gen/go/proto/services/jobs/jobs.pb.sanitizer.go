@@ -24,7 +24,7 @@ func (m *GetColleagueLabelsResponse) Sanitize() error {
 	for idx, item := range m.Labels {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *GetColleagueLabelsStatsResponse) Sanitize() error {
 	for idx, item := range m.Count {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -78,7 +78,7 @@ func (m *GetColleagueResponse) Sanitize() error {
 
 	// Field: Colleague
 	if m.Colleague != nil {
-		if v, ok := interface{}(m.GetColleague()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetColleague()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -119,7 +119,7 @@ func (m *GetSelfResponse) Sanitize() error {
 
 	// Field: Colleague
 	if m.Colleague != nil {
-		if v, ok := interface{}(m.GetColleague()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetColleague()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -142,7 +142,7 @@ func (m *ListColleagueActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -151,7 +151,7 @@ func (m *ListColleagueActivityRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -170,7 +170,7 @@ func (m *ListColleagueActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -180,7 +180,7 @@ func (m *ListColleagueActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -197,7 +197,7 @@ func (m *ListColleaguesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -206,7 +206,7 @@ func (m *ListColleaguesRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -225,7 +225,7 @@ func (m *ListColleaguesResponse) Sanitize() error {
 	for idx, item := range m.Colleagues {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -235,7 +235,7 @@ func (m *ListColleaguesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -254,7 +254,7 @@ func (m *ManageColleagueLabelsRequest) Sanitize() error {
 	for idx, item := range m.Labels {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -274,7 +274,7 @@ func (m *ManageColleagueLabelsResponse) Sanitize() error {
 	for idx, item := range m.Labels {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -292,7 +292,7 @@ func (m *SetJobsUserPropsRequest) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -312,7 +312,7 @@ func (m *SetJobsUserPropsResponse) Sanitize() error {
 
 	// Field: Props
 	if m.Props != nil {
-		if v, ok := interface{}(m.GetProps()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetProps()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

@@ -10,7 +10,7 @@ func (m *CreatePageRequest) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -27,7 +27,7 @@ func (m *CreatePageResponse) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -68,7 +68,7 @@ func (m *GetPageResponse) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -85,7 +85,7 @@ func (m *ListPageActivityRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -104,7 +104,7 @@ func (m *ListPageActivityResponse) Sanitize() error {
 	for idx, item := range m.Activity {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -114,7 +114,7 @@ func (m *ListPageActivityResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -131,7 +131,7 @@ func (m *ListPagesRequest) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -140,7 +140,7 @@ func (m *ListPagesRequest) Sanitize() error {
 
 	// Field: Sort
 	if m.Sort != nil {
-		if v, ok := interface{}(m.GetSort()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetSort()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -159,7 +159,7 @@ func (m *ListPagesResponse) Sanitize() error {
 	for idx, item := range m.Pages {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -169,7 +169,7 @@ func (m *ListPagesResponse) Sanitize() error {
 
 	// Field: Pagination
 	if m.Pagination != nil {
-		if v, ok := interface{}(m.GetPagination()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPagination()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -186,7 +186,7 @@ func (m *UpdatePageRequest) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -203,7 +203,7 @@ func (m *UpdatePageResponse) Sanitize() error {
 
 	// Field: Page
 	if m.Page != nil {
-		if v, ok := interface{}(m.GetPage()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetPage()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

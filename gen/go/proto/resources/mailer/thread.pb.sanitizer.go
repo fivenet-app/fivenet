@@ -14,7 +14,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -23,7 +23,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: Creator
 	if m.Creator != nil {
-		if v, ok := interface{}(m.GetCreator()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreator()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -32,7 +32,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: CreatorEmail
 	if m.CreatorEmail != nil {
-		if v, ok := interface{}(m.GetCreatorEmail()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatorEmail()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -41,7 +41,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: DeletedAt
 	if m.DeletedAt != nil {
-		if v, ok := interface{}(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -52,7 +52,7 @@ func (m *Thread) Sanitize() error {
 	for idx, item := range m.Recipients {
 		_, _ = idx, item
 
-		if v, ok := interface{}(item).(interface{ Sanitize() error }); ok {
+		if v, ok := any(item).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -62,7 +62,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: State
 	if m.State != nil {
-		if v, ok := interface{}(m.GetState()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetState()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -74,7 +74,7 @@ func (m *Thread) Sanitize() error {
 
 	// Field: UpdatedAt
 	if m.UpdatedAt != nil {
-		if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -91,7 +91,7 @@ func (m *ThreadRecipientEmail) Sanitize() error {
 
 	// Field: CreatedAt
 	if m.CreatedAt != nil {
-		if v, ok := interface{}(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetCreatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -100,7 +100,7 @@ func (m *ThreadRecipientEmail) Sanitize() error {
 
 	// Field: Email
 	if m.Email != nil {
-		if v, ok := interface{}(m.GetEmail()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetEmail()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -117,7 +117,7 @@ func (m *ThreadState) Sanitize() error {
 
 	// Field: LastRead
 	if m.LastRead != nil {
-		if v, ok := interface{}(m.GetLastRead()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetLastRead()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

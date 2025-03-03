@@ -19,7 +19,7 @@ type PermifyModule struct {
 }
 
 var fns = template.FuncMap{
-	"last": func(x int, a interface{}) bool {
+	"last": func(x int, a any) bool {
 		return x == reflect.ValueOf(a).Len()-1
 	},
 }

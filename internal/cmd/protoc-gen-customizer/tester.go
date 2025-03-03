@@ -21,7 +21,7 @@ func (p *TesterModule) InitContext(c pgs.BuildContext) {
 	p.ModuleBase.InitContext(c)
 	p.ctx = pgsgo.InitContext(c.Parameters())
 
-	tpl := template.New("tester").Funcs(map[string]interface{}{
+	tpl := template.New("tester").Funcs(map[string]any{
 		"package": p.ctx.PackageName,
 		"name":    p.ctx.Name,
 	})

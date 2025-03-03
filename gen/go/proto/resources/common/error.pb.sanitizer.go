@@ -10,7 +10,7 @@ func (m *Error) Sanitize() error {
 
 	// Field: Content
 	if m.Content != nil {
-		if v, ok := interface{}(m.GetContent()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetContent()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -19,7 +19,7 @@ func (m *Error) Sanitize() error {
 
 	// Field: Title
 	if m.Title != nil {
-		if v, ok := interface{}(m.GetTitle()).(interface{ Sanitize() error }); ok {
+		if v, ok := any(m.GetTitle()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
