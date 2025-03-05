@@ -397,8 +397,6 @@ func (b *Bot) runSync(ctx context.Context) error {
 		return true
 	})
 
-	b.wg.Wait()
-
 	return errs
 }
 
