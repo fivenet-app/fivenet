@@ -38,11 +38,11 @@ func (c *SyncCommand) RegisterCommand(router *cmdroute.Router) api.CreateCommand
 		Type: discord.ChatInputCommand,
 		Name: "sync",
 		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.commands.fivenet.desc",
+			MessageID: "discord.commands.sync.desc",
 		}),
 		DescriptionLocalizations: discord.StringLocales{
 			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.commands.fivenet.desc",
+				MessageID: "discord.commands.sync.desc",
 			}),
 		},
 		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionAdministrator),

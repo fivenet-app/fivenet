@@ -99,6 +99,7 @@ type Bot struct {
 	workCh chan *Guild
 
 	syncTimer *time.Timer
+	syncTime  atomic.Pointer[time.Duration]
 
 	dc           *state.State
 	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
@@ -138,6 +139,11 @@ func New(p BotParams) Result {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		// Setup sync timer
+		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
+		b.syncTime.Store(&syncInterval)
+		b.syncTimer = time.NewTimer(syncInterval)
+
 		// Start bot workers
 		for range botWorkerCount {
 			b.wg.Add(1)
@@ -218,8 +224,12 @@ func New(p BotParams) Result {
 func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
 	b.setBotPresence(cfg.Discord.BotPresence)
 
-	if b.syncTimer != nil {
-		b.syncTimer.Reset(cfg.Discord.SyncInterval.AsDuration())
+	// Only reset sync timer when interval has changed
+	currentSyncTime := b.syncTime.Load()
+	if currentSyncTime == nil || *currentSyncTime != cfg.Discord.SyncInterval.AsDuration() {
+		newSyncTime := cfg.Discord.SyncInterval.AsDuration()
+		b.syncTime.Store(&newSyncTime)
+		b.syncTimer.Reset(newSyncTime)
 	}
 }
 
@@ -278,11 +288,11 @@ func (b *Bot) syncLoop() {
 			}
 		}()
 
-		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
-		if b.syncTimer == nil {
-			b.syncTimer = time.NewTimer(syncInterval)
+		if syncTime := b.syncTime.Load(); syncTime != nil {
+			b.syncTimer.Reset(*syncTime)
 		} else {
-			b.syncTimer.Reset(syncInterval)
+			// Fallback to sane value
+			b.syncTimer.Reset(10 * time.Minute)
 		}
 
 		select {
