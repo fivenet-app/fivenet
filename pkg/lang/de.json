@@ -78,6 +78,8 @@
                 }
             },
             "sync": {
+                "name": "sync",
+                "desc": "FiveNet Discord-Synchronisation auslösen.",
                 "results": {
                     "wrong_discord": {
                         "title": "Sync Befehl muss auf einem Discord Server mit FiveNet-Verbindung ausgeführt werden!",
