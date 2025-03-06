@@ -692,8 +692,8 @@
                 "livemap_marker_color": "Karten-Marker-Farbe",
                 "quick_buttons": "Schnellzugriff Knöpfe",
                 "discord_sync_settings": {
-                    "title": "Discord-Bot-Synchronisations-Einstellungen",
-                    "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen. Um mit dem Discord-Bot loszulegen, laden Sie den Bot ein, legen Sie unten Ihre Discord-Server-ID fest und konfigurieren Sie die Einstellungen nach Wunsch.",
+                    "title": "Discord-Bot-Einstellungen",
+                    "subtitle": "Verwalte die Discord-Bot-Einstellungen. Um mit dem Discord-Bot loszulegen, laden Sie den Bot ein, legen Sie unten Ihre Discord-Server-ID fest und konfigurieren Sie die Einstellungen nach Wunsch.",
                     "discord_guild_id": "Discord Guild/Server ID",
                     "invite_bot": "Bot einladen",
                     "last_sync": "Letzte Synchronisation",
@@ -743,6 +743,10 @@
                         "past_days": "Maximale Rückdatierung einer Abwesenheit in Tagen",
                         "future_days": "Maximale Vordatierung einer Abwesenheit in Tagen"
                     }
+                },
+                "discord_sync_features": {
+                    "title": "Discord-Bot-Synchronisation Funktionen",
+                    "subtitle": "Verwalte die Synchronisations-Funktionen des Discord-Bot (e.g., ob Mitarbeiter-Ränge synchronisiert werden sollen.)"
                 }
             },
             "role_view": {

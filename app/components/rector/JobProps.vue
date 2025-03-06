@@ -545,7 +545,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                     />
                                 </UFormGroup>
+                            </UDashboardSection>
 
+                            <UDivider class="mb-4" />
+
+                            <UDashboardSection
+                                :title="$t('components.rector.job_props.discord_sync_features.title')"
+                                :description="$t('components.rector.job_props.discord_sync_features.subtitle')"
+                            >
                                 <UFormGroup
                                     name="userInfoSync"
                                     :label="$t('components.rector.job_props.discord_sync_settings.user_info_sync')"

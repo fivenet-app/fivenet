@@ -692,8 +692,8 @@
                 "livemap_marker_color": "Map Marker Color",
                 "quick_buttons": "Quick Access Buttons",
                 "discord_sync_settings": {
-                    "title": "Discord Sync Settings",
-                    "subtitle": "Manage the Discord Bot Sync settings. To get started with the Discord bot, invite the bot, set your Discord server ID below and configure the settings as you want.",
+                    "title": "Discord Bot Settings",
+                    "subtitle": "Manage the basic Discord Bot  settings. To get started with the Discord bot, invite the bot, set your Discord server ID below and configure the settings as you want.",
                     "discord_guild_id": "Discord Guild/ Server ID",
                     "invite_bot": "Invite Bot",
                     "last_sync": "Last Sync",
@@ -743,6 +743,10 @@
                         "past_days": "Maximum backdating of an absence in days",
                         "future_days": "Maximum days in the future an absence can be dated"
                     }
+                },
+                "discord_sync_features": {
+                    "title": "Discord Bot Sync Features",
+                    "subtitle": "Manage the synchronisation features of the Discord bot (e.g., job grade roles.)"
                 }
             },
             "role_view": {
