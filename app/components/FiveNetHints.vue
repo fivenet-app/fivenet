@@ -25,17 +25,13 @@ const hints = shuffle([
 
 <template>
     <UCard
+        icon="i-mdi-information-outline"
         :ui="{
-            body: { padding: 'px-2 py-3 sm:p-4' },
-            header: { padding: 'px-2 py-3 sm:p-4' },
-            footer: { padding: 'px-2 py-2 sm:p-4' },
+            icon: { base: 'size-6' },
         }"
     >
         <template #header>
-            <div class="inline-flex items-center">
-                <UIcon name="i-mdi-information-outline" class="size-6" />
-                <span class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</span>
-            </div>
+            <div class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</div>
         </template>
 
         <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows>

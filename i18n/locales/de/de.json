@@ -735,6 +735,9 @@
                     "qualifications_role_format": {
                         "title": "Qualifizierungen-Rollen-Format",
                         "description": "Format der Discord Rolle. Nutze %abbr% für die Abkürzung und %name% für den Rollen-Namen der Qualifizierungen."
+                    },
+                    "discord_sync_command_info": {
+                        "description": "Der /sync Discord-Bot-Befehl kann genutzt werden um eine Discord-Synchronisation auszulösen. Standardmäßig kann dieser von Discord-Administratoren ausgeführt werden."
                     }
                 },
                 "settings": {

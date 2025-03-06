@@ -545,6 +545,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                     />
                                 </UFormGroup>
+
+                                <UAlert
+                                    :ui="{
+                                        icon: { base: 'size-6' },
+                                    }"
+                                    icon="i-mdi-information-outline"
+                                    :description="
+                                        $t(
+                                            'components.rector.job_props.discord_sync_settings.discord_sync_command_info.description',
+                                        )
+                                    "
+                                    variant="subtle"
+                                />
                             </UDashboardSection>
 
                             <UDivider class="mb-4" />

@@ -735,6 +735,9 @@
                     "qualifications_role_format": {
                         "title": "Qualifications Role Format",
                         "description": "Format of the Discord role. Use %abbr% for the abbreviation and %name% for the role name of the qualification."
+                    },
+                    "discord_sync_command_info": {
+                        "description": "The /sync Discord bot command can be used to trigger a sync. By default Discord admins can use the command."
                     }
                 },
                 "settings": {

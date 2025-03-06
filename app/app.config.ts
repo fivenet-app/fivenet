@@ -154,6 +154,11 @@ export default defineAppConfig({
                 padding: 'px-2 py-3 sm:px-4',
             },
         },
+        alert: {
+            body: { padding: 'px-2 py-2 sm:p-2' },
+            header: { padding: 'px-2 py-2 sm:p-2' },
+            footer: { padding: 'px-2 py-2 sm:p-2' },
+        },
         dashboard: {
             panel: {
                 content: {

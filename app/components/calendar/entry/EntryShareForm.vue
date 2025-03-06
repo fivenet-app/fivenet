@@ -66,9 +66,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :ui="{
                 ring: '',
                 divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-                body: { padding: 'px-2 py-3 sm:p-3' },
-                header: { padding: 'px-2 py-3 sm:p-3' },
-                footer: { padding: 'px-2 py-2 sm:p-3' },
             }"
         >
             <template #header>
