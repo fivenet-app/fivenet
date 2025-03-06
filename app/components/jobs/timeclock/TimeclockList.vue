@@ -655,6 +655,7 @@ const { game } = useAppConfig();
         >
             <template #default>
                 <UTooltip
+                    v-if="query.mode === TimeclockMode.TIMELINE"
                     :text="$t('components.jobs.timeclock.timeline.tooltip')"
                     :shortcuts="['CTRL', '🖱']"
                     :ui="{ shortcuts: 'inline-flex' }"
