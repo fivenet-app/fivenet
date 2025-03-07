@@ -19,19 +19,22 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 const route = useRoute();
 const router = useRouter();
 
-if (!route.query || !route.query.target) {
-    await navigateTo('/');
-} else {
-    const url = route.query.target as string;
-    useTimeoutFn(async () => {
-        if (nuiEnabled.value) {
-            openURLInWindow(url);
-            router.back();
-        } else {
+onMounted(async () => {
+    if (!route.query || !route.query.target) {
+        await navigateTo('/');
+    } else {
+        const url = route.query.target as string;
+        useTimeoutFn(async () => {
+            if (nuiEnabled.value) {
+                openURLInWindow(url);
+                router.back();
+                return;
+            }
+
             await navigateTo(url, { external: true });
-        }
-    }, 5000);
-}
+        }, 5000);
+    }
+});
 
 const target = route.query.target as string;
 </script>
