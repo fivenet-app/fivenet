@@ -5,6 +5,7 @@ import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 useHead({
     title: 'components.auth.RegistrationForm.title',
 });
+
 definePageMeta({
     title: 'components.auth.RegistrationForm.title',
     layout: 'auth',

@@ -4,6 +4,7 @@ import AttrRolesList from '~/components/rector/attrs/AttrRolesList.vue';
 useHead({
     title: 'pages.rector.limiter.title',
 });
+
 definePageMeta({
     title: 'pages.rector.limiter.title',
     requiresAuth: true,

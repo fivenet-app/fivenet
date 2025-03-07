@@ -5,6 +5,7 @@ import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueAc
 useHead({
     title: 'pages.jobs.colleagues.single.activity',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.activity',
     requiresAuth: true,

@@ -4,6 +4,7 @@ import CentrumSettings from '~/components/centrum/settings/CentrumSettings.vue';
 useHead({
     title: 'components.centrum.settings.title',
 });
+
 definePageMeta({
     title: 'components.centrum.settings.title',
     requiresAuth: true,

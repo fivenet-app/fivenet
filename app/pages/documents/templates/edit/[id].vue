@@ -5,6 +5,7 @@ import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue'
 useHead({
     title: 'pages.documents.templates.edit.title',
 });
+
 definePageMeta({
     title: 'pages.documents.templates.edit.title',
     requiresAuth: true,

@@ -7,6 +7,7 @@ const { t } = useI18n();
 useHead({
     title: 'common.control_panel',
 });
+
 definePageMeta({
     title: 'common.control_panel',
     requiresAuth: true,

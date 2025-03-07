@@ -4,6 +4,7 @@ import AuditLog from '~/components/rector/AuditLog.vue';
 useHead({
     title: 'common.audit_log',
 });
+
 definePageMeta({
     title: 'common.audit_log',
     requiresAuth: true,

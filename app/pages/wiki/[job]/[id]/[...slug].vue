@@ -10,6 +10,7 @@ import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 useHead({
     title: 'common.wiki',
 });
+
 definePageMeta({
     title: 'common.wiki',
     requiresAuth: true,

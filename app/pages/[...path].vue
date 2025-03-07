@@ -5,6 +5,7 @@ import { useAuthStore } from '~/store/auth';
 useHead({
     title: 'pages.notfound.title',
 });
+
 definePageMeta({
     title: 'pages.notfound.title',
     layout: 'landing',

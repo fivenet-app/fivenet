@@ -5,6 +5,7 @@ import QualificationsResultsList from '~/components/qualifications/Qualification
 useHead({
     title: 'pages.jobs.colleagues.single.qualifications',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.qualifications',
     requiresAuth: true,

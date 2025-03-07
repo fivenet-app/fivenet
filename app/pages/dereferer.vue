@@ -5,6 +5,7 @@ useHeadSafe({
     title: 'pages.dereferer.title',
     meta: [{ name: 'referrer', content: 'no-referrer' }],
 });
+
 definePageMeta({
     title: 'pages.dereferer.title',
     layout: 'landing',

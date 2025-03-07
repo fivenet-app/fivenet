@@ -5,6 +5,7 @@ import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 useHead({
     title: 'pages.documents.templates.title',
 });
+
 definePageMeta({
     title: 'pages.documents.templates.title',
     requiresAuth: true,

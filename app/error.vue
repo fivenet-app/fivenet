@@ -2,6 +2,8 @@
 <script setup lang="ts">
 import '~/assets/css/herofull-pattern.css';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import PageHeader from './components/landing/PageHeader.vue';
+import PageFooter from './components/partials/PageFooter.vue';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -44,6 +46,8 @@ const isDev = import.meta.dev;
 
 <template>
     <div class="h-dscreen">
+        <PageHeader />
+
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="h-full">
@@ -146,5 +150,7 @@ const isDev = import.meta.dev;
                 </main>
             </div>
         </div>
+
+        <PageFooter />
     </div>
 </template>

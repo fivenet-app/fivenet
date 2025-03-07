@@ -10,6 +10,7 @@ import type { ListDocumentPinsResponse } from '~~/gen/ts/services/docstore/docst
 useHead({
     title: 'pages.documents.title',
 });
+
 definePageMeta({
     title: 'pages.documents.title',
     requiresAuth: true,

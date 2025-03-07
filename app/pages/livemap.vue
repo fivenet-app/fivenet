@@ -4,6 +4,7 @@ import LivemapHolder from '~/components/livemap/LivemapHolder.vue';
 useHead({
     title: 'common.livemap',
 });
+
 definePageMeta({
     title: 'common.livemap',
     requiresAuth: true,

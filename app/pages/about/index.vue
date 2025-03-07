@@ -6,6 +6,7 @@ const { t } = useI18n();
 useHead({
     title: 'common.about',
 });
+
 definePageMeta({
     title: 'common.about',
     layout: 'landing',

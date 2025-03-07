@@ -6,6 +6,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 useHead({
     title: 'components.auth.AccountInfo.title',
 });
+
 definePageMeta({
     title: 'components.auth.AccountInfo.title',
     requiresAuth: true,

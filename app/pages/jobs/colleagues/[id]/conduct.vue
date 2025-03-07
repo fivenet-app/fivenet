@@ -5,6 +5,7 @@ import ConductList from '~/components/jobs/conduct/ConductList.vue';
 useHead({
     title: 'pages.jobs.colleagues.single.conduct',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.conduct',
     requiresAuth: true,

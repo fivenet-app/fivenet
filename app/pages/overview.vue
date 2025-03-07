@@ -6,6 +6,7 @@ import type { CardElements } from '~/utils/types';
 useHead({
     title: 'common.overview',
 });
+
 definePageMeta({
     title: 'common.overview',
     requiresAuth: true,

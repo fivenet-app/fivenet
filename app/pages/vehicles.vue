@@ -4,6 +4,7 @@ import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 useHead({
     title: 'pages.vehicles.title',
 });
+
 definePageMeta({
     title: 'pages.vehicles.title',
     requiresAuth: true,

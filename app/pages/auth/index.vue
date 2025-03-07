@@ -2,6 +2,7 @@
 useHead({
     title: 'components.auth.LoginForm.title',
 });
+
 definePageMeta({
     title: 'components.auth.LoginForm.title',
     requiresAuth: false,

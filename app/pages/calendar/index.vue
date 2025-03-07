@@ -17,6 +17,7 @@ import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar
 useHead({
     title: 'common.calendar',
 });
+
 definePageMeta({
     title: 'common.calendar',
     requiresAuth: true,

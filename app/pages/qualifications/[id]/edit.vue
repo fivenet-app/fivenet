@@ -5,6 +5,7 @@ import QualificationEditor from '~/components/qualifications/QualificationEditor
 useHead({
     title: 'pages.qualifications.edit.title',
 });
+
 definePageMeta({
     title: 'pages.qualifications.edit.title',
     requiresAuth: true,

@@ -5,6 +5,7 @@ import NotificationsList from '~/components/partials/notification/NotificationsL
 useHead({
     title: 'components.notifications.title',
 });
+
 definePageMeta({
     title: 'components.notifications.title',
     requiresAuth: true,

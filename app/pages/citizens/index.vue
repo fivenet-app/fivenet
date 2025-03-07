@@ -5,6 +5,7 @@ import CitizensList from '~/components/citizens/CitizensList.vue';
 useHead({
     title: 'pages.citizens.title',
 });
+
 definePageMeta({
     title: 'pages.citizens.title',
     requiresAuth: true,

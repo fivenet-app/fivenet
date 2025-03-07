@@ -6,6 +6,7 @@ import type { Stat } from '~~/gen/ts/resources/stats/stats';
 useHead({
     title: 'pages.stats.title',
 });
+
 definePageMeta({
     title: 'pages.stats.title',
     layout: 'landing',

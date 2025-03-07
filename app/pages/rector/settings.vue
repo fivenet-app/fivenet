@@ -4,6 +4,7 @@ import AppConfig from '~/components/rector/AppConfig.vue';
 useHead({
     title: 'pages.rector.settings.title',
 });
+
 definePageMeta({
     title: 'pages.rector.settings.title',
     requiresAuth: true,

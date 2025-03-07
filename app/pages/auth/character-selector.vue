@@ -6,6 +6,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 useHead({
     title: 'components.auth.CharacterSelector.title',
 });
+
 definePageMeta({
     title: 'components.auth.CharacterSelector.title',
     layout: 'auth',

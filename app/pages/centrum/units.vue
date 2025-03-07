@@ -6,6 +6,7 @@ const { t } = useI18n();
 useHead({
     title: () => t('common.unit', 2),
 });
+
 definePageMeta({
     title: 'common.unit',
     requiresAuth: true,

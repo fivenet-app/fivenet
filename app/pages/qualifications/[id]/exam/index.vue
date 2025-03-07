@@ -5,6 +5,7 @@ import ExamView from '~/components/qualifications/exam/ExamView.vue';
 useHead({
     title: 'pages.qualifications.single.exam.title',
 });
+
 definePageMeta({
     title: 'pages.qualifications.single.exam.title',
     requiresAuth: true,

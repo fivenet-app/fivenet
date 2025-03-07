@@ -6,6 +6,7 @@ import { useAuthStore } from '~/store/auth';
 useHead({
     title: 'common.home',
 });
+
 definePageMeta({
     title: 'common.home',
     layout: 'landing',
@@ -46,24 +47,22 @@ const links = computed(() =>
 </script>
 
 <template>
-    <div class="flex flex-col">
+    <div class="flex min-h-[calc(100dvh-(2*var(--header-height)))] flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
-        <div class="w-full flex-1">
-            <ULandingHero :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :links="links">
-                <template #headline>
-                    <UButton
-                        color="gray"
-                        :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
-                        :external="true"
-                        :label="$t('pages.index.whats_new_in', { version: appVersion })"
-                        trailing-icon="i-mdi-arrow-right"
-                        size="xs"
-                        class="rounded-full"
-                    />
-                </template>
-            </ULandingHero>
-        </div>
+        <ULandingHero :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :links="links" class="flex-1">
+            <template #headline>
+                <UButton
+                    color="gray"
+                    :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
+                    :external="true"
+                    :label="$t('pages.index.whats_new_in', { version: appVersion })"
+                    trailing-icon="i-mdi-arrow-right"
+                    size="xs"
+                    class="rounded-full"
+                />
+            </template>
+        </ULandingHero>
     </div>
 </template>
 

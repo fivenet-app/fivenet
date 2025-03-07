@@ -5,6 +5,7 @@ import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 useHead({
     title: 'pages.jobs.conduct.title',
 });
+
 definePageMeta({
     title: 'pages.jobs.conduct.title',
     requiresAuth: true,

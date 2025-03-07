@@ -211,8 +211,11 @@ func (s *Server) Login(ctx context.Context, req *pbauth.LoginRequest) (*pbauth.L
 		}
 	}
 
-	if err := s.setTokenCookie(ctx, token); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	// If choose char response is null, set the basic login token
+	if chooseCharResp == nil {
+		if err := s.setTokenCookie(ctx, token); err != nil {
+			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		}
 	}
 
 	return &pbauth.LoginResponse{

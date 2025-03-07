@@ -2,6 +2,7 @@
 useHead({
     title: 'common.privacy_policy',
 });
+
 definePageMeta({
     title: 'common.privacy_policy',
     layout: 'landing',

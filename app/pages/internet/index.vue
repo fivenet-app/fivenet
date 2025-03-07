@@ -6,6 +6,7 @@ import { useInternetStore } from '~/store/internet';
 useHead({
     title: 'common.internet',
 });
+
 definePageMeta({
     title: 'common.internet',
     requiresAuth: true,

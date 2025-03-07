@@ -5,6 +5,7 @@ import { useAuthStore } from '~/store/auth';
 useHead({
     title: 'common.logout',
 });
+
 definePageMeta({
     title: 'common.logout',
     layout: 'auth',

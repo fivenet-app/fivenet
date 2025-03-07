@@ -12,6 +12,7 @@ import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 useHead({
     title: 'pages.jobs.colleagues.single.title',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,

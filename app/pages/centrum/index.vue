@@ -4,6 +4,7 @@ import DispatchCenter from '~/components/centrum/DispatchCenter.vue';
 useHead({
     title: 'common.dispatch_center',
 });
+
 definePageMeta({
     title: 'common.dispatch_center',
     requiresAuth: true,

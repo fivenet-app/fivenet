@@ -5,6 +5,7 @@ import TimeclockList from '~/components/jobs/timeclock/TimeclockList.vue';
 useHead({
     title: 'pages.jobs.colleagues.single.timeclock',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.timeclock',
     requiresAuth: true,

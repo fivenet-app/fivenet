@@ -5,6 +5,7 @@ import TimeclockInactiveList from '~/components/jobs/timeclock/TimeclockInactive
 useHead({
     title: 'common.inactive_colleagues',
 });
+
 definePageMeta({
     title: 'common.inactive_colleagues',
     requiresAuth: true,

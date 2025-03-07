@@ -10,6 +10,7 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 useHead({
     title: 'pages.jobs.colleagues.single.title',
 });
+
 definePageMeta({
     title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,

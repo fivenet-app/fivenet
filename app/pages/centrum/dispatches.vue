@@ -13,6 +13,7 @@ import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/se
 useHead({
     title: 'common.dispatches',
 });
+
 definePageMeta({
     title: 'common.dispatches',
     requiresAuth: true,

@@ -9,6 +9,7 @@ import { useSettingsStore } from '~/store/settings';
 useHead({
     title: 'pages.jobs.overview.title',
 });
+
 definePageMeta({
     title: 'common.overview',
     requiresAuth: true,

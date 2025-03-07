@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 useHead({
     title: 'components.auth.LoginForm.title',
 });
+
 definePageMeta({
     title: 'components.auth.LoginForm.title',
     layout: 'auth',

@@ -5,6 +5,7 @@ import DocumentView from '~/components/documents/DocumentView.vue';
 useHead({
     title: 'pages.documents.id.title',
 });
+
 definePageMeta({
     title: 'pages.documents.id.title',
     requiresAuth: true,

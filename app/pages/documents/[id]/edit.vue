@@ -5,6 +5,7 @@ import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 useHead({
     title: 'pages.documents.edit.title',
 });
+
 definePageMeta({
     title: 'pages.documents.edit.title',
     requiresAuth: true,

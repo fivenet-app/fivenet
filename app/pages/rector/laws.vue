@@ -4,6 +4,7 @@ import LawList from '~/components/rector/laws/LawList.vue';
 useHead({
     title: 'pages.rector.laws.title',
 });
+
 definePageMeta({
     title: 'pages.rector.laws.title',
     requiresAuth: true,

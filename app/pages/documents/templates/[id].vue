@@ -5,6 +5,7 @@ import TemplateView from '~/components/documents/templates/TemplateView.vue';
 useHead({
     title: 'pages.documents.templates.view.title',
 });
+
 definePageMeta({
     title: 'pages.documents.templates.view.title',
     requiresAuth: true,

@@ -13,6 +13,7 @@ import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 useHead({
     title: 'pages.mailer.manage.title',
 });
+
 definePageMeta({
     title: 'pages.mailer.manage.title',
     requiresAuth: true,

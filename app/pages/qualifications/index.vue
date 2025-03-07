@@ -7,6 +7,7 @@ import QualificationsResultsList from '~/components/qualifications/Qualification
 useHead({
     title: 'pages.qualifications.title',
 });
+
 definePageMeta({
     title: 'pages.qualifications.title',
     requiresAuth: true,

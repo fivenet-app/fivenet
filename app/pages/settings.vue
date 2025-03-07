@@ -4,6 +4,7 @@ import UserSettingsPanel from '~/components/auth/account/UserSettingsPanel.vue';
 useHead({
     title: 'components.auth.UserSettingsPanel.title',
 });
+
 definePageMeta({
     title: 'components.auth.UserSettingsPanel.title',
     requiresAuth: true,

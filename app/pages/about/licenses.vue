@@ -4,6 +4,7 @@ import ExternalFileHolder from '~/components/partials/ExternalFileHolder.vue';
 useHead({
     title: 'common.licenses',
 });
+
 definePageMeta({
     title: 'common.licenses',
     layout: 'landing',

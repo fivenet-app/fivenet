@@ -5,6 +5,7 @@ import QualificationView from '~/components/qualifications/QualificationView.vue
 useHead({
     title: 'pages.qualifications.single.title',
 });
+
 definePageMeta({
     title: 'pages.qualifications.single.title',
     requiresAuth: true,

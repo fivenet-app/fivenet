@@ -17,6 +17,7 @@ import type { ListThreadsResponse } from '~~/gen/ts/services/mailer/mailer';
 useHead({
     title: 'common.mail',
 });
+
 definePageMeta({
     title: 'common.mail',
     requiresAuth: true,

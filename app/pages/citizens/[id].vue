@@ -5,6 +5,7 @@ import CitizenInfo from '~/components/citizens/info/CitizenInfo.vue';
 useHead({
     title: 'pages.citizens.id.title',
 });
+
 definePageMeta({
     title: 'pages.citizens.id.title',
     requiresAuth: true,

@@ -2,6 +2,7 @@
 useHead({
     title: 'common.imprint',
 });
+
 definePageMeta({
     title: 'common.imprint',
     layout: 'landing',
