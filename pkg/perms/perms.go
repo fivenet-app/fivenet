@@ -189,6 +189,7 @@ func New(p Params) (Permissions, error) {
 		ps.wg.Add(1)
 		go func() {
 			defer ps.wg.Done()
+
 			if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
 				ps.logger.Error("failed to apply job permissions", zap.Error(err))
 				return

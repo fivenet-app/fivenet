@@ -33,7 +33,7 @@ func (s *Server) setTokenCookie(ctx context.Context, token string) error {
 
 	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
 	// Send the cookie back to the client
-	return grpc.SendHeader(ctx, header)
+	return grpc.SetHeader(ctx, header)
 }
 
 func (s *Server) destroyTokenCookie(ctx context.Context) error {
@@ -47,5 +47,5 @@ func (s *Server) destroyTokenCookie(ctx context.Context) error {
 
 	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
 	// Send the cookie back to the client
-	return grpc.SendHeader(ctx, header)
+	return grpc.SetHeader(ctx, header)
 }
