@@ -249,19 +249,21 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
 });
 
 onBeforeMount(async () => {
-    if (canStream.value) {
-        useIntervalFn(() => checkup(), 1 * 60 * 1000);
-        useTimeoutFn(async () => {
-            try {
-                startStream();
-            } catch (e) {
-                logger.error('exception during centrum stream', e);
-            }
-        }, 550);
-
-        toggleSidebarBasedOnUnit();
-        toggleRequireUnitNotification();
+    if (!canStream.value) {
+        return;
     }
+
+    useIntervalFn(() => checkup(), 1 * 60 * 1000);
+    useTimeoutFn(async () => {
+        try {
+            startStream();
+        } catch (e) {
+            logger.error('exception during centrum stream', e);
+        }
+    }, 550);
+
+    toggleSidebarBasedOnUnit();
+    toggleRequireUnitNotification();
 });
 
 onBeforeUnmount(() => stopStream());

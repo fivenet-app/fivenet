@@ -34,10 +34,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
             </template>
         </UDashboardNavbar>
 
-        <div
-            ref="splitpanesContainer"
-            class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden"
-        >
+        <div class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden">
             <Splitpanes v-if="mount" class="relative">
                 <Pane :min-size="25">
                     <div class="relative z-0 size-full">
