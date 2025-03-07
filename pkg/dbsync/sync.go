@@ -232,7 +232,7 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-ctx.Done():
 				return
 
-			case <-time.After(2 * time.Second):
+			case <-time.After(s.cfg.GetSyncInterval(&s.cfg.Tables.Users)):
 			}
 		}
 	}()
@@ -251,7 +251,7 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-ctx.Done():
 				return
 
-			case <-time.After(2 * time.Second):
+			case <-time.After(s.cfg.GetSyncInterval(&s.cfg.Tables.Vehicles)):
 			}
 		}
 	}()

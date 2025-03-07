@@ -14,7 +14,7 @@ import (
 func (s *Sync) RunStream(ctx context.Context) {
 	defer s.wg.Done()
 
-	for i := 0; i < 3; i++ {
+	for range 3 {
 		s.wg.Add(1)
 		go s.streamWorker(ctx)
 	}

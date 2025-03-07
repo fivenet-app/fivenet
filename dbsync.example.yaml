@@ -7,6 +7,8 @@ destination:
   url: "example.fivenet.app"
   token: "YOUR_SYNC_API_TOKEN"
   insecure: false
+  # Sync Interval can also be specified per table
+  syncInterval: 5s
 
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details

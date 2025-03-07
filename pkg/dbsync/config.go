@@ -3,6 +3,7 @@ package dbsync
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/creasty/defaults"
 	"github.com/spf13/viper"
@@ -61,6 +62,8 @@ type DBSyncDestination struct {
 	URL      string `yaml:"url"`
 	Token    string `yaml:"token"`
 	Insecure bool   `yaml:"insecure"`
+
+	SyncInterval time.Duration `default:"5s" yaml:"syncInterval"`
 }
 
 type DBSyncSourceTables struct {
@@ -74,9 +77,14 @@ type DBSyncSourceTables struct {
 }
 
 type DBSyncTable struct {
-	Enabled           bool    `yaml:"enabled"`
-	UpdatedTimeColumn *string `yaml:"updatedTimeColumn"`
-	Query             string  `yaml:"query"`
+	Enabled           bool           `yaml:"enabled"`
+	UpdatedTimeColumn *string        `yaml:"updatedTimeColumn"`
+	Query             string         `yaml:"query"`
+	SyncInterval      *time.Duration `yaml:"syncInterval"`
+}
+
+func (c *DBSyncTable) GetSyncInterval() *time.Duration {
+	return c.SyncInterval
 }
 
 type UsersDBSyncTable struct {
@@ -118,4 +126,17 @@ func (c *ValueMapping) Process(input *string) {
 	} else {
 		*input = val
 	}
+}
+
+type DBSyncTableSyncInterval interface {
+	GetSyncInterval() *time.Duration
+}
+
+func (c *DBSync) GetSyncInterval(table DBSyncTableSyncInterval) time.Duration {
+	if table != nil && table.GetSyncInterval() != nil {
+		interval := table.GetSyncInterval()
+		return *interval
+	}
+
+	return c.Destination.SyncInterval
 }
