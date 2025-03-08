@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"io"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/utils"
@@ -16,7 +18,7 @@ import (
 )
 
 func init() {
-	storageFactories["filesystem"] = NewFilesystem
+	storageFactories[config.StorageTypeFilesystem] = NewFilesystem
 }
 
 type Filesystem struct {
@@ -26,14 +28,18 @@ type Filesystem struct {
 	prefix   string
 }
 
-func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
+func NewFilesystem(p Params) (IStorage, error) {
 	f := &Filesystem{
-		basePath: cfg.Storage.Filesystem.Path,
+		basePath: p.Cfg.Storage.Filesystem.Path,
 	}
 
-	if err := os.MkdirAll(f.basePath, 0o770); err != nil {
-		return nil, err
-	}
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		if err := os.MkdirAll(f.basePath, 0o770); err != nil {
+			return err
+		}
+
+		return nil
+	}))
 
 	return f, nil
 }
@@ -66,7 +72,7 @@ func (s *Filesystem) Get(ctx context.Context, filePathIn string) (IObject, IObje
 		return nil, nil, err
 	}
 
-	name := f.Name()
+	name := stat.Name()
 
 	return f, &ObjectInfo{
 		name:         name,
@@ -74,6 +80,10 @@ func (s *Filesystem) Get(ctx context.Context, filePathIn string) (IObject, IObje
 		size:         stat.Size(),
 		lastModified: stat.ModTime(),
 	}, nil
+}
+
+func (s *Filesystem) GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error) {
+	return nil, nil
 }
 
 func (s *Filesystem) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {

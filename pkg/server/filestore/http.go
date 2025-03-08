@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
 	"path"
 	"path/filepath"
 	"time"
@@ -36,7 +37,7 @@ func (s *FilestoreHTTP) RegisterHTTP(e *gin.Engine) {
 		Public:               true,
 		Private:              false,
 		ProxyRevalidate:      true,
-		MaxAge:               cachecontrol.Duration(5 * 24 * time.Hour),
+		MaxAge:               cachecontrol.Duration(4 * 24 * time.Hour),
 		SMaxAge:              nil,
 		Immutable:            false,
 		StaleWhileRevalidate: cachecontrol.Duration(1 * 24 * time.Hour),
@@ -57,7 +58,9 @@ func (s *FilestoreHTTP) HEAD(c *gin.Context) {
 		return
 	}
 
-	if _, err := s.st.Stat(c, path.Join(prefix, fileName)); err != nil {
+	filePath := path.Join(prefix, fileName)
+
+	if _, err := s.st.Stat(c, filePath); err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)
 			return
@@ -75,6 +78,24 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 	fileName = filepath.Clean(fileName)
 	if prefix == "" || fileName == "" {
 		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("invalid file requested"))
+		return
+	}
+
+	filePath := path.Join(prefix, fileName)
+
+	url, err := s.st.GetURL(c, filePath, 1*time.Hour, url.Values{})
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+
+		c.AbortWithError(http.StatusBadRequest, fmt.Errorf("failed to retrieve file url from store. %w", err))
+		return
+	}
+
+	if url != nil {
+		c.Redirect(http.StatusTemporaryRedirect, *url)
 		return
 	}
 

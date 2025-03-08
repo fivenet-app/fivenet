@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"net/url"
 	"path/filepath"
 	"time"
 )
@@ -17,21 +18,27 @@ var (
 )
 
 type IStorage interface {
+	// Return storage with prefix transparently added to the calls
 	WithPrefix(prefix string) (IStorage, error)
 
+	// Get return object contents and info
 	Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error)
+	// Get URL of object (not every storage adapter supports this)
+	GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error)
+	// Return object info
 	Stat(ctx context.Context, filePath string) (IObjectInfo, error)
+	// Upload file, size and content type must be accurate
 	Put(ctx context.Context, filePath string, reader io.Reader, size int64, contentType string) (string, error)
+	// Delete file
 	Delete(ctx context.Context, filePath string) error
 
+	// List files by offset and page size
 	List(ctx context.Context, filePath string, offset int, pageSize int) ([]*FileInfo, error)
 }
 
 type IObject interface {
-	Read(p []byte) (n int, err error)
-	ReadAt(p []byte, off int64) (n int, err error)
-	Seek(offset int64, whence int) (int64, error)
-	Close() error
+	io.ReadSeekCloser
+	io.ReaderAt
 }
 
 type IObjectInfo interface {

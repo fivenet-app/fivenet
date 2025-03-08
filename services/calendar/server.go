@@ -13,7 +13,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
@@ -53,7 +52,6 @@ type Server struct {
 	p        perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
-	st       storage.IStorage
 	appCfg   appconfig.IConfig
 	notif    notifi.INotifi
 	js       *events.JSWrapper
@@ -68,7 +66,6 @@ type Params struct {
 	P         perms.Permissions
 	Enricher  *mstlystcdata.UserAwareEnricher
 	Aud       audit.IAuditer
-	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notif     notifi.INotifi
 	JS        *events.JSWrapper
@@ -80,7 +77,6 @@ func NewServer(p Params) *Server {
 		p:        p.P,
 		enricher: p.Enricher,
 		aud:      p.Aud,
-		st:       p.Storage,
 		appCfg:   p.AppConfig,
 		notif:    p.Notif,
 		js:       p.JS,

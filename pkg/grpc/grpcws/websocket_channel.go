@@ -249,6 +249,7 @@ func (ws *WebsocketChannel) poll() error {
 		// grpclog.Infof("received body %v", frame)
 		stream.inputFrames <- frame
 
+		// Close channel if body frame says so
 		body := frame.Payload.(*grpcws.GrpcFrame_Body)
 		if body.Body.Complete {
 			stream.close()

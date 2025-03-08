@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"io"
 	"mime"
+	"net/http"
+	"net/http/httptrace"
+	"net/url"
 	"path"
 	"path/filepath"
 	"strings"
@@ -15,11 +18,13 @@ import (
 	"github.com/h2non/filetype"
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace"
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.uber.org/fx"
 )
 
 func init() {
-	storageFactories["s3"] = NewS3
+	storageFactories[config.StorageTypeS3] = NewS3
 }
 
 type S3 struct {
@@ -30,12 +35,21 @@ type S3 struct {
 	prefix     string
 }
 
-func NewS3(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
+func NewS3(p Params) (IStorage, error) {
+	transport := otelhttp.NewTransport(
+		http.DefaultClient.Transport,
+		otelhttp.WithClientTrace(func(ctx context.Context) *httptrace.ClientTrace {
+			return otelhttptrace.NewClientTrace(ctx, otelhttptrace.WithTracerProvider(p.TP))
+		}),
+	)
+
 	// Initialize minio client object.
-	mc, err := minio.New(cfg.Storage.S3.Endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(cfg.Storage.S3.AccessKeyID, cfg.Storage.S3.SecretAccessKey, ""),
-		Secure: cfg.Storage.S3.UseSSL,
-		Region: cfg.Storage.S3.Region,
+	mc, err := minio.New(p.Cfg.Storage.S3.Endpoint, &minio.Options{
+		Creds:      credentials.NewStaticV4(p.Cfg.Storage.S3.AccessKeyID, p.Cfg.Storage.S3.SecretAccessKey, ""),
+		Secure:     p.Cfg.Storage.S3.UseSSL,
+		Region:     p.Cfg.Storage.S3.Region,
+		MaxRetries: p.Cfg.Storage.S3.Retries,
+		Transport:  transport,
 	})
 	if err != nil {
 		return nil, err
@@ -43,11 +57,11 @@ func NewS3(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 
 	s := &S3{
 		s3:         mc,
-		bucketName: cfg.Storage.S3.BucketName,
-		prefix:     cfg.Storage.S3.Prefix,
+		bucketName: p.Cfg.Storage.S3.BucketName,
+		prefix:     p.Cfg.Storage.S3.Prefix,
 	}
 
-	lc.Append(fx.StartHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		exists, err := s.s3.BucketExists(ctx, s.bucketName)
 		if err != nil {
 			return err
@@ -103,6 +117,22 @@ func (s *S3) Get(ctx context.Context, filePathIn string) (IObject, IObjectInfo, 
 		lastModified: info.LastModified,
 		expiration:   info.Expiration,
 	}, nil
+}
+
+func (s *S3) GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error) {
+	filePath, ok := utils.CleanFilePath(filePath)
+	if !ok {
+		return nil, ErrInvalidPath
+	}
+	filePath = path.Join(s.prefix, filePath)
+
+	u, err := s.s3.PresignedGetObject(ctx, s.bucketName, filePath, expires, reqParams)
+	if err != nil {
+		return nil, err
+	}
+
+	url := u.String()
+	return &url, nil
 }
 
 func (s *S3) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {

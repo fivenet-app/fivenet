@@ -1,6 +1,6 @@
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { writeUInt32BE } from '~/utils/array';
-import { Body, Cancel, Complete, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
+import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal, errUnavailable } from '../../errors';
 import type { Metadata } from '../../metadata';
@@ -272,7 +272,7 @@ class WebsocketChannelStream {
                 streamId: this.streamId,
                 payload: {
                     oneofKind: 'complete',
-                    complete: Complete.create(),
+                    complete: {},
                 },
             }),
         );

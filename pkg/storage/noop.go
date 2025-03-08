@@ -3,18 +3,19 @@ package storage
 import (
 	"context"
 	"io"
+	"net/url"
+	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
-	"go.uber.org/fx"
 )
 
 func init() {
-	storageFactories["noop"] = NewNoop
+	storageFactories[config.StorageTypeNoop] = NewNoop
 }
 
 type Noop struct{}
 
-func NewNoop(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
+func NewNoop(p Params) (IStorage, error) {
 	return &Noop{}, nil
 }
 
@@ -24,6 +25,10 @@ func (s *Noop) WithPrefix(prefix string) (IStorage, error) {
 
 func (s *Noop) Get(ctx context.Context, filePath string) (IObject, IObjectInfo, error) {
 	return nil, nil, nil
+}
+
+func (s *Noop) GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error) {
+	return nil, nil
 }
 
 func (s *Noop) Stat(ctx context.Context, filePath string) (IObjectInfo, error) {

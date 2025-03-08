@@ -100,8 +100,16 @@ type JWT struct {
 	Secret string `yaml:"secret"`
 }
 
+type StorageType string
+
+const (
+	StorageTypeS3         StorageType = "s3"
+	StorageTypeFilesystem StorageType = "filesystem"
+	StorageTypeNoop       StorageType = "noop"
+)
+
 type Storage struct {
-	Type       string            `default:"filesystem" yaml:"type"`
+	Type       StorageType       `default:"filesystem" yaml:"type"`
 	Filesystem FilesystemStorage `yaml:"filesystem"`
 	S3         S3Storage         `yaml:"s3"`
 }
@@ -118,6 +126,7 @@ type S3Storage struct {
 	UseSSL          bool   `default:"true" yaml:"useSSL"`
 	BucketName      string `yaml:"bucketName"`
 	Prefix          string `yaml:"prefix"`
+	Retries         int    `default:"10" yaml:"retries"`
 }
 
 type ImageProxy struct {

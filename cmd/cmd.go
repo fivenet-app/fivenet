@@ -77,7 +77,7 @@ var Cli struct {
 	Server  ServerCmd  `cmd:"" help:"Run FiveNet server."`
 	Worker  WorkerCmd  `cmd:"" help:"Run FiveNet worker."`
 	Discord DiscordCmd `cmd:"" help:"Run FiveNet Discord bot."`
-	DBSync  DBSyncCmd  `cmd:"" help:"Run FiveNet database sync."`
+	DBSync  DBSyncCmd  `cmd:"" name:"dbsync" help:"Run FiveNet database sync."`
 	Tools   ToolsCmd   `cmd:"" help:"Run FiveNet tools/helpers."`
 }
 

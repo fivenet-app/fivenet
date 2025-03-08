@@ -14,8 +14,8 @@ var defaultOptions = &options{
 	originFunc:                     func(origin string) bool { return false },
 	allowNonRootResources:          false,
 	corsMaxAge:                     10 * time.Minute,
-	websocketReadLimit:             8 * 1024 * 1024, // 8 MB
-	websocketChannelMaxStreamCount: 25,
+	websocketReadLimit:             5 * 1024 * 1024, // 5 MB
+	websocketChannelMaxStreamCount: 15,
 }
 
 type options struct {

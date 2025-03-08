@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )
@@ -37,6 +38,7 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		auth.PermsModule,
 		croner.HandlerModule,
 		fx.Provide(croner.NewNoopCron),
+		fx.Provide(storage.NewNoop),
 
 		fx.Provide(
 			mstlystcdata.NewDocumentCategories,
