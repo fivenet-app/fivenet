@@ -7,12 +7,14 @@ import { useCentrumStore } from '~/store/centrum';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
-const centrumStore = useCentrumStore();
-const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
-
 const props = defineProps<{
     dispatchId: number;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const centrumStore = useCentrumStore();
+const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 
@@ -46,7 +48,7 @@ async function assignDispatch(): Promise<void> {
             }
         });
 
-        const call = getGRPCCentrumClient().assignDispatch({
+        const call = $grpc.centrum.centrum.assignDispatch({
             dispatchId: props.dispatchId,
             toAdd,
             toRemove,

@@ -1,13 +1,11 @@
 // @ts-check
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import pluginVue from 'eslint-plugin-vue';
 import withNuxt from './.nuxt/eslint.config.mjs';
 
 export default withNuxt(
     {
         ignores: ['gen/', 'proto/'],
     },
-    ...pluginVue.configs['flat/recommended'],
     eslintPluginPrettierRecommended,
     {
         rules: {

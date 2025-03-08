@@ -17,6 +17,8 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -103,7 +105,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     }
 
     try {
-        const call = getGRPCDocStoreClient().listDocuments(req);
+        const call = $grpc.docstore.docStore.listDocuments(req);
         const { response } = await call;
 
         return response;

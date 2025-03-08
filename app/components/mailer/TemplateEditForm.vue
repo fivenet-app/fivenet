@@ -17,6 +17,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const mailerStore = useMailerStore();
@@ -44,7 +46,7 @@ state.content = props.template?.content ?? '';
 
 async function createOrUpdateTemplate(values: Schema): Promise<CreateOrUpdateTemplateRequest> {
     try {
-        const call = getGRPCMailerClient().createOrUpdateTemplate({
+        const call = $grpc.mailer.mailer.createOrUpdateTemplate({
             template: {
                 id: props.template?.id ?? 0,
                 emailId: selectedEmail.value!.id,

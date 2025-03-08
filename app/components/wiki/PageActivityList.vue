@@ -10,6 +10,8 @@ const props = defineProps<{
     pageId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
@@ -22,7 +24,7 @@ const {
 
 async function listPageActivity(): Promise<ListPageActivityResponse> {
     try {
-        const call = getGRPCWikiClient().listPageActivity({
+        const call = $grpc.wiki.wiki.listPageActivity({
             pagination: {
                 offset: offset.value,
             },

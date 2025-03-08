@@ -9,6 +9,8 @@ const emit = defineEmits<{
     (e: 'left'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
@@ -16,7 +18,7 @@ const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
 async function joinOrLeaveUnit(unitId?: number): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().joinUnit({
+        const call = $grpc.centrum.centrum.joinUnit({
             unitId: unitId,
         });
         const { response } = await call;

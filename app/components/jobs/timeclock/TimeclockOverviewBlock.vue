@@ -6,11 +6,13 @@ const props = defineProps<{
     userId?: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { data, error, pending: loading, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
-        const call = getGRPCJobsTimeclockClient().getTimeclockStats({
+        const call = $grpc.jobs.jobsTimeclock.getTimeclockStats({
             userId: props.userId,
         });
         const { response } = await call;

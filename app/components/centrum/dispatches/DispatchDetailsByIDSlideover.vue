@@ -7,6 +7,8 @@ const props = defineProps<{
     dispatchId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
@@ -22,7 +24,7 @@ async function getDispatch(id: number): Promise<GetDispatchResponse> {
     }
 
     try {
-        const call = getGRPCCentrumClient().getDispatch({ id });
+        const call = $grpc.centrum.centrum.getDispatch({ id });
         const { response } = await call;
 
         return response;

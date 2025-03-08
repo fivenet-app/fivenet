@@ -4,7 +4,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import PageEditor from '~/components/wiki/PageEditor.vue';
 import PagesList from '~/components/wiki/PagesList.vue';
 import PageView from '~/components/wiki/PageView.vue';
-import { getGRPCWikiClient } from '~/composables/grpc';
 import type { Page, PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
@@ -25,6 +24,8 @@ definePageMeta({
     },
 });
 
+const { $grpc } = useNuxtApp();
+
 const { activeChar } = useAuth();
 
 const route = useRoute('wiki-job-id-slug');
@@ -33,7 +34,7 @@ const { data: pages, error: pagesError, refresh: pagesRefresh } = useLazyAsyncDa
 
 async function listPages(): Promise<PageShort[]> {
     try {
-        const call = getGRPCWikiClient().listPages({
+        const call = $grpc.wiki.wiki.listPages({
             pagination: {
                 offset: 0,
             },
@@ -60,7 +61,7 @@ const {
 
 async function getPage(id: number): Promise<Page | undefined> {
     try {
-        const call = getGRPCWikiClient().getPage({
+        const call = $grpc.wiki.wiki.getPage({
             id: id,
         });
         const { response } = await call;

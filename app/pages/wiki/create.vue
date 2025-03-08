@@ -12,13 +12,15 @@ definePageMeta({
     permission: ['WikiService.CreatePage'],
 });
 
+const { $grpc } = useNuxtApp();
+
 const { activeChar } = useAuth();
 
 const { data: pages } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
-        const call = getGRPCWikiClient().listPages({
+        const call = $grpc.wiki.wiki.listPages({
             pagination: {
                 offset: 0,
             },

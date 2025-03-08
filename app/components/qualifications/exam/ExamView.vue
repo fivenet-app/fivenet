@@ -11,6 +11,8 @@ const props = defineProps<{
     qualificationId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const {
     data,
     pending: loading,
@@ -20,7 +22,7 @@ const {
 
 async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse> {
     try {
-        const call = getGRPCQualificationsClient().getExamInfo({
+        const call = $grpc.qualifications.qualifications.getExamInfo({
             qualificationId: qualificationId,
         });
         const { response } = await call;
@@ -36,7 +38,7 @@ async function getExamInfo(qualificationId: number): Promise<GetExamInfoResponse
 
 async function takeExam(cancel = false): Promise<TakeExamResponse> {
     try {
-        const call = getGRPCQualificationsClient().takeExam({
+        const call = $grpc.qualifications.qualifications.takeExam({
             qualificationId: props.qualificationId,
             cancel: cancel,
         });

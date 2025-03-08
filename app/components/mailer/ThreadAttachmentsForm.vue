@@ -12,6 +12,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', attachments: MessageAttachment[]): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const attachments = useVModel(props, 'modelValue', emit);
 
 async function listDocuments(search: string): Promise<DocumentShort[]> {
@@ -27,7 +29,7 @@ async function listDocuments(search: string): Promise<DocumentShort[]> {
     };
 
     try {
-        const call = getGRPCDocStoreClient().listDocuments(req);
+        const call = $grpc.docstore.docStore.listDocuments(req);
         const { response } = await call;
 
         return response.documents;

@@ -7,6 +7,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -31,7 +33,7 @@ const state = reactive<Schema>({
 
 async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabels({});
+        const { response } = await $grpc.jobs.jobs.getColleagueLabels({});
 
         return response;
     } catch (e) {
@@ -44,7 +46,7 @@ const { data: labels } = useLazyAsyncData('jobs-colleagues-labels', () => getCol
 
 async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().manageColleagueLabels({
+        const { response } = await $grpc.jobs.jobs.manageColleagueLabels({
             labels: values.labels,
         });
 

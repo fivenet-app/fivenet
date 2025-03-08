@@ -8,6 +8,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -20,7 +22,7 @@ const { data: units, pending: loading, refresh, error } = useLazyAsyncData('cent
 
 async function listUnits(): Promise<ListUnitsResponse> {
     try {
-        const call = getGRPCCentrumClient().listUnits({
+        const call = $grpc.centrum.centrum.listUnits({
             status: [],
         });
         const { response } = await call;
@@ -34,7 +36,7 @@ async function listUnits(): Promise<ListUnitsResponse> {
 
 async function deleteUnit(id: number): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().deleteUnit({
+        const call = $grpc.centrum.centrum.deleteUnit({
             unitId: id,
         });
         await call;

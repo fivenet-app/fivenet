@@ -19,6 +19,8 @@ const emit = defineEmits<{
 
 const tab = useVModel(props, 'modelValue', emit);
 
+const { $grpc } = useNuxtApp();
+
 const internetStore = useInternetStore();
 
 const {
@@ -35,7 +37,7 @@ async function getPage(): Promise<GetPageResponse | undefined> {
     }
 
     try {
-        const call = getGRPCInternetClient().getPage({
+        const call = $grpc.internet.internet.getPage({
             domain: tab.value.domain,
             path: tab.value.path,
         });

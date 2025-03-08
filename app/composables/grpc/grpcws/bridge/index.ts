@@ -15,7 +15,7 @@ import {
     type RpcTransport,
 } from '@protobuf-ts/runtime-rpc';
 import type { UseWebSocketReturn } from '@vueuse/core';
-import { Metadata } from '~/composables/grpcws/metadata';
+import { Metadata } from '~/composables/grpc/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import { errInternal, errTimeout, errUnavailable } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
@@ -84,7 +84,13 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        const abort = opt.abort || (opt.timeout ? AbortSignal.timeout(opt.timeout) : undefined);
+        const abort =
+            opt.abort ||
+            (opt.timeout
+                ? typeof opt.timeout === 'number'
+                    ? AbortSignal.timeout(opt.timeout)
+                    : AbortSignal.timeout(opt.timeout.getTime() - new Date().getTime())
+                : undefined);
         if (abort) {
             abort.addEventListener('abort', () => transport.cancel());
         }

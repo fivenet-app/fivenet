@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { WebSocketStatus } from '@vueuse/core';
 import { v4 as uuidv4 } from 'uuid';
-import { useGRPCWebsocketTransport } from '~/composables/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 
 withDefaults(
     defineProps<{
@@ -24,7 +24,7 @@ const status = useDebounce(webSocket.status, 150);
 
 const notificationId = ref<string | undefined>();
 
-const overlay = useTemplateRef('overlay');
+const overlayRef = useTemplateRef('overlayRef');
 
 async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: WebSocketStatus): Promise<void> {
     if (notificationId.value !== undefined && status === 'OPEN') {
@@ -40,7 +40,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             timeout: timeouts.notification,
         });
 
-        overlay.value?.blur();
+        overlayRef.value?.blur();
     } else if (previousStatus === 'CONNECTING' && status === 'CLOSED') {
         if (notificationId.value !== undefined) {
             return;
@@ -75,7 +75,7 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             ],
         });
 
-        overlay.value?.focus();
+        overlayRef.value?.focus();
     }
 }
 
@@ -101,7 +101,7 @@ useTimeoutFn(() => {
 <template>
     <div
         v-if="notificationId && !hideOverlay"
-        ref="overlay"
+        ref="overlayRef"
         class="relative z-[999999]"
         :class="hideOverlay && 'pointer-events-none'"
     >

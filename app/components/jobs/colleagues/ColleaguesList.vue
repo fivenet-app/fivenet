@@ -19,6 +19,8 @@ import ColleaguesLabelStatsModal from './ColleaguesLabelStatsModal.vue';
 import JobsLabelsModal from './JobsLabelsModal.vue';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const modal = useModal();
@@ -70,7 +72,7 @@ const {
 
 async function listColleagues(): Promise<ListColleaguesResponse> {
     try {
-        const call = getGRPCJobsClient().listColleagues({
+        const call = $grpc.jobs.jobs.listColleagues({
             pagination: {
                 offset: offset.value,
             },
@@ -92,7 +94,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabels({
+        const { response } = await $grpc.jobs.jobs.getColleagueLabels({
             search: search,
         });
 

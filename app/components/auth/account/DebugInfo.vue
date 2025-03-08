@@ -2,7 +2,7 @@
 import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useGRPCWebsocketTransport } from '~/composables/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';

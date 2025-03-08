@@ -28,6 +28,8 @@ const props = defineProps<{
     qualificationId?: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can, activeChar } = useAuth();
@@ -105,7 +107,7 @@ const qualiRequirements = ref<QualificationRequirement[]>([]);
 
 async function getQualification(qualificationId: number): Promise<void> {
     try {
-        const call = getGRPCQualificationsClient().getQualification({
+        const call = $grpc.qualifications.qualifications.getQualification({
             qualificationId: qualificationId,
             withExam: true,
         });
@@ -196,7 +198,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
     };
 
     try {
-        const call = getGRPCQualificationsClient().createQualification(req);
+        const call = $grpc.qualifications.qualifications.createQualification(req);
         const { response } = await call;
 
         await navigateTo({
@@ -239,7 +241,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
     };
 
     try {
-        const call = getGRPCQualificationsClient().updateQualification(req);
+        const call = $grpc.qualifications.qualifications.updateQualification(req);
 
         const { response } = await call;
 

@@ -11,6 +11,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const modal = useModal();
@@ -22,7 +24,7 @@ const { data: account, pending: loading, refresh, error } = useLazyAsyncData(`ac
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
-        const call = getGRPCAuthClient().getAccountInfo({});
+        const call = $grpc.auth.auth.getAccountInfo({});
         const { response } = await call;
 
         return response;

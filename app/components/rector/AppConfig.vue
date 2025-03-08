@@ -14,6 +14,8 @@ import { DiscordBotPresenceType } from '~~/gen/ts/resources/rector/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 
+const { $grpc } = useNuxtApp();
+
 const { t, locales } = useI18n();
 
 const { game } = useAppConfig();
@@ -27,7 +29,7 @@ const { data: config, pending: loading, refresh, error } = useLazyAsyncData(`rec
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
-        const call = getGRPCRectorConfigClient().getAppConfig({});
+        const call = $grpc.rector.rectorConfig.getAppConfig({});
         const { response } = await call;
 
         return response;
@@ -163,7 +165,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
     };
 
     try {
-        const { response } = await getGRPCRectorConfigClient().updateAppConfig({
+        const { response } = await $grpc.rector.rectorConfig.updateAppConfig({
             config: config.value?.config,
         });
 

@@ -26,6 +26,8 @@ const props = defineProps<{
     documentId?: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can, activeChar } = useAuth();
@@ -101,7 +103,7 @@ onMounted(async () => {
         templateId.value = parseInt(route.query.templateId as string);
 
         try {
-            const call = getGRPCDocStoreClient().getTemplate({
+            const call = $grpc.docstore.docStore.getTemplate({
                 templateId: templateId.value,
                 data,
                 render: true,
@@ -134,7 +136,7 @@ onMounted(async () => {
     } else if (props.documentId) {
         try {
             const req = { documentId: props.documentId };
-            const call = getGRPCDocStoreClient().getDocument(req);
+            const call = $grpc.docstore.docStore.getDocument(req);
             const { response } = await call;
 
             const document = response.document;
@@ -148,9 +150,9 @@ onMounted(async () => {
                 state.public = document.public;
                 state.access = response.access!;
 
-                const refs = await getGRPCDocStoreClient().getDocumentReferences(req);
+                const refs = await $grpc.docstore.docStore.getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
-                const rels = await getGRPCDocStoreClient().getDocumentRelations(req);
+                const rels = await $grpc.docstore.docStore.getDocumentRelations(req);
                 currentRelations.value = rels.response.relations;
             }
         } catch (e) {
@@ -272,7 +274,7 @@ async function createDocument(values: Schema): Promise<void> {
 
     // Try to submit to server
     try {
-        const call = getGRPCDocStoreClient().createDocument(req);
+        const call = $grpc.docstore.docStore.createDocument(req);
         const { response } = await call;
 
         const promises: Promise<unknown>[] = [];
@@ -280,7 +282,7 @@ async function createDocument(values: Schema): Promise<void> {
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;
 
-                const prom = getGRPCDocStoreClient().addDocumentReference({
+                const prom = $grpc.docstore.docStore.addDocumentReference({
                     reference: ref,
                 });
                 promises.push(prom.response);
@@ -291,7 +293,7 @@ async function createDocument(values: Schema): Promise<void> {
             relationManagerData.value.forEach((rel) => {
                 rel.documentId = response.documentId;
 
-                const prom = getGRPCDocStoreClient().addDocumentRelation({
+                const prom = $grpc.docstore.docStore.addDocumentRelation({
                     relation: rel,
                 });
                 promises.push(prom.response);
@@ -333,7 +335,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = getGRPCDocStoreClient().updateDocument(req);
+        const call = $grpc.docstore.docStore.updateDocument(req);
         const { response } = await call;
 
         if (canDo.value.references) {
@@ -344,7 +346,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
             });
             referencesToRemove.forEach((id) => {
-                getGRPCDocStoreClient().removeDocumentReference({
+                $grpc.docstore.docStore.removeDocumentReference({
                     id: id,
                 });
             });
@@ -354,7 +356,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
                 ref.sourceDocumentId = response.documentId;
 
-                getGRPCDocStoreClient().addDocumentReference({
+                $grpc.docstore.docStore.addDocumentReference({
                     reference: ref,
                 });
             });
@@ -366,7 +368,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
             relationsToRemove.forEach((id) => {
-                getGRPCDocStoreClient().removeDocumentRelation({ id });
+                $grpc.docstore.docStore.removeDocumentRelation({ id });
             });
             relationManagerData.value.forEach((rel) => {
                 if (currentRelations.value.find((r) => r.id === rel.id!)) {
@@ -374,7 +376,7 @@ async function updateDocument(id: number, values: Schema): Promise<void> {
                 }
                 rel.documentId = response.documentId;
 
-                getGRPCDocStoreClient().addDocumentRelation({
+                $grpc.docstore.docStore.addDocumentRelation({
                     relation: rel,
                 });
             });

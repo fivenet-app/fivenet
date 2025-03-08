@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
-import { useGRPCWebsocketTransport } from '~/composables/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -14,6 +14,8 @@ export const logger = useLogger('🔑 Auth');
 export const useAuthStore = defineStore(
     'auth',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const accessTokenExpiration = ref<Date | null>(null);
         const username = ref<string | null>(null);
@@ -102,7 +104,7 @@ export const useAuthStore = defineStore(
             setPermissions([]);
 
             try {
-                const call = getGRPCAuthClient().login({ username: user, password: pass });
+                const call = $grpc.auth.auth.login({ username: user, password: pass });
                 const { response } = await call;
 
                 loginStop(null);
@@ -141,7 +143,7 @@ export const useAuthStore = defineStore(
             loggingIn.value = true;
 
             try {
-                await getGRPCAuthClient().logout({});
+                await $grpc.auth.auth.logout({});
             } catch (e) {
                 clearAuthInfo();
                 handleGRPCError(e as RpcError);
@@ -176,7 +178,7 @@ export const useAuthStore = defineStore(
             }
 
             try {
-                const call = getGRPCAuthClient().chooseCharacter({
+                const call = $grpc.auth.auth.chooseCharacter({
                     charId,
                 });
                 const { response } = await call;
@@ -218,7 +220,7 @@ export const useAuthStore = defineStore(
                     req.job = job.name;
                 }
 
-                const call = getGRPCAuthClient().setSuperUserMode(req);
+                const call = $grpc.auth.auth.setSuperUserMode(req);
                 const { response } = await call;
 
                 if (superuser) {

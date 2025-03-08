@@ -30,6 +30,8 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const notifications = useNotificatorStore();
@@ -48,7 +50,7 @@ const {
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
-        const call = getGRPCDocStoreClient().getComments({
+        const call = $grpc.docstore.docStore.getComments({
             pagination: {
                 offset: offset.value,
                 pageSize: 5,
@@ -93,7 +95,7 @@ async function addComment(documentId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = getGRPCDocStoreClient().postComment({ comment });
+        const call = $grpc.docstore.docStore.postComment({ comment });
         const { response } = await call;
 
         notifications.add({

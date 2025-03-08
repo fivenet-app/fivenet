@@ -31,6 +31,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { activeChar, isSuperuser } = useAuth();
@@ -44,7 +46,7 @@ const { data: proposals, refresh: refreshProposabls } = useLazyAsyncData(`emails
 
 async function getEmailProposals(): Promise<GetEmailProposalsResponse> {
     try {
-        const call = getGRPCMailerClient().getEmailProposals({
+        const call = $grpc.mailer.mailer.getEmailProposals({
             input: '',
             job: !props.personalEmail,
             userId: isSuperuser.value ? selectedEmail.value?.userId : undefined,

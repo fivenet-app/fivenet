@@ -9,6 +9,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Role } from '~~/gen/ts/resources/permissions/permissions';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -23,7 +25,7 @@ const { data: roles, pending: loading, refresh, error } = useLazyAsyncData('rect
 
 async function getRoles(): Promise<Role[]> {
     try {
-        const call = getGRPCRectorClient().getRoles({
+        const call = $grpc.rector.rector.getRoles({
             lowestRank: true,
         });
         const { response } = await call;
@@ -55,7 +57,7 @@ async function createRole(): Promise<void> {
     }
 
     try {
-        const call = getGRPCRectorClient().createRole({
+        const call = $grpc.rector.rector.createRole({
             job: state.job?.name,
             grade: 1,
         });

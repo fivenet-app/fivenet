@@ -19,11 +19,13 @@ const emit = defineEmits<{
 
 const labels = useVModel(props, 'modelValue', emit);
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 async function getColleagueLabels(search?: string): Promise<GetColleagueLabelsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabels({
+        const { response } = await $grpc.jobs.jobs.getColleagueLabels({
             search: search,
         });
 
@@ -66,7 +68,7 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetJobsUs
     };
 
     try {
-        const call = getGRPCJobsClient().setJobsUserProps({
+        const call = $grpc.jobs.jobs.setJobsUserProps({
             props: jobsUserProps,
             reason: values.reason,
         });

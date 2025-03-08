@@ -22,6 +22,8 @@ const props = defineProps<{
     userId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
@@ -65,7 +67,7 @@ const {
 
 async function getUser(userId: number): Promise<User> {
     try {
-        const call = getGRPCCitizenStoreClient().getUser({ userId });
+        const call = $grpc.citizenstore.citizenStore.getUser({ userId });
         const { response } = await call;
 
         if (response.user?.props === undefined) {

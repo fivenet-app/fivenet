@@ -7,6 +7,8 @@ import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
@@ -36,7 +38,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
         }
 
         // Make sure all selected dispatches are still existing and not in a "completed"
-        const call = getGRPCCentrumClient().takeDispatch({
+        const call = $grpc.centrum.centrum.takeDispatch({
             dispatchIds,
             resp,
         });

@@ -19,6 +19,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
@@ -42,7 +44,7 @@ async function listQualificationsRequests(
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
     try {
-        const call = getGRPCQualificationsClient().listQualificationRequests({
+        const call = $grpc.qualifications.qualifications.listQualificationRequests({
             pagination: {
                 offset: offset.value,
             },

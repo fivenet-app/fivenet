@@ -13,6 +13,8 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(3).max(1024), z.string().length(0).optional()]),
@@ -35,7 +37,7 @@ const state = reactive<Schema>({
 
 async function saveLaw(lawBookId: number, id: number, values: Schema): Promise<void> {
     try {
-        const call = getGRPCRectorLawsClient().createOrUpdateLaw({
+        const call = $grpc.rector.rectorLaws.createOrUpdateLaw({
             law: {
                 id: id < 0 ? 0 : id,
                 lawbookId: lawBookId,

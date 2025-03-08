@@ -1,6 +1,6 @@
 import type { RpcMetadata, RpcStatus } from '@protobuf-ts/runtime-rpc';
-import { Metadata } from '~/composables/grpcws/metadata';
 import type { HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
+import { Metadata } from '../metadata';
 
 export function createGrpcStatus(metaData: Metadata): RpcStatus {
     return {

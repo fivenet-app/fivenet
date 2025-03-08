@@ -20,7 +20,7 @@
         "lint": "pnpm eslint ./app/"
     },
     "dependencies": {
-        "@galexrt/nuxt-update": "1.0.1",
+        "@galexrt/nuxt-update": "1.1.0",
         "@iconify-json/flagpack": "1.2.2",
         "@iconify-json/mdi": "1.2.3",
         "@iconify-json/simple-icons": "1.2.27",
@@ -103,7 +103,6 @@
         "eslint": "9.22.0",
         "eslint-config-prettier": "10.1.1",
         "eslint-plugin-prettier": "5.2.3",
-        "eslint-plugin-vue": "9.33.0",
         "nuxi": "3.22.5",
         "nuxt": "3.16.0",
         "nuxt-tiptap-editor": "2.1.4",
@@ -132,7 +131,18 @@
     },
     "pnpm": {
         "onlyBuiltDependencies": [
+            "better-sqlite3",
+            "protoc",
+            "protoc-gen-js",
             "v-code-diff"
+        ],
+        "ignoredBuiltDependencies": [
+            "@intlify/vue-i18n-bridge",
+            "@intlify/vue-router-bridge",
+            "@parcel/watcher",
+            "esbuild",
+            "maplibre-gl",
+            "vue-demi"
         ]
     },
     "packageManager": "pnpm@10.6.1+sha512.40ee09af407fa9fbb5fbfb8e1cb40fbb74c0af0c3e10e9224d7b53c7658528615b2c92450e74cfad91e3a2dcafe3ce4050d80bda71d757756d2ce2b66213e9a3"

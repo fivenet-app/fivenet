@@ -22,6 +22,8 @@ const props = defineProps<{
     dispatch?: Dispatch;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const modal = useModal();
@@ -50,7 +52,7 @@ async function selfAssign(id: number): Promise<void> {
     }
 
     try {
-        const call = getGRPCCentrumClient().takeDispatch({
+        const call = $grpc.centrum.centrum.takeDispatch({
             dispatchIds: [id],
             resp: TakeDispatchResp.ACCEPTED,
         });
@@ -63,7 +65,7 @@ async function selfAssign(id: number): Promise<void> {
 
 async function deleteDispatch(id: number): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().deleteDispatch({ id });
+        const call = $grpc.centrum.centrum.deleteDispatch({ id });
         await call;
     } catch (e) {
         handleGRPCError(e as RpcError);

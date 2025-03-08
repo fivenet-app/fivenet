@@ -19,6 +19,8 @@ import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/servic
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
 import { eventTypeToBadgeColor } from './helpers';
 
+const { $grpc } = useNuxtApp();
+
 const { d, t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -91,7 +93,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 
     try {
-        const call = getGRPCRectorClient().viewAuditLog(req);
+        const call = $grpc.rector.rector.viewAuditLog(req);
         const { response } = await call;
 
         return response;

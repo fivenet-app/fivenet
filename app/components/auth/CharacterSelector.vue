@@ -6,15 +6,16 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Character } from '~~/gen/ts/resources/accounts/accounts';
 
-const authStore = useAuthStore();
+const { $grpc } = useNuxtApp();
 
+const authStore = useAuthStore();
 const { chooseCharacter } = authStore;
 
 const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('chars', () => getCharacters());
 
 async function getCharacters(): Promise<Character[]> {
     try {
-        const call = getGRPCAuthClient().getCharacters({});
+        const call = $grpc.auth.auth.getCharacters({});
         const { response } = await call;
 
         return response.chars;

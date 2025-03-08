@@ -6,6 +6,8 @@ const props = defineProps<{
     dispatchId?: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const offset = ref(0);
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? 0}-activity-${offset.value}`, () =>
@@ -14,7 +16,7 @@ const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId 
 
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
     try {
-        const call = getGRPCCentrumClient().listDispatchActivity({
+        const call = $grpc.centrum.centrum.listDispatchActivity({
             pagination: {
                 offset: offset.value,
             },

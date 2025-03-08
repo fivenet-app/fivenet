@@ -29,6 +29,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
@@ -44,7 +46,7 @@ const {
 
 async function getCitizen(id: number): Promise<User | undefined> {
     try {
-        const call = getGRPCCitizenStoreClient().getUser({
+        const call = $grpc.citizenstore.citizenStore.getUser({
             userId: id,
             infoOnly: true,
         });

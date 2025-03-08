@@ -8,6 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationsListEntry from '~/components/qualifications/QualificationsListEntry.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
+const { $grpc } = useNuxtApp();
+
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
@@ -35,7 +37,7 @@ const {
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
-        const call = getGRPCQualificationsClient().listQualifications({
+        const call = $grpc.qualifications.qualifications.listQualifications({
             pagination: {
                 offset: offset.value,
             },

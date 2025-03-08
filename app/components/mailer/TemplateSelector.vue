@@ -11,11 +11,13 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: string): void;
 }>();
 
+const content = useVModel(props, 'modelValue', emit);
+
 defineOptions({
     inheritAttrs: false,
 });
 
-const content = useVModel(props, 'modelValue', emit);
+const { $grpc } = useNuxtApp();
 
 const mailerStore = useMailerStore();
 const { selectedEmail } = storeToRefs(mailerStore);
@@ -24,7 +26,7 @@ const { data: templates } = useLazyAsyncData(`mailer-templates:${selectedEmail.v
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = getGRPCMailerClient().listTemplates({
+        const call = $grpc.mailer.mailer.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

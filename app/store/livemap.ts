@@ -14,6 +14,8 @@ const initialReconnectBackoffTime = 1.75;
 export const useLivemapStore = defineStore(
     'livemap',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
@@ -52,7 +54,7 @@ export const useLivemapStore = defineStore(
             reconnecting.value = false;
 
             try {
-                const call = getGRPCLivemapperClient().stream({}, { abort: abort.value.signal });
+                const call = $grpc.livemapper.livemapper.stream({}, { abort: abort.value.signal });
 
                 // For partial user updates
                 const foundUsers: number[] = [];

@@ -14,6 +14,8 @@ defineEmits<{
     (e: 'cancel'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const schema = z.object({
@@ -28,7 +30,7 @@ const state = reactive({
 
 async function registerDomain(values: Schema): Promise<RegisterDomainResponse> {
     try {
-        const call = getGRPCInternetDomainsClient().registerDomain({
+        const call = $grpc.internet.domain.registerDomain({
             tldId: props.domain.tldId,
             name: props.domain.search,
             transferCode: values.transferCode,

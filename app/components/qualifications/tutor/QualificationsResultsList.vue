@@ -29,6 +29,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -61,7 +63,7 @@ async function listQualificationsResults(
     status?: ResultStatus[],
 ): Promise<ListQualificationsResultsResponse> {
     try {
-        const call = getGRPCQualificationsClient().listQualificationsResults({
+        const call = $grpc.qualifications.qualifications.listQualificationsResults({
             pagination: {
                 offset: offset.value,
             },
@@ -82,7 +84,7 @@ watch(offset, async () => refresh());
 
 async function deleteQualificationResult(resultId: number): Promise<DeleteQualificationResultResponse> {
     try {
-        const call = getGRPCQualificationsClient().deleteQualificationResult({
+        const call = $grpc.qualifications.qualifications.deleteQualificationResult({
             resultId,
         });
         const { response } = await call;

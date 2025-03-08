@@ -16,6 +16,8 @@ definePageMeta({
     redirectIfAuthed: false,
 });
 
+const { $grpc } = useNuxtApp();
+
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -68,7 +70,7 @@ const { data: stats, pending: loading } = useLazyAsyncData('stats', () => getSta
 
 async function getStats(): Promise<Stats> {
     try {
-        const call = getGRPCStatsClient().getStats({});
+        const call = $grpc.stats.stats.getStats({});
         const { response } = await call;
 
         const stats = { ...defaultStats };

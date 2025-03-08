@@ -9,6 +9,8 @@ import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';
 import TemplateEditForm from './TemplateEditForm.vue';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const mailerStore = useMailerStore();
@@ -23,7 +25,7 @@ const {
 
 async function listTemplates(): Promise<ListTemplatesResponse> {
     try {
-        const call = getGRPCMailerClient().listTemplates({
+        const call = $grpc.mailer.mailer.listTemplates({
             emailId: selectedEmail.value!.id,
         });
         const { response } = await call;

@@ -22,6 +22,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { attrList } = useAuth();
 
 const completorStore = useCompletorStore();
@@ -75,7 +77,7 @@ async function listColleagueActivity(
     activityTypes: JobsUserActivityType[],
 ): Promise<ListColleagueActivityResponse> {
     try {
-        const call = getGRPCJobsClient().listColleagueActivity({
+        const call = $grpc.jobs.jobs.listColleagueActivity({
             pagination: {
                 offset: offset.value,
             },

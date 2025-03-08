@@ -2,6 +2,8 @@
 import type { Group } from '#ui/types';
 import { useMailerStore } from '~/store/mailer';
 
+const { $grpc } = useNuxtApp();
+
 const { t, d } = useI18n();
 
 const appConfig = useAppConfig();
@@ -17,7 +19,7 @@ const groups = [
         label: (q: string | undefined) => q && `${t('common.search')}: ${q}`,
         search: async (q: string) => {
             try {
-                const call = getGRPCMailerClient().searchThreads({
+                const call = $grpc.mailer.mailer.searchThreads({
                     pagination: {
                         offset: 0,
                     },

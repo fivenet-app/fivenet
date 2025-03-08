@@ -12,6 +12,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const modal = useModal();
 
 const centrumStore = useCentrumStore();
@@ -19,7 +21,7 @@ const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().takeControl({
+        const call = $grpc.centrum.centrum.takeControl({
             signon,
         });
         await call;

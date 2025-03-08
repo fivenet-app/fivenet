@@ -28,6 +28,8 @@ definePageMeta({
     },
 });
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
@@ -43,7 +45,7 @@ const {
 
 async function getColleague(userId: number): Promise<GetColleagueResponse> {
     try {
-        const call = getGRPCJobsClient().getColleague({
+        const call = $grpc.jobs.jobs.getColleague({
             userId,
         });
         const { response } = await call;

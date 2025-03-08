@@ -19,6 +19,8 @@ const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
@@ -45,7 +47,7 @@ const attrStates = ref(new Map<number, AttributeValues | undefined>());
 
 async function getRole(id: number): Promise<Role> {
     try {
-        const call = getGRPCRectorClient().getRole({
+        const call = $grpc.rector.rector.getRole({
             id: id,
             filtered: false,
         });
@@ -64,7 +66,7 @@ async function getRole(id: number): Promise<Role> {
 
 async function getPermissions(roleId: number): Promise<void> {
     try {
-        const call = getGRPCRectorClient().getPermissions({
+        const call = $grpc.rector.rector.getPermissions({
             roleId,
             filtered: false,
         });
@@ -172,7 +174,7 @@ async function updatePermissions(): Promise<void> {
     }
 
     try {
-        await getGRPCRectorClient().updateRoleLimits({
+        await $grpc.rector.rector.updateRoleLimits({
             roleId: props.roleId,
             perms: perms,
             attrs: attrs,
@@ -281,7 +283,7 @@ const accordionCategories = computed(() =>
 
 async function deleteFaction(id: number): Promise<void> {
     try {
-        await getGRPCRectorClient().deleteFaction({
+        await $grpc.rector.rector.deleteFaction({
             roleId: id,
         });
 

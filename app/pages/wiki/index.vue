@@ -3,7 +3,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import PageSearch from '~/components/wiki/PageSearch.vue';
-import { getGRPCWikiClient } from '~/composables/grpc';
 import type { PageShort } from '~~/gen/ts/resources/wiki/page';
 
 useHead({
@@ -16,13 +15,15 @@ definePageMeta({
     permission: 'WikiService.ListPages',
 });
 
+const { $grpc } = useNuxtApp();
+
 const { activeChar, can } = useAuth();
 
 const { data: pages, pending: loading, refresh, error } = useLazyAsyncData(`wiki-pages`, () => listPages());
 
 async function listPages(): Promise<PageShort[]> {
     try {
-        const call = getGRPCWikiClient().listPages({
+        const call = $grpc.wiki.wiki.listPages({
             pagination: {
                 offset: 0,
             },

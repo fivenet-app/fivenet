@@ -26,6 +26,8 @@ defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const {
@@ -36,7 +38,7 @@ const {
 } = useLazyAsyncData(`qualification-${props.qualificationId}-result-examinfo-${props.userId}`, () => getUserExam());
 
 async function getUserExam(): Promise<GetUserExamResponse> {
-    const call = getGRPCQualificationsClient().getUserExam({
+    const call = $grpc.qualifications.qualifications.getUserExam({
         qualificationId: props.qualificationId,
         userId: props.userId,
     });

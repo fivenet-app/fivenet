@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { Group } from '#ui/types';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const appConfig = useAppConfig();
@@ -13,7 +15,7 @@ const groups = [
         label: (q: string | undefined) => q && `${t('common.search')}: ${q}`,
         search: async (q: string) => {
             try {
-                const call = getGRPCWikiClient().listPages({
+                const call = $grpc.wiki.wiki.listPages({
                     pagination: {
                         offset: 0,
                     },

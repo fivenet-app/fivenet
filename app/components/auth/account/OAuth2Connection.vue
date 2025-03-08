@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'disconnected', provider: string): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
@@ -23,7 +25,7 @@ const { nuiEnabled } = storeToRefs(settingsStore);
 
 async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
     try {
-        await getGRPCAuthClient().deleteOAuth2Connection({
+        await $grpc.auth.auth.deleteOAuth2Connection({
             provider: provider.name,
         });
 

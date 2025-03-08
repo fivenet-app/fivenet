@@ -18,6 +18,8 @@ const emit = defineEmits<{
 
 const { modelValue } = useVModels(props, emit);
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const schema = z.object({
@@ -40,7 +42,7 @@ const changed = ref(false);
 
 async function setJobsUserNote(values: Schema): Promise<undefined | SetJobsUserPropsResponse> {
     try {
-        const call = getGRPCJobsClient().setJobsUserProps({
+        const call = $grpc.jobs.jobs.setJobsUserProps({
             reason: values.reason,
             props: {
                 userId: props.userId,

@@ -21,6 +21,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const { attr, can, activeChar } = useAuth();
@@ -62,7 +64,7 @@ const {
 
 async function listDocumnetReqs(documentId: number): Promise<ListDocumentReqsResponse> {
     try {
-        const call = getGRPCDocStoreClient().listDocumentReqs({
+        const call = $grpc.docstore.docStore.listDocumentReqs({
             pagination: {
                 offset: offset.value,
             },
@@ -83,7 +85,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
     }
 
     try {
-        const call = getGRPCDocStoreClient().createDocumentReq({
+        const call = $grpc.docstore.docStore.createDocumentReq({
             documentId: props.doc.id,
             reason: values.reason,
             requestType: values.requestType,

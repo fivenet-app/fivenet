@@ -4,6 +4,8 @@ import { z } from 'zod';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -30,7 +32,7 @@ const state = reactive<Schema>({
 
 async function changeUsername(values: Schema): Promise<void> {
     try {
-        const call = getGRPCAuthClient().changeUsername({
+        const call = $grpc.auth.auth.changeUsername({
             current: values.currentUsername,
             new: values.newUsername,
         });

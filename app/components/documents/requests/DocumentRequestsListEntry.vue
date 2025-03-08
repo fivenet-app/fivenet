@@ -16,11 +16,13 @@ const emit = defineEmits<{
     (e: 'refreshRequests'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 async function updateDocumentReq(documentId: number, requestId: number, accepted: boolean): Promise<void> {
     try {
-        const call = getGRPCDocStoreClient().updateDocumentReq({
+        const call = $grpc.docstore.docStore.updateDocumentReq({
             documentId,
             requestId,
             accepted,
@@ -48,7 +50,7 @@ async function updateDocumentReq(documentId: number, requestId: number, accepted
 
 async function deleteDocumentReq(id: number): Promise<void> {
     try {
-        const call = getGRPCDocStoreClient().deleteDocumentReq({
+        const call = $grpc.docstore.docStore.deleteDocumentReq({
             requestId: id,
         });
         await call;

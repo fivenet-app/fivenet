@@ -18,7 +18,6 @@ const props = withDefaults(
     {
         disabled: false,
         showRequired: false,
-        accessTypes: undefined,
         accessRoles: undefined,
         jobs: () => [],
     },
@@ -28,6 +27,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: typeof props.modelValue): void;
     (e: 'delete'): void;
 }>();
+
+const { $grpc } = useNuxtApp();
 
 const entry = useVModel(props, 'modelValue', emit);
 
@@ -81,7 +82,7 @@ async function setFromProps(): Promise<void> {
         }
 
         try {
-            const { response } = await getGRPCQualificationsClient().getQualification({
+            const { response } = await $grpc.qualifications.qualifications.getQualification({
                 qualificationId: entry.value.qualificationId,
             });
             selectedQualification.value = response.qualification;
@@ -205,7 +206,7 @@ watch(props, () => setFromProps());
                         v-model="selectedQualification"
                         :searchable="
                             async (query: string) => {
-                                const { response } = await getGRPCQualificationsClient().listQualifications({
+                                const { response } = await $grpc.qualifications.qualifications.listQualifications({
                                     pagination: {
                                         offset: 0,
                                     },

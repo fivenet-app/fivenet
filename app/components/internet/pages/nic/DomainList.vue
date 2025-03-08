@@ -4,6 +4,8 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useInternetStore } from '~/store/internet';
 import type { ListDomainsResponse } from '~~/gen/ts/services/internet/domain';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const internetStore = useInternetStore();
@@ -15,7 +17,7 @@ const { data, pending: loading, refresh } = useLazyAsyncData(`internet-domain-li
 
 async function listDomains(): Promise<ListDomainsResponse> {
     try {
-        const call = getGRPCInternetDomainsClient().listDomains({
+        const call = $grpc.internet.domain.listDomains({
             pagination: {
                 offset: offset.value,
             },

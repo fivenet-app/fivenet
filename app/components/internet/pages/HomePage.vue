@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { getGRPCInternetClient } from '~/composables/grpc';
 import { useInternetStore, type Tab } from '~/store/internet';
 import { AdType } from '~~/gen/ts/resources/internet/ads';
 import type { SearchResponse } from '~~/gen/ts/services/internet/internet';
@@ -17,6 +16,8 @@ const emit = defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const { $grpc } = useNuxtApp();
 
 const tab = useVModel(props, 'modelValue', emit);
 
@@ -52,7 +53,7 @@ async function searchInternet(values: Schema): Promise<SearchResponse> {
     }
 
     try {
-        const call = getGRPCInternetClient().search({
+        const call = $grpc.internet.internet.search({
             search: values.search,
         });
         const { response } = await call;

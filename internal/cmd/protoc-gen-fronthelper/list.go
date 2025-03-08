@@ -64,7 +64,7 @@ func (p *ListSvcMethodsModule) Execute(targets map[string]pgs.File, pkgs map[str
 			for _, s := range f.Services() {
 				sName := string(s.Name())
 
-				p.Debugf("Service: %s (%s)", sName, sName)
+				p.Debugf("Service: %s", sName)
 
 				for _, m := range s.Methods() {
 					if _, ok := data.Svcs[sName]; !ok {

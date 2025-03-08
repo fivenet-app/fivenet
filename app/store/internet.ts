@@ -16,6 +16,8 @@ export type Tab = {
 export const useInternetStore = defineStore(
     'internet',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const tab = ref<Tab>({
             id: 0,
@@ -59,7 +61,7 @@ export const useInternetStore = defineStore(
         // Ads
         const getAds = async (req: GetAdsRequest): Promise<GetAdsResponse> => {
             try {
-                const call = getGRPCInternetAdsClient().getAds(req);
+                const call = $grpc.internet.ads.getAds(req);
                 const { response } = await call;
                 return response;
             } catch (e) {

@@ -27,6 +27,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { can, activeChar } = useAuth();
 
 const { popover } = useAppConfig();
@@ -42,7 +44,7 @@ const {
 
 async function getCitizen(id: number): Promise<Colleague> {
     try {
-        const call = getGRPCJobsClient().getColleague({
+        const call = $grpc.jobs.jobs.getColleague({
             userId: id,
             infoOnly: true,
         });

@@ -33,6 +33,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { activeChar } = useAuth();
 
 const completorStore = useCompletorStore();
@@ -67,7 +69,7 @@ async function createOrUpdateQualificationResult(
     values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
-        const call = getGRPCQualificationsClient().createOrUpdateQualificationResult({
+        const call = $grpc.qualifications.qualifications.createOrUpdateQualificationResult({
             result: {
                 id: props.resultId ?? 0,
                 qualificationId: qualificationId,

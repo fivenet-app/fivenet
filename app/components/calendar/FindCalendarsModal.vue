@@ -8,6 +8,8 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useCalendarStore } from '~/store/calendar';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const calendarStore = useCalendarStore();
@@ -30,7 +32,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
 }
 
 async function subscribeToCalendar(calendarId: number, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
-    const call = getGRPCCalendarClient().subscribeToCalendar({
+    const call = $grpc.calendar.calendar.subscribeToCalendar({
         delete: !subscribe,
         sub: {
             calendarId: calendarId,

@@ -18,6 +18,8 @@ const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -44,7 +46,7 @@ const attrStates = ref(new Map<number, AttributeValues | undefined>());
 
 async function getRole(id: number): Promise<Role> {
     try {
-        const call = getGRPCRectorClient().getRole({
+        const call = $grpc.rector.rector.getRole({
             id,
             filtered: true,
         });
@@ -59,7 +61,7 @@ async function getRole(id: number): Promise<Role> {
 
 async function deleteRole(id: number): Promise<void> {
     try {
-        await getGRPCRectorClient().deleteRole({
+        await $grpc.rector.rector.deleteRole({
             id,
         });
 
@@ -78,7 +80,7 @@ async function deleteRole(id: number): Promise<void> {
 
 async function getPermissions(roleId: number): Promise<void> {
     try {
-        const call = getGRPCRectorClient().getPermissions({
+        const call = $grpc.rector.rector.getPermissions({
             roleId,
             filtered: true,
         });
@@ -186,7 +188,7 @@ async function updatePermissions(): Promise<void> {
     }
 
     try {
-        await getGRPCRectorClient().updateRolePerms({
+        await $grpc.rector.rector.updateRolePerms({
             id: props.roleId,
             perms: perms,
             attrs: attrs,

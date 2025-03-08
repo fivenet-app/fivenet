@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', labels: CitizenLabels | undefined): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { attr, can } = useAuth();
 
 const labels = useVModel(props, 'modelValue', emit);
@@ -60,7 +62,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = getGRPCCitizenStoreClient().setUserProps({
+        const call = $grpc.citizenstore.citizenStore.setUserProps({
             props: userProps,
             reason: values.reason,
         });

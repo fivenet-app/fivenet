@@ -17,6 +17,8 @@ const props = defineProps<{
     responses?: ExamResponses;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const schema = z.object({
@@ -35,7 +37,7 @@ const state = useState<Schema>('qualifications-exam-responses', () => ({
 
 async function submitExam(values: Schema): Promise<SubmitExamResponse> {
     try {
-        const call = getGRPCQualificationsClient().submitExam({
+        const call = $grpc.qualifications.qualifications.submitExam({
             qualificationId: props.qualificationId,
             responses: {
                 qualificationId: props.qualificationId,

@@ -21,6 +21,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -49,7 +51,7 @@ async function createOrUpdateQualificationRequest(
     values: Schema,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {
     try {
-        const call = getGRPCQualificationsClient().createOrUpdateQualificationRequest({
+        const call = $grpc.qualifications.qualifications.createOrUpdateQualificationRequest({
             request: {
                 qualificationId: qualificationId,
                 userId: userId,

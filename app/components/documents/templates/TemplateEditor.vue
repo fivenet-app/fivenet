@@ -25,6 +25,8 @@ const props = defineProps<{
     templateId?: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { game } = useAppConfig();
@@ -189,7 +191,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
 
     try {
         if (templateId === undefined) {
-            const call = getGRPCDocStoreClient().createTemplate(req);
+            const call = $grpc.docstore.docStore.createTemplate(req);
             const { response } = await call;
 
             notifications.add({
@@ -203,7 +205,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: number): Prom
                 params: { id: response.id },
             });
         } else {
-            const call = getGRPCDocStoreClient().updateTemplate(req);
+            const call = $grpc.docstore.docStore.updateTemplate(req);
             const { response } = await call;
             if (response.template) {
                 setValuesFromTemplate(response.template);
@@ -290,7 +292,7 @@ function setValuesFromTemplate(tpl: Template): void {
 onBeforeMount(async () => {
     if (props.templateId) {
         try {
-            const call = getGRPCDocStoreClient().getTemplate({
+            const call = $grpc.docstore.docStore.getTemplate({
                 templateId: props.templateId,
                 render: false,
             });

@@ -13,6 +13,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const schema = z.object({
@@ -77,7 +79,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.dateofbirth = query.dateofbirth;
         }
 
-        const call = getGRPCCitizenStoreClient().listCitizens(req);
+        const call = $grpc.citizenstore.citizenStore.listCitizens(req);
         const { response } = await call;
 
         return response;

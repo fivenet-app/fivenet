@@ -34,6 +34,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const { popover } = useAppConfig();
@@ -50,7 +52,7 @@ const {
 });
 
 async function getDocument(id: number): Promise<Document> {
-    const call = getGRPCDocStoreClient().getDocument({
+    const call = $grpc.docstore.docStore.getDocument({
         documentId: id,
         infoOnly: true,
     });

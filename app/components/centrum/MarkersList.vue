@@ -5,6 +5,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -15,7 +17,7 @@ const { markersMarkers } = storeToRefs(livemapStore);
 
 async function deleteMarker(id: number): Promise<void> {
     try {
-        const call = getGRPCLivemapperClient().deleteMarker({
+        const call = $grpc.livemapper.livemapper.deleteMarker({
             id,
         });
         await call;

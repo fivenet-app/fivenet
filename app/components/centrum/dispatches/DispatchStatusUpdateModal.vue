@@ -13,6 +13,8 @@ const props = defineProps<{
     status?: StatusDispatch;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
@@ -34,7 +36,7 @@ const state = reactive<Schema>({
 
 async function updateDispatchStatus(dispatchId: number, values: Schema): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().updateDispatchStatus({
+        const call = $grpc.centrum.centrum.updateDispatchStatus({
             dispatchId,
             status: values.status,
             code: values.code,

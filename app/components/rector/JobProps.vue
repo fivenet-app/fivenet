@@ -17,6 +17,8 @@ import type { JobProps } from '~~/gen/ts/resources/users/job_props';
 import { type DiscordSyncChange, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/job_settings';
 import NotSupportedTabletBlock from '../partials/NotSupportedTabletBlock.vue';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -123,7 +125,7 @@ const state = reactive<Schema>({
 
 async function getJobProps(): Promise<JobProps> {
     try {
-        const call = getGRPCRectorClient().getJobProps({});
+        const call = $grpc.rector.rector.getJobProps({});
         const { response } = await call;
 
         return response.jobProps!;
@@ -158,7 +160,7 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.settings.absenceFutureDays = values.settings.absenceFutureDays;
 
     try {
-        const { response } = await getGRPCRectorClient().setJobProps({
+        const { response } = await $grpc.rector.rector.setJobProps({
             jobProps: jobProps.value,
         });
 

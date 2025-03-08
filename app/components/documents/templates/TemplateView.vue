@@ -17,6 +17,8 @@ const props = defineProps<{
     templateId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -36,7 +38,7 @@ const {
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
-        const call = getGRPCDocStoreClient().getTemplate({
+        const call = $grpc.docstore.docStore.getTemplate({
             templateId: props.templateId,
             render: false,
         });
@@ -55,7 +57,7 @@ async function getTemplate(): Promise<Template | undefined> {
 
 async function deleteTemplate(id: number): Promise<void> {
     try {
-        await getGRPCDocStoreClient().deleteTemplate({ id });
+        await $grpc.docstore.docStore.deleteTemplate({ id });
 
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },

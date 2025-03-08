@@ -8,13 +8,15 @@ defineProps<{
     userId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const modal = useModal();
 
 const { can, activeChar } = useAuth();
 
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {
-        const call = getGRPCJobsClient().getSelf({});
+        const call = $grpc.jobs.jobs.getSelf({});
         const { response } = await call;
 
         return response;

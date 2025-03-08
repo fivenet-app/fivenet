@@ -30,6 +30,8 @@ const logger = useLogger('📅 Calendar');
 export const useCalendarStore = defineStore(
     'calendar',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const activeCalendarIds = ref<number[]>([]);
         const view = ref<'month' | 'week' | 'summary'>('month');
@@ -111,7 +113,7 @@ export const useCalendarStore = defineStore(
 
         // Calendars
         const getCalendar = async (req: GetCalendarRequest): Promise<GetCalendarResponse> => {
-            const call = getGRPCCalendarClient().getCalendar(req);
+            const call = $grpc.calendar.calendar.getCalendar(req);
             const { response } = await call;
 
             if (response.calendar) {
@@ -128,7 +130,7 @@ export const useCalendarStore = defineStore(
 
         const listCalendars = async (req: ListCalendarsRequest): Promise<ListCalendarsResponse> => {
             try {
-                const call = getGRPCCalendarClient().listCalendars(req);
+                const call = $grpc.calendar.calendar.listCalendars(req);
                 const { response } = await call;
 
                 // Only "register" calendars in list when they are accessible by the user
@@ -172,7 +174,7 @@ export const useCalendarStore = defineStore(
         };
 
         const createOrUpdateCalendar = async (calendarParam: Calendar): Promise<CreateOrUpdateCalendarResponse> => {
-            const call = getGRPCCalendarClient().createOrUpdateCalendar({
+            const call = $grpc.calendar.calendar.createOrUpdateCalendar({
                 calendar: calendarParam,
             });
             const { response } = await call;
@@ -193,7 +195,7 @@ export const useCalendarStore = defineStore(
 
         const deleteCalendar = async (id: number): Promise<void> => {
             try {
-                const call = getGRPCCalendarClient().deleteCalendar({
+                const call = $grpc.calendar.calendar.deleteCalendar({
                     calendarId: id,
                 });
                 await call;
@@ -210,7 +212,7 @@ export const useCalendarStore = defineStore(
 
         // Entries
         const getCalendarEntry = async (req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> => {
-            const call = getGRPCCalendarClient().getCalendarEntry(req);
+            const call = $grpc.calendar.calendar.getCalendarEntry(req);
             const { response } = await call;
 
             if (response.entry) {
@@ -235,7 +237,7 @@ export const useCalendarStore = defineStore(
             }
 
             try {
-                const call = getGRPCCalendarClient().listCalendarEntries(req);
+                const call = $grpc.calendar.calendar.listCalendarEntries(req);
                 const { response } = await call;
 
                 if (response.entries.length > 0) {
@@ -265,7 +267,7 @@ export const useCalendarStore = defineStore(
 
         const getUpcomingEntries = async (req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> => {
             try {
-                const call = getGRPCCalendarClient().getUpcomingEntries(req);
+                const call = $grpc.calendar.calendar.getUpcomingEntries(req);
                 const { response } = await call;
 
                 return response;
@@ -279,7 +281,7 @@ export const useCalendarStore = defineStore(
             entryParam: CalendarEntry,
             users?: UserShort[],
         ): Promise<CreateOrUpdateCalendarEntryResponse> => {
-            const call = getGRPCCalendarClient().createOrUpdateCalendarEntry({
+            const call = $grpc.calendar.calendar.createOrUpdateCalendarEntry({
                 entry: entryParam,
                 userIds: users?.map((u) => u.userId) ?? [],
             });
@@ -299,7 +301,7 @@ export const useCalendarStore = defineStore(
 
         const deleteCalendarEntry = async (entryId: number): Promise<void> => {
             try {
-                const call = getGRPCCalendarClient().deleteCalendarEntry({
+                const call = $grpc.calendar.calendar.deleteCalendarEntry({
                     entryId: entryId,
                 });
                 await call;
@@ -317,7 +319,7 @@ export const useCalendarStore = defineStore(
         // RSVP
         const listCalendarEntryRSVP = async (req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> => {
             try {
-                const call = getGRPCCalendarClient().listCalendarEntryRSVP(req);
+                const call = $grpc.calendar.calendar.listCalendarEntryRSVP(req);
                 const { response } = await call;
 
                 return response;
@@ -329,7 +331,7 @@ export const useCalendarStore = defineStore(
 
         const rsvpCalendarEntry = async (req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> => {
             try {
-                const call = getGRPCCalendarClient().rSVPCalendarEntry(req);
+                const call = $grpc.calendar.calendar.rSVPCalendarEntry(req);
                 const { response } = await call;
 
                 // Retrieve calendar entry if a "should be visible" response and it is not in our list yet

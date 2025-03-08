@@ -22,6 +22,8 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { attr, activeChar } = useAuth();
@@ -158,13 +160,13 @@ async function createOrUpdatePage(values: Schema): Promise<void> {
     try {
         let responsePage: Page | undefined = undefined;
         if (createPage.value) {
-            const call = getGRPCWikiClient().createPage({
+            const call = $grpc.wiki.wiki.createPage({
                 page: req,
             });
             const { response } = await call;
             responsePage = response.page;
         } else {
-            const call = getGRPCWikiClient().updatePage({
+            const call = $grpc.wiki.wiki.updatePage({
                 page: req,
             });
             const { response } = await call;

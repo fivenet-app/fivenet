@@ -26,6 +26,8 @@ export type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'U
 export const useCentrumStore = defineStore(
     'centrum',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const error = ref<RpcError | undefined>(undefined);
         const abort = ref<AbortController | undefined>(undefined);
@@ -356,7 +358,7 @@ export const useCentrumStore = defineStore(
             reconnecting.value = false;
 
             try {
-                const call = getGRPCCentrumClient().stream({}, { abort: abort.value.signal });
+                const call = $grpc.centrum.centrum.stream({}, { abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
                     error.value = undefined;

@@ -19,6 +19,8 @@ const emit = defineEmits<{
 
 const reminderTime = useVModel(props, 'reminderTime', emit);
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -39,7 +41,7 @@ watch(reminderTime, () => (state.reminderTime = reminderTime.value ? toDate(remi
 
 async function setDocumentReminder(values: Schema): Promise<SetDocumentReminderResponse> {
     try {
-        const call = getGRPCDocStoreClient().setDocumentReminder({
+        const call = $grpc.docstore.docStore.setDocumentReminder({
             documentId: props.documentId,
             reminderTime: values.reminderTime ? toTimestamp(values.reminderTime) : undefined,
             message: values.message,

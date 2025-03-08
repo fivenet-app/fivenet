@@ -5,7 +5,7 @@ const props = withDefaults(
     defineProps<{
         state?: string;
         stateShort?: string;
-        plate: string;
+        plate?: string;
         year?: string;
     }>(),
     {

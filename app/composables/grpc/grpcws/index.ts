@@ -9,6 +9,13 @@ function _useGRPCWebsocketTransport(): GrpcWSTransport {
         debug: import.meta.dev,
         timeout: 8500,
         reconnect: true,
+
+        // GRPC web transport options
+        baseUrl: '/api/grpc',
+        format: 'text',
+        fetchInit: {
+            credentials: 'same-origin',
+        },
     });
 
     return grpcWebsocketTransport;

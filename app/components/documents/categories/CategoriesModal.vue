@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'update'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const notifications = useNotificatorStore();
@@ -39,7 +41,7 @@ const state = reactive<Schema>({
 
 async function createCategory(values: Schema): Promise<void> {
     try {
-        await getGRPCDocStoreClient().createCategory({
+        await $grpc.docstore.docStore.createCategory({
             category: {
                 id: 0,
                 name: values.name,
@@ -64,7 +66,7 @@ async function createCategory(values: Schema): Promise<void> {
 
 async function updateCategory(values: Schema): Promise<void> {
     try {
-        await getGRPCDocStoreClient().updateCategory({
+        await $grpc.docstore.docStore.updateCategory({
             category: {
                 id: props.category!.id,
                 name: values.name,
@@ -93,7 +95,7 @@ async function deleteCategory(): Promise<void> {
     }
 
     try {
-        await getGRPCDocStoreClient().deleteCategory({
+        await $grpc.docstore.docStore.deleteCategory({
             ids: [props.category.id!],
         });
 

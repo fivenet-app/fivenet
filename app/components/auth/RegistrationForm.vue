@@ -8,6 +8,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { $grpc } = useNuxtApp();
+
 const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
@@ -37,7 +39,7 @@ const state = reactive<Schema>({
 
 async function createAccount(values: Schema): Promise<void> {
     try {
-        await getGRPCAuthClient().createAccount({
+        await $grpc.auth.auth.createAccount({
             regToken: values.registrationToken,
             username: values.username,
             password: values.password,

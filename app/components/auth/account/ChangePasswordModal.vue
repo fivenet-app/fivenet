@@ -6,6 +6,8 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -27,7 +29,7 @@ const state = reactive<Schema>({
 
 async function changePassword(values: Schema): Promise<void> {
     try {
-        const call = getGRPCAuthClient().changePassword({
+        const call = $grpc.auth.auth.changePassword({
             current: values.currentPassword,
             new: values.newPassword,
         });

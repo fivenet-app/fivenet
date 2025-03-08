@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { useGRPCWebsocketTransport } from '~/composables/grpcws';
+import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -16,6 +16,8 @@ const initialReconnectBackoffTime = 2;
 export const useNotificatorStore = defineStore(
     'notifications',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const doNotDisturb = ref<boolean>(false);
         const notifications = ref<Notification[]>([]);
@@ -57,7 +59,7 @@ export const useNotificatorStore = defineStore(
             const { can } = useAuth();
 
             try {
-                const call = getGRPCNotificatorClient().stream({}, { abort: abort.value.signal });
+                const call = $grpc.notificator.notificator.stream({}, { abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
                     notificationsCount.value = resp.notificationCount;
@@ -203,7 +205,7 @@ export const useNotificatorStore = defineStore(
 
         const markNotifications = async (req: MarkNotificationsRequest): Promise<void> => {
             try {
-                await getGRPCNotificatorClient().markNotifications(req);
+                await $grpc.notificator.notificator.markNotifications(req);
             } catch (e) {
                 handleGRPCError(e as RpcError);
                 throw e;

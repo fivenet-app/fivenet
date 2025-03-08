@@ -27,6 +27,8 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { $grpc } = useNuxtApp();
+
 const modal = useModal();
 
 const slideover = useSlideover();
@@ -52,7 +54,7 @@ const selectedDispatch = ref<number | undefined>();
 
 async function updateDispatchStatus(dispatchId: number, status: StatusDispatch): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().updateDispatchStatus({ dispatchId, status });
+        const call = $grpc.centrum.centrum.updateDispatchStatus({ dispatchId, status });
         await call;
 
         notifications.add({
@@ -89,7 +91,7 @@ async function updateDspStatus(dispatchId?: number, status?: StatusDispatch): Pr
 
 async function updateUnitStatus(id: number, status: StatusUnit): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().updateUnitStatus({
+        const call = $grpc.centrum.centrum.updateUnitStatus({
             unitId: id,
             status,
         });

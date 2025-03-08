@@ -13,6 +13,8 @@ const props = defineProps<{
     userId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { attr, activeChar } = useAuth();
 
 const activityTypes = Object.keys(UserActivityType)
@@ -60,7 +62,7 @@ const {
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
-        const call = getGRPCCitizenStoreClient().listUserActivity({
+        const call = $grpc.citizenstore.citizenStore.listUserActivity({
             pagination: {
                 offset: offset.value,
             },

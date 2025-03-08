@@ -22,6 +22,8 @@ const emit = defineEmits<{
     (e: 'updated', entry: ConductEntry): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -73,12 +75,12 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: number): Promise<
         };
 
         if (id === undefined) {
-            const call = getGRPCJobsConductClient().createConductEntry(req);
+            const call = $grpc.jobs.jobsConduct.createConductEntry(req);
             const { response } = await call;
 
             emit('created', response.entry!);
         } else {
-            const call = getGRPCJobsConductClient().updateConductEntry(req);
+            const call = $grpc.jobs.jobsConduct.updateConductEntry(req);
             const { response } = await call;
 
             emit('updated', response.entry!);

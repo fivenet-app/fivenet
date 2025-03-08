@@ -34,6 +34,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { attr, can } = useAuth();
@@ -147,7 +149,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             perDay: query.perDay,
         };
 
-        const call = getGRPCJobsTimeclockClient().listTimeclock(req);
+        const call = $grpc.jobs.jobsTimeclock.listTimeclock(req);
         const { response } = await call;
 
         return response;

@@ -32,6 +32,8 @@ const props = defineProps<{
     documentId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can, activeChar, isSuperuser } = useAuth();
@@ -54,7 +56,7 @@ const {
 
 async function getDocument(id: number): Promise<Document> {
     try {
-        const call = getGRPCDocStoreClient().getDocument({
+        const call = $grpc.docstore.docStore.getDocument({
             documentId: id,
         });
         const { response } = await call;
@@ -70,7 +72,7 @@ async function getDocument(id: number): Promise<Document> {
 
 async function deleteDocument(id: number, reason?: string): Promise<void> {
     try {
-        await getGRPCDocStoreClient().deleteDocument({
+        await $grpc.docstore.docStore.deleteDocument({
             documentId: id,
             reason: reason,
         });
@@ -90,7 +92,7 @@ async function deleteDocument(id: number, reason?: string): Promise<void> {
 
 async function toggleDocument(id: number, closed: boolean): Promise<void> {
     try {
-        await getGRPCDocStoreClient().toggleDocument({
+        await $grpc.docstore.docStore.toggleDocument({
             documentId: id,
             closed,
         });
@@ -118,7 +120,7 @@ async function toggleDocument(id: number, closed: boolean): Promise<void> {
 
 async function changeDocumentOwner(id: number): Promise<void> {
     try {
-        await getGRPCDocStoreClient().changeDocumentOwner({
+        await $grpc.docstore.docStore.changeDocumentOwner({
             documentId: id,
         });
 
@@ -169,7 +171,7 @@ function openRequestsModal(): void {
 
 async function togglePin(documentId: number, state: boolean): Promise<ToggleDocumentPinResponse> {
     try {
-        const call = getGRPCDocStoreClient().toggleDocumentPin({
+        const call = $grpc.docstore.docStore.toggleDocumentPin({
             documentId: documentId,
             state: state,
         });

@@ -11,6 +11,8 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const modal = useModal();
@@ -21,7 +23,7 @@ const { deleteMarkerMarker, goto } = livemapStore;
 
 async function deleteMarker(id: number): Promise<void> {
     try {
-        const call = getGRPCLivemapperClient().deleteMarker({
+        const call = $grpc.livemapper.livemapper.deleteMarker({
             id,
         });
         await call;

@@ -6,23 +6,25 @@ async function loadConfig(): Promise<void> {
     const abort = new AbortController();
     const tId = setTimeout(() => abort.abort(), 7.5 * 1000);
 
-    const resp = await $fetch<AppConfig>('/api/config', {
-        method: 'POST',
-        signal: abort.signal,
-    })
-        .catch((e) => {
-            const err = e as Error;
-            throw createError({
-                statusCode: 500,
-                statusMessage: 'Failed to get FiveNet config from backend',
-                message: err.message + '(Cause: ' + err.cause + ')',
-                fatal: true,
-                unhandled: false,
-            });
-        })
-        .finally(() => clearTimeout(tId));
+    try {
+        const resp = await $fetch<AppConfig>('/api/config', {
+            method: 'POST',
+            signal: abort.signal,
+        });
 
-    updateAppConfig(resp);
+        updateAppConfig(resp);
+    } catch (e) {
+        const err = e as Error;
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'Failed to get FiveNet config from backend',
+            message: err.message + '(Cause: ' + err.cause + ')',
+            fatal: true,
+            unhandled: false,
+        });
+    } finally {
+        clearTimeout(tId);
+    }
 }
 
 export default defineNuxtPlugin({
@@ -30,6 +32,7 @@ export default defineNuxtPlugin({
     parallel: true,
     async setup(_) {
         await loadConfig();
+
         return {};
     },
 });

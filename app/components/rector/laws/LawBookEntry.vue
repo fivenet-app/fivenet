@@ -19,6 +19,8 @@ const emit = defineEmits<{
     (e: 'update:law', update: { id: number; law: Law }): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const lawBook = useVModel(props, 'modelValue', emit);
@@ -44,7 +46,7 @@ async function deleteLawBook(id: number): Promise<void> {
     }
 
     try {
-        const call = getGRPCRectorLawsClient().deleteLawBook({
+        const call = $grpc.rector.rectorLaws.deleteLawBook({
             id: id,
         });
         await call;
@@ -58,7 +60,7 @@ async function deleteLawBook(id: number): Promise<void> {
 
 async function saveLawBook(id: number, values: Schema): Promise<LawBook> {
     try {
-        const call = getGRPCRectorLawsClient().createOrUpdateLawBook({
+        const call = $grpc.rector.rectorLaws.createOrUpdateLawBook({
             lawBook: {
                 id: id < 0 ? 0 : id,
                 name: values.name,
@@ -132,7 +134,7 @@ async function deleteLaw(id: number): Promise<void> {
     }
 
     try {
-        const call = getGRPCRectorLawsClient().deleteLaw({
+        const call = $grpc.rector.rectorLaws.deleteLaw({
             id: id,
         });
         await call;

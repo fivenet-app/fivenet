@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const { game } = useAppConfig();
@@ -58,7 +60,7 @@ async function setJobProp(values: Schema): Promise<void> {
     }
 
     try {
-        const call = getGRPCCitizenStoreClient().setUserProps({
+        const call = $grpc.citizenstore.citizenStore.setUserProps({
             props: userProps,
             reason: values.reason,
         });

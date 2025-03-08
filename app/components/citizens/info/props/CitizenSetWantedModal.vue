@@ -14,6 +14,8 @@ const emit = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -35,7 +37,7 @@ async function setWantedState(values: Schema): Promise<void> {
     };
 
     try {
-        const call = getGRPCCitizenStoreClient().setUserProps({
+        const call = $grpc.citizenstore.citizenStore.setUserProps({
             props: userProps,
             reason: values.reason,
         });

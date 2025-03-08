@@ -4,6 +4,8 @@ import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue'
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const bodyRef = useTemplateRef('bodyRef');
@@ -11,7 +13,7 @@ const { height, width } = useElementSize(bodyRef);
 
 async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
     try {
-        const { response } = await getGRPCJobsClient().getColleagueLabelsStats({
+        const { response } = await $grpc.jobs.jobs.getColleagueLabelsStats({
             labelIds: [],
         });
 

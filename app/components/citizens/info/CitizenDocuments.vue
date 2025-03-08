@@ -10,11 +10,13 @@ import type { OpenClose } from '~/typings';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
-const { t } = useI18n();
-
 const props = defineProps<{
     userId: number;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
 
 const openclose: OpenClose[] = [
     { id: 0, label: t('common.not_selected'), closed: undefined },
@@ -42,7 +44,7 @@ const {
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
-        const call = getGRPCDocStoreClient().listUserDocuments({
+        const call = $grpc.docstore.docStore.listUserDocuments({
             pagination: {
                 offset: offset.value,
             },

@@ -14,6 +14,8 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
@@ -35,7 +37,7 @@ const state = reactive<Schema>({
 
 async function updateUnitStatus(id: number, values: Schema): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().updateUnitStatus({
+        const call = $grpc.centrum.centrum.updateUnitStatus({
             unitId: id,
             status: values.status,
             code: values.code,

@@ -11,6 +11,8 @@ const props = defineProps<{
     templateId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -31,7 +33,7 @@ async function getTemplate(): Promise<Template> {
         data.activeChar = activeChar.value!;
         logger.debug('Documents: Editor - Clipboard Template Data', data);
 
-        const call = getGRPCDocStoreClient().getTemplate({
+        const call = $grpc.docstore.docStore.getTemplate({
             templateId: props.templateId,
             data,
             render: true,

@@ -21,6 +21,8 @@ const emit = defineEmits<{
 
 const comment = useVModel(props, 'modelValue', emit);
 
+const { $grpc } = useNuxtApp();
+
 const modal = useModal();
 
 const { can, activeChar, isSuperuser } = useAuth();
@@ -41,7 +43,7 @@ const state = reactive<Schema>({
 
 async function editComment(documentId: number, commentId: number, values: Schema): Promise<void> {
     try {
-        const { response } = await getGRPCDocStoreClient().editComment({
+        const { response } = await $grpc.docstore.docStore.editComment({
             comment: {
                 id: commentId,
                 documentId,
@@ -74,7 +76,7 @@ async function editComment(documentId: number, commentId: number, values: Schema
 
 async function deleteComment(id: number): Promise<void> {
     try {
-        await getGRPCDocStoreClient().deleteComment({
+        await $grpc.docstore.docStore.deleteComment({
             commentId: id,
         });
 

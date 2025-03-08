@@ -10,9 +10,11 @@ const emit = defineEmits<{
     (e: 'uploaded', file: FileInfo): void;
 }>();
 
-const { isOpen } = useModal();
+const { $grpc } = useNuxtApp();
 
 const appConfig = useAppConfig();
+
+const { isOpen } = useModal();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -43,7 +45,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse | undefine
     file.data = new Uint8Array(await values.file[0].arrayBuffer());
 
     try {
-        const { response } = await getGRPCRectorFilestoreClient().uploadFile({
+        const { response } = await $grpc.rector.rectorFilestore.uploadFile({
             prefix: values.category,
             name: values.name,
             file: file,

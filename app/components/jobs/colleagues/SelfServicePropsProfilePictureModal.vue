@@ -9,6 +9,8 @@ import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -48,7 +50,7 @@ async function setProfilePicture(values: Schema): Promise<void> {
     }
 
     try {
-        const call = getGRPCCitizenStoreClient().setProfilePicture(req);
+        const call = $grpc.citizenstore.citizenStore.setProfilePicture(req);
         const { response } = await call;
 
         if (activeChar.value) {

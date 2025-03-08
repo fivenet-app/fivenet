@@ -6,13 +6,15 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import type { CardElements } from '~/utils/types';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 async function listCategories(): Promise<Category[]> {
     try {
-        const call = getGRPCDocStoreClient().listCategories({});
+        const call = $grpc.docstore.docStore.listCategories({});
         const { response } = await call;
 
         return response.categories;

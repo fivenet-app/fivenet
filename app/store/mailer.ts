@@ -33,6 +33,8 @@ const logger = useLogger('💬 Mailer');
 export const useMailerStore = defineStore(
     'mailer',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const loaded = ref<boolean>(false);
         const error = ref<Error | undefined>(undefined);
@@ -300,7 +302,7 @@ export const useMailerStore = defineStore(
             }
 
             try {
-                const call = getGRPCMailerClient().listEmails({
+                const call = $grpc.mailer.mailer.listEmails({
                     pagination: {
                         offset,
                     },
@@ -344,7 +346,7 @@ export const useMailerStore = defineStore(
 
         const getEmail = async (id: number): Promise<Email | undefined> => {
             try {
-                const call = getGRPCMailerClient().getEmail({
+                const call = $grpc.mailer.mailer.getEmail({
                     id,
                 });
                 const { response } = await call;
@@ -368,7 +370,7 @@ export const useMailerStore = defineStore(
 
         const createOrUpdateEmail = async (req: CreateOrUpdateEmailRequest): Promise<CreateOrUpdateEmailResponse> => {
             try {
-                const call = getGRPCMailerClient().createOrUpdateEmail(req);
+                const call = $grpc.mailer.mailer.createOrUpdateEmail(req);
                 const { response } = await call;
 
                 if (response.email) {
@@ -393,7 +395,7 @@ export const useMailerStore = defineStore(
 
         const deleteEmail = async (req: DeleteEmailRequest): Promise<DeleteEmailResponse> => {
             try {
-                const call = getGRPCMailerClient().deleteEmail(req);
+                const call = $grpc.mailer.mailer.deleteEmail(req);
                 const { response } = await call;
 
                 if (selectedEmail.value?.id === req.id) {
@@ -426,7 +428,7 @@ export const useMailerStore = defineStore(
             store: boolean = true,
         ): Promise<ListThreadsResponse | undefined> => {
             try {
-                const call = getGRPCMailerClient().listThreads(req);
+                const call = $grpc.mailer.mailer.listThreads(req);
                 const { response } = await call;
 
                 // If response is at offset 0 and request is not for archived threads, update unread threads list
@@ -474,7 +476,7 @@ export const useMailerStore = defineStore(
             }
 
             try {
-                const call = getGRPCMailerClient().getThread({
+                const call = $grpc.mailer.mailer.getThread({
                     emailId: selectedEmail.value.id,
                     threadId,
                 });
@@ -508,7 +510,7 @@ export const useMailerStore = defineStore(
 
         const createThread = async (req: CreateThreadRequest): Promise<CreateThreadResponse> => {
             try {
-                const call = getGRPCMailerClient().createThread(req);
+                const call = $grpc.mailer.mailer.createThread(req);
                 const { response } = await call;
 
                 if (response.thread) {
@@ -529,7 +531,7 @@ export const useMailerStore = defineStore(
 
         const deleteThread = async (req: DeleteThreadRequest): Promise<DeleteThreadResponse> => {
             try {
-                const call = getGRPCMailerClient().deleteThread(req);
+                const call = $grpc.mailer.mailer.deleteThread(req);
                 const { response } = await call;
 
                 if (selectedThread.value?.id === req.threadId) {
@@ -552,7 +554,7 @@ export const useMailerStore = defineStore(
         // Thread User State
         const getThreadState = async (threadId: number): Promise<ThreadState | undefined> => {
             try {
-                const call = getGRPCMailerClient().getThreadState({
+                const call = $grpc.mailer.mailer.getThreadState({
                     emailId: selectedEmail.value!.id,
                     threadId,
                 });
@@ -573,7 +575,7 @@ export const useMailerStore = defineStore(
                 return;
             }
 
-            const { response } = await getGRPCMailerClient().setThreadState({
+            const { response } = await $grpc.mailer.mailer.setThreadState({
                 state: {
                     ...state,
                     threadId: state.threadId!,
@@ -625,7 +627,7 @@ export const useMailerStore = defineStore(
             }
 
             try {
-                const call = getGRPCMailerClient().listThreadMessages(req);
+                const call = $grpc.mailer.mailer.listThreadMessages(req);
                 const { response } = await call;
 
                 messages.value = response;
@@ -646,7 +648,7 @@ export const useMailerStore = defineStore(
 
         const postMessage = async (req: PostMessageRequest): Promise<PostMessageResponse> => {
             try {
-                const call = getGRPCMailerClient().postMessage(req);
+                const call = $grpc.mailer.mailer.postMessage(req);
                 const { response } = await call;
 
                 if (response.message) {
@@ -664,7 +666,7 @@ export const useMailerStore = defineStore(
 
         const deleteMessage = async (req: DeleteMessageRequest): Promise<DeleteMessageResponse> => {
             try {
-                const call = getGRPCMailerClient().deleteMessage(req);
+                const call = $grpc.mailer.mailer.deleteMessage(req);
                 const { response } = await call;
 
                 useNotificatorStore().add({
@@ -683,7 +685,7 @@ export const useMailerStore = defineStore(
         // User Settings
         const getEmailSettings = async (req: GetEmailSettingsRequest): Promise<GetEmailSettingsResponse> => {
             try {
-                const call = getGRPCMailerClient().getEmailSettings(req);
+                const call = $grpc.mailer.mailer.getEmailSettings(req);
                 const { response } = await call;
 
                 if (response.settings && selectedEmail.value) {
@@ -699,7 +701,7 @@ export const useMailerStore = defineStore(
 
         const setEmailSettings = async (req: SetEmailSettingsRequest): Promise<SetEmailSettingsResponse> => {
             try {
-                const call = getGRPCMailerClient().setEmailSettings(req);
+                const call = $grpc.mailer.mailer.setEmailSettings(req);
                 const { response } = await call;
 
                 if (response.settings && selectedEmail.value) {

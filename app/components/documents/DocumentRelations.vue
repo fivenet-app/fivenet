@@ -21,6 +21,8 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const {
@@ -32,7 +34,7 @@ const {
 
 async function getDocumentRelations(): Promise<DocumentRelation[]> {
     try {
-        const call = getGRPCDocStoreClient().getDocumentRelations({
+        const call = $grpc.docstore.docStore.getDocumentRelations({
             documentId: props.documentId,
         });
         const { response } = await call;

@@ -20,6 +20,8 @@ defineEmits<{
     (e: 'update:modelValue', payload: Map<number, DocumentReference>): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
@@ -58,7 +60,7 @@ watchDebounced(queryDoc, async () => await refresh(), {
 
 async function listDocuments(): Promise<DocumentShort[]> {
     try {
-        const call = getGRPCDocStoreClient().listDocuments({
+        const call = $grpc.docstore.docStore.listDocuments({
             pagination: {
                 offset: 0,
                 pageSize: 8,

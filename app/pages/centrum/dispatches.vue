@@ -20,6 +20,8 @@ definePageMeta({
     permission: 'CentrumService.TakeControl',
 });
 
+const { $grpc } = useNuxtApp();
+
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
 
@@ -56,7 +58,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             req.ids.push(query.id);
         }
 
-        const call = getGRPCCentrumClient().listDispatches(req);
+        const call = $grpc.centrum.centrum.listDispatches(req);
         const { response } = await call;
 
         return response;

@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -39,7 +41,7 @@ async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCale
         return;
     }
 
-    const call = getGRPCCalendarClient().shareCalendarEntry({
+    const call = $grpc.calendar.calendar.shareCalendarEntry({
         entryId: props.entryId,
         userIds: values.users.map((u) => u.userId),
     });

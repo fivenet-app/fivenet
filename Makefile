@@ -4,7 +4,7 @@ VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/
 
 GO ?= go
-PROTOC ?= pnpm protoc
+PROTOC ?= protoc
 
 .DEFAULT: run-server
 

@@ -12,9 +12,11 @@ import UserDropdown from '~/components/UserDropdown.vue';
 import { useMailerStore } from '~/store/mailer';
 import type { Perms } from '~~/gen/ts/perms';
 
-const { can, activeChar, jobProps, isSuperuser } = useAuth();
+const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
+
+const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
@@ -314,7 +316,7 @@ const groups = computed(() => [
             switch (searchType) {
                 case '#': {
                     try {
-                        const call = getGRPCDocStoreClient().listDocuments({
+                        const call = $grpc.docstore.docStore.listDocuments({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,
@@ -341,7 +343,7 @@ const groups = computed(() => [
                 case '@':
                 default: {
                     try {
-                        const call = getGRPCCitizenStoreClient().listCitizens({
+                        const call = $grpc.citizenstore.citizenStore.listCitizens({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,

@@ -18,6 +18,8 @@ const emit = defineEmits<{
     (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -67,7 +69,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     }
 
     try {
-        const call = getGRPCJobsClient().setJobsUserProps({
+        const call = $grpc.jobs.jobs.setJobsUserProps({
             props: userProps,
             reason: values.reason,
         });

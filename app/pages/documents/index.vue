@@ -17,6 +17,8 @@ definePageMeta({
     permission: 'DocStoreService.ListDocuments',
 });
 
+const { $grpc } = useNuxtApp();
+
 const modal = useModal();
 
 const { can } = useAuth();
@@ -27,7 +29,7 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListDocumentPinsResponse> {
-    const call = getGRPCDocStoreClient().listDocumentPins({
+    const call = $grpc.docstore.docStore.listDocumentPins({
         pagination: {
             offset: offset.value,
         },

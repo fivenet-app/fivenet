@@ -11,6 +11,8 @@ import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueName from '../colleagues/ColleagueName.vue';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -50,7 +52,7 @@ const {
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
-        const call = getGRPCJobsTimeclockClient().listInactiveEmployees({
+        const call = $grpc.jobs.jobsTimeclock.listInactiveEmployees({
             pagination: {
                 offset: offset.value,
             },

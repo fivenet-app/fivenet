@@ -15,6 +15,8 @@ const emit = defineEmits<{
     (e: 'toggle'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const canSubmit = useVModel(props, 'modelValue', emit);
 
 const notifications = useNotificatorStore();
@@ -37,7 +39,7 @@ const state = reactive<Schema>({
 
 async function forgotPassword(values: Schema): Promise<void> {
     try {
-        await getGRPCAuthClient().forgotPassword({
+        await $grpc.auth.auth.forgotPassword({
             regToken: values.registrationToken.toString(),
             new: values.password,
         });

@@ -11,6 +11,8 @@ import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 export const useCompletorStore = defineStore(
     'completor',
     () => {
+        const { $grpc } = useNuxtApp();
+
         // State
         const jobs = ref<Job[]>([]);
 
@@ -29,7 +31,7 @@ export const useCompletorStore = defineStore(
 
         const completeJobs = async (req: CompleteJobsRequest): Promise<Job[]> => {
             try {
-                const call = getGRPCCompletorClient().completeJobs(req);
+                const call = $grpc.completor.completor.completeJobs(req);
                 const { response } = await call;
                 return response.jobs;
             } catch (e) {
@@ -49,7 +51,7 @@ export const useCompletorStore = defineStore(
                 return [];
             }
             try {
-                const call = getGRPCCompletorClient().completeCitizens(req);
+                const call = $grpc.completor.completor.completeCitizens(req);
                 const { response } = await call;
                 return response.users;
             } catch (e) {
@@ -68,7 +70,7 @@ export const useCompletorStore = defineStore(
                 req.pagination = { offset: 0 };
             }
             try {
-                const call = getGRPCJobsClient().listColleagues(req);
+                const call = $grpc.jobs.jobs.listColleagues(req);
                 const { response } = await call;
                 return response.colleagues;
             } catch (e) {
@@ -83,7 +85,7 @@ export const useCompletorStore = defineStore(
                 return [];
             }
             try {
-                const call = getGRPCCompletorClient().completeDocumentCategories({ search });
+                const call = $grpc.completor.completor.completeDocumentCategories({ search });
                 const { response } = await call;
                 return response.categories;
             } catch (e) {
@@ -94,7 +96,7 @@ export const useCompletorStore = defineStore(
 
         const listLawBooks = async (): Promise<LawBook[]> => {
             try {
-                const call = getGRPCCompletorClient().listLawBooks({});
+                const call = $grpc.completor.completor.listLawBooks({});
                 const { response } = await call;
                 return response.books;
             } catch (e) {
@@ -105,7 +107,7 @@ export const useCompletorStore = defineStore(
 
         const completeCitizenLabels = async (search: string): Promise<CitizenLabel[]> => {
             try {
-                const call = getGRPCCompletorClient().completeCitizenLabels({ search });
+                const call = $grpc.completor.completor.completeCitizenLabels({ search });
                 const { response } = await call;
                 return response.labels;
             } catch (e) {

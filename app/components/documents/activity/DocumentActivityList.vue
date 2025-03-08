@@ -10,6 +10,8 @@ const props = defineProps<{
     documentId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const page = useRouteQuery('page', '1', { transform: Number });
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
@@ -22,7 +24,7 @@ const {
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
     try {
-        const call = getGRPCDocStoreClient().listDocumentActivity({
+        const call = $grpc.docstore.docStore.listDocumentActivity({
             pagination: {
                 offset: offset.value,
             },

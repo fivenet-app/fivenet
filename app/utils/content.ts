@@ -6,7 +6,7 @@ export function jsonNodeToTocLinks(n: JSONNode): TocLink[] {
     if (/h[1-6]/i.test(n.tag)) {
         const text = getTextFromContent(n);
         headers.push({
-            id: n.id,
+            id: n.id ?? n.tag,
             depth: parseInt(n.tag.replace('h', '')),
             text: text,
         });
@@ -18,7 +18,7 @@ export function jsonNodeToTocLinks(n: JSONNode): TocLink[] {
 }
 
 export function getTextFromContent(n: JSONNode): string {
-    if (n.text !== '') {
+    if (n.text && n.text !== '') {
         return n.text;
     }
     if (n.content.length > 0) {
@@ -29,7 +29,7 @@ export function getTextFromContent(n: JSONNode): string {
         }
     }
 
-    return n.id;
+    return n.id ?? '';
 }
 
 function walkContentForText(ns: JSONNode[]): string {

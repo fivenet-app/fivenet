@@ -8,6 +8,8 @@ import { useSettingsStore } from '~/store/settings';
 import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -22,7 +24,7 @@ const { data, pending: loading, refresh, error } = useLazyAsyncData(`files-${pag
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
-        const { response } = getGRPCRectorFilestoreClient().listFiles({
+        const { response } = $grpc.rector.rectorFilestore.listFiles({
             pagination: {
                 offset: offset.value,
             },
@@ -38,7 +40,7 @@ async function listFiles(prefix: string): Promise<ListFilesResponse> {
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
-        const { response } = getGRPCRectorFilestoreClient().deleteFile({
+        const { response } = $grpc.rector.rectorFilestore.deleteFile({
             path,
         });
 

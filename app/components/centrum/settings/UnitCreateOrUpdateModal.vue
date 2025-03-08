@@ -18,6 +18,8 @@ const emit = defineEmits<{
     (e: 'updated', unit: Unit): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -57,7 +59,7 @@ const selectedAttributes = ref<string[]>([]);
 
 async function createOrUpdateUnit(values: Schema): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().createOrUpdateUnit({
+        const call = $grpc.centrum.centrum.createOrUpdateUnit({
             unit: {
                 id: props.unit?.id ?? 0,
                 job: '',

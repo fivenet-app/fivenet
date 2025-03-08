@@ -9,6 +9,8 @@ import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { isSuperuser } = useAuth();
@@ -26,7 +28,7 @@ const {
 
 async function getCentrumSettings(): Promise<Settings> {
     try {
-        const call = getGRPCCentrumClient().getSettings({});
+        const call = $grpc.centrum.centrum.getSettings({});
         const { response } = await call;
 
         return response.settings!;
@@ -73,7 +75,7 @@ const state = reactive<Schema>({
 
 async function updateSettings(values: Schema): Promise<void> {
     try {
-        const call = getGRPCCentrumClient().updateSettings({
+        const call = $grpc.centrum.centrum.updateSettings({
             settings: {
                 job: '',
                 enabled: values.enabled,

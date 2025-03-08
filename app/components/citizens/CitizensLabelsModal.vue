@@ -5,6 +5,8 @@ import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { ManageCitizenLabelsResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
+const { $grpc } = useNuxtApp();
+
 const { can } = useAuth();
 
 const { isOpen } = useModal();
@@ -32,7 +34,7 @@ const { data: labels } = useLazyAsyncData('citizenstore-labels', () => completor
 
 async function manageCitizenLabels(values: Schema): Promise<ManageCitizenLabelsResponse> {
     try {
-        const { response } = await getGRPCCitizenStoreClient().manageCitizenLabels({
+        const { response } = await $grpc.citizenstore.citizenStore.manageCitizenLabels({
             labels: values.labels ?? [],
         });
 

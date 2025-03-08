@@ -28,6 +28,8 @@ defineEmits<{
     (e: 'edit'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -53,7 +55,7 @@ const breadcrumbs = computed(() => [
 
 async function deletePage(id: number): Promise<void> {
     try {
-        const call = getGRPCWikiClient().deletePage({
+        const call = $grpc.wiki.wiki.deletePage({
             id: id,
         });
         await call;

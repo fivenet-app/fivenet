@@ -20,6 +20,8 @@ const props = defineProps<{
     hideUserSearch?: boolean;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -77,7 +79,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
     try {
-        const call = getGRPCJobsConductClient().listConductEntries({
+        const call = $grpc.jobs.jobsConduct.listConductEntries({
             pagination: {
                 offset: offset.value,
             },
@@ -98,7 +100,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
 async function deleteConductEntry(id: number): Promise<void> {
     try {
-        const call = getGRPCJobsConductClient().deleteConductEntry({ id });
+        const call = $grpc.jobs.jobsConduct.deleteConductEntry({ id });
         await call;
 
         refresh();

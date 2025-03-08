@@ -11,6 +11,8 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import type { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -64,7 +66,7 @@ const {
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
-        const call = getGRPCDMVClient().listVehicles({
+        const call = $grpc.dmv.dMV.listVehicles({
             pagination: {
                 offset: offset.value,
             },
@@ -185,7 +187,7 @@ defineShortcuts({
                             :search="
                                 async (query: string): Promise<UserShort[]> => {
                                     usersLoading = true;
-                                    const { response } = await getGRPCCompletorClient().completeCitizens({
+                                    const { response } = await $grpc.completor.completor.completeCitizens({
                                         search: query,
                                     });
                                     usersLoading = false;

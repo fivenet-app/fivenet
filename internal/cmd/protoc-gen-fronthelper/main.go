@@ -13,5 +13,6 @@ func main() {
 	).RegisterModule(
 		Permify(),
 		ListSvcMethods(),
+		Clients(),
 	).Render()
 }

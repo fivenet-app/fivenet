@@ -16,6 +16,8 @@ const emit = defineEmits<{
     (e: 'update:modelValue', value: Tab): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const tab = useVModel(props, 'modelValue', emit);
@@ -46,7 +48,7 @@ const { data: tlds } = useLazyAsyncData('internet-tlds', () => listTLDs());
 
 async function listTLDs(): Promise<TLD[]> {
     try {
-        const call = getGRPCInternetDomainsClient().listTLDs({});
+        const call = $grpc.internet.domain.listTLDs({});
         const { response } = await call;
 
         return response.tlds;
@@ -66,7 +68,7 @@ const {
 
 async function checkDomainAvailability(): Promise<CheckDomainAvailabilityResponse> {
     try {
-        const call = getGRPCInternetDomainsClient().checkDomainAvailability({
+        const call = $grpc.internet.domain.checkDomainAvailability({
             tldId: state.tldId,
             name: state.search,
         });

@@ -29,6 +29,8 @@ const props = defineProps<{
     qualificationId: number;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const { t } = useI18n();
 
 const { can } = useAuth();
@@ -46,7 +48,7 @@ const {
 
 async function getQualification(qualificationId: number): Promise<GetQualificationResponse> {
     try {
-        const call = getGRPCQualificationsClient().getQualification({
+        const call = $grpc.qualifications.qualifications.getQualification({
             qualificationId: qualificationId,
         });
         const { response } = await call;
@@ -60,7 +62,7 @@ async function getQualification(qualificationId: number): Promise<GetQualificati
 
 async function deleteQualification(qualificationId: number): Promise<DeleteQualificationResponse> {
     try {
-        const call = getGRPCQualificationsClient().deleteQualification({
+        const call = $grpc.qualifications.qualifications.deleteQualification({
             qualificationId: qualificationId,
         });
         const { response } = await call;
