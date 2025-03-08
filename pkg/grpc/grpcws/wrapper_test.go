@@ -636,14 +636,14 @@ type testServiceImpl struct{}
 
 func (s *testServiceImpl) PingEmpty(ctx context.Context, _ *google_protobuf.Empty) (*testproto.PingResponse, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Info("Handling PingEmpty")
+	grpclog.Info("handling PingEmpty")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return &testproto.PingResponse{Value: "foobar"}, nil
 }
 
 func (s *testServiceImpl) Ping(ctx context.Context, ping *testproto.PingRequest) (*testproto.PingResponse, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Info("Handling Ping")
+	grpclog.Info("handling Ping")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return &testproto.PingResponse{Value: ping.Value}, nil
 }
@@ -652,11 +652,11 @@ func (s *testServiceImpl) PingError(ctx context.Context, ping *testproto.PingReq
 	md, _ := metadata.FromIncomingContext(ctx)
 	if _, exists := md[useFlushForHeaders]; exists {
 		grpc.SendHeader(ctx, expectedHeaders)
-		grpclog.Info("Handling PingError with flushed headers")
+		grpclog.Info("handling PingError with flushed headers")
 
 	} else {
 		grpc.SetHeader(ctx, expectedHeaders)
-		grpclog.Info("Handling PingError without flushing")
+		grpclog.Info("handling PingError without flushing")
 	}
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return nil, grpc.Errorf(codes.Unimplemented, "Not implemented PingError")
@@ -665,7 +665,7 @@ func (s *testServiceImpl) PingError(ctx context.Context, ping *testproto.PingReq
 func (s *testServiceImpl) PingList(ping *testproto.PingRequest, stream testproto.TestService_PingListServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Info("Handling PingList")
+	grpclog.Info("handling PingList")
 	for i := int32(0); i < int32(expectedListResponses); i++ {
 		stream.Send(&testproto.PingResponse{Value: fmt.Sprintf("%s %d", ping.Value, i), Counter: i})
 	}
@@ -675,7 +675,7 @@ func (s *testServiceImpl) PingList(ping *testproto.PingRequest, stream testproto
 func (s *testServiceImpl) PingStream(stream testproto.TestService_PingStreamServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Info("Handling PingStream")
+	grpclog.Info("handling PingStream")
 	allValues := ""
 	for {
 		in, err := stream.Recv()
@@ -708,7 +708,7 @@ func (s *testServiceImpl) PingStream(stream testproto.TestService_PingStreamServ
 
 func (s *testServiceImpl) Echo(ctx context.Context, text *testproto.TextMessage) (*testproto.TextMessage, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Info("Handling Echo")
+	grpclog.Info("handling Echo")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return text, nil
 }
@@ -716,7 +716,7 @@ func (s *testServiceImpl) Echo(ctx context.Context, text *testproto.TextMessage)
 func (s *testServiceImpl) PingPongBidi(stream testproto.TestService_PingPongBidiServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Info("Handling PingPongBidi")
+	grpclog.Info("handling PingPongBidi")
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {

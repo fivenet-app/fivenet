@@ -154,7 +154,7 @@ func (w *base64ResponseWriter) Flush() {
 	err := w.encoder.Close()
 	if err != nil {
 		// Must ignore this error since Flush() is not defined as returning an error
-		grpclog.Errorf("ignoring error Flushing base64 encoder: %v", err)
+		grpclog.Errorf("ignoring error flushing base64 encoder: %v", err)
 	}
 	w.newEncoder()
 	flushWriter(w.wrapped)

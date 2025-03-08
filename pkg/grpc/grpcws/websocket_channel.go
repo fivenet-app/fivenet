@@ -32,7 +32,7 @@ type WebsocketChannel struct {
 }
 
 type GrpcStream struct {
-	mutex sync.Mutex
+	mu sync.Mutex
 
 	id                uint32
 	hasWrittenHeaders bool
@@ -81,7 +81,7 @@ func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx co
 func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize int) *GrpcStream {
 	ctx, cancel := context.WithCancel(channel.context)
 	return &GrpcStream{
-		mutex: sync.Mutex{},
+		mu: sync.Mutex{},
 
 		id:              streamId,
 		inputFrames:     make(chan *grpcws.GrpcFrame, streamBufferSize),
@@ -171,8 +171,8 @@ func (ws *WebsocketChannel) writeError(streamId uint32, message string) error {
 }
 
 func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
-	ws.mutex.Lock()
-	defer ws.mutex.Unlock()
+	ws.mutex.RLock()
+	defer ws.mutex.RUnlock()
 
 	return ws.activeStreams[streamId]
 }
@@ -258,7 +258,7 @@ func (ws *WebsocketChannel) poll() error {
 	case *grpcws.GrpcFrame_Cancel:
 		// grpclog.Infof("received cancel for stream %v", frame.StreamId)
 		if stream == nil {
-			// If a stream is being cancelled and it's not there anymore, no error here
+			// If a stream is being cancelled and it's not there anymore, don't return an error
 			return nil
 		}
 
@@ -288,6 +288,7 @@ func (ws *WebsocketChannel) poll() error {
 
 	default:
 	}
+
 	return nil
 }
 
@@ -344,20 +345,11 @@ func (w *WebsocketChannel) ping() {
 		select {
 		case <-w.context.Done():
 			return
+
 		case <-w.timer.C:
 			w.timer.Reset(w.timeOutInterval)
 
-			stream := func() *GrpcStream {
-				w.mutex.Lock()
-				defer w.mutex.Unlock()
-
-				stream, ok := w.activeStreams[0]
-				if !ok {
-					return nil
-				}
-				return stream
-			}()
-
+			stream := w.getStream(0)
 			if stream == nil {
 				return
 			}
@@ -370,8 +362,8 @@ func (w *WebsocketChannel) ping() {
 func (ws *WebsocketChannel) Close() {}
 
 func (stream *GrpcStream) Close() error {
-	stream.mutex.Lock()
-	defer stream.mutex.Unlock()
+	stream.mu.Lock()
+	defer stream.mu.Unlock()
 
 	if st, ok := stream.responseHeaders["Grpc-Status"]; ok && (len(st) == 0 || st[0] != "0") {
 		statusCode := st[0]
@@ -406,6 +398,7 @@ func (stream *GrpcStream) Close() error {
 	defer stream.cancel()
 	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
 	stream.channel.deleteStream(stream.id)
+
 	return nil
 }
 
