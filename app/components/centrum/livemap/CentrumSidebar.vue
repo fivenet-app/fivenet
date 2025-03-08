@@ -260,13 +260,15 @@ onBeforeMount(async () => {
         } catch (e) {
             logger.error('exception during centrum stream', e);
         }
-    }, 550);
+    }, 500);
 
     toggleSidebarBasedOnUnit();
     toggleRequireUnitNotification();
 });
 
-onBeforeUnmount(() => stopStream());
+onBeforeRouteLeave(async () => {
+    await stopStream();
+});
 
 const attentionSound = useSounds('/sounds/centrum/attention.mp3', { playbackRate: 1.85 });
 

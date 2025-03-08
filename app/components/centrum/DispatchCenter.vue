@@ -16,12 +16,26 @@ const { can } = useAuth();
 
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
-const { startStream } = centrumStore;
+const { startStream, stopStream } = centrumStore;
 
-onMounted(async () => useTimeoutFn(async () => startStream(true), 250));
+onBeforeMount(async () => {
+    useTimeoutFn(async () => {
+        try {
+            startStream();
+        } catch (e) {
+            logger.error('exception during centrum stream', e);
+        }
+    }, 500);
+});
 
-const mount = ref(false);
-onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
+onBeforeRouteLeave(async (to) => {
+    // Don't end centrum stream if user is switching to livemap page
+    if (to.path.startsWith('/livemap')) {
+        return;
+    }
+
+    await stopStream();
+});
 </script>
 
 <template>
@@ -35,7 +49,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         </UDashboardNavbar>
 
         <div class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden">
-            <Splitpanes v-if="mount" class="relative">
+            <Splitpanes class="relative">
                 <Pane :min-size="25">
                     <div class="relative z-0 size-full">
                         <div
