@@ -9,23 +9,27 @@ const { zoom } = storeToRefs(livemapStore);
 <template>
     <LControl position="topleft">
         <UButtonGroup orientation="vertical" class="inline-flex w-full flex-col">
-            <UButton
-                class="inset-0 inline-flex items-center justify-center border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
-                @click="if (zoom + 1 <= 7) zoom++;"
-            >
-                <UIcon name="i-mdi-plus-thick" class="size-5" />
-            </UButton>
+            <UTooltip :text="$t('common.zoom_in')" :popper="{ placement: 'right' }">
+                <UButton
+                    icon="i-mdi-plus-thick"
+                    block
+                    class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
+                    @click="if (zoom + 1 <= 7) zoom++;"
+                />
+            </UTooltip>
 
-            <UButton class="inset-0 inline-flex select-none items-center justify-center border border-black/20 bg-clip-padding">
-                {{ zoom }}
-            </UButton>
+            <UTooltip :text="$t('common.zoom')" :popper="{ placement: 'right' }">
+                <UButton :label="zoom" block class="inset-0 select-none border border-black/20 bg-clip-padding" />
+            </UTooltip>
 
-            <UButton
-                class="inset-0 inline-flex items-center justify-center border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
-                @click="if (zoom - 1 >= 1) zoom--;"
-            >
-                <UIcon name="i-mdi-minus-thick" class="size-5" />
-            </UButton>
+            <UTooltip :text="$t('common.zoom_out')" :popper="{ placement: 'right' }">
+                <UButton
+                    icon="i-mdi-minus-thick"
+                    block
+                    class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
+                    @click="if (zoom - 1 >= 1) zoom--;"
+                />
+            </UTooltip>
         </UButtonGroup>
     </LControl>
 </template>

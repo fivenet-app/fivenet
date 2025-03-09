@@ -562,7 +562,11 @@
         "found": "{0} gefunden",
         "attachment": "Anhang | Anhänge",
         "layers": "Keine Ebenen | {n} Ebene | {n} Ebenen",
-        "layer": "Ebene | Ebenen"
+        "layer": "Ebene | Ebenen",
+        "all_dispatches": "Alle Einsätze",
+        "zoom": "Zoomstufe",
+        "zoom_in": "Vergrößern",
+        "zoom_out": "Verkleinern"
     },
     "components": {
         "partials": {

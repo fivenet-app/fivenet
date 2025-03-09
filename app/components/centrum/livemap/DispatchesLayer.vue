@@ -17,7 +17,7 @@ const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
-const { addOrUpdateLivemapLayer } = settingsStore;
+const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
@@ -34,6 +34,10 @@ const dispatchesFiltered = computedAsync(async () =>
 );
 
 onBeforeMount(() => {
+    addOrUpdateLivemapCategory({
+        key: 'dispatches',
+        label: t('common.dispatch', 2),
+    });
     addOrUpdateLivemapLayer({
         key: 'dispatches_own',
         category: 'dispatches',
@@ -43,7 +47,7 @@ onBeforeMount(() => {
     addOrUpdateLivemapLayer({
         key: 'dispatches_all',
         category: 'dispatches',
-        label: t('common.dispatch', 2),
+        label: t('common.all_dispatches'),
         perm: 'CentrumService.Stream',
     });
 });

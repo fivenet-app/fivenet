@@ -562,7 +562,11 @@
         "found": "Found {0}",
         "attachment": "Attachment | Attachments",
         "layers": "No Layers | {n} Layer | {n} Layers",
-        "layer": "Layer | Layers"
+        "layer": "Layer | Layers",
+        "all_dispatches": "All Dispatches",
+        "zoom": "Zoom",
+        "zoom_in": "Zoom In",
+        "zoom_out": "Zoom Out"
     },
     "components": {
         "partials": {

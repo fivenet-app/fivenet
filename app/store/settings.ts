@@ -16,6 +16,11 @@ export type LivemapLayer = {
     };
 };
 
+export type LivemapLayerCategory = {
+    key: string;
+    label: string;
+};
+
 export const useSettingsStore = defineStore(
     'settings',
     () => {
@@ -36,6 +41,7 @@ export const useSettingsStore = defineStore(
         });
 
         const livemapLayers = ref<LivemapLayer[]>([]);
+        const livemapLayerCategories = ref<LivemapLayerCategory[]>([]);
 
         const startpage = ref<string>('/overview');
         const design = ref({
@@ -74,6 +80,19 @@ export const useSettingsStore = defineStore(
             nuiResourceName.value = resourceName;
         };
 
+        const addOrUpdateLivemapCategory = (category: LivemapLayerCategory): void => {
+            const idx = livemapLayerCategories.value.findIndex((l) => l.key === category.key);
+            if (idx === -1) {
+                livemapLayerCategories.value.push(category);
+                return;
+            }
+
+            const current = livemapLayerCategories.value[idx]!;
+            if (current.label !== category.label) {
+                current.label = category.label;
+            }
+            current.label = category.label;
+        };
         const addOrUpdateLivemapLayer = (layer: LivemapLayer): void => {
             const idx = livemapLayers.value.findIndex((l) => l.key === layer.key);
             if (idx === -1) {
@@ -112,6 +131,7 @@ export const useSettingsStore = defineStore(
             nuiEnabled,
             nuiResourceName,
             livemap,
+            livemapLayerCategories,
             livemapLayers,
             startpage,
             design,
@@ -124,6 +144,7 @@ export const useSettingsStore = defineStore(
             setVersion,
             setUpdateAvailable,
             setNuiSettings,
+            addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
 
             getUserLocale,
@@ -131,7 +152,7 @@ export const useSettingsStore = defineStore(
     },
     {
         persist: {
-            omit: ['updateAvailable'],
+            omit: ['updateAvailable', 'livemapLayerCategories'],
         },
     },
 );

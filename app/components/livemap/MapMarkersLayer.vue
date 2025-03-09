@@ -15,7 +15,7 @@ const livemapStore = useLivemapStore();
 const { jobsMarkers, markersMarkers } = storeToRefs(livemapStore);
 
 const settingsStore = useSettingsStore();
-const { addOrUpdateLivemapLayer } = settingsStore;
+const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 watch(jobsMarkers, () =>
@@ -23,7 +23,7 @@ watch(jobsMarkers, () =>
         addOrUpdateLivemapLayer({
             key: `markers_${job.name}`,
             category: 'markers',
-            label: `${t('common.marker', 2)} ${job.label}`,
+            label: job.label,
             perm: 'LivemapperService.Stream',
             attr: {
                 key: 'Markers',
@@ -31,6 +31,13 @@ watch(jobsMarkers, () =>
             },
         }),
     ),
+);
+
+onBeforeMount(async () =>
+    addOrUpdateLivemapCategory({
+        key: 'markers',
+        label: t('common.marker', 2),
+    }),
 );
 </script>
 

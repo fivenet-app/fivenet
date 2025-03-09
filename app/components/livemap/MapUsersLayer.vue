@@ -30,7 +30,7 @@ const { jobsUsers, markersUsers } = storeToRefs(livemapStore);
 const { startStream, stopStream } = livemapStore;
 
 const settingsStore = useSettingsStore();
-const { addOrUpdateLivemapLayer } = settingsStore;
+const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
 const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 watch(jobsUsers, () =>
@@ -38,7 +38,7 @@ watch(jobsUsers, () =>
         addOrUpdateLivemapLayer({
             key: `users_${job.name}`,
             category: 'users',
-            label: `${t('common.employee', 2)} ${job.label}`,
+            label: job.label,
             perm: 'LivemapperService.Stream',
             attr: {
                 key: 'Players',
@@ -49,6 +49,11 @@ watch(jobsUsers, () =>
 );
 
 onBeforeMount(async () => {
+    addOrUpdateLivemapCategory({
+        key: 'users',
+        label: t('common.employee', 2),
+    });
+
     useTimeoutFn(async () => {
         try {
             startStream();
