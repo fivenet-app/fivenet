@@ -560,7 +560,9 @@
         "search_result": "Search Result | Search Results",
         "search_results": "No Search Results | {n} Search Result | {n} Search Results",
         "found": "Found {0}",
-        "attachment": "Attachment | Attachments"
+        "attachment": "Attachment | Attachments",
+        "layers": "No Layers | {n} Layer | {n} Layers",
+        "layer": "Layer | Layers"
     },
     "components": {
         "partials": {

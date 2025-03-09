@@ -31,7 +31,7 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 	}
 
 	perms := make(collections.Permissions, len(ps))
-	for i := 0; i < len(ps); i++ {
+	for i := range ps {
 		perms[i] = &model.FivenetPermissions{
 			ID:        ps[i].ID,
 			Category:  string(ps[i].Category),

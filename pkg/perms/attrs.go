@@ -509,6 +509,21 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 				guard := Guard(aKey + "." + v)
 				as = append(as, guard)
 			}
+
+		case permissions.JobListAttributeType:
+			aKey := BuildGuardWithKey(attr.Category, attr.Name, Key(rAttr.Key))
+			for _, v := range rAttr.Value.GetJobList().Strings {
+				guard := Guard(aKey + "." + v)
+				as = append(as, guard)
+			}
+
+		case permissions.JobGradeListAttributeType:
+			// Only generate jobs as attribute
+			aKey := BuildGuardWithKey(attr.Category, attr.Name, Key(rAttr.Key))
+			for v := range rAttr.Value.GetJobGradeList().GetJobs() {
+				guard := Guard(aKey + "." + v)
+				as = append(as, guard)
+			}
 		}
 	}
 

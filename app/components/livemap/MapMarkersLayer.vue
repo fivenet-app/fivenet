@@ -9,11 +9,29 @@ defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;
 }>();
 
+const { t } = useI18n();
+
 const livemapStore = useLivemapStore();
 const { jobsMarkers, markersMarkers } = storeToRefs(livemapStore);
 
 const settingsStore = useSettingsStore();
-const { livemap } = storeToRefs(settingsStore);
+const { addOrUpdateLivemapLayer } = settingsStore;
+const { livemap, livemapLayers } = storeToRefs(settingsStore);
+
+watch(jobsMarkers, () =>
+    jobsMarkers.value.forEach((job) =>
+        addOrUpdateLivemapLayer({
+            key: `markers_${job.name}`,
+            category: 'markers',
+            label: `${t('common.marker', 2)} ${job.label}`,
+            perm: 'LivemapperService.Stream',
+            attr: {
+                key: 'Markers',
+                val: job.name,
+            },
+        }),
+    ),
+);
 </script>
 
 <template>
@@ -22,7 +40,7 @@ const { livemap } = storeToRefs(settingsStore);
         :key="job.name"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
-        :visible="livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.marker', 2)} ${job.label}`)"
+        :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible"
     >
         <MapMarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"

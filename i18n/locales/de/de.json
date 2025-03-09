@@ -560,7 +560,9 @@
         "search_result": "Suchergebnis | Suchergebnisse",
         "search_results": "Keine Suchergebnisse | {n} Suchergebnis | {n} Suchergebnisse",
         "found": "{0} gefunden",
-        "attachment": "Anhang | Anhänge"
+        "attachment": "Anhang | Anhänge",
+        "layers": "Keine Ebenen | {n} Ebene | {n} Ebenen",
+        "layer": "Ebene | Ebenen"
     },
     "components": {
         "partials": {

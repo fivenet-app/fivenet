@@ -1,7 +1,20 @@
 import { defineStore } from 'pinia';
 import type { Locale } from 'vue-i18n';
+import type { Perms } from '~~/gen/ts/perms';
 
 export const logger = useLogger('⚙️ Settings');
+
+export type LivemapLayer = {
+    key: string;
+    label: string;
+    category: string;
+    visible?: boolean;
+    perm?: Perms;
+    attr?: {
+        key: string;
+        val: string;
+    };
+};
 
 export const useSettingsStore = defineStore(
     'settings',
@@ -20,8 +33,9 @@ export const useSettingsStore = defineStore(
             showUnitNames: true,
             showUnitStatus: true,
             showAllDispatches: false,
-            activeLayers: [] as string[],
         });
+
+        const livemapLayers = ref<LivemapLayer[]>([]);
 
         const startpage = ref<string>('/overview');
         const design = ref({
@@ -60,6 +74,26 @@ export const useSettingsStore = defineStore(
             nuiResourceName.value = resourceName;
         };
 
+        const addOrUpdateLivemapLayer = (layer: LivemapLayer): void => {
+            const idx = livemapLayers.value.findIndex((l) => l.key === layer.key);
+            if (idx === -1) {
+                layer.visible = true;
+                livemapLayers.value.push(layer);
+                return;
+            }
+
+            const current = livemapLayers.value[idx]!;
+            if (current.label !== layer.label) {
+                current.label = layer.label;
+            }
+            current.category = layer.category;
+            if (layer.visible !== undefined) {
+                current.visible = layer.visible;
+            }
+            current.perm = layer.perm;
+            current.attr = layer.attr;
+        };
+
         // Getters
         const getUserLocale = computed<Locale>(() => {
             if (locale.value !== undefined) {
@@ -78,6 +112,7 @@ export const useSettingsStore = defineStore(
             nuiEnabled,
             nuiResourceName,
             livemap,
+            livemapLayers,
             startpage,
             design,
             audio,
@@ -89,6 +124,7 @@ export const useSettingsStore = defineStore(
             setVersion,
             setUpdateAvailable,
             setNuiSettings,
+            addOrUpdateLivemapLayer,
 
             getUserLocale,
         };

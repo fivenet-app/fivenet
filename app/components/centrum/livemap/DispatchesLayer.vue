@@ -9,13 +9,16 @@ defineProps<{
     showAllDispatches?: boolean;
 }>();
 
+const { t } = useI18n();
+
 const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
-const { livemap } = storeToRefs(settingsStore);
+const { addOrUpdateLivemapLayer } = settingsStore;
+const { livemap, livemapLayers } = storeToRefs(settingsStore);
 
 const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
@@ -29,10 +32,25 @@ const dispatchesFiltered = computedAsync(async () =>
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
     ),
 );
+
+onBeforeMount(() => {
+    addOrUpdateLivemapLayer({
+        key: 'dispatches_own',
+        category: 'dispatches',
+        label: t('common.your_dispatches'),
+        perm: 'CentrumService.Stream',
+    });
+    addOrUpdateLivemapLayer({
+        key: 'dispatches_all',
+        category: 'dispatches',
+        label: t('common.dispatch', 2),
+        perm: 'CentrumService.Stream',
+    });
+});
 </script>
 
 <template>
-    <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
+    <LLayerGroup key="dispatches_own" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :key="dispatch"
@@ -47,14 +65,11 @@ const dispatchesFiltered = computedAsync(async () =>
     </LLayerGroup>
 
     <LLayerGroup
-        key="all_dispatches"
+        key="dispatches_all"
         :name="$t('common.dispatch', 2)"
         layer-type="overlay"
         :visible="
-            showAllDispatches ||
-            livemap.activeLayers.length === 0 ||
-            livemap.activeLayers.includes($t('common.dispatch', 2)) ||
-            dispatchQuery.length > 0
+            showAllDispatches || livemapLayers.find((l) => l.key === `dispatches_all`)?.visible || dispatchQuery.length > 0
         "
     >
         <DispatchMarker

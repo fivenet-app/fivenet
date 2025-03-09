@@ -29,7 +29,7 @@ const { can } = useAuth();
 const slideover = useSlideover();
 
 const settingsStore = useSettingsStore();
-const { livemap, nuiEnabled } = storeToRefs(settingsStore);
+const { nuiEnabled } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
 const { startStream } = livemapStore;
@@ -82,19 +82,6 @@ if (nuiEnabled.value) {
     });
 }
 
-function addActiveLayer(name: string): void {
-    if (!livemap.value.activeLayers.includes(name)) {
-        livemap.value.activeLayers.push(name);
-    }
-}
-
-function removeActiveLayer(name: string): void {
-    const idx = livemap.value.activeLayers.indexOf(name);
-    if (idx > -1) {
-        livemap.value.activeLayers.splice(idx, 1);
-    }
-}
-
 const reconnectingDebounced = useDebounce(reconnecting, 500);
 const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 </script>
@@ -117,11 +104,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
             />
         </div>
 
-        <BaseMap
-            :map-options="mapOptions"
-            @overlayadd="addActiveLayer($event.name)"
-            @overlayremove="removeActiveLayer($event.name)"
-        >
+        <BaseMap :map-options="mapOptions">
             <template #default>
                 <LControl position="bottomright">
                     <SettingsButton />

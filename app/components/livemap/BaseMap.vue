@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
+import { LControl, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import type L from 'leaflet';
 import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet-contextmenu';
@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { ValueOf } from '~/utils/types';
+import LayerControls from './controls/LayerControls.vue';
 
 defineProps<{
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
@@ -190,12 +191,8 @@ async function onMapReady(map: L.Map): Promise<void> {
         updateBackground(event.name);
     });
 
-    map.on('overlayadd', (event) => {
-        emit('overlayadd', event);
-    });
-    map.on('overlayremove', (event) => {
-        emit('overlayremove', event);
-    });
+    map.on('overlayadd', (event) => emit('overlayadd', event));
+    map.on('overlayremove', (event) => emit('overlayremove', event));
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
         if (!event.latlng) {
@@ -254,7 +251,7 @@ onBeforeUnmount(() => {
                 :max-zoom="7"
             />
 
-            <LControlLayers />
+            <LayerControls />
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
             <LControl position="bottomleft" class="leaflet-control-attribution">

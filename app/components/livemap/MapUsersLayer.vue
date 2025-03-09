@@ -23,12 +23,30 @@ defineEmits<{
     (e: 'userSelected', marker: UserMarker): void;
 }>();
 
+const { t } = useI18n();
+
 const livemapStore = useLivemapStore();
 const { jobsUsers, markersUsers } = storeToRefs(livemapStore);
 const { startStream, stopStream } = livemapStore;
 
 const settingsStore = useSettingsStore();
-const { livemap } = storeToRefs(settingsStore);
+const { addOrUpdateLivemapLayer } = settingsStore;
+const { livemap, livemapLayers } = storeToRefs(settingsStore);
+
+watch(jobsUsers, () =>
+    jobsUsers.value.forEach((job) =>
+        addOrUpdateLivemapLayer({
+            key: `users_${job.name}`,
+            category: 'users',
+            label: `${t('common.employee', 2)} ${job.label}`,
+            perm: 'LivemapperService.Stream',
+            attr: {
+                key: 'Players',
+                val: job.name,
+            },
+        }),
+    ),
+);
 
 onBeforeMount(async () => {
     useTimeoutFn(async () => {
@@ -66,9 +84,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         :key="job.name"
         :name="`${$t('common.employee', 2)} ${job.label}`"
         layer-type="overlay"
-        :visible="
-            livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.employee', 2)} ${job.label}`)
-        "
+        :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible"
     >
         <MapUserMarker
             v-for="marker in playerMarkersFiltered?.filter((m) => m.info?.job === job.name)"
