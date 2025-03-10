@@ -90,7 +90,8 @@ build-go:
 		-a \
 		-installsuffix cgo \
 		-ldflags "-X github.com/fivenet-app/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
-		-o fivenet .
+		-o fivenet \
+		.
 
 .PHONY: build-js
 build-js:

@@ -4,22 +4,18 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
-    nixpkgs-stable.url = "github:nixos/nixpkgs?ref=nixos-24.11";
   };
 
-  outputs = { self, nixpkgs, nixpkgs-stable }:
+  outputs = { self, nixpkgs }:
     let
       goMajorVersion = 1;
-      goMinorVersion = 23; # Change this to update the whole stack
+      goMinorVersion = 24; # Change this to update the whole stack
 
       supportedSystems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
       forEachSupportedSystem = f: nixpkgs.lib.genAttrs supportedSystems (system: f {
         pkgs = import nixpkgs {
           inherit system;
           overlays = [ self.overlays.default ];
-        };
-        stablePkgs = import nixpkgs-stable {
-          inherit system;
         };
       });
 
@@ -30,14 +26,14 @@
         go = final."go_${toString goMajorVersion}_${toString goMinorVersion}";
       };
 
-      devShells = forEachSupportedSystem ({ pkgs, stablePkgs }: {
+      devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
           # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
           hardeningDisable = [ "fortify" ];
 
           packages = with pkgs; [
-            # go and tools
-            stablePkgs.go
+            # go
+            go
             # goimports, godoc, etc.
             gotools
             gofumpt
