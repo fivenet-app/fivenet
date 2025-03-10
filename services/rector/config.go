@@ -55,6 +55,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 	defer s.aud.Log(auditEntry, req)
 
 	req.Config.Default()
+	req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title)
 
 	stmt := tConfig.
 		INSERT(
@@ -94,8 +95,6 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 		})
 	} else {
 		// Check if an updated banner message event is needed by md5 hashing the title and using that as the ID
-		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title)
-
 		if currentConfig.System.BannerMessage == nil || currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id {
 			s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
 				Data: &notifications.SystemEvent_BannerMessage{
