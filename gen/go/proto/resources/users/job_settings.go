@@ -1,11 +1,6 @@
 package users
 
-import (
-	"database/sql/driver"
-
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
-	"google.golang.org/protobuf/encoding/protojson"
-)
+import "slices"
 
 const (
 	DefaultJobAbsencePastDays   = 7
@@ -21,23 +16,26 @@ func (x *JobSettings) Default() {
 	}
 }
 
-// Scan implements driver.Valuer for protobuf JobSettings.
-func (x *JobSettings) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
+func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
+	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != ""
 }
 
-// Value marshals the value into driver.Valuer.
-func (x *JobSettings) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
+func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
+	if x.Changes == nil {
+		x.Changes = []*DiscordSyncChange{}
 	}
 
-	out, err := protoutils.Marshal(x)
-	return string(out), err
+	if len(x.Changes) > 0 {
+		lastChange := x.Changes[len(x.Changes)-1]
+
+		if lastChange.Plan == change.Plan {
+			return
+		}
+	}
+
+	x.Changes = append(x.Changes, change)
+
+	if len(x.Changes) > 12 {
+		x.Changes = slices.Delete(x.Changes, 0, 1)
+	}
 }

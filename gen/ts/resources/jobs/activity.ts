@@ -61,6 +61,8 @@ export interface JobsUserActivity {
     data?: JobsUserActivityData;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.jobs.JobsUserActivityData
  */
 export interface JobsUserActivityData {

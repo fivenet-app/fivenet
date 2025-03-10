@@ -682,6 +682,7 @@ func (x *QualificationRequirement) GetTargetQualification() *QualificationShort 
 	return nil
 }
 
+// @dbscanner: json
 type QualificationDiscordSettings struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	RoleName      *string                `protobuf:"bytes,1,opt,name=role_name,json=roleName,proto3,oneof" json:"role_name,omitempty"`
@@ -734,6 +735,7 @@ func (x *QualificationDiscordSettings) GetRoleFormat() string {
 	return ""
 }
 
+// @dbscanner: json
 type QualificationExamSettings struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Time          *durationpb.Duration   `protobuf:"bytes,1,opt,name=time,proto3" json:"time,omitempty"`

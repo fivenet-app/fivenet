@@ -23,6 +23,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// @dbscanner: json
 type Workflow struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	Reminder          bool                   `protobuf:"varint,1,opt,name=reminder,proto3" json:"reminder,omitempty"`

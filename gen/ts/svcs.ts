@@ -4,10 +4,12 @@
 // source: resources/calendar/access.proto
 // source: resources/calendar/calendar.proto
 // source: resources/centrum/access.proto
+// source: resources/centrum/attributes.proto
 // source: resources/centrum/dispatches.proto
-// source: resources/centrum/general.proto
+// source: resources/centrum/disponents.proto
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
+// source: resources/centrum/user_unit.proto
 // source: resources/common/error.proto
 // source: resources/common/i18n.proto
 // source: resources/common/uuid.proto

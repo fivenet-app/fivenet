@@ -12,7 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../jobs/colleagues";
 import { UnitAccess } from "./access";
-import { Attributes } from "./general";
+import { UnitAttributes } from "./attributes";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Unit
@@ -67,9 +67,9 @@ export interface Unit {
      */
     users: UnitAssignment[];
     /**
-     * @generated from protobuf field: optional resources.centrum.Attributes attributes = 12;
+     * @generated from protobuf field: optional resources.centrum.UnitAttributes attributes = 12;
      */
-    attributes?: Attributes;
+    attributes?: UnitAttributes;
     /**
      * @generated from protobuf field: optional string home_postal = 13;
      */
@@ -231,7 +231,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
-            { no: 12, name: "attributes", kind: "message", T: () => Attributes },
+            { no: 12, name: "attributes", kind: "message", T: () => UnitAttributes },
             { no: 13, name: "home_postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 14, name: "access", kind: "message", T: () => UnitAccess }
         ]);
@@ -283,8 +283,8 @@ class Unit$Type extends MessageType<Unit> {
                 case /* repeated resources.centrum.UnitAssignment users */ 11:
                     message.users.push(UnitAssignment.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.centrum.Attributes attributes */ 12:
-                    message.attributes = Attributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                case /* optional resources.centrum.UnitAttributes attributes */ 12:
+                    message.attributes = UnitAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
                     break;
                 case /* optional string home_postal */ 13:
                     message.homePostal = reader.string();
@@ -334,9 +334,9 @@ class Unit$Type extends MessageType<Unit> {
         /* repeated resources.centrum.UnitAssignment users = 11; */
         for (let i = 0; i < message.users.length; i++)
             UnitAssignment.internalBinaryWrite(message.users[i], writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.centrum.Attributes attributes = 12; */
+        /* optional resources.centrum.UnitAttributes attributes = 12; */
         if (message.attributes)
-            Attributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            UnitAttributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* optional string home_postal = 13; */
         if (message.homePostal !== undefined)
             writer.tag(13, WireType.LengthDelimited).string(message.homePostal);

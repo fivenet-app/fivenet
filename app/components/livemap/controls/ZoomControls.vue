@@ -19,7 +19,7 @@ const { zoom } = storeToRefs(livemapStore);
             </UTooltip>
 
             <UTooltip :text="$t('common.zoom')" :popper="{ placement: 'right' }">
-                <UButton :label="zoom" block class="inset-0 select-none border border-black/20 bg-clip-padding" />
+                <UButton :label="zoom.toString()" block class="inset-0 select-none border border-black/20 bg-clip-padding" />
             </UTooltip>
 
             <UTooltip :text="$t('common.zoom_out')" :popper="{ placement: 'right' }">

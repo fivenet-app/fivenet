@@ -3,6 +3,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import FileUploadModal from '~/components/rector/filestore/FileUploadModal.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
@@ -190,6 +191,6 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" infinite />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </template>
 </template>

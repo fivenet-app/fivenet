@@ -207,6 +207,7 @@ func (x *JobsUserActivity) GetData() *JobsUserActivityData {
 	return nil
 }
 
+// @dbscanner: json
 type JobsUserActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

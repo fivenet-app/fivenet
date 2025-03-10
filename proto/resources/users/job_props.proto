@@ -28,6 +28,7 @@ message JobProps {
   resources.users.JobSettings settings = 13;
 }
 
+// @dbscanner: json
 message QuickButtons {
   bool penalty_calculator = 1;
   bool body_checkup = 2;

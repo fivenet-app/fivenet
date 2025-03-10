@@ -1,12 +1,5 @@
 package centrum
 
-import (
-	"database/sql/driver"
-
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
-	"google.golang.org/protobuf/encoding/protojson"
-)
-
 func (x *UnitAccess) IsEmpty() bool {
 	return len(x.Jobs) == 0 && len(x.Qualifications) == 0
 }
@@ -75,25 +68,4 @@ func (x *UnitQualificationAccess) SetQualificationId(id uint64) {
 
 func (x *UnitQualificationAccess) SetAccess(access UnitAccessLevel) {
 	x.Access = access
-}
-
-// Scan implements driver.Valuer for protobuf UnitAccess.
-func (x *UnitAccess) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *UnitAccess) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
 }

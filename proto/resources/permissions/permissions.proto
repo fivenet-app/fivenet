@@ -54,6 +54,7 @@ message RoleAttribute {
   optional AttributeValues max_values = 11;
 }
 
+// @dbscanner: json
 message AttributeValues {
   oneof valid_values {
     option (validate.required) = true;

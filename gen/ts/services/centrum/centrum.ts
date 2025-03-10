@@ -11,7 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Disponents } from "../../resources/centrum/general";
+import { Disponents } from "../../resources/centrum/disponents";
 import { Colleague } from "../../resources/jobs/colleagues";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TakeDispatchResp } from "../../resources/centrum/dispatches";

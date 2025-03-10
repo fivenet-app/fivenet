@@ -23,7 +23,7 @@ type fivenetQualificationsResultsTable struct {
 	QualificationID mysql.ColumnInteger
 	UserID          mysql.ColumnInteger
 	Status          mysql.ColumnInteger
-	Score           mysql.ColumnInteger
+	Score           mysql.ColumnFloat
 	Summary         mysql.ColumnString
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
@@ -73,7 +73,7 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
 		UserIDColumn          = mysql.IntegerColumn("user_id")
 		StatusColumn          = mysql.IntegerColumn("status")
-		ScoreColumn           = mysql.IntegerColumn("score")
+		ScoreColumn           = mysql.FloatColumn("score")
 		SummaryColumn         = mysql.StringColumn("summary")
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")

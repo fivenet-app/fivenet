@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package resources.centrum;
+
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrum";
+
+message UserUnitMapping {
+  uint64 unit_id = 1;
+  string job = 2;
+  int32 user_id = 3 [(validate.rules).int32.gte = 0];
+  resources.timestamp.Timestamp created_at = 4;
+}

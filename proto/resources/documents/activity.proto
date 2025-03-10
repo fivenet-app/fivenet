@@ -47,6 +47,7 @@ message DocActivity {
   DocActivityData data = 10;
 }
 
+// @dbscanner: json
 message DocActivityData {
   oneof data {
     option (validate.required) = true;

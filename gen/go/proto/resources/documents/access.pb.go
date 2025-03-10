@@ -85,6 +85,7 @@ func (AccessLevel) EnumDescriptor() ([]byte, []int) {
 	return file_resources_documents_access_proto_rawDescGZIP(), []int{0}
 }
 
+// @dbscanner: json
 type DocumentAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Jobs          []*DocumentJobAccess   `protobuf:"bytes,1,rep,name=jobs,proto3" json:"jobs,omitempty" alias:"job_access"`   // @gotags: alias:"job_access"

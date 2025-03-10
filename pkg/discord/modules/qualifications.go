@@ -9,10 +9,10 @@ import (
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"

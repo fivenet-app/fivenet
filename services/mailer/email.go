@@ -14,11 +14,11 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer"
 	permsmailer "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
@@ -36,9 +36,7 @@ var namePrefixCleaner = regexp.MustCompile(`(Prof\.|Dr\.|Sr(\.| ))[ ]*`)
 var (
 	tEmails = table.FivenetMailerEmails.AS("email")
 
-	tEmailsJobAccess            = table.FivenetMailerEmailsJobAccess
-	tEmailsUserAccess           = table.FivenetMailerEmailsUserAccess
-	tEmailsQualificationsAccess = table.FivenetMailerEmailsQualificationsAccess
+	tEmailsAccess = table.FivenetMailerEmailsAccess
 
 	tQualificationsResults = table.FivenetQualificationsResults
 
@@ -51,27 +49,23 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 	condition := jet.Bool(true)
 
 	if !userInfo.SuperUser || (userInfo.SuperUser && req.All != nil && !*req.All) {
-		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		// Include deactivated e-mails
 		condition = condition.AND(jet.AND(
 			tEmails.DeletedAt.IS_NULL(),
 			jet.OR(
 				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
-				jet.AND(
-					tEmailsUserAccess.Access.IS_NULL(),
-					tEmailsJobAccess.Access.IS_NOT_NULL(),
-					tEmailsJobAccess.Access.GT_EQ(jet.Int32(access)),
-				),
-				jet.AND(
-					tEmailsUserAccess.Access.IS_NOT_NULL(),
-					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
-				),
-				jet.AND(
-					tEmailsQualificationsAccess.Access.IS_NOT_NULL(),
-					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
-					tQualificationsResults.DeletedAt.IS_NULL(),
-					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
-					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+				jet.OR(
+					tEmailsAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+					jet.AND(
+						tEmailsAccess.Job.EQ(jet.String(userInfo.Job)),
+						tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+					),
+					jet.AND(
+						tEmailsAccess.QualificationID.IS_NOT_NULL(),
+						tQualificationsResults.DeletedAt.IS_NULL(),
+						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
+						tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+					),
 				),
 			),
 		))
@@ -83,20 +77,12 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 		).
 		FROM(
 			tEmails.
-				LEFT_JOIN(tEmailsJobAccess,
-					tEmailsJobAccess.EmailID.EQ(tEmails.ID).
-						AND(tEmailsJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tEmailsJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-				).
-				LEFT_JOIN(tEmailsUserAccess,
-					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
-						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-				).
-				LEFT_JOIN(tEmailsQualificationsAccess,
-					tEmailsQualificationsAccess.EmailID.EQ(tEmails.ID),
+				INNER_JOIN(tEmailsAccess,
+					tEmailsAccess.TargetID.EQ(tEmails.ID).
+						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
 				).
 				LEFT_JOIN(tQualificationsResults,
-					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID).
+					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID).
 						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 				),
 		).
@@ -155,25 +141,18 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 	}
 
 	if !userInfo.SuperUser {
-		access := int32(mailer.AccessLevel_ACCESS_LEVEL_READ)
 		condition = condition.AND(jet.AND(
 			baseCondition,
 			jet.OR(
-				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
+				tEmailsAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
-					tEmailsUserAccess.Access.IS_NOT_NULL(),
-					tEmailsUserAccess.Access.GT_EQ(jet.Int32(access)),
+					tEmailsAccess.Job.EQ(jet.String(userInfo.Job)),
+					tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 				),
 				jet.AND(
-					tEmailsUserAccess.Access.IS_NULL(),
-					tEmailsJobAccess.Access.IS_NOT_NULL(),
-					tEmailsJobAccess.Access.GT_EQ(jet.Int32(access)),
-				),
-				jet.AND(
-					tEmailsQualificationsAccess.Access.IS_NOT_NULL(),
-					tEmailsQualificationsAccess.Access.GT_EQ(jet.Int32(access)),
+					tEmailsAccess.QualificationID.IS_NOT_NULL(),
 					tQualificationsResults.DeletedAt.IS_NULL(),
-					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID),
+					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
 					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
 				),
 			),
@@ -196,20 +175,12 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 		).
 		FROM(
 			tEmails.
-				LEFT_JOIN(tEmailsUserAccess,
-					tEmailsUserAccess.EmailID.EQ(tEmails.ID).
-						AND(tEmailsUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-				).
-				LEFT_JOIN(tEmailsJobAccess,
-					tEmailsJobAccess.EmailID.EQ(tEmails.ID).
-						AND(tEmailsJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tEmailsJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-				).
-				LEFT_JOIN(tEmailsQualificationsAccess,
-					tEmailsQualificationsAccess.EmailID.EQ(tEmails.ID),
+				INNER_JOIN(tEmailsAccess,
+					tEmailsAccess.TargetID.EQ(tEmails.ID).
+						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
 				).
 				LEFT_JOIN(tQualificationsResults,
-					tQualificationsResults.QualificationID.EQ(tEmailsQualificationsAccess.QualificationID).
+					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID).
 						AND(tQualificationsResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 				),
 		).

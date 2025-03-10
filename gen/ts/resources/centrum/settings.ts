@@ -40,6 +40,8 @@ export interface Settings {
     timings?: Timings;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.centrum.PredefinedStatus
  */
 export interface PredefinedStatus {
@@ -57,6 +59,8 @@ export interface PredefinedStatus {
     dispatchStatus: string[];
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.centrum.Timings
  */
 export interface Timings {

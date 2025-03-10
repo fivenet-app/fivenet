@@ -61,6 +61,8 @@ export interface DocActivity {
     data?: DocActivityData;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.documents.DocActivityData
  */
 export interface DocActivityData {

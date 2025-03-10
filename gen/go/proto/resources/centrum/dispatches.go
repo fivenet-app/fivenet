@@ -1,12 +1,9 @@
 package centrum
 
 import (
-	"database/sql/driver"
 	"slices"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/paulmach/orb"
-	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -115,27 +112,6 @@ func (x *DispatchStatus) Point() orb.Point {
 	}
 
 	return orb.Point{*x.X, *x.Y}
-}
-
-// Scan implements driver.Valuer for protobuf DispatchReferences.
-func (x *DispatchReferences) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *DispatchReferences) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
 }
 
 func (x *DispatchReferences) Has(dspId uint64) bool {

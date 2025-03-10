@@ -172,6 +172,8 @@ export interface RoleAttribute {
     maxValues?: AttributeValues;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.permissions.AttributeValues
  */
 export interface AttributeValues {

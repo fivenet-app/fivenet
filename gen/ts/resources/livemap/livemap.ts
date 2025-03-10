@@ -136,6 +136,8 @@ export interface MarkerMarker {
     creator?: UserShort;
 }
 /**
+ * @dbscanner
+ *
  * @generated from protobuf message resources.livemap.MarkerData
  */
 export interface MarkerData {

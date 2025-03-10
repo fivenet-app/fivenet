@@ -5,6 +5,7 @@ package resources.common;
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common;common";
 
 // Wrapped translated message for the client
+// @dbscanner: json
 message TranslateItem {
   // @sanitize: method=StripTags
   string key = 1;

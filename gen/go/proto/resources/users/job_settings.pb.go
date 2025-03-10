@@ -72,6 +72,7 @@ func (UserInfoSyncUnemployedMode) EnumDescriptor() ([]byte, []int) {
 	return file_resources_users_job_settings_proto_rawDescGZIP(), []int{0}
 }
 
+// @dbscanner: json
 type DiscordSyncSettings struct {
 	state                    protoimpl.MessageState `protogen:"open.v1"`
 	DryRun                   bool                   `protobuf:"varint,1,opt,name=dry_run,json=dryRun,proto3" json:"dry_run,omitempty"`
@@ -180,6 +181,7 @@ func (x *DiscordSyncSettings) GetQualificationsRoleFormat() string {
 	return ""
 }
 
+// @dbscanner: json
 type DiscordSyncChanges struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Changes       []*DiscordSyncChange   `protobuf:"bytes,1,rep,name=changes,proto3" json:"changes,omitempty"`
@@ -569,6 +571,7 @@ func (x *GroupSyncSettings) GetIgnoredRoleIds() []string {
 	return nil
 }
 
+// @dbscanner: json
 type JobSettings struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	AbsencePastDays   int32                  `protobuf:"varint,1,opt,name=absence_past_days,json=absencePastDays,proto3" json:"absence_past_days,omitempty"`

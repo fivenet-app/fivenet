@@ -60,6 +60,8 @@ export interface PageActivity {
     data?: PageActivityData;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.wiki.PageActivityData
  */
 export interface PageActivityData {

@@ -12,11 +12,11 @@ import (
 	pbdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore"
 	permsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/fivenet-app/fivenet/pkg/access"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
@@ -37,8 +37,7 @@ var (
 	tUserProps     = table.FivenetUserProps
 	tDocument      = table.FivenetDocuments.AS("document")
 	tDocumentShort = table.FivenetDocuments.AS("documentshort")
-	tDJobAccess    = table.FivenetDocumentsJobAccess.AS("job_access")
-	tDUserAccess   = table.FivenetDocumentsUserAccess.AS("user_access")
+	tDAccess       = table.FivenetDocumentsAccess.AS("job_access")
 )
 
 func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocumentsRequest) (*pbdocstore.ListDocumentsResponse, error) {
@@ -114,16 +113,6 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 		}, req)
 	}
 
-	countStmt := s.listDocumentsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocumentShort.ID)).AS("datacount.totalcount")}, userInfo)
-
-	var count database.DataCount
-	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-		}
-	}
-
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
@@ -152,18 +141,15 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageSize)
+	pag, limit := req.Pagination.GetResponseWithPageSize(database.NoTotalCount, DocsDefaultPageSize)
 	resp := &pbdocstore.ListDocumentsResponse{
 		Pagination: pag,
-	}
-	if count.TotalCount <= 0 {
-		return resp, nil
 	}
 
 	stmt := s.listDocumentsQuery(condition, nil, userInfo).
 		ORDER_BY(orderBys...).
-		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tDocumentShort.ID).
+		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {

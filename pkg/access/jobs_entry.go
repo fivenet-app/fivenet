@@ -12,7 +12,6 @@ func (a *Jobs[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id ui
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
-			a.selectColumns.CreatedAt,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
 			a.selectColumns.Job,

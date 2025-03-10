@@ -11,9 +11,9 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore"
 	permsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
@@ -24,8 +24,8 @@ import (
 )
 
 var (
-	tDTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
-	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
+	tDTemplates       = table.FivenetDocumentsTemplates.AS("templateshort")
+	tDTemplatesAccess = table.FivenetDocumentsTemplatesAccess.AS("templatejobaccess")
 )
 
 func (s *Server) ListTemplates(ctx context.Context, req *pbdocstore.ListTemplatesRequest) (*pbdocstore.ListTemplatesResponse, error) {
@@ -51,10 +51,10 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbdocstore.ListTemplate
 		).
 		FROM(
 			tDTemplates.
-				INNER_JOIN(tDTemplatesJobAccess,
-					tDTemplatesJobAccess.TemplateID.EQ(tDTemplates.ID).
-						AND(tDTemplatesJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tDTemplatesJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				INNER_JOIN(tDTemplatesAccess,
+					tDTemplatesAccess.TargetID.EQ(tDTemplates.ID).
+						AND(tDTemplatesAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDTemplatesAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),

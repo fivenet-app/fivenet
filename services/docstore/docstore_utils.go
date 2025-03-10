@@ -7,10 +7,10 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -31,14 +31,10 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 						tDocumentShort.CreatorJob.EQ(jet.String(userInfo.Job)),
 					),
 					jet.OR(
+						tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 						jet.AND(
-							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
-						jet.AND(
-							tDUserAccess.Access.IS_NULL(),
-							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDAccess.Job.EQ(jet.String(userInfo.Job)),
+							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 						),
 					),
 				),
@@ -111,14 +107,9 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tDocumentShort.
-			LEFT_JOIN(tDUserAccess,
-				tDUserAccess.DocumentID.EQ(tDocumentShort.ID).
-					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tDJobAccess,
-				tDJobAccess.DocumentID.EQ(tDocumentShort.ID).
-					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tDAccess,
+				tDAccess.TargetID.EQ(tDocumentShort.ID).
+					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).
 			LEFT_JOIN(tDCategory,
 				tDocumentShort.CategoryID.EQ(tDCategory.ID),
@@ -163,14 +154,10 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 						tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 					),
 					jet.OR(
+						tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 						jet.AND(
-							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-						),
-						jet.AND(
-							tDUserAccess.Access.IS_NULL(),
-							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDAccess.Job.EQ(jet.String(userInfo.Job)),
+							tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 						),
 					),
 				),
@@ -253,14 +240,9 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tDocument.
-			LEFT_JOIN(tDUserAccess,
-				tDUserAccess.DocumentID.EQ(tDocument.ID).
-					AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tDJobAccess,
-				tDJobAccess.DocumentID.EQ(tDocument.ID).
-					AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tDAccess,
+				tDAccess.TargetID.EQ(tDocument.ID).
+					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).
 			LEFT_JOIN(tDCategory,
 				tDocument.CategoryID.EQ(tDCategory.ID),

@@ -10,11 +10,11 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbcalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar"
 	permscalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/services/calendar/errors"
@@ -37,7 +37,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 		)),
 	)
 
-	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_BLOCKED
+	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_VIEW
 	if req.MinAccessLevel != nil {
 		minAccessLevel = *req.MinAccessLevel
 		subsCondition = jet.Bool(false)
@@ -51,14 +51,10 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
+				tCAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
-					tCUserAccess.Access.IS_NOT_NULL(),
-					tCUserAccess.Access.GT(jet.Int32(int32(minAccessLevel))),
-				),
-				jet.AND(
-					tCUserAccess.Access.IS_NULL(),
-					tCJobAccess.Access.IS_NOT_NULL(),
-					tCJobAccess.Access.GT(jet.Int32(int32(minAccessLevel))),
+					tCAccess.Job.EQ(jet.String(userInfo.Job)),
+					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 				),
 			),
 		),
@@ -80,14 +76,9 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			jet.COUNT(jet.DISTINCT(tCalendar.ID)).AS("datacount.totalcount"),
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tCAccess,
+				tCAccess.TargetID.EQ(tCalendar.ID).
+					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
@@ -140,14 +131,9 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			tCalendarSubs.Muted,
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tCAccess,
+				tCAccess.TargetID.EQ(tCalendar.ID).
+					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),

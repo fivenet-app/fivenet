@@ -4,7 +4,7 @@ import (
 	"context"
 
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

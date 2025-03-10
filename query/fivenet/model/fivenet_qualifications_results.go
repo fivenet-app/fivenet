@@ -18,7 +18,7 @@ type FivenetQualificationsResults struct {
 	QualificationID uint64     `json:"qualification_id"`
 	UserID          int32      `json:"user_id"`
 	Status          *int16     `json:"status"`
-	Score           *int32     `json:"score"`
+	Score           *float64   `json:"score"`
 	Summary         *string    `json:"summary"`
 	CreatorID       *int32     `json:"creator_id"`
 	CreatorJob      string     `json:"creator_job"`

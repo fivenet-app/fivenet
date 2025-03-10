@@ -170,6 +170,8 @@ export interface TemplateShort {
     workflow?: Workflow;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.documents.TemplateSchema
  */
 export interface TemplateSchema {

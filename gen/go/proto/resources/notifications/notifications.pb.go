@@ -250,6 +250,7 @@ func (x *Notification) GetStarred() bool {
 	return false
 }
 
+// @dbscanner: json
 type Data struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Link          *Link                  `protobuf:"bytes,1,opt,name=link,proto3,oneof" json:"link,omitempty"`

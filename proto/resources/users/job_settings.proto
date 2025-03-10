@@ -7,6 +7,7 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
 
+// @dbscanner: json
 message DiscordSyncSettings {
   bool dry_run = 1;
 
@@ -24,6 +25,7 @@ message DiscordSyncSettings {
   string qualifications_role_format = 9 [(validate.rules).string.max_len = 64];
 }
 
+// @dbscanner: json
 message DiscordSyncChanges {
   repeated DiscordSyncChange changes = 1;
 }
@@ -72,6 +74,7 @@ message GroupSyncSettings {
   repeated string ignored_role_ids = 1 [(validate.rules).repeated = { items { string { max_len: 24 } }, max_items: 25 }];
 }
 
+// @dbscanner: json
 message JobSettings {
   int32 absence_past_days = 1 [(validate.rules).int32 = {
     gte: 0,

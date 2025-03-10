@@ -12,7 +12,6 @@ func (a *Qualifications[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
-			a.selectColumns.CreatedAt,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
 			a.selectColumns.QualificationId,

@@ -305,7 +305,7 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 
 		// Add "too old" attribute when we are able to retrieve the dispatch
 		if dsp, err := s.GetDispatch(ctx, ds.Job, ds.DispatchID); err == nil && dsp != nil {
-			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeTooOld); err != nil {
+			if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_TOO_OLD); err != nil {
 				s.logger.Error("failed to add too old attribute to cancelled dispatch", zap.Uint64("dispatch_id", ds.DispatchID), zap.Error(err))
 			}
 		}
@@ -511,7 +511,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					}
 
 					// Skip dispatches that are marked as multiple or duplicate dispatches they have already been handled
-					if closeByDsp.Attributes != nil && (closeByDsp.Attributes.Has(centrum.DispatchAttributeMultiple) || closeByDsp.Attributes.Has(centrum.DispatchAttributeDuplicate)) {
+					if closeByDsp.Attributes != nil && (closeByDsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE) || closeByDsp.Attributes.Has(centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE)) {
 						continue
 					}
 
@@ -530,7 +530,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}
 
 				// Add "multiple" attribute when multiple dispatches close by
-				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttributeMultiple); err != nil {
+				if err := s.AddAttributeToDispatch(ctx, dsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_MULTIPLE); err != nil {
 					s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
 				}
 
@@ -555,7 +555,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttributeDuplicate); err != nil {
+					if err := s.AddAttributeToDispatch(ctx, closeByDsp, centrum.DispatchAttribute_DISPATCH_ATTRIBUTE_DUPLICATE); err != nil {
 						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
 					}
 
@@ -687,7 +687,7 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 		for _, unit := range units {
 			// Either unit has users but is static and in a wrong status
 			if len(unit.Users) > 0 {
-				if unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeStatic) {
+				if unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 					continue
 				}
 

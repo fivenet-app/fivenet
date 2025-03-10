@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -59,14 +59,9 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			tCalendar.ID,
 		).
 		FROM(tCalendar.
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tCAccess,
+				tCAccess.TargetID.EQ(tCalendar.ID).
+					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
@@ -79,19 +74,15 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			jet.OR(
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				tCalendar.CreatorJob.EQ(jet.String(userInfo.Job)),
+				tCAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
-					tCUserAccess.Access.IS_NOT_NULL(),
-					tCUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-				jet.AND(
-					tCUserAccess.Access.IS_NULL(),
-					tCJobAccess.Access.IS_NOT_NULL(),
-					tCJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+					tCAccess.Job.EQ(jet.String(userInfo.Job)),
+					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 				),
 				condition,
 			),
 		)).
-		ORDER_BY(tCalendar.ID.DESC(), tCJobAccess.MinimumGrade)
+		ORDER_BY(tCalendar.ID.DESC(), tCAccess.MinimumGrade)
 
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

@@ -1,12 +1,13 @@
 package calendar
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo *userinfo.UserInfo, access calendar.AccessLevel) jet.SelectStatement {
 	tCreator := tables.Users().AS("creator")
 
 	stmt := tCalendarEntry.
@@ -49,14 +50,9 @@ func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
 					AND(tCalendar.DeletedAt.IS_NULL()),
 			).
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			INNER_JOIN(tCAccess,
+				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID).
+					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),

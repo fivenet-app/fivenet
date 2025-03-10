@@ -25,8 +25,7 @@ var (
 	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
 	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
 
-	tCJobAccess  = table.FivenetCalendarJobAccess.AS("calendar_job_access")
-	tCUserAccess = table.FivenetCalendarUserAccess.AS("calendar_user_access")
+	tCAccess = table.FivenetCalendarAccess.AS("calendar_access")
 
 	tUserProps = table.FivenetUserProps
 )
@@ -90,49 +89,45 @@ func NewServer(p Params) *Server {
 				CreatorID:  table.FivenetDocuments.CreatorID,
 			},
 			access.NewJobs[calendar.CalendarJobAccess, *calendar.CalendarJobAccess, calendar.AccessLevel](
-				table.FivenetCalendarJobAccess,
+				table.FivenetCalendarAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetCalendarJobAccess.ID,
-						CreatedAt: table.FivenetCalendarJobAccess.CreatedAt,
-						TargetID:  table.FivenetCalendarJobAccess.CalendarID,
-						Access:    table.FivenetCalendarJobAccess.Access,
+						ID:       table.FivenetCalendarAccess.ID,
+						TargetID: table.FivenetCalendarAccess.TargetID,
+						Access:   table.FivenetCalendarAccess.Access,
 					},
-					Job:          table.FivenetCalendarJobAccess.Job,
-					MinimumGrade: table.FivenetCalendarJobAccess.MinimumGrade,
+					Job:          table.FivenetCalendarAccess.Job,
+					MinimumGrade: table.FivenetCalendarAccess.MinimumGrade,
 				},
-				table.FivenetCalendarJobAccess.AS("calendar_job_access"),
+				table.FivenetCalendarAccess.AS("calendar_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetCalendarJobAccess.AS("calendar_job_access").ID,
-						CreatedAt: table.FivenetCalendarJobAccess.AS("calendar_job_access").CreatedAt,
-						TargetID:  table.FivenetCalendarJobAccess.AS("calendar_job_access").CalendarID,
-						Access:    table.FivenetCalendarJobAccess.AS("calendar_job_access").Access,
+						ID:       table.FivenetCalendarAccess.AS("calendar_job_access").ID,
+						TargetID: table.FivenetCalendarAccess.AS("calendar_job_access").TargetID,
+						Access:   table.FivenetCalendarAccess.AS("calendar_job_access").Access,
 					},
-					Job:          table.FivenetCalendarJobAccess.AS("calendar_job_access").Job,
-					MinimumGrade: table.FivenetCalendarJobAccess.AS("calendar_job_access").MinimumGrade,
+					Job:          table.FivenetCalendarAccess.AS("calendar_job_access").Job,
+					MinimumGrade: table.FivenetCalendarAccess.AS("calendar_job_access").MinimumGrade,
 				},
 			),
 			access.NewUsers[calendar.CalendarUserAccess, *calendar.CalendarUserAccess, calendar.AccessLevel](
-				table.FivenetCalendarUserAccess,
+				table.FivenetCalendarAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetCalendarUserAccess.ID,
-						CreatedAt: table.FivenetCalendarUserAccess.CreatedAt,
-						TargetID:  table.FivenetCalendarUserAccess.CalendarID,
-						Access:    table.FivenetCalendarUserAccess.Access,
+						ID:       table.FivenetCalendarAccess.ID,
+						TargetID: table.FivenetCalendarAccess.TargetID,
+						Access:   table.FivenetCalendarAccess.Access,
 					},
-					UserId: table.FivenetCalendarUserAccess.UserID,
+					UserId: table.FivenetCalendarAccess.UserID,
 				},
-				table.FivenetCalendarUserAccess.AS("calendar_user_access"),
+				table.FivenetCalendarAccess.AS("calendar_user_access"),
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetCalendarUserAccess.AS("calendar_user_access").ID,
-						CreatedAt: table.FivenetCalendarUserAccess.AS("calendar_user_access").CreatedAt,
-						TargetID:  table.FivenetCalendarUserAccess.AS("calendar_user_access").CalendarID,
-						Access:    table.FivenetCalendarUserAccess.AS("calendar_user_access").Access,
+						ID:       table.FivenetCalendarAccess.AS("calendar_user_access").ID,
+						TargetID: table.FivenetCalendarAccess.AS("calendar_user_access").TargetID,
+						Access:   table.FivenetCalendarAccess.AS("calendar_user_access").Access,
 					},
-					UserId: table.FivenetCalendarUserAccess.AS("calendar_user_access").UserID,
+					UserId: table.FivenetCalendarAccess.AS("calendar_user_access").UserID,
 				},
 			),
 			nil,

@@ -12,6 +12,8 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
 /**
+ * @dbscanner: json,partial
+ *
  * @generated from protobuf message resources.rector.AppConfig
  */
 export interface AppConfig {

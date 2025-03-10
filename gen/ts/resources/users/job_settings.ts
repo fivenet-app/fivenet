@@ -12,6 +12,8 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.DiscordSyncSettings
  */
 export interface DiscordSyncSettings {
@@ -53,6 +55,8 @@ export interface DiscordSyncSettings {
     qualificationsRoleFormat: string;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.DiscordSyncChanges
  */
 export interface DiscordSyncChanges {
@@ -158,6 +162,8 @@ export interface GroupSyncSettings {
     ignoredRoleIds: string[];
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.JobSettings
  */
 export interface JobSettings {

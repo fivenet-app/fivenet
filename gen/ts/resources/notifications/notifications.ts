@@ -63,6 +63,8 @@ export interface Notification {
     starred?: boolean;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.notifications.Data
  */
 export interface Data {

@@ -11,13 +11,13 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/wiki"
 	pbwiki "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki"
 	permswiki "github.com/fivenet-app/fivenet/gen/go/proto/services/wiki/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorswiki "github.com/fivenet-app/fivenet/services/wiki/errors"
@@ -68,14 +68,10 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 				tPageShort.Public.IS_TRUE(),
 				tPageShort.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				jet.OR(
+					tPAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 					jet.AND(
-						tPUserAccess.Access.IS_NOT_NULL(),
-						tPUserAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-					),
-					jet.AND(
-						tPUserAccess.Access.IS_NULL(),
-						tPJobAccess.Access.IS_NOT_NULL(),
-						tPJobAccess.Access.GT(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tPAccess.Job.EQ(jet.String(userInfo.Job)),
+						tPAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 					),
 				),
 			),
@@ -95,14 +91,9 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		).
 		FROM(
 			tPageShort.
-				LEFT_JOIN(tPUserAccess,
-					tPUserAccess.PageID.EQ(tPageShort.ID).
-						AND(tPUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-				).
-				LEFT_JOIN(tPJobAccess,
-					tPJobAccess.PageID.EQ(tPageShort.ID).
-						AND(tPJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tPJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				INNER_JOIN(tPAccess,
+					tPAccess.TargetID.EQ(tPageShort.ID).
+						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
 		).
 		WHERE(condition)
@@ -146,14 +137,9 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		).
 		FROM(
 			tPageShort.
-				LEFT_JOIN(tPUserAccess,
-					tPUserAccess.PageID.EQ(tPageShort.ID).
-						AND(tPUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-				).
-				LEFT_JOIN(tPJobAccess,
-					tPJobAccess.PageID.EQ(tPageShort.ID).
-						AND(tPJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tPJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				INNER_JOIN(tPAccess,
+					tPAccess.TargetID.EQ(tPAccess.ID).
+						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tPageShort.Job),

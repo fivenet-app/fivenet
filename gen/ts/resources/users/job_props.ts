@@ -73,6 +73,8 @@ export interface JobProps {
     settings?: JobSettings;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.QuickButtons
  */
 export interface QuickButtons {

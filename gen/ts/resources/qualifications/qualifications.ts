@@ -234,6 +234,8 @@ export interface QualificationRequirement {
     targetQualification?: QualificationShort; // @gotags: alias:"targetqualification.*"
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.QualificationDiscordSettings
  */
 export interface QualificationDiscordSettings {
@@ -247,6 +249,8 @@ export interface QualificationDiscordSettings {
     roleFormat?: string;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.QualificationExamSettings
  */
 export interface QualificationExamSettings {

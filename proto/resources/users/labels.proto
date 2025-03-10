@@ -6,6 +6,7 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users;users";
 
+// @dbscanner: json
 message CitizenLabels {
   repeated CitizenLabel list = 1 [(validate.rules).repeated.max_items = 10];
 }

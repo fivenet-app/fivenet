@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -15,7 +15,6 @@ func (a *Users[U, T, AccessLevel]) GetEntry(ctx context.Context, tx qrm.DB, id u
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
-			a.selectColumns.CreatedAt,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
 			a.selectColumns.UserId,

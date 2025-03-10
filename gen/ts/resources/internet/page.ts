@@ -68,6 +68,8 @@ export interface Page {
     creatorId?: number;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.internet.PageData
  */
 export interface PageData {

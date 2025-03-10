@@ -13,6 +13,8 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { QualificationShort } from "../qualifications/qualifications";
 import { Timestamp } from "../timestamp/timestamp";
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.centrum.UnitAccess
  */
 export interface UnitAccess {

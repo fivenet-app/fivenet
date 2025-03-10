@@ -178,6 +178,7 @@ func (x *ExamQuestion) GetPoints() int32 {
 	return 0
 }
 
+// @dbscanner: json
 type ExamQuestionData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:
@@ -598,6 +599,7 @@ func (x *ExamQuestionMultipleChoice) GetLimit() int32 {
 	return 0
 }
 
+// @dbscanner: json
 type ExamQuestionAnswerData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	AnswerKey     string                 `protobuf:"bytes,1,opt,name=answer_key,json=answerKey,proto3" json:"answer_key,omitempty"`
@@ -726,6 +728,7 @@ func (x *ExamUser) GetEndedAt() *timestamp.Timestamp {
 	return nil
 }
 
+// @dbscanner: json
 type ExamResponses struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	QualificationId uint64                 `protobuf:"varint,1,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
@@ -1199,6 +1202,7 @@ func (x *ExamResponseMultipleChoice) GetChoices() []string {
 	return nil
 }
 
+// @dbscanner: json
 type ExamGrading struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Responses     []*ExamGradingResponse `protobuf:"bytes,1,rep,name=responses,proto3" json:"responses,omitempty"`

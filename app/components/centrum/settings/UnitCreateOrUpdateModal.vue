@@ -6,6 +6,7 @@ import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/access';
+import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -24,7 +25,10 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
+const availableAttributes = ref<{ type: UnitAttribute }[]>([
+    { type: UnitAttribute.STATIC },
+    { type: UnitAttribute.NO_DISPATCH_AUTO_ASSIGN },
+]);
 
 const { maxAccessEntries } = useAppConfig();
 
@@ -34,7 +38,7 @@ const schema = z.object({
     description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
     color: z.string().length(7),
     homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
-    attributes: z.string().array().max(5),
+    attributes: z.nativeEnum(UnitAttribute).array().max(5),
     access: z.object({
         jobs: z.custom<UnitJobAccess>().array().max(maxAccessEntries),
         qualifications: z.custom<UnitQualificationAccess>().array().max(maxAccessEntries),
@@ -163,10 +167,17 @@ onMounted(async () => updateUnitInForm());
                                 v-model="state.attributes"
                                 multiple
                                 nullable
+                                value-attribute="type"
                                 :options="availableAttributes"
                                 :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                                 :searchable-placeholder="$t('common.search_field')"
                             >
+                                <template #option="{ option }">
+                                    <span class="truncate">{{
+                                        $t(`enums.centrum.UnitAttribute.${UnitAttribute[option.type]}`, 2)
+                                    }}</span>
+                                </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>

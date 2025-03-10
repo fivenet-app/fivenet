@@ -12,11 +12,11 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
@@ -69,11 +69,11 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 					tQualiResults.CreatorJob.EQ(jet.String(userInfo.Job)),
 				),
 				jet.AND(
-					tQJobAccess.Access.IS_NOT_NULL(),
+					tQAccess.Access.IS_NOT_NULL(),
 					jet.OR(
-						tQJobAccess.Access.GT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
+						tQAccess.Access.GT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_GRADE))),
 						jet.AND(
-							tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 							tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),
 						),
 					),
@@ -112,10 +112,10 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 				INNER_JOIN(tQuali,
 					tQuali.ID.EQ(tQualiResults.QualificationID),
 				).
-				LEFT_JOIN(tQJobAccess,
-					tQJobAccess.QualificationID.EQ(tQuali.ID).
-						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				LEFT_JOIN(tQAccess,
+					tQAccess.TargetID.EQ(tQuali.ID).
+						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				).
 				LEFT_JOIN(tUser,
 					tQualiResults.UserID.EQ(tUser.ID),
@@ -207,10 +207,10 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *pbqualifica
 				LEFT_JOIN(tCreator,
 					tQualiResults.CreatorID.EQ(tCreator.ID),
 				).
-				LEFT_JOIN(tQJobAccess,
-					tQJobAccess.QualificationID.EQ(tQuali.ID).
-						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				LEFT_JOIN(tQAccess,
+					tQAccess.TargetID.EQ(tQuali.ID).
+						AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
 		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt).

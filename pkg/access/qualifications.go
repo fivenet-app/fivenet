@@ -55,7 +55,6 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 		stmt = a.selectTable.
 			SELECT(
 				a.selectColumns.ID,
-				a.selectColumns.CreatedAt,
 				a.selectColumns.TargetID,
 				a.selectColumns.Access,
 				a.selectColumns.QualificationId,
@@ -86,7 +85,6 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 		stmt = a.selectTable.
 			SELECT(
 				a.selectColumns.ID,
-				a.selectColumns.CreatedAt,
 				a.selectColumns.TargetID,
 				a.selectColumns.Access,
 				a.selectColumns.QualificationId,

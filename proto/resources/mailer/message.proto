@@ -29,6 +29,7 @@ message Message {
   optional string creator_job = 12;
 }
 
+// @dbscanner: json
 message MessageData {
   repeated MessageAttachment attachments = 1 [(validate.rules).repeated.max_items = 3];
 }

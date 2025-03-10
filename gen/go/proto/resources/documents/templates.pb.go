@@ -353,6 +353,7 @@ func (x *TemplateShort) GetWorkflow() *Workflow {
 	return nil
 }
 
+// @dbscanner: json
 type TemplateSchema struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Requirements  *TemplateRequirements  `protobuf:"bytes,1,opt,name=requirements,proto3" json:"requirements,omitempty"`

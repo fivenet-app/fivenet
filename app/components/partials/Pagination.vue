@@ -6,7 +6,6 @@ const props = withDefaults(
     defineProps<{
         modelValue?: number;
         pagination?: PaginationResponse | undefined | null;
-        infinite?: boolean;
         disableBorder?: boolean;
         refresh?: () => Promise<void>;
         loading?: boolean;
@@ -16,7 +15,6 @@ const props = withDefaults(
     {
         modelValue: 0,
         pagination: undefined,
-        infinite: false,
         disableBorder: false,
         refresh: undefined,
         loading: false,
@@ -26,13 +24,13 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'update:modelValue', offset: number): void;
+    (e: 'update:modelValue', page: number): void;
 }>();
 
-const page = useVModel(props, 'modelValue', emit);
+const currentPage = useVModel(props, 'modelValue', emit);
 
 const total = computed(() => props.pagination?.totalCount ?? 0);
-const pageSize = computed(() => props.pagination?.pageSize ?? 1);
+const pageSize = computed(() => props.pagination?.pageSize ?? 10);
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
@@ -57,6 +55,32 @@ watchDebounced(
         maxWait: 1250,
     },
 );
+
+const isInfinite = computed(() => props.pagination && props.pagination.totalCount === -1);
+const canGoFirstOrPrev = computed(() => currentPage.value > 1);
+const canGoLastOrNext = computed(
+    () =>
+        (props.pagination &&
+            props.pagination.totalCount === -1 &&
+            props.pagination?.offset + props.pagination?.pageSize <= props.pagination?.end) ||
+        currentPage.value < totalPages.value,
+);
+
+function onClickPrev() {
+    if (!canGoFirstOrPrev.value) {
+        return;
+    }
+
+    currentPage.value--;
+}
+
+function onClickNext() {
+    if (!canGoLastOrNext.value) {
+        return;
+    }
+
+    currentPage.value++;
+}
 </script>
 
 <template>
@@ -67,13 +91,14 @@ watchDebounced(
         >
             <div v-if="!hideText" class="flex flex-col items-center gap-2">
                 <I18nT
-                    keypath="components.partials.table_pagination.page_count"
+                    v-if="!isInfinite"
+                    keypath="components.partials.table_pagination.page_count_with_total"
                     tag="p"
                     class="@md:block hidden truncate text-sm"
                 >
                     <template #current>
                         <span class="text-neutral font-medium">
-                            {{ page }}
+                            {{ currentPage }}
                         </span>
                     </template>
                     <template #total>
@@ -84,6 +109,23 @@ watchDebounced(
                     <template #maxPage>
                         <span class="text-neutral font-medium">
                             {{ totalPages === 0 ? 1 : totalPages }}
+                        </span>
+                    </template>
+                    <template #size>
+                        <span class="text-neutral font-medium">
+                            {{ pageSize }}
+                        </span>
+                    </template>
+                </I18nT>
+                <I18nT
+                    v-else
+                    keypath="components.partials.table_pagination.page_count"
+                    tag="p"
+                    class="@md:block hidden truncate text-sm"
+                >
+                    <template #current>
+                        <span class="text-neutral font-medium">
+                            {{ currentPage }}
                         </span>
                     </template>
                     <template #size>
@@ -110,12 +152,32 @@ watchDebounced(
                 </UButton>
             </UTooltip>
 
-            <UPagination
-                v-if="!hideButtons"
-                v-model="page"
-                :page-count="pagination?.pageSize ?? 0"
-                :total="!infinite ? (pagination?.totalCount ?? 0) : (page + 1) * (pagination?.pageSize ?? 0)"
-            />
+            <template v-if="!hideButtons">
+                <UPagination
+                    v-if="!isInfinite"
+                    v-model="currentPage"
+                    :page-count="pagination?.pageSize ?? 0"
+                    :total="pagination?.totalCount ?? 0"
+                />
+                <UButtonGroup v-else>
+                    <UButton
+                        :label="$t('common.previous')"
+                        color="gray"
+                        icon="i-mdi-chevron-left"
+                        :disabled="!canGoFirstOrPrev || loading"
+                        @click="onClickPrev"
+                    />
+                    <UButton :label="currentPage.toString()" color="white" disabled />
+                    <UButton
+                        :label="$t('common.next')"
+                        color="gray"
+                        :disabled="!canGoLastOrNext || loading"
+                        trailing
+                        trailing-icon="i-mdi-chevron-right"
+                        @click="onClickNext"
+                    />
+                </UButtonGroup>
+            </template>
             <div v-else></div>
 
             <slot />

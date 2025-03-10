@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package resources.centrum;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum;centrum";
+
+enum UnitAttribute {
+  UNIT_ATTRIBUTE_UNSPECIFIED = 0;
+  UNIT_ATTRIBUTE_STATIC = 1;
+  UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN = 2;
+}
+
+enum DispatchAttribute {
+  DISPATCH_ATTRIBUTE_UNSPECIFIED = 0;
+  DISPATCH_ATTRIBUTE_MULTIPLE = 1;
+  DISPATCH_ATTRIBUTE_DUPLICATE = 2;
+  DISPATCH_ATTRIBUTE_TOO_OLD = 3;
+}
+
+// @dbscanner: json
+message UnitAttributes {
+  repeated UnitAttribute list = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+}
+
+// @dbscanner: json
+message DispatchAttributes {
+  repeated DispatchAttribute list = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+}

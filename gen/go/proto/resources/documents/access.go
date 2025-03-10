@@ -1,11 +1,7 @@
 package documents
 
 import (
-	"database/sql/driver"
 	"fmt"
-
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (x *DocumentJobAccess) SetJob(job string) {
@@ -44,27 +40,6 @@ func (x *DocumentUserAccess) SetUserId(id int32) {
 
 func (x *DocumentUserAccess) SetAccess(access AccessLevel) {
 	x.Access = access
-}
-
-// Scan implements driver.Valuer for protobuf DocumentAccess.
-func (x *DocumentAccess) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *DocumentAccess) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
 }
 
 func DocumentAccessHasDuplicates(access *DocumentAccess) bool {

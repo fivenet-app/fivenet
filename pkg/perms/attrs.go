@@ -6,8 +6,8 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -207,15 +207,6 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 }
 
 func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues) error {
-	validValuesExp := jet.StringExp(jet.NULL)
-	if validValues != nil {
-		out, err := validValues.Value()
-		if err != nil {
-			return err
-		}
-		validValuesExp = jet.String(out.(string))
-	}
-
 	stmt := tAttrs.
 		UPDATE(
 			tAttrs.PermissionID,
@@ -224,10 +215,10 @@ func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint6
 			tAttrs.ValidValues,
 		).
 		SET(
-			tAttrs.PermissionID.SET(jet.Uint64(permId)),
-			tAttrs.Key.SET(jet.String(string(key))),
-			tAttrs.Type.SET(jet.String(string(aType))),
-			tAttrs.ValidValues.SET(validValuesExp),
+			permId,
+			string(key),
+			string(aType),
+			validValues,
 		).
 		WHERE(
 			tAttrs.ID.EQ(jet.Uint64(attrId)),

@@ -63,6 +63,7 @@ message MarkerMarker {
   optional resources.users.UserShort creator = 6;
 }
 
+// @dbscanner
 message MarkerData {
   oneof data {
     option (validate.required) = true;

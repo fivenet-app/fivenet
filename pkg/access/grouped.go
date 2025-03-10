@@ -157,12 +157,15 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 
 func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuery(userInfo *userinfo.UserInfo, targetIds []uint64, access V) jet.SelectStatement {
 	ids := make([]jet.Expression, len(targetIds))
-	for i := 0; i < len(targetIds); i++ {
+	for i := range targetIds {
 		ids[i] = jet.Uint64(targetIds[i])
 	}
 
-	var from jet.ReadableTable
-	from = g.targetTable
+	from := g.targetTable.
+		LEFT_JOIN(g.Jobs.table,
+			g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
+				AND(g.Jobs.columns.Access.EQ(jet.Int32(int32(access.Number())))),
+		)
 
 	accessCheckConditions := []jet.BoolExpression{}
 	accessCheckCondition := jet.Bool(false)
@@ -180,38 +183,19 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 
 	orderBys := []jet.OrderByClause{g.targetTableColumns.ID.DESC()}
 
-	if g.Jobs != nil {
-		from = from.
-			LEFT_JOIN(g.Jobs.table,
-				g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
-					AND(g.Jobs.columns.Job.EQ(jet.String(userInfo.Job))).
-					AND(g.Jobs.columns.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-			)
-
-		condition := []jet.BoolExpression{
-			g.Jobs.columns.Access.IS_NOT_NULL(),
-			g.Jobs.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
-		}
-		if g.Users != nil {
-			condition = append(condition, g.Users.columns.Access.IS_NULL())
-		}
-		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))
-
-		orderBys = append(orderBys, g.Jobs.columns.MinimumGrade)
+	if g.Users != nil {
+		accessCheckConditions = append(accessCheckConditions, g.Users.columns.UserId.EQ(jet.Int32(userInfo.UserId)))
 	}
 
-	if g.Users != nil {
-		from = from.
-			LEFT_JOIN(g.Users.table,
-				g.Users.columns.TargetID.EQ(g.targetTableColumns.ID).
-					AND(g.Users.columns.UserId.EQ(jet.Int32(userInfo.UserId))),
-			)
+	if g.Jobs != nil {
+		accessCheckConditions = append(accessCheckConditions,
+			jet.AND(
+				g.Jobs.columns.Job.EQ(jet.String(userInfo.Job)),
+				g.Jobs.columns.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+			),
+		)
 
-		condition := []jet.BoolExpression{
-			g.Users.columns.Access.IS_NOT_NULL(),
-			g.Users.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
-		}
-		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))
+		orderBys = append(orderBys, g.Jobs.columns.MinimumGrade)
 	}
 
 	if g.Qualifications != nil {
@@ -224,14 +208,12 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 
-		condition := []jet.BoolExpression{
-			g.Qualifications.columns.Access.IS_NOT_NULL(),
-			g.Qualifications.columns.Access.GT_EQ(jet.Int32(int32(access.Number()))),
+		accessCheckConditions = append(accessCheckConditions, jet.AND(
+			g.Qualifications.columns.QualificationId.IS_NOT_NULL(),
 			tQualiResults.DeletedAt.IS_NULL(),
 			tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId),
 			tQualiResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
-		}
-		accessCheckConditions = append(accessCheckConditions, jet.AND(condition...))
+		))
 	}
 
 	stmt := g.targetTable.

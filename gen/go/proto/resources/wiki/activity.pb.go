@@ -199,6 +199,7 @@ func (x *PageActivity) GetData() *PageActivityData {
 	return nil
 }
 
+// @dbscanner: json
 type PageActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

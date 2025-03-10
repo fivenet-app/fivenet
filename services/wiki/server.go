@@ -28,11 +28,10 @@ func init() {
 }
 
 var (
-	tPage        = table.FivenetWikiPages.AS("page")
-	tPageShort   = table.FivenetWikiPages.AS("pageshort")
-	tPJobAccess  = table.FivenetWikiPageJobAccess.AS("job_access")
-	tPUserAccess = table.FivenetWikiPageUserAccess.AS("user_access")
-	tJobProps    = table.FivenetJobProps
+	tPage      = table.FivenetWikiPages.AS("page")
+	tPageShort = table.FivenetWikiPages.AS("pageshort")
+	tPAccess   = table.FivenetWikiPagesAccess.AS("access")
+	tJobProps  = table.FivenetJobProps
 )
 
 type Server struct {
@@ -80,49 +79,45 @@ func NewServer(p Params) *Server {
 				CreatorJob: table.FivenetWikiPages.Job,
 			},
 			access.NewJobs[wiki.PageJobAccess, *wiki.PageJobAccess, wiki.AccessLevel](
-				table.FivenetWikiPageJobAccess,
+				table.FivenetWikiPagesAccess,
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetWikiPageJobAccess.ID,
-						CreatedAt: table.FivenetWikiPageJobAccess.CreatedAt,
-						TargetID:  table.FivenetWikiPageJobAccess.PageID,
-						Access:    table.FivenetWikiPageJobAccess.Access,
+						ID:       table.FivenetWikiPagesAccess.ID,
+						TargetID: table.FivenetWikiPagesAccess.TargetID,
+						Access:   table.FivenetWikiPagesAccess.Access,
 					},
-					Job:          table.FivenetWikiPageJobAccess.Job,
-					MinimumGrade: table.FivenetWikiPageJobAccess.MinimumGrade,
+					Job:          table.FivenetWikiPagesAccess.Job,
+					MinimumGrade: table.FivenetWikiPagesAccess.MinimumGrade,
 				},
-				table.FivenetWikiPageJobAccess.AS("page_job_access"),
+				table.FivenetWikiPagesAccess.AS("page_job_access"),
 				&access.JobAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetWikiPageJobAccess.AS("page_job_access").ID,
-						CreatedAt: table.FivenetWikiPageJobAccess.AS("page_job_access").CreatedAt,
-						TargetID:  table.FivenetWikiPageJobAccess.AS("page_job_access").PageID,
-						Access:    table.FivenetWikiPageJobAccess.AS("page_job_access").Access,
+						ID:       table.FivenetWikiPagesAccess.AS("page_job_access").ID,
+						TargetID: table.FivenetWikiPagesAccess.AS("page_job_access").TargetID,
+						Access:   table.FivenetWikiPagesAccess.AS("page_job_access").Access,
 					},
-					Job:          table.FivenetWikiPageJobAccess.AS("page_job_access").Job,
-					MinimumGrade: table.FivenetWikiPageJobAccess.AS("page_job_access").MinimumGrade,
+					Job:          table.FivenetWikiPagesAccess.AS("page_job_access").Job,
+					MinimumGrade: table.FivenetWikiPagesAccess.AS("page_job_access").MinimumGrade,
 				},
 			),
 			access.NewUsers[wiki.PageUserAccess, *wiki.PageUserAccess, wiki.AccessLevel](
-				table.FivenetWikiPageUserAccess,
+				table.FivenetWikiPagesAccess,
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetWikiPageUserAccess.ID,
-						CreatedAt: table.FivenetWikiPageUserAccess.CreatedAt,
-						TargetID:  table.FivenetWikiPageUserAccess.PageID,
-						Access:    table.FivenetWikiPageUserAccess.Access,
+						ID:       table.FivenetWikiPagesAccess.ID,
+						TargetID: table.FivenetWikiPagesAccess.TargetID,
+						Access:   table.FivenetWikiPagesAccess.Access,
 					},
-					UserId: table.FivenetWikiPageUserAccess.UserID,
+					UserId: table.FivenetWikiPagesAccess.UserID,
 				},
-				table.FivenetWikiPageUserAccess.AS("page_user_access"),
+				table.FivenetWikiPagesAccess.AS("page_user_access"),
 				&access.UserAccessColumns{
 					BaseAccessColumns: access.BaseAccessColumns{
-						ID:        table.FivenetWikiPageUserAccess.AS("page_user_access").ID,
-						CreatedAt: table.FivenetWikiPageUserAccess.AS("page_user_access").CreatedAt,
-						TargetID:  table.FivenetWikiPageUserAccess.AS("page_user_access").PageID,
-						Access:    table.FivenetWikiPageUserAccess.AS("page_user_access").Access,
+						ID:       table.FivenetWikiPagesAccess.AS("page_user_access").ID,
+						TargetID: table.FivenetWikiPagesAccess.AS("page_user_access").TargetID,
+						Access:   table.FivenetWikiPagesAccess.AS("page_user_access").Access,
 					},
-					UserId: table.FivenetWikiPageUserAccess.AS("page_user_access").UserID,
+					UserId: table.FivenetWikiPagesAccess.AS("page_user_access").UserID,
 				},
 			),
 			nil,

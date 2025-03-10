@@ -583,7 +583,8 @@
                 "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
             },
             "table_pagination": {
-                "page_count": "Page {current} of {maxPage} à {size} records (Total {total})"
+                "page_count": "Page {current} à {size} records",
+                "page_count_with_total": "Page {current} of {maxPage} à {size} records (Total {total})"
             },
             "TipTapEditor": {
                 "clear": "Clear",
@@ -879,10 +880,6 @@
                         "BUSY": "Unit busy"
                     }
                 },
-                "attributes": {
-                    "static": "Static",
-                    "no_dispatch_auto_assign": "No Dispatch Auto Assign"
-                },
                 "edit_units": "Edit Units"
             },
             "dispatches": {
@@ -902,11 +899,6 @@
                         "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
                         "UNSPECIFIED": "Unspecified"
                     }
-                },
-                "attributes": {
-                    "multiple": "Multiple Dispatches",
-                    "too_old": "Cancelled due to Age",
-                    "duplicate": "Duplicat"
                 }
             },
             "settings": {
@@ -2704,6 +2696,15 @@
                 "BLOCKED": "Blocked",
                 "VIEW": "View",
                 "JOIN": "Join"
+            },
+            "DispatchAttribute": {
+                "MULTIPLE": "Multiple Dispatches",
+                "TOO_OLD": "Cancelled due to Age",
+                "DUPLICATE": "Duplicate"
+            },
+            "UnitAttribute": {
+                "STATIC": "Static",
+                "NO_DISPATCH_AUTO_ASSIGN": "No Dispatch Auto Assign"
             }
         },
         "livemap": {

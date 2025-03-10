@@ -18,15 +18,15 @@ func (p *PaginationRequest) GetResponse(totalCount int64) (*PaginationResponse, 
 	return p.GetResponseWithPageSize(totalCount, DefaultMaxPageSize)
 }
 
-func (p *PaginationRequest) GetResponseWithPageSize(totalCount int64, maxPageSize int64) (*PaginationResponse, int64) {
+func (p *PaginationRequest) GetResponseWithPageSize(totalCount int64, pageSize int64) (*PaginationResponse, int64) {
 	if p.PageSize != nil {
 		if *p.PageSize <= 0 {
-			p.PageSize = &maxPageSize
-		} else if *p.PageSize > maxPageSize {
-			p.PageSize = &maxPageSize
+			p.PageSize = &pageSize
+		} else if *p.PageSize > pageSize {
+			p.PageSize = &pageSize
 		}
 	} else {
-		p.PageSize = &maxPageSize
+		p.PageSize = &pageSize
 	}
 
 	p.Offset = ensureOffsetInRage(p.Offset, *p.PageSize, totalCount)
@@ -40,7 +40,7 @@ func (p *PaginationRequest) GetResponseWithPageSize(totalCount int64, maxPageSiz
 }
 
 func ensureOffsetInRage(offset int64, pageSize int64, totalCount int64) int64 {
-	if totalCount != 0 && offset > totalCount && totalCount != NoTotalCount {
+	if totalCount != 0 && totalCount != NoTotalCount && offset > totalCount {
 		// Set offset to "last" page
 		offset = totalCount - pageSize
 	}

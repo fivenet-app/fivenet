@@ -78,6 +78,7 @@ func (DiscordBotPresenceType) EnumDescriptor() ([]byte, []int) {
 	return file_resources_rector_config_proto_rawDescGZIP(), []int{0}
 }
 
+// @dbscanner: json,partial
 type AppConfig struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Version       *string                `protobuf:"bytes,1,opt,name=version,proto3,oneof" json:"version,omitempty"`

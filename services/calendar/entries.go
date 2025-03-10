@@ -8,10 +8,10 @@ import (
 	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbcalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorscalendar "github.com/fivenet-app/fivenet/services/calendar/errors"
@@ -54,14 +54,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *pbcalendar.ListCa
 			),
 			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.OR(
+				tCAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
-					tCUserAccess.Access.IS_NOT_NULL(),
-					tCUserAccess.Access.GT(jet.Int32(int32(calendar.AccessLevel_ACCESS_LEVEL_BLOCKED))),
-				),
-				jet.AND(
-					tCUserAccess.Access.IS_NULL(),
-					tCJobAccess.Access.IS_NOT_NULL(),
-					tCJobAccess.Access.GT(jet.Int32(int32(calendar.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					tCAccess.Job.EQ(jet.String(userInfo.Job)),
+					tCAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 				),
 			),
 		),
@@ -92,7 +88,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *pbcalendar.ListCa
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
 	}
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo)
+	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
 
 	if req.After != nil {
 		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
@@ -148,7 +144,7 @@ func (s *Server) GetUpcomingEntries(ctx context.Context, req *pbcalendar.GetUpco
 		),
 	)
 
-	stmt := s.listCalendarEntriesQuery(condition, userInfo)
+	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

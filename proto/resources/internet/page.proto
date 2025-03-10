@@ -31,6 +31,7 @@ enum PageLayoutType {
   PAGE_LAYOUT_TYPE_LANDING_PAGE = 2;
 }
 
+// @dbscanner: json
 message PageData {
   PageLayoutType layout_type = 1;
   optional ContentNode node = 2;

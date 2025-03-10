@@ -240,6 +240,7 @@ func (x *DocActivity) GetData() *DocActivityData {
 	return nil
 }
 
+// @dbscanner: json
 type DocActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

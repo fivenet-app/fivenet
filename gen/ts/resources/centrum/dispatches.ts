@@ -13,7 +13,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../jobs/colleagues";
 import { Unit } from "./units";
 import { User } from "../users/users";
-import { Attributes } from "./general";
+import { DispatchAttributes } from "./attributes";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.centrum.Dispatch
@@ -52,9 +52,9 @@ export interface Dispatch {
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional resources.centrum.Attributes attributes = 9;
+     * @generated from protobuf field: optional resources.centrum.DispatchAttributes attributes = 9;
      */
-    attributes?: Attributes;
+    attributes?: DispatchAttributes;
     /**
      * @generated from protobuf field: double x = 10;
      */
@@ -196,6 +196,8 @@ export interface DispatchStatus {
     postal?: string;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.centrum.DispatchReferences
  */
 export interface DispatchReferences {
@@ -331,7 +333,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 9, name: "attributes", kind: "message", T: () => Attributes },
+            { no: 9, name: "attributes", kind: "message", T: () => DispatchAttributes },
             { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
@@ -381,8 +383,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
                 case /* optional string description */ 8:
                     message.description = reader.string();
                     break;
-                case /* optional resources.centrum.Attributes attributes */ 9:
-                    message.attributes = Attributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                case /* optional resources.centrum.DispatchAttributes attributes */ 9:
+                    message.attributes = DispatchAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
                     break;
                 case /* double x */ 10:
                     message.x = reader.double();
@@ -441,9 +443,9 @@ class Dispatch$Type extends MessageType<Dispatch> {
         /* optional string description = 8; */
         if (message.description !== undefined)
             writer.tag(8, WireType.LengthDelimited).string(message.description);
-        /* optional resources.centrum.Attributes attributes = 9; */
+        /* optional resources.centrum.DispatchAttributes attributes = 9; */
         if (message.attributes)
-            Attributes.internalBinaryWrite(message.attributes, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+            DispatchAttributes.internalBinaryWrite(message.attributes, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* double x = 10; */
         if (message.x !== 0)
             writer.tag(10, WireType.Bit64).double(message.x);

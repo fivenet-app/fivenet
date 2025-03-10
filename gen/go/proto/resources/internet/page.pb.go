@@ -200,6 +200,7 @@ func (x *Page) GetCreatorId() int32 {
 	return 0
 }
 
+// @dbscanner: json
 type PageData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	LayoutType    PageLayoutType         `protobuf:"varint,1,opt,name=layout_type,json=layoutType,proto3,enum=resources.internet.PageLayoutType" json:"layout_type,omitempty"`

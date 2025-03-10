@@ -5,10 +5,9 @@ import (
 )
 
 type BaseAccessColumns struct {
-	ID        jet.ColumnInteger
-	CreatedAt jet.ColumnTimestamp
-	TargetID  jet.ColumnInteger
-	Access    jet.ColumnInteger
+	ID       jet.ColumnInteger
+	TargetID jet.ColumnInteger
+	Access   jet.ColumnInteger
 }
 
 type JobAccessColumns struct {

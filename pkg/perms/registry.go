@@ -9,8 +9,8 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"

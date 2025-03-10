@@ -87,6 +87,7 @@ message CalendarEntry {
   optional CalendarEntryRSVP rsvp = 18;
 }
 
+// @dbscanner: json
 message CalendarEntryRecurring {
   string every = 1;
   int32 count = 2;

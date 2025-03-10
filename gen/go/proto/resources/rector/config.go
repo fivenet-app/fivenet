@@ -1,10 +1,8 @@
 package rector
 
 import (
-	"database/sql/driver"
 	"time"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -102,25 +100,4 @@ func (x *AppConfig) Default() {
 			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
 		}
 	}
-}
-
-// Scan implements driver.Valuer for protobuf AppConfig.
-func (x *AppConfig) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protoutils.UnmarshalPartial([]byte(t), x)
-	case []byte:
-		return protoutils.UnmarshalPartial(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *AppConfig) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
 }

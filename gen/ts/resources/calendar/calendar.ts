@@ -239,6 +239,8 @@ export interface CalendarEntry {
     rsvp?: CalendarEntryRSVP;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.calendar.CalendarEntryRecurring
  */
 export interface CalendarEntryRecurring {

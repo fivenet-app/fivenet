@@ -2,15 +2,11 @@ package users
 
 import (
 	"context"
-	"database/sql/driver"
 	"errors"
-	"slices"
 
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 const (
@@ -146,116 +142,4 @@ func (x *JobProps) Default(job string) {
 		x.Settings = &JobSettings{}
 	}
 	x.Settings.Default()
-}
-
-// Scan implements driver.Valuer for protobuf QuickButtons.
-func (x *QuickButtons) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *QuickButtons) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
-}
-
-// Scan implements driver.Valuer for protobuf DiscordSyncSettings.
-func (x *DiscordSyncSettings) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *DiscordSyncSettings) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
-}
-
-func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
-	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != ""
-}
-
-// Scan implements driver.Valuer for protobuf CitizenLabels.
-func (x *CitizenLabels) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *CitizenLabels) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
-}
-
-func (x *CitizenLabel) Equal(a *CitizenLabel) bool {
-	return x.Name == a.Name
-}
-
-// Scan implements driver.Valuer for protobuf DiscordSyncChanges.
-func (x *DiscordSyncChanges) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *DiscordSyncChanges) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
-}
-
-func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
-	if x.Changes == nil {
-		x.Changes = []*DiscordSyncChange{}
-	}
-
-	if len(x.Changes) > 0 {
-		lastChange := x.Changes[len(x.Changes)-1]
-
-		if lastChange.Plan == change.Plan {
-			return
-		}
-	}
-
-	x.Changes = append(x.Changes, change)
-
-	if len(x.Changes) > 12 {
-		x.Changes = slices.Delete(x.Changes, 0, 1)
-	}
 }

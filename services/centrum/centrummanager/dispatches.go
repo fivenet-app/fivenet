@@ -10,8 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
@@ -864,11 +864,11 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 	return nil
 }
 
-func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute string) error {
+func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute centrum.DispatchAttribute) error {
 	update := false
 	if dsp.Attributes == nil {
-		dsp.Attributes = &centrum.Attributes{
-			List: []string{attribute},
+		dsp.Attributes = &centrum.DispatchAttributes{
+			List: []centrum.DispatchAttribute{attribute},
 		}
 
 		update = true

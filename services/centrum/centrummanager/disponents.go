@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/services/centrum/events"
 	jet "github.com/go-jet/jet/v2/mysql"

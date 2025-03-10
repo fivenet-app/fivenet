@@ -7,10 +7,10 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsqualifications "github.com/fivenet-app/fivenet/services/qualifications/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	tQJobAccess = table.FivenetQualificationsJobAccess
-	tQReqs      = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
+	tQAccess = table.FivenetQualificationsAccess
+	tQReqs   = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
 )
 
 func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
@@ -36,8 +36,8 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
 					),
 					jet.AND(
-						tQJobAccess.Access.IS_NOT_NULL(),
-						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQAccess.Access.IS_NOT_NULL(),
+						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -116,10 +116,10 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tQuali.
-			LEFT_JOIN(tQJobAccess,
-				tQJobAccess.QualificationID.EQ(tQuali.ID).
-					AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			LEFT_JOIN(tQAccess,
+				tQAccess.TargetID.EQ(tQuali.ID).
+					AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
+					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),
@@ -168,8 +168,8 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
 					),
 					jet.AND(
-						tQJobAccess.Access.IS_NOT_NULL(),
-						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQAccess.Access.IS_NOT_NULL(),
+						tQAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -258,10 +258,10 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tQuali.
-			LEFT_JOIN(tQJobAccess,
-				tQJobAccess.QualificationID.EQ(tQuali.ID).
-					AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+			LEFT_JOIN(tQAccess,
+				tQAccess.TargetID.EQ(tQuali.ID).
+					AND(tQAccess.Job.EQ(jet.String(userInfo.Job))).
+					AND(tQAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
 			LEFT_JOIN(tCreator,
 				tQuali.CreatorID.EQ(tCreator.ID),

@@ -383,6 +383,7 @@ func (x *MarkerMarker) GetCreator() *users.UserShort {
 	return nil
 }
 
+// @dbscanner
 type MarkerData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

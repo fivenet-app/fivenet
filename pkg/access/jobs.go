@@ -43,7 +43,6 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([
 	stmt := a.selectTable.
 		SELECT(
 			a.selectColumns.ID,
-			a.selectColumns.CreatedAt,
 			a.selectColumns.TargetID,
 			a.selectColumns.Access,
 			a.selectColumns.Job,

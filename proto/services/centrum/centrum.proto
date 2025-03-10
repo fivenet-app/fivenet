@@ -4,7 +4,7 @@ package services.centrum;
 
 import "resources/common/database/database.proto";
 import "resources/centrum/dispatches.proto";
-import "resources/centrum/general.proto";
+import "resources/centrum/disponents.proto";
 import "resources/centrum/settings.proto";
 import "resources/centrum/units.proto";
 import "resources/jobs/colleagues.proto";

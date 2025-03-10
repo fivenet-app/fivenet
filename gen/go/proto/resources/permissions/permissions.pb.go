@@ -447,6 +447,7 @@ func (x *RoleAttribute) GetMaxValues() *AttributeValues {
 	return nil
 }
 
+// @dbscanner: json
 type AttributeValues struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to ValidValues:

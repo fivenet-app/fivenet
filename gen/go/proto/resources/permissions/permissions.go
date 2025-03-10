@@ -1,13 +1,10 @@
 package permissions
 
 import (
-	"database/sql/driver"
 	"slices"
 
 	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
-	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func (x *Role) GetJobGrade() int32 {
@@ -51,27 +48,6 @@ const (
 	JobListAttributeType      AttributeTypes = "JobList"
 	JobGradeListAttributeType AttributeTypes = "JobGradeList"
 )
-
-// Scan implements driver.Valuer for protobuf DocActivityData.
-func (x *AttributeValues) Scan(value any) error {
-	switch t := value.(type) {
-	case string:
-		return protojson.Unmarshal([]byte(t), x)
-	case []byte:
-		return protojson.Unmarshal(t, x)
-	}
-	return nil
-}
-
-// Value marshals the value into driver.Valuer.
-func (x *AttributeValues) Value() (driver.Value, error) {
-	if x == nil {
-		return nil, nil
-	}
-
-	out, err := protoutils.Marshal(x)
-	return string(out), err
-}
 
 func (x *AttributeValues) Default(aType AttributeTypes) {
 	switch AttributeTypes(aType) {

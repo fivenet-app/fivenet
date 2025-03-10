@@ -72,6 +72,8 @@ export interface UserActivity {
     newValue: string; // @gotags: alias:"fivenet_user_activity.new_value"
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.UserActivityData
  */
 export interface UserActivityData {

@@ -164,6 +164,7 @@ func (x *JobProps) GetSettings() *JobSettings {
 	return nil
 }
 
+// @dbscanner: json
 type QuickButtons struct {
 	state             protoimpl.MessageState `protogen:"open.v1"`
 	PenaltyCalculator bool                   `protobuf:"varint,1,opt,name=penalty_calculator,json=penaltyCalculator,proto3" json:"penalty_calculator,omitempty"`

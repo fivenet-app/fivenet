@@ -158,6 +158,7 @@ func (x *Message) GetCreatorJob() string {
 	return ""
 }
 
+// @dbscanner: json
 type MessageData struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Attachments   []*MessageAttachment   `protobuf:"bytes,1,rep,name=attachments,proto3" json:"attachments,omitempty"`

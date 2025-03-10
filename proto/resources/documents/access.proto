@@ -18,6 +18,7 @@ enum AccessLevel {
   ACCESS_LEVEL_EDIT = 6;
 }
 
+// @dbscanner: json
 message DocumentAccess {
   repeated DocumentJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
   repeated DocumentUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"

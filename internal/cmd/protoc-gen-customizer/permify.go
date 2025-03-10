@@ -15,7 +15,7 @@ import (
 	pgs "github.com/lyft/protoc-gen-star/v2"
 )
 
-// PermifyPlugin
+// PermifyModule
 type PermifyModule struct {
 	*pgs.ModuleBase
 	ctx      pgsgo.Context
@@ -23,7 +23,7 @@ type PermifyModule struct {
 	constTpl *template.Template
 }
 
-// Permify returns an initialized PermifyPlugin
+// Permify returns an initialized PermifyModule
 func Permify() *PermifyModule { return &PermifyModule{ModuleBase: &pgs.ModuleBase{}} }
 
 func (p *PermifyModule) InitContext(c pgs.BuildContext) {

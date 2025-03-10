@@ -11,6 +11,8 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.users.CitizenLabels
  */
 export interface CitizenLabels {

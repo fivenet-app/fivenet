@@ -71,6 +71,8 @@ export interface Message {
     creatorJob?: string;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.mailer.MessageData
  */
 export interface MessageData {

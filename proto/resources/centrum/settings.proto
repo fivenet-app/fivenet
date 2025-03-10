@@ -23,6 +23,7 @@ message Settings {
   Timings timings = 6;
 }
 
+// @dbscanner: json
 message PredefinedStatus {
   // @sanitize: method=StripTags
   repeated string unit_status = 1 [(validate.rules).repeated = {
@@ -36,6 +37,7 @@ message PredefinedStatus {
   }];
 }
 
+// @dbscanner: json
 message Timings {
   int64 dispatch_max_wait = 1 [(validate.rules).int64 = { gt: 30, lt: 6000}];
   bool require_unit = 2;

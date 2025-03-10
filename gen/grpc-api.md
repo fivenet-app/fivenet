@@ -38,11 +38,6 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
-- [resources/centrum/general.proto](#resources_centrum_general-proto)
-    - [Attributes](#resources-centrum-Attributes)
-    - [Disponents](#resources-centrum-Disponents)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
@@ -50,6 +45,19 @@
     - [UnitStatus](#resources-centrum-UnitStatus)
   
     - [StatusUnit](#resources-centrum-StatusUnit)
+  
+- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
+    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
+    - [UnitAttributes](#resources-centrum-UnitAttributes)
+  
+    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
+    - [UnitAttribute](#resources-centrum-UnitAttribute)
+  
+- [resources/centrum/disponents.proto](#resources_centrum_disponents-proto)
+    - [Disponents](#resources-centrum-Disponents)
+  
+- [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [DateRange](#resources-common-database-DateRange)
@@ -1098,7 +1106,7 @@
 <a name="resources-centrum-PredefinedStatus"></a>
 
 ### PredefinedStatus
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -1134,7 +1142,7 @@
 <a name="resources-centrum-Timings"></a>
 
 ### Timings
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -1182,7 +1190,7 @@
 <a name="resources-centrum-UnitAccess"></a>
 
 ### UnitAccess
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -1291,7 +1299,7 @@
 | `status` | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
 | `message` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize |
-| `attributes` | [Attributes](#resources-centrum-Attributes) | optional |  |
+| `attributes` | [DispatchAttributes](#resources-centrum-DispatchAttributes) | optional |  |
 | `x` | [double](#double) |  |  |
 | `y` | [double](#double) |  |  |
 | `postal` | [string](#string) | optional | @sanitize |
@@ -1361,7 +1369,7 @@
 <a name="resources-centrum-DispatchReferences"></a>
 
 ### DispatchReferences
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -1461,71 +1469,6 @@
 
 
 
-<a name="resources_centrum_general-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/general.proto
-
-
-
-<a name="resources-centrum-Attributes"></a>
-
-### Attributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1551,7 +1494,7 @@
 | `description` | [string](#string) | optional | @sanitize |
 | `status` | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
 | `users` | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-| `attributes` | [Attributes](#resources-centrum-Attributes) | optional |  |
+| `attributes` | [UnitAttributes](#resources-centrum-UnitAttributes) | optional |  |
 | `home_postal` | [string](#string) | optional |  |
 | `access` | [UnitAccess](#resources-centrum-UnitAccess) |  |  |
 
@@ -1640,6 +1583,145 @@
 | `STATUS_UNIT_ON_BREAK` | 6 |  |
 | `STATUS_UNIT_BUSY` | 7 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_attributes-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/attributes.proto
+
+
+
+<a name="resources-centrum-DispatchAttributes"></a>
+
+### DispatchAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAttributes"></a>
+
+### UnitAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-DispatchAttribute"></a>
+
+### DispatchAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
+| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
+| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
+
+
+
+<a name="resources-centrum-UnitAttribute"></a>
+
+### UnitAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
+| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_disponents-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/disponents.proto
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_user_unit-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/user_unit.proto
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -2221,7 +2303,7 @@ States of Cronjbo
 <a name="resources-common-TranslateItem"></a>
 
 ### TranslateItem
-Wrapped translated message for the client
+Wrapped translated message for the client @dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -2348,7 +2430,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 <a name="resources-documents-Workflow"></a>
 
 ### Workflow
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -2397,7 +2479,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 <a name="resources-documents-DocumentAccess"></a>
 
 ### DocumentAccess
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -2579,7 +2661,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 <a name="resources-documents-DocActivityData"></a>
 
 ### DocActivityData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -2898,7 +2980,7 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 <a name="resources-documents-TemplateSchema"></a>
 
 ### TemplateSchema
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -3309,7 +3391,7 @@ Dummy - DO NOT USE!
 <a name="resources-jobs-JobsUserActivityData"></a>
 
 ### JobsUserActivityData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -3792,7 +3874,7 @@ Dummy - DO NOT USE!
 <a name="resources-livemap-MarkerData"></a>
 
 ### MarkerData
-
+@dbscanner
 
 
 | Field | Type | Label | Description |
@@ -3998,7 +4080,7 @@ Dummy - DO NOT USE!
 <a name="resources-notifications-Data"></a>
 
 ### Data
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4101,7 +4183,7 @@ Dummy - DO NOT USE!
 <a name="resources-permissions-AttributeValues"></a>
 
 ### AttributeValues
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4352,7 +4434,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-ExamGrading"></a>
 
 ### ExamGrading
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4407,7 +4489,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-ExamQuestionAnswerData"></a>
 
 ### ExamQuestionAnswerData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4422,7 +4504,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-ExamQuestionData"></a>
 
 ### ExamQuestionData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4649,7 +4731,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-ExamResponses"></a>
 
 ### ExamResponses
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4741,7 +4823,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-QualificationDiscordSettings"></a>
 
 ### QualificationDiscordSettings
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4757,7 +4839,7 @@ Dummy - DO NOT USE!
 <a name="resources-qualifications-QualificationExamSettings"></a>
 
 ### QualificationExamSettings
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -4995,7 +5077,7 @@ Dummy - DO NOT USE!
 <a name="resources-rector-AppConfig"></a>
 
 ### AppConfig
-
+@dbscanner: json,partial
 
 
 | Field | Type | Label | Description |
@@ -5274,7 +5356,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-UserActivityData"></a>
 
 ### UserActivityData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -5524,7 +5606,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-QuickButtons"></a>
 
 ### QuickButtons
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -5573,7 +5655,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-DiscordSyncChanges"></a>
 
 ### DiscordSyncChanges
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -5588,7 +5670,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-DiscordSyncSettings"></a>
 
 ### DiscordSyncSettings
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -5643,7 +5725,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-JobSettings"></a>
 
 ### JobSettings
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -5808,7 +5890,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-users-CitizenLabels"></a>
 
 ### CitizenLabels
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -6208,7 +6290,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-calendar-CalendarEntryRecurring"></a>
 
 ### CalendarEntryRecurring
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -6605,7 +6687,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-internet-PageData"></a>
 
 ### PageData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -7089,7 +7171,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-mailer-MessageData"></a>
 
 ### MessageData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |
@@ -7284,7 +7366,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 <a name="resources-wiki-PageActivityData"></a>
 
 ### PageActivityData
-
+@dbscanner: json
 
 
 | Field | Type | Label | Description |

@@ -8,8 +8,8 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -106,7 +106,7 @@ func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 
 		dsp := &centrum.Dispatch{
 			CreatedAt:  timestamp.Now(),
-			Attributes: &centrum.Attributes{},
+			Attributes: &centrum.DispatchAttributes{},
 			Job:        job,
 			Message:    message,
 			X:          x,

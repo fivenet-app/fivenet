@@ -14,6 +14,7 @@ enum UnitAccessLevel {
   UNIT_ACCESS_LEVEL_JOIN = 2;
 }
 
+// @dbscanner: json
 message UnitAccess {
   repeated UnitJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
   repeated UnitQualificationAccess qualifications = 3 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"qualification_access"

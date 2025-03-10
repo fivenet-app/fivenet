@@ -109,7 +109,7 @@ func (b *Bot) Stop() {
 func (b *Bot) getAvailableUnit(ctx context.Context) (*centrum.Unit, bool) {
 	units := b.state.FilterUnits(ctx, b.job, []centrum.StatusUnit{centrum.StatusUnit_STATUS_UNIT_AVAILABLE}, nil,
 		func(unit *centrum.Unit) bool {
-			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttributeNoDispatchAutoAssign)
+			return unit.Attributes == nil || !unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN)
 		},
 	)
 

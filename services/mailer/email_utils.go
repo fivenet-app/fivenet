@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 )

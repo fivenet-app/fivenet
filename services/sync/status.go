@@ -6,7 +6,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

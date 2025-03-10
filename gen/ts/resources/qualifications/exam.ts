@@ -69,6 +69,8 @@ export interface ExamQuestion {
     points?: number;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.ExamQuestionData
  */
 export interface ExamQuestionData {
@@ -178,6 +180,8 @@ export interface ExamQuestionMultipleChoice {
     limit?: number;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.ExamQuestionAnswerData
  */
 export interface ExamQuestionAnswerData {
@@ -218,6 +222,8 @@ export interface ExamUser {
     endedAt?: Timestamp;
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.ExamResponses
  */
 export interface ExamResponses {
@@ -344,6 +350,8 @@ export interface ExamResponseMultipleChoice {
     choices: string[];
 }
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.qualifications.ExamGrading
  */
 export interface ExamGrading {

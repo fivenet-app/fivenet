@@ -15,6 +15,7 @@ func main() {
 		Permify(),
 		Tester(),
 		Sanitizer(),
+		DBScanner(),
 	).RegisterPostProcessor(
 		pgsgo.GoImports(),
 		pgsgo.GoFmt(),

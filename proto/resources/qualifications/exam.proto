@@ -31,6 +31,7 @@ message ExamQuestion {
   optional int32 points = 9 [(validate.rules).int32.gte = 0];
 }
 
+// @dbscanner: json
 message ExamQuestionData {
   oneof data {
     option (validate.required) = true;
@@ -69,6 +70,7 @@ message ExamQuestionMultipleChoice {
   optional int32 limit = 2 [(validate.rules).int32 = {gte: 0, lte: 10}];
 }
 
+// @dbscanner: json
 message ExamQuestionAnswerData {
   string answer_key = 1 [(validate.rules).string.max_len = 1024];
 }
@@ -84,6 +86,7 @@ message ExamUser {
   optional resources.timestamp.Timestamp ended_at = 6;
 }
 
+// @dbscanner: json
 message ExamResponses {
   uint64 qualification_id = 1;
   int32 user_id = 2;
@@ -131,6 +134,7 @@ message ExamResponseMultipleChoice {
   repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
 }
 
+// @dbscanner: json
 message ExamGrading {
   repeated ExamGradingResponse responses = 1 [(validate.rules).repeated.max_items = 50];
 }

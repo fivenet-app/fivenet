@@ -22,6 +22,7 @@ const (
 )
 
 // Wrapped translated message for the client
+// @dbscanner: json
 type TranslateItem struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @sanitize: method=StripTags

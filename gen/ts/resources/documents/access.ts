@@ -13,6 +13,8 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 /**
+ * @dbscanner: json
+ *
  * @generated from protobuf message resources.documents.DocumentAccess
  */
 export interface DocumentAccess {

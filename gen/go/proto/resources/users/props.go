@@ -6,8 +6,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"

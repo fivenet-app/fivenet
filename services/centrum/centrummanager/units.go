@@ -9,8 +9,8 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/fivenet-app/fivenet/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
@@ -40,7 +40,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		return nil, nil
 	}
 
-	if unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttributeStatic) {
+	if unit.Attributes != nil && unit.Attributes.Has(centrum.UnitAttribute_UNIT_ATTRIBUTE_STATIC) {
 		// Only allow a static unit to be set busy, on break or unavailable
 		if in.Status != centrum.StatusUnit_STATUS_UNIT_BUSY &&
 			in.Status != centrum.StatusUnit_STATUS_UNIT_ON_BREAK &&

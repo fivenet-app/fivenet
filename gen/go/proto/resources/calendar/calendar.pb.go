@@ -610,6 +610,7 @@ func (x *CalendarEntry) GetRsvp() *CalendarEntryRSVP {
 	return nil
 }
 
+// @dbscanner: json
 type CalendarEntryRecurring struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Every         string                 `protobuf:"bytes,1,opt,name=every,proto3" json:"every,omitempty"`

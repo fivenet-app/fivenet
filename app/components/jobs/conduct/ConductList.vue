@@ -32,6 +32,15 @@ const slideover = useSlideover();
 
 const completorStore = useCompletorStore();
 
+const availableTypes = ref<{ status: ConductType }[]>([
+    { status: ConductType.NOTE },
+    { status: ConductType.NEUTRAL },
+    { status: ConductType.POSITIVE },
+    { status: ConductType.NEGATIVE },
+    { status: ConductType.WARNING },
+    { status: ConductType.SUSPENSION },
+]);
+
 const schema = z.object({
     id: z.number().max(16).optional(),
     types: z.nativeEnum(ConductType).array().max(10),
@@ -125,17 +134,6 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
 
     refresh();
 }
-
-type CType = { status: ConductType };
-
-const cTypes = ref<CType[]>([
-    { status: ConductType.NOTE },
-    { status: ConductType.NEUTRAL },
-    { status: ConductType.POSITIVE },
-    { status: ConductType.NEGATIVE },
-    { status: ConductType.WARNING },
-    { status: ConductType.SUSPENSION },
-]);
 
 const columns = [
     {
@@ -238,7 +236,7 @@ const columns = [
                                 v-model="query.types"
                                 multiple
                                 nullable
-                                :options="cTypes"
+                                :options="availableTypes"
                                 value-attribute="status"
                                 :placeholder="$t('common.na')"
                                 :searchable-placeholder="$t('common.search_field')"

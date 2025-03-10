@@ -230,6 +230,7 @@ func (x *UserActivity) GetNewValue() string {
 	return ""
 }
 
+// @dbscanner: json
 type UserActivityData struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Types that are valid to be assigned to Data:

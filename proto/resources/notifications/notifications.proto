@@ -39,6 +39,7 @@ message Notification {
   optional bool starred = 10;
 }
 
+// @dbscanner: json
 message Data {
   optional Link link = 1;
   optional resources.users.UserShort caused_by = 2;

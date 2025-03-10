@@ -6,8 +6,8 @@ import (
 	"slices"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	errorsmailer "github.com/fivenet-app/fivenet/services/mailer/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"

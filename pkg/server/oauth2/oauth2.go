@@ -10,10 +10,10 @@ import (
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/dbutils"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/server/oauth2/providers"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/gin-contrib/sessions"

@@ -22,6 +22,7 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// @dbscanner: json
 type CitizenLabels struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	List          []*CitizenLabel        `protobuf:"bytes,1,rep,name=list,proto3" json:"list,omitempty"`

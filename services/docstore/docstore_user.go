@@ -8,9 +8,9 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore"
+	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/dbutils/tables"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	errorsdocstore "github.com/fivenet-app/fivenet/services/docstore/errors"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,14 +39,10 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
+				tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
-					tDUserAccess.Access.IS_NOT_NULL(),
-					tDUserAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW))),
-				),
-				jet.AND(
-					tDUserAccess.Access.IS_NULL(),
-					tDJobAccess.Access.IS_NOT_NULL(),
-					tDJobAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW))),
+					tDAccess.Job.EQ(jet.String(userInfo.Job)),
+					tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
 				),
 			),
 		),
@@ -67,13 +63,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				INNER_JOIN(tDocument,
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
-				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
-				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				INNER_JOIN(tDAccess,
+					tDAccess.TargetID.EQ(tDocRel.DocumentID).
+						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
 		).
 		WHERE(condition)
@@ -103,13 +95,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				INNER_JOIN(tDocument,
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
-				LEFT_JOIN(tDUserAccess,
-					tDUserAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
-				LEFT_JOIN(tDJobAccess,
-					tDJobAccess.DocumentID.EQ(tDocument.ID).
-						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				INNER_JOIN(tDAccess,
+					tDAccess.TargetID.EQ(tDocRel.DocumentID).
+						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
 		).
 		WHERE(condition).

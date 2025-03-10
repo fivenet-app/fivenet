@@ -81,6 +81,7 @@ message QualificationRequirement {
   optional QualificationShort target_qualification = 5; // @gotags: alias:"targetqualification.*"
 }
 
+// @dbscanner: json
 message QualificationDiscordSettings {
   optional string role_name = 1 [(validate.rules).string.max_len = 64];
   optional string role_format = 2 [(validate.rules).string.max_len = 64];
@@ -93,6 +94,7 @@ enum QualificationExamMode {
   QUALIFICATION_EXAM_MODE_ENABLED = 3;
 }
 
+// @dbscanner: json
 message QualificationExamSettings {
   google.protobuf.Duration time = 1 [(validate.rules).duration = {
     required: true,

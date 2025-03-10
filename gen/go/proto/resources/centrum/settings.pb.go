@@ -161,6 +161,7 @@ func (x *Settings) GetTimings() *Timings {
 	return nil
 }
 
+// @dbscanner: json
 type PredefinedStatus struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// @sanitize: method=StripTags
@@ -215,6 +216,7 @@ func (x *PredefinedStatus) GetDispatchStatus() []string {
 	return nil
 }
 
+// @dbscanner: json
 type Timings struct {
 	state                      protoimpl.MessageState `protogen:"open.v1"`
 	DispatchMaxWait            int64                  `protobuf:"varint,1,opt,name=dispatch_max_wait,json=dispatchMaxWait,proto3" json:"dispatch_max_wait,omitempty"`

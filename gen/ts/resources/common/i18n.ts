@@ -12,6 +12,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 /**
  * Wrapped translated message for the client
+ * @dbscanner: json
  *
  * @generated from protobuf message resources.common.TranslateItem
  */

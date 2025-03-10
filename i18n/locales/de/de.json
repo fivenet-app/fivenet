@@ -583,7 +583,8 @@
                 "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
             },
             "table_pagination": {
-                "page_count": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
+                "page_count": "Seite {current} à {size} Einträge",
+                "page_count_with_total": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
             },
             "TipTapEditor": {
                 "clear": "Löschen",
@@ -879,10 +880,6 @@
                         "BUSY": "Einheit beschäftigt"
                     }
                 },
-                "attributes": {
-                    "static": "Statisch",
-                    "no_dispatch_auto_assign": "Keine automatische Einsatz Zuweisung"
-                },
                 "edit_units": "Einheiten editieren"
             },
             "dispatches": {
@@ -902,11 +899,6 @@
                         "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
                         "UNSPECIFIED": "Unbekannter Einsatz-Status"
                     }
-                },
-                "attributes": {
-                    "multiple": "Mehrere Einsätze",
-                    "too_old": "Abgebrochen, Einsatz zu alt",
-                    "duplicate": "Duplikat"
                 }
             },
             "settings": {
@@ -2704,6 +2696,15 @@
                 "BLOCKED": "Blockiert",
                 "VIEW": "Ansehen",
                 "JOIN": "Beitreten"
+            },
+            "DispatchAttribute": {
+                "MULTIPLE": "Mehrere Einsätze",
+                "TOO_OLD": "Abgebrochen, Einsatz zu alt",
+                "DUPLICATE": "Duplikat"
+            },
+            "UnitAttribute": {
+                "STATIC": "Statisch",
+                "NO_DISPATCH_AUTO_ASSIGN": "Keine automatische Einsatz Zuweisung"
             }
         },
         "livemap": {
