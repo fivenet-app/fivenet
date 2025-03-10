@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"slices"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/pkg/croner"
@@ -15,6 +16,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
 var Module = fx.Module("db_housekeeper",
@@ -58,6 +60,7 @@ func New(p Params) *Housekeeper {
 		if err := p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
 			Name:     "housekeeper.run",
 			Schedule: "@5minutes", // Every 5 minutes
+			Timeout:  durationpb.New(1 * time.Minute),
 		}); err != nil {
 			return err
 		}
