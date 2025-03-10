@@ -30,7 +30,7 @@ const groupedLayers = computed(() => {
 <template>
     <LControl position="topright">
         <UTooltip :text="$t('common.layer', 2)" :popper="{ placement: 'left' }">
-            <UPopover :popper="{ arrow: true }" :ui="{ arrow: { base: 'mt-2' }, container: 'z-[999999]' }">
+            <UPopover :popper="{ arrow: true }" :ui="{ arrow: { base: 'mt-2' } }">
                 <UButton
                     size="xl"
                     icon="i-mdi-layers-triple"
