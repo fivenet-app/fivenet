@@ -1,5 +1,6 @@
 import 'vue-router';
 import type { Perms } from '~~/gen/ts/perms';
+import type { BannerMessage } from '~~/gen/ts/resources/rector/banner';
 
 declare module 'vue-router' {
     interface RouteMeta {
@@ -11,6 +12,17 @@ declare module 'vue-router' {
         showCookieOptions?: boolean;
     }
 }
+
+export type ServerAppConfig = {
+    defaultLocale: string;
+
+    login: LoginConfig;
+    discord: DiscordConfig;
+    website: WebsiteConfig;
+    featureGates: FeatureGates;
+    game: GameConfig;
+    system: SystemConfig;
+};
 
 export type ProviderConfig = {
     name: string;
@@ -48,6 +60,10 @@ export type FeatureGates = {
 export type GameConfig = {
     unemployedJobName: string;
     startJobGrade: number;
+};
+
+export type SystemConfig = {
+    bannerMessage?: BannerMessage;
 };
 
 export type OpenClose = { id: number; label: string; closed?: boolean };

@@ -220,6 +220,7 @@
     - [MarkerType](#resources-livemap-MarkerType)
   
 - [resources/notifications/events.proto](#resources_notifications_events-proto)
+    - [BannerMessageWrapper](#resources-notifications-BannerMessageWrapper)
     - [JobEvent](#resources-notifications-JobEvent)
     - [JobGradeEvent](#resources-notifications-JobGradeEvent)
     - [SystemEvent](#resources-notifications-SystemEvent)
@@ -301,11 +302,15 @@
     - [Links](#resources-rector-Links)
     - [Perm](#resources-rector-Perm)
     - [Perms](#resources-rector-Perms)
+    - [System](#resources-rector-System)
     - [UnemployedJob](#resources-rector-UnemployedJob)
     - [UserTracker](#resources-rector-UserTracker)
     - [Website](#resources-rector-Website)
   
     - [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType)
+  
+- [resources/rector/banner.proto](#resources_rector_banner-proto)
+    - [BannerMessage](#resources-rector-BannerMessage)
   
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
@@ -3983,6 +3988,21 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources-notifications-BannerMessageWrapper"></a>
+
+### BannerMessageWrapper
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message` | [resources.rector.BannerMessage](#resources-rector-BannerMessage) | optional |  |
+
+
+
+
+
+
 <a name="resources-notifications-JobEvent"></a>
 
 ### JobEvent
@@ -4022,6 +4042,7 @@ Dummy - DO NOT USE!
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `ping` | [bool](#bool) |  |  |
+| `banner_message` | [BannerMessageWrapper](#resources-notifications-BannerMessageWrapper) |  |  |
 
 
 
@@ -5090,6 +5111,7 @@ Dummy - DO NOT USE!
 | `job_info` | [JobInfo](#resources-rector-JobInfo) |  |  |
 | `user_tracker` | [UserTracker](#resources-rector-UserTracker) |  |  |
 | `discord` | [Discord](#resources-rector-Discord) |  |  |
+| `system` | [System](#resources-rector-System) |  |  |
 
 
 
@@ -5212,6 +5234,22 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources-rector-System"></a>
+
+### System
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `banner_message_enabled` | [bool](#bool) |  |  |
+| `banner_message` | [BannerMessage](#resources-rector-BannerMessage) |  |  |
+
+
+
+
+
+
 <a name="resources-rector-UnemployedJob"></a>
 
 ### UnemployedJob
@@ -5276,6 +5314,42 @@ Dummy - DO NOT USE!
 | `DISCORD_BOT_PRESENCE_TYPE_STREAMING` | 3 |  |
 | `DISCORD_BOT_PRESENCE_TYPE_WATCH` | 4 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_rector_banner-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/rector/banner.proto
+
+
+
+<a name="resources-rector-BannerMessage"></a>
+
+### BannerMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  | @sanitize: method |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 

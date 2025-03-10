@@ -50,6 +50,14 @@ async function sendTestNotifications(): Promise<void> {
     });
 }
 
+function triggerBannerMessage(): void {
+    const { system } = useAppConfig();
+    system.bannerMessage = {
+        id: 'test-' + new Date().getTime().toString(),
+        title: 'Test Banner: Insert cool message here',
+    };
+}
+
 function triggerErrorPage(): void {
     showError(new Error('You pressed the trigger error page button'));
 }
@@ -156,6 +164,9 @@ const version = APP_VERSION;
                     </UButton>
                     <UButton block color="gray" @click="sendTestNotifications">
                         <span>{{ $t('components.debug_info.test_notifications') }}</span>
+                    </UButton>
+                    <UButton block color="gray" @click="triggerBannerMessage">
+                        <span>{{ $t('components.debug_info.trigger_banner_message') }}</span>
                     </UButton>
                     <UButton block color="gray" @click="triggerErrorPage">
                         <span>{{ $t('components.debug_info.trigger_error') }}</span>

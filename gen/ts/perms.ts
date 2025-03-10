@@ -54,6 +54,7 @@
 // source: resources/qualifications/exam.proto
 // source: resources/qualifications/qualifications.proto
 // source: resources/rector/audit.proto
+// source: resources/rector/banner.proto
 // source: resources/rector/config.proto
 // source: resources/stats/stats.proto
 // source: resources/sync/activity.proto

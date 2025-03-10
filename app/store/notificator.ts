@@ -18,6 +18,8 @@ export const useNotificatorStore = defineStore(
     () => {
         const { $grpc } = useNuxtApp();
 
+        const notificationSound = useSounds('/sounds/notification.mp3');
+
         // State
         const doNotDisturb = ref<boolean>(false);
         const notifications = ref<Notification[]>([]);
@@ -27,7 +29,7 @@ export const useNotificatorStore = defineStore(
         const reconnecting = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(0);
 
-        const notificationSound = useSounds('/sounds/notification.mp3');
+        const dismissedBannerMessageID = ref<string | undefined>();
 
         // Actions
         const remove = (notId: number): void => {
@@ -137,6 +139,18 @@ export const useNotificatorStore = defineStore(
                     } else if (resp.data.oneofKind === 'systemEvent') {
                         if (resp.data.systemEvent.data.oneofKind === 'ping') {
                             // Pong!
+                        } else if (resp.data.systemEvent.data.oneofKind === 'bannerMessage') {
+                            const { system } = useAppConfig();
+                            if (resp.data.systemEvent.data.bannerMessage.bannerMessage === undefined) {
+                                system.bannerMessage = undefined;
+                                continue;
+                            }
+
+                            if (system.bannerMessage?.id === resp.data.systemEvent.data.bannerMessage.bannerMessage.id) {
+                                continue;
+                            }
+
+                            system.bannerMessage = resp.data.systemEvent.data.bannerMessage.bannerMessage;
                         } else {
                             logger.warn('Unknown systemEvent event data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
@@ -227,6 +241,8 @@ export const useNotificatorStore = defineStore(
             reconnecting,
             reconnectBackoffTime,
 
+            dismissedBannerMessageID,
+
             // Actions
             remove,
             add,
@@ -239,7 +255,7 @@ export const useNotificatorStore = defineStore(
     },
     {
         persist: {
-            pick: ['doNotDisturb'],
+            pick: ['doNotDisturb', 'dismissedBannerMessageID'],
         },
     },
 );

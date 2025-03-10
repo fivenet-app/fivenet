@@ -234,7 +234,21 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 				}
 
 			case notifi.SystemTopic:
-				// No events yet...
+				var dest notifications.SystemEvent
+				if err := protojson.Unmarshal(msg.Data(), &dest); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
+
+				resp := &pbnotificator.StreamResponse{
+					NotificationCount: notificationCount,
+					Data: &pbnotificator.StreamResponse_SystemEvent{
+						SystemEvent: &dest,
+					},
+				}
+
+				if err := srv.Send(resp); err != nil {
+					return errswrap.NewError(err, ErrFailedStream)
+				}
 
 			case notifi.MailerTopic:
 				var dest mailer.MailerEvent

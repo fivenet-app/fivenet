@@ -3,6 +3,7 @@ package rector
 import (
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 
@@ -98,6 +99,17 @@ func (x *AppConfig) Default() {
 	if x.Discord.BotPresence == nil {
 		x.Discord.BotPresence = &DiscordBotPresence{
 			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
+		}
+	}
+
+	if x.System == nil {
+		x.System = &System{
+			BannerMessageEnabled: false,
+		}
+	}
+	if x.System.BannerMessage != nil {
+		if x.System.BannerMessage.CreatedAt == nil {
+			x.System.BannerMessage.CreatedAt = timestamp.Now()
 		}
 	}
 }

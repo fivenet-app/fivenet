@@ -566,7 +566,8 @@
         "all_dispatches": "All Dispatches",
         "zoom": "Zoom",
         "zoom_in": "Zoom In",
-        "zoom_out": "Zoom Out"
+        "zoom_out": "Zoom Out",
+        "system": "System"
     },
     "components": {
         "partials": {
@@ -810,6 +811,12 @@
                 },
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
+                },
+                "system": {
+                    "banner_message": {
+                        "title": "Banner Message",
+                        "subtitle": "Globally displayed banner message (the message should be kept short)."
+                    }
                 }
             },
             "citizen_labels": {
@@ -831,7 +838,8 @@
             "no_char_selected": "No char active, please choose a character and check again.",
             "test_notifications": "Test Notifications",
             "trigger_error": "Trigger Error page",
-            "toggle_log_level": "Toggle Log Level to debug/warn"
+            "toggle_log_level": "Toggle Log Level to debug/warn",
+            "trigger_banner_message": "Trigger Banner Message"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"

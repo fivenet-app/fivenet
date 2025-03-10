@@ -104,12 +104,6 @@ const open = ref(cookiesState.value === null);
             </template>
         </UCard>
 
-        <UButton
-            :ui="{ rounded: 'rounded-full' }"
-            icon="i-mdi-cookie-cog"
-            size="xl"
-            class="fixed bottom-10 right-6"
-            @click="open = true"
-        />
+        <UButton icon="i-mdi-cookie-cog" size="xl" class="fixed bottom-10 right-6" @click="open = true" />
     </div>
 </template>

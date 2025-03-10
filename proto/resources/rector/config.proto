@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.rector;
 
 import "google/protobuf/duration.proto";
+import "resources/rector/banner.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rector";
@@ -19,6 +20,7 @@ message AppConfig {
   JobInfo job_info = 5;
   UserTracker user_tracker = 6;
   Discord discord = 7;
+  System system = 9;
 }
 
 message Auth {
@@ -105,4 +107,9 @@ message DiscordBotPresence {
   optional string status = 2;
   // @sanitize: method=StripTags
   optional string url = 3;
+}
+
+message System {
+  bool banner_message_enabled = 1;
+  resources.rector.BannerMessage banner_message = 2;
 }

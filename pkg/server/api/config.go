@@ -1,5 +1,7 @@
 package api
 
+import "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+
 type Version struct {
 	Version string `json:"version"`
 }
@@ -14,6 +16,7 @@ type ClientConfig struct {
 	Website      Website      `json:"website"`
 	FeatureGates FeatureGates `json:"featureGates"`
 	Game         Game         `json:"game"`
+	System       System       `json:"system"`
 }
 
 type LoginConfig struct {
@@ -49,4 +52,8 @@ type FeatureGates struct {
 type Game struct {
 	UnemployedJobName string `json:"unemployedJobName"`
 	StartJobGrade     int32  `json:"startJobGrade"`
+}
+
+type System struct {
+	BannerMessage *rector.BannerMessage `json:"bannerMessage,omitempty"`
 }

@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { BannerMessage } from "./banner";
 import { Duration } from "../../google/protobuf/duration";
 /**
  * @dbscanner: json,partial
@@ -49,6 +50,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.rector.Discord discord = 7;
      */
     discord?: Discord;
+    /**
+     * @generated from protobuf field: resources.rector.System system = 9;
+     */
+    system?: System;
 }
 /**
  * @generated from protobuf message resources.rector.Auth
@@ -223,6 +228,19 @@ export interface DiscordBotPresence {
     url?: string;
 }
 /**
+ * @generated from protobuf message resources.rector.System
+ */
+export interface System {
+    /**
+     * @generated from protobuf field: bool banner_message_enabled = 1;
+     */
+    bannerMessageEnabled: boolean;
+    /**
+     * @generated from protobuf field: resources.rector.BannerMessage banner_message = 2;
+     */
+    bannerMessage?: BannerMessage;
+}
+/**
  * @generated from protobuf enum resources.rector.DiscordBotPresenceType
  */
 export enum DiscordBotPresenceType {
@@ -258,7 +276,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 4, name: "website", kind: "message", T: () => Website },
             { no: 5, name: "job_info", kind: "message", T: () => JobInfo },
             { no: 6, name: "user_tracker", kind: "message", T: () => UserTracker },
-            { no: 7, name: "discord", kind: "message", T: () => Discord }
+            { no: 7, name: "discord", kind: "message", T: () => Discord },
+            { no: 9, name: "system", kind: "message", T: () => System }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
@@ -297,6 +316,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                 case /* resources.rector.Discord discord */ 7:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
                     break;
+                case /* resources.rector.System system */ 9:
+                    message.system = System.internalBinaryRead(reader, reader.uint32(), options, message.system);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -333,6 +355,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.rector.Discord discord = 7; */
         if (message.discord)
             Discord.internalBinaryWrite(message.discord, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.System system = 9; */
+        if (message.system)
+            System.internalBinaryWrite(message.system, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -922,3 +947,57 @@ class DiscordBotPresence$Type extends MessageType<DiscordBotPresence> {
  * @generated MessageType for protobuf message resources.rector.DiscordBotPresence
  */
 export const DiscordBotPresence = new DiscordBotPresence$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class System$Type extends MessageType<System> {
+    constructor() {
+        super("resources.rector.System", [
+            { no: 1, name: "banner_message_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "banner_message", kind: "message", T: () => BannerMessage }
+        ]);
+    }
+    create(value?: PartialMessage<System>): System {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.bannerMessageEnabled = false;
+        if (value !== undefined)
+            reflectionMergePartial<System>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: System): System {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool banner_message_enabled */ 1:
+                    message.bannerMessageEnabled = reader.bool();
+                    break;
+                case /* resources.rector.BannerMessage banner_message */ 2:
+                    message.bannerMessage = BannerMessage.internalBinaryRead(reader, reader.uint32(), options, message.bannerMessage);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: System, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool banner_message_enabled = 1; */
+        if (message.bannerMessageEnabled !== false)
+            writer.tag(1, WireType.Varint).bool(message.bannerMessageEnabled);
+        /* resources.rector.BannerMessage banner_message = 2; */
+        if (message.bannerMessage)
+            BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.rector.System
+ */
+export const System = new System$Type();

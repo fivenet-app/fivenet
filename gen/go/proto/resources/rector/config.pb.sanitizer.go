@@ -48,6 +48,15 @@ func (m *AppConfig) Sanitize() error {
 		}
 	}
 
+	// Field: System
+	if m.System != nil {
+		if v, ok := any(m.GetSystem()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	// Field: UserTracker
 	if m.UserTracker != nil {
 		if v, ok := any(m.GetUserTracker()).(interface{ Sanitize() error }); ok {
@@ -219,6 +228,23 @@ func (m *Perms) Sanitize() error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *System) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: BannerMessage
+	if m.BannerMessage != nil {
+		if v, ok := any(m.GetBannerMessage()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil

@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { BannerMessage } from "../rector/banner";
 import { JobProps } from "../users/job_props";
 import { Notification } from "./notifications";
 // User Events
@@ -99,8 +100,23 @@ export interface SystemEvent {
          */
         ping: boolean;
     } | {
+        oneofKind: "bannerMessage";
+        /**
+         * @generated from protobuf field: resources.notifications.BannerMessageWrapper banner_message = 2;
+         */
+        bannerMessage: BannerMessageWrapper;
+    } | {
         oneofKind: undefined;
     };
+}
+/**
+ * @generated from protobuf message resources.notifications.BannerMessageWrapper
+ */
+export interface BannerMessageWrapper {
+    /**
+     * @generated from protobuf field: optional resources.rector.BannerMessage banner_message = 1;
+     */
+    bannerMessage?: BannerMessage;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserEvent$Type extends MessageType<UserEvent> {
@@ -276,7 +292,8 @@ export const JobGradeEvent = new JobGradeEvent$Type();
 class SystemEvent$Type extends MessageType<SystemEvent> {
     constructor() {
         super("resources.notifications.SystemEvent", [
-            { no: 1, name: "ping", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "ping", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "banner_message", kind: "message", oneof: "data", T: () => BannerMessageWrapper }
         ]);
     }
     create(value?: PartialMessage<SystemEvent>): SystemEvent {
@@ -297,6 +314,12 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
                         ping: reader.bool()
                     };
                     break;
+                case /* resources.notifications.BannerMessageWrapper banner_message */ 2:
+                    message.data = {
+                        oneofKind: "bannerMessage",
+                        bannerMessage: BannerMessageWrapper.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).bannerMessage)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -312,6 +335,9 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
         /* bool ping = 1; */
         if (message.data.oneofKind === "ping")
             writer.tag(1, WireType.Varint).bool(message.data.ping);
+        /* resources.notifications.BannerMessageWrapper banner_message = 2; */
+        if (message.data.oneofKind === "bannerMessage")
+            BannerMessageWrapper.internalBinaryWrite(message.data.bannerMessage, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -322,3 +348,49 @@ class SystemEvent$Type extends MessageType<SystemEvent> {
  * @generated MessageType for protobuf message resources.notifications.SystemEvent
  */
 export const SystemEvent = new SystemEvent$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class BannerMessageWrapper$Type extends MessageType<BannerMessageWrapper> {
+    constructor() {
+        super("resources.notifications.BannerMessageWrapper", [
+            { no: 1, name: "banner_message", kind: "message", T: () => BannerMessage }
+        ]);
+    }
+    create(value?: PartialMessage<BannerMessageWrapper>): BannerMessageWrapper {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<BannerMessageWrapper>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: BannerMessageWrapper): BannerMessageWrapper {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.rector.BannerMessage banner_message */ 1:
+                    message.bannerMessage = BannerMessage.internalBinaryRead(reader, reader.uint32(), options, message.bannerMessage);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: BannerMessageWrapper, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.rector.BannerMessage banner_message = 1; */
+        if (message.bannerMessage)
+            BannerMessage.internalBinaryWrite(message.bannerMessage, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.BannerMessageWrapper
+ */
+export const BannerMessageWrapper = new BannerMessageWrapper$Type();

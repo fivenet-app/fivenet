@@ -566,7 +566,8 @@
         "all_dispatches": "Alle Einsätze",
         "zoom": "Zoomstufe",
         "zoom_in": "Vergrößern",
-        "zoom_out": "Verkleinern"
+        "zoom_out": "Verkleinern",
+        "system": "System"
     },
     "components": {
         "partials": {
@@ -810,6 +811,12 @@
                 },
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
+                },
+                "system": {
+                    "banner_message": {
+                        "title": "Banner Nachricht",
+                        "subtitle": "Global angezeigte Bannermeldung (sollte nicht zulange vom Text her sein)."
+                    }
                 }
             },
             "citizen_labels": {
@@ -831,7 +838,8 @@
             "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
             "test_notifications": "Teste Benachrichtigungen",
             "trigger_error": "Fehlerseite auslösen",
-            "toggle_log_level": "Log-Level zwischen Debug/Warn umschalten"
+            "toggle_log_level": "Log-Level zwischen Debug/Warn umschalten",
+            "trigger_banner_message": "Banner auslösen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"

@@ -2,11 +2,15 @@ package rector
 
 import (
 	"context"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -71,11 +75,36 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 
 	// Update default perms
 	defaultPerms := make([]string, len(req.Config.Perms.Default))
-	for i := 0; i < len(req.Config.Perms.Default); i++ {
+	for i := range req.Config.Perms.Default {
 		defaultPerms[i] = perms.BuildGuard(perms.Category(req.Config.Perms.Default[i].Category), perms.Name(req.Config.Perms.Default[i].Name))
 	}
 	if err := s.ps.SetDefaultRolePerms(ctx, defaultPerms); err != nil {
 		return nil, err
+	}
+
+	currentConfig := s.appCfg.Get()
+	// If banner is disabled and was previously enabled, send "nil" banner message to remove it from clients
+	if !req.Config.System.BannerMessageEnabled && currentConfig.System.BannerMessageEnabled != req.Config.System.BannerMessageEnabled {
+		s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
+			Data: &notifications.SystemEvent_BannerMessage{
+				BannerMessage: &notifications.BannerMessageWrapper{
+					BannerMessage: nil,
+				},
+			},
+		})
+	} else {
+		// Check if an updated banner message event is needed by md5 hashing the title and using that as the ID
+		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title)
+
+		if currentConfig.System.BannerMessage == nil || currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id {
+			s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
+				Data: &notifications.SystemEvent_BannerMessage{
+					BannerMessage: &notifications.BannerMessageWrapper{
+						BannerMessage: req.Config.System.BannerMessage,
+					},
+				},
+			})
+		}
 	}
 
 	// Update config state

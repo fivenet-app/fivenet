@@ -206,6 +206,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UFormGroup name="expiresAt">
                                     <DatePickerPopoverClient
                                         v-model="state.expiresAt"
+                                        date-format="dd.MM.yyyy HH:mm"
                                         :popover="{ popper: { placement: 'bottom-start' } }"
                                         :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                                     />

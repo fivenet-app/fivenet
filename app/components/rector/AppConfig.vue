@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import type { LocaleObject } from '@nuxtjs/i18n';
+import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -13,6 +14,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { DiscordBotPresenceType } from '~~/gen/ts/resources/rector/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { grpcMethods, grpcServices } from '~~/gen/ts/svcs';
+import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
+import TiptapEditor from '../partials/editor/TiptapEditor.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -97,6 +100,13 @@ const schema = z.object({
             })
             .optional(),
     }),
+    system: z.object({
+        bannerMessageEnabled: z.boolean(),
+        bannerMessage: z.object({
+            title: z.string().min(3).max(512),
+            expiresAt: z.date().min(new Date()).optional(),
+        }),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -128,7 +138,6 @@ const state = reactive<Schema>({
         refreshTime: 3.35,
         livemapJobs: [],
     },
-    // Discord
     discord: {
         enabled: false,
         syncInterval: 9.0,
@@ -136,6 +145,12 @@ const state = reactive<Schema>({
         ignoredJobs: [],
         botPresence: {
             type: DiscordBotPresenceType.UNSPECIFIED,
+        },
+    },
+    system: {
+        bannerMessageEnabled: false,
+        bannerMessage: {
+            title: '',
         },
     },
 });
@@ -162,6 +177,14 @@ async function updateAppConfig(values: Schema): Promise<void> {
         syncInterval: toDuration(values.discord.syncInterval),
         ignoredJobs: values.discord.ignoredJobs,
         botPresence: values.discord.botPresence,
+    };
+    config.value.config.system = {
+        bannerMessageEnabled: values.system.bannerMessageEnabled,
+        bannerMessage: {
+            id: '',
+            title: values.system.bannerMessage.title,
+            expiresAt: values.system.bannerMessage.expiresAt ? toTimestamp(values.system.bannerMessage.expiresAt) : undefined,
+        },
     };
 
     try {
@@ -244,6 +267,7 @@ const items = [
     { slot: 'jobInfo', label: t('components.rector.app_config.job_info.title'), icon: 'i-mdi-briefcase' },
     { slot: 'userTracker', label: t('components.rector.app_config.user_tracker.title'), icon: 'i-mdi-track-changes' },
     { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
+    { slot: 'system', label: t('common.system'), icon: 'i-mdi-settings' },
 ];
 
 const botPresenceTypes = ref<{ mode: DiscordBotPresenceType }[]>([
@@ -866,6 +890,55 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.discord.botPresence.url"
                                         type="text"
                                         :placeholder="$t('components.rector.app_config.discord.bot_presence.url')"
+                                    />
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+
+                    <template #system>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.rector.app_config.system.banner_message.title')"
+                                :description="$t('components.rector.app_config.system.banner_message.subtitle')"
+                            >
+                                <UFormGroup
+                                    name="system.bannerMessageEnabled"
+                                    :label="$t('common.enabled')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="state.system.bannerMessageEnabled">
+                                        <span class="sr-only">
+                                            {{ $t('common.enabled') }}
+                                        </span>
+                                    </UToggle>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="system.bannerMessage.title"
+                                    :label="$t('common.message')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <TiptapEditor v-model="state.system.bannerMessage.title" />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="system.bannerMessage.expiresAt"
+                                    :label="$t('common.expires_at')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <DatePickerPopoverClient
+                                        v-model="state.system.bannerMessage.expiresAt"
+                                        date-format="dd.MM.yyyy HH:mm"
+                                        :date-picker="{
+                                            mode: 'dateTime',
+                                            is24hr: true,
+                                            clearable: true,
+                                            disabledDates: [{ start: null, end: subDays(new Date(), 1) }],
+                                        }"
                                     />
                                 </UFormGroup>
                             </UDashboardSection>

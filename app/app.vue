@@ -5,6 +5,7 @@ import NotificationProvider from '~/components/partials/notification/Notificatio
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { logger, useSettingsStore } from '~/store/settings';
+import BannerMessage from './components/partials/BannerMessage.vue';
 import { useAuthStore } from './store/auth';
 
 const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
@@ -169,8 +170,8 @@ const route = router.currentRoute;
 <template>
     <div>
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
-
         <NuxtRouteAnnouncer />
+
         <NuxtLayout>
             <NuxtPage
                 :transition="{
@@ -178,6 +179,8 @@ const route = router.currentRoute;
                 }"
             />
         </NuxtLayout>
+
+        <BannerMessage v-if="appConfig.system.bannerMessage" :message="appConfig.system.bannerMessage" />
 
         <UNotifications />
         <UModals />

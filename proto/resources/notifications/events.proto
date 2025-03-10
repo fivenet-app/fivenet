@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.notifications;
 
 import "resources/notifications/notifications.proto";
+import "resources/rector/banner.proto";
 import "resources/users/job_props.proto";
 import "validate/validate.proto";
 
@@ -48,5 +49,10 @@ message SystemEvent {
     option (validate.required) = true;
 
     bool ping = 1;
+    BannerMessageWrapper banner_message = 2;
   }
+}
+
+message BannerMessageWrapper {
+  optional resources.rector.BannerMessage banner_message = 1;
 }

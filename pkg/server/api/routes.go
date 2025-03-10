@@ -5,12 +5,14 @@ import (
 	"net/http"
 	"sync/atomic"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 )
 
 type Routes struct {
@@ -111,6 +113,7 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 			UnemployedJobName: "unemployed",
 			StartJobGrade:     0,
 		},
+		System: System{},
 	}
 
 	clientCfg.Discord.BotInviteURL = appCfg.Discord.InviteUrl
@@ -126,6 +129,10 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 		clientCfg.Game.UnemployedJobName = appCfg.JobInfo.UnemployedJob.Name
 	}
 	clientCfg.Game.StartJobGrade = r.cfg.Game.StartJobGrade
+
+	if appCfg.System.BannerMessage != nil {
+		clientCfg.System.BannerMessage = proto.Clone(appCfg.System.BannerMessage).(*rector.BannerMessage)
+	}
 
 	return clientCfg
 }

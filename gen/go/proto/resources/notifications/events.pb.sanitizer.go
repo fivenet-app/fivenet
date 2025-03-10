@@ -3,6 +3,23 @@
 
 package notifications
 
+func (m *BannerMessageWrapper) Sanitize() error {
+	if m == nil {
+		return nil
+	}
+
+	// Field: BannerMessage
+	if m.BannerMessage != nil {
+		if v, ok := any(m.GetBannerMessage()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
 func (m *JobEvent) Sanitize() error {
 	if m == nil {
 		return nil
@@ -34,6 +51,18 @@ func (m *JobGradeEvent) Sanitize() error {
 func (m *SystemEvent) Sanitize() error {
 	if m == nil {
 		return nil
+	}
+
+	// Field: BannerMessage
+	switch v := m.Data.(type) {
+
+	case *SystemEvent_BannerMessage:
+		if v, ok := any(v).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

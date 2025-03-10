@@ -1,5 +1,5 @@
 import { defineNuxtPlugin } from '#app';
-import type { AppConfig } from 'nuxt/schema';
+import type { ServerAppConfig } from '~/typings';
 
 async function loadConfig(): Promise<void> {
     // 7.5 seconds should be enough to retrieve the config from the server...
@@ -7,7 +7,7 @@ async function loadConfig(): Promise<void> {
     const tId = setTimeout(() => abort.abort(), 7.5 * 1000);
 
     try {
-        const resp = await $fetch<AppConfig>('/api/config', {
+        const resp = await $fetch<ServerAppConfig>('/api/config', {
             method: 'POST',
             signal: abort.signal,
         });

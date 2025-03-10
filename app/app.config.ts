@@ -1,4 +1,4 @@
-import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, WebsiteConfig } from '~/typings';
+import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, SystemConfig, WebsiteConfig } from '~/typings';
 
 export default defineAppConfig({
     // BEGIN Server provided App Config
@@ -22,6 +22,7 @@ export default defineAppConfig({
         unemployedJobName: 'unemployed',
         startJobGrade: 0,
     } as GameConfig,
+    system: {} as SystemConfig,
     // END Server provided App Config
 
     // File upload related config
