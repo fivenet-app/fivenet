@@ -87,7 +87,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 </script>
 
 <template>
-    <div class="relative z-0 size-full">
+    <div class="relative size-full">
         <div
             v-if="!!error || !initiated || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"

@@ -226,7 +226,6 @@ onBeforeUnmount(() => {
             v-model:center="center"
             :bounds="bounds"
             :max-bounds="maxBounds"
-            class="z-0"
             :crs="customCRS"
             :min-zoom="1"
             :max-zoom="7"

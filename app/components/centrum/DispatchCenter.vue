@@ -49,9 +49,9 @@ onBeforeRouteLeave(async (to) => {
         </UDashboardNavbar>
 
         <div class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden">
-            <Splitpanes class="relative">
+            <Splitpanes>
                 <Pane :min-size="25">
-                    <div class="relative z-0 size-full">
+                    <div class="relative size-full">
                         <div
                             v-if="error || (abort === undefined && !reconnecting)"
                             class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
@@ -75,6 +75,7 @@ onBeforeRouteLeave(async (to) => {
                         </LivemapBase>
                     </div>
                 </Pane>
+
                 <Pane :min-size="40" :size="70">
                     <Splitpanes horizontal>
                         <Pane :size="58" :min-size="2">
