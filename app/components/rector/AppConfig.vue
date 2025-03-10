@@ -256,6 +256,13 @@ function setSettingsValues(): void {
         state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;
         state.discord.botPresence = config.value.config.discord.botPresence;
     }
+    if (config.value.config.system) {
+        state.system.bannerMessageEnabled = config.value.config.system.bannerMessageEnabled;
+        state.system.bannerMessage = {
+            title: config.value.config.system.bannerMessage?.title ?? '',
+            expiresAt: toDate(config.value.config.system.bannerMessage?.expiresAt),
+        };
+    }
 }
 
 watch(config, () => setSettingsValues());
