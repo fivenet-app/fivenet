@@ -29,7 +29,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           goos: ${{ matrix.goos }}
           goarch: ${{ matrix.goarch }}
-          goversion: '1.23.5'
+          goversion: '1.23.6'
           binary_name: 'fivenet'
           extra_files: LICENSE README.md VERSION config.example.yaml dbsync.example.yaml
           ldflags: '-X github.com/fivenet-app/fivenet/pkg/version.Version=${{ env.APP_VERSION }}'
