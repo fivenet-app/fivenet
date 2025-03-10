@@ -4,7 +4,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { Error as CommonError } from '~~/gen/ts/resources/common/error';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const logger = useLogger('📦 GRPC');
+const logger = useLogger('📡 GRPC');
 
 const throttledErrorCodes = ['INTERNAL', 'DEADLINE_EXCEEDED', 'CANCELLED', 'PERMISSION_DENIED', 'UNAUTHENTICATED'];
 
