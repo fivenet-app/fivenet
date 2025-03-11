@@ -76,7 +76,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			jet.COUNT(jet.DISTINCT(tCalendar.ID)).AS("datacount.totalcount"),
 		).
 		FROM(tCalendar.
-			INNER_JOIN(tCAccess,
+			LEFT_JOIN(tCAccess,
 				tCAccess.TargetID.EQ(tCalendar.ID).
 					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
 			).
@@ -131,7 +131,7 @@ func (s *Server) ListCalendars(ctx context.Context, req *pbcalendar.ListCalendar
 			tCalendarSubs.Muted,
 		).
 		FROM(tCalendar.
-			INNER_JOIN(tCAccess,
+			LEFT_JOIN(tCAccess,
 				tCAccess.TargetID.EQ(tCalendar.ID).
 					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(minAccessLevel)))),
 			).

@@ -107,7 +107,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tDocumentShort.
-			INNER_JOIN(tDAccess,
+			LEFT_JOIN(tDAccess,
 				tDAccess.TargetID.EQ(tDocumentShort.ID).
 					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).
@@ -240,7 +240,7 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 	var tables jet.ReadableTable
 	if !userInfo.SuperUser {
 		tables = tDocument.
-			INNER_JOIN(tDAccess,
+			LEFT_JOIN(tDAccess,
 				tDAccess.TargetID.EQ(tDocument.ID).
 					AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 			).

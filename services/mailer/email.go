@@ -77,7 +77,7 @@ func (s *Server) ListEmails(ctx context.Context, req *pbmailer.ListEmailsRequest
 		).
 		FROM(
 			tEmails.
-				INNER_JOIN(tEmailsAccess,
+				LEFT_JOIN(tEmailsAccess,
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
 						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
 				).
@@ -175,7 +175,7 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 		).
 		FROM(
 			tEmails.
-				INNER_JOIN(tEmailsAccess,
+				LEFT_JOIN(tEmailsAccess,
 					tEmailsAccess.TargetID.EQ(tEmails.ID).
 						AND(tEmailsAccess.Access.GT_EQ(jet.Int32(int32(mailer.AccessLevel_ACCESS_LEVEL_READ)))),
 				).

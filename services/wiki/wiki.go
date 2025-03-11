@@ -91,7 +91,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		).
 		FROM(
 			tPageShort.
-				INNER_JOIN(tPAccess,
+				LEFT_JOIN(tPAccess,
 					tPAccess.TargetID.EQ(tPageShort.ID).
 						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
@@ -137,7 +137,7 @@ func (s *Server) ListPages(ctx context.Context, req *pbwiki.ListPagesRequest) (*
 		).
 		FROM(
 			tPageShort.
-				INNER_JOIN(tPAccess,
+				LEFT_JOIN(tPAccess,
 					tPAccess.TargetID.EQ(tPAccess.ID).
 						AND(tPAccess.Access.GT_EQ(jet.Int32(int32(wiki.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				).

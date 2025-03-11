@@ -63,7 +63,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				INNER_JOIN(tDocument,
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
-				INNER_JOIN(tDAccess,
+				LEFT_JOIN(tDAccess,
 					tDAccess.TargetID.EQ(tDocRel.DocumentID).
 						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),
@@ -95,7 +95,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				INNER_JOIN(tDocument,
 					tDocument.ID.EQ(tDocRel.DocumentID),
 				).
-				INNER_JOIN(tDAccess,
+				LEFT_JOIN(tDAccess,
 					tDAccess.TargetID.EQ(tDocRel.DocumentID).
 						AND(tDAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				),

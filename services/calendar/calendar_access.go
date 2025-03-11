@@ -59,7 +59,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			tCalendar.ID,
 		).
 		FROM(tCalendar.
-			INNER_JOIN(tCAccess,
+			LEFT_JOIN(tCAccess,
 				tCAccess.TargetID.EQ(tCalendar.ID).
 					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
 			).

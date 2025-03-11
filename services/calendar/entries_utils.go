@@ -50,7 +50,7 @@ func (s *Server) listCalendarEntriesQuery(condition jet.BoolExpression, userInfo
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
 					AND(tCalendar.DeletedAt.IS_NULL()),
 			).
-			INNER_JOIN(tCAccess,
+			LEFT_JOIN(tCAccess,
 				tCAccess.TargetID.EQ(tCalendarEntry.CalendarID).
 					AND(tCAccess.Access.GT_EQ(jet.Int32(int32(access)))),
 			).

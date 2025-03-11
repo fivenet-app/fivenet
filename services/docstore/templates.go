@@ -51,7 +51,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbdocstore.ListTemplate
 		).
 		FROM(
 			tDTemplates.
-				INNER_JOIN(tDTemplatesAccess,
+				LEFT_JOIN(tDTemplatesAccess,
 					tDTemplatesAccess.TargetID.EQ(tDTemplates.ID).
 						AND(tDTemplatesAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tDTemplatesAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
