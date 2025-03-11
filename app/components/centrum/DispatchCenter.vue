@@ -15,12 +15,13 @@ import DisponentsInfo from './disponents/DisponentsInfo.vue';
 const { can } = useAuth();
 
 const centrumStore = useCentrumStore();
-const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
+const { error, abort, reconnecting, feed, isCenter } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 onBeforeMount(async () => {
     useTimeoutFn(async () => {
         try {
+            isCenter.value = true;
             startStream();
         } catch (e) {
             logger.error('exception during centrum stream', e);
@@ -29,6 +30,8 @@ onBeforeMount(async () => {
 });
 
 onBeforeRouteLeave(async (to) => {
+    isCenter.value = false;
+
     // Don't end centrum stream if user is switching to livemap page
     if (to.path.startsWith('/livemap')) {
         return;

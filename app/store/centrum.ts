@@ -41,6 +41,7 @@ export const useCentrumStore = defineStore(
         const isDisponent = ref<boolean>(false);
         const disponents = ref<UserShort[]>([]);
         const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
+        const isCenter = ref<boolean>(false);
 
         const units = ref<Map<number, Unit>>(new Map());
         const dispatches = ref<Map<number, Dispatch>>(new Map());
@@ -339,7 +340,7 @@ export const useCentrumStore = defineStore(
         };
 
         // Streams
-        const startStream = async (isCenter?: boolean): Promise<void> => {
+        const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) {
                 return;
             }
@@ -468,13 +469,13 @@ export const useCentrumStore = defineStore(
                             }
                         }
 
-                        if (isCenter && resp.change.unitUpdated.status) {
+                        if (isCenter.value && resp.change.unitUpdated.status) {
                             addFeedItem(resp.change.unitUpdated.status);
                         }
                     } else if (resp.change.oneofKind === 'unitStatus') {
                         updateUnitStatus(resp.change.unitStatus);
 
-                        if (isCenter) {
+                        if (isCenter.value) {
                             addFeedItem(resp.change.unitStatus);
                             continue;
                         }
@@ -519,7 +520,7 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         addOrUpdateDispatch(resp.change.dispatchCreated);
 
-                        if (isCenter && resp.change.dispatchCreated.status) {
+                        if (isCenter.value && resp.change.dispatchCreated.status) {
                             addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
@@ -527,14 +528,14 @@ export const useCentrumStore = defineStore(
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         addOrUpdateDispatch(resp.change.dispatchUpdated);
 
-                        if (isCenter && resp.change.dispatchUpdated.status) {
+                        if (isCenter.value && resp.change.dispatchUpdated.status) {
                             addFeedItem(resp.change.dispatchUpdated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const ds = resp.change.dispatchStatus;
                         updateDispatchStatus(ds);
 
-                        if (isCenter) {
+                        if (isCenter.value) {
                             addFeedItem(ds);
                         }
 
@@ -572,7 +573,7 @@ export const useCentrumStore = defineStore(
 
                     // only restart if not aborted
                     if (abort.value && !abort.value.signal.aborted) {
-                        restartStream(isCenter);
+                        restartStream();
                     } else {
                         error.value = rpcError;
                     }
@@ -600,7 +601,7 @@ export const useCentrumStore = defineStore(
             }
         };
 
-        const restartStream = async (isCenter?: boolean): Promise<void> => {
+        const restartStream = async (): Promise<void> => {
             if (!abort.value || abort.value.signal.aborted) {
                 return;
             }
@@ -616,7 +617,7 @@ export const useCentrumStore = defineStore(
             await stopStream();
             setTimeout(() => {
                 if (reconnecting.value) {
-                    startStream(isCenter);
+                    startStream();
                 }
             }, reconnectBackoffTime.value * 1000);
         };
