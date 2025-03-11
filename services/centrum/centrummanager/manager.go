@@ -135,9 +135,12 @@ func New(p Params) *Manager {
 			return err
 		}
 
-		if err := s.loadData(ctxStartup); err != nil {
-			return err
-		}
+		go func() {
+			if err := s.loadData(ctxCancel); err != nil {
+				s.logger.Error("failed to load centrum data", zap.Error(err))
+				return
+			}
+		}()
 
 		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
