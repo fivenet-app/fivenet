@@ -20,7 +20,7 @@ import (
 
 var tAudit = table.FivenetAuditLog
 
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
+var json = jsoniter.ConfigFastest
 
 var Module = fx.Module("audit",
 	fx.Provide(
@@ -122,8 +122,8 @@ func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any, callbacks ...Filt
 	for _, fn := range callbacks {
 		fn(in, data)
 	}
-
 	in.Data = a.toJson(data)
+
 	a.input <- in
 }
 
@@ -160,14 +160,14 @@ func (a *AuditStorer) store(ctx context.Context, in *model.FivenetAuditLog) erro
 }
 
 func (a *AuditStorer) toJson(data any) *string {
-	if data != nil {
-		data, err := json.MarshalToString(data)
-		if err != nil {
-			data = "Failed to marshal data"
-		}
-		return &data
+	if data == nil {
+		noData := "No Data"
+		return &noData
 	}
 
-	noData := "No Data"
-	return &noData
+	out, err := json.MarshalToString(data)
+	if err != nil {
+		data = "Failed to marshal data"
+	}
+	return &out
 }

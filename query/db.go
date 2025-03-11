@@ -13,10 +13,12 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/dbutils/dsn"
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
+	"github.com/go-jet/jet/v2/qrm"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	mysqlmigrate "github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
@@ -37,6 +39,9 @@ type Params struct {
 }
 
 func SetupDB(p Params) (*sql.DB, error) {
+	// Use jsoniter as a replacement for std json lib for jet qrm (in case it is used)
+	qrm.GlobalConfig.JsonUnmarshalFunc = jsoniter.ConfigCompatibleWithStandardLibrary.Unmarshal
+
 	if skip, _ := strconv.ParseBool(os.Getenv(envs.SkipDBMigrationsEnv)); !skip {
 		if err := MigrateDB(p.Logger, p.Config.Database.DSN, p.Config.Database.ESXCompat); err != nil {
 			return nil, err

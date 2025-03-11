@@ -173,20 +173,21 @@ func (s *Scheduler) start(ctx context.Context) {
 					go func() {
 						defer wg.Done()
 
-						if err := s.runCronjob(ctx, job); err != nil {
-							s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
-						}
-
 						if err := s.store.ComputeUpdate(ctx, key, true, func(key string, existing *cron.Cronjob) (*cron.Cronjob, bool, error) {
 							if existing == nil {
 								return existing, false, nil
 							}
 
+							existing.StartedTime = timestamp.Now()
 							existing.State = cron.CronjobState_CRONJOB_STATE_RUNNING
 
 							return existing, true, nil
 						}); err != nil {
 							s.logger.Error("failed to update status of cron job", zap.String("job_name", job.Name))
+						}
+
+						if err := s.runCronjob(ctx, job); err != nil {
+							s.logger.Error("failed to trigger cron job run", zap.String("job_name", job.Name))
 						}
 					}()
 
