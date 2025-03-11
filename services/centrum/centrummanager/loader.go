@@ -147,12 +147,12 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 
 	if job != "" {
 		if err := s.UpdateDisponents(ctx, job, perJob[job]); err != nil {
-			return err
+			return fmt.Errorf("failed to update disponents for specific job. %w", err)
 		}
 	} else {
 		for job, us := range perJob {
 			if err := s.UpdateDisponents(ctx, job, us); err != nil {
-				return err
+				return fmt.Errorf("failed to update disponents for all jobs. %w", err)
 			}
 		}
 	}
