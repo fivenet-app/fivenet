@@ -295,21 +295,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
                                         </UFormGroup>
 
-                                        <UButton
-                                            :ui="{ rounded: 'rounded-full' }"
-                                            icon="i-mdi-close"
-                                            @click="state.unitStatus.splice(idx, 1)"
-                                        />
+                                        <UTooltip :text="$t('common.delete')">
+                                            <UButton
+                                                :ui="{ rounded: 'rounded-full' }"
+                                                icon="i-mdi-close"
+                                                @click="state.unitStatus.splice(idx, 1)"
+                                            />
+                                        </UTooltip>
                                     </div>
                                 </div>
 
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    icon="i-mdi-plus"
-                                    :disabled="!canSubmit || state.unitStatus.length >= 8"
-                                    :class="state.unitStatus.length ? 'mt-2' : ''"
-                                    @click="state.unitStatus.push('')"
-                                />
+                                <UTooltip :text="$t('common.add')">
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-plus"
+                                        :disabled="!canSubmit || state.unitStatus.length >= 8"
+                                        :class="state.unitStatus.length ? 'mt-2' : ''"
+                                        @click="state.unitStatus.push('')"
+                                    />
+                                </UTooltip>
                             </UFormGroup>
 
                             <!-- Predefined Dispatch Status Reason -->
@@ -330,22 +334,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
                                         </UFormGroup>
 
-                                        <UButton
-                                            :ui="{ rounded: 'rounded-full' }"
-                                            icon="i-mdi-close"
-                                            :disabled="!canSubmit"
-                                            @click="state.dispatchStatus.splice(idx, 1)"
-                                        />
+                                        <UTooltip :text="$t('common.delete')">
+                                            <UButton
+                                                :ui="{ rounded: 'rounded-full' }"
+                                                icon="i-mdi-close"
+                                                :disabled="!canSubmit"
+                                                @click="state.dispatchStatus.splice(idx, 1)"
+                                            />
+                                        </UTooltip>
                                     </div>
                                 </div>
 
-                                <UButton
-                                    :ui="{ rounded: 'rounded-full' }"
-                                    icon="i-mdi-plus"
-                                    :disabled="!canSubmit || state.dispatchStatus.length >= 8"
-                                    :class="state.dispatchStatus.length ? 'mt-2' : ''"
-                                    @click="state.dispatchStatus.push('')"
-                                />
+                                <UTooltip :text="$t('common.add')">
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-plus"
+                                        :disabled="!canSubmit || state.dispatchStatus.length >= 8"
+                                        :class="state.dispatchStatus.length ? 'mt-2' : ''"
+                                        @click="state.dispatchStatus.push('')"
+                                    />
+                                </UTooltip>
                             </UFormGroup>
                         </UDashboardSection>
                     </UDashboardPanelContent>
