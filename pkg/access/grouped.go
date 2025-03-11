@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -145,6 +146,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) CanUserAccess
 
 	stmt := g.GetAccessQuery(userInfo, targetIds, access)
 
+	fmt.Println(stmt.DebugSql())
 	dest := &canAccessIdsHelper{}
 	if err := stmt.QueryContext(ctx, g.db, &dest.IDs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -164,7 +166,7 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 	from := g.targetTable.
 		LEFT_JOIN(g.Jobs.table,
 			g.Jobs.columns.TargetID.EQ(g.targetTableColumns.ID).
-				AND(g.Jobs.columns.Access.EQ(jet.Int32(int32(access.Number())))),
+				AND(g.Jobs.columns.Access.GT_EQ(jet.Int32(int32(access.Number())))),
 		)
 
 	accessCheckConditions := []jet.BoolExpression{}

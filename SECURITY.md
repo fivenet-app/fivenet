@@ -4,12 +4,14 @@
 
 Please note that only the latest release version will be supported, example:
 
-| Version | Supported?         |
-| ------- | ------------------ |
-| 1.0.0   | :x:                |
-| 1.0.1   | :x:                |
-| 1.1.0   | :x:                |
-| 1.1.5   | :white_check_mark: |
+Version `1.1.5` is the current latest release in this example.
+
+| Version   | Supported?         |
+| --------- | ------------------ |
+| `1.0.0`   | :x:                |
+| `1.0.1`   | :x:                |
+| `1.1.0`   | :x:                |
+| `1.1.5`   | :white_check_mark: |
 
 ## Reporting a Vulnerability
 
