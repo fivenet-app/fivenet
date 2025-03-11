@@ -144,16 +144,19 @@ func ListUserEmails(ctx context.Context, tx qrm.DB, userInfo *userinfo.UserInfo,
 		condition = condition.AND(jet.AND(
 			baseCondition,
 			jet.OR(
-				tEmailsAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
-				jet.AND(
-					tEmailsAccess.Job.EQ(jet.String(userInfo.Job)),
-					tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
-				),
-				jet.AND(
-					tEmailsAccess.QualificationID.IS_NOT_NULL(),
-					tQualificationsResults.DeletedAt.IS_NULL(),
-					tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
-					tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+				tEmails.UserID.EQ(jet.Int32(userInfo.UserId)),
+				jet.OR(
+					tEmailsAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+					jet.AND(
+						tEmailsAccess.Job.EQ(jet.String(userInfo.Job)),
+						tEmailsAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+					),
+					jet.AND(
+						tEmailsAccess.QualificationID.IS_NOT_NULL(),
+						tQualificationsResults.DeletedAt.IS_NULL(),
+						tQualificationsResults.QualificationID.EQ(tEmailsAccess.QualificationID),
+						tQualificationsResults.Status.EQ(jet.Int32(int32(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL))),
+					),
 				),
 			),
 		))

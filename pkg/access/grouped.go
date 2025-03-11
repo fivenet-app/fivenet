@@ -200,9 +200,6 @@ func (g *Grouped[JobsU, JobsT, UsersU, UsersT, QualiU, QualiT, V]) GetAccessQuer
 
 	if g.Qualifications != nil {
 		from = from.
-			LEFT_JOIN(g.Qualifications.table,
-				g.Qualifications.columns.TargetID.EQ(g.targetTableColumns.ID),
-			).
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(g.Qualifications.columns.QualificationId).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
