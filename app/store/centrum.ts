@@ -774,6 +774,7 @@ export const useCentrumStore = defineStore(
             ownUnitId,
             ownDispatches,
             pendingDispatches,
+            isCenter,
 
             // Getters
             getCurrentMode,
