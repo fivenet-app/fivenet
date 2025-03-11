@@ -7,6 +7,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -170,8 +171,9 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		AllowOrigins:           p.Config.HTTP.Origins,
 		AllowMethods:           []string{"GET", "POST", "HEAD", "OPTIONS"},
 		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type", "Cookie"},
-		AllowBrowserExtensions: true,
 		ExposeHeaders:          []string{"Content-Length", "Content-Type", "Accept-Encoding"},
+		AllowBrowserExtensions: true,
+		AllowWebSockets:        true,
 		AllowCredentials:       true,
 		MaxAge:                 1 * time.Hour,
 	}))
@@ -213,30 +215,15 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	wrapperGrpc := grpcws.WrapServer(
 		p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders([]string{"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive"}), // Allow cookie header
-		grpcws.WithWebsocketChannelMaxStreamCount(10000),
-		grpcws.WithWebsocketOriginFunc(func(req *http.Request) bool {
-			return true
+		grpcws.WithOriginFunc(func(origin string) bool {
+			return slices.Contains(p.Config.HTTP.Origins, origin)
 		}),
-		grpcws.WithCorsForRegisteredEndpointsOnly(false),
-		grpcws.WithAllowNonRootResource(true),
-		grpcws.WithWebsocketPingInterval(40*time.Second),
+		grpcws.WithWebsocketOriginFunc(func(req *http.Request) bool {
+			origin := req.Header.Get("Origin")
+			return slices.Contains(p.Config.HTTP.Origins, origin)
+		}),
 	)
-	ginWrappedGrpc := func(c *gin.Context) {
-		if cip := c.ClientIP(); cip != "" {
-			_, port, err := net.SplitHostPort(strings.TrimSpace(c.Request.RemoteAddr))
-			if err != nil || port == "" {
-				port = "1"
-			}
-
-			if strings.Count(cip, ":") > 1 {
-				c.Request.RemoteAddr = "[" + cip + "]:" + port
-			} else {
-				c.Request.RemoteAddr = cip + ":" + port
-			}
-		}
-
-		wrapperGrpc.ServeHTTP(c.Writer, c.Request)
-	}
+	ginWrappedGrpc := gin.WrapH(http.StripPrefix("/api/grpc", wrapperGrpc))
 	e.Any("/api/grpc", ginWrappedGrpc)
 	e.Any("/api/grpc/*path", ginWrappedGrpc)
 

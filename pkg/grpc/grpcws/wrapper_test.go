@@ -38,6 +38,7 @@ import (
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -659,7 +660,7 @@ func (s *testServiceImpl) PingError(ctx context.Context, ping *testproto.PingReq
 		grpclog.Info("handling PingError without flushing")
 	}
 	grpc.SetTrailer(ctx, expectedTrailers)
-	return nil, grpc.Errorf(codes.Unimplemented, "Not implemented PingError")
+	return nil, status.Errorf(codes.Unimplemented, "Not implemented PingError")
 }
 
 func (s *testServiceImpl) PingList(ping *testproto.PingRequest, stream testproto.TestService_PingListServer) error {
@@ -700,7 +701,7 @@ func (s *testServiceImpl) PingStream(stream testproto.TestService_PingStreamServ
 				})
 				return nil
 			} else {
-				return grpc.Errorf(codes.Code(in.ErrorCodeReturned), "Intentionally returning status code: %d", in.ErrorCodeReturned)
+				return status.Errorf(codes.Code(in.ErrorCodeReturned), "Intentionally returning status code: %d", in.ErrorCodeReturned)
 			}
 		}
 	}
@@ -732,7 +733,7 @@ func (s *testServiceImpl) PingPongBidi(stream testproto.TestService_PingPongBidi
 				})
 				return nil
 			} else {
-				return grpc.Errorf(codes.Code(in.ErrorCodeReturned), "Intentionally returning status code: %d", in.ErrorCodeReturned)
+				return status.Errorf(codes.Code(in.ErrorCodeReturned), "Intentionally returning status code: %d", in.ErrorCodeReturned)
 			}
 		}
 	}

@@ -19,13 +19,13 @@ import (
 )
 
 type WebsocketChannel struct {
-	mutex sync.RWMutex
+	mu sync.RWMutex
 
 	wsConn          *websocket.Conn
 	activeStreams   map[uint32]*GrpcStream
-	timeOutInterval time.Duration
+	timeoutInterval time.Duration
 	timer           *timer.Timer
-	context         context.Context
+	ctx             context.Context
 	handler         http.Handler
 	maxStreamCount  int
 	req             *http.Request
@@ -60,26 +60,23 @@ var framePingResponse = &grpcws.GrpcFrame{
 }
 
 func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx context.Context, maxStreamCount int, req *http.Request) *WebsocketChannel {
-	wsCh := &WebsocketChannel{
-		mutex: sync.RWMutex{},
+	return &WebsocketChannel{
+		mu: sync.RWMutex{},
 
 		wsConn: websocket,
 		activeStreams: make(
 			map[uint32]*GrpcStream),
-		timeOutInterval: 12 * time.Second,
+		timeoutInterval: 12 * time.Second,
 		timer:           nil,
-		context:         ctx,
+		ctx:             ctx,
 		handler:         handler,
 		maxStreamCount:  maxStreamCount,
 		req:             req,
 	}
-	wsCh.activeStreams[0] = newGrpcStream(0, wsCh, maxStreamCount)
-
-	return wsCh
 }
 
 func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize int) *GrpcStream {
-	ctx, cancel := context.WithCancel(channel.context)
+	ctx, cancel := context.WithCancel(channel.ctx)
 	return &GrpcStream{
 		mu: sync.Mutex{},
 
@@ -171,15 +168,15 @@ func (ws *WebsocketChannel) writeError(streamId uint32, message string) error {
 }
 
 func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
-	ws.mutex.RLock()
-	defer ws.mutex.RUnlock()
+	ws.mu.RLock()
+	defer ws.mu.RUnlock()
 
 	return ws.activeStreams[streamId]
 }
 
 func (ws *WebsocketChannel) deleteStream(streamId uint32) {
-	ws.mutex.Lock()
-	defer ws.mutex.Unlock()
+	ws.mu.Lock()
+	defer ws.mu.Unlock()
 
 	delete(ws.activeStreams, streamId)
 }
@@ -209,8 +206,8 @@ func (ws *WebsocketChannel) poll() error {
 
 		stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
 		func() {
-			ws.mutex.Lock()
-			defer ws.mutex.Unlock()
+			ws.mu.Lock()
+			defer ws.mu.Unlock()
 
 			ws.activeStreams[frame.StreamId] = stream
 		}()
@@ -268,12 +265,12 @@ func (ws *WebsocketChannel) poll() error {
 		ws.deleteStream(frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
-		// grpclog.Infof("received Complete for stream %v", frame.StreamId)
+		// grpclog.Infof("received complete for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		// grpclog.Infof("completing stream %v", frame.StreamId)
+		// grpclog.Infof("completing input stream %v", frame.StreamId)
 		stream.close()
 
 	case *grpcws.GrpcFrame_Failure:
@@ -308,7 +305,7 @@ func makeGrpcRequest(req *http.Request) *http.Request {
 
 func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
 	// we assume a large limit is set for the websocket to avoid handling multiple frames.
-	typ, bytesValue, err := ws.wsConn.Read(ws.context)
+	typ, bytesValue, err := ws.wsConn.Read(ws.ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -329,12 +326,12 @@ func (ws *WebsocketChannel) write(frame *grpcws.GrpcFrame) error {
 	if err != nil {
 		return err
 	}
-	return ws.wsConn.Write(ws.context, websocket.MessageBinary, binaryFrame)
+	return ws.wsConn.Write(ws.ctx, websocket.MessageBinary, binaryFrame)
 }
 
 func (w *WebsocketChannel) enablePing(timeOutInterval time.Duration) {
-	w.timeOutInterval = timeOutInterval
-	w.timer = timer.NewTimer(w.timeOutInterval)
+	w.timeoutInterval = timeOutInterval
+	w.timer = timer.NewTimer(w.timeoutInterval)
 	go w.ping()
 }
 
@@ -343,11 +340,11 @@ func (w *WebsocketChannel) ping() {
 
 	for {
 		select {
-		case <-w.context.Done():
+		case <-w.ctx.Done():
 			return
 
 		case <-w.timer.C:
-			w.timer.Reset(w.timeOutInterval)
+			w.timer.Reset(w.timeoutInterval)
 
 			stream := w.getStream(0)
 			if stream == nil {

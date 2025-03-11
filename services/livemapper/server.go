@@ -94,14 +94,15 @@ func NewServer(p Params) *Server {
 
 		go func() {
 			for {
+				if err := s.refreshData(ctxCancel); err != nil {
+					s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
+				}
+
 				select {
 				case <-ctxCancel.Done():
 					return
 
 				case <-time.After(30 * time.Second):
-					if err := s.refreshData(ctxCancel); err != nil {
-						s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
-					}
 				}
 			}
 		}()

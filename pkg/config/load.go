@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/creasty/defaults"
 	"github.com/fivenet-app/fivenet/cmd/envs"
@@ -53,6 +54,11 @@ func Load() (Result, error) {
 
 	if err := v.Unmarshal(c); err != nil {
 		return res, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	// Ensure origins are lower case
+	for i := range c.HTTP.Origins {
+		c.HTTP.Origins[i] = strings.ToLower(c.HTTP.Origins[i])
 	}
 
 	return res, nil

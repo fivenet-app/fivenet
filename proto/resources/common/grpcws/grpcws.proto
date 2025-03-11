@@ -12,12 +12,12 @@ message GrpcFrame {
   oneof payload {
     option (validate.required) = true;
 
-    Ping ping = 2;
-    Header header = 3;
-    Body body = 4;
-    Complete complete = 5;
-    Failure failure = 6;
-    Cancel cancel = 7;
+    Ping ping = 3;
+    Header header = 4;
+    Body body = 5;
+    Complete complete = 6;
+    Failure failure = 7;
+    Cancel cancel = 8;
   }
 }
 

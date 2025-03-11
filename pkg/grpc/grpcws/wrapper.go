@@ -32,13 +32,13 @@ const (
 type WrappedGrpcServer struct {
 	handler             http.Handler
 	opts                *options
-	corsWrapper         *cors.Cors
+	corsWrapperHandler  http.Handler
 	originFunc          func(origin string) bool
 	websocketOriginFunc func(req *http.Request) bool
 	websocketReadLimit  int64
 	allowedHeaders      []string
 	endpointFunc        func(req *http.Request) string
-	endpointsFunc       func() []string
+	registeredEndpoints []string
 }
 
 // WrapServer takes a gRPC Server in Go and returns a *WrappedGrpcServer that provides gRPC-Web Compatibility.
@@ -91,17 +91,19 @@ func wrapGrpc(options []Option, handler http.Handler, endpointsFunc func() []str
 		endpointsFunc = *opts.endpointsFunc
 	}
 
-	return &WrappedGrpcServer{
+	w := &WrappedGrpcServer{
 		handler:             handler,
 		opts:                opts,
-		corsWrapper:         corsWrapper,
 		originFunc:          opts.originFunc,
 		websocketOriginFunc: websocketOriginFunc,
 		websocketReadLimit:  opts.websocketReadLimit,
 		allowedHeaders:      allowedHeaders,
 		endpointFunc:        endpointFunc,
-		endpointsFunc:       endpointsFunc,
+		registeredEndpoints: endpointsFunc(),
 	}
+	w.corsWrapperHandler = corsWrapper.Handler(http.HandlerFunc(w.HandleGrpcWebRequest))
+
+	return w
 }
 
 // ServeHTTP takes a HTTP request and if it is a gRPC-Web request wraps it with a compatibility layer to transform it to
@@ -114,10 +116,8 @@ func wrapGrpc(options []Option, handler http.Handler, endpointsFunc func() []str
 func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
 	if w.IsGrpcWebSocketChannelRequest(req) {
 		if w.websocketOriginFunc(req) {
-			if !w.opts.corsForRegisteredEndpointsOnly || w.isRequestForRegisteredEndpoint(req) {
-				w.HandleGrpcWebsocketChannelRequest(resp, req)
-				return
-			}
+			w.HandleGrpcWebsocketChannelRequest(resp, req)
+			return
 		}
 
 		resp.WriteHeader(http.StatusForbidden)
@@ -126,7 +126,7 @@ func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Reques
 	}
 
 	if w.IsAcceptableGrpcCorsRequest(req) || w.IsGrpcWebRequest(req) {
-		w.corsWrapper.Handler(http.HandlerFunc(w.HandleGrpcWebRequest)).ServeHTTP(resp, req)
+		w.corsWrapperHandler.ServeHTTP(resp, req)
 		return
 	}
 
@@ -144,15 +144,15 @@ func (w *WrappedGrpcServer) HandleGrpcWebRequest(resp http.ResponseWriter, req *
 	intResp.finishRequest(req)
 }
 
-// IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Sec-Websocket-Protocol"
-// header value is "grpc-websocket-channel"
+// IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Upgrade" header is set and
+// "Sec-Websocket-Protocol" header value is "grpc-websocket-channel" and that the "root" path is requested
 func (w *WrappedGrpcServer) IsGrpcWebSocketChannelRequest(req *http.Request) bool {
 	if strings.ToLower(req.Header.Get("Upgrade")) != "websocket" {
 		return false
 	}
 
 	for _, subproto := range req.Header.Values("Sec-Websocket-Protocol") {
-		for _, token := range strings.Split(subproto, ",") {
+		for token := range strings.SplitSeq(subproto, ",") {
 			token = strings.TrimSpace(token)
 			if strings.EqualFold(token, "grpc-websocket-channel") {
 				return true
@@ -220,9 +220,8 @@ func (w *WrappedGrpcServer) IsAcceptableGrpcCorsRequest(req *http.Request) bool 
 }
 
 func (w *WrappedGrpcServer) isRequestForRegisteredEndpoint(req *http.Request) bool {
-	registeredEndpoints := w.endpointsFunc()
 	requestedEndpoint := w.endpointFunc(req)
-	return slices.Contains(registeredEndpoints, requestedEndpoint)
+	return slices.Contains(w.registeredEndpoints, requestedEndpoint)
 }
 
 // readerCloser combines an io.Reader and an io.Closer into an io.ReadCloser.

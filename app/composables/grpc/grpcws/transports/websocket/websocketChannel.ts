@@ -2,10 +2,12 @@ import type { UseWebSocketReturn } from '@vueuse/core';
 import { writeUInt32BE } from '~/utils/array';
 import { Body, Cancel, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
-import { errCancelled, errInternal, errUnavailable } from '../../errors';
+import { errCancelled, errInternal } from '../../errors';
 import type { Metadata } from '../../metadata';
 import type { Transport, TransportFactory, TransportOptions } from '../transport';
 import { createRpcError } from './utils';
+
+const websocketChannelMaxStreamCount = 7;
 
 export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<ArrayBuffer>): TransportFactory {
     const wsChannel = new WebsocketChannelImpl(logger, webSocket);
@@ -38,7 +40,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
     protected ws: UseWebSocketReturn<ArrayBuffer>;
     readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
-    protected lastStreamId = 1;
+    protected lastStreamId = 0;
 
     constructor(logger: ILogger, ws: UseWebSocketReturn<ArrayBuffer>) {
         this.logger = logger;
@@ -171,23 +173,27 @@ class WebsocketChannelImpl implements WebsocketChannel {
         }
     }
 
-    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usignBuffer: boolean = true): Promise<boolean> {
+    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame, usingBuffer: boolean = true): Promise<boolean> {
         if (!this.activeStreams.has(toSend.streamId)) {
             opts.debug && this.logger.debug('Stream does not exist', toSend.streamId);
             return false;
         }
 
-        if (this.ws.status.value === 'CLOSED') {
-            throw errUnavailable;
+        return this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, usingBuffer);
+    }
+
+    private getNextStreamId(): number {
+        // Reset stream id back to 0 if max is reached
+        if (this.lastStreamId >= websocketChannelMaxStreamCount) {
+            this.lastStreamId = 0;
+            return this.lastStreamId;
         }
 
-        return this.ws.send(GrpcFrame.toBinary(toSend).buffer as ArrayBuffer, usignBuffer);
+        return this.lastStreamId++;
     }
 
     getStream(opts: TransportOptions): GrpcStream {
-        const currentStreamId = this.lastStreamId++;
-
-        return new WebsocketChannelStream(this, this.logger, currentStreamId, opts);
+        return new WebsocketChannelStream(this, this.logger, this.getNextStreamId(), opts);
     }
 }
 

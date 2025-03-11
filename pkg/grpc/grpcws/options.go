@@ -15,7 +15,7 @@ var defaultOptions = &options{
 	allowNonRootResources:          false,
 	corsMaxAge:                     10 * time.Minute,
 	websocketReadLimit:             5 * 1024 * 1024, // 5 MB
-	websocketChannelMaxStreamCount: 15,
+	websocketChannelMaxStreamCount: 7,
 }
 
 type options struct {

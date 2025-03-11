@@ -1,3 +1,4 @@
+import { GrpcStatusCode } from '@protobuf-ts/grpcweb-transport';
 import {
     ClientStreamingCall,
     Deferred,
@@ -41,7 +42,7 @@ export class GrpcWSTransport implements RpcTransport {
         const webSocket = useWebSocket(defaultOptions.wsUrl, {
             immediate: false,
             autoReconnect: {
-                delay: 1150,
+                delay: 850,
             },
             protocols: ['grpc-websocket-channel'],
 
@@ -67,71 +68,10 @@ export class GrpcWSTransport implements RpcTransport {
     }
 
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
-        const opt = options as GrpcWSOptions;
-
-        const meta = opt.meta ?? {},
-            defHeader = new Deferred<RpcMetadata>(),
-            defMessage = new Deferred<O>(),
-            defStatus = new Deferred<RpcStatus>(),
-            defTrailer = new Deferred<RpcMetadata>(),
-            call = new UnaryCall<I, O>(
-                method,
-                meta,
-                input,
-                defHeader.promise,
-                defMessage.promise,
-                defStatus.promise,
-                defTrailer.promise,
-            );
-
-        const abort =
-            opt.abort ||
-            (opt.timeout
-                ? typeof opt.timeout === 'number'
-                    ? AbortSignal.timeout(opt.timeout)
-                    : AbortSignal.timeout(opt.timeout.getTime() - new Date().getTime())
-                : undefined);
-        if (abort) {
-            abort.addEventListener('abort', () => transport.cancel());
-        }
-
-        const transport = this.wsTs({
-            methodDefinition: method,
-            debug: opt.debug,
-            url: '',
-
-            onChunk(chunkBytes) {
-                defHeader.resolvePending({});
-                defTrailer.resolvePending({});
-                defStatus.resolvePending(createGrpcStatus(new Metadata()));
-                defMessage.resolvePending(method.O.fromBinary(chunkBytes, opt.binaryOptions));
-            },
-            onEnd(err) {
-                if (err !== undefined && !(err instanceof RpcError)) {
-                    if (err.name === 'AbortError') {
-                        err = errTimeout;
-                    } else {
-                        err = errInternal;
-                    }
-                }
-
-                defHeader.rejectPending(err);
-                defMessage.rejectPending(err);
-                defStatus.rejectPending(err);
-                defTrailer.rejectPending(err);
-            },
-            onHeaders(headers: Metadata, _: number): void {
-                defHeader.resolvePending(headers.headersMap);
-
-                defStatus.resolvePending(createGrpcStatus(headers));
-                defTrailer.resolvePending(createGrpcTrailers(headers));
-            },
-        });
-
-        transport.start(new Metadata());
-        transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-
-        return call;
+        const e = new RpcError('Unary request is not supported by grpc-web', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
+        e.methodName = method.name;
+        e.serviceName = method.service.typeName;
+        throw e;
     }
 
     serverStreaming<I extends object, O extends object>(

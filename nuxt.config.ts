@@ -158,14 +158,30 @@ export default defineNuxtConfig({
                 },
                 '/api/grpc': {
                     target: 'http://localhost:8080',
-                    changeOrigin: true,
                     ws: true,
                     proxyTimeout: 60 * 60 * 1000,
                     timeout: 60 * 60 * 1000,
+                    changeOrigin: true,
+                    configure: (proxy, options) => {
+                        proxy.on('proxyReq', (_, req) => {
+                            req.headers.origin =
+                                typeof options.target === 'string'
+                                    ? options.target
+                                    : `${options.target!.protocol}//${options.target!.host}`;
+                        });
+                    },
                 },
                 '/api': {
                     target: 'http://localhost:8080',
                     changeOrigin: true,
+                    configure: (proxy, options) => {
+                        proxy.on('proxyReq', (_, req) => {
+                            req.headers.origin =
+                                typeof options.target === 'string'
+                                    ? options.target
+                                    : `${options.target!.protocol}//${options.target!.host}`;
+                        });
+                    },
                 },
             },
         },

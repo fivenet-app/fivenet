@@ -115,7 +115,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                                     v-show="state.search !== ''"
                                     color="gray"
                                     variant="link"
-                                    icon="i-heroicons-x-mark-20-solid"
+                                    icon="i-mdi-close"
                                     :padded="false"
                                     @click="state.search = ''"
                                 />

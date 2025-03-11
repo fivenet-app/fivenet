@@ -4,7 +4,9 @@ Based upon [GitHub improbable-eng/grpc-web](https://github.com/improbable-eng/gr
 
 ## Additional Modifications
 
-It has been adjusted to work with `protobuf-ts` in the context of this project.
+- It has been adjusted to work with `protobuf-ts` in the context of this project.
+- CORS logics have been adjusted for websockets calling (only) the "root" path.
+- Registered Endpoints func is only called once during server creation.
 
 ## License
 
