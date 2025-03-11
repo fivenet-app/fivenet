@@ -350,6 +350,15 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	// Make sure that the qualification doesn't require itself
+	if len(req.Qualification.Requirements) > 0 {
+		for _, req := range req.Qualification.Requirements {
+			if req.TargetQualificationId == quali.Id {
+				return nil, errorsqualifications.ErrRequirementSelfRef
+			}
+		}
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {

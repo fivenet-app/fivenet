@@ -9,9 +9,11 @@ const props = withDefaults(
     defineProps<{
         requirement: QualificationRequirement;
         readOnly?: boolean;
+        qualificationId?: number;
     }>(),
     {
         readOnly: false,
+        qualificationId: undefined,
     },
 );
 
@@ -35,7 +37,11 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
         const { response } = await call;
 
         qualificationsLoading.value = false;
-        return response.qualifications;
+        if (props.qualificationId === undefined) {
+            return response.qualifications;
+        }
+
+        return response.qualifications.filter((q) => q.id !== props.qualificationId);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;

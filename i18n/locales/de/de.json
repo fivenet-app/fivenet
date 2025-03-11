@@ -911,7 +911,7 @@
             },
             "settings": {
                 "title": "Leitstellen-Einstellungen",
-                "description": "Leitstellen-Einstellungen die die Nutzung und vordefinierten Status betreffen.",
+                "description": "Einstellungen zur Änderung des Leistellen-Systems und vordefinierter Status von Einheiten und Einsätzen.",
                 "predefined": {
                     "title": "Vordefinierte Status",
                     "description": "Verwalte vordefinierte Einsatz- und Einheit-Status-Gründe."
@@ -2539,7 +2539,9 @@
                 "title": "Qualifizierungsanforderungen nicht erfüllt",
                 "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
             },
-            "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
+            "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!",
+            "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
+            "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifikationsanforderungen, die sich auf die Qualifikation beziehen, die Sie bearbeiten!"
         },
         "CalendarService": {
             "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
