@@ -3,7 +3,7 @@ import { backgroundColors, primaryColors } from '~/composables/colors';
 
 const props = withDefaults(
     defineProps<{
-        modelValue: string | undefined;
+        modelValue?: string | undefined;
     }>(),
     {
         modelValue: 'primary',

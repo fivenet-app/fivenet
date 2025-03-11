@@ -10,7 +10,7 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue: DatePickerDate | DatePickerRangeObject | undefined;
+        modelValue?: DatePickerDate | DatePickerRangeObject | undefined;
         clearable?: boolean;
     }>(),
     {

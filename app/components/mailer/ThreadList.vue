@@ -10,7 +10,6 @@ const props = withDefaults(
     }>(),
     {
         modelValue: undefined,
-        threads: () => [],
     },
 );
 

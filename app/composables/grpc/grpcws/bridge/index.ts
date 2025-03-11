@@ -6,7 +6,6 @@ import {
     RpcError,
     RpcOutputStreamController,
     ServerStreamingCall,
-    UnaryCall,
     mergeRpcOptions,
     type MethodInfo,
     type RpcInputStream,
@@ -14,6 +13,7 @@ import {
     type RpcOptions,
     type RpcStatus,
     type RpcTransport,
+    type UnaryCall,
 } from '@protobuf-ts/runtime-rpc';
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpc/grpcws/metadata';
@@ -67,7 +67,7 @@ export class GrpcWSTransport implements RpcTransport {
         return mergeRpcOptions(this.defaultOptions, options);
     }
 
-    unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
+    unary<I extends object, O extends object>(method: MethodInfo<I, O>, _input: I, _options: RpcOptions): UnaryCall<I, O> {
         const e = new RpcError('Unary request is not supported by grpc-web', GrpcStatusCode[GrpcStatusCode.UNIMPLEMENTED]);
         e.methodName = method.name;
         e.serviceName = method.service.typeName;

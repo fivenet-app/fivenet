@@ -10,7 +10,7 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue: { start: Date; end: Date } | undefined;
+        modelValue?: { start: Date; end: Date } | undefined;
         clearable?: boolean;
         dateFormat?: string;
         popover?: object;

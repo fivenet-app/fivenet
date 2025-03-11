@@ -9,7 +9,6 @@ const props = withDefaults(
     }>(),
     {
         modelValue: undefined,
-        emails: () => [],
     },
 );
 
