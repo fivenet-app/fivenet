@@ -40,7 +40,7 @@ export interface CalendarJobAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"calendar_id"
+    targetId: number;
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -77,7 +77,7 @@ export interface CalendarUserAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"calendar_id"
+    targetId: number;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */

@@ -130,7 +130,7 @@ type UnitJobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"calendar_id"` // @gotags: alias:"calendar_id"
+	TargetId      uint64                 `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
@@ -266,7 +266,7 @@ type UnitQualificationAccess struct {
 	state           protoimpl.MessageState             `protogen:"open.v1"`
 	Id              uint64                             `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt       *timestamp.Timestamp               `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId        uint64                             `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"thread_id"` // @gotags: alias:"thread_id"
+	TargetId        uint64                             `protobuf:"varint,3,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	QualificationId uint64                             `protobuf:"varint,4,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
 	Qualification   *qualifications.QualificationShort `protobuf:"bytes,5,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
 	Access          UnitAccessLevel                    `protobuf:"varint,6,opt,name=access,proto3,enum=resources.centrum.UnitAccessLevel" json:"access,omitempty"`

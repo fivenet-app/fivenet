@@ -40,7 +40,7 @@ export interface PageJobAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"page_id"
+    targetId: number;
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -77,7 +77,7 @@ export interface PageUserAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"page_id"
+    targetId: number;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */

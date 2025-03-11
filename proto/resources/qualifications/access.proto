@@ -25,7 +25,7 @@ message QualificationAccess {
 message QualificationJobAccess {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 4; // @gotags: alias:"qualification_id"
+  uint64 target_id = 4;
   string job = 5 [(validate.rules).string.max_len = 20];
   optional string job_label = 6 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 7 [(validate.rules).int32.gte = 0];

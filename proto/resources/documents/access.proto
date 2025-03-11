@@ -27,21 +27,21 @@ message DocumentAccess {
 message DocumentJobAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3; // @gotags: alias:"document_id"
+  uint64 target_id = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50];
   int32 minimum_grade = 6 [(validate.rules).int32.gte = 0];
   optional string job_grade_label = 7 [(validate.rules).string.max_len = 50];
   AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
-  optional bool required = 9; // @gotags: alias:"required"
+  optional bool required = 9;
 }
 
 message DocumentUserAccess {
   uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 target_id = 3; // @gotags: alias:"document_id"
+  uint64 target_id = 3;
   int32 user_id = 4 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 5;
   AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
-  optional bool required = 7; // @gotags: alias:"required"
+  optional bool required = 7;
 }

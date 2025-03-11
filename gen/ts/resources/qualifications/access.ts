@@ -35,7 +35,7 @@ export interface QualificationJobAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 4;
      */
-    targetId: number; // @gotags: alias:"qualification_id"
+    targetId: number;
     /**
      * @generated from protobuf field: string job = 5;
      */

@@ -45,7 +45,7 @@ export interface JobAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 4;
      */
-    targetId: number; // @gotags: alias:"email_id"
+    targetId: number;
     /**
      * @generated from protobuf field: string job = 5;
      */
@@ -82,7 +82,7 @@ export interface UserAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"thread_id"
+    targetId: number;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */
@@ -111,7 +111,7 @@ export interface QualificationAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"thread_id"
+    targetId: number;
     /**
      * @generated from protobuf field: uint64 qualification_id = 4;
      */

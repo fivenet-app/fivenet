@@ -28,11 +28,6 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calend
 	return check, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntries(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, entryIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, publicOk, entryIds...)
-	return len(out) == len(entryIds), err
-}
-
 func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, entryIds ...uint64) ([]uint64, error) {
 	var dest []uint64
 	if len(entryIds) == 0 {

@@ -53,16 +53,19 @@ func (s *Server) ListTemplates(ctx context.Context, req *pbdocstore.ListTemplate
 			tDTemplates.
 				LEFT_JOIN(tDTemplatesAccess,
 					tDTemplatesAccess.TargetID.EQ(tDTemplates.ID).
-						AND(tDTemplatesAccess.Job.EQ(jet.String(userInfo.Job))).
-						AND(tDTemplatesAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+						AND(tDTemplatesAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW)))),
 				).
 				LEFT_JOIN(tDCategory,
 					tDCategory.ID.EQ(tDTemplates.CategoryID),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			tDTemplates.DeletedAt.IS_NULL(),
-		).
+			jet.AND(
+				tDTemplatesAccess.Job.EQ(jet.String(userInfo.Job)),
+				tDTemplatesAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+			),
+		)).
 		ORDER_BY(
 			tDTemplates.Weight.DESC(),
 			tDTemplates.ID.ASC(),

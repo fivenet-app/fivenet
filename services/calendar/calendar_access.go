@@ -16,11 +16,6 @@ func (s *Server) checkIfUserHasAccessToCalendar(ctx context.Context, calendarId 
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendars(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, calendarIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, publicOk, calendarIds...)
-	return len(out) == len(calendarIds), err
-}
-
 type calendarAccessEntry struct {
 	ID     uint64 `alias:"calendar.id"`
 	Public bool   `alias:"calendar.public"`

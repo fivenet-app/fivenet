@@ -120,10 +120,10 @@ watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const categoriesLoading = ref(false);
 
-const input = useTemplateRef('input');
+const inputRef = useTemplateRef('inputRef');
 
 defineShortcuts({
-    '/': () => input.value?.input?.focus(),
+    '/': () => inputRef.value?.input?.focus(),
 });
 </script>
 
@@ -132,7 +132,7 @@ defineShortcuts({
         <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
             <UFormGroup name="title" :label="$t('common.search')">
                 <UInput
-                    ref="input"
+                    ref="inputRef"
                     v-model="query.title"
                     type="text"
                     name="title"
@@ -312,7 +312,7 @@ defineShortcuts({
                                                 <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
                                             </template>
 
-                                            {{ $t(option.label) }}
+                                            {{ option.label }}
                                         </div>
                                     </template>
                                 </USelectMenu>

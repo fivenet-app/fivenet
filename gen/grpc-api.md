@@ -11,13 +11,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
-  
 - [resources/centrum/access.proto](#resources_centrum_access-proto)
     - [UnitAccess](#resources-centrum-UnitAccess)
     - [UnitJobAccess](#resources-centrum-UnitJobAccess)
@@ -25,6 +18,13 @@
     - [UnitUserAccess](#resources-centrum-UnitUserAccess)
   
     - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
+  
+- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
+    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
+    - [UnitAttributes](#resources-centrum-UnitAttributes)
+  
+    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
+    - [UnitAttribute](#resources-centrum-UnitAttribute)
   
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
@@ -38,6 +38,16 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
+- [resources/centrum/disponents.proto](#resources_centrum_disponents-proto)
+    - [Disponents](#resources-centrum-Disponents)
+  
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+  
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
@@ -45,16 +55,6 @@
     - [UnitStatus](#resources-centrum-UnitStatus)
   
     - [StatusUnit](#resources-centrum-StatusUnit)
-  
-- [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
-    - [DispatchAttributes](#resources-centrum-DispatchAttributes)
-    - [UnitAttributes](#resources-centrum-UnitAttributes)
-  
-    - [DispatchAttribute](#resources-centrum-DispatchAttribute)
-    - [UnitAttribute](#resources-centrum-UnitAttribute)
-  
-- [resources/centrum/disponents.proto](#resources_centrum_disponents-proto)
-    - [Disponents](#resources-centrum-Disponents)
   
 - [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
@@ -102,19 +102,32 @@
 - [resources/common/error.proto](#resources_common_error-proto)
     - [Error](#resources-common-Error)
   
+- [resources/common/tests/objects.proto](#resources_common_tests_objects-proto)
+    - [SimpleObject](#resources-common-tests-SimpleObject)
+  
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
     - [TranslateItem](#resources-common-TranslateItem)
     - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
   
-- [resources/common/tests/objects.proto](#resources_common_tests_objects-proto)
-    - [SimpleObject](#resources-common-tests-SimpleObject)
+- [resources/documents/category.proto](#resources_documents_category-proto)
+    - [Category](#resources-documents-Category)
   
-- [resources/documents/workflow.proto](#resources_documents_workflow-proto)
-    - [AutoCloseSettings](#resources-documents-AutoCloseSettings)
-    - [Reminder](#resources-documents-Reminder)
-    - [ReminderSettings](#resources-documents-ReminderSettings)
-    - [Workflow](#resources-documents-Workflow)
-    - [WorkflowCronData](#resources-documents-WorkflowCronData)
+- [resources/documents/comment.proto](#resources_documents_comment-proto)
+    - [Comment](#resources-documents-Comment)
+  
+- [resources/documents/requests.proto](#resources_documents_requests-proto)
+    - [DocRequest](#resources-documents-DocRequest)
+  
+- [resources/documents/documents.proto](#resources_documents_documents-proto)
+    - [Document](#resources-documents-Document)
+    - [DocumentReference](#resources-documents-DocumentReference)
+    - [DocumentRelation](#resources-documents-DocumentRelation)
+    - [DocumentShort](#resources-documents-DocumentShort)
+    - [WorkflowState](#resources-documents-WorkflowState)
+    - [WorkflowUserState](#resources-documents-WorkflowUserState)
+  
+    - [DocReference](#resources-documents-DocReference)
+    - [DocRelation](#resources-documents-DocRelation)
   
 - [resources/documents/access.proto](#resources_documents_access-proto)
     - [DocumentAccess](#resources-documents-DocumentAccess)
@@ -135,15 +148,6 @@
   
     - [DocActivityType](#resources-documents-DocActivityType)
   
-- [resources/documents/category.proto](#resources_documents_category-proto)
-    - [Category](#resources-documents-Category)
-  
-- [resources/documents/comment.proto](#resources_documents_comment-proto)
-    - [Comment](#resources-documents-Comment)
-  
-- [resources/documents/requests.proto](#resources_documents_requests-proto)
-    - [DocRequest](#resources-documents-DocRequest)
-  
 - [resources/documents/templates.proto](#resources_documents_templates-proto)
     - [ObjectSpecs](#resources-documents-ObjectSpecs)
     - [Template](#resources-documents-Template)
@@ -154,30 +158,16 @@
     - [TemplateShort](#resources-documents-TemplateShort)
     - [TemplateUserAccess](#resources-documents-TemplateUserAccess)
   
-- [resources/documents/documents.proto](#resources_documents_documents-proto)
-    - [Document](#resources-documents-Document)
-    - [DocumentReference](#resources-documents-DocumentReference)
-    - [DocumentRelation](#resources-documents-DocumentRelation)
-    - [DocumentShort](#resources-documents-DocumentShort)
-    - [WorkflowState](#resources-documents-WorkflowState)
-    - [WorkflowUserState](#resources-documents-WorkflowUserState)
-  
-    - [DocReference](#resources-documents-DocReference)
-    - [DocRelation](#resources-documents-DocRelation)
+- [resources/documents/workflow.proto](#resources_documents_workflow-proto)
+    - [AutoCloseSettings](#resources-documents-AutoCloseSettings)
+    - [Reminder](#resources-documents-Reminder)
+    - [ReminderSettings](#resources-documents-ReminderSettings)
+    - [Workflow](#resources-documents-Workflow)
+    - [WorkflowCronData](#resources-documents-WorkflowCronData)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
-  
-- [resources/jobs/activity.proto](#resources_jobs_activity-proto)
-    - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
-    - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
-    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
-    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
-    - [JobsUserActivity](#resources-jobs-JobsUserActivity)
-    - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
-  
-    - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
@@ -200,6 +190,16 @@
   
     - [TimeclockMode](#resources-jobs-TimeclockMode)
     - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
+  
+- [resources/jobs/activity.proto](#resources_jobs_activity-proto)
+    - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
+    - [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange)
+    - [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange)
+    - [ColleagueNameChange](#resources-jobs-ColleagueNameChange)
+    - [JobsUserActivity](#resources-jobs-JobsUserActivity)
+    - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
+  
+    - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -293,6 +293,9 @@
   
     - [EventType](#resources-rector-EventType)
   
+- [resources/rector/banner.proto](#resources_rector_banner-proto)
+    - [BannerMessage](#resources-rector-BannerMessage)
+  
 - [resources/rector/config.proto](#resources_rector_config-proto)
     - [AppConfig](#resources-rector-AppConfig)
     - [Auth](#resources-rector-Auth)
@@ -309,11 +312,23 @@
   
     - [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType)
   
-- [resources/rector/banner.proto](#resources_rector_banner-proto)
-    - [BannerMessage](#resources-rector-BannerMessage)
-  
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
+  
+- [resources/users/jobs.proto](#resources_users_jobs-proto)
+    - [Job](#resources-users-Job)
+    - [JobGrade](#resources-users-JobGrade)
+  
+- [resources/users/licenses.proto](#resources_users_licenses-proto)
+    - [License](#resources-users-License)
+    - [UserLicenses](#resources-users-UserLicenses)
+  
+- [resources/users/props.proto](#resources_users_props-proto)
+    - [UserProps](#resources-users-UserProps)
+  
+- [resources/users/users.proto](#resources_users_users-proto)
+    - [User](#resources-users-User)
+    - [UserShort](#resources-users-UserShort)
   
 - [resources/users/activity.proto](#resources_users_activity-proto)
     - [UserActivity](#resources-users-UserActivity)
@@ -348,24 +363,9 @@
   
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
   
-- [resources/users/jobs.proto](#resources_users_jobs-proto)
-    - [Job](#resources-users-Job)
-    - [JobGrade](#resources-users-JobGrade)
-  
 - [resources/users/labels.proto](#resources_users_labels-proto)
     - [CitizenLabel](#resources-users-CitizenLabel)
     - [CitizenLabels](#resources-users-CitizenLabels)
-  
-- [resources/users/licenses.proto](#resources_users_licenses-proto)
-    - [License](#resources-users-License)
-    - [UserLicenses](#resources-users-UserLicenses)
-  
-- [resources/users/props.proto](#resources_users_props-proto)
-    - [UserProps](#resources-users-UserProps)
-  
-- [resources/users/users.proto](#resources_users_users-proto)
-    - [User](#resources-users-User)
-    - [UserShort](#resources-users-UserShort)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -406,6 +406,9 @@
     - [Domain](#resources-internet-Domain)
     - [TLD](#resources-internet-TLD)
   
+- [resources/internet/search.proto](#resources_internet_search-proto)
+    - [SearchResult](#resources-internet-SearchResult)
+  
 - [resources/internet/page.proto](#resources_internet_page-proto)
     - [ContentNode](#resources-internet-ContentNode)
     - [ContentNode.AttrsEntry](#resources-internet-ContentNode-AttrsEntry)
@@ -413,9 +416,6 @@
     - [PageData](#resources-internet-PageData)
   
     - [PageLayoutType](#resources-internet-PageLayoutType)
-  
-- [resources/internet/search.proto](#resources_internet_search-proto)
-    - [SearchResult](#resources-internet-SearchResult)
   
 - [resources/mailer/access.proto](#resources_mailer_access-proto)
     - [Access](#resources-mailer-Access)
@@ -455,6 +455,12 @@
   
     - [AccessLevel](#resources-wiki-AccessLevel)
   
+- [resources/wiki/page.proto](#resources_wiki_page-proto)
+    - [Page](#resources-wiki-Page)
+    - [PageMeta](#resources-wiki-PageMeta)
+    - [PageRootInfo](#resources-wiki-PageRootInfo)
+    - [PageShort](#resources-wiki-PageShort)
+  
 - [resources/wiki/activity.proto](#resources_wiki_activity-proto)
     - [PageAccessJobsDiff](#resources-wiki-PageAccessJobsDiff)
     - [PageAccessUpdated](#resources-wiki-PageAccessUpdated)
@@ -464,12 +470,6 @@
     - [PageUpdated](#resources-wiki-PageUpdated)
   
     - [PageActivityType](#resources-wiki-PageActivityType)
-  
-- [resources/wiki/page.proto](#resources_wiki_page-proto)
-    - [Page](#resources-wiki-Page)
-    - [PageMeta](#resources-wiki-PageMeta)
-    - [PageRootInfo](#resources-wiki-PageRootInfo)
-    - [PageShort](#resources-wiki-PageShort)
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
     - [JobsUserProps](#resources-sync-JobsUserProps)
@@ -1101,90 +1101,6 @@
 
 
 
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `enabled` | [bool](#bool) |  |  |
-| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| `timings` | [Timings](#resources-centrum-Timings) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-Timings"></a>
-
-### Timings
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `dispatch_max_wait` | [int64](#int64) |  |  |
-| `require_unit` | [bool](#bool) |  |  |
-| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
-| `CENTRUM_MODE_MANUAL` | 1 |  |
-| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
-| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
-| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1218,7 +1134,7 @@
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"calendar_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -1240,7 +1156,7 @@
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"thread_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `qualification_id` | [uint64](#uint64) |  |  |
 | `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
 | `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
@@ -1272,6 +1188,79 @@
 | `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
 | `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
 | `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_attributes-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/attributes.proto
+
+
+
+<a name="resources-centrum-DispatchAttributes"></a>
+
+### DispatchAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAttributes"></a>
+
+### UnitAttributes
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-DispatchAttribute"></a>
+
+### DispatchAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
+| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
+| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
+
+
+
+<a name="resources-centrum-UnitAttribute"></a>
+
+### UnitAttribute
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
+| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
+| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
 
 
  <!-- end enums -->
@@ -1474,6 +1463,122 @@
 
 
 
+<a name="resources_centrum_disponents-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/disponents.proto
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `unit_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `dispatch_status` | [string](#string) | repeated | @sanitize: method=StripTags |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job` | [string](#string) |  |  |
+| `enabled` | [bool](#bool) |  |  |
+| `mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `fallback_mode` | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| `predefined_status` | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| `timings` | [Timings](#resources-centrum-Timings) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `dispatch_max_wait` | [int64](#int64) |  |  |
+| `require_unit` | [bool](#bool) |  |  |
+| `require_unit_reminder_seconds` | [int64](#int64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `CENTRUM_MODE_UNSPECIFIED` | 0 |  |
+| `CENTRUM_MODE_MANUAL` | 1 |  |
+| `CENTRUM_MODE_CENTRAL_COMMAND` | 2 |  |
+| `CENTRUM_MODE_AUTO_ROUND_ROBIN` | 3 |  |
+| `CENTRUM_MODE_SIMPLIFIED` | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1588,111 +1693,6 @@
 | `STATUS_UNIT_ON_BREAK` | 6 |  |
 | `STATUS_UNIT_BUSY` | 7 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_centrum_attributes-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/attributes.proto
-
-
-
-<a name="resources-centrum-DispatchAttributes"></a>
-
-### DispatchAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [DispatchAttribute](#resources-centrum-DispatchAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAttributes"></a>
-
-### UnitAttributes
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `list` | [UnitAttribute](#resources-centrum-UnitAttribute) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-DispatchAttribute"></a>
-
-### DispatchAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DISPATCH_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `DISPATCH_ATTRIBUTE_MULTIPLE` | 1 |  |
-| `DISPATCH_ATTRIBUTE_DUPLICATE` | 2 |  |
-| `DISPATCH_ATTRIBUTE_TOO_OLD` | 3 |  |
-
-
-
-<a name="resources-centrum-UnitAttribute"></a>
-
-### UnitAttribute
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ATTRIBUTE_UNSPECIFIED` | 0 |  |
-| `UNIT_ATTRIBUTE_STATIC` | 1 |  |
-| `UNIT_ATTRIBUTE_NO_DISPATCH_AUTO_ASSIGN` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_centrum_disponents-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/disponents.proto
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job` | [string](#string) |  |  |
-| `disponents` | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 
@@ -2298,6 +2298,38 @@ States of Cronjbo
 
 
 
+<a name="resources_common_tests_objects-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/tests/objects.proto
+
+
+
+<a name="resources-common-tests-SimpleObject"></a>
+
+### SimpleObject
+INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages are required.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `field1` | [string](#string) |  |  |
+| `field2` | [bool](#bool) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_common_i18n-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2337,412 +2369,6 @@ Wrapped translated message for the client @dbscanner: json
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_common_tests_objects-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/common/tests/objects.proto
-
-
-
-<a name="resources-common-tests-SimpleObject"></a>
-
-### SimpleObject
-INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages are required.
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `field1` | [string](#string) |  |  |
-| `field2` | [bool](#bool) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_documents_workflow-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/workflow.proto
-
-
-
-<a name="resources-documents-AutoCloseSettings"></a>
-
-### AutoCloseSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `duration` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `message` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-Reminder"></a>
-
-### Reminder
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `duration` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `message` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-ReminderSettings"></a>
-
-### ReminderSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reminders` | [Reminder](#resources-documents-Reminder) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-Workflow"></a>
-
-### Workflow
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `reminder` | [bool](#bool) |  |  |
-| `reminder_settings` | [ReminderSettings](#resources-documents-ReminderSettings) |  |  |
-| `auto_close` | [bool](#bool) |  |  |
-| `auto_close_settings` | [AutoCloseSettings](#resources-documents-AutoCloseSettings) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-WorkflowCronData"></a>
-
-### WorkflowCronData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `last_doc_id` | [uint64](#uint64) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_documents_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/access.proto
-
-
-
-<a name="resources-documents-DocumentAccess"></a>
-
-### DocumentAccess
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"user_access" |
-
-
-
-
-
-
-<a name="resources-documents-DocumentJobAccess"></a>
-
-### DocumentJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"document_id" |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| `required` | [bool](#bool) | optional | @gotags: alias:"required" |
-
-
-
-
-
-
-<a name="resources-documents-DocumentUserAccess"></a>
-
-### DocumentUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"document_id" |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| `required` | [bool](#bool) | optional | @gotags: alias:"required" |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-documents-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_COMMENT` | 3 |  |
-| `ACCESS_LEVEL_STATUS` | 4 |  |
-| `ACCESS_LEVEL_ACCESS` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_documents_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/activity.proto
-
-
-
-<a name="resources-documents-DocAccessJobsDiff"></a>
-
-### DocAccessJobsDiff
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_create` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
-| `to_update` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
-| `to_delete` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-DocAccessRequested"></a>
-
-### DocAccessRequested
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `level` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-DocAccessUpdated"></a>
-
-### DocAccessUpdated
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff) |  |  |
-| `users` | [DocAccessUsersDiff](#resources-documents-DocAccessUsersDiff) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-DocAccessUsersDiff"></a>
-
-### DocAccessUsersDiff
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `to_create` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
-| `to_update` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
-| `to_delete` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-DocActivity"></a>
-
-### DocActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `document_id` | [uint64](#uint64) |  |  |
-| `activity_type` | [DocActivityType](#resources-documents-DocActivityType) |  |  |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `reason` | [string](#string) | optional |  |
-| `data` | [DocActivityData](#resources-documents-DocActivityData) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-DocActivityData"></a>
-
-### DocActivityData
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `updated` | [DocUpdated](#resources-documents-DocUpdated) |  |  |
-| `owner_changed` | [DocOwnerChanged](#resources-documents-DocOwnerChanged) |  |  |
-| `access_updated` | [DocAccessUpdated](#resources-documents-DocAccessUpdated) |  |  |
-| `access_requested` | [DocAccessRequested](#resources-documents-DocAccessRequested) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-DocOwnerChanged"></a>
-
-### DocOwnerChanged
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `new_owner_id` | [int32](#int32) |  |  |
-| `new_owner` | [resources.users.UserShort](#resources-users-UserShort) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-DocUpdated"></a>
-
-### DocUpdated
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title_diff` | [string](#string) | optional |  |
-| `content_diff` | [string](#string) | optional |  |
-| `state_diff` | [string](#string) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-documents-DocActivityType"></a>
-
-### DocActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `DOC_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
-| `DOC_ACTIVITY_TYPE_CREATED` | 1 | Base |
-| `DOC_ACTIVITY_TYPE_STATUS_OPEN` | 2 |  |
-| `DOC_ACTIVITY_TYPE_STATUS_CLOSED` | 3 |  |
-| `DOC_ACTIVITY_TYPE_UPDATED` | 4 |  |
-| `DOC_ACTIVITY_TYPE_RELATIONS_UPDATED` | 5 |  |
-| `DOC_ACTIVITY_TYPE_REFERENCES_UPDATED` | 6 |  |
-| `DOC_ACTIVITY_TYPE_ACCESS_UPDATED` | 7 |  |
-| `DOC_ACTIVITY_TYPE_OWNER_CHANGED` | 8 |  |
-| `DOC_ACTIVITY_TYPE_DELETED` | 9 |  |
-| `DOC_ACTIVITY_TYPE_COMMENT_ADDED` | 10 | Comments |
-| `DOC_ACTIVITY_TYPE_COMMENT_UPDATED` | 11 |  |
-| `DOC_ACTIVITY_TYPE_COMMENT_DELETED` | 12 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_ACCESS` | 13 | Requests |
-| `DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE` | 14 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_OPENING` | 15 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_UPDATE` | 16 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE` | 17 |  |
-| `DOC_ACTIVITY_TYPE_REQUESTED_DELETION` | 18 |  |
-
 
  <!-- end enums -->
 
@@ -2854,180 +2480,6 @@ INTERNAL ONLY** SimpleObject is used as a test object where proto-based messages
 | `reason` | [string](#string) | optional |  |
 | `data` | [DocActivityData](#resources-documents-DocActivityData) |  |  |
 | `accepted` | [bool](#bool) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_documents_templates-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/templates.proto
-
-
-
-<a name="resources-documents-ObjectSpecs"></a>
-
-### ObjectSpecs
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `required` | [bool](#bool) | optional |  |
-| `min` | [int32](#int32) | optional |  |
-| `max` | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-Template"></a>
-
-### Template
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
-| `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `content_title` | [string](#string) |  | @gotags: alias:"content_title" |
-| `content` | [string](#string) |  | @gotags: alias:"content" |
-| `state` | [string](#string) |  | @gotags: alias:"state" |
-| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `job_access` | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
-| `content_access` | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:"access" |
-| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateData"></a>
-
-### TemplateData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `activeChar` | [resources.users.User](#resources-users-User) |  |  |
-| `documents` | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
-| `users` | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateJobAccess"></a>
-
-### TemplateJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"template_id" |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateRequirements"></a>
-
-### TemplateRequirements
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `documents` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| `users` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-| `vehicles` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateSchema"></a>
-
-### TemplateSchema
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `requirements` | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateShort"></a>
-
-### TemplateShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
-| `weight` | [uint32](#uint32) |  |  |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
-| `creator_job` | [string](#string) |  |  |
-| `creator_job_label` | [string](#string) | optional |  |
-| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-TemplateUserAccess"></a>
-
-### TemplateUserAccess
-Dummy - DO NOT USE!
 
 
 
@@ -3245,6 +2697,554 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_documents_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/access.proto
+
+
+
+<a name="resources-documents-DocumentAccess"></a>
+
+### DocumentAccess
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-documents-DocumentJobAccess"></a>
+
+### DocumentJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| `required` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-DocumentUserAccess"></a>
+
+### DocumentUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| `required` | [bool](#bool) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-documents-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_COMMENT` | 3 |  |
+| `ACCESS_LEVEL_STATUS` | 4 |  |
+| `ACCESS_LEVEL_ACCESS` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_documents_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/activity.proto
+
+
+
+<a name="resources-documents-DocAccessJobsDiff"></a>
+
+### DocAccessJobsDiff
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_create` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+| `to_update` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+| `to_delete` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-DocAccessRequested"></a>
+
+### DocAccessRequested
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `level` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocAccessUpdated"></a>
+
+### DocAccessUpdated
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff) |  |  |
+| `users` | [DocAccessUsersDiff](#resources-documents-DocAccessUsersDiff) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocAccessUsersDiff"></a>
+
+### DocAccessUsersDiff
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `to_create` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
+| `to_update` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
+| `to_delete` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-DocActivity"></a>
+
+### DocActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `document_id` | [uint64](#uint64) |  |  |
+| `activity_type` | [DocActivityType](#resources-documents-DocActivityType) |  |  |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `reason` | [string](#string) | optional |  |
+| `data` | [DocActivityData](#resources-documents-DocActivityData) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocActivityData"></a>
+
+### DocActivityData
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `updated` | [DocUpdated](#resources-documents-DocUpdated) |  |  |
+| `owner_changed` | [DocOwnerChanged](#resources-documents-DocOwnerChanged) |  |  |
+| `access_updated` | [DocAccessUpdated](#resources-documents-DocAccessUpdated) |  |  |
+| `access_requested` | [DocAccessRequested](#resources-documents-DocAccessRequested) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocOwnerChanged"></a>
+
+### DocOwnerChanged
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `new_owner_id` | [int32](#int32) |  |  |
+| `new_owner` | [resources.users.UserShort](#resources-users-UserShort) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-DocUpdated"></a>
+
+### DocUpdated
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title_diff` | [string](#string) | optional |  |
+| `content_diff` | [string](#string) | optional |  |
+| `state_diff` | [string](#string) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-documents-DocActivityType"></a>
+
+### DocActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `DOC_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `DOC_ACTIVITY_TYPE_CREATED` | 1 | Base |
+| `DOC_ACTIVITY_TYPE_STATUS_OPEN` | 2 |  |
+| `DOC_ACTIVITY_TYPE_STATUS_CLOSED` | 3 |  |
+| `DOC_ACTIVITY_TYPE_UPDATED` | 4 |  |
+| `DOC_ACTIVITY_TYPE_RELATIONS_UPDATED` | 5 |  |
+| `DOC_ACTIVITY_TYPE_REFERENCES_UPDATED` | 6 |  |
+| `DOC_ACTIVITY_TYPE_ACCESS_UPDATED` | 7 |  |
+| `DOC_ACTIVITY_TYPE_OWNER_CHANGED` | 8 |  |
+| `DOC_ACTIVITY_TYPE_DELETED` | 9 |  |
+| `DOC_ACTIVITY_TYPE_COMMENT_ADDED` | 10 | Comments |
+| `DOC_ACTIVITY_TYPE_COMMENT_UPDATED` | 11 |  |
+| `DOC_ACTIVITY_TYPE_COMMENT_DELETED` | 12 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_ACCESS` | 13 | Requests |
+| `DOC_ACTIVITY_TYPE_REQUESTED_CLOSURE` | 14 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_OPENING` | 15 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_UPDATE` | 16 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_OWNER_CHANGE` | 17 |  |
+| `DOC_ACTIVITY_TYPE_REQUESTED_DELETION` | 18 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_documents_templates-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/templates.proto
+
+
+
+<a name="resources-documents-ObjectSpecs"></a>
+
+### ObjectSpecs
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `required` | [bool](#bool) | optional |  |
+| `min` | [int32](#int32) | optional |  |
+| `max` | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-Template"></a>
+
+### Template
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
+| `weight` | [uint32](#uint32) |  |  |
+| `title` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) |  | @sanitize |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `content_title` | [string](#string) |  | @gotags: alias:"content_title" |
+| `content` | [string](#string) |  | @gotags: alias:"content" |
+| `state` | [string](#string) |  | @gotags: alias:"state" |
+| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `job_access` | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
+| `content_access` | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:"access" |
+| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateData"></a>
+
+### TemplateData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `activeChar` | [resources.users.User](#resources-users-User) |  |  |
+| `documents` | [DocumentShort](#resources-documents-DocumentShort) | repeated |  |
+| `users` | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+| `vehicles` | [resources.vehicles.Vehicle](#resources-vehicles-Vehicle) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateJobAccess"></a>
+
+### TemplateJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  | @gotags: alias:"template_id" |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateRequirements"></a>
+
+### TemplateRequirements
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `documents` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| `users` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+| `vehicles` | [ObjectSpecs](#resources-documents-ObjectSpecs) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateSchema"></a>
+
+### TemplateSchema
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `requirements` | [TemplateRequirements](#resources-documents-TemplateRequirements) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateShort"></a>
+
+### TemplateShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `category` | [Category](#resources-documents-Category) |  | @gotags: alias:"category" |
+| `weight` | [uint32](#uint32) |  |  |
+| `title` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) |  | @sanitize |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `schema` | [TemplateSchema](#resources-documents-TemplateSchema) |  | @gotags: alias:"schema" |
+| `creator_job` | [string](#string) |  |  |
+| `creator_job_label` | [string](#string) | optional |  |
+| `workflow` | [Workflow](#resources-documents-Workflow) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-TemplateUserAccess"></a>
+
+### TemplateUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_documents_workflow-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/workflow.proto
+
+
+
+<a name="resources-documents-AutoCloseSettings"></a>
+
+### AutoCloseSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `duration` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| `message` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-Reminder"></a>
+
+### Reminder
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `duration` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| `message` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-ReminderSettings"></a>
+
+### ReminderSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reminders` | [Reminder](#resources-documents-Reminder) | repeated |  |
+
+
+
+
+
+
+<a name="resources-documents-Workflow"></a>
+
+### Workflow
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `reminder` | [bool](#bool) |  |  |
+| `reminder_settings` | [ReminderSettings](#resources-documents-ReminderSettings) |  |  |
+| `auto_close` | [bool](#bool) |  |  |
+| `auto_close_settings` | [AutoCloseSettings](#resources-documents-AutoCloseSettings) |  |  |
+
+
+
+
+
+
+<a name="resources-documents-WorkflowCronData"></a>
+
+### WorkflowCronData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `last_doc_id` | [uint64](#uint64) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_filestore_file-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3289,147 +3289,6 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_jobs_activity-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/activity.proto
-
-
-
-<a name="resources-jobs-ColleagueAbsenceDate"></a>
-
-### ColleagueAbsenceDate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `absence_begin` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `absence_end` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueGradeChange"></a>
-
-### ColleagueGradeChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `grade` | [int32](#int32) |  |  |
-| `grade_label` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueLabelsChange"></a>
-
-### ColleagueLabelsChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `added` | [Label](#resources-jobs-Label) | repeated |  |
-| `removed` | [Label](#resources-jobs-Label) | repeated |  |
-
-
-
-
-
-
-<a name="resources-jobs-ColleagueNameChange"></a>
-
-### ColleagueNameChange
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `prefix` | [string](#string) | optional |  |
-| `suffix` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserActivity"></a>
-
-### JobsUserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `source_user_id` | [int32](#int32) | optional |  |
-| `source_user` | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:"source_user" |
-| `target_user_id` | [int32](#int32) |  |  |
-| `target_user` | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
-| `activity_type` | [JobsUserActivityType](#resources-jobs-JobsUserActivityType) |  |  |
-| `reason` | [string](#string) |  | @sanitize |
-| `data` | [JobsUserActivityData](#resources-jobs-JobsUserActivityData) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-JobsUserActivityData"></a>
-
-### JobsUserActivityData
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `absence_date` | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
-| `grade_change` | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
-| `labels_change` | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
-| `name_change` | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-jobs-JobsUserActivityType"></a>
-
-### JobsUserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
-| `JOBS_USER_ACTIVITY_TYPE_HIRED` | 1 |  |
-| `JOBS_USER_ACTIVITY_TYPE_FIRED` | 2 |  |
-| `JOBS_USER_ACTIVITY_TYPE_PROMOTED` | 3 |  |
-| `JOBS_USER_ACTIVITY_TYPE_DEMOTED` | 4 |  |
-| `JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE` | 5 |  |
-| `JOBS_USER_ACTIVITY_TYPE_NOTE` | 6 |  |
-| `JOBS_USER_ACTIVITY_TYPE_LABELS` | 7 |  |
-| `JOBS_USER_ACTIVITY_TYPE_NAME` | 8 |  |
-
 
  <!-- end enums -->
 
@@ -3720,6 +3579,147 @@ Dummy - DO NOT USE!
 | `TIMECLOCK_USER_MODE_UNSPECIFIED` | 0 |  |
 | `TIMECLOCK_USER_MODE_SELF` | 1 |  |
 | `TIMECLOCK_USER_MODE_ALL` | 2 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_jobs_activity-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/activity.proto
+
+
+
+<a name="resources-jobs-ColleagueAbsenceDate"></a>
+
+### ColleagueAbsenceDate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `absence_begin` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `absence_end` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueGradeChange"></a>
+
+### ColleagueGradeChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `grade` | [int32](#int32) |  |  |
+| `grade_label` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueLabelsChange"></a>
+
+### ColleagueLabelsChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `added` | [Label](#resources-jobs-Label) | repeated |  |
+| `removed` | [Label](#resources-jobs-Label) | repeated |  |
+
+
+
+
+
+
+<a name="resources-jobs-ColleagueNameChange"></a>
+
+### ColleagueNameChange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `prefix` | [string](#string) | optional |  |
+| `suffix` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobsUserActivity"></a>
+
+### JobsUserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `job` | [string](#string) |  |  |
+| `source_user_id` | [int32](#int32) | optional |  |
+| `source_user` | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:"source_user" |
+| `target_user_id` | [int32](#int32) |  |  |
+| `target_user` | [Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"target_user" |
+| `activity_type` | [JobsUserActivityType](#resources-jobs-JobsUserActivityType) |  |  |
+| `reason` | [string](#string) |  | @sanitize |
+| `data` | [JobsUserActivityData](#resources-jobs-JobsUserActivityData) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-JobsUserActivityData"></a>
+
+### JobsUserActivityData
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `absence_date` | [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate) |  |  |
+| `grade_change` | [ColleagueGradeChange](#resources-jobs-ColleagueGradeChange) |  |  |
+| `labels_change` | [ColleagueLabelsChange](#resources-jobs-ColleagueLabelsChange) |  |  |
+| `name_change` | [ColleagueNameChange](#resources-jobs-ColleagueNameChange) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-jobs-JobsUserActivityType"></a>
+
+### JobsUserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `JOBS_USER_ACTIVITY_TYPE_UNSPECIFIED` | 0 |  |
+| `JOBS_USER_ACTIVITY_TYPE_HIRED` | 1 |  |
+| `JOBS_USER_ACTIVITY_TYPE_FIRED` | 2 |  |
+| `JOBS_USER_ACTIVITY_TYPE_PROMOTED` | 3 |  |
+| `JOBS_USER_ACTIVITY_TYPE_DEMOTED` | 4 |  |
+| `JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE` | 5 |  |
+| `JOBS_USER_ACTIVITY_TYPE_NOTE` | 6 |  |
+| `JOBS_USER_ACTIVITY_TYPE_LABELS` | 7 |  |
+| `JOBS_USER_ACTIVITY_TYPE_NAME` | 8 |  |
 
 
  <!-- end enums -->
@@ -4396,7 +4396,7 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"qualification_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -5088,6 +5088,42 @@ Dummy - DO NOT USE!
 
 
 
+<a name="resources_rector_banner-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/rector/banner.proto
+
+
+
+<a name="resources-rector-BannerMessage"></a>
+
+### BannerMessage
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [string](#string) |  | @sanitize: method=StripTags |
+| `title` | [string](#string) |  | @sanitize: method |
+| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_rector_config-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5323,42 +5359,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_rector_banner-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/rector/banner.proto
-
-
-
-<a name="resources-rector-BannerMessage"></a>
-
-### BannerMessage
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [string](#string) |  | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize: method |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_timestamp_timestamp-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5375,6 +5375,220 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `timestamp` | [google.protobuf.Timestamp](#google-protobuf-Timestamp) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_jobs-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/jobs.proto
+
+
+
+<a name="resources-users-Job"></a>
+
+### Job
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `name` | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
+| `label` | [string](#string) |  |  |
+| `grades` | [JobGrade](#resources-users-JobGrade) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-JobGrade"></a>
+
+### JobGrade
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `job_name` | [string](#string) | optional |  |
+| `grade` | [int32](#int32) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_licenses-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/licenses.proto
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `type` | [string](#string) |  |  |
+| `label` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-UserLicenses"></a>
+
+### UserLicenses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `licenses` | [License](#resources-users-License) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_props-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/props.proto
+
+
+
+<a name="resources-users-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `wanted` | [bool](#bool) | optional |  |
+| `job_name` | [string](#string) | optional | @gotags: alias:"job" |
+| `job` | [Job](#resources-users-Job) | optional |  |
+| `job_grade_number` | [int32](#int32) | optional | @gotags: alias:"job_grade" |
+| `job_grade` | [JobGrade](#resources-users-JobGrade) | optional |  |
+| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
+| `open_fines` | [int64](#int64) | optional |  |
+| `blood_type` | [string](#string) | optional |  |
+| `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `labels` | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
+| `email` | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_users_users-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/users.proto
+
+
+
+<a name="resources-users-User"></a>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `sex` | [string](#string) | optional |  |
+| `height` | [string](#string) | optional |  |
+| `phone_number` | [string](#string) | optional |  |
+| `visum` | [int32](#int32) | optional |  |
+| `playtime` | [int32](#int32) | optional |  |
+| `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
+| `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| `group` | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserShort"></a>
+
+### UserShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
+| `identifier` | [string](#string) | optional |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `job_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `firstname` | [string](#string) |  |  |
+| `lastname` | [string](#string) |  |  |
+| `dateofbirth` | [string](#string) |  |  |
+| `phone_number` | [string](#string) | optional |  |
+| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
 
 
 
@@ -5886,56 +6100,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_users_jobs-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/jobs.proto
-
-
-
-<a name="resources-users-Job"></a>
-
-### Job
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `name` | [string](#string) |  | @gotags: sql:"primary_key" alias:"name" |
-| `label` | [string](#string) |  |  |
-| `grades` | [JobGrade](#resources-users-JobGrade) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-JobGrade"></a>
-
-### JobGrade
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `job_name` | [string](#string) | optional |  |
-| `grade` | [int32](#int32) |  |  |
-| `label` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_users_labels-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -5970,170 +6134,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `list` | [CitizenLabel](#resources-users-CitizenLabel) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_licenses-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/licenses.proto
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `type` | [string](#string) |  |  |
-| `label` | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-UserLicenses"></a>
-
-### UserLicenses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `licenses` | [License](#resources-users-License) | repeated |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_props-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/props.proto
-
-
-
-<a name="resources-users-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `wanted` | [bool](#bool) | optional |  |
-| `job_name` | [string](#string) | optional | @gotags: alias:"job" |
-| `job` | [Job](#resources-users-Job) | optional |  |
-| `job_grade_number` | [int32](#int32) | optional | @gotags: alias:"job_grade" |
-| `job_grade` | [JobGrade](#resources-users-JobGrade) | optional |  |
-| `traffic_infraction_points` | [uint32](#uint32) | optional |  |
-| `open_fines` | [int64](#int64) | optional |  |
-| `blood_type` | [string](#string) | optional |  |
-| `mug_shot` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `labels` | [CitizenLabels](#resources-users-CitizenLabels) | optional |  |
-| `email` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_users_users-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/users.proto
-
-
-
-<a name="resources-users-User"></a>
-
-### User
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
-| `identifier` | [string](#string) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `sex` | [string](#string) | optional |  |
-| `height` | [string](#string) | optional |  |
-| `phone_number` | [string](#string) | optional |  |
-| `visum` | [int32](#int32) | optional |  |
-| `playtime` | [int32](#int32) | optional |  |
-| `props` | [UserProps](#resources-users-UserProps) |  | @gotags: alias:"fivenet_user_props" |
-| `licenses` | [License](#resources-users-License) | repeated | @gotags: alias:"user_licenses" |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| `group` | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserShort"></a>
-
-### UserShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `user_id` | [int32](#int32) |  | @gotags: alias:"id" |
-| `identifier` | [string](#string) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `job_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `firstname` | [string](#string) |  |  |
-| `lastname` | [string](#string) |  |  |
-| `dateofbirth` | [string](#string) |  |  |
-| `phone_number` | [string](#string) | optional |  |
-| `avatar` | [resources.filestore.File](#resources-filestore-File) | optional |  |
 
 
 
@@ -6217,7 +6217,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"calendar_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -6239,7 +6239,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"calendar_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | `access` | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
@@ -6509,7 +6509,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -6531,7 +6531,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | `access` | [AccessLevel](#resources-internet-AccessLevel) |  |  |
@@ -6689,6 +6689,42 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources_internet_search-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/search.proto
+
+
+
+<a name="resources-internet-SearchResult"></a>
+
+### SearchResult
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `domain_id` | [uint64](#uint64) |  |  |
+| `domain` | [Domain](#resources-internet-Domain) | optional |  |
+| `path` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_internet_page-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6796,42 +6832,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_internet_search-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/internet/search.proto
-
-
-
-<a name="resources-internet-SearchResult"></a>
-
-### SearchResult
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) |  |  |
-| `domain_id` | [uint64](#uint64) |  |  |
-| `domain` | [Domain](#resources-internet-Domain) | optional |  |
-| `path` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_mailer_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6866,7 +6866,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"email_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -6888,7 +6888,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"thread_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `qualification_id` | [uint64](#uint64) |  |  |
 | `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
 | `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
@@ -6908,7 +6908,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"thread_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
@@ -7299,7 +7299,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `job` | [string](#string) |  |  |
 | `job_label` | [string](#string) | optional |  |
 | `minimum_grade` | [int32](#int32) |  |  |
@@ -7321,7 +7321,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ----- | ---- | ----- | ----------- |
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  | @gotags: alias:"page_id" |
+| `target_id` | [uint64](#uint64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | `access` | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
@@ -7347,6 +7347,108 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `ACCESS_LEVEL_EDIT` | 4 |  |
 | `ACCESS_LEVEL_OWNER` | 5 |  |
 
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_wiki_page-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/page.proto
+
+
+
+<a name="resources-wiki-Page"></a>
+
+### Page
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `job` | [string](#string) |  | @sanitize: method=StripTags |
+| `job_label` | [string](#string) | optional |  |
+| `parent_id` | [uint64](#uint64) | optional |  |
+| `meta` | [PageMeta](#resources-wiki-PageMeta) |  |  |
+| `content` | [resources.common.content.Content](#resources-common-content-Content) |  |  |
+| `access` | [PageAccess](#resources-wiki-PageAccess) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageMeta"></a>
+
+### PageMeta
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
+| `title` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) |  | @sanitize: method=StripTags |
+| `creator_id` | [int32](#int32) | optional |  |
+| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
+| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
+| `tags` | [string](#string) | repeated | @sanitize: method=StripTags |
+| `toc` | [bool](#bool) | optional |  |
+| `public` | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageRootInfo"></a>
+
+### PageRootInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `logo` | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageShort"></a>
+
+### PageShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `parent_id` | [uint64](#uint64) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
+| `title` | [string](#string) |  |  |
+| `description` | [string](#string) |  |  |
+| `children` | [PageShort](#resources-wiki-PageShort) | repeated |  |
+| `root_info` | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
 
  <!-- end enums -->
 
@@ -7486,108 +7588,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `PAGE_ACTIVITY_TYPE_OWNER_CHANGED` | 4 |  |
 | `PAGE_ACTIVITY_TYPE_DELETED` | 5 |  |
 
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_wiki_page-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/wiki/page.proto
-
-
-
-<a name="resources-wiki-Page"></a>
-
-### Page
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `job` | [string](#string) |  | @sanitize: method=StripTags |
-| `job_label` | [string](#string) | optional |  |
-| `parent_id` | [uint64](#uint64) | optional |  |
-| `meta` | [PageMeta](#resources-wiki-PageMeta) |  |  |
-| `content` | [resources.common.content.Content](#resources-common-content-Content) |  |  |
-| `access` | [PageAccess](#resources-wiki-PageAccess) |  |  |
-
-
-
-
-
-
-<a name="resources-wiki-PageMeta"></a>
-
-### PageMeta
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
-| `title` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) |  | @sanitize: method=StripTags |
-| `creator_id` | [int32](#int32) | optional |  |
-| `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:"creator" |
-| `content_type` | [resources.common.content.ContentType](#resources-common-content-ContentType) |  |  |
-| `tags` | [string](#string) | repeated | @sanitize: method=StripTags |
-| `toc` | [bool](#bool) | optional |  |
-| `public` | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-wiki-PageRootInfo"></a>
-
-### PageRootInfo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `logo` | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
-
-<a name="resources-wiki-PageShort"></a>
-
-### PageShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `parent_id` | [uint64](#uint64) | optional |  |
-| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `slug` | [string](#string) | optional | @sanitize: method=StripTags |
-| `title` | [string](#string) |  |  |
-| `description` | [string](#string) |  |  |
-| `children` | [PageShort](#resources-wiki-PageShort) | repeated |  |
-| `root_info` | [PageRootInfo](#resources-wiki-PageRootInfo) | optional |  |
-
-
-
-
-
- <!-- end messages -->
 
  <!-- end enums -->
 

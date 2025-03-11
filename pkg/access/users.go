@@ -62,9 +62,10 @@ func (a *Users[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) (
 					tUsers.ID.EQ(a.selectColumns.UserId),
 				),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
-		)
+			a.selectColumns.UserId.IS_NOT_NULL(),
+		))
 
 	var dest []T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {

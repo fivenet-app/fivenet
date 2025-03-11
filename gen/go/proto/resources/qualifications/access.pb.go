@@ -135,7 +135,7 @@ type QualificationJobAccess struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
 	CreatedAt     *timestamp.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TargetId      uint64                 `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty" alias:"qualification_id"` // @gotags: alias:"qualification_id"
+	TargetId      uint64                 `protobuf:"varint,4,opt,name=target_id,json=targetId,proto3" json:"target_id,omitempty"`
 	Job           string                 `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty"`
 	JobLabel      *string                `protobuf:"bytes,6,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
 	MinimumGrade  int32                  `protobuf:"varint,7,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`

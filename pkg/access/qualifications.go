@@ -77,6 +77,7 @@ func (a *Qualifications[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId 
 			).
 			WHERE(jet.AND(
 				a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
+				a.selectColumns.QualificationId.IS_NOT_NULL(),
 				tQualifications.DeletedAt.IS_NULL(),
 				tQualiResults.DeletedAt.IS_NULL(),
 				tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)),

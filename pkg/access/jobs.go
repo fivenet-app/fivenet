@@ -49,9 +49,11 @@ func (a *Jobs[U, T, V]) List(ctx context.Context, tx qrm.DB, targetId uint64) ([
 			a.selectColumns.MinimumGrade,
 		).
 		FROM(a.selectTable).
-		WHERE(
+		WHERE(jet.AND(
 			a.selectColumns.TargetID.EQ(jet.Uint64(targetId)),
-		)
+			a.selectColumns.Job.IS_NOT_NULL(),
+			a.selectColumns.MinimumGrade.IS_NOT_NULL(),
+		))
 
 	var dest []T
 	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {

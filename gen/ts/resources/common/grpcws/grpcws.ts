@@ -24,37 +24,37 @@ export interface GrpcFrame {
     payload: {
         oneofKind: "ping";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Ping ping = 2;
+         * @generated from protobuf field: resources.common.grpcws.Ping ping = 3;
          */
         ping: Ping;
     } | {
         oneofKind: "header";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Header header = 3;
+         * @generated from protobuf field: resources.common.grpcws.Header header = 4;
          */
         header: Header;
     } | {
         oneofKind: "body";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Body body = 4;
+         * @generated from protobuf field: resources.common.grpcws.Body body = 5;
          */
         body: Body;
     } | {
         oneofKind: "complete";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Complete complete = 5;
+         * @generated from protobuf field: resources.common.grpcws.Complete complete = 6;
          */
         complete: Complete;
     } | {
         oneofKind: "failure";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Failure failure = 6;
+         * @generated from protobuf field: resources.common.grpcws.Failure failure = 7;
          */
         failure: Failure;
     } | {
         oneofKind: "cancel";
         /**
-         * @generated from protobuf field: resources.common.grpcws.Cancel cancel = 7;
+         * @generated from protobuf field: resources.common.grpcws.Cancel cancel = 8;
          */
         cancel: Cancel;
     } | {
@@ -145,12 +145,12 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
     constructor() {
         super("resources.common.grpcws.GrpcFrame", [
             { no: 1, name: "streamId", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 2, name: "ping", kind: "message", oneof: "payload", T: () => Ping },
-            { no: 3, name: "header", kind: "message", oneof: "payload", T: () => Header },
-            { no: 4, name: "body", kind: "message", oneof: "payload", T: () => Body },
-            { no: 5, name: "complete", kind: "message", oneof: "payload", T: () => Complete },
-            { no: 6, name: "failure", kind: "message", oneof: "payload", T: () => Failure },
-            { no: 7, name: "cancel", kind: "message", oneof: "payload", T: () => Cancel }
+            { no: 3, name: "ping", kind: "message", oneof: "payload", T: () => Ping },
+            { no: 4, name: "header", kind: "message", oneof: "payload", T: () => Header },
+            { no: 5, name: "body", kind: "message", oneof: "payload", T: () => Body },
+            { no: 6, name: "complete", kind: "message", oneof: "payload", T: () => Complete },
+            { no: 7, name: "failure", kind: "message", oneof: "payload", T: () => Failure },
+            { no: 8, name: "cancel", kind: "message", oneof: "payload", T: () => Cancel }
         ]);
     }
     create(value?: PartialMessage<GrpcFrame>): GrpcFrame {
@@ -169,37 +169,37 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
                 case /* uint32 streamId */ 1:
                     message.streamId = reader.uint32();
                     break;
-                case /* resources.common.grpcws.Ping ping */ 2:
+                case /* resources.common.grpcws.Ping ping */ 3:
                     message.payload = {
                         oneofKind: "ping",
                         ping: Ping.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).ping)
                     };
                     break;
-                case /* resources.common.grpcws.Header header */ 3:
+                case /* resources.common.grpcws.Header header */ 4:
                     message.payload = {
                         oneofKind: "header",
                         header: Header.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).header)
                     };
                     break;
-                case /* resources.common.grpcws.Body body */ 4:
+                case /* resources.common.grpcws.Body body */ 5:
                     message.payload = {
                         oneofKind: "body",
                         body: Body.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).body)
                     };
                     break;
-                case /* resources.common.grpcws.Complete complete */ 5:
+                case /* resources.common.grpcws.Complete complete */ 6:
                     message.payload = {
                         oneofKind: "complete",
                         complete: Complete.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).complete)
                     };
                     break;
-                case /* resources.common.grpcws.Failure failure */ 6:
+                case /* resources.common.grpcws.Failure failure */ 7:
                     message.payload = {
                         oneofKind: "failure",
                         failure: Failure.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).failure)
                     };
                     break;
-                case /* resources.common.grpcws.Cancel cancel */ 7:
+                case /* resources.common.grpcws.Cancel cancel */ 8:
                     message.payload = {
                         oneofKind: "cancel",
                         cancel: Cancel.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).cancel)
@@ -220,24 +220,24 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
         /* uint32 streamId = 1; */
         if (message.streamId !== 0)
             writer.tag(1, WireType.Varint).uint32(message.streamId);
-        /* resources.common.grpcws.Ping ping = 2; */
+        /* resources.common.grpcws.Ping ping = 3; */
         if (message.payload.oneofKind === "ping")
-            Ping.internalBinaryWrite(message.payload.ping, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.grpcws.Header header = 3; */
+            Ping.internalBinaryWrite(message.payload.ping, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.grpcws.Header header = 4; */
         if (message.payload.oneofKind === "header")
-            Header.internalBinaryWrite(message.payload.header, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.grpcws.Body body = 4; */
+            Header.internalBinaryWrite(message.payload.header, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.grpcws.Body body = 5; */
         if (message.payload.oneofKind === "body")
-            Body.internalBinaryWrite(message.payload.body, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.grpcws.Complete complete = 5; */
+            Body.internalBinaryWrite(message.payload.body, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.grpcws.Complete complete = 6; */
         if (message.payload.oneofKind === "complete")
-            Complete.internalBinaryWrite(message.payload.complete, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.grpcws.Failure failure = 6; */
+            Complete.internalBinaryWrite(message.payload.complete, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.grpcws.Failure failure = 7; */
         if (message.payload.oneofKind === "failure")
-            Failure.internalBinaryWrite(message.payload.failure, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.grpcws.Cancel cancel = 7; */
+            Failure.internalBinaryWrite(message.payload.failure, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.common.grpcws.Cancel cancel = 8; */
         if (message.payload.oneofKind === "cancel")
-            Cancel.internalBinaryWrite(message.payload.cancel, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            Cancel.internalBinaryWrite(message.payload.cancel, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

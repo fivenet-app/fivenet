@@ -42,7 +42,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"document_id"
+    targetId: number;
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -66,7 +66,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: optional bool required = 9;
      */
-    required?: boolean; // @gotags: alias:"required"
+    required?: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentUserAccess
@@ -83,7 +83,7 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: uint64 target_id = 3;
      */
-    targetId: number; // @gotags: alias:"document_id"
+    targetId: number;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */
@@ -99,7 +99,7 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: optional bool required = 7;
      */
-    required?: boolean; // @gotags: alias:"required"
+    required?: boolean;
 }
 /**
  * @generated from protobuf enum resources.documents.AccessLevel
