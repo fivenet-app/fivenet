@@ -41,7 +41,7 @@ const target = route.query.target as string;
 </script>
 
 <template>
-    <div class="flex h-screen flex-col">
+    <div class="flex h-dscreen flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
         <div class="flex w-full flex-1 items-center justify-center">

@@ -360,7 +360,7 @@ const categoriesLoading = ref(false);
     <UForm
         :schema="schema"
         :state="state"
-        class="flex min-h-screen w-full max-w-full flex-1 flex-col overflow-y-auto"
+        class="min-h-dscreen flex w-full max-w-full flex-1 flex-col overflow-y-auto"
         @submit="onSubmitThrottle"
     >
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">

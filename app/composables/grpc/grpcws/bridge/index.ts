@@ -136,14 +136,24 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                transport.cancel();
-            });
+        let timeoutId: NodeJS.Timeout | undefined;
+        // When the websocket isn't open (yet), wait 3 seconds before if it is still closed,
+        // cancelling the stream with an unavailable error
+        if (this.webSocket.status.value !== 'OPEN') {
+            const cancelTransport = () => {
+                if (this.webSocket.status.value !== 'OPEN') {
+                    transport.cancel(errUnavailable);
+                }
+            };
+
+            timeoutId = setTimeout(cancelTransport, 3000);
         }
 
-        if (this.webSocket.status.value !== 'OPEN') {
-            throw errUnavailable;
+        if (opt.abort) {
+            opt.abort.addEventListener('abort', (_) => {
+                if (timeoutId) clearTimeout(timeoutId);
+                transport.cancel();
+            });
         }
 
         transport.start(new Metadata());
@@ -205,14 +215,24 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                transport.cancel();
-            });
+        let timeoutId: NodeJS.Timeout | undefined;
+        // When the websocket isn't open (yet), wait 3 seconds before if it is still closed,
+        // cancelling the stream with an unavailable error
+        if (this.webSocket.status.value !== 'OPEN') {
+            const cancelTransport = () => {
+                if (this.webSocket.status.value !== 'OPEN') {
+                    transport.cancel(errUnavailable);
+                }
+            };
+
+            timeoutId = setTimeout(cancelTransport, 3000);
         }
 
-        if (this.webSocket.status.value !== 'OPEN') {
-            throw errUnavailable;
+        if (opt.abort) {
+            opt.abort.addEventListener('abort', (_) => {
+                if (timeoutId) clearTimeout(timeoutId);
+                transport.cancel();
+            });
         }
 
         transport.start(new Metadata());
@@ -274,14 +294,24 @@ export class GrpcWSTransport implements RpcTransport {
                 defTrailer.promise,
             );
 
-        if (opt.abort) {
-            opt.abort.addEventListener('abort', (_) => {
-                transport.cancel();
-            });
+        let timeoutId: NodeJS.Timeout | undefined;
+        // When the websocket isn't open (yet), wait 3 seconds before if it is still closed,
+        // cancelling the stream with an unavailable error
+        if (this.webSocket.status.value !== 'OPEN') {
+            const cancelTransport = () => {
+                if (this.webSocket.status.value !== 'OPEN') {
+                    transport.cancel(errUnavailable);
+                }
+            };
+
+            timeoutId = setTimeout(cancelTransport, 3000);
         }
 
-        if (this.webSocket.status.value !== 'OPEN') {
-            throw errUnavailable;
+        if (opt.abort) {
+            opt.abort.addEventListener('abort', (_) => {
+                if (timeoutId) clearTimeout(timeoutId);
+                transport.cancel();
+            });
         }
 
         transport.start(new Metadata());
