@@ -191,8 +191,8 @@ export const useNotificatorStore = defineStore(
                 return;
             }
             abort.value.abort();
-            abort.value = undefined;
             logger.debug('Stopping Stream');
+            abort.value = undefined;
         };
 
         const restartStream = async (): Promise<void> => {

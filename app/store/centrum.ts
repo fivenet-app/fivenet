@@ -592,13 +592,13 @@ export const useCentrumStore = defineStore(
         const stopStream = async (): Promise<void> => {
             if (abort.value) {
                 abort.value.abort();
-                abort.value = undefined;
                 logger.debug('Stopping Stream');
             }
             if (!reconnecting.value && cleanupIntervalId.value) {
                 clearInterval(cleanupIntervalId.value);
                 cleanupIntervalId.value = undefined;
             }
+            abort.value = undefined;
         };
 
         const restartStream = async (): Promise<void> => {
