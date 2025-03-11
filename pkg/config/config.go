@@ -127,6 +127,7 @@ type S3Storage struct {
 	BucketName      string `yaml:"bucketName"`
 	Prefix          string `yaml:"prefix"`
 	Retries         int    `default:"10" yaml:"retries"`
+	UsePreSigned    bool   `default:"true" yaml:"usePresigned"`
 }
 
 type ImageProxy struct {

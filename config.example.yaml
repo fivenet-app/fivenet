@@ -69,6 +69,8 @@ storage:
     useSSL: true
     bucketName: ""
     prefix: ""
+    retries: 10
+    usePresigned: true
 imageProxy:
   enabled: true
   url: "/api/image_proxy/"

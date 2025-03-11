@@ -30,9 +30,10 @@ func init() {
 type S3 struct {
 	IStorage
 
-	s3         *minio.Client
-	bucketName string
-	prefix     string
+	s3           *minio.Client
+	bucketName   string
+	prefix       string
+	usePresigned bool
 }
 
 func NewS3(p Params) (IStorage, error) {
@@ -56,9 +57,10 @@ func NewS3(p Params) (IStorage, error) {
 	}
 
 	s := &S3{
-		s3:         mc,
-		bucketName: p.Cfg.Storage.S3.BucketName,
-		prefix:     p.Cfg.Storage.S3.Prefix,
+		s3:           mc,
+		bucketName:   p.Cfg.Storage.S3.BucketName,
+		prefix:       p.Cfg.Storage.S3.Prefix,
+		usePresigned: p.Cfg.Storage.S3.UsePreSigned,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -120,6 +122,10 @@ func (s *S3) Get(ctx context.Context, filePathIn string) (IObject, IObjectInfo, 
 }
 
 func (s *S3) GetURL(ctx context.Context, filePath string, expires time.Duration, reqParams url.Values) (*string, error) {
+	if !s.usePresigned {
+		return nil, nil
+	}
+
 	filePath, ok := utils.CleanFilePath(filePath)
 	if !ok {
 		return nil, ErrInvalidPath
