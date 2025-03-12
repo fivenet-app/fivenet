@@ -1,6 +1,6 @@
 import 'vue-router';
 import type { Perms } from '~~/gen/ts/perms';
-import type { BannerMessage } from '~~/gen/ts/resources/rector/banner';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 declare module 'vue-router' {
     interface RouteMeta {
@@ -64,6 +64,15 @@ export type GameConfig = {
 
 export type SystemConfig = {
     bannerMessage?: BannerMessage;
+};
+
+export type BannerMessage = {
+    id: string;
+    title: string;
+    icon?: string;
+    color?: string;
+    createdAt?: Timestamp;
+    expiresAt?: Timestamp;
 };
 
 export type OpenClose = { id: number; label: string; closed?: boolean };

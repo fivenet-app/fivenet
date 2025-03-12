@@ -237,7 +237,7 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		})
 	}
 
-	if (in.Note == nil && x.Note != nil) || (in.Note != nil && x.Note == nil) {
+	if (in.Note == nil && x.Note != nil) || (in.Note != nil && x.Note == nil) || *in.Note != *x.Note {
 		activities = append(activities, &JobsUserActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
@@ -247,8 +247,8 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		})
 	}
 
-	if in.NamePrefix != nil && (x.NamePrefix == nil || in.NamePrefix != x.NamePrefix) ||
-		in.NameSuffix != nil && (x.NameSuffix == nil || in.NameSuffix != x.NameSuffix) {
+	if in.NamePrefix != nil && (x.NamePrefix == nil || *in.NamePrefix != *x.NamePrefix) ||
+		in.NameSuffix != nil && (x.NameSuffix == nil || *in.NameSuffix != *x.NameSuffix) {
 		activities = append(activities, &JobsUserActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,

@@ -141,10 +141,6 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		cj.NextScheduleTime = timestamp.New(nextTime)
 	}
 
-	if cj.Data == nil {
-		cj.Data = &cron.CronjobData{}
-	}
-
 	if err := c.scheduler.store.Put(ctx, strings.ToLower(job.Name), cj); err != nil {
 		return fmt.Errorf("failed to register cron job %s in store. %w", job.Name, err)
 	}

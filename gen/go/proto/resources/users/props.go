@@ -244,7 +244,8 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if (x.JobName != in.JobName && (x.JobName == nil || in.JobName == nil || *x.JobName != *in.JobName)) || (x.JobGradeNumber != in.JobGradeNumber && (x.JobGradeNumber == nil || in.JobGradeNumber == nil || *x.JobGradeNumber != *in.JobGradeNumber)) {
+	if (x.JobName != in.JobName && (x.JobName == nil || in.JobName == nil || *x.JobName != *in.JobName)) || (x.JobGradeNumber != in.JobGradeNumber &&
+		(x.JobGradeNumber == nil || in.JobGradeNumber == nil || *x.JobGradeNumber != *in.JobGradeNumber)) {
 		var jobLabel *string
 		if in.Job != nil {
 			jobLabel = &in.Job.Label
@@ -272,7 +273,8 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.TrafficInfractionPoints != in.TrafficInfractionPoints && (x.TrafficInfractionPoints == nil || in.TrafficInfractionPoints == nil || *x.TrafficInfractionPoints != *in.TrafficInfractionPoints) {
+	if x.TrafficInfractionPoints != in.TrafficInfractionPoints && (x.TrafficInfractionPoints == nil || in.TrafficInfractionPoints == nil ||
+		*x.TrafficInfractionPoints != *in.TrafficInfractionPoints) {
 		old := uint32(0)
 		if x.TrafficInfractionPoints != nil {
 			old = *x.TrafficInfractionPoints
@@ -297,7 +299,7 @@ func (x *UserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *UserProps,
 			},
 		})
 	}
-	if x.MugShot != in.MugShot && (x.MugShot == nil || in.MugShot == nil || x.MugShot.Url != in.MugShot.Url) {
+	if x.MugShot != in.MugShot && (x.MugShot == nil || in.MugShot == nil || x.MugShot.GetUrl() != in.MugShot.GetUrl()) {
 		var url *string
 		if in.MugShot != nil && in.MugShot.Url != nil {
 			url = in.MugShot.Url

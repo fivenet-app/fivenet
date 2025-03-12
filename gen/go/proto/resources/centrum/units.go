@@ -42,7 +42,7 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		x.Color = in.Color
 	}
 
-	if in.Description != nil && (x.Description == nil || x.Description != in.Description) {
+	if in.Description != nil && (x.Description == nil || *x.Description != *in.Description) {
 		x.Description = in.Description
 	}
 

@@ -5,14 +5,12 @@ import (
 	"net/http"
 	"sync/atomic"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 type Routes struct {
@@ -131,7 +129,14 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 	clientCfg.Game.StartJobGrade = r.cfg.Game.StartJobGrade
 
 	if appCfg.System.BannerMessage != nil {
-		clientCfg.System.BannerMessage = proto.Clone(appCfg.System.BannerMessage).(*rector.BannerMessage)
+		clientCfg.System.BannerMessage = &BannerMessage{
+			Id:        appCfg.System.BannerMessage.Id,
+			Title:     appCfg.System.BannerMessage.Title,
+			Icon:      appCfg.System.BannerMessage.Icon,
+			Color:     appCfg.System.BannerMessage.Color,
+			CreatedAt: appCfg.System.BannerMessage.CreatedAt,
+			ExpiresAt: appCfg.System.BannerMessage.ExpiresAt,
+		}
 	}
 
 	return clientCfg

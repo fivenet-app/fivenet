@@ -49,7 +49,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		x.Message = in.Message
 	}
 
-	if in.Description != nil && (x.Description == nil || x.Description != in.Description) {
+	if in.Description != nil && (x.Description == nil || *x.Description != *in.Description) {
 		x.Description = in.Description
 	}
 
@@ -69,7 +69,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		x.Y = in.Y
 	}
 
-	if in.Postal != nil && (x.Postal == nil || x.Postal != in.Postal) {
+	if in.Postal != nil && (x.Postal == nil || *x.Postal != *in.Postal) {
 		x.Postal = in.Postal
 	}
 
@@ -77,7 +77,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		x.Anon = in.Anon
 	}
 
-	if in.CreatorId != nil && (x.CreatorId == nil || x.CreatorId != in.CreatorId) {
+	if in.CreatorId != nil && (x.CreatorId == nil || *x.CreatorId != *in.CreatorId) {
 		x.CreatorId = in.CreatorId
 	}
 

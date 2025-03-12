@@ -3,6 +3,7 @@ package rector
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -54,8 +55,17 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	currentConfig := s.appCfg.Get()
+
 	req.Config.Default()
-	req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title)
+	if req.Config.System.BannerMessage != nil {
+		var expiresAt time.Time
+		if req.Config.System.BannerMessage.ExpiresAt != nil {
+			expiresAt = req.Config.System.BannerMessage.ExpiresAt.AsTime()
+		}
+
+		req.Config.System.BannerMessage.Id = utils.GetMD5HashFromString(req.Config.System.BannerMessage.Title + "-" + expiresAt.String())
+	}
 
 	stmt := tConfig.
 		INSERT(
@@ -83,7 +93,6 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 		return nil, err
 	}
 
-	currentConfig := s.appCfg.Get()
 	// If banner is disabled and was previously enabled, send "nil" banner message to remove it from clients
 	if !req.Config.System.BannerMessageEnabled && currentConfig.System.BannerMessageEnabled != req.Config.System.BannerMessageEnabled {
 		s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
@@ -95,7 +104,10 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 		})
 	} else {
 		// Check if an updated banner message event is needed by md5 hashing the title and using that as the ID
-		if currentConfig.System.BannerMessage == nil || currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id {
+		if currentConfig.System.BannerMessage == nil || req.Config.System.BannerMessage != nil && (currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id ||
+			(req.Config.System.BannerMessage.ExpiresAt != nil &&
+				(currentConfig.System.BannerMessage.ExpiresAt == nil ||
+					req.Config.System.BannerMessage.ExpiresAt.AsTime().Compare(currentConfig.System.BannerMessage.ExpiresAt.AsTime()) != 0))) {
 			s.js.PublishProto(ctx, fmt.Sprintf("%s.%s", notifi.BaseSubject, notifi.SystemTopic), &notifications.SystemEvent{
 				Data: &notifications.SystemEvent_BannerMessage{
 					BannerMessage: &notifications.BannerMessageWrapper{

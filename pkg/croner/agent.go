@@ -115,7 +115,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		return
 	}
 
-	if err := msg.InProgress(); err != nil {
+	if err := msg.Ack(); err != nil {
 		ag.logger.Error("failed to send in progress for cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 	}
 
@@ -125,11 +125,31 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		}
 	}
 
-	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name))
+	var timeout *time.Duration
+	if job.Cronjob.Timeout != nil {
+		ct := job.Cronjob.Timeout.AsDuration()
+		timeout = &ct
+	}
 
-	start := time.Now()
-	err := fn(ag.ctx, job.Cronjob.Data)
-	elapsed := time.Since(start)
+	ag.logger.Debug("running cron job", zap.String("name", job.Cronjob.Name), zap.Durationp("timeout", timeout))
+
+	var elapsed time.Duration
+
+	var err error
+	func() {
+		var ctx context.Context
+		var cancel context.CancelFunc
+		if timeout != nil {
+			ctx, cancel = context.WithTimeout(ag.ctx, *timeout)
+		} else {
+			ctx, cancel = context.WithCancel(ag.ctx)
+		}
+		defer cancel()
+
+		start := time.Now()
+		err = fn(ctx, job.Cronjob.Data)
+		elapsed = time.Since(start)
+	}()
 
 	// Update timestamp in cronjob data
 	now := timestamp.Now()
@@ -144,11 +164,6 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		Data: job.Cronjob.Data,
 	}); err != nil {
 		ag.logger.Error("failed to publish cron schedule completion msg", zap.String("subject", msg.Subject()), zap.Error(err))
-		return
-	}
-
-	if err := msg.Ack(); err != nil {
-		ag.logger.Error("failed to ack cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		return
 	}
 }

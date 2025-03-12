@@ -1,7 +1,7 @@
 import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, SystemConfig, WebsiteConfig } from '~/typings';
 
 export default defineAppConfig({
-    // BEGIN Server provided App Config
+    // Server provided App Config
     version: '',
 
     defaultLocale: 'en',
@@ -23,7 +23,6 @@ export default defineAppConfig({
         startJobGrade: 0,
     } as GameConfig,
     system: {} as SystemConfig,
-    // END Server provided App Config
 
     // File upload related config
     fileUpload: {
@@ -44,7 +43,21 @@ export default defineAppConfig({
     },
     maxAccessEntries: 12,
 
-    // Nuxt UI app config
+    popover: {
+        waitTime: 850,
+    },
+
+    livemap: {
+        userMarkers: {
+            activeCharColor: '#fcab10',
+            fallbackColor: '#8d81f2',
+        },
+        markerMarkers: {
+            fallbackColor: '#ffffff',
+        },
+    },
+
+    // Nuxt UI and UI Pro config
     ui: {
         primary: 'blue',
         gray: 'neutral',
@@ -120,20 +133,6 @@ export default defineAppConfig({
                 },
             },
         },
-        // Nuxt UI Pro
-        icons: {
-            // Icons
-            dark: 'i-mdi-moon-and-stars',
-            light: 'i-mdi-weather-sunny',
-            system: 'i-mdi-computer',
-            search: 'i-mdi-search',
-            external: 'i-mdi-external-link',
-            chevron: 'i-mdi-chevron-down',
-            hash: 'i-mdi-hashtag',
-            menu: 'i-mdi-menu',
-            close: 'i-mdi-window-close',
-            check: 'i-mdi-check-circle',
-        },
         accordion: {
             default: {
                 openIcon: 'i-mdi-chevron-down',
@@ -160,6 +159,21 @@ export default defineAppConfig({
             header: { padding: 'px-2 py-2 sm:p-2' },
             footer: { padding: 'px-2 py-2 sm:p-2' },
         },
+
+        // Nuxt UI Pro
+        icons: {
+            // Icons
+            dark: 'i-mdi-moon-and-stars',
+            light: 'i-mdi-weather-sunny',
+            system: 'i-mdi-computer',
+            search: 'i-mdi-search',
+            external: 'i-mdi-external-link',
+            chevron: 'i-mdi-chevron-down',
+            hash: 'i-mdi-hashtag',
+            menu: 'i-mdi-menu',
+            close: 'i-mdi-window-close',
+            check: 'i-mdi-check-circle',
+        },
         dashboard: {
             panel: {
                 content: {
@@ -171,20 +185,6 @@ export default defineAppConfig({
             grid: {
                 wrapper: 'gap-4',
             },
-        },
-    },
-
-    popover: {
-        waitTime: 850,
-    },
-
-    livemap: {
-        userMarkers: {
-            activeCharColor: '#fcab10',
-            fallbackColor: '#8d81f2',
-        },
-        markerMarkers: {
-            fallbackColor: '#ffffff',
         },
     },
 });

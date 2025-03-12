@@ -1,6 +1,6 @@
 package api
 
-import "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+import "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 
 type Version struct {
 	Version string `json:"version"`
@@ -55,5 +55,14 @@ type Game struct {
 }
 
 type System struct {
-	BannerMessage *rector.BannerMessage `json:"bannerMessage,omitempty"`
+	BannerMessage *BannerMessage `json:"bannerMessage,omitempty"`
+}
+
+type BannerMessage struct {
+	Id        string               `json:"id,omitempty"`
+	Title     string               `json:"title,omitempty"`
+	Icon      *string              `json:"icon,omitempty"`
+	Color     *string              `json:"color,omitempty"`
+	CreatedAt *timestamp.Timestamp `json:"createdAt,omitempty"`
+	ExpiresAt *timestamp.Timestamp `json:"expiresAt,omitempty"`
 }

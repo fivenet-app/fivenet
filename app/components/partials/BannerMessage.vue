@@ -13,12 +13,12 @@ const emit = defineEmits<{
 const notificationStore = useNotificatorStore();
 const { dismissedBannerMessageID } = storeToRefs(notificationStore);
 
-const show = computed(
+const now = new Date();
+
+const hide = computed(
     () =>
-        dismissedBannerMessageID.value !== props.message.id ||
-        (props.message.createdAt !== undefined &&
-            props.message.expiresAt !== undefined &&
-            toDate(props.message.createdAt).getTime() - toDate(props.message.expiresAt).getTime() > 0),
+        dismissedBannerMessageID.value === props.message.id ||
+        (props.message.expiresAt !== undefined && toDate(props.message.expiresAt).getTime() - now.getTime() < 0),
 );
 
 function onClose() {
@@ -28,7 +28,7 @@ function onClose() {
 </script>
 
 <template>
-    <div v-if="show" class="fixed top-0 z-50 w-full">
+    <div v-if="!hide" class="fixed top-0 z-50 w-full">
         <div class="bg-primary-600 flex justify-between gap-1 p-2" :class="`bg-${message.color ?? 'primary'}-600`">
             <div class="flex flex-1 items-center justify-center gap-1">
                 <UIcon :name="message.icon ?? 'i-mdi-information-outline'" class="size-6" />
