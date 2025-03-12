@@ -260,7 +260,9 @@ function setSettingsValues(): void {
         state.system.bannerMessageEnabled = config.value.config.system.bannerMessageEnabled;
         state.system.bannerMessage = {
             title: config.value.config.system.bannerMessage?.title ?? '',
-            expiresAt: toDate(config.value.config.system.bannerMessage?.expiresAt),
+            expiresAt: config.value.config.system.bannerMessage?.expiresAt
+                ? toDate(config.value.config.system.bannerMessage?.expiresAt)
+                : undefined,
         };
     }
 }
