@@ -90,7 +90,7 @@ build-go:
 		-a \
 		-installsuffix cgo \
 		-ldflags "-X github.com/fivenet-app/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
-		-tags=jsoniter \ # For Gin to use jsoniter
+		-tags=jsoniter \
 		-o fivenet \
 		.
 
