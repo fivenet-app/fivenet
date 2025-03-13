@@ -73,7 +73,7 @@ onBeforeRouteLeave(async (to) => {
 });
 
 const playerQueryRaw = ref<string>('');
-const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());
+const playerQuery = computed(() => playerQueryRaw.value.toLowerCase());
 
 const playerMarkersFiltered = computedAsync(async () =>
     [...(markersUsers.value.values() ?? [])].filter(
@@ -105,7 +105,7 @@ const playerMarkersFiltered = computedAsync(async () =>
     <LControl v-if="showUserFilter" position="bottomleft">
         <div class="flex flex-col gap-2">
             <UInput
-                v-model="playerQueryRaw"
+                v-model.trim="playerQueryRaw"
                 class="max-w-40"
                 type="text"
                 name="searchPlayer"
