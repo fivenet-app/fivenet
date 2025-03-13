@@ -184,8 +184,8 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		return true, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
-	// No updates or deletions? Early return
-	if len(updatedUsers) == 0 && len(deletedUsers) == 0 {
+	// UpdatedAt is zero and no user updates or deletions? Early return
+	if !updatedAt.IsZero() && len(updatedUsers) == 0 && len(deletedUsers) == 0 {
 		return false, nil
 	}
 
