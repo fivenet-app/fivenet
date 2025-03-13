@@ -75,10 +75,6 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 		}
 	}()
 
-	// Ping ticker
-	pingTicker := time.NewTicker(30 * time.Second)
-	defer pingTicker.Stop()
-
 	// Update Ticker
 	updateTicker := time.NewTicker(60 * time.Second)
 	defer updateTicker.Stop()
@@ -106,19 +102,6 @@ func (s *Server) Stream(req *pbnotificator.StreamRequest, srv pbnotificator.Noti
 		select {
 		case <-srv.Context().Done():
 			return nil
-
-		case <-pingTicker.C:
-			if err := srv.Send(&pbnotificator.StreamResponse{
-				Data: &pbnotificator.StreamResponse_SystemEvent{
-					SystemEvent: &notifications.SystemEvent{
-						Data: &notifications.SystemEvent_Ping{
-							Ping: true,
-						},
-					},
-				},
-			}); err != nil {
-				return errswrap.NewError(err, ErrFailedStream)
-			}
 
 		case <-updateTicker.C:
 			// Check user token validity
