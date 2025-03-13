@@ -7,7 +7,7 @@ func (x *Job) Merge(in *Job) *Job {
 		// Nil grades list to ensure it is updated
 		x.Grades = nil
 
-		proto.Merge(x, in)
+		proto.Merge(in, x)
 	}
 
 	return x

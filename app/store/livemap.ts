@@ -53,11 +53,11 @@ export const useLivemapStore = defineStore(
             error.value = undefined;
             reconnecting.value = false;
 
+            // Tracking user markers between part responses
+            const foundUsers: number[] = [];
+
             try {
                 const call = $grpc.livemapper.livemapper.stream({}, { abort: abort.value.signal });
-
-                // For partial user updates
-                const foundUsers: number[] = [];
 
                 for await (const resp of call.responses) {
                     error.value = undefined;
@@ -77,50 +77,62 @@ export const useLivemapStore = defineStore(
                         jobsUsers.value = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
                         const foundMarkers: number[] = [];
-                        resp.data.markers.markers.forEach((v) => {
+                        resp.data.markers.updated.forEach((v) => {
                             foundMarkers.push(v.info!.id);
                             addOrUpdateMarkerMarker(v);
                         });
 
-                        // Remove markers not found in the latest state
-                        let removedMarkers = 0;
-                        markersMarkers.value.forEach((_, id) => {
-                            if (!foundMarkers.includes(id)) {
-                                markersMarkers.value.delete(id);
-                                removedMarkers++;
-                            }
-                        });
-                        foundMarkers.length = 0;
-                        logger.debug(`Removed ${removedMarkers} old marker markers`);
+                        resp.data.markers.deleted.forEach((id) => markersMarkers.value.delete(id));
+
+                        if (!resp.data.markers.partial) {
+                            // Remove markers not found in the latest state
+                            let removedMarkers = 0;
+                            markersMarkers.value.forEach((_, id) => {
+                                if (!foundMarkers.includes(id)) {
+                                    markersMarkers.value.delete(id);
+                                    removedMarkers++;
+                                }
+                            });
+                            foundMarkers.length = 0;
+                            logger.debug(`Removed ${removedMarkers} old marker markers`);
+                        }
                     } else if (resp.data.oneofKind === 'users') {
-                        resp.data.users.users.forEach((v) => {
-                            foundUsers.push(v.info!.id);
+                        resp.data.users.updated.forEach((v) => {
+                            // Only record found users for non-partial responses
+                            if (resp.data.oneofKind === 'users' && !resp.data.users.partial) {
+                                foundUsers.push(v.info!.id);
+                            }
+
                             addOrUpdateUserMarker(v);
 
-                            // If auto-centering on selected marker
+                            // If a marker is selected, update it
                             if (livemap.value.centerSelectedMarker && v.info!.id === selectedMarker.value?.info?.id) {
                                 selectedMarker.value = v;
                             }
                         });
 
-                        if (resp.data.users.part <= 0) {
-                            // Remove user markers not found in the latest state
-                            let removedMarkers = 0;
-                            markersUsers.value.forEach((_, id) => {
-                                if (!foundUsers.includes(id)) {
-                                    markersUsers.value.delete(id);
+                        resp.data.users.deleted.forEach((id) => markersUsers.value.delete(id));
 
-                                    if (id === selectedMarker.value?.info?.id) {
-                                        selectedMarker.value = undefined;
+                        if (!resp.data.users.partial) {
+                            if (resp.data.users.part <= 0) {
+                                // Remove user markers not found in the latest state
+                                let removedMarkers = 0;
+                                markersUsers.value.forEach((_, id) => {
+                                    if (!foundUsers.includes(id)) {
+                                        markersUsers.value.delete(id);
+
+                                        if (id === selectedMarker.value?.info?.id) {
+                                            selectedMarker.value = undefined;
+                                        }
+                                        removedMarkers++;
                                     }
-                                    removedMarkers++;
-                                }
-                            });
-                            foundUsers.length = 0;
-                            logger.debug(`Removed ${removedMarkers} old user markers`);
-                        }
+                                });
+                                foundUsers.length = 0;
+                                logger.debug(`Removed ${removedMarkers} old user markers`);
+                            }
 
-                        initiated.value = true;
+                            initiated.value = true;
+                        }
                     } else {
                         logger.warn('Unknown data received - Kind: ' + resp.data.oneofKind);
                     }

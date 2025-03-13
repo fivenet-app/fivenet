@@ -88,7 +88,8 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
-	if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
+	updatedAt := time.Now()
+	if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, time.Time{}); end || err != nil {
 		return err
 	}
 
@@ -96,6 +97,8 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 	defer s.broker.Unsubscribe(updateCh)
 
 	for {
+		refreshTime := s.appCfg.Get().UserTracker.RefreshTime.AsDuration()
+
 		select {
 		case <-srv.Context().Done():
 			return nil
@@ -105,34 +108,96 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 				continue
 			}
 
-			if event.Send == MarkerUpdate {
-				if end, err := s.sendMarkerMarkers(srv, markersJobs); end || err != nil {
+			if event.Users != nil {
+				if len(usersJobs) == 0 {
+					continue
+				}
+
+				// Send delete user markers event to clients
+				deleted := []int32{}
+				for job, grade := range usersJobs {
+					if _, ok := (*event.Users)[job]; !ok {
+						continue
+					}
+
+					for _, um := range (*event.Users)[job] {
+						if um.Hidden || um.User.JobGrade > grade {
+							continue
+						}
+
+						deleted = append(deleted, um.UserId)
+					}
+				}
+
+				resp := &pblivemapper.StreamResponse{
+					Data: &pblivemapper.StreamResponse_Users{
+						Users: &pblivemapper.UserMarkersUpdates{
+							Deleted: deleted,
+							Partial: true,
+						},
+					},
+				}
+				if err := srv.Send(resp); err != nil {
+					return err
+				}
+			} else if event.MarkerUpdate != nil {
+				// Send delete marker event to clients
+				resp := &pblivemapper.StreamResponse{
+					Data: &pblivemapper.StreamResponse_Markers{
+						Markers: &pblivemapper.MarkerMarkersUpdates{
+							Updated: []*livemap.MarkerMarker{event.MarkerUpdate},
+							Partial: true,
+						},
+					},
+				}
+				if err := srv.Send(resp); err != nil {
+					return err
+				}
+			} else if event.MarkerDelete != nil {
+				// Send delete marker event to clients
+				resp := &pblivemapper.StreamResponse{
+					Data: &pblivemapper.StreamResponse_Markers{
+						Markers: &pblivemapper.MarkerMarkersUpdates{
+							Deleted: []uint64{*event.MarkerDelete},
+						},
+					},
+				}
+				if err := srv.Send(resp); err != nil {
 					return err
 				}
 			}
 
-		case <-time.After(s.appCfg.Get().UserTracker.RefreshTime.AsDuration()):
-			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo); end || err != nil {
+		case <-time.After(refreshTime):
+			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt); end || err != nil {
 				return err
 			}
+
+			updatedAt = time.Now().Add(-refreshTime)
 		}
 	}
 }
 
 // Sends out chunked current user markers
-func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo) (bool, error) {
-	userMarkers, onDutyState, err := s.getUserLocations(usersJobs, userInfo)
+func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) (bool, error) {
+	updatedUsers, deletedUsers, onDutyState, err := s.getUserLocations(usersJobs, userInfo, updatedAt)
 	if err != nil {
 		return true, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
-	// Less than chunk size or no markers, quick return here
-	if len(userMarkers) <= userMarkerChunkSize {
+	// No updates or deletions? Early return
+	if len(updatedUsers) == 0 && len(deletedUsers) == 0 {
+		return false, nil
+	}
+
+	// Less than chunk size or no markers, no need to chunk the response early return
+	if len(updatedUsers) <= userMarkerChunkSize {
 		resp := &pblivemapper.StreamResponse{
 			Data: &pblivemapper.StreamResponse_Users{
 				Users: &pblivemapper.UserMarkersUpdates{
-					Users: userMarkers,
-					Part:  0,
+					Updated: updatedUsers,
+					Deleted: deletedUsers,
+					Part:    0,
+					Partial: !updatedAt.IsZero(),
 				},
 			},
 			UserOnDuty: &onDutyState,
@@ -145,39 +210,48 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		return false, nil
 	}
 
-	parts := int32(len(userMarkers) / userMarkerChunkSize)
-	for userMarkerChunkSize < len(userMarkers) {
+	totalParts := int32(len(updatedUsers) / userMarkerChunkSize)
+	currentPart := totalParts
+	for userMarkerChunkSize < len(updatedUsers) {
+		userUpdates := &pblivemapper.UserMarkersUpdates{
+			Updated: updatedUsers[0:userMarkerChunkSize:userMarkerChunkSize],
+			Part:    currentPart,
+			Partial: !updatedAt.IsZero(),
+		}
+
+		if totalParts == currentPart {
+			userUpdates.Deleted = deletedUsers
+		}
+
 		resp := &pblivemapper.StreamResponse{
 			Data: &pblivemapper.StreamResponse_Users{
-				Users: &pblivemapper.UserMarkersUpdates{
-					Users: userMarkers[0:userMarkerChunkSize:userMarkerChunkSize],
-					Part:  parts,
-				},
+				Users: userUpdates,
 			},
 			UserOnDuty: &onDutyState,
 		}
-		parts--
+		currentPart--
 
 		if err := srv.Send(resp); err != nil {
 			return true, err
 		}
 
-		userMarkers = userMarkers[userMarkerChunkSize:]
+		updatedUsers = updatedUsers[userMarkerChunkSize:]
 
 		select {
 		case <-srv.Context().Done():
 			return true, nil
 
-		case <-time.After(125 * time.Millisecond):
+		case <-time.After(75 * time.Millisecond):
 		}
 	}
 
-	if len(userMarkers) > 0 {
+	if len(updatedUsers) > 0 {
 		resp := &pblivemapper.StreamResponse{
 			Data: &pblivemapper.StreamResponse_Users{
 				Users: &pblivemapper.UserMarkersUpdates{
-					Users: userMarkers,
-					Part:  0,
+					Updated: updatedUsers,
+					Part:    0,
+					Partial: !updatedAt.IsZero(),
 				},
 			},
 			UserOnDuty: &onDutyState,
@@ -200,7 +274,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServ
 	resp := &pblivemapper.StreamResponse{
 		Data: &pblivemapper.StreamResponse_Markers{
 			Markers: &pblivemapper.MarkerMarkersUpdates{
-				Markers: markers,
+				Updated: markers,
 			},
 		},
 	}
@@ -211,8 +285,9 @@ func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServ
 	return false, nil
 }
 
-func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo) ([]*livemap.UserMarker, bool, error) {
-	ds := []*livemap.UserMarker{}
+func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) ([]*livemap.UserMarker, []int32, bool, error) {
+	updated := []*livemap.UserMarker{}
+	deleted := []int32{}
 
 	found := false
 	if userInfo.SuperUser {
@@ -227,8 +302,15 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 
 		markers.Range(func(key int32, marker *livemap.UserMarker) bool {
 			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
-			if (grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId)) && !marker.Hidden {
-				ds = append(ds, marker)
+			if grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId) {
+				// Either no input updatedAt time set or the marker has been updated in the mean time
+				if updatedAt.IsZero() || (marker.Info.UpdatedAt != nil && updatedAt.Sub(marker.Info.UpdatedAt.AsTime()) < 0) {
+					if marker.Hidden {
+						deleted = append(deleted, marker.UserId)
+					} else {
+						updated = append(updated, marker)
+					}
+				}
 			}
 
 			// If the user is found in the list of user markers and not "off duty" (hidden), set found state
@@ -241,8 +323,8 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	if found {
-		return ds, true, nil
+		return updated, deleted, true, nil
 	}
 
-	return nil, false, nil
+	return nil, nil, false, nil
 }

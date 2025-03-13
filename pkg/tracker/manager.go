@@ -222,7 +222,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	errs := multierr.Combine()
 
 	event := &livemap.UsersUpdateEvent{}
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		foundUserIds[dest[i].UserId] = nil
 
 		m.enricher.EnrichJobInfo(dest[i].User)

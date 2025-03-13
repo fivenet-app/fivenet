@@ -233,7 +233,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `job` varchar(20) NOT NULL,
   `x` decimal(24,14) DEFAULT NULL,
   `y` decimal(24,14) DEFAULT NULL,
-  `hidden` tinyint(1) DEFAULT NULL,
+  `hidden` tinyint(1) DEFAULT 0,
   `updated_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),

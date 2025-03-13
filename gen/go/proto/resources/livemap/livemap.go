@@ -18,6 +18,10 @@ func (x *MarkerInfo) SetJobLabel(label string) {
 }
 
 func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
+	if in.Info.UpdatedAt != nil {
+		x.Info.UpdatedAt = in.Info.UpdatedAt
+	}
+
 	if in.UnitId == nil {
 		x.UnitId = nil
 		x.Unit = nil
@@ -34,12 +38,14 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 		if x.User == nil {
 			x.User = in.User
 		} else {
-			proto.Merge(x.User, in.User)
+			proto.Merge(in.User, x.User)
 		}
 	}
 
 	if in.Info != nil {
-		proto.Merge(x.Info, in.Info)
+		x.Info.X = in.Info.X
+		x.Info.Y = in.Info.Y
+		proto.Merge(in.Info, x.Info)
 	}
 
 	x.Hidden = in.Hidden

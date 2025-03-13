@@ -70,22 +70,38 @@ export interface JobsList {
  */
 export interface MarkerMarkersUpdates {
     /**
-     * @generated from protobuf field: repeated resources.livemap.MarkerMarker markers = 1;
+     * @generated from protobuf field: repeated resources.livemap.MarkerMarker updated = 1;
      */
-    markers: MarkerMarker[];
+    updated: MarkerMarker[];
+    /**
+     * @generated from protobuf field: repeated uint64 deleted = 2;
+     */
+    deleted: number[];
+    /**
+     * @generated from protobuf field: bool partial = 3;
+     */
+    partial: boolean;
 }
 /**
  * @generated from protobuf message services.livemapper.UserMarkersUpdates
  */
 export interface UserMarkersUpdates {
     /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 1;
+     * @generated from protobuf field: repeated resources.livemap.UserMarker updated = 1;
      */
-    users: UserMarker[];
+    updated: UserMarker[];
     /**
-     * @generated from protobuf field: int32 part = 2;
+     * @generated from protobuf field: repeated int32 deleted = 2;
+     */
+    deleted: number[];
+    /**
+     * @generated from protobuf field: int32 part = 3;
      */
     part: number;
+    /**
+     * @generated from protobuf field: bool partial = 4;
+     */
+    partial: boolean;
 }
 /**
  * @generated from protobuf message services.livemapper.CreateOrUpdateMarkerRequest
@@ -293,12 +309,16 @@ export const JobsList = new JobsList$Type();
 class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
     constructor() {
         super("services.livemapper.MarkerMarkersUpdates", [
-            { no: 1, name: "markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MarkerMarker }
+            { no: 1, name: "updated", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MarkerMarker },
+            { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<MarkerMarkersUpdates>): MarkerMarkersUpdates {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.markers = [];
+        message.updated = [];
+        message.deleted = [];
+        message.partial = false;
         if (value !== undefined)
             reflectionMergePartial<MarkerMarkersUpdates>(this, message, value);
         return message;
@@ -308,8 +328,18 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.MarkerMarker markers */ 1:
-                    message.markers.push(MarkerMarker.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.livemap.MarkerMarker updated */ 1:
+                    message.updated.push(MarkerMarker.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* repeated uint64 deleted */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.deleted.push(reader.uint64().toNumber());
+                    else
+                        message.deleted.push(reader.uint64().toNumber());
+                    break;
+                case /* bool partial */ 3:
+                    message.partial = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -323,9 +353,19 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         return message;
     }
     internalBinaryWrite(message: MarkerMarkersUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.MarkerMarker markers = 1; */
-        for (let i = 0; i < message.markers.length; i++)
-            MarkerMarker.internalBinaryWrite(message.markers[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.livemap.MarkerMarker updated = 1; */
+        for (let i = 0; i < message.updated.length; i++)
+            MarkerMarker.internalBinaryWrite(message.updated[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated uint64 deleted = 2; */
+        if (message.deleted.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.deleted.length; i++)
+                writer.uint64(message.deleted[i]);
+            writer.join();
+        }
+        /* bool partial = 3; */
+        if (message.partial !== false)
+            writer.tag(3, WireType.Varint).bool(message.partial);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -340,14 +380,18 @@ export const MarkerMarkersUpdates = new MarkerMarkersUpdates$Type();
 class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
     constructor() {
         super("services.livemapper.UserMarkersUpdates", [
-            { no: 1, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 2, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "updated", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
+            { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<UserMarkersUpdates>): UserMarkersUpdates {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.users = [];
+        message.updated = [];
+        message.deleted = [];
         message.part = 0;
+        message.partial = false;
         if (value !== undefined)
             reflectionMergePartial<UserMarkersUpdates>(this, message, value);
         return message;
@@ -357,11 +401,21 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.livemap.UserMarker users */ 1:
-                    message.users.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.livemap.UserMarker updated */ 1:
+                    message.updated.push(UserMarker.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* int32 part */ 2:
+                case /* repeated int32 deleted */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.deleted.push(reader.int32());
+                    else
+                        message.deleted.push(reader.int32());
+                    break;
+                case /* int32 part */ 3:
                     message.part = reader.int32();
+                    break;
+                case /* bool partial */ 4:
+                    message.partial = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -375,12 +429,22 @@ class UserMarkersUpdates$Type extends MessageType<UserMarkersUpdates> {
         return message;
     }
     internalBinaryWrite(message: UserMarkersUpdates, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.livemap.UserMarker users = 1; */
-        for (let i = 0; i < message.users.length; i++)
-            UserMarker.internalBinaryWrite(message.users[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 part = 2; */
+        /* repeated resources.livemap.UserMarker updated = 1; */
+        for (let i = 0; i < message.updated.length; i++)
+            UserMarker.internalBinaryWrite(message.updated[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 deleted = 2; */
+        if (message.deleted.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.deleted.length; i++)
+                writer.int32(message.deleted[i]);
+            writer.join();
+        }
+        /* int32 part = 3; */
         if (message.part !== 0)
-            writer.tag(2, WireType.Varint).int32(message.part);
+            writer.tag(3, WireType.Varint).int32(message.part);
+        /* bool partial = 4; */
+        if (message.partial !== false)
+            writer.tag(4, WireType.Varint).bool(message.partial);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

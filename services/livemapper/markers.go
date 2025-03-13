@@ -149,7 +149,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerUpdate, marker.Info.Job, marker); err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
@@ -205,7 +205,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *pblivemapper.DeleteMarke
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerUpdate, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.Info.Job, marker); err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 

@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel/trace"
@@ -16,7 +17,10 @@ import (
 const (
 	BaseSubject events.Subject = "livemap"
 
-	MarkerUpdate events.Type = "marker_update"
+	MarkerTopic events.Topic = "marker"
+
+	MarkerUpdate events.Type = "update"
+	MarkerDelete events.Type = "delete"
 )
 
 func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel context.Context) error {
@@ -54,13 +58,8 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 	return nil
 }
 
-func (s *Server) sendUpdateEvent(ctx context.Context, tType events.Type, event proto.Message) error {
-	data, err := proto.Marshal(event)
-	if err != nil {
-		return err
-	}
-
-	if _, err := s.js.Publish(ctx, fmt.Sprintf("%s.%s", BaseSubject, tType), data); err != nil {
+func (s *Server) sendUpdateEvent(ctx context.Context, topic events.Topic, tType events.Type, job string, msg proto.Message) error {
+	if _, err := s.js.PublishProto(ctx, fmt.Sprintf("%s.%s.%s.%s", BaseSubject, topic, tType, job), msg); err != nil {
 		return err
 	}
 
@@ -78,22 +77,49 @@ func (s *Server) watchForEventsFunc(ctx context.Context) jetstream.MessageHandle
 		}
 
 		split := strings.Split(msg.Subject(), ".")
-		if len(split) < 2 {
+		if len(split) < 4 {
 			return
 		}
 
-		tType := events.Type(split[1])
-		if tType == MarkerUpdate {
-			if err := s.refreshData(ctx); err != nil {
-				s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
-				return
-			}
+		topic := events.Topic(split[1])
+		tType := events.Type(split[2])
+		job := events.Type(split[3])
+		_ = job
+		switch topic {
+		case MarkerTopic:
+			switch tType {
+			case MarkerUpdate:
+				// Send marker update when there is at least one subscriber
+				if s.broker.SubCount() <= 0 {
+					return
+				}
 
-			// Send marker update when data has been refreshed and we have at least one subscriber
-			if s.broker.SubCount() <= 0 {
-				return
+				marker := &livemap.MarkerMarker{}
+				if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+					s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+					return
+				}
+
+				s.broker.Publish(&brokerEvent{
+					MarkerUpdate: marker,
+				})
+
+			case MarkerDelete:
+				// Send marker deletion when there is at least one subscriber
+				if s.broker.SubCount() <= 0 {
+					return
+				}
+
+				marker := &livemap.MarkerMarker{}
+				if err := proto.Unmarshal(msg.Data(), marker); err != nil {
+					s.logger.Error("failed to unmarshal livemap marker update data", zap.Error(err))
+					return
+				}
+
+				s.broker.Publish(&brokerEvent{
+					MarkerDelete: &marker.Info.Id,
+				})
 			}
-			s.broker.Publish(&brokerEvent{Send: MarkerUpdate})
 		}
 	}
 }

@@ -14,7 +14,7 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		if x.CreatedAt == nil {
 			x.CreatedAt = in.CreatedAt
 		} else {
-			proto.Merge(x.CreatedAt, in.CreatedAt)
+			proto.Merge(in.CreatedAt, x.CreatedAt)
 		}
 	}
 
@@ -22,7 +22,7 @@ func (x *Unit) Merge(in *Unit) *Unit {
 		if x.UpdatedAt == nil {
 			x.UpdatedAt = in.UpdatedAt
 		} else {
-			proto.Merge(x.UpdatedAt, in.UpdatedAt)
+			proto.Merge(in.UpdatedAt, x.UpdatedAt)
 		}
 	}
 

@@ -28,12 +28,16 @@ message JobsList {
 }
 
 message MarkerMarkersUpdates {
-  repeated resources.livemap.MarkerMarker markers = 1;
+  repeated resources.livemap.MarkerMarker updated = 1;
+  repeated uint64 deleted = 2;
+  bool partial = 3;
 }
 
 message UserMarkersUpdates {
-  repeated resources.livemap.UserMarker users = 1;
-  int32 part = 2;
+  repeated resources.livemap.UserMarker updated = 1;
+  repeated int32 deleted = 2;
+  int32 part = 3;
+  bool partial = 4;
 }
 
 message CreateOrUpdateMarkerRequest {

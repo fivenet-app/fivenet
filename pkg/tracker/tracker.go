@@ -90,7 +90,8 @@ func New(p Params) (ITracker, error) {
 				})
 				// Maybe we can be smarter about updating the user marker here, but
 				// without mutexes it will be problematic (data races and Co.)
-				jobUsers.Store(um.UserId, um)
+				// Is `proto.Clone` the solution to this?
+				jobUsers.Store(um.UserId, proto.Clone(um).(*livemap.UserMarker))
 
 				return um, nil
 			}),
@@ -159,6 +160,7 @@ func (s *Tracker) watchForChanges(msg jetstream.Msg) {
 	s.broker.Publish(dest)
 }
 
+// Returns a `xsync.MapOf` with **copies** (proto cloned) of the `*livemap.UserMarker`
 func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
 	return s.usersByJob.Load(job)
 }

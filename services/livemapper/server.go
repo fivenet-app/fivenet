@@ -62,7 +62,9 @@ type Params struct {
 }
 
 type brokerEvent struct {
-	Send events.Type
+	Users        *map[string][]*livemap.UserMarker
+	MarkerUpdate *livemap.MarkerMarker
+	MarkerDelete *uint64
 }
 
 func NewServer(p Params) *Server {
@@ -91,6 +93,37 @@ func NewServer(p Params) *Server {
 		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
 		}
+
+		go func() {
+			updateCh := p.Tracker.Subscribe()
+			defer p.Tracker.Unsubscribe(updateCh)
+
+			for {
+				select {
+				case <-ctxCancel.Done():
+					return
+
+				case event := <-updateCh:
+					if len(event.Removed) == 0 {
+						continue
+					}
+
+					// Group removed user markers by job
+					grouped := map[string][]*livemap.UserMarker{}
+					for _, um := range event.Removed {
+						if _, ok := grouped[um.User.Job]; !ok {
+							grouped[um.User.Job] = []*livemap.UserMarker{}
+						}
+
+						grouped[um.User.Job] = append(grouped[um.User.Job], um)
+					}
+
+					s.broker.Publish(&brokerEvent{
+						Users: &grouped,
+					})
+				}
+			}
+		}()
 
 		go func() {
 			for {

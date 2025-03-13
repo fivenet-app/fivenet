@@ -90,8 +90,8 @@ func (m *MarkerMarkersUpdates) Sanitize() error {
 		return nil
 	}
 
-	// Field: Markers
-	for idx, item := range m.Markers {
+	// Field: Updated
+	for idx, item := range m.Updated {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {
@@ -154,8 +154,8 @@ func (m *UserMarkersUpdates) Sanitize() error {
 		return nil
 	}
 
-	// Field: Users
-	for idx, item := range m.Users {
+	// Field: Updated
+	for idx, item := range m.Updated {
 		_, _ = idx, item
 
 		if v, ok := any(item).(interface{ Sanitize() error }); ok {

@@ -570,7 +570,7 @@ func (m *MarkerMarkersUpdates) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetMarkers() {
+	for idx, item := range m.GetUpdated() {
 		_, _ = idx, item
 
 		if all {
@@ -578,7 +578,7 @@ func (m *MarkerMarkersUpdates) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, MarkerMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Markers[%v]", idx),
+						field:  fmt.Sprintf("Updated[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -586,7 +586,7 @@ func (m *MarkerMarkersUpdates) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, MarkerMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Markers[%v]", idx),
+						field:  fmt.Sprintf("Updated[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -595,7 +595,7 @@ func (m *MarkerMarkersUpdates) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return MarkerMarkersUpdatesValidationError{
-					field:  fmt.Sprintf("Markers[%v]", idx),
+					field:  fmt.Sprintf("Updated[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -603,6 +603,8 @@ func (m *MarkerMarkersUpdates) validate(all bool) error {
 		}
 
 	}
+
+	// no validation rules for Partial
 
 	if len(errors) > 0 {
 		return MarkerMarkersUpdatesMultiError(errors)
@@ -706,7 +708,7 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetUsers() {
+	for idx, item := range m.GetUpdated() {
 		_, _ = idx, item
 
 		if all {
@@ -714,7 +716,7 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, UserMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
+						field:  fmt.Sprintf("Updated[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -722,7 +724,7 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, UserMarkersUpdatesValidationError{
-						field:  fmt.Sprintf("Users[%v]", idx),
+						field:  fmt.Sprintf("Updated[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -731,7 +733,7 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return UserMarkersUpdatesValidationError{
-					field:  fmt.Sprintf("Users[%v]", idx),
+					field:  fmt.Sprintf("Updated[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -741,6 +743,8 @@ func (m *UserMarkersUpdates) validate(all bool) error {
 	}
 
 	// no validation rules for Part
+
+	// no validation rules for Partial
 
 	if len(errors) > 0 {
 		return UserMarkersUpdatesMultiError(errors)
