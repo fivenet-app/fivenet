@@ -3,15 +3,12 @@ syntax = "proto3";
 package services.livemapper;
 
 import "resources/livemap/livemap.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper;livemapper";
 
-message StreamRequest {
-  optional resources.timestamp.Timestamp markers_updated_at = 1;
-}
+message StreamRequest {}
 
 message StreamResponse {
   oneof data {

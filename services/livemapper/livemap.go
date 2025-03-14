@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	userMarkerChunkSize   = 20
+	userMarkerChunkSize   = 25
 	markerMarkerChunkSize = 50
 )
 
@@ -84,12 +84,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
-	var markersUpdatedAt time.Time
-	// Check that updatedAt time is within 3 days
-	if req.MarkersUpdatedAt != nil && time.Since(req.MarkersUpdatedAt.AsTime()) < 3*24*time.Hour {
-		markersUpdatedAt = req.MarkersUpdatedAt.AsTime()
-	}
-	if end, err := s.sendMarkerMarkers(srv, markersJobs, markersUpdatedAt); end || err != nil {
+	if end, err := s.sendMarkerMarkers(srv, markersJobs, time.Time{}); end || err != nil {
 		return err
 	}
 

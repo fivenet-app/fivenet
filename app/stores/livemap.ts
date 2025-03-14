@@ -1,6 +1,5 @@
 import type { RpcError } from '@protobuf-ts/runtime-rpc';
-import { destr } from 'destr';
-import { defineStore, type StateTree } from 'pinia';
+import { defineStore } from 'pinia';
 import type { Coordinate } from '~/composables/livemap';
 import type { MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
@@ -34,7 +33,6 @@ export const useLivemapStore = defineStore(
         const jobsMarkers = ref<Job[]>([]);
         const jobsUsers = ref<Job[]>([]);
 
-        const markersMarkersUpdatedAt = ref<Date | undefined>();
         const markersMarkers = ref<Map<number, MarkerMarker>>(new Map());
         const markersUsers = ref<Map<number, UserMarker>>(new Map());
 
@@ -74,14 +72,7 @@ export const useLivemapStore = defineStore(
             cleanupMarkerMarkers();
 
             try {
-                const call = $grpc.livemapper.livemapper.stream(
-                    {
-                        markersUpdatedAt: markersMarkersUpdatedAt.value
-                            ? toTimestamp(markersMarkersUpdatedAt.value)
-                            : undefined,
-                    },
-                    { abort: abort.value.signal },
-                );
+                const call = $grpc.livemapper.livemapper.stream({}, { abort: abort.value.signal });
 
                 for await (const resp of call.responses) {
                     error.value = undefined;
@@ -112,8 +103,6 @@ export const useLivemapStore = defineStore(
                         resp.data.markers.deleted.forEach((id) => markersMarkers.value.delete(id));
 
                         if (!resp.data.markers.partial) {
-                            markersMarkersUpdatedAt.value = new Date();
-
                             if (resp.data.markers.part <= 0) {
                                 // Remove markers not found in the latest full state
                                 let removedMarkers = 0;
@@ -383,7 +372,6 @@ export const useLivemapStore = defineStore(
             userOnDuty,
             jobsMarkers,
             jobsUsers,
-            markersMarkersUpdatedAt,
             markersMarkers,
             markersUsers,
             selectedMarker,
@@ -401,34 +389,7 @@ export const useLivemapStore = defineStore(
         };
     },
     {
-        persist: {
-            pick: ['markersMarkersUpdatedAt', 'markersMarkers'],
-            // Use custom serializer to handle the Map
-            serializer: {
-                serialize: (storeState) => {
-                    // Convert the Map into an array of [key, value] pairs
-                    return JSON.stringify({
-                        ...storeState,
-                        markersMarkers: Array.from(storeState.markersMarkers.entries()),
-                    });
-                },
-                deserialize: (serializedState): StateTree => {
-                    return destr(serializedState);
-                },
-            },
-
-            // After rehydration, rebuild the Map from the array
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            afterHydrate: (ctx: any) => {
-                const store = ctx.store;
-                if (Array.isArray(store.markersMarkers)) {
-                    store.markersMarkers = new Map(store.markersMarkers);
-                }
-                if (typeof store.markersMarkersUpdatedAt === 'string') {
-                    store.markersMarkersUpdatedAt = new Date(store.markersMarkersUpdatedAt);
-                }
-            },
-        },
+        persist: false,
     },
 );
 

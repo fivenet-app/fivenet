@@ -147,19 +147,23 @@ export class GrpcWSTransport implements RpcTransport {
 
         // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
         // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value !== 'OPEN') {
-            const stop = watchOnce(this.webSocket.status, () => {
-                if (this.webSocket.status.value !== 'OPEN') {
-                    transport.cancel(errUnavailable);
-                } else {
-                    transport.start(new Metadata());
-                    transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
-                }
-            });
-            timeoutId = setTimeout(stop, 3000);
-        } else {
+        if (this.webSocket.status.value === 'OPEN') {
             transport.start(new Metadata());
             transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
+        } else {
+            const stop = watch(this.webSocket.status, (status) => {
+                if (status !== 'OPEN') return;
+
+                clearTimeout(timeoutId);
+                stop();
+
+                transport.start(new Metadata());
+                transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
+            });
+            timeoutId = setTimeout(() => {
+                stop();
+                transport.cancel(errUnavailable);
+            }, 3000);
         }
 
         return call;
@@ -229,17 +233,21 @@ export class GrpcWSTransport implements RpcTransport {
 
         // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
         // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value !== 'OPEN') {
-            const stop = watchOnce(this.webSocket.status, () => {
-                if (this.webSocket.status.value !== 'OPEN') {
-                    transport.cancel(errUnavailable);
-                } else {
-                    transport.start(new Metadata());
-                }
-            });
-            timeoutId = setTimeout(stop, 3000);
-        } else {
+        if (this.webSocket.status.value === 'OPEN') {
             transport.start(new Metadata());
+        } else {
+            const stop = watch(this.webSocket.status, (status) => {
+                if (status !== 'OPEN') return;
+
+                clearTimeout(timeoutId);
+                stop();
+
+                transport.start(new Metadata());
+            });
+            timeoutId = setTimeout(() => {
+                stop();
+                transport.cancel(errUnavailable);
+            }, 3000);
         }
 
         return call;
@@ -310,17 +318,21 @@ export class GrpcWSTransport implements RpcTransport {
 
         // When the websocket isn't open (yet), use vue watch for 3 seconds before if it is still closed,
         // cancelling the stream with an unavailable error
-        if (this.webSocket.status.value !== 'OPEN') {
-            const stop = watchOnce(this.webSocket.status, () => {
-                if (this.webSocket.status.value !== 'OPEN') {
-                    transport.cancel(errUnavailable);
-                } else {
-                    transport.start(new Metadata());
-                }
-            });
-            timeoutId = setTimeout(stop, 3000);
-        } else {
+        if (this.webSocket.status.value === 'OPEN') {
             transport.start(new Metadata());
+        } else {
+            const stop = watch(this.webSocket.status, (status) => {
+                if (status !== 'OPEN') return;
+
+                clearTimeout(timeoutId);
+                stop();
+
+                transport.start(new Metadata());
+            });
+            timeoutId = setTimeout(() => {
+                stop();
+                transport.cancel(errUnavailable);
+            }, 3000);
         }
 
         return call;

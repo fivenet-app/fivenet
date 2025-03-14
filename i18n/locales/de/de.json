@@ -1371,6 +1371,11 @@
         "access": {
             "add_entry": "Zugriff hinzufügen",
             "remove_entry": "Zugriff entfernen"
+        },
+        "wiki": {
+            "PageView": {
+                "delete": "Löschen (benötigt Besitzer Zugriff)"
+            }
         }
     },
     "notifications": {

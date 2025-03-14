@@ -10,18 +10,18 @@ export default defineNuxtConfig({
 
     modules: [
         '@nuxt/ui',
+        '@pinia/nuxt',
+        'pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
         '@nuxtjs/robots',
         '@nuxt/fonts',
-        '@vueuse/nuxt',
-        '@pinia/nuxt',
-        'pinia-plugin-persistedstate/nuxt',
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',
         '@nuxt/eslint',
         '@nuxt/content',
         'nuxt-tiptap-editor',
+        '@vueuse/nuxt',
         '@vueuse/sound/nuxt',
     ],
 
