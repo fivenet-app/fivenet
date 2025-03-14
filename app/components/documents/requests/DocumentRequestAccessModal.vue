@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

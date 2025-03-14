@@ -29,6 +29,7 @@ type fivenetQualificationsExamQuestionsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsExamQuestionsTable struct {
@@ -77,6 +78,7 @@ func newFivenetQualificationsExamQuestionsTableImpl(schemaName, tableName, alias
 		PointsColumn          = mysql.IntegerColumn("points")
 		allColumns            = mysql.ColumnList{IDColumn, QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn}
 		mutableColumns        = mysql.ColumnList{QualificationIDColumn, CreatedAtColumn, UpdatedAtColumn, TitleColumn, DescriptionColumn, DataColumn, AnswerColumn, PointsColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, PointsColumn}
 	)
 
 	return fivenetQualificationsExamQuestionsTable{
@@ -95,5 +97,6 @@ func newFivenetQualificationsExamQuestionsTableImpl(schemaName, tableName, alias
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

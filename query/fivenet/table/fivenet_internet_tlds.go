@@ -27,6 +27,7 @@ type fivenetInternetTldsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetInternetTldsTable struct {
@@ -73,6 +74,7 @@ func newFivenetInternetTldsTableImpl(schemaName, tableName, alias string) fivene
 		CreatorIDColumn = mysql.IntegerColumn("creator_id")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, InternalColumn, CreatorIDColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, NameColumn, InternalColumn, CreatorIDColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, InternalColumn}
 	)
 
 	return fivenetInternetTldsTable{
@@ -89,5 +91,6 @@ func newFivenetInternetTldsTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

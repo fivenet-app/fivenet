@@ -24,6 +24,7 @@ type fivenetCentrumDispatchesAsgmtsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumDispatchesAsgmtsTable struct {
@@ -67,6 +68,7 @@ func newFivenetCentrumDispatchesAsgmtsTableImpl(schemaName, tableName, alias str
 		ExpiresAtColumn  = mysql.TimestampColumn("expires_at")
 		allColumns       = mysql.ColumnList{DispatchIDColumn, UnitIDColumn, CreatedAtColumn, ExpiresAtColumn}
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, ExpiresAtColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumDispatchesAsgmtsTable{
@@ -80,5 +82,6 @@ func newFivenetCentrumDispatchesAsgmtsTableImpl(schemaName, tableName, alias str
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

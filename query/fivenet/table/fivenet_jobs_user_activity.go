@@ -28,6 +28,7 @@ type fivenetJobsUserActivityTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobsUserActivityTable struct {
@@ -75,6 +76,7 @@ func newFivenetJobsUserActivityTableImpl(schemaName, tableName, alias string) fi
 		DataColumn         = mysql.StringColumn("data")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, SourceUserIDColumn, TargetUserIDColumn, ActivityTypeColumn, ReasonColumn, DataColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, JobColumn, SourceUserIDColumn, TargetUserIDColumn, ActivityTypeColumn, ReasonColumn, DataColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetJobsUserActivityTable{
@@ -92,5 +94,6 @@ func newFivenetJobsUserActivityTableImpl(schemaName, tableName, alias string) fi
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

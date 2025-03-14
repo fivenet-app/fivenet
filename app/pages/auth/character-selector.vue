@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
-import { useAuthStore } from '~/store/auth';
-import { useDocumentEditorStore } from '~/store/documenteditor';
+import { useAuthStore } from '~/stores/auth';
+import { useDocumentEditorStore } from '~/stores/documenteditor';
 
 useHead({
     title: 'components.auth.CharacterSelector.title',

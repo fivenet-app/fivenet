@@ -5,7 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useCalendarStore } from '~/store/calendar';
+import { useCalendarStore } from '~/stores/calendar';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const { $grpc } = useNuxtApp();

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 const { isOpen } = useModal();
 

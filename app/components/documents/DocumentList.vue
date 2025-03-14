@@ -9,8 +9,8 @@ import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerP
 import { availableIcons, fallbackIcon } from '~/components/partials/icons';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import { useCompletorStore } from '~/store/completor';
-import { useSettingsStore } from '~/store/settings';
+import { useCompletorStore } from '~/stores/completor';
+import { useSettingsStore } from '~/stores/settings';
 import type { OpenClose } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';

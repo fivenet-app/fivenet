@@ -22,6 +22,7 @@ type fivenetMailerSettingsBlockedTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetMailerSettingsBlockedTable struct {
@@ -63,6 +64,7 @@ func newFivenetMailerSettingsBlockedTableImpl(schemaName, tableName, alias strin
 		TargetEmailColumn = mysql.StringColumn("target_email")
 		allColumns        = mysql.ColumnList{EmailIDColumn, TargetEmailColumn}
 		mutableColumns    = mysql.ColumnList{}
+		defaultColumns    = mysql.ColumnList{}
 	)
 
 	return fivenetMailerSettingsBlockedTable{
@@ -74,5 +76,6 @@ func newFivenetMailerSettingsBlockedTableImpl(schemaName, tableName, alias strin
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

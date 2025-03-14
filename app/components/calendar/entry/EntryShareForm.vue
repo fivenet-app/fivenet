@@ -2,8 +2,8 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { useAuthStore } from '~/store/auth';
-import { useCompletorStore } from '~/store/completor';
+import { useAuthStore } from '~/stores/auth';
+import { useCompletorStore } from '~/stores/completor';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 

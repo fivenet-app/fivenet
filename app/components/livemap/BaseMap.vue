@@ -5,7 +5,7 @@ import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type Poi
 import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
-import { useLivemapStore } from '~/store/livemap';
+import { useLivemapStore } from '~/stores/livemap';
 import type { ValueOf } from '~/utils/types';
 import LayerControls from './controls/LayerControls.vue';
 

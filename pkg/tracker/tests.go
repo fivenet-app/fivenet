@@ -80,7 +80,7 @@ func (s *TestTracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
 		return nil, false
 	}
 
-	return s.GetUserByJobAndID(info.Info.Job, id)
+	return s.GetUserByJobAndID(info.Job, id)
 }
 
 func (s *TestTracker) Subscribe() chan *livemap.UsersUpdateEvent {

@@ -30,6 +30,7 @@ type fivenetQualificationsRequestsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsRequestsTable struct {
@@ -79,6 +80,7 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 		ApproverJobColumn     = mysql.StringColumn("approver_job")
 		allColumns            = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
 		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, UserCommentColumn, StatusColumn, ApprovedAtColumn, ApproverCommentColumn, ApproverIDColumn, ApproverJobColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn}
 	)
 
 	return fivenetQualificationsRequestsTable{
@@ -98,5 +100,6 @@ func newFivenetQualificationsRequestsTableImpl(schemaName, tableName, alias stri
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

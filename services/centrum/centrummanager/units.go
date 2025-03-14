@@ -59,9 +59,9 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		}
 
 		if um, ok := s.tracker.GetUserById(*in.UserId); ok {
-			in.X = &um.Info.X
-			in.Y = &um.Info.Y
-			in.Postal = um.Info.Postal
+			in.X = &um.X
+			in.Y = &um.Y
+			in.Postal = um.Postal
 		}
 	}
 	if in.CreatorId != nil {
@@ -140,9 +140,9 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	var postal *string
 	if userId != nil {
 		if um, ok := s.tracker.GetUserById(*userId); ok {
-			x = &um.Info.X
-			y = &um.Info.Y
-			postal = um.Info.Postal
+			x = &um.X
+			y = &um.Y
+			postal = um.Postal
 		}
 	}
 

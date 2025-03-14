@@ -26,6 +26,7 @@ type fivenetJobsTimeclockTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobsTimeclockTable struct {
@@ -71,6 +72,7 @@ func newFivenetJobsTimeclockTableImpl(schemaName, tableName, alias string) fiven
 		SpentTimeColumn = mysql.FloatColumn("spent_time")
 		allColumns      = mysql.ColumnList{JobColumn, UserIDColumn, DateColumn, StartTimeColumn, EndTimeColumn, SpentTimeColumn}
 		mutableColumns  = mysql.ColumnList{JobColumn, UserIDColumn, DateColumn, StartTimeColumn, EndTimeColumn, SpentTimeColumn}
+		defaultColumns  = mysql.ColumnList{DateColumn, StartTimeColumn, SpentTimeColumn}
 	)
 
 	return fivenetJobsTimeclockTable{
@@ -86,5 +88,6 @@ func newFivenetJobsTimeclockTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

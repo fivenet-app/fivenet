@@ -31,6 +31,7 @@ type fivenetNotificationsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetNotificationsTable struct {
@@ -81,6 +82,7 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		StarredColumn   = mysql.BoolColumn("starred")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ReadAtColumn, UserIDColumn, JobColumn, TitleColumn, TypeColumn, ContentColumn, CategoryColumn, DataColumn, StarredColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, StarredColumn}
 	)
 
 	return fivenetNotificationsTable{
@@ -101,5 +103,6 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -2,8 +2,8 @@
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
-import { useCentrumStore } from '~/store/centrum';
-import { useSettingsStore } from '~/store/settings';
+import { useCentrumStore } from '~/stores/centrum';
+import { useSettingsStore } from '~/stores/settings';
 
 defineProps<{
     showAllDispatches?: boolean;

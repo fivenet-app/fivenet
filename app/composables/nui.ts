@@ -1,5 +1,5 @@
 import type { TypedRouteFromName } from '@typed-router';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 export const logger = useLogger('🎮 NUI');
 

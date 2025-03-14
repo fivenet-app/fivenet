@@ -27,6 +27,7 @@ type fivenetMailerEmailsAccessTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetMailerEmailsAccessTable struct {
@@ -73,6 +74,7 @@ func newFivenetMailerEmailsAccessTableImpl(schemaName, tableName, alias string) 
 		AccessColumn          = mysql.IntegerColumn("access")
 		allColumns            = mysql.ColumnList{IDColumn, TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, QualificationIDColumn, AccessColumn}
 		mutableColumns        = mysql.ColumnList{TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, QualificationIDColumn, AccessColumn}
+		defaultColumns        = mysql.ColumnList{}
 	)
 
 	return fivenetMailerEmailsAccessTable{
@@ -89,5 +91,6 @@ func newFivenetMailerEmailsAccessTableImpl(schemaName, tableName, alias string) 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -35,255 +35,6 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on MarkerInfo with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *MarkerInfo) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on MarkerInfo with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in MarkerInfoMultiError, or
-// nil if none found.
-func (m *MarkerInfo) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *MarkerInfo) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for Job
-
-	// no validation rules for JobLabel
-
-	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
-		err := MarkerInfoValidationError{
-			field:  "Name",
-			reason: "value length must be between 1 and 255 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for X
-
-	// no validation rules for Y
-
-	if m.CreatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MarkerInfoValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MarkerInfoValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MarkerInfoValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.UpdatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetUpdatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, MarkerInfoValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, MarkerInfoValidationError{
-						field:  "UpdatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return MarkerInfoValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Description != nil {
-		// no validation rules for Description
-	}
-
-	if m.Postal != nil {
-
-		if utf8.RuneCountInString(m.GetPostal()) > 48 {
-			err := MarkerInfoValidationError{
-				field:  "Postal",
-				reason: "value length must be at most 48 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Color != nil {
-
-		if utf8.RuneCountInString(m.GetColor()) != 7 {
-			err := MarkerInfoValidationError{
-				field:  "Color",
-				reason: "value length must be 7 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-
-		}
-
-		if !_MarkerInfo_Color_Pattern.MatchString(m.GetColor()) {
-			err := MarkerInfoValidationError{
-				field:  "Color",
-				reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Icon != nil {
-
-		if utf8.RuneCountInString(m.GetIcon()) > 128 {
-			err := MarkerInfoValidationError{
-				field:  "Icon",
-				reason: "value length must be at most 128 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return MarkerInfoMultiError(errors)
-	}
-
-	return nil
-}
-
-// MarkerInfoMultiError is an error wrapping multiple validation errors
-// returned by MarkerInfo.ValidateAll() if the designated constraints aren't met.
-type MarkerInfoMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m MarkerInfoMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m MarkerInfoMultiError) AllErrors() []error { return m }
-
-// MarkerInfoValidationError is the validation error returned by
-// MarkerInfo.Validate if the designated constraints aren't met.
-type MarkerInfoValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e MarkerInfoValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e MarkerInfoValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e MarkerInfoValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e MarkerInfoValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e MarkerInfoValidationError) ErrorName() string { return "MarkerInfoValidationError" }
-
-// Error satisfies the builtin error interface
-func (e MarkerInfoValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sMarkerInfo.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = MarkerInfoValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = MarkerInfoValidationError{}
-
-var _MarkerInfo_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")
-
 // Validate checks the field values on UserMarker with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -306,35 +57,6 @@ func (m *UserMarker) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetInfo()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UserMarkerValidationError{
-					field:  "Info",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UserMarkerValidationError{
-					field:  "Info",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetInfo()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UserMarkerValidationError{
-				field:  "Info",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if m.GetUserId() <= 0 {
 		err := UserMarkerValidationError{
 			field:  "UserId",
@@ -345,6 +67,23 @@ func (m *UserMarker) validate(all bool) error {
 		}
 		errors = append(errors, err)
 	}
+
+	// no validation rules for X
+
+	// no validation rules for Y
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := UserMarkerValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for JobLabel
 
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {
@@ -376,6 +115,81 @@ func (m *UserMarker) validate(all bool) error {
 	}
 
 	// no validation rules for Hidden
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserMarkerValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Postal != nil {
+
+		if utf8.RuneCountInString(m.GetPostal()) > 48 {
+			err := UserMarkerValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Color != nil {
+
+		if utf8.RuneCountInString(m.GetColor()) != 7 {
+			err := UserMarkerValidationError{
+				field:  "Color",
+				reason: "value length must be 7 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_UserMarker_Color_Pattern.MatchString(m.GetColor()) {
+			err := UserMarkerValidationError{
+				field:  "Color",
+				reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
 
 	if m.UnitId != nil {
 		// no validation rules for UnitId
@@ -491,6 +305,8 @@ var _ interface {
 	ErrorName() string
 } = UserMarkerValidationError{}
 
+var _UserMarker_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")
+
 // Validate checks the field values on MarkerMarker with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -513,34 +329,35 @@ func (m *MarkerMarker) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetInfo()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, MarkerMarkerValidationError{
-					field:  "Info",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, MarkerMarkerValidationError{
-					field:  "Info",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
+	// no validation rules for Id
+
+	// no validation rules for X
+
+	// no validation rules for Y
+
+	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
+		err := MarkerMarkerValidationError{
+			field:  "Name",
+			reason: "value length must be between 1 and 255 runes, inclusive",
 		}
-	} else if v, ok := interface{}(m.GetInfo()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return MarkerMarkerValidationError{
-				field:  "Info",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
+		if !all {
+			return err
 		}
+		errors = append(errors, err)
 	}
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := MarkerMarkerValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for JobLabel
 
 	// no validation rules for Type
 
@@ -573,6 +390,72 @@ func (m *MarkerMarker) validate(all bool) error {
 		}
 	}
 
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MarkerMarkerValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MarkerMarkerValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.ExpiresAt != nil {
 
 		if all {
@@ -602,6 +485,85 @@ func (m *MarkerMarker) validate(all bool) error {
 					cause:  err,
 				}
 			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, MarkerMarkerValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return MarkerMarkerValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
+	}
+
+	if m.Postal != nil {
+
+		if utf8.RuneCountInString(m.GetPostal()) > 48 {
+			err := MarkerMarkerValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Color != nil {
+
+		if utf8.RuneCountInString(m.GetColor()) != 7 {
+			err := MarkerMarkerValidationError{
+				field:  "Color",
+				reason: "value length must be 7 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_MarkerMarker_Color_Pattern.MatchString(m.GetColor()) {
+			err := MarkerMarkerValidationError{
+				field:  "Color",
+				reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
 		}
 
 	}
@@ -730,6 +692,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MarkerMarkerValidationError{}
+
+var _MarkerMarker_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")
 
 // Validate checks the field values on MarkerData with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -955,7 +919,18 @@ func (m *CircleMarker) validate(all bool) error {
 	// no validation rules for Radius
 
 	if m.Opacity != nil {
-		// no validation rules for Opacity
+
+		if val := m.GetOpacity(); val < 1 || val > 75 {
+			err := CircleMarkerValidationError{
+				field:  "Opacity",
+				reason: "value must be inside range [1, 75]",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1034,108 +1009,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CircleMarkerValidationError{}
-
-// Validate checks the field values on Coords with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Coords) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on Coords with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in CoordsMultiError, or nil if none found.
-func (m *Coords) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *Coords) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for X
-
-	// no validation rules for Y
-
-	if len(errors) > 0 {
-		return CoordsMultiError(errors)
-	}
-
-	return nil
-}
-
-// CoordsMultiError is an error wrapping multiple validation errors returned by
-// Coords.ValidateAll() if the designated constraints aren't met.
-type CoordsMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CoordsMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CoordsMultiError) AllErrors() []error { return m }
-
-// CoordsValidationError is the validation error returned by Coords.Validate if
-// the designated constraints aren't met.
-type CoordsValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CoordsValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CoordsValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CoordsValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CoordsValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CoordsValidationError) ErrorName() string { return "CoordsValidationError" }
-
-// Error satisfies the builtin error interface
-func (e CoordsValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCoords.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CoordsValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CoordsValidationError{}
 
 // Validate checks the field values on IconMarker with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -1246,3 +1119,105 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = IconMarkerValidationError{}
+
+// Validate checks the field values on Coords with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Coords) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Coords with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in CoordsMultiError, or nil if none found.
+func (m *Coords) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Coords) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for X
+
+	// no validation rules for Y
+
+	if len(errors) > 0 {
+		return CoordsMultiError(errors)
+	}
+
+	return nil
+}
+
+// CoordsMultiError is an error wrapping multiple validation errors returned by
+// Coords.ValidateAll() if the designated constraints aren't met.
+type CoordsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CoordsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CoordsMultiError) AllErrors() []error { return m }
+
+// CoordsValidationError is the validation error returned by Coords.Validate if
+// the designated constraints aren't met.
+type CoordsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CoordsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CoordsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CoordsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CoordsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CoordsValidationError) ErrorName() string { return "CoordsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CoordsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCoords.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CoordsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CoordsValidationError{}

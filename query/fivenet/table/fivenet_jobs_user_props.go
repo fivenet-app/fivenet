@@ -27,6 +27,7 @@ type fivenetJobsUserPropsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobsUserPropsTable struct {
@@ -73,6 +74,7 @@ func newFivenetJobsUserPropsTableImpl(schemaName, tableName, alias string) fiven
 		NameSuffixColumn   = mysql.StringColumn("name_suffix")
 		allColumns         = mysql.ColumnList{UserIDColumn, JobColumn, AbsenceBeginColumn, AbsenceEndColumn, NoteColumn, NamePrefixColumn, NameSuffixColumn}
 		mutableColumns     = mysql.ColumnList{UserIDColumn, JobColumn, AbsenceBeginColumn, AbsenceEndColumn, NoteColumn, NamePrefixColumn, NameSuffixColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetJobsUserPropsTable{
@@ -89,5 +91,6 @@ func newFivenetJobsUserPropsTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

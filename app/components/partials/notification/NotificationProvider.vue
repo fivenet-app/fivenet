@@ -2,10 +2,10 @@
 import { v4 as uuidv4 } from 'uuid';
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import type { Notification } from '~/composables/notifications';
-import { useCalendarStore } from '~/store/calendar';
-import { useMailerStore } from '~/store/mailer';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { useCalendarStore } from '~/stores/calendar';
+import { useMailerStore } from '~/stores/mailer';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 
 const { t } = useI18n();
 

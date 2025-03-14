@@ -26,6 +26,7 @@ type fivenetQualificationsExamUsersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsExamUsersTable struct {
@@ -71,6 +72,7 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 		EndedAtColumn         = mysql.TimestampColumn("ended_at")
 		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
 		mutableColumns        = mysql.ColumnList{CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetQualificationsExamUsersTable{
@@ -86,5 +88,6 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 
 const notifications = useNotificatorStore();
 const { doNotDisturb } = storeToRefs(notifications);

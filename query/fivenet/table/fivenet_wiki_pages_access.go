@@ -26,6 +26,7 @@ type fivenetWikiPagesAccessTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetWikiPagesAccessTable struct {
@@ -71,6 +72,7 @@ func newFivenetWikiPagesAccessTableImpl(schemaName, tableName, alias string) fiv
 		AccessColumn       = mysql.IntegerColumn("access")
 		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 		mutableColumns     = mysql.ColumnList{TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetWikiPagesAccessTable{
@@ -86,5 +88,6 @@ func newFivenetWikiPagesAccessTableImpl(schemaName, tableName, alias string) fiv
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

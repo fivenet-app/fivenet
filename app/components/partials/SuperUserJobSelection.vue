@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
-import { useCompletorStore } from '~/store/completor';
+import { useAuthStore } from '~/stores/auth';
+import { useCompletorStore } from '~/stores/completor';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 
 defineOptions({

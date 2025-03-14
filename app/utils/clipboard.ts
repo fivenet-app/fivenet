@@ -1,6 +1,6 @@
 import { useClipboard } from '@vueuse/core';
 import { copyToClipboard } from '~/composables/nui';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 export function copyToClipboardWrapper(text: string): Promise<void> {
     const settingsStore = useSettingsStore();

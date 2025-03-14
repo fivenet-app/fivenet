@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import BMICalculator from '~/components/quickbuttons/bodycheckup/BMICalculator.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const notifications = useNotificatorStore();

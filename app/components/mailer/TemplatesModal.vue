@@ -3,7 +3,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 import { canAccess } from './helpers';

@@ -5,7 +5,7 @@ import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums, type AccessType } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { QualificationJobAccess } from '~~/gen/ts/resources/qualifications/access';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';

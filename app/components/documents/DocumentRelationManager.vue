@@ -2,8 +2,8 @@
 import type { TabItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useAuthStore } from '~/store/auth';
-import { getUser, useClipboardStore } from '~/store/clipboard';
+import { useAuthStore } from '~/stores/auth';
+import { getUser, useClipboardStore } from '~/stores/clipboard';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import type { User } from '~~/gen/ts/resources/users/users';

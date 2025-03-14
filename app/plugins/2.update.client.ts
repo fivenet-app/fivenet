@@ -1,4 +1,4 @@
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 export default defineNuxtPlugin(() => {
     const { $update } = useNuxtApp();

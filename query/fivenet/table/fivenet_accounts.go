@@ -32,6 +32,7 @@ type fivenetAccountsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetAccountsTable struct {
@@ -83,6 +84,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		LastCharColumn         = mysql.IntegerColumn("last_char")
 		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
 		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
+		defaultColumns         = mysql.ColumnList{CreatedAtColumn, EnabledColumn, SuperuserColumn}
 	)
 
 	return fivenetAccountsTable{
@@ -104,5 +106,6 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

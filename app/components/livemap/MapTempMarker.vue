@@ -2,8 +2,8 @@
 import { LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import type { PointExpression } from 'leaflet';
 import { MapMarkerDownIcon } from 'mdi-vue3';
-import { useLivemapStore } from '~/store/livemap';
-import { useSettingsStore } from '~/store/settings';
+import { useLivemapStore } from '~/stores/livemap';
+import { useSettingsStore } from '~/stores/settings';
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);

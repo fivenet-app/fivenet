@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useLivemapStore } from '~/store/livemap';
+import { useLivemapStore } from '~/stores/livemap';
 
 const livemapStore = useLivemapStore();
 const { zoom } = storeToRefs(livemapStore);

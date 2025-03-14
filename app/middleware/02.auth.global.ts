@@ -1,6 +1,6 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
-import { useAuthStore } from '~/store/auth';
-import { useNotificatorStore } from '~/store/notificator';
+import { useAuthStore } from '~/stores/auth';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {

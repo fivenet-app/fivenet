@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { Tab } from '~/store/internet';
+import type { Tab } from '~/stores/internet';
 import type { Page } from '~~/gen/ts/resources/internet/page';
 import NuxtComponentRenderer from './webpages/NuxtComponentRenderer.vue';
 

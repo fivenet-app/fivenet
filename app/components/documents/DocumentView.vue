@@ -18,8 +18,8 @@ import DocumentCategoryBadge from '~/components/partials/documents/DocumentCateg
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
+import { useClipboardStore } from '~/stores/clipboard';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';

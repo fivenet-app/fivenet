@@ -35,6 +35,7 @@ type fivenetWikiPagesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetWikiPagesTable struct {
@@ -89,6 +90,7 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
 		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, TocColumn, PublicColumn}
 	)
 
 	return fivenetWikiPagesTable{
@@ -113,5 +115,6 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

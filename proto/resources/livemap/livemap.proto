@@ -17,50 +17,59 @@ enum MarkerType {
   MARKER_TYPE_ICON = 3;
 }
 
-message MarkerInfo {
+message UserMarker {
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  double x = 2;
+  double y = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+  // @sanitize: method=StripTags
+  optional string postal = 5 [(validate.rules).string.max_len = 48];
+  // @sanitize: method=StripTags
+  optional string color = 6 [(validate.rules).string = {
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
+  }];
+
+  string job = 7 [(validate.rules).string.max_len = 20];
+  string job_label = 8;
+
+  resources.jobs.Colleague user = 9; // @gotags: alias:"user"
+  optional uint64 unit_id = 10;
+  optional resources.centrum.Unit unit = 11;
+
+  bool hidden = 12;
+}
+
+message MarkerMarker {
   uint64 id = 1;
-  optional resources.timestamp.Timestamp created_at = 2;
-  optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4;
-  string job_label = 12;
+  double x = 2;
+  double y = 3;
+  optional resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp updated_at = 5;
+  optional resources.timestamp.Timestamp expires_at = 6;
+  optional resources.timestamp.Timestamp deleted_at = 7;
   // @sanitize
-  string name = 5 [(validate.rules).string = {
+  string name = 8 [(validate.rules).string = {
     min_len: 1,
     max_len: 255,
   }];
   // @sanitize
-  optional string description = 6;
-  double x = 7;
-  double y = 8;
-  // @sanitize
-  optional string postal = 9  [(validate.rules).string.max_len = 48];
+  optional string description = 9;
   // @sanitize: method=StripTags
-  optional string color = 10  [(validate.rules).string = {
+  optional string postal = 10 [(validate.rules).string.max_len = 48];
+  // @sanitize: method=StripTags
+  optional string color = 11 [(validate.rules).string = {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",
   }];
-  // @sanitize: method=StripTags
-  optional string icon = 11 [(validate.rules).string.max_len = 128];
-}
+  string job = 12 [(validate.rules).string.max_len = 20];
+  string job_label = 13;
 
-message UserMarker {
-  MarkerInfo info = 1;
+  MarkerType type = 14; // @gotags: alias:"markerType"
+  MarkerData data = 15; // @gotags: alias:"markerData"
 
-  int32 user_id = 2 [(validate.rules).int32.gt = 0];
-  resources.jobs.Colleague user = 3; // @gotags: alias:"user"
-  optional uint64 unit_id = 4;
-  optional resources.centrum.Unit unit = 5;
-
-  bool hidden = 6;
-}
-
-message MarkerMarker {
-  MarkerInfo info = 1;
-  MarkerType type = 2; // @gotags: alias:"markerType"
-  optional resources.timestamp.Timestamp expires_at = 3;
-  MarkerData data = 4; // @gotags: alias:"markerData"
-  optional int32 creator_id = 5 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 6;
+  optional int32 creator_id = 16 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 17;
 }
 
 // @dbscanner
@@ -75,15 +84,18 @@ message MarkerData {
 
 message CircleMarker {
   int32 radius = 1;
-  optional float opacity = 2;
-}
-
-message Coords {
-  double x = 1;
-  double y = 2;
+  optional float opacity = 2 [(validate.rules).float = {
+    gte: 1,
+    lte: 75,
+  }];
 }
 
 message IconMarker {
   // @sanitize: method=StripTags
   string icon = 1 [(validate.rules).string.max_len = 128];
+}
+
+message Coords {
+  double x = 1;
+  double y = 2;
 }

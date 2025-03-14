@@ -23,6 +23,7 @@ type fivenetJobsLabelsUsersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobsLabelsUsersTable struct {
@@ -65,6 +66,7 @@ func newFivenetJobsLabelsUsersTableImpl(schemaName, tableName, alias string) fiv
 		LabelIDColumn  = mysql.IntegerColumn("label_id")
 		allColumns     = mysql.ColumnList{UserIDColumn, JobColumn, LabelIDColumn}
 		mutableColumns = mysql.ColumnList{UserIDColumn, JobColumn, LabelIDColumn}
+		defaultColumns = mysql.ColumnList{}
 	)
 
 	return fivenetJobsLabelsUsersTable{
@@ -77,5 +79,6 @@ func newFivenetJobsLabelsUsersTableImpl(schemaName, tableName, alias string) fiv
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

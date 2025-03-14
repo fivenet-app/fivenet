@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import type { Tab } from '~/store/internet';
+import type { Tab } from '~/stores/internet';
 import type { TLD } from '~~/gen/ts/resources/internet/domain';
 import type { CheckDomainAvailabilityResponse } from '~~/gen/ts/services/internet/domain';
 import DomainList from './nic/DomainList.vue';

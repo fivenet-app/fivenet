@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { splitURL, urlHomePage } from '~/components/internet/helper';
-import { useInternetStore, type Tab } from '~/store/internet';
+import { useInternetStore, type Tab } from '~/stores/internet';
 import type { GetPageResponse } from '~~/gen/ts/services/internet/internet';
 import HomePage from './pages/HomePage.vue';
 import NotFound from './pages/NotFound.vue';

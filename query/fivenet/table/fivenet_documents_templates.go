@@ -37,6 +37,7 @@ type fivenetDocumentsTemplatesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsTemplatesTable struct {
@@ -93,6 +94,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, CreatorJobColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ColorColumn, IconColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, WorkflowColumn, CreatorJobColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn, WeightColumn, ColorColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -119,5 +121,6 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

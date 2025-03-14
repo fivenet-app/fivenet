@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { BannerMessage } from '~~/gen/ts/resources/rector/banner';
 
 const props = defineProps<{

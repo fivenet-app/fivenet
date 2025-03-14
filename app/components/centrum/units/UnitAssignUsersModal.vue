@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 

@@ -9,7 +9,7 @@ import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import DisponentsInfo from './disponents/DisponentsInfo.vue';
 
 const { can } = useAuth();

@@ -31,6 +31,7 @@ type fivenetCentrumDispatchesStatusTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumDispatchesStatusTable struct {
@@ -81,6 +82,7 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, PostalColumn, UserIDColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumDispatchesStatusTable{
@@ -101,5 +103,6 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -36,6 +36,7 @@ type fivenetUsersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetUsersTable struct {
@@ -91,6 +92,7 @@ func newFivenetUsersTableImpl(schemaName, tableName, alias string) fivenetUsersT
 		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
 		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, DisabledColumn, VisumColumn, PlaytimeColumn, CreatedAtColumn, UpdatedAtColumn}
+		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn, DisabledColumn, CreatedAtColumn}
 	)
 
 	return fivenetUsersTable{
@@ -116,5 +118,6 @@ func newFivenetUsersTableImpl(schemaName, tableName, alias string) fivenetUsersT
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

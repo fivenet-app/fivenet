@@ -2,8 +2,8 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
-import { useCentrumStore } from '~/store/centrum';
-import { useNotificatorStore } from '~/store/notificator';
+import { useCentrumStore } from '~/stores/centrum';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

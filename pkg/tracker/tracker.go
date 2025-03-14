@@ -81,11 +81,11 @@ func New(p Params) (ITracker, error) {
 		userIDs, err := store.New(ctxStartup, p.Logger, p.JS, "tracker",
 			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
 			store.WithOnUpdateFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], um *livemap.UserMarker) (*livemap.UserMarker, error) {
-				if um == nil || um.Info == nil {
+				if um == nil {
 					return um, nil
 				}
 
-				jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
+				jobUsers, _ := t.usersByJob.LoadOrCompute(um.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
 					return xsync.NewMapOf[int32, *livemap.UserMarker]()
 				})
 				// Maybe we can be smarter about updating the user marker here, but
@@ -97,11 +97,11 @@ func New(p Params) (ITracker, error) {
 			}),
 
 			store.WithOnDeleteFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], entry jetstream.KeyValueEntry, um *livemap.UserMarker) error {
-				if um == nil || um.Info == nil {
+				if um == nil {
 					return nil
 				}
 
-				if jobUsers, ok := t.usersByJob.Load(um.Info.Job); ok {
+				if jobUsers, ok := t.usersByJob.Load(um.Job); ok {
 					jobUsers.Delete(um.UserId)
 				}
 

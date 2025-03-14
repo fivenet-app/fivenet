@@ -39,6 +39,7 @@ type fivenetQualificationsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsTable struct {
@@ -97,6 +98,7 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 		LabelSyncFormatColumn    = mysql.StringColumn("label_sync_format")
 		allColumns               = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn, LabelSyncEnabledColumn, LabelSyncFormatColumn}
 		mutableColumns           = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn, LabelSyncEnabledColumn, LabelSyncFormatColumn}
+		defaultColumns           = mysql.ColumnList{CreatedAtColumn, WeightColumn, ClosedColumn, DiscordSyncEnabledColumn, ExamModeColumn, LabelSyncEnabledColumn}
 	)
 
 	return fivenetQualificationsTable{
@@ -125,5 +127,6 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

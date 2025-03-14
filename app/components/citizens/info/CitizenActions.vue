@@ -5,8 +5,8 @@ import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/Citiz
 import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
+import { useClipboardStore } from '~/stores/clipboard';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';

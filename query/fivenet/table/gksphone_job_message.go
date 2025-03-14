@@ -28,6 +28,7 @@ type gksphoneJobMessageTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type GksphoneJobMessageTable struct {
@@ -75,6 +76,7 @@ func newGksphoneJobMessageTableImpl(schemaName, tableName, alias string) gksphon
 		TimeColumn     = mysql.TimestampColumn("time")
 		allColumns     = mysql.ColumnList{IDColumn, NumberColumn, MessageColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
 		mutableColumns = mysql.ColumnList{NumberColumn, MessageColumn, GpsColumn, OwnerColumn, JobmColumn, AnonColumn, TimeColumn}
+		defaultColumns = mysql.ColumnList{OwnerColumn, TimeColumn}
 	)
 
 	return gksphoneJobMessageTable{
@@ -92,5 +94,6 @@ func newGksphoneJobMessageTableImpl(schemaName, tableName, alias string) gksphon
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

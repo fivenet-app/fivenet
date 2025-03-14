@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
 import type { Notification } from '~/composables/notifications';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';

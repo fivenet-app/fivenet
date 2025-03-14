@@ -24,6 +24,7 @@ type fivenetRolesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetRolesTable struct {
@@ -67,6 +68,7 @@ func newFivenetRolesTableImpl(schemaName, tableName, alias string) fivenetRolesT
 		GradeColumn     = mysql.IntegerColumn("grade")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, GradeColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, JobColumn, GradeColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetRolesTable{
@@ -80,5 +82,6 @@ func newFivenetRolesTableImpl(schemaName, tableName, alias string) fivenetRolesT
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

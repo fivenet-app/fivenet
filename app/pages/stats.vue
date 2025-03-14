@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import CountUp from 'vue-countup-v3';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 import type { Stat } from '~~/gen/ts/resources/stats/stats';
 
 useHead({

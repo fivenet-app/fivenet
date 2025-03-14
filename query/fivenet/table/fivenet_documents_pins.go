@@ -25,6 +25,7 @@ type fivenetDocumentsPinsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsPinsTable struct {
@@ -69,6 +70,7 @@ func newFivenetDocumentsPinsTableImpl(schemaName, tableName, alias string) fiven
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		allColumns       = mysql.ColumnList{DocumentIDColumn, JobColumn, CreatedAtColumn, StateColumn, CreatorIDColumn}
 		mutableColumns   = mysql.ColumnList{CreatedAtColumn, StateColumn, CreatorIDColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn, StateColumn}
 	)
 
 	return fivenetDocumentsPinsTable{
@@ -83,5 +85,6 @@ func newFivenetDocumentsPinsTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

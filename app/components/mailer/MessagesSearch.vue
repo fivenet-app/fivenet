@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { Group } from '#ui/types';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 
 const { $grpc } = useNuxtApp();
 

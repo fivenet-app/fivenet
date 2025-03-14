@@ -5,7 +5,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import FileUploadModal from '~/components/rector/filestore/FileUploadModal.vue';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 

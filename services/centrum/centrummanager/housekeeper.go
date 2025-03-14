@@ -204,7 +204,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		).
 		WHERE(jet.AND(
 			tDispatchUnit.ExpiresAt.IS_NOT_NULL(),
-			tDispatchUnit.ExpiresAt.LT_EQ(jet.NOW()),
+			tDispatchUnit.ExpiresAt.LT_EQ(jet.CURRENT_TIMESTAMP()),
 		))
 
 	var dest []*struct {
@@ -847,15 +847,15 @@ func (s *Housekeeper) watchUserChanges() {
 						continue
 					}
 
-					if err := s.SetUnitForUser(ctx, userMarker.Info.Job, userMarker.UserId, unitId); err != nil {
+					if err := s.SetUnitForUser(ctx, userMarker.Job, userMarker.UserId, unitId); err != nil {
 						s.logger.Error("failed to update user unit id mapping in kv", zap.Error(err))
 						continue
 					}
 				}
 
-				for _, userInfo := range event.Removed {
-					s.handleRemovedUserDisponents(ctx, userInfo.Info.Job, userInfo.UserId)
-					s.handleRemovedUserUnit(ctx, userInfo.Info.Job, userInfo.UserId)
+				for _, userMarker := range event.Removed {
+					s.handleRemovedUserDisponents(ctx, userMarker.Job, userMarker.UserId)
+					s.handleRemovedUserUnit(ctx, userMarker.Job, userMarker.UserId)
 				}
 			}()
 		}

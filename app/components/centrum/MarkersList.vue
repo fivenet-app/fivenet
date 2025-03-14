@@ -2,7 +2,7 @@
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useLivemapStore } from '~/store/livemap';
+import { useLivemapStore } from '~/stores/livemap';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 
 const { $grpc } = useNuxtApp();
@@ -93,11 +93,7 @@ const columns = [
                 <template #actions-data="{ row: marker }">
                     <div :key="marker.id">
                         <UTooltip :text="$t('common.mark')">
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-map-marker"
-                                @click="goto({ x: marker.info!.x, y: marker.info!.y })"
-                            />
+                            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })" />
                         </UTooltip>
 
                         <UTooltip :text="$t('common.delete')">
@@ -108,7 +104,7 @@ const columns = [
                                 color="red"
                                 @click="
                                     modal.open(ConfirmModal, {
-                                        confirm: async () => deleteMarker(marker.info!.id),
+                                        confirm: async () => deleteMarker(marker.id),
                                     })
                                 "
                             />
@@ -117,7 +113,7 @@ const columns = [
                 </template>
 
                 <template #createdAt-data="{ row: marker }">
-                    <GenericTime :value="marker.info?.createdAt" type="compact" />
+                    <GenericTime :value="marker.createdAt" type="compact" />
                 </template>
 
                 <template #expiresAt-data="{ row: marker }">
@@ -128,7 +124,7 @@ const columns = [
                 </template>
 
                 <template #name-data="{ row: marker }">
-                    {{ marker.info!.name }}
+                    {{ marker.name }}
                 </template>
 
                 <template #type-data="{ row: marker }">
@@ -137,7 +133,7 @@ const columns = [
 
                 <template #description-data="{ row: marker }">
                     <p class="max-h-14 overflow-y-scroll break-words">
-                        {{ marker.info?.description ?? $t('common.na') }}
+                        {{ marker.description ?? $t('common.na') }}
                     </p>
                 </template>
 

@@ -31,6 +31,7 @@ type fivenetCentrumUnitsStatusTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumUnitsStatusTable struct {
@@ -81,6 +82,7 @@ func newFivenetCentrumUnitsStatusTableImpl(schemaName, tableName, alias string) 
 		CreatorIDColumn = mysql.IntegerColumn("creator_id")
 		allColumns      = mysql.ColumnList{IDColumn, CreatedAtColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn, XColumn, YColumn, PostalColumn, CreatorIDColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumUnitsStatusTable{
@@ -101,5 +103,6 @@ func newFivenetCentrumUnitsStatusTableImpl(schemaName, tableName, alias string) 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

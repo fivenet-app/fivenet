@@ -25,7 +25,7 @@ message Dispatch {
   double x = 10;
   double y = 11;
   // @sanitize
-  optional string postal = 12  [(validate.rules).string.max_len = 48];
+  optional string postal = 12 [(validate.rules).string.max_len = 48];
   bool anon = 13;
   optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
   optional resources.users.User creator = 15;
@@ -80,7 +80,7 @@ message DispatchStatus {
   optional double x = 11;
   optional double y = 12;
   // @sanitize
-  optional string postal = 13  [(validate.rules).string.max_len = 48];
+  optional string postal = 13 [(validate.rules).string.max_len = 48];
 }
 
 enum TakeDispatchResp {

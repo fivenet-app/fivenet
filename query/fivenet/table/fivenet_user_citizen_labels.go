@@ -22,6 +22,7 @@ type fivenetUserCitizenLabelsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetUserCitizenLabelsTable struct {
@@ -63,6 +64,7 @@ func newFivenetUserCitizenLabelsTableImpl(schemaName, tableName, alias string) f
 		AttributeIDColumn = mysql.IntegerColumn("attribute_id")
 		allColumns        = mysql.ColumnList{UserIDColumn, AttributeIDColumn}
 		mutableColumns    = mysql.ColumnList{UserIDColumn, AttributeIDColumn}
+		defaultColumns    = mysql.ColumnList{}
 	)
 
 	return fivenetUserCitizenLabelsTable{
@@ -74,5 +76,6 @@ func newFivenetUserCitizenLabelsTableImpl(schemaName, tableName, alias string) f
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

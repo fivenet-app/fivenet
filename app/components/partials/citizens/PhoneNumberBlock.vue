@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { phoneCallNumber } from '~/composables/nui';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

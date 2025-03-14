@@ -2,8 +2,8 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
-import { useAuthStore } from '~/store/auth';
-import { useNotificatorStore } from '~/store/notificator';
+import { useAuthStore } from '~/stores/auth';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();

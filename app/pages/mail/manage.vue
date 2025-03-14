@@ -6,7 +6,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 

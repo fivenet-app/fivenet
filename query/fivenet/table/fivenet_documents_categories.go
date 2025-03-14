@@ -26,6 +26,7 @@ type fivenetDocumentsCategoriesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsCategoriesTable struct {
@@ -71,6 +72,7 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 		IconColumn        = mysql.StringColumn("icon")
 		allColumns        = mysql.ColumnList{IDColumn, NameColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
 		mutableColumns    = mysql.ColumnList{NameColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
+		defaultColumns    = mysql.ColumnList{ColorColumn}
 	)
 
 	return fivenetDocumentsCategoriesTable{
@@ -86,5 +88,6 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

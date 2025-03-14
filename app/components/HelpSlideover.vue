@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { ButtonColor } from '#ui/types';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 const { isHelpSlideoverOpen } = useDashboard();
 const { metaSymbol } = useShortcuts();

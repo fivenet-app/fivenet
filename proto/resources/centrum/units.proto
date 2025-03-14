@@ -77,7 +77,7 @@ message UnitStatus {
   optional double x = 10;
   optional double y = 11;
   // @sanitize
-  optional string postal = 12  [(validate.rules).string.max_len = 48];
+  optional string postal = 12 [(validate.rules).string.max_len = 48];
   optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
   optional resources.jobs.Colleague creator = 14;
 }

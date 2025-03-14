@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { SetDocumentReminderResponse } from '~~/gen/ts/services/docstore/docstore';

@@ -18,10 +18,10 @@ import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideove
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
-import { logger, useCentrumStore } from '~/store/centrum';
-import { useLivemapStore } from '~/store/livemap';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { logger, useCentrumStore } from '~/stores/centrum';
+import { useLivemapStore } from '~/stores/livemap';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';

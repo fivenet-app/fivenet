@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
 

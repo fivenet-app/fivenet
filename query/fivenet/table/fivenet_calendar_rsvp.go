@@ -24,6 +24,7 @@ type fivenetCalendarRsvpTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCalendarRsvpTable struct {
@@ -67,6 +68,7 @@ func newFivenetCalendarRsvpTableImpl(schemaName, tableName, alias string) fivene
 		ResponseColumn  = mysql.IntegerColumn("response")
 		allColumns      = mysql.ColumnList{EntryIDColumn, CreatedAtColumn, UserIDColumn, ResponseColumn}
 		mutableColumns  = mysql.ColumnList{CreatedAtColumn, ResponseColumn}
+		defaultColumns  = mysql.ColumnList{CreatedAtColumn, ResponseColumn}
 	)
 
 	return fivenetCalendarRsvpTable{
@@ -80,5 +82,6 @@ func newFivenetCalendarRsvpTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

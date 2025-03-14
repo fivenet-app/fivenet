@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import MathCalculator from '~/components/quickbuttons/mathcalculator/MathCalculator.vue';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 const { isOpen } = useModal();
 

@@ -10,7 +10,7 @@ import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.v
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useCalendarStore } from '~/store/calendar';
+import { useCalendarStore } from '~/stores/calendar';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 

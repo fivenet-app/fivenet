@@ -1,6 +1,6 @@
 import type { SoundsPaths } from '#build/sounds/index.d';
 import type { ComposableOptions } from '@vueuse/sound';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 export function useSounds(name: SoundsPaths, options?: ComposableOptions) {
     const settingsStore = useSettingsStore();

@@ -1,6 +1,8 @@
-import { defineStore } from 'pinia';
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
+import { destr } from 'destr';
+import { defineStore, type StateTree } from 'pinia';
 import type { Coordinate } from '~/composables/livemap';
-import type { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { useSettingsStore } from './settings';
@@ -32,12 +34,24 @@ export const useLivemapStore = defineStore(
         const jobsMarkers = ref<Job[]>([]);
         const jobsUsers = ref<Job[]>([]);
 
+        const markersMarkersUpdatedAt = ref<Date | undefined>();
         const markersMarkers = ref<Map<number, MarkerMarker>>(new Map());
         const markersUsers = ref<Map<number, UserMarker>>(new Map());
 
         const selectedMarker = ref<UserMarker | undefined>(undefined);
 
         // Actions
+        const cleanupMarkerMarkers = (): void => {
+            const now = new Date();
+            markersMarkers.value.forEach((m) => {
+                if (!m.expiresAt) return;
+
+                if (toDate(m.expiresAt).getTime() > now.getTime()) return;
+
+                markersMarkers.value.delete(m.id);
+            });
+        };
+
         const startStream = async (): Promise<void> => {
             if (abort.value !== undefined) {
                 return;
@@ -53,11 +67,21 @@ export const useLivemapStore = defineStore(
             error.value = undefined;
             reconnecting.value = false;
 
-            // Tracking user markers between part responses
+            // Tracking marker and user markers between part responses
             const foundUsers: number[] = [];
+            const foundMarkers: number[] = [];
+
+            cleanupMarkerMarkers();
 
             try {
-                const call = $grpc.livemapper.livemapper.stream({}, { abort: abort.value.signal });
+                const call = $grpc.livemapper.livemapper.stream(
+                    {
+                        markersUpdatedAt: markersMarkersUpdatedAt.value
+                            ? toTimestamp(markersMarkersUpdatedAt.value)
+                            : undefined,
+                    },
+                    { abort: abort.value.signal },
+                );
 
                 for await (const resp of call.responses) {
                     error.value = undefined;
@@ -76,37 +100,44 @@ export const useLivemapStore = defineStore(
                         jobsMarkers.value = resp.data.jobs.markers;
                         jobsUsers.value = resp.data.jobs.users;
                     } else if (resp.data.oneofKind === 'markers') {
-                        const foundMarkers: number[] = [];
                         resp.data.markers.updated.forEach((v) => {
-                            foundMarkers.push(v.info!.id);
+                            // Only record found users for non-partial responses
+                            if (resp.data.oneofKind === 'markers' && !resp.data.markers.partial) {
+                                foundMarkers.push(v.id);
+                            }
+
                             addOrUpdateMarkerMarker(v);
                         });
 
                         resp.data.markers.deleted.forEach((id) => markersMarkers.value.delete(id));
 
                         if (!resp.data.markers.partial) {
-                            // Remove markers not found in the latest state
-                            let removedMarkers = 0;
-                            markersMarkers.value.forEach((_, id) => {
-                                if (!foundMarkers.includes(id)) {
-                                    markersMarkers.value.delete(id);
-                                    removedMarkers++;
-                                }
-                            });
-                            foundMarkers.length = 0;
-                            logger.debug(`Removed ${removedMarkers} old marker markers`);
+                            markersMarkersUpdatedAt.value = new Date();
+
+                            if (resp.data.markers.part <= 0) {
+                                // Remove markers not found in the latest full state
+                                let removedMarkers = 0;
+                                markersMarkers.value.forEach((_, id) => {
+                                    if (!foundMarkers.includes(id)) {
+                                        markersMarkers.value.delete(id);
+                                        removedMarkers++;
+                                    }
+                                });
+                                foundMarkers.length = 0;
+                                logger.debug(`Removed ${removedMarkers} old marker markers`);
+                            }
                         }
                     } else if (resp.data.oneofKind === 'users') {
                         resp.data.users.updated.forEach((v) => {
                             // Only record found users for non-partial responses
                             if (resp.data.oneofKind === 'users' && !resp.data.users.partial) {
-                                foundUsers.push(v.info!.id);
+                                foundUsers.push(v.userId);
                             }
 
                             addOrUpdateUserMarker(v);
 
                             // If a marker is selected, update it
-                            if (livemap.value.centerSelectedMarker && v.info!.id === selectedMarker.value?.info?.id) {
+                            if (livemap.value.centerSelectedMarker && v.userId === selectedMarker.value?.userId) {
                                 selectedMarker.value = v;
                             }
                         });
@@ -115,13 +146,13 @@ export const useLivemapStore = defineStore(
 
                         if (!resp.data.users.partial) {
                             if (resp.data.users.part <= 0) {
-                                // Remove user markers not found in the latest state
+                                // Remove user markers not found in the latest full state
                                 let removedMarkers = 0;
                                 markersUsers.value.forEach((_, id) => {
                                     if (!foundUsers.includes(id)) {
                                         markersUsers.value.delete(id);
 
-                                        if (id === selectedMarker.value?.info?.id) {
+                                        if (id === selectedMarker.value?.userId) {
                                             selectedMarker.value = undefined;
                                         }
                                         removedMarkers++;
@@ -198,53 +229,32 @@ export const useLivemapStore = defineStore(
         };
 
         const addOrUpdateMarkerMarker = (marker: MarkerMarker): void => {
-            const m = markersMarkers.value.get(marker.info!.id);
+            const m = markersMarkers.value.get(marker.id);
             if (!m) {
-                markersMarkers.value.set(marker.info!.id, marker);
+                markersMarkers.value.set(marker.id, marker);
             } else {
-                updateMarkerInfo(m.info!, marker.info!);
-
-                if (m.type !== marker.type) {
-                    m.type = marker.type;
-                }
-                m.creatorId = marker.creatorId;
-                if (marker.creator !== undefined) {
-                    updateUserInfo(m.creator!, marker.creator);
-                }
-                m.data = marker.data;
-                if (m.expiresAt !== marker.expiresAt) {
-                    m.expiresAt = marker.expiresAt;
-                }
+                updateMarkerMarker(m, marker);
             }
         };
 
-        const addOrUpdateUserMarker = (marker: UserMarker): void => {
-            const m = markersUsers.value.get(marker.info!.id);
-            if (!m) {
-                markersUsers.value.set(marker.info!.id, marker);
-            } else {
-                updateMarkerInfo(m.info!, marker.info!);
-
-                if (m.userId !== marker.userId) {
-                    m.userId = marker.userId;
-                    updateUserInfo(m.user!, marker.user!);
-                }
-                if (m.unitId !== marker.unitId) {
-                    m.unitId = marker.unitId;
-                    m.unit = marker.unit;
-                }
+        const updateMarkerMarker = (dest: MarkerMarker, src: MarkerMarker): void => {
+            if (dest.x !== src.x) {
+                dest.x = src.x;
             }
-        };
-
-        const updateMarkerInfo = (dest: MarkerInfo, src: MarkerInfo): void => {
+            if (dest.y !== src.y) {
+                dest.y = src.y;
+            }
+            if (dest.createdAt !== src.createdAt) {
+                dest.createdAt = src.createdAt;
+            }
             if (dest.updatedAt !== src.updatedAt) {
                 dest.updatedAt = src.updatedAt;
             }
-            if (dest.job !== src.job) {
-                dest.job = src.job;
+            if (dest.expiresAt !== src.expiresAt) {
+                dest.expiresAt = src.expiresAt;
             }
-            if (dest.jobLabel !== src.jobLabel) {
-                dest.jobLabel = src.jobLabel;
+            if (dest.deletedAt !== src.deletedAt) {
+                dest.deletedAt = src.deletedAt;
             }
             if (dest.name !== src.name) {
                 dest.name = src.name;
@@ -252,11 +262,49 @@ export const useLivemapStore = defineStore(
             if (dest.description !== src.description) {
                 dest.description = src.description;
             }
+            if (dest.postal !== src.postal) {
+                dest.postal = src.postal;
+            }
+            if (dest.color !== src.color) {
+                dest.color = src.color;
+            }
+            if (dest.job !== src.job) {
+                dest.job = src.job;
+            }
+            if (dest.jobLabel !== src.jobLabel) {
+                dest.jobLabel = src.jobLabel;
+            }
+            if (dest.type !== src.type) {
+                dest.type = src.type;
+            }
+            if (dest.data !== src.data) {
+                dest.data = src.data;
+            }
+
+            dest.creatorId = src.creatorId;
+            if (src.creator !== undefined) {
+                updateUserInfo(dest.creator!, src.creator);
+            }
+        };
+
+        const addOrUpdateUserMarker = (marker: UserMarker): void => {
+            const m = markersUsers.value.get(marker.userId);
+            if (!m) {
+                markersUsers.value.set(marker.userId, marker);
+            } else {
+                updateUserMarker(m, marker);
+            }
+        };
+
+        const updateUserMarker = (dest: UserMarker, src: UserMarker): void => {
             if (dest.x !== src.x) {
                 dest.x = src.x;
             }
             if (dest.y !== src.y) {
                 dest.y = src.y;
+            }
+            if (dest.updatedAt !== src.updatedAt) {
+                dest.updatedAt = src.updatedAt;
             }
             if (dest.postal !== src.postal) {
                 dest.postal = src.postal;
@@ -264,8 +312,20 @@ export const useLivemapStore = defineStore(
             if (dest.color !== src.color) {
                 dest.color = src.color;
             }
-            if (dest.icon !== src.icon) {
-                dest.icon = src.icon;
+            if (dest.job !== src.job) {
+                dest.job = src.job;
+            }
+            if (dest.jobLabel !== src.jobLabel) {
+                dest.jobLabel = src.jobLabel;
+            }
+
+            if (dest.userId !== src.userId) {
+                dest.userId = src.userId;
+                updateUserInfo(dest.user!, src.user!);
+            }
+            if (dest.unitId !== src.unitId) {
+                dest.unitId = src.unitId;
+                dest.unit = src.unit;
             }
         };
 
@@ -323,6 +383,7 @@ export const useLivemapStore = defineStore(
             userOnDuty,
             jobsMarkers,
             jobsUsers,
+            markersMarkersUpdatedAt,
             markersMarkers,
             markersUsers,
             selectedMarker,
@@ -333,14 +394,41 @@ export const useLivemapStore = defineStore(
             restartStream,
             addOrUpdateMarkerMarker,
             addOrUpdateUserMarker,
-            updateMarkerInfo,
+            updateUserMarker,
             updateUserInfo,
             deleteMarkerMarker,
             goto,
         };
     },
     {
-        persist: false,
+        persist: {
+            pick: ['markersMarkersUpdatedAt', 'markersMarkers'],
+            // Use custom serializer to handle the Map
+            serializer: {
+                serialize: (storeState) => {
+                    // Convert the Map into an array of [key, value] pairs
+                    return JSON.stringify({
+                        ...storeState,
+                        markersMarkers: Array.from(storeState.markersMarkers.entries()),
+                    });
+                },
+                deserialize: (serializedState): StateTree => {
+                    return destr(serializedState);
+                },
+            },
+
+            // After rehydration, rebuild the Map from the array
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            afterHydrate: (ctx: any) => {
+                const store = ctx.store;
+                if (Array.isArray(store.markersMarkers)) {
+                    store.markersMarkers = new Map(store.markersMarkers);
+                }
+                if (typeof store.markersMarkersUpdatedAt === 'string') {
+                    store.markersMarkersUpdatedAt = new Date(store.markersMarkersUpdatedAt);
+                }
+            },
+        },
     },
 );
 

@@ -26,6 +26,7 @@ type fivenetOauth2AccountsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetOauth2AccountsTable struct {
@@ -71,6 +72,7 @@ func newFivenetOauth2AccountsTableImpl(schemaName, tableName, alias string) five
 		AvatarColumn     = mysql.StringColumn("avatar")
 		allColumns       = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
 		mutableColumns   = mysql.ColumnList{AccountIDColumn, CreatedAtColumn, ProviderColumn, ExternalIDColumn, UsernameColumn, AvatarColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetOauth2AccountsTable{
@@ -86,5 +88,6 @@ func newFivenetOauth2AccountsTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

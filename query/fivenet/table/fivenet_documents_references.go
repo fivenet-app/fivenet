@@ -27,6 +27,7 @@ type fivenetDocumentsReferencesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsReferencesTable struct {
@@ -73,6 +74,7 @@ func newFivenetDocumentsReferencesTableImpl(schemaName, tableName, alias string)
 		CreatorIDColumn        = mysql.IntegerColumn("creator_id")
 		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
 		mutableColumns         = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, SourceDocumentIDColumn, ReferenceColumn, TargetDocumentIDColumn, CreatorIDColumn}
+		defaultColumns         = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsReferencesTable{
@@ -89,5 +91,6 @@ func newFivenetDocumentsReferencesTableImpl(schemaName, tableName, alias string)
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

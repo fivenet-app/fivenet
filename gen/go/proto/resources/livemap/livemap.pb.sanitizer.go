@@ -62,7 +62,7 @@ func (m *MarkerData) Sanitize() error {
 	return nil
 }
 
-func (m *MarkerInfo) Sanitize() error {
+func (m *MarkerMarker) Sanitize() error {
 	if m == nil {
 		return nil
 	}
@@ -80,44 +80,6 @@ func (m *MarkerInfo) Sanitize() error {
 				return err
 			}
 		}
-	}
-
-	// Field: Description
-
-	if m.Description != nil {
-		*m.Description = htmlsanitizer.Sanitize(*m.Description)
-	}
-
-	// Field: Icon
-
-	if m.Icon != nil {
-		*m.Icon = htmlsanitizer.StripTags(*m.Icon)
-	}
-
-	// Field: Name
-	m.Name = htmlsanitizer.Sanitize(m.Name)
-
-	// Field: Postal
-
-	if m.Postal != nil {
-		*m.Postal = htmlsanitizer.Sanitize(*m.Postal)
-	}
-
-	// Field: UpdatedAt
-	if m.UpdatedAt != nil {
-		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
-			if err := v.Sanitize(); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (m *MarkerMarker) Sanitize() error {
-	if m == nil {
-		return nil
 	}
 
 	// Field: Creator
@@ -138,6 +100,21 @@ func (m *MarkerMarker) Sanitize() error {
 		}
 	}
 
+	// Field: DeletedAt
+	if m.DeletedAt != nil {
+		if v, ok := any(m.GetDeletedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
+	// Field: Description
+
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.Sanitize(*m.Description)
+	}
+
 	// Field: ExpiresAt
 	if m.ExpiresAt != nil {
 		if v, ok := any(m.GetExpiresAt()).(interface{ Sanitize() error }); ok {
@@ -147,9 +124,18 @@ func (m *MarkerMarker) Sanitize() error {
 		}
 	}
 
-	// Field: Info
-	if m.Info != nil {
-		if v, ok := any(m.GetInfo()).(interface{ Sanitize() error }); ok {
+	// Field: Name
+	m.Name = htmlsanitizer.Sanitize(m.Name)
+
+	// Field: Postal
+
+	if m.Postal != nil {
+		*m.Postal = htmlsanitizer.StripTags(*m.Postal)
+	}
+
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
@@ -164,18 +150,30 @@ func (m *UserMarker) Sanitize() error {
 		return nil
 	}
 
-	// Field: Info
-	if m.Info != nil {
-		if v, ok := any(m.GetInfo()).(interface{ Sanitize() error }); ok {
+	// Field: Color
+
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.StripTags(*m.Color)
+	}
+
+	// Field: Postal
+
+	if m.Postal != nil {
+		*m.Postal = htmlsanitizer.StripTags(*m.Postal)
+	}
+
+	// Field: Unit
+	if m.Unit != nil {
+		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}
 		}
 	}
 
-	// Field: Unit
-	if m.Unit != nil {
-		if v, ok := any(m.GetUnit()).(interface{ Sanitize() error }); ok {
+	// Field: UpdatedAt
+	if m.UpdatedAt != nil {
+		if v, ok := any(m.GetUpdatedAt()).(interface{ Sanitize() error }); ok {
 			if err := v.Sanitize(); err != nil {
 				return err
 			}

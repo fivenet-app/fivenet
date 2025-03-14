@@ -28,6 +28,7 @@ type fivenetWikiPageActivityTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetWikiPageActivityTable struct {
@@ -75,6 +76,7 @@ func newFivenetWikiPageActivityTableImpl(schemaName, tableName, alias string) fi
 		DataColumn         = mysql.StringColumn("data")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, PageIDColumn, ActivityTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, PageIDColumn, ActivityTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetWikiPageActivityTable{
@@ -92,5 +94,6 @@ func newFivenetWikiPageActivityTableImpl(schemaName, tableName, alias string) fi
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

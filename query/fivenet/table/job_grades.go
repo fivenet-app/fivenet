@@ -24,6 +24,7 @@ type jobGradesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type JobGradesTable struct {
@@ -67,6 +68,7 @@ func newJobGradesTableImpl(schemaName, tableName, alias string) jobGradesTable {
 		LabelColumn    = mysql.StringColumn("label")
 		allColumns     = mysql.ColumnList{JobNameColumn, GradeColumn, NameColumn, LabelColumn}
 		mutableColumns = mysql.ColumnList{NameColumn, LabelColumn}
+		defaultColumns = mysql.ColumnList{}
 	)
 
 	return jobGradesTable{
@@ -80,5 +82,6 @@ func newJobGradesTableImpl(schemaName, tableName, alias string) jobGradesTable {
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

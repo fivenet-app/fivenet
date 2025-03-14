@@ -23,6 +23,7 @@ type fivenetCentrumUsersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumUsersTable struct {
@@ -65,6 +66,7 @@ func newFivenetCentrumUsersTableImpl(schemaName, tableName, alias string) fivene
 		IdentifierColumn = mysql.StringColumn("identifier")
 		allColumns       = mysql.ColumnList{JobColumn, UserIDColumn, IdentifierColumn}
 		mutableColumns   = mysql.ColumnList{JobColumn, IdentifierColumn}
+		defaultColumns   = mysql.ColumnList{}
 	)
 
 	return fivenetCentrumUsersTable{
@@ -77,5 +79,6 @@ func newFivenetCentrumUsersTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

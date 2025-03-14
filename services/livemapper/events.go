@@ -117,7 +117,7 @@ func (s *Server) watchForEventsFunc(ctx context.Context) jetstream.MessageHandle
 				}
 
 				s.broker.Publish(&brokerEvent{
-					MarkerDelete: &marker.Info.Id,
+					MarkerDelete: &marker.Id,
 				})
 			}
 		}

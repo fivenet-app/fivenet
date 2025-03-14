@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 useHeadSafe({
     title: 'pages.dereferer.title',

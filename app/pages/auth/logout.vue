@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 
 useHead({
     title: 'common.logout',

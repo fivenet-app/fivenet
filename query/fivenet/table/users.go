@@ -34,6 +34,7 @@ type usersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type UsersTable struct {
@@ -87,6 +88,7 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		LastSeenColumn    = mysql.TimestampColumn("last_seen")
 		allColumns        = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn, LastSeenColumn}
 		mutableColumns    = mysql.ColumnList{IDColumn, GroupColumn, JobColumn, JobGradeColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, PhoneNumberColumn, VisumColumn, PlaytimeColumn, LastSeenColumn}
+		defaultColumns    = mysql.ColumnList{JobColumn, JobGradeColumn}
 	)
 
 	return usersTable{
@@ -110,5 +112,6 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

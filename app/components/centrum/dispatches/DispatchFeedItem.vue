@@ -3,7 +3,7 @@ import DispatchStatusInfoPopover from '~/components/centrum/dispatches/DispatchS
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useLivemapStore } from '~/store/livemap';
+import { useLivemapStore } from '~/stores/livemap';
 import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 

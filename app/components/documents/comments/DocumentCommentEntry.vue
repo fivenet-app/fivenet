@@ -6,7 +6,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import HTMLContent from '~/components/partials/content/HTMLContent.vue';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

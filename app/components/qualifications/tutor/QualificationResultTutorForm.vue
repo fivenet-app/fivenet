@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useCompletorStore } from '~/store/completor';
-import { useNotificatorStore } from '~/store/notificator';
+import { useCompletorStore } from '~/stores/completor';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamGrading } from '~~/gen/ts/resources/qualifications/exam';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';

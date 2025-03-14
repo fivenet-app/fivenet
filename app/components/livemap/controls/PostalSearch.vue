@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useLivemapStore } from '~/store/livemap';
-import { useNotificatorStore } from '~/store/notificator';
+import { useLivemapStore } from '~/stores/livemap';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineOptions({

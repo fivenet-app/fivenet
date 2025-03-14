@@ -28,6 +28,7 @@ type fivenetMailerThreadsStateTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetMailerThreadsStateTable struct {
@@ -75,6 +76,7 @@ func newFivenetMailerThreadsStateTableImpl(schemaName, tableName, alias string) 
 		ArchivedColumn  = mysql.BoolColumn("archived")
 		allColumns      = mysql.ColumnList{ThreadIDColumn, EmailIDColumn, LastReadColumn, UnreadColumn, ImportantColumn, FavoriteColumn, MutedColumn, ArchivedColumn}
 		mutableColumns  = mysql.ColumnList{LastReadColumn, UnreadColumn, ImportantColumn, FavoriteColumn, MutedColumn, ArchivedColumn}
+		defaultColumns  = mysql.ColumnList{UnreadColumn, ImportantColumn, FavoriteColumn, MutedColumn, ArchivedColumn}
 	)
 
 	return fivenetMailerThreadsStateTable{
@@ -92,5 +94,6 @@ func newFivenetMailerThreadsStateTableImpl(schemaName, tableName, alias string) 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

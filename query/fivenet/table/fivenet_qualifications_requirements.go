@@ -24,6 +24,7 @@ type fivenetQualificationsRequirementsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsRequirementsTable struct {
@@ -67,6 +68,7 @@ func newFivenetQualificationsRequirementsTableImpl(schemaName, tableName, alias 
 		TargetQualificationIDColumn = mysql.IntegerColumn("target_qualification_id")
 		allColumns                  = mysql.ColumnList{IDColumn, CreatedAtColumn, QualificationIDColumn, TargetQualificationIDColumn}
 		mutableColumns              = mysql.ColumnList{CreatedAtColumn, QualificationIDColumn, TargetQualificationIDColumn}
+		defaultColumns              = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetQualificationsRequirementsTable{
@@ -80,5 +82,6 @@ func newFivenetQualificationsRequirementsTableImpl(schemaName, tableName, alias 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

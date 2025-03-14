@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import DateRangePickerPopoverClient from '~/components/partials/DateRangePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { TimeclockMode, TimeclockUserMode } from '~~/gen/ts/resources/jobs/timeclock';

@@ -6,20 +6,46 @@ import (
 )
 
 func (x *UserMarker) Point() orb.Point {
-	if x.Info == nil {
-		return orb.Point{}
-	}
-
-	return orb.Point{x.Info.X, x.Info.Y}
+	return orb.Point{x.X, x.Y}
 }
 
-func (x *MarkerInfo) SetJobLabel(label string) {
+func (x *UserMarker) SetJobLabel(label string) {
 	x.JobLabel = label
 }
 
 func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
-	if in.Info.UpdatedAt != nil {
-		x.Info.UpdatedAt = in.Info.UpdatedAt
+	if x.UserId != in.UserId {
+		x.UserId = in.UserId
+	}
+
+	x.X = in.X
+	x.Y = in.Y
+
+	if in.UpdatedAt != nil {
+		x.UpdatedAt = in.UpdatedAt
+	}
+
+	if in.Postal == nil {
+		x.Postal = nil
+	} else {
+		x.Postal = in.Postal
+	}
+
+	if in.Color == nil {
+		x.Color = nil
+	} else {
+		x.Color = in.Color
+	}
+
+	x.Job = in.Job
+	x.JobLabel = in.JobLabel
+
+	if in.User != nil {
+		if x.User == nil {
+			x.User = in.User
+		} else {
+			proto.Merge(in.User, x.User)
+		}
 	}
 
 	if in.UnitId == nil {
@@ -30,25 +56,11 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 		x.Unit = in.Unit
 	}
 
-	if x.UserId != in.UserId {
-		x.UserId = in.UserId
-	}
-
-	if in.User != nil {
-		if x.User == nil {
-			x.User = in.User
-		} else {
-			proto.Merge(in.User, x.User)
-		}
-	}
-
-	if in.Info != nil {
-		x.Info.X = in.Info.X
-		x.Info.Y = in.Info.Y
-		proto.Merge(in.Info, x.Info)
-	}
-
 	x.Hidden = in.Hidden
 
 	return x
+}
+
+func (x *MarkerMarker) SetJobLabel(label string) {
+	x.JobLabel = label
 }

@@ -22,6 +22,7 @@ type fivenetUserLicensesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetUserLicensesTable struct {
@@ -63,6 +64,7 @@ func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivene
 		OwnerColumn    = mysql.StringColumn("owner")
 		allColumns     = mysql.ColumnList{TypeColumn, OwnerColumn}
 		mutableColumns = mysql.ColumnList{}
+		defaultColumns = mysql.ColumnList{}
 	)
 
 	return fivenetUserLicensesTable{
@@ -74,5 +76,6 @@ func newFivenetUserLicensesTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -3,7 +3,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import type { ClipboardUser } from '~/store/clipboard';
+import type { ClipboardUser } from '~/stores/clipboard';
 import type { ClassProp } from '~/typings';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import EmailBlock from './EmailBlock.vue';

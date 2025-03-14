@@ -84,7 +84,7 @@ export const useMailerStore = defineStore(
                 }
             } else if (event.data.oneofKind === 'threadUpdate') {
                 const data = event.data.threadUpdate;
-                console.log('threadUpdate', data);
+                console.debug('threadUpdate', data);
 
                 // Handle email sent by blocked email
                 if (data.creatorEmail?.email && checkIfEmailBlocked(data.creatorEmail?.email)) {
@@ -170,7 +170,7 @@ export const useMailerStore = defineStore(
                     messages.value?.messages?.unshift(data);
                 }
 
-                console.log('messageUpdate', data);
+                console.debug('messageUpdate', data);
 
                 // Handle email sent by blocked email
                 if (data.sender?.email && checkIfEmailBlocked(data.sender?.email)) {

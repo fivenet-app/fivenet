@@ -32,6 +32,7 @@ type fivenetCalendarTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCalendarTable struct {
@@ -83,6 +84,7 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, PublicColumn, ClosedColumn, ColorColumn}
 	)
 
 	return fivenetCalendarTable{
@@ -104,5 +106,6 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

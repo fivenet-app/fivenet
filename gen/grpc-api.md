@@ -230,7 +230,6 @@
     - [Coords](#resources-livemap-Coords)
     - [IconMarker](#resources-livemap-IconMarker)
     - [MarkerData](#resources-livemap-MarkerData)
-    - [MarkerInfo](#resources-livemap-MarkerInfo)
     - [MarkerMarker](#resources-livemap-MarkerMarker)
     - [UserMarker](#resources-livemap-UserMarker)
   
@@ -4153,32 +4152,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources-livemap-MarkerInfo"></a>
-
-### MarkerInfo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) |  |  |
-| `name` | [string](#string) |  | @sanitize |
-| `description` | [string](#string) | optional | @sanitize |
-| `x` | [double](#double) |  |  |
-| `y` | [double](#double) |  |  |
-| `postal` | [string](#string) | optional | @sanitize |
-| `color` | [string](#string) | optional | @sanitize: method=StripTags |
-| `icon` | [string](#string) | optional | @sanitize: method=StripTags |
-
-
-
-
-
-
 <a name="resources-livemap-MarkerMarker"></a>
 
 ### MarkerMarker
@@ -4187,9 +4160,20 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `info` | [MarkerInfo](#resources-livemap-MarkerInfo) |  |  |
-| `type` | [MarkerType](#resources-livemap-MarkerType) |  | @gotags: alias:"markerType" |
+| `id` | [uint64](#uint64) |  |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `expires_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `deleted_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `name` | [string](#string) |  | @sanitize |
+| `description` | [string](#string) | optional | @sanitize |
+| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) |  |  |
+| `type` | [MarkerType](#resources-livemap-MarkerType) |  | @gotags: alias:"markerType" |
 | `data` | [MarkerData](#resources-livemap-MarkerData) |  | @gotags: alias:"markerData" |
 | `creator_id` | [int32](#int32) | optional |  |
 | `creator` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
@@ -4207,8 +4191,14 @@ Dummy - DO NOT USE!
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `info` | [MarkerInfo](#resources-livemap-MarkerInfo) |  |  |
 | `user_id` | [int32](#int32) |  |  |
+| `x` | [double](#double) |  |  |
+| `y` | [double](#double) |  |  |
+| `updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `postal` | [string](#string) | optional | @sanitize: method=StripTags |
+| `color` | [string](#string) | optional | @sanitize: method=StripTags |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) |  |  |
 | `user` | [resources.jobs.Colleague](#resources-jobs-Colleague) |  | @gotags: alias:"user" |
 | `unit_id` | [uint64](#uint64) | optional |  |
 | `unit` | [resources.centrum.Unit](#resources-centrum-Unit) | optional |  |
@@ -11711,6 +11701,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----- | ---- | ----- | ----------- |
 | `updated` | [resources.livemap.MarkerMarker](#resources-livemap-MarkerMarker) | repeated |  |
 | `deleted` | [uint64](#uint64) | repeated |  |
+| `part` | [int32](#int32) |  |  |
 | `partial` | [bool](#bool) |  |  |
 
 
@@ -11722,6 +11713,11 @@ Auth Service handles user authentication, character selection and oauth2 connect
 
 ### StreamRequest
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `markers_updated_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 
 
 

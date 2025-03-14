@@ -2,8 +2,8 @@
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor, dispatchTimeToTextColorSidebar } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useCentrumStore } from '~/store/centrum';
-import { useLivemapStore } from '~/store/livemap';
+import { useCentrumStore } from '~/stores/centrum';
+import { useLivemapStore } from '~/stores/livemap';
 import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 

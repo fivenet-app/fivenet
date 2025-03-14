@@ -30,6 +30,7 @@ type fivenetAuditLogTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetAuditLogTable struct {
@@ -79,6 +80,7 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 		DataColumn          = mysql.StringColumn("data")
 		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
 		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UserIDColumn, UserJobColumn, TargetUserIDColumn, TargetUserJobColumn, ServiceColumn, MethodColumn, StateColumn, DataColumn}
+		defaultColumns      = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetAuditLogTable{
@@ -98,5 +100,6 @@ func newFivenetAuditLogTableImpl(schemaName, tableName, alias string) fivenetAud
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

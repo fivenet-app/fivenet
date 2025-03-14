@@ -3,7 +3,7 @@ import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 import type { Character } from '~~/gen/ts/resources/accounts/accounts';
 
 const { $grpc } = useNuxtApp();

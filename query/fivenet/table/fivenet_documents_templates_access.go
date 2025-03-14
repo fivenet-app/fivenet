@@ -25,6 +25,7 @@ type fivenetDocumentsTemplatesAccessTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsTemplatesAccessTable struct {
@@ -69,6 +70,7 @@ func newFivenetDocumentsTemplatesAccessTableImpl(schemaName, tableName, alias st
 		AccessColumn       = mysql.IntegerColumn("access")
 		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 		mutableColumns     = mysql.ColumnList{TargetIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetDocumentsTemplatesAccessTable{
@@ -83,5 +85,6 @@ func newFivenetDocumentsTemplatesAccessTableImpl(schemaName, tableName, alias st
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

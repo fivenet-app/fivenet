@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { emojiBlast } from 'emoji-blast';
-import { useCookiesStore } from '~/store/cookies';
+import { useCookiesStore } from '~/stores/cookies';
 
 const cookiesStore = useCookiesStore();
 const { cookiesState } = storeToRefs(cookiesStore);

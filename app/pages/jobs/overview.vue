@@ -4,7 +4,7 @@ import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import GenericImg from '~/components/partials/elements/GenericImg.vue';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 useHead({
     title: 'pages.jobs.overview.title',

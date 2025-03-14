@@ -2,8 +2,8 @@
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import { logger as authLogger, useAuthStore } from '~/store/auth';
-import { useNotificatorStore } from '~/store/notificator';
+import { logger as authLogger, useAuthStore } from '~/stores/auth';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({

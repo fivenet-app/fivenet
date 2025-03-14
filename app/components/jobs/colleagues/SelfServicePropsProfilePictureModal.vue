@@ -3,9 +3,9 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
-import { useAuthStore } from '~/store/auth';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { useAuthStore } from '~/stores/auth';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 

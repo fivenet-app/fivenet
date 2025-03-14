@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import type { ClipboardVehicle } from '~/store/clipboard';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
+import type { ClipboardVehicle } from '~/stores/clipboard';
+import { useClipboardStore } from '~/stores/clipboard';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

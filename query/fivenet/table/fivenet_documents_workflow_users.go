@@ -24,6 +24,7 @@ type fivenetDocumentsWorkflowUsersTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsWorkflowUsersTable struct {
@@ -67,6 +68,7 @@ func newFivenetDocumentsWorkflowUsersTableImpl(schemaName, tableName, alias stri
 		ManualReminderMessageColumn = mysql.StringColumn("manual_reminder_message")
 		allColumns                  = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn}
 		mutableColumns              = mysql.ColumnList{DocumentIDColumn, UserIDColumn, ManualReminderTimeColumn, ManualReminderMessageColumn}
+		defaultColumns              = mysql.ColumnList{}
 	)
 
 	return fivenetDocumentsWorkflowUsersTable{
@@ -80,5 +82,6 @@ func newFivenetDocumentsWorkflowUsersTableImpl(schemaName, tableName, alias stri
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

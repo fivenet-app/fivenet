@@ -10,7 +10,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DashboardPanel from '~/components/partials/DashboardPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import type { ListThreadsResponse } from '~~/gen/ts/services/mailer/mailer';
 

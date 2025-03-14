@@ -22,6 +22,7 @@ type gksphoneSettingsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type GksphoneSettingsTable struct {
@@ -63,6 +64,7 @@ func newGksphoneSettingsTableImpl(schemaName, tableName, alias string) gksphoneS
 		PhoneNumberColumn = mysql.StringColumn("phone_number")
 		allColumns        = mysql.ColumnList{IdentifierColumn, PhoneNumberColumn}
 		mutableColumns    = mysql.ColumnList{IdentifierColumn, PhoneNumberColumn}
+		defaultColumns    = mysql.ColumnList{}
 	)
 
 	return gksphoneSettingsTable{
@@ -74,5 +76,6 @@ func newGksphoneSettingsTableImpl(schemaName, tableName, alias string) gksphoneS
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -26,6 +26,7 @@ type fivenetCentrumSettingsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumSettingsTable struct {
@@ -71,6 +72,7 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		TimingsColumn          = mysql.StringColumn("timings")
 		allColumns             = mysql.ColumnList{JobColumn, EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
 		mutableColumns         = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn, PredefinedStatusColumn, TimingsColumn}
+		defaultColumns         = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn}
 	)
 
 	return fivenetCentrumSettingsTable{
@@ -86,5 +88,6 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

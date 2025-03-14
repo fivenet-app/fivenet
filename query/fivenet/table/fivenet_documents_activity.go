@@ -28,6 +28,7 @@ type fivenetDocumentsActivityTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsActivityTable struct {
@@ -75,6 +76,7 @@ func newFivenetDocumentsActivityTableImpl(schemaName, tableName, alias string) f
 		DataColumn         = mysql.StringColumn("data")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, ActivityTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, ActivityTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsActivityTable{
@@ -92,5 +94,6 @@ func newFivenetDocumentsActivityTableImpl(schemaName, tableName, alias string) f
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

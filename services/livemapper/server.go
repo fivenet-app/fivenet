@@ -10,11 +10,13 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/housekeeper"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -23,6 +25,20 @@ import (
 	"go.uber.org/zap"
 	grpc "google.golang.org/grpc"
 )
+
+func init() {
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumMarkers,
+		TimestampColumn: table.FivenetCentrumMarkers.ExpiresAt,
+		MinDays:         3,
+	})
+
+	housekeeper.AddTable(&housekeeper.Table{
+		Table:           table.FivenetCentrumMarkers,
+		TimestampColumn: table.FivenetCentrumMarkers.DeletedAt,
+		MinDays:         7,
+	})
+}
 
 type Server struct {
 	pblivemapper.LivemapperServiceServer
@@ -39,7 +55,8 @@ type Server struct {
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
 
-	markersCache *xsync.MapOf[string, []*livemap.MarkerMarker]
+	markersCache        *xsync.MapOf[string, []*livemap.MarkerMarker]
+	markersDeletedCache *xsync.MapOf[string, []uint64]
 
 	broker *broker.Broker[*brokerEvent]
 }
@@ -82,7 +99,8 @@ func NewServer(p Params) *Server {
 		aud:      p.Audit,
 		appCfg:   p.AppConfig,
 
-		markersCache: xsync.NewMapOf[string, []*livemap.MarkerMarker](),
+		markersCache:        xsync.NewMapOf[string, []*livemap.MarkerMarker](),
+		markersDeletedCache: xsync.NewMapOf[string, []uint64](),
 
 		broker: broker.New[*brokerEvent](),
 	}

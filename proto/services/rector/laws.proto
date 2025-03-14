@@ -8,7 +8,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/rector;rector";
 
 message CreateOrUpdateLawBookRequest {
-  resources.laws.LawBook lawBook = 1  [(validate.rules).message.required = true];
+  resources.laws.LawBook lawBook = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateLawBookResponse {
@@ -21,7 +21,7 @@ message DeleteLawBookRequest {
 message DeleteLawBookResponse {}
 
 message CreateOrUpdateLawRequest {
-  resources.laws.Law law = 1  [(validate.rules).message.required = true];
+  resources.laws.Law law = 1 [(validate.rules).message.required = true];
 }
 
 message CreateOrUpdateLawResponse {

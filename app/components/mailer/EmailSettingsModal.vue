@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import { AccessLevel } from '~~/gen/ts/resources/mailer/access';
 import { canAccess } from './helpers';
 

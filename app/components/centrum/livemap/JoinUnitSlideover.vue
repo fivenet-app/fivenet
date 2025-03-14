@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import { UnitAccessLevel } from '~~/gen/ts/resources/centrum/access';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { checkUnitAccess } from '../helpers';

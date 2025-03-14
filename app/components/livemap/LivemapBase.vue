@@ -13,9 +13,9 @@ import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
-import { useCentrumStore } from '~/store/centrum';
-import { useLivemapStore } from '~/store/livemap';
-import { useSettingsStore } from '~/store/settings';
+import { useCentrumStore } from '~/stores/centrum';
+import { useLivemapStore } from '~/stores/livemap';
+import { useSettingsStore } from '~/stores/settings';
 
 defineProps<{
     showUnitNames?: boolean;

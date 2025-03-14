@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useInternetStore, type Tab } from '~/store/internet';
+import { useInternetStore, type Tab } from '~/stores/internet';
 
 const props = defineProps<{
     modelValue?: Tab;

@@ -2,11 +2,11 @@
 <script lang="ts" setup>
 import CookieControl from '~/components/partials/CookieControl.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import { useClipboardStore } from '~/store/clipboard';
-import { useDocumentEditorStore } from '~/store/documenteditor';
-import { logger, useSettingsStore } from '~/store/settings';
+import { useAuthStore } from '~/stores/auth';
+import { useClipboardStore } from '~/stores/clipboard';
+import { useDocumentEditorStore } from '~/stores/documenteditor';
+import { logger, useSettingsStore } from '~/stores/settings';
 import BannerMessage from './components/partials/BannerMessage.vue';
-import { useAuthStore } from './store/auth';
 
 const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
 

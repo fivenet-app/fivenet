@@ -1,4 +1,4 @@
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 import slug from '~/utils/slugify';
 import type { Perms } from '~~/gen/ts/perms';
 

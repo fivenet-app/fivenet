@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
-import { useLivemapStore } from '~/store/livemap';
-import { useSettingsStore } from '~/store/settings';
+import { useLivemapStore } from '~/stores/livemap';
+import { useSettingsStore } from '~/stores/settings';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 defineEmits<{
@@ -50,8 +50,8 @@ onBeforeMount(async () =>
         :visible="livemapLayers.find((l) => l.key === `markers_${job.name}`)?.visible"
     >
         <MapMarkerMarker
-            v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"
-            :key="marker.info!.id"
+            v-for="marker in [...markersMarkers.values()].filter((p) => p.job === job.name)"
+            :key="marker.id"
             :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"

@@ -22,6 +22,7 @@ type licensesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type LicensesTable struct {
@@ -63,6 +64,7 @@ func newLicensesTableImpl(schemaName, tableName, alias string) licensesTable {
 		LabelColumn    = mysql.StringColumn("label")
 		allColumns     = mysql.ColumnList{TypeColumn, LabelColumn}
 		mutableColumns = mysql.ColumnList{LabelColumn}
+		defaultColumns = mysql.ColumnList{}
 	)
 
 	return licensesTable{
@@ -74,5 +76,6 @@ func newLicensesTableImpl(schemaName, tableName, alias string) licensesTable {
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

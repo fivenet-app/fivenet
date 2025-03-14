@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { joinURL } from '~/components/internet/helper';
 import InternetTab from '~/components/internet/InternetTab.vue';
-import { useInternetStore } from '~/store/internet';
+import { useInternetStore } from '~/stores/internet';
 
 useHead({
     title: 'common.internet',

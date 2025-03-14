@@ -31,6 +31,7 @@ type fivenetUserPropsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetUserPropsTable struct {
@@ -81,6 +82,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		EmailColumn                   = mysql.StringColumn("email")
 		allColumns                    = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
 		mutableColumns                = mysql.ColumnList{UserIDColumn, UpdatedAtColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn, BloodTypeColumn, AvatarColumn, MugShotColumn, EmailColumn}
+		defaultColumns                = mysql.ColumnList{WantedColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -101,5 +103,6 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

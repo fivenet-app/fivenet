@@ -24,6 +24,7 @@ type fivenetDocumentsWorkflowStateTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsWorkflowStateTable struct {
@@ -67,6 +68,7 @@ func newFivenetDocumentsWorkflowStateTableImpl(schemaName, tableName, alias stri
 		AutoCloseTimeColumn     = mysql.TimestampColumn("auto_close_time")
 		allColumns              = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn}
 		mutableColumns          = mysql.ColumnList{DocumentIDColumn, NextReminderTimeColumn, NextReminderCountColumn, AutoCloseTimeColumn}
+		defaultColumns          = mysql.ColumnList{}
 	)
 
 	return fivenetDocumentsWorkflowStateTable{
@@ -80,5 +82,6 @@ func newFivenetDocumentsWorkflowStateTableImpl(schemaName, tableName, alias stri
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

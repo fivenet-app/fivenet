@@ -4,8 +4,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import PenaltyStats from '~/components/quickbuttons/penaltycalculator/PenaltyStats.vue';
 import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/PenaltySummaryTable.vue';
-import { useCompletorStore } from '~/store/completor';
-import { useNotificatorStore } from '~/store/notificator';
+import { useCompletorStore } from '~/stores/completor';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

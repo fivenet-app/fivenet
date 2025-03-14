@@ -3,10 +3,10 @@ import { LogLevels } from 'consola';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
-import { useAuthStore } from '~/store/auth';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { useAuthStore } from '~/stores/auth';
+import { useClipboardStore } from '~/stores/clipboard';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const clipboardStore = useClipboardStore();
@@ -14,7 +14,7 @@ const clipboardStore = useClipboardStore();
 const settings = useSettingsStore();
 
 const authStore = useAuthStore();
-const { activeChar, permissions, getAccessTokenExpiration, isSuperuser } = storeToRefs(authStore);
+const { activeChar, permissions, accessTokenExpiration, isSuperuser } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
@@ -116,14 +116,14 @@ const version = APP_VERSION;
             </UFormGroup>
 
             <UFormGroup
-                v-if="getAccessTokenExpiration"
+                v-if="accessTokenExpiration"
                 name="accessTokenExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                <GenericTime :value="getAccessTokenExpiration" ago />
-                (<GenericTime :value="getAccessTokenExpiration" type="long" />)
+                <GenericTime :value="accessTokenExpiration" ago />
+                (<GenericTime :value="accessTokenExpiration" type="long" />)
             </UFormGroup>
 
             <UFormGroup

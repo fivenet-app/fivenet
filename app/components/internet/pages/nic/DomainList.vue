@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { useInternetStore } from '~/store/internet';
+import { useInternetStore } from '~/stores/internet';
 import type { ListDomainsResponse } from '~~/gen/ts/services/internet/domain';
 
 const { $grpc } = useNuxtApp();

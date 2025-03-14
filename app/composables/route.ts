@@ -1,5 +1,5 @@
 import type { RouteLocationNormalized } from 'vue-router';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 const _useRouteQueryObject = <T extends object>(key: string, def: T): Ref<T> => {
     const query = useRouteQuery<string, T>(key, JSON.stringify(def), {

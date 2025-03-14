@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import type { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 

@@ -24,6 +24,7 @@ type fivenetOwnedVehiclesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetOwnedVehiclesTable struct {
@@ -67,6 +68,7 @@ func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fiven
 		TypeColumn     = mysql.StringColumn("type")
 		allColumns     = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, TypeColumn}
 		mutableColumns = mysql.ColumnList{OwnerColumn, ModelColumn, TypeColumn}
+		defaultColumns = mysql.ColumnList{}
 	)
 
 	return fivenetOwnedVehiclesTable{
@@ -80,5 +82,6 @@ func newFivenetOwnedVehiclesTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

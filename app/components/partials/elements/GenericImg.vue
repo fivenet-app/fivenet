@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { AvatarSize } from '#ui/types';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 
 const props = withDefaults(
     defineProps<{

@@ -32,6 +32,7 @@ type fivenetMailerMessagesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetMailerMessagesTable struct {
@@ -83,6 +84,7 @@ func newFivenetMailerMessagesTableImpl(schemaName, tableName, alias string) five
 		CreatorEmailColumn = mysql.StringColumn("creator_email")
 		allColumns         = mysql.ColumnList{IDColumn, ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, CreatorEmailColumn}
 		mutableColumns     = mysql.ColumnList{ThreadIDColumn, SenderIDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TitleColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, CreatorEmailColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetMailerMessagesTable{
@@ -104,5 +106,6 @@ func newFivenetMailerMessagesTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

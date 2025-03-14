@@ -2,9 +2,9 @@
 // @generated from protobuf file "services/livemapper/livemap.proto" (package "services.livemapper", syntax proto3)
 // @ts-nocheck
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
@@ -14,10 +14,15 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserMarker } from "../../resources/livemap/livemap";
 import { MarkerMarker } from "../../resources/livemap/livemap";
 import { Job } from "../../resources/users/jobs";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 /**
  * @generated from protobuf message services.livemapper.StreamRequest
  */
 export interface StreamRequest {
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp markers_updated_at = 1;
+     */
+    markersUpdatedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message services.livemapper.StreamResponse
@@ -78,7 +83,11 @@ export interface MarkerMarkersUpdates {
      */
     deleted: number[];
     /**
-     * @generated from protobuf field: bool partial = 3;
+     * @generated from protobuf field: int32 part = 3;
+     */
+    part: number;
+    /**
+     * @generated from protobuf field: bool partial = 4;
      */
     partial: boolean;
 }
@@ -138,7 +147,9 @@ export interface DeleteMarkerResponse {
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
-        super("services.livemapper.StreamRequest", []);
+        super("services.livemapper.StreamRequest", [
+            { no: 1, name: "markers_updated_at", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<StreamRequest>): StreamRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -151,6 +162,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp markers_updated_at */ 1:
+                    message.markersUpdatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.markersUpdatedAt);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -163,6 +177,9 @@ class StreamRequest$Type extends MessageType<StreamRequest> {
         return message;
     }
     internalBinaryWrite(message: StreamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp markers_updated_at = 1; */
+        if (message.markersUpdatedAt)
+            Timestamp.internalBinaryWrite(message.markersUpdatedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -311,13 +328,15 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
         super("services.livemapper.MarkerMarkersUpdates", [
             { no: 1, name: "updated", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => MarkerMarker },
             { no: 2, name: "deleted", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 3, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "part", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "partial", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<MarkerMarkersUpdates>): MarkerMarkersUpdates {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.updated = [];
         message.deleted = [];
+        message.part = 0;
         message.partial = false;
         if (value !== undefined)
             reflectionMergePartial<MarkerMarkersUpdates>(this, message, value);
@@ -338,7 +357,10 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
                     else
                         message.deleted.push(reader.uint64().toNumber());
                     break;
-                case /* bool partial */ 3:
+                case /* int32 part */ 3:
+                    message.part = reader.int32();
+                    break;
+                case /* bool partial */ 4:
                     message.partial = reader.bool();
                     break;
                 default:
@@ -363,9 +385,12 @@ class MarkerMarkersUpdates$Type extends MessageType<MarkerMarkersUpdates> {
                 writer.uint64(message.deleted[i]);
             writer.join();
         }
-        /* bool partial = 3; */
+        /* int32 part = 3; */
+        if (message.part !== 0)
+            writer.tag(3, WireType.Varint).int32(message.part);
+        /* bool partial = 4; */
         if (message.partial !== false)
-            writer.tag(3, WireType.Varint).bool(message.partial);
+            writer.tag(4, WireType.Varint).bool(message.partial);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

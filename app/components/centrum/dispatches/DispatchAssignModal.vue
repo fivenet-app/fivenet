@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { GroupedUnits } from '~/components/centrum/helpers';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 

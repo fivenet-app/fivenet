@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useSettingsStore, type LivemapLayer } from '~/store/settings';
+import { useSettingsStore, type LivemapLayer } from '~/stores/settings';
 
 const { attr, can } = useAuth();
 

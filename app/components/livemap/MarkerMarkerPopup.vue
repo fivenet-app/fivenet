@@ -3,7 +3,7 @@ import { LPopup } from '@vue-leaflet/vue-leaflet';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useLivemapStore } from '~/store/livemap';
+import { useLivemapStore } from '~/stores/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
@@ -40,8 +40,8 @@ async function deleteMarker(id: number): Promise<void> {
     <LPopup :options="{ closeButton: true }">
         <div class="flex flex-col gap-2">
             <div class="grid grid-cols-2 gap-1">
-                <UTooltip v-if="marker.info?.x !== undefined && marker.info?.y !== undefined" :text="$t('common.mark')">
-                    <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.info?.x, y: marker.info?.y })">
+                <UTooltip v-if="marker.x !== undefined && marker.y !== undefined" :text="$t('common.mark')">
+                    <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: marker.x, y: marker.y })">
                         <span class="truncate">
                             {{ $t('common.mark') }}
                         </span>
@@ -71,7 +71,7 @@ async function deleteMarker(id: number): Promise<void> {
                         color="red"
                         @click="
                             modal.open(ConfirmModal, {
-                                confirm: async () => deleteMarker(marker.info!.id),
+                                confirm: async () => deleteMarker(marker.id),
                             })
                         "
                     >
@@ -84,17 +84,17 @@ async function deleteMarker(id: number): Promise<void> {
 
             <p class="inline-flex items-center gap-1">
                 <span class="font-semibold"> {{ $t('common.marker') }}:</span>
-                <span>{{ marker.info?.name }}</span>
+                <span>{{ marker.name }}</span>
             </p>
 
             <ul role="list">
                 <li>
                     <span class="font-semibold">{{ $t('common.job') }}:</span>
-                    {{ marker.info?.jobLabel ?? $t('common.na') }}
+                    {{ marker.jobLabel ?? $t('common.na') }}
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{ marker.info?.description ?? $t('common.na') }}
+                    {{ marker.description ?? $t('common.na') }}
                 </li>
                 <li class="inline-flex gap-1">
                     <span class="font-semibold">{{ $t('common.expires_at') }}:</span>

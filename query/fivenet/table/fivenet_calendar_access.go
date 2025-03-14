@@ -26,6 +26,7 @@ type fivenetCalendarAccessTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCalendarAccessTable struct {
@@ -71,6 +72,7 @@ func newFivenetCalendarAccessTableImpl(schemaName, tableName, alias string) five
 		AccessColumn       = mysql.IntegerColumn("access")
 		allColumns         = mysql.ColumnList{IDColumn, TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 		mutableColumns     = mysql.ColumnList{TargetIDColumn, UserIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetCalendarAccessTable{
@@ -86,5 +88,6 @@ func newFivenetCalendarAccessTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

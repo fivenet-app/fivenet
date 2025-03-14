@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import { QualificationExamMode, type QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';

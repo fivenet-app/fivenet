@@ -26,6 +26,7 @@ type fivenetCalendarSubsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCalendarSubsTable struct {
@@ -71,6 +72,7 @@ func newFivenetCalendarSubsTableImpl(schemaName, tableName, alias string) fivene
 		MutedColumn      = mysql.BoolColumn("muted")
 		allColumns       = mysql.ColumnList{CalendarIDColumn, EntryIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
 		mutableColumns   = mysql.ColumnList{CalendarIDColumn, EntryIDColumn, UserIDColumn, CreatedAtColumn, ConfirmedColumn, MutedColumn}
+		defaultColumns   = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCalendarSubsTable{
@@ -86,5 +88,6 @@ func newFivenetCalendarSubsTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

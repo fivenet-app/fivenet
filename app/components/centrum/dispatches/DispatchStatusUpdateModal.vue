@@ -3,8 +3,8 @@ import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { useCentrumStore } from '~/store/centrum';
-import { useNotificatorStore } from '~/store/notificator';
+import { useCentrumStore } from '~/stores/centrum';
+import { useNotificatorStore } from '~/stores/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 

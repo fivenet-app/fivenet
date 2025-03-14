@@ -3,8 +3,8 @@ import { logger } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useAuthStore } from '~/store/auth';
-import { useClipboardStore } from '~/store/clipboard';
+import { useAuthStore } from '~/stores/auth';
+import { useClipboardStore } from '~/stores/clipboard';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{

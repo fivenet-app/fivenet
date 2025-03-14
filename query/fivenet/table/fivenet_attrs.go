@@ -26,6 +26,7 @@ type fivenetAttrsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetAttrsTable struct {
@@ -71,6 +72,7 @@ func newFivenetAttrsTableImpl(schemaName, tableName, alias string) fivenetAttrsT
 		ValidValuesColumn  = mysql.StringColumn("valid_values")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetAttrsTable{
@@ -86,5 +88,6 @@ func newFivenetAttrsTableImpl(schemaName, tableName, alias string) fivenetAttrsT
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

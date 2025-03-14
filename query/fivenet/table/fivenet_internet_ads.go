@@ -35,6 +35,7 @@ type fivenetInternetAdsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetInternetAdsTable struct {
@@ -89,6 +90,7 @@ func newFivenetInternetAdsTableImpl(schemaName, tableName, alias string) fivenet
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, AdTypeColumn, StartsAtColumn, EndsAtColumn, TitleColumn, DescriptionColumn, ImageColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DisabledColumn, AdTypeColumn, StartsAtColumn, EndsAtColumn, TitleColumn, DescriptionColumn, ImageColumn, ApproverJobColumn, ApproverIDColumn, CreatorJobColumn, CreatorIDColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, DisabledColumn}
 	)
 
 	return fivenetInternetAdsTable{
@@ -113,5 +115,6 @@ func newFivenetInternetAdsTableImpl(schemaName, tableName, alias string) fivenet
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

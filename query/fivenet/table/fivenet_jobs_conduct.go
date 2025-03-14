@@ -29,6 +29,7 @@ type fivenetJobsConductTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobsConductTable struct {
@@ -77,6 +78,7 @@ func newFivenetJobsConductTableImpl(schemaName, tableName, alias string) fivenet
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, TypeColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, TypeColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetJobsConductTable{
@@ -95,5 +97,6 @@ func newFivenetJobsConductTableImpl(schemaName, tableName, alias string) fivenet
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

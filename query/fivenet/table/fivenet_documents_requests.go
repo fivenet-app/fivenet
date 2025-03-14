@@ -30,6 +30,7 @@ type fivenetDocumentsRequestsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsRequestsTable struct {
@@ -79,6 +80,7 @@ func newFivenetDocumentsRequestsTableImpl(schemaName, tableName, alias string) f
 		AcceptedColumn    = mysql.BoolColumn("accepted")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, AcceptedColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DocumentIDColumn, RequestTypeColumn, CreatorIDColumn, CreatorJobColumn, ReasonColumn, DataColumn, AcceptedColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsRequestsTable{
@@ -98,5 +100,6 @@ func newFivenetDocumentsRequestsTableImpl(schemaName, tableName, alias string) f
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

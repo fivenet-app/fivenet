@@ -4,7 +4,7 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { ContentType } from '~~/gen/ts/resources/common/content/content';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { PageJobAccess, PageUserAccess } from '~~/gen/ts/resources/wiki/access';

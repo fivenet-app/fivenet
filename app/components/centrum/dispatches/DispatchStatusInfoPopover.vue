@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import type { DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { dispatchStatusToBGColor } from '../helpers';

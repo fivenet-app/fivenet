@@ -2,9 +2,9 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
-import { useAuthStore } from '~/store/auth';
-import { useCompletorStore } from '~/store/completor';
-import { useNotificatorStore } from '~/store/notificator';
+import { useAuthStore } from '~/stores/auth';
+import { useCompletorStore } from '~/stores/completor';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

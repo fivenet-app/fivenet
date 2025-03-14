@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { statusOrder, type GroupedUnits } from '~/components/centrum/helpers';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const { can } = useAuth();

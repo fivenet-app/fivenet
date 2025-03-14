@@ -24,6 +24,7 @@ type fivenetJobCitizenLabelsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobCitizenLabelsTable struct {
@@ -67,6 +68,7 @@ func newFivenetJobCitizenLabelsTableImpl(schemaName, tableName, alias string) fi
 		ColorColumn    = mysql.StringColumn("color")
 		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, ColorColumn}
 		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, ColorColumn}
+		defaultColumns = mysql.ColumnList{ColorColumn}
 	)
 
 	return fivenetJobCitizenLabelsTable{
@@ -80,5 +82,6 @@ func newFivenetJobCitizenLabelsTableImpl(schemaName, tableName, alias string) fi
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

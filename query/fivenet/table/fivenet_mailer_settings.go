@@ -22,6 +22,7 @@ type fivenetMailerSettingsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetMailerSettingsTable struct {
@@ -63,6 +64,7 @@ func newFivenetMailerSettingsTableImpl(schemaName, tableName, alias string) five
 		SignatureColumn = mysql.StringColumn("signature")
 		allColumns      = mysql.ColumnList{EmailIDColumn, SignatureColumn}
 		mutableColumns  = mysql.ColumnList{SignatureColumn}
+		defaultColumns  = mysql.ColumnList{}
 	)
 
 	return fivenetMailerSettingsTable{
@@ -74,5 +76,6 @@ func newFivenetMailerSettingsTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

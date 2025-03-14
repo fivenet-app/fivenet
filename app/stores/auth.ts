@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';
-import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
+import { useNotificatorStore } from '~/stores/notificator';
+import { useSettingsStore } from '~/stores/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { JobProps } from '~~/gen/ts/resources/users/job_props';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
@@ -256,13 +256,6 @@ export const useAuthStore = defineStore(
             return permissions.value.includes('superuser');
         });
 
-        const getAccessTokenExpiration = computed<null | Date>(() => {
-            if (typeof accessTokenExpiration.value === 'string') {
-                accessTokenExpiration.value = new Date(Date.parse(accessTokenExpiration.value as unknown as string));
-            }
-            return accessTokenExpiration.value;
-        });
-
         return {
             // State
             accessTokenExpiration,
@@ -289,12 +282,18 @@ export const useAuthStore = defineStore(
 
             // Getters
             isSuperuser,
-            getAccessTokenExpiration,
         };
     },
     {
         persist: {
             pick: ['accessTokenExpiration', 'lastCharID', 'username'],
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            afterHydrate: (ctx: any) => {
+                const store = ctx.store;
+                if (typeof store.accessTokenExpiration === 'string') {
+                    store.accessTokenExpiration = new Date(store.accessTokenExpiration);
+                }
+            },
         },
     },
 );

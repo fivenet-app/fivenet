@@ -2,8 +2,8 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import TiptapEditor from '~/components/partials/editor/TiptapEditor.vue';
-import { useMailerStore } from '~/store/mailer';
-import { useNotificatorStore } from '~/store/notificator';
+import { useMailerStore } from '~/stores/mailer';
+import { useNotificatorStore } from '~/stores/notificator';
 import type { MessageAttachment } from '~~/gen/ts/resources/mailer/message';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { defaultEmptyContent } from './helpers';

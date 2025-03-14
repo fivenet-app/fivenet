@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
-import { useLivemapStore } from '~/store/livemap';
-import { useSettingsStore } from '~/store/settings';
+import { useLivemapStore } from '~/stores/livemap';
+import { useSettingsStore } from '~/stores/settings';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 withDefaults(
@@ -92,8 +92,8 @@ const playerMarkersFiltered = computedAsync(async () =>
         :visible="livemapLayers.find((l) => l.key === `users_${job.name}`)?.visible"
     >
         <MapUserMarker
-            v-for="marker in playerMarkersFiltered?.filter((m) => m.info?.job === job.name)"
-            :key="marker.info!.id"
+            v-for="marker in playerMarkersFiltered?.filter((m) => m.job === job.name)"
+            :key="marker.userId"
             :marker="marker"
             :size="livemap.markerSize"
             :show-unit-names="showUnitNames || livemap.showUnitNames"

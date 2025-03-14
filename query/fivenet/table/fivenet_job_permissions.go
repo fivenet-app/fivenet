@@ -23,6 +23,7 @@ type fivenetJobPermissionsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobPermissionsTable struct {
@@ -65,6 +66,7 @@ func newFivenetJobPermissionsTableImpl(schemaName, tableName, alias string) five
 		ValColumn          = mysql.BoolColumn("val")
 		allColumns         = mysql.ColumnList{JobColumn, PermissionIDColumn, ValColumn}
 		mutableColumns     = mysql.ColumnList{ValColumn}
+		defaultColumns     = mysql.ColumnList{}
 	)
 
 	return fivenetJobPermissionsTable{
@@ -77,5 +79,6 @@ func newFivenetJobPermissionsTableImpl(schemaName, tableName, alias string) five
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

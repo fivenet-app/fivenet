@@ -145,7 +145,7 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 		}
 
 		// Marker has been updated in the latest 15 seconds, skip it
-		if marker.Info.UpdatedAt != nil && time.Since(marker.Info.UpdatedAt.AsTime()) <= 15*time.Second {
+		if marker.UpdatedAt != nil && time.Since(marker.UpdatedAt.AsTime()) <= 15*time.Second {
 			continue
 		}
 
@@ -168,7 +168,7 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	m.logger.Debug("refreshing user tracker cache")
 
-	tLocs := tLocs.AS("markerInfo")
+	tLocs := tLocs.AS("usermarker")
 	tUsers := tables.Users().AS("user")
 
 	stmt := tLocs.
@@ -179,10 +179,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tLocs.Y,
 			tLocs.UpdatedAt,
 			tUsers.ID.AS("usermarker.userid"),
-			tUsers.ID.AS("user.id"),
-			tUsers.ID.AS("markerInfo.id"),
-			tLocs.Job.AS("user.job"),
 			tLocs.Hidden.AS("usermarker.hidden"),
+			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
@@ -191,7 +189,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tJobsUserProps.Job,
 			tJobsUserProps.NamePrefix,
 			tJobsUserProps.NameSuffix,
-			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
+			tJobProps.LivemapMarkerColor.AS("usermarker.color"),
 		).
 		FROM(
 			tLocs.
@@ -227,14 +225,14 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 		m.enricher.EnrichJobInfo(dest[i].User)
 
-		if dest[i].Info.Color == nil {
+		if dest[i].Color == nil {
 			defaultColor := users.DefaultLivemapMarkerColor
-			dest[i].Info.Color = &defaultColor
+			dest[i].Color = &defaultColor
 		}
 
-		postal := m.postals.Closest(dest[i].Info.X, dest[i].Info.Y)
+		postal := m.postals.Closest(dest[i].X, dest[i].Y)
 		if postal != nil {
-			dest[i].Info.Postal = postal.Code
+			dest[i].Postal = postal.Code
 		}
 
 		userId := dest[i].User.UserId

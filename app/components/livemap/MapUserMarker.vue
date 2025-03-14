@@ -5,8 +5,8 @@ import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { useCentrumStore } from '~/store/centrum';
-import { useLivemapStore } from '~/store/livemap';
+import { useCentrumStore } from '~/stores/centrum';
+import { useLivemapStore } from '~/stores/livemap';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import ColleagueName from '../jobs/colleagues/ColleagueName.vue';
 
@@ -43,7 +43,7 @@ const markerColor = computed(() => {
     if (activeChar.value !== null && props.marker.user?.userId === activeChar.value?.userId) {
         return livemap.userMarkers.activeCharColor;
     } else {
-        return props.marker.info?.color ?? livemap.userMarkers.fallbackColor;
+        return props.marker.color ?? livemap.userMarkers.fallbackColor;
     }
 });
 
@@ -61,9 +61,8 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
 
 <template>
     <LMarker
-        :key="`user_${marker.info!.id}`"
-        :lat-lng="[marker.info!.y, marker.info!.x]"
-        :name="marker.info!.name"
+        :key="`user_${marker.userId}`"
+        :lat-lng="[marker.y, marker.x]"
         :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
         @click="$emit('selected')"
     >
@@ -93,11 +92,11 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             <div class="flex flex-col gap-2">
                 <div class="grid grid-cols-2 gap-2">
                     <UButton
-                        v-if="marker.info?.x !== undefined && marker.info?.y !== undefined"
+                        v-if="marker.x !== undefined && marker.y !== undefined"
                         variant="link"
                         icon="i-mdi-map-marker"
                         :padded="false"
-                        @click="goto({ x: marker.info?.x, y: marker.info?.y })"
+                        @click="goto({ x: marker.x, y: marker.y })"
                     >
                         <span class="truncate">
                             {{ $t('common.mark') }}

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import type { Template } from '~~/gen/ts/resources/mailer/template';
 import type { ListTemplatesResponse } from '~~/gen/ts/services/mailer/mailer';
 

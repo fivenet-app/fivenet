@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { RoutePathSchema } from '@typed-router';
 import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
-import { useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/stores/settings';
 import type { Perms } from '~~/gen/ts/perms';
 import { reminderTimes } from './helpers';
 

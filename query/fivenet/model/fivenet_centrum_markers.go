@@ -14,6 +14,8 @@ import (
 type FivenetCentrumMarkers struct {
 	ID          uint64     `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
+	UpdatedAt   *time.Time `json:"updated_at"`
+	DeletedAt   *time.Time `json:"deleted_at"`
 	ExpiresAt   *time.Time `json:"expires_at"`
 	Job         string     `json:"job"`
 	Name        string     `json:"name"`

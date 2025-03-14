@@ -3,7 +3,7 @@
     setup
     generic="JobsT extends JobAccessEntry, UsersT extends UserAccessEntry, QualiT extends QualificationAccessEntry"
 >
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import AccessEntry from './AccessEntry.vue';
 import type {
     AccessEntryType,

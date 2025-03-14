@@ -23,6 +23,7 @@ type fivenetJobAttrsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetJobAttrsTable struct {
@@ -65,6 +66,7 @@ func newFivenetJobAttrsTableImpl(schemaName, tableName, alias string) fivenetJob
 		MaxValuesColumn = mysql.StringColumn("max_values")
 		allColumns      = mysql.ColumnList{JobColumn, AttrIDColumn, MaxValuesColumn}
 		mutableColumns  = mysql.ColumnList{MaxValuesColumn}
+		defaultColumns  = mysql.ColumnList{}
 	)
 
 	return fivenetJobAttrsTable{
@@ -77,5 +79,6 @@ func newFivenetJobAttrsTableImpl(schemaName, tableName, alias string) fivenetJob
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

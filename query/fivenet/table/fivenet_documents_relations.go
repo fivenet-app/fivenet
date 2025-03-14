@@ -27,6 +27,7 @@ type fivenetDocumentsRelationsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetDocumentsRelationsTable struct {
@@ -73,6 +74,7 @@ func newFivenetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, SourceUserIDColumn, RelationColumn, TargetUserIDColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetDocumentsRelationsTable{
@@ -89,5 +91,6 @@ func newFivenetDocumentsRelationsTableImpl(schemaName, tableName, alias string) 
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

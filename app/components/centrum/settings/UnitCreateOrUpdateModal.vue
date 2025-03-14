@@ -4,7 +4,7 @@ import { z } from 'zod';
 import AccessManager from '~/components/partials/access/AccessManager.vue';
 import { enumToAccessLevelEnums } from '~/components/partials/access/helpers';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { UnitAccessLevel, type UnitJobAccess, type UnitQualificationAccess } from '~~/gen/ts/resources/centrum/access';
 import { UnitAttribute } from '~~/gen/ts/resources/centrum/attributes';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';

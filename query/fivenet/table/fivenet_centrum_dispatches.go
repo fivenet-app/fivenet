@@ -33,6 +33,7 @@ type fivenetCentrumDispatchesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumDispatchesTable struct {
@@ -85,6 +86,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, ReferencesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn, AnonColumn}
 	)
 
 	return fivenetCentrumDispatchesTable{
@@ -107,5 +109,6 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

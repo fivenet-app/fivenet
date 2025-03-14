@@ -9,7 +9,7 @@ import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCa
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import UserDropdown from '~/components/UserDropdown.vue';
-import { useMailerStore } from '~/store/mailer';
+import { useMailerStore } from '~/stores/mailer';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { $grpc } = useNuxtApp();

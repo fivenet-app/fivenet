@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { emojiBlast } from 'emoji-blast';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 
 useHead({
     title: 'pages.notfound.title',

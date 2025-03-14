@@ -31,6 +31,7 @@ type fivenetCentrumUnitsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetCentrumUnitsTable struct {
@@ -81,6 +82,7 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		HomePostalColumn  = mysql.StringColumn("home_postal")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, AttributesColumn, HomePostalColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetCentrumUnitsTable{
@@ -101,5 +103,6 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

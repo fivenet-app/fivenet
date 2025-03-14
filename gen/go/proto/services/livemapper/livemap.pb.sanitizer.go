@@ -110,6 +110,15 @@ func (m *StreamRequest) Sanitize() error {
 		return nil
 	}
 
+	// Field: MarkersUpdatedAt
+	if m.MarkersUpdatedAt != nil {
+		if v, ok := any(m.GetMarkersUpdatedAt()).(interface{ Sanitize() error }); ok {
+			if err := v.Sanitize(); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }
 

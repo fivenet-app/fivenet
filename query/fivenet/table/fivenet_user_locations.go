@@ -26,6 +26,7 @@ type fivenetUserLocationsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetUserLocationsTable struct {
@@ -71,6 +72,7 @@ func newFivenetUserLocationsTableImpl(schemaName, tableName, alias string) fiven
 		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		allColumns       = mysql.ColumnList{IdentifierColumn, JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
 		mutableColumns   = mysql.ColumnList{JobColumn, XColumn, YColumn, HiddenColumn, UpdatedAtColumn}
+		defaultColumns   = mysql.ColumnList{UpdatedAtColumn}
 	)
 
 	return fivenetUserLocationsTable{
@@ -86,5 +88,6 @@ func newFivenetUserLocationsTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

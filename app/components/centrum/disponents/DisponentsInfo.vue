@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const props = withDefaults(

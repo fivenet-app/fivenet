@@ -30,6 +30,7 @@ type fivenetQualificationsResultsTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetQualificationsResultsTable struct {
@@ -79,6 +80,7 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
 		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
 		mutableColumns        = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, QualificationIDColumn, UserIDColumn, StatusColumn, ScoreColumn, SummaryColumn, CreatorIDColumn, CreatorJobColumn}
+		defaultColumns        = mysql.ColumnList{CreatedAtColumn, StatusColumn}
 	)
 
 	return fivenetQualificationsResultsTable{
@@ -98,5 +100,6 @@ func newFivenetQualificationsResultsTableImpl(schemaName, tableName, alias strin
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

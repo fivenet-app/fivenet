@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const { isOpen } = useModal();

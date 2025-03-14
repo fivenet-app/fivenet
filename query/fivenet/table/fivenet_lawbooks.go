@@ -25,6 +25,7 @@ type fivenetLawbooksTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetLawbooksTable struct {
@@ -69,6 +70,7 @@ func newFivenetLawbooksTableImpl(schemaName, tableName, alias string) fivenetLaw
 		DescriptionColumn = mysql.StringColumn("description")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, NameColumn, DescriptionColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetLawbooksTable{
@@ -83,5 +85,6 @@ func newFivenetLawbooksTableImpl(schemaName, tableName, alias string) fivenetLaw
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore } from '~/stores/auth';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import type { User } from '~~/gen/ts/resources/users/users';
 

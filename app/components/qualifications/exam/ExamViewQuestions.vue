@@ -2,7 +2,7 @@
 import type { Form, FormSubmitEvent } from '#ui/types';
 import { differenceInMinutes, isPast } from 'date-fns';
 import { z } from 'zod';
-import { useNotificatorStore } from '~/store/notificator';
+import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';

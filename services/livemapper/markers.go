@@ -3,6 +3,7 @@ package livemapper
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
@@ -25,8 +26,8 @@ import (
 var tMarkers = table.FivenetCentrumMarkers.AS("markermarker")
 
 func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.CreateOrUpdateMarkerRequest) (*pblivemapper.CreateOrUpdateMarkerResponse, error) {
-	if req.Marker != nil && req.Marker.Info != nil && req.Marker.Info.Id < 1 {
-		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemapper.marker.id", int64(req.Marker.Info.Id)))
+	if req.Marker != nil && req.Marker.Id > 0 {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.livemapper.marker.id", int64(req.Marker.Id)))
 	}
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -41,7 +42,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 	defer s.aud.Log(auditEntry, req)
 
 	// No marker id set
-	if req.Marker.Info.Id <= 0 {
+	if req.Marker.Id <= 0 {
 		tMarkers := table.FivenetCentrumMarkers
 		stmt := tMarkers.
 			INSERT(
@@ -53,7 +54,6 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 				tMarkers.Y,
 				tMarkers.Postal,
 				tMarkers.Color,
-				tMarkers.Icon,
 				tMarkers.MarkerType,
 				tMarkers.MarkerData,
 				tMarkers.CreatorID,
@@ -61,13 +61,12 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 			VALUES(
 				req.Marker.ExpiresAt,
 				userInfo.Job,
-				req.Marker.Info.Name,
-				req.Marker.Info.Description,
-				req.Marker.Info.X,
-				req.Marker.Info.Y,
-				req.Marker.Info.Postal,
-				req.Marker.Info.Color,
-				req.Marker.Info.Icon,
+				req.Marker.Name,
+				req.Marker.Description,
+				req.Marker.X,
+				req.Marker.Y,
+				req.Marker.Postal,
+				req.Marker.Color,
 				req.Marker.Type,
 				req.Marker.Data,
 				userInfo.UserId,
@@ -83,7 +82,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 			return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 		}
 
-		req.Marker.Info.Id = uint64(lastId)
+		req.Marker.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
@@ -96,7 +95,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 			fields = fieldsAttr.([]string)
 		}
 
-		marker, err := s.getMarker(ctx, req.Marker.Info.Id)
+		marker, err := s.getMarker(ctx, req.Marker.Id)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 		}
@@ -108,33 +107,29 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 		stmt := tMarkers.
 			UPDATE(
 				tMarkers.ExpiresAt,
-				tMarkers.Job,
 				tMarkers.Name,
 				tMarkers.Description,
 				tMarkers.X,
 				tMarkers.Y,
 				tMarkers.Postal,
 				tMarkers.Color,
-				tMarkers.Icon,
 				tMarkers.MarkerType,
 				tMarkers.MarkerData,
 			).
 			SET(
 				req.Marker.ExpiresAt,
-				userInfo.Job,
-				req.Marker.Info.Name,
-				req.Marker.Info.Description,
-				req.Marker.Info.X,
-				req.Marker.Info.Y,
-				req.Marker.Info.Postal,
-				req.Marker.Info.Color,
-				req.Marker.Info.Icon,
+				req.Marker.Name,
+				req.Marker.Description,
+				req.Marker.X,
+				req.Marker.Y,
+				req.Marker.Postal,
+				req.Marker.Color,
 				req.Marker.Type,
 				req.Marker.Data,
 			).
 			WHERE(jet.AND(
 				tMarkers.Job.EQ(jet.String(userInfo.Job)),
-				tMarkers.ID.EQ(jet.Uint64(req.Marker.Info.Id)),
+				tMarkers.ID.EQ(jet.Uint64(req.Marker.Id)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -144,12 +139,12 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *pblivemapper.Cre
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	marker, err := s.getMarker(ctx, req.Marker.Info.Id)
+	marker, err := s.getMarker(ctx, req.Marker.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerUpdate, marker.Info.Job, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerUpdate, marker.Job, marker); err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
@@ -195,7 +190,12 @@ func (s *Server) DeleteMarker(ctx context.Context, req *pblivemapper.DeleteMarke
 	}
 
 	stmt := tMarkers.
-		DELETE().
+		UPDATE(
+			tMarkers.DeletedAt,
+		).
+		SET(
+			tMarkers.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
+		).
 		WHERE(
 			tMarkers.ID.EQ(jet.Uint64(req.Id)),
 		).
@@ -205,7 +205,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *pblivemapper.DeleteMarke
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
-	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.Info.Job, marker); err != nil {
+	if err := s.sendUpdateEvent(ctx, MarkerTopic, MarkerDelete, marker.Job, marker); err != nil {
 		return nil, errswrap.NewError(err, errorslivemapper.ErrMarkerFailed)
 	}
 
@@ -217,16 +217,18 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 
 	stmt := tMarkers.
 		SELECT(
-			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.ID,
+			tMarkers.CreatedAt,
+			tMarkers.UpdatedAt,
+			tMarkers.DeletedAt,
 			tMarkers.ExpiresAt,
-			tMarkers.Job.AS("markerinfo.job"),
-			tMarkers.Name.AS("markerinfo.name"),
-			tMarkers.Description.AS("markerinfo.description"),
-			tMarkers.X.AS("markerinfo.x"),
-			tMarkers.Y.AS("markerinfo.y"),
-			tMarkers.Postal.AS("markerinfo.postal"),
-			tMarkers.Color.AS("markerinfo.color"),
-			tMarkers.Icon.AS("markerinfo.icon"),
+			tMarkers.Job,
+			tMarkers.Name,
+			tMarkers.Description,
+			tMarkers.X,
+			tMarkers.Y,
+			tMarkers.Postal,
+			tMarkers.Color,
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
@@ -254,26 +256,36 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.MarkerMarke
 		return nil, err
 	}
 
-	if dest.Info != nil {
-		s.enricher.EnrichJobName(dest.Info)
-	}
+	s.enricher.EnrichJobName(&dest)
 
 	return &dest, nil
 }
 
-func (s *Server) getMarkerMarkers(jobs []string) ([]*livemap.MarkerMarker, error) {
-	ds := []*livemap.MarkerMarker{}
+func (s *Server) getMarkerMarkers(jobs []string, updatedAt time.Time) ([]*livemap.MarkerMarker, []uint64, error) {
+	updated := []*livemap.MarkerMarker{}
+	deleted := []uint64{}
 
 	for _, job := range jobs {
-		markers, ok := s.markersCache.Load(job)
-		if !ok {
-			continue
+		markers, _ := s.markersCache.Load(job)
+
+		for _, marker := range markers {
+			if updatedAt.IsZero() || marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0 {
+				// Make sure marker isn't expired if expiresAt is set
+				if marker.ExpiresAt == nil || time.Since(marker.ExpiresAt.AsTime()) < 0 {
+					updated = append(updated, marker)
+				} else {
+					// Just to be sure in regards to cleaning up the client side, add marker id to deleted list
+					deleted = append(deleted, marker.Id)
+				}
+			}
 		}
 
-		ds = append(ds, markers...)
+		// Load the deleted markers list
+		deletedMarkers, _ := s.markersDeletedCache.Load(job)
+		deleted = append(deleted, deletedMarkers...)
 	}
 
-	return ds, nil
+	return updated, deleted, nil
 }
 
 func (s *Server) refreshMarkers(ctx context.Context) error {
@@ -281,16 +293,18 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 
 	stmt := tMarkers.
 		SELECT(
-			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.ID,
+			tMarkers.CreatedAt,
+			tMarkers.UpdatedAt,
+			tMarkers.DeletedAt,
 			tMarkers.ExpiresAt,
-			tMarkers.Job.AS("markerinfo.job"),
-			tMarkers.Name.AS("markerinfo.name"),
-			tMarkers.Description.AS("markerinfo.description"),
-			tMarkers.X.AS("markerinfo.x"),
-			tMarkers.Y.AS("markerinfo.y"),
-			tMarkers.Postal.AS("markerinfo.postal"),
-			tMarkers.Color.AS("markerinfo.color"),
-			tMarkers.Icon.AS("markerinfo.icon"),
+			tMarkers.Job,
+			tMarkers.Name,
+			tMarkers.Description,
+			tMarkers.X,
+			tMarkers.Y,
+			tMarkers.Postal,
+			tMarkers.Color,
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
@@ -308,10 +322,16 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 					tMarkers.CreatorID.EQ(tUsers.ID),
 				),
 		).
-		WHERE(jet.OR(
-			tMarkers.ExpiresAt.IS_NULL(),
-			tMarkers.ExpiresAt.GT_EQ(jet.NOW()),
-		))
+		WHERE(jet.AND(
+			tMarkers.DeletedAt.IS_NULL(),
+			jet.OR(
+				tMarkers.ExpiresAt.IS_NULL(),
+				tMarkers.ExpiresAt.GT(jet.CURRENT_TIMESTAMP()),
+			),
+		)).
+		ORDER_BY(
+			tMarkers.ID.ASC(),
+		)
 
 	var dest []*livemap.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -321,20 +341,14 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	}
 
 	markers := map[string][]*livemap.MarkerMarker{}
-	for _, job := range s.appCfg.Get().UserTracker.GetLivemapJobs() {
-		markers[job] = []*livemap.MarkerMarker{}
-	}
-
 	for _, m := range dest {
-		if m.Info != nil {
-			s.enricher.EnrichJobName(m.Info)
+		s.enricher.EnrichJobName(m)
+
+		if _, ok := markers[m.Job]; !ok {
+			markers[m.Job] = []*livemap.MarkerMarker{}
 		}
 
-		if _, ok := markers[m.Info.Job]; !ok {
-			markers[m.Info.Job] = []*livemap.MarkerMarker{}
-		}
-
-		markers[m.Info.Job] = append(markers[m.Info.Job], m)
+		markers[m.Job] = append(markers[m.Job], m)
 	}
 
 	for job, ms := range markers {
@@ -351,6 +365,50 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 		}
 		return true
 	})
+
+	return s.refreshDeletedMarkers(ctx)
+}
+
+func (s *Server) refreshDeletedMarkers(ctx context.Context) error {
+	deletedMarkers := map[string][]uint64{}
+
+	stmt := tMarkers.
+		SELECT(
+			tMarkers.ID,
+		).
+		FROM(
+			tMarkers,
+		).
+		WHERE(jet.OR(
+			tMarkers.DeletedAt.IS_NOT_NULL(),
+			tMarkers.ExpiresAt.LT_EQ(jet.CURRENT_TIMESTAMP()),
+		)).
+		ORDER_BY(
+			tMarkers.ID.ASC(),
+		)
+
+	var dest []*livemap.MarkerMarker
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
+	}
+
+	for _, m := range dest {
+		if _, ok := deletedMarkers[m.Job]; !ok {
+			deletedMarkers[m.Job] = []uint64{}
+		}
+
+		deletedMarkers[m.Job] = append(deletedMarkers[m.Job], m.Id)
+	}
+
+	for job, ms := range deletedMarkers {
+		if len(ms) == 0 {
+			s.markersDeletedCache.Delete(job)
+		} else {
+			s.markersDeletedCache.Store(job, ms)
+		}
+	}
 
 	return nil
 }

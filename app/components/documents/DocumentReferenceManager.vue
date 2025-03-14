@@ -4,8 +4,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ClipboardDocument } from '~/store/clipboard';
-import { getDocument, useClipboardStore } from '~/store/clipboard';
+import type { ClipboardDocument } from '~/stores/clipboard';
+import { getDocument, useClipboardStore } from '~/stores/clipboard';
 import type { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { DocReference } from '~~/gen/ts/resources/documents/documents';
 

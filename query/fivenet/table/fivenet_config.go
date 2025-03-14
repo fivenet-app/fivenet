@@ -25,6 +25,7 @@ type fivenetConfigTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetConfigTable struct {
@@ -69,6 +70,7 @@ func newFivenetConfigTableImpl(schemaName, tableName, alias string) fivenetConfi
 		PluginConfigColumn = mysql.StringColumn("plugin_config")
 		allColumns         = mysql.ColumnList{KeyColumn, CreatedAtColumn, UpdatedAtColumn, AppConfigColumn, PluginConfigColumn}
 		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, AppConfigColumn, PluginConfigColumn}
+		defaultColumns     = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetConfigTable{
@@ -83,5 +85,6 @@ func newFivenetConfigTableImpl(schemaName, tableName, alias string) fivenetConfi
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { useInternetStore, type Tab } from '~/store/internet';
+import { useInternetStore, type Tab } from '~/stores/internet';
 import { AdType } from '~~/gen/ts/resources/internet/ads';
 import type { SearchResponse } from '~~/gen/ts/services/internet/internet';
 import DataPendingBlock from '../../partials/data/DataPendingBlock.vue';

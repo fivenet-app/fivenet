@@ -31,6 +31,7 @@ type fivenetInternetPagesTable struct {
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
+	DefaultColumns mysql.ColumnList
 }
 
 type FivenetInternetPagesTable struct {
@@ -81,6 +82,7 @@ func newFivenetInternetPagesTableImpl(schemaName, tableName, alias string) fiven
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DomainIDColumn, PathColumn, TitleColumn, DescriptionColumn, DataColumn, CreatorJobColumn, CreatorIDColumn}
 		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, DomainIDColumn, PathColumn, TitleColumn, DescriptionColumn, DataColumn, CreatorJobColumn, CreatorIDColumn}
+		defaultColumns    = mysql.ColumnList{CreatedAtColumn}
 	)
 
 	return fivenetInternetPagesTable{
@@ -101,5 +103,6 @@ func newFivenetInternetPagesTableImpl(schemaName, tableName, alias string) fiven
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
+		DefaultColumns: defaultColumns,
 	}
 }

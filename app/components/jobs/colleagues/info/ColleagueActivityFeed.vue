@@ -5,7 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import SortButton from '~/components/partials/SortButton.vue';
-import { useCompletorStore } from '~/store/completor';
+import { useCompletorStore } from '~/stores/completor';
 import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/activity';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';

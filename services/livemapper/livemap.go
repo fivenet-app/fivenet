@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	userMarkerChunkSize = 20
+	userMarkerChunkSize   = 20
+	markerMarkerChunkSize = 50
 )
 
 func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.LivemapperService_StreamServer) error {
@@ -48,7 +49,6 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 	if userJobsAttr != nil {
 		usersJobs, _ = userJobsAttr.(map[string]int32)
 	}
-
 	if userInfo.SuperUser {
 		usersJobs = map[string]int32{}
 		for _, j := range s.appCfg.Get().UserTracker.GetLivemapJobs() {
@@ -64,7 +64,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		},
 	}
 
-	for i := 0; i < len(markersJobs); i++ {
+	for i := range markersJobs {
 		jobs.Jobs.Markers[i] = &users.Job{
 			Name: markersJobs[i],
 		}
@@ -84,7 +84,12 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
-	if end, err := s.sendMarkerMarkers(srv, markersJobs); end || err != nil {
+	var markersUpdatedAt time.Time
+	// Check that updatedAt time is within 3 days
+	if req.MarkersUpdatedAt != nil && time.Since(req.MarkersUpdatedAt.AsTime()) < 3*24*time.Hour {
+		markersUpdatedAt = req.MarkersUpdatedAt.AsTime()
+	}
+	if end, err := s.sendMarkerMarkers(srv, markersJobs, markersUpdatedAt); end || err != nil {
 		return err
 	}
 
@@ -93,12 +98,15 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
+	// Refresh Ticker
+	refreshTime := s.appCfg.Get().UserTracker.RefreshTime.AsDuration()
+	updateTicker := time.NewTicker(refreshTime)
+	defer updateTicker.Stop()
+
 	updateCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(updateCh)
 
 	for {
-		refreshTime := s.appCfg.Get().UserTracker.RefreshTime.AsDuration()
-
 		select {
 		case <-srv.Context().Done():
 			return nil
@@ -121,12 +129,15 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 					}
 
 					for _, um := range (*event.Users)[job] {
-						if um.Hidden || um.User.JobGrade > grade {
+						if um.Hidden || (grade == -1 || um.User.JobGrade > grade) {
 							continue
 						}
 
 						deleted = append(deleted, um.UserId)
 					}
+				}
+				if len(deleted) == 0 {
+					continue
 				}
 
 				resp := &pblivemapper.StreamResponse{
@@ -167,7 +178,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 				}
 			}
 
-		case <-time.After(refreshTime):
+		case <-updateTicker.C:
 			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt); end || err != nil {
 				return err
 			}
@@ -241,7 +252,7 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		case <-srv.Context().Done():
 			return true, nil
 
-		case <-time.After(75 * time.Millisecond):
+		case <-time.After(25 * time.Millisecond):
 		}
 	}
 
@@ -264,22 +275,85 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 	return false, nil
 }
 
-func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServer, jobs []string) (bool, error) {
-	markers, err := s.getMarkerMarkers(jobs)
+// Send out chunked current marker markers
+func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServer, jobs []string, updatedAt time.Time) (bool, error) {
+	updatedMarkers, deletedMarkers, err := s.getMarkerMarkers(jobs, updatedAt)
 	if err != nil {
 		return true, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
-	// Send current markers
-	resp := &pblivemapper.StreamResponse{
-		Data: &pblivemapper.StreamResponse_Markers{
-			Markers: &pblivemapper.MarkerMarkersUpdates{
-				Updated: markers,
-			},
-		},
+	// UpdatedAt is zero and no user updates or deletions? Early return
+	if !updatedAt.IsZero() && len(updatedMarkers) == 0 && len(deletedMarkers) == 0 {
+		return false, nil
 	}
-	if err := srv.Send(resp); err != nil {
-		return true, err
+
+	// Less than chunk size or no markers, no need to chunk the response early return
+	if len(updatedMarkers) <= markerMarkerChunkSize {
+		resp := &pblivemapper.StreamResponse{
+			Data: &pblivemapper.StreamResponse_Markers{
+				Markers: &pblivemapper.MarkerMarkersUpdates{
+					Updated: updatedMarkers,
+					Deleted: deletedMarkers,
+					Part:    0,
+					Partial: !updatedAt.IsZero(),
+				},
+			},
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
+
+		return false, nil
+	}
+
+	totalParts := int32(len(updatedMarkers) / markerMarkerChunkSize)
+	currentPart := totalParts
+	for markerMarkerChunkSize < len(updatedMarkers) {
+		markerUpdates := &pblivemapper.MarkerMarkersUpdates{
+			Updated: updatedMarkers[0:markerMarkerChunkSize:markerMarkerChunkSize],
+			Part:    currentPart,
+			Partial: !updatedAt.IsZero(),
+		}
+
+		if totalParts == currentPart {
+			markerUpdates.Deleted = deletedMarkers
+		}
+
+		resp := &pblivemapper.StreamResponse{
+			Data: &pblivemapper.StreamResponse_Markers{
+				Markers: markerUpdates,
+			},
+		}
+		currentPart--
+
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
+
+		updatedMarkers = updatedMarkers[markerMarkerChunkSize:]
+
+		select {
+		case <-srv.Context().Done():
+			return true, nil
+
+		case <-time.After(25 * time.Millisecond):
+		}
+	}
+
+	if len(updatedMarkers) > 0 {
+		resp := &pblivemapper.StreamResponse{
+			Data: &pblivemapper.StreamResponse_Markers{
+				Markers: &pblivemapper.MarkerMarkersUpdates{
+					Updated: updatedMarkers,
+					Part:    0,
+					Partial: !updatedAt.IsZero(),
+				},
+			},
+		}
+		if err := srv.Send(resp); err != nil {
+			return true, err
+		}
 	}
 
 	return false, nil
@@ -304,7 +378,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
 			if grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId) {
 				// Either no input updatedAt time set or the marker has been updated in the mean time
-				if updatedAt.IsZero() || (marker.Info.UpdatedAt != nil && updatedAt.Sub(marker.Info.UpdatedAt.AsTime()) < 0) {
+				if updatedAt.IsZero() || (marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0) {
 					if marker.Hidden {
 						deleted = append(deleted, marker.UserId)
 					} else {
