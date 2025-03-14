@@ -50,7 +50,7 @@ func NewLaws(p Params) *Laws {
 			ctx, span := c.tracer.Start(ctx, "mstlystcdata-laws")
 			defer span.End()
 
-			if err := c.loadLaws(ctxCancel, 0); err != nil {
+			if err := c.loadLaws(ctx, 0); err != nil {
 				c.logger.Error("failed to refresh laws in cache", zap.Error(err))
 				return err
 			}

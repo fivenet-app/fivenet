@@ -102,7 +102,7 @@ func (s *Server) UpdateAppConfig(ctx context.Context, req *pbrector.UpdateAppCon
 				},
 			},
 		})
-	} else {
+	} else if req.Config.System.BannerMessageEnabled {
 		// Check if an updated banner message event is needed by md5 hashing the title and using that as the ID
 		if currentConfig.System.BannerMessage == nil || req.Config.System.BannerMessage != nil && (currentConfig.System.BannerMessage.Id != req.Config.System.BannerMessage.Id ||
 			(req.Config.System.BannerMessage.ExpiresAt != nil &&

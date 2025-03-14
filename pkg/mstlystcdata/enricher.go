@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	permscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -19,14 +20,16 @@ const (
 type Enricher struct {
 	jobs *Jobs
 
-	appCfg appconfig.IConfig
+	appCfg        appconfig.IConfig
+	jobStartIndex int32
 }
 
-func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig) *Enricher {
+func NewEnricher(jobs *Jobs, appCfg appconfig.IConfig, cfg *config.Config) *Enricher {
 	return &Enricher{
 		jobs: jobs,
 
-		appCfg: appCfg,
+		appCfg:        appCfg,
+		jobStartIndex: cfg.Game.StartJobGrade,
 	}
 }
 
@@ -37,7 +40,7 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 	if ok {
 		usr.SetJobLabel(job.Label)
 
-		gradeIndex := max(usr.GetJobGrade()-1, 0)
+		gradeIndex := max(usr.GetJobGrade()-e.jobStartIndex, 0)
 
 		if len(job.Grades) > int(gradeIndex) {
 			usr.SetJobGradeLabel(job.Grades[gradeIndex].Label)

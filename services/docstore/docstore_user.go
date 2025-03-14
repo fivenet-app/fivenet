@@ -3,6 +3,7 @@ package docstore
 import (
 	context "context"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
@@ -26,25 +27,31 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	userCondition := jet.Bool(true)
+	if !userInfo.SuperUser {
+		userCondition = jet.OR(
+			tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
+			jet.AND(
+				tDAccess.Job.EQ(jet.String(userInfo.Job)),
+				tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
+			),
+		)
+	}
+
 	condition := jet.AND(
-		tDocRel.DeletedAt.IS_NULL(),
 		jet.OR(
 			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
 			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 		),
+		tDocRel.DeletedAt.IS_NULL(),
 		tDocument.DeletedAt.IS_NULL(),
 		jet.OR(
-			jet.OR(
-				tDocument.Public.IS_TRUE(),
+			tDocument.Public.IS_TRUE(),
+			jet.AND(
 				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
 			),
-			jet.OR(
-				tDAccess.UserID.EQ(jet.Int32(userInfo.UserId)),
-				jet.AND(
-					tDAccess.Job.EQ(jet.String(userInfo.Job)),
-					tDAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade)),
-				),
-			),
+			userCondition,
 		),
 	)
 
@@ -69,6 +76,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 				),
 		).
 		WHERE(condition)
+
+	fmt.Println(countStmt.DebugSql())
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

@@ -100,13 +100,22 @@ const schema = z.object({
             })
             .optional(),
     }),
-    system: z.object({
-        bannerMessageEnabled: z.boolean(),
-        bannerMessage: z.object({
-            title: z.string().min(3).max(512),
-            expiresAt: z.date().min(new Date()).optional(),
+    system: z.union([
+        z.object({
+            bannerMessageEnabled: z.literal(false),
+            bannerMessage: z.object({
+                title: z.string().max(512),
+                expiresAt: z.date().min(new Date()).optional(),
+            }),
         }),
-    }),
+        z.object({
+            bannerMessageEnabled: z.literal(true),
+            bannerMessage: z.object({
+                title: z.string().min(3).max(512),
+                expiresAt: z.date().min(new Date()).optional(),
+            }),
+        }),
+    ]),
 });
 
 type Schema = z.output<typeof schema>;
