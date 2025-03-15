@@ -9,7 +9,7 @@ import type { Job } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
-export const logger = useLogger('🔑 Auth');
+const logger = useLogger('🔑 Auth');
 
 export const useAuthStore = defineStore(
     'auth',

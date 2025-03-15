@@ -1,6 +1,7 @@
 import type { RouteLocationNormalized } from 'vue-router';
-import { logger } from '~/composables/nui';
 import { useSettingsStore } from '~/stores/settings';
+
+const logger = useLogger('🎮 NUI');
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     if (import.meta.server) {

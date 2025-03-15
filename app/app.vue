@@ -5,7 +5,7 @@ import NotificationProvider from '~/components/partials/notification/Notificatio
 import { useAuthStore } from '~/stores/auth';
 import { useClipboardStore } from '~/stores/clipboard';
 import { useDocumentEditorStore } from '~/stores/documenteditor';
-import { logger, useSettingsStore } from '~/stores/settings';
+import { useSettingsStore } from '~/stores/settings';
 import BannerMessage from './components/partials/BannerMessage.vue';
 
 const { locale, t, setLocale, finalizePendingLocaleChange } = useI18n();
@@ -17,6 +17,8 @@ const toast = useToast();
 const colorMode = useColorMode();
 
 const color = computed(() => (colorMode.value === 'dark' ? '#111827' : 'white'));
+
+const logger = useLogger('⚙️ Settings');
 
 useHead({
     htmlAttrs: {

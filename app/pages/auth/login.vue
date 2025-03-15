@@ -2,7 +2,7 @@
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
-import { logger as authLogger, useAuthStore } from '~/stores/auth';
+import { useAuthStore } from '~/stores/auth';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -26,6 +26,8 @@ const { setAccessTokenExpiration } = authStore;
 const { username } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
+
+const logger = useLogger('🔑 Auth');
 
 const items = [
     {
@@ -62,7 +64,7 @@ onMounted(async () => {
     const query = route.query;
     // `t` and `exp` set, means social login was successful
     if (query.u && query.u !== '' && query.exp && query.exp !== '') {
-        authLogger.info('Got access token via query param (oauth2 login)');
+        logger.info('Got access token via query param (oauth2 login)');
         username.value = query.u as string;
         setAccessTokenExpiration(query.exp as string);
 

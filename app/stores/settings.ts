@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import type { Locale } from 'vue-i18n';
 import type { Perms } from '~~/gen/ts/perms';
 
-export const logger = useLogger('⚙️ Settings');
+const logger = useLogger('⚙️ Settings');
 
 export type LivemapLayer = {
     key: string;
@@ -124,7 +124,10 @@ export const useSettingsStore = defineStore(
             return 'en';
         });
 
+        const getLogger = (): ILogger => logger;
+
         return {
+            // State
             version,
             updateAvailable,
             locale,
@@ -141,12 +144,15 @@ export const useSettingsStore = defineStore(
             calculatorPosition,
             jobsService,
 
+            // Actions
+            getLogger,
             setVersion,
             setUpdateAvailable,
             setNuiSettings,
             addOrUpdateLivemapCategory,
             addOrUpdateLivemapLayer,
 
+            // Getters
             getUserLocale,
         };
     },

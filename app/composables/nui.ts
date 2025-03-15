@@ -1,7 +1,7 @@
 import type { TypedRouteFromName } from '@typed-router';
 import { useSettingsStore } from '~/stores/settings';
 
-export const logger = useLogger('🎮 NUI');
+const logger = useLogger('🎮 NUI');
 
 // Use settings store to see if NUI is enabled
 const _isNUIEnabled = (): Ref<boolean> => {

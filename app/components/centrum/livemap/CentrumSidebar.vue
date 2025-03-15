@@ -18,7 +18,7 @@ import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideove
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
-import { logger, useCentrumStore } from '~/stores/centrum';
+import { useCentrumStore } from '~/stores/centrum';
 import { useLivemapStore } from '~/stores/livemap';
 import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
@@ -47,6 +47,8 @@ const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
+
+const logger = useLogger('⛑️ Centrum');
 
 const canStream = can('CentrumService.Stream');
 
