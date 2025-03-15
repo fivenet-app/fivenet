@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { z } from 'zod';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

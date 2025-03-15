@@ -103,7 +103,7 @@ watch(selectedMarker, async () => {
         return;
     }
 
-    map?.panTo([selectedMarker.value.info!.y!, selectedMarker.value.info!.x! + getZoomOffset(zoom.value)], {
+    map?.panTo([selectedMarker.value.y, selectedMarker.value.x + getZoomOffset(zoom.value)], {
         animate: true,
         duration: 0.75,
     });

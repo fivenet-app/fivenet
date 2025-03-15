@@ -45,10 +45,10 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    name: props.marker?.info?.name ?? '',
-    description: props.marker?.info?.description,
+    name: props.marker?.name ?? '',
+    description: props.marker?.description,
     expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : defaultExpiresAt.value,
-    color: props.marker?.info?.color ?? '#ee4b2b',
+    color: props.marker?.color ?? '#ee4b2b',
     markerType: props.marker?.type ?? MarkerType.CIRCLE,
     circleRadius:
         props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.radius
@@ -69,16 +69,14 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
 
     try {
         const marker: MarkerMarker = {
-            info: {
-                id: props.marker?.info?.id ?? 0,
-                job: '',
-                jobLabel: '',
-                name: values.name,
-                description: values.description,
-                x: props.marker?.info?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0,
-                y: props.marker?.info?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0,
-                color: values.color,
-            },
+            id: props.marker?.id ?? 0,
+            job: '',
+            jobLabel: '',
+            name: values.name,
+            description: values.description,
+            x: props.marker?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0,
+            y: props.marker?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0,
+            color: values.color,
             expiresAt: expiresAt,
             type: values.markerType,
         };

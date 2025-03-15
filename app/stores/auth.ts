@@ -1,3 +1,4 @@
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpc/grpcws';

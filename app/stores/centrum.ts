@@ -1,3 +1,4 @@
+import type { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';

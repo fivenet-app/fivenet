@@ -211,7 +211,7 @@ const editing = ref(false);
                     {{ $t('common.save') }}
                 </UButton>
 
-                <UButton icon="i-mdi-cancel" color="red" @click="state.labels = labels" />
+                <UButton icon="i-mdi-cancel" color="red" @click="state.labels = labels?.list ?? []" />
             </UButtonGroup>
         </template>
     </UForm>
