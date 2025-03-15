@@ -221,8 +221,13 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 
 	event := &livemap.UsersUpdateEvent{}
 	for i := range dest {
+		if dest[i].User == nil {
+			continue
+		}
+
 		foundUserIds[dest[i].UserId] = nil
 
+		m.enricher.EnrichJobName(dest[i])
 		m.enricher.EnrichJobInfo(dest[i].User)
 
 		if dest[i].Color == nil {
@@ -235,9 +240,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			dest[i].Postal = postal.Code
 		}
 
-		userId := dest[i].User.UserId
-
-		unitId, ok := m.state.GetUserUnitID(ctx, userId)
+		unitId, ok := m.state.GetUserUnitID(ctx, dest[i].UserId)
 		if ok {
 			dest[i].UnitId = &unitId
 			job := dest[i].User.Job
@@ -246,13 +249,13 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			}
 		}
 
-		userMarker, ok := m.userStore.Get(userIdKey(userId))
+		userMarker, ok := m.userStore.Get(userIdKey(dest[i].UserId))
 		// No user marker in key value store nor locally
 		if userMarker == nil || !ok {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
 			event.Added = append(event.Added, dest[i])
 
-			if err := m.userStore.Put(ctx, userIdKey(userId), dest[i]); err != nil {
+			if err := m.userStore.Put(ctx, userIdKey(dest[i].UserId), dest[i]); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
 			}
@@ -261,7 +264,7 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			if !proto.Equal(userMarker, dest[i]) {
 				userMarker.Merge(dest[i])
 
-				if err := m.userStore.Put(ctx, userIdKey(userId), userMarker); err != nil {
+				if err := m.userStore.Put(ctx, userIdKey(dest[i].UserId), userMarker); err != nil {
 					errs = multierr.Append(errs, err)
 					continue
 				}

@@ -22,7 +22,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		if x.CreatedAt == nil {
 			x.CreatedAt = in.CreatedAt
 		} else {
-			proto.Merge(in.CreatedAt, x.CreatedAt)
+			proto.Merge(x.CreatedAt, in.CreatedAt)
 		}
 	}
 
@@ -30,7 +30,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		if x.UpdatedAt == nil {
 			x.UpdatedAt = in.UpdatedAt
 		} else {
-			proto.Merge(in.UpdatedAt, x.UpdatedAt)
+			proto.Merge(x.UpdatedAt, in.UpdatedAt)
 		}
 	}
 
@@ -85,7 +85,7 @@ func (x *Dispatch) Merge(in *Dispatch) *Dispatch {
 		if x.Creator == nil {
 			x.Creator = in.Creator
 		} else {
-			proto.Merge(in.Creator, x.Creator)
+			proto.Merge(x.Creator, in.Creator)
 		}
 	}
 

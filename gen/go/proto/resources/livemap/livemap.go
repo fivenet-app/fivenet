@@ -44,7 +44,7 @@ func (x *UserMarker) Merge(in *UserMarker) *UserMarker {
 		if x.User == nil {
 			x.User = in.User
 		} else {
-			proto.Merge(in.User, x.User)
+			proto.Merge(x.User, in.User)
 		}
 	}
 

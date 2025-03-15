@@ -129,11 +129,11 @@ func NewServer(p Params) *Server {
 					// Group removed user markers by job
 					grouped := map[string][]*livemap.UserMarker{}
 					for _, um := range event.Removed {
-						if _, ok := grouped[um.User.Job]; !ok {
-							grouped[um.User.Job] = []*livemap.UserMarker{}
+						if _, ok := grouped[um.Job]; !ok {
+							grouped[um.Job] = []*livemap.UserMarker{}
 						}
 
-						grouped[um.User.Job] = append(grouped[um.User.Job], um)
+						grouped[um.Job] = append(grouped[um.Job], um)
 					}
 
 					s.broker.Publish(&brokerEvent{
