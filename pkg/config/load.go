@@ -7,6 +7,7 @@ import (
 
 	"github.com/creasty/defaults"
 	"github.com/fivenet-app/fivenet/cmd/envs"
+	"github.com/go-sql-driver/mysql"
 	"github.com/spf13/viper"
 	"go.uber.org/fx"
 )
@@ -28,6 +29,7 @@ func Load() (Result, error) {
 	v := viper.New()
 	// Viper config reading setup
 	v.SetEnvPrefix("FIVENET")
+	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 	v.SetConfigType("yaml")
 
 	if configFile := os.Getenv(envs.ConfigFileEnvVar); configFile != "" {
@@ -37,6 +39,8 @@ func Load() (Result, error) {
 		v.AddConfigPath(".")
 		v.AddConfigPath("/config")
 	}
+
+	v.AutomaticEnv()
 
 	res := Result{}
 	// Find and read the config file
@@ -54,6 +58,18 @@ func Load() (Result, error) {
 
 	if err := v.Unmarshal(c); err != nil {
 		return res, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	// Handle non-DSN database connection details
+	if c.Database.DSN == "" {
+		m := mysql.NewConfig()
+		m.Addr = c.Database.Host
+		m.User = c.Database.Username
+		m.Passwd = c.Database.Password
+		m.DBName = c.Database.Database
+		m.Collation = c.Database.Collation
+
+		c.Database.DSN = m.FormatDSN()
 	}
 
 	// Ensure origins are lower case

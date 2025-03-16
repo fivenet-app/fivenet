@@ -75,6 +75,12 @@ type Database struct {
 	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
 
+	Host      string `yaml:"host"`
+	Username  string `yaml:"username"`
+	Password  string `yaml:"password"`
+	Database  string `yaml:"database"`
+	Collation string `default:"utf8mb4_unicode_ci" yaml:"collation"`
+
 	// Connection options
 	MaxOpenConns    int           `default:"32" yaml:"maxOpenConns"`
 	MaxIdleConns    int           `default:"5" yaml:"maxIdleConns"`
