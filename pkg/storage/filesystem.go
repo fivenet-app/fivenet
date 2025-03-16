@@ -31,6 +31,7 @@ type Filesystem struct {
 func NewFilesystem(p Params) (IStorage, error) {
 	f := &Filesystem{
 		basePath: p.Cfg.Storage.Filesystem.Path,
+		prefix:   p.Cfg.Storage.S3.Prefix,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
