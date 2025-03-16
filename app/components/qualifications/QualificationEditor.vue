@@ -32,15 +32,18 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const { can, activeChar } = useAuth();
+const { attr, can, activeChar } = useAuth();
 
 const notifications = useNotificatorStore();
 
 const { maxAccessEntries } = useAppConfig();
 
 const canDo = computed(() => ({
-    edit: can('QualificationsService.UpdateQualification').value,
+    edit: !props.qualificationId
+        ? can('QualificationsService.CreateQualification').value
+        : can('QualificationsService.UpdateQualification').value,
     access: true,
+    public: attr('QualificationsService.CreateQualification', 'Fields', 'Public').value,
 }));
 
 const loading = ref(props.qualificationId !== undefined);
@@ -58,6 +61,7 @@ const schema = z.object({
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(3).max(750000),
     closed: z.boolean(),
+    public: z.boolean(),
     discordSyncEnabled: z.boolean(),
     discordSettings: z.object({
         roleName: z.string().max(64).optional(),
@@ -82,6 +86,7 @@ const state = reactive<Schema>({
     description: '',
     content: '',
     closed: false,
+    public: false,
     discordSyncEnabled: false,
     discordSettings: {
         roleName: '',
@@ -120,6 +125,7 @@ async function getQualification(qualificationId: number): Promise<void> {
             state.description = qualification.description;
             state.content = qualification.content?.rawContent ?? '';
             state.closed = qualification.closed;
+            state.public = qualification.public;
             state.abbreviation = qualification.abbreviation;
             state.discordSyncEnabled = qualification.discordSyncEnabled;
             state.discordSettings = qualification.discordSettings ?? {
@@ -177,6 +183,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             job: '',
             weight: 0,
             closed: values.closed,
+            public: values.public,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
@@ -220,6 +227,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             job: '',
             weight: 0,
             closed: values.closed,
+            public: values.public,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
@@ -421,28 +429,15 @@ const selectedTab = computed({
                                             />
                                         </UFormGroup>
 
-                                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
-                                            <ClientOnly>
-                                                <USelectMenu
-                                                    v-model="state.closed"
-                                                    :disabled="!canDo.edit"
-                                                    :options="[
-                                                        { label: $t('common.open', 2), closed: false },
-                                                        { label: $t('common.close', 2), closed: true },
-                                                    ]"
-                                                    value-attribute="closed"
-                                                    :searchable-placeholder="$t('common.search_field')"
-                                                >
-                                                    <template #option-empty="{ query: search }">
-                                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                    </template>
+                                        <div class="flex flex-initial flex-col">
+                                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                                <UToggle v-model="state.closed" :disabled="!canDo.edit" />
+                                            </UFormGroup>
 
-                                                    <template #empty>
-                                                        {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                                    </template>
-                                                </USelectMenu>
-                                            </ClientOnly>
-                                        </UFormGroup>
+                                            <UFormGroup name="public" :label="$t('common.public')" class="flex-initial">
+                                                <UToggle v-model="state.public" :disabled="!canDo.public" />
+                                            </UFormGroup>
+                                        </div>
                                     </div>
                                 </div>
                             </template>

@@ -266,6 +266,14 @@ const accordionItems = computed(() =>
 
                     <div class="mb-2 flex gap-2">
                         <OpenClosedBadge :closed="qualification.closed" />
+
+                        <UBadge v-if="qualification.public" color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-earth" class="size-5" />
+                            <span>
+                                {{ $t('common.public') }}
+                            </span>
+                        </UBadge>
+
                         <UBadge class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-test-tube" class="size-5" />
                             <span>

@@ -20,6 +20,7 @@ message Qualification {
   string job = 5 [(validate.rules).string.max_len = 20];
   uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
   bool closed = 7;
+  bool public = 26;
   // @sanitize: method=StripTags
   string abbreviation = 8 [(validate.rules).string.max_len = 20];
   // @sanitize
@@ -55,6 +56,7 @@ message QualificationShort {
   string job = 5 [(validate.rules).string.max_len = 20];
   uint32 weight = 6 [(validate.rules).uint32.lt = 4294967295];
   bool closed = 7;
+  bool public = 22;
   // @sanitize: method=StripTags
   string abbreviation = 8 [(validate.rules).string.max_len = 20];
   // @sanitize

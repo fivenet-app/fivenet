@@ -182,7 +182,7 @@ service QualificationsService {
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
   // @perm: Name=ListQualifications
   rpc GetQualification(GetQualificationRequest) returns (GetQualificationResponse);
-  // @perm
+  // @perm: Attrs=Fields/StringList:[]string{"Public"}
   rpc CreateQualification(CreateQualificationRequest) returns (CreateQualificationResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
   rpc UpdateQualification(UpdateQualificationRequest) returns (UpdateQualificationResponse);

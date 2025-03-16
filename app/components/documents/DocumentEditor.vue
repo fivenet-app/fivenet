@@ -599,27 +599,8 @@ logger.info(
                                         />
                                     </UFormGroup>
 
-                                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.closed"
-                                                :disabled="!canEdit || !canDo.edit"
-                                                :options="[
-                                                    { label: $t('common.open', 2), closed: false },
-                                                    { label: $t('common.close', 2), closed: true },
-                                                ]"
-                                                value-attribute="closed"
-                                                :searchable-placeholder="$t('common.search_field')"
-                                            >
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
-
-                                                <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
+                                    <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                        <UToggle v-model="state.closed" :disabled="!canDo.edit" />
                                     </UFormGroup>
                                 </div>
                             </div>

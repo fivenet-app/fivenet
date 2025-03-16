@@ -44,7 +44,7 @@ type QualificationsServiceClient interface {
 	ListQualifications(ctx context.Context, in *ListQualificationsRequest, opts ...grpc.CallOption) (*ListQualificationsResponse, error)
 	// @perm: Name=ListQualifications
 	GetQualification(ctx context.Context, in *GetQualificationRequest, opts ...grpc.CallOption) (*GetQualificationResponse, error)
-	// @perm
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreateQualification(ctx context.Context, in *CreateQualificationRequest, opts ...grpc.CallOption) (*CreateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateQualification(ctx context.Context, in *UpdateQualificationRequest, opts ...grpc.CallOption) (*UpdateQualificationResponse, error)
@@ -238,7 +238,7 @@ type QualificationsServiceServer interface {
 	ListQualifications(context.Context, *ListQualificationsRequest) (*ListQualificationsResponse, error)
 	// @perm: Name=ListQualifications
 	GetQualification(context.Context, *GetQualificationRequest) (*GetQualificationResponse, error)
-	// @perm
+	// @perm: Attrs=Fields/StringList:[]string{"Public"}
 	CreateQualification(context.Context, *CreateQualificationRequest) (*CreateQualificationResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
 	UpdateQualification(context.Context, *UpdateQualificationRequest) (*UpdateQualificationResponse, error)

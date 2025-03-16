@@ -54,7 +54,7 @@ export interface IQualificationsServiceClient {
      */
     getQualification(input: GetQualificationRequest, options?: RpcOptions): UnaryCall<GetQualificationRequest, GetQualificationResponse>;
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: CreateQualification(services.qualifications.CreateQualificationRequest) returns (services.qualifications.CreateQualificationResponse);
      */
@@ -160,7 +160,7 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
         return stackIntercept<GetQualificationRequest, GetQualificationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Attrs=Fields/StringList:[]string{"Public"}
      *
      * @generated from protobuf rpc: CreateQualification(services.qualifications.CreateQualificationRequest) returns (services.qualifications.CreateQualificationResponse);
      */

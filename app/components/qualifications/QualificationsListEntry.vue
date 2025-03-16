@@ -24,6 +24,13 @@ defineProps<{
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         <span>{{ qualification.abbreviation }}: {{ qualification.title }}</span>
 
+                        <UBadge v-if="qualification.public" color="black" class="inline-flex gap-1" size="xs">
+                            <UIcon name="i-mdi-earth" class="size-5" />
+                            <span>
+                                {{ $t('common.public') }}
+                            </span>
+                        </UBadge>
+
                         <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="xs">
                             <UIcon name="i-mdi-calendar-remove" class="size-5" />
                             <span>

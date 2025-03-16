@@ -2261,7 +2261,13 @@
             },
             "CreateQualification": {
                 "key": "Create Qualifications",
-                "description": "Create qualifications"
+                "description": "Create qualifications",
+                "attrs": {
+                    "Public": "Public qualifications for anyone to view"
+                },
+                "attrs_types": {
+                    "Fields": "Access to creating qualifications with specific access"
+                }
             },
             "UpdateQualification": {
                 "key": "Update Qualifications",

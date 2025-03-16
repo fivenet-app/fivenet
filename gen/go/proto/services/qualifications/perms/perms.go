@@ -12,6 +12,7 @@ const (
 
 	QualificationsServiceCreateOrUpdateQualificationResultPerm perms.Name = "CreateOrUpdateQualificationResult"
 	QualificationsServiceCreateQualificationPerm               perms.Name = "CreateQualification"
+	QualificationsServiceCreateQualificationFieldsPermField    perms.Key  = "Fields"
 	QualificationsServiceDeleteQualificationPerm               perms.Name = "DeleteQualification"
 	QualificationsServiceDeleteQualificationAccessPermField    perms.Key  = "Access"
 	QualificationsServiceDeleteQualificationReqPerm            perms.Name = "DeleteQualificationReq"

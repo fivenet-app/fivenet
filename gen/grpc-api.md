@@ -4807,6 +4807,7 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `closed` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
 | `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
 | `title` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -4950,6 +4951,7 @@ Dummy - DO NOT USE!
 | `job` | [string](#string) |  |  |
 | `weight` | [uint32](#uint32) |  |  |
 | `closed` | [bool](#bool) |  |  |
+| `public` | [bool](#bool) |  |  |
 | `abbreviation` | [string](#string) |  | @sanitize: method=StripTags |
 | `title` | [string](#string) |  | @sanitize |
 | `description` | [string](#string) | optional | @sanitize: method=StripTags |
@@ -11978,7 +11980,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | ----------- | ------------ | ------------- | ------------|
 | `ListQualifications` | [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest) | [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse) | @perm |
 | `GetQualification` | [GetQualificationRequest](#services-qualifications-GetQualificationRequest) | [GetQualificationResponse](#services-qualifications-GetQualificationResponse) | @perm: Name=ListQualifications |
-| `CreateQualification` | [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest) | [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse) | @perm |
+| `CreateQualification` | [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest) | [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse) | @perm: Attrs=Fields/StringList:[]string{"Public"} |
 | `UpdateQualification` | [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest) | [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 | `DeleteQualification` | [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest) | [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse) | @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"} |
 | `ListQualificationRequests` | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=ListQualifications |

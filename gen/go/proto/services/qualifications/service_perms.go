@@ -33,7 +33,13 @@ func init() {
 		{
 			Category: permkeys.QualificationsServicePerm,
 			Name:     permkeys.QualificationsServiceCreateQualificationPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.QualificationsServiceCreateQualificationFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Public"},
+				},
+			},
 		},
 		{
 			Category: permkeys.QualificationsServicePerm,

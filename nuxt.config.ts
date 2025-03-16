@@ -249,6 +249,7 @@ export default defineNuxtConfig({
     $development: {
         icon: {
             iconifyApiEndpoint: 'https://api.iconify.design',
+            provider: 'iconify',
             clientBundle: {
                 scan: false,
             },

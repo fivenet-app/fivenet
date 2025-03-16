@@ -558,6 +558,19 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
 	}
 
+	// Field Permission Check
+	fieldsAttr, err := s.perms.Attr(userInfo, permswiki.WikiServicePerm, permswiki.WikiServiceCreatePagePerm, permswiki.WikiServiceCreatePageFieldsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorswiki.ErrFailedQuery)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !slices.Contains(fields, "Public") {
+		req.Page.Meta.Public = page.Meta.Public
+	}
+
 	if req.Page.Access.IsEmpty() {
 		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
 		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{

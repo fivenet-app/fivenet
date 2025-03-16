@@ -31,6 +31,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
+					tQuali.Public.IS_TRUE(),
 					jet.AND(
 						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
@@ -73,6 +74,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tQuali.Job,
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
@@ -100,7 +102,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fieldsAttr, _ := s.perms.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 		var fields perms.StringList
 		if fieldsAttr != nil {
 			fields = fieldsAttr.([]string)
@@ -163,6 +165,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
+					tQuali.Public.IS_TRUE(),
 					jet.AND(
 						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
@@ -206,6 +209,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			tQuali.Job,
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
@@ -242,7 +246,7 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fieldsAttr, _ := s.perms.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 		var fields perms.StringList
 		if fieldsAttr != nil {
 			fields = fieldsAttr.([]string)

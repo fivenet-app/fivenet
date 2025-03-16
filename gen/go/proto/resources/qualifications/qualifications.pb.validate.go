@@ -83,6 +83,8 @@ func (m *Qualification) validate(all bool) error {
 
 	// no validation rules for Closed
 
+	// no validation rules for Public
+
 	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
 		err := QualificationValidationError{
 			field:  "Abbreviation",
@@ -690,6 +692,8 @@ func (m *QualificationShort) validate(all bool) error {
 	}
 
 	// no validation rules for Closed
+
+	// no validation rules for Public
 
 	if utf8.RuneCountInString(m.GetAbbreviation()) > 20 {
 		err := QualificationShortValidationError{

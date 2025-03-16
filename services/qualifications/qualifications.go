@@ -3,6 +3,7 @@ package qualifications
 import (
 	"context"
 	"errors"
+	"slices"
 	"strings"
 	"time"
 
@@ -229,6 +230,19 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	// Field Permission Check
+	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !slices.Contains(fields, "Public") {
+		req.Qualification.Public = false
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -243,6 +257,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 			tQuali.Job,
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
@@ -258,6 +273,7 @@ func (s *Server) CreateQualification(ctx context.Context, req *pbqualifications.
 			userInfo.Job,
 			req.Qualification.Weight,
 			req.Qualification.Closed,
+			req.Qualification.Public,
 			req.Qualification.Abbreviation,
 			req.Qualification.Title,
 			req.Qualification.Description,
@@ -338,7 +354,19 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
+	accessAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceUpdateQualificationPerm, permsqualifications.QualificationsServiceUpdateQualificationAccessPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	var ownAccess perms.StringList
+	if accessAttr != nil {
+		ownAccess = accessAttr.([]string)
+	}
+	if !access.CheckIfHasAccess(ownAccess, userInfo, quali.CreatorJob, quali.Creator) {
+		return nil, errorsqualifications.ErrFailedQuery
+	}
+
+	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceCreateQualificationPerm, permsqualifications.QualificationsServiceCreateQualificationFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -346,8 +374,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	if !access.CheckIfHasAccess(fields, userInfo, quali.CreatorJob, quali.Creator) {
-		return nil, errorsqualifications.ErrFailedQuery
+	if !slices.Contains(fields, "Public") {
+		req.Qualification.Public = quali.Public
 	}
 
 	// Make sure that the qualification doesn't require itself
@@ -374,6 +402,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		UPDATE(
 			tQuali.Weight,
 			tQuali.Closed,
+			tQuali.Public,
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
@@ -388,6 +417,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *pbqualifications.
 		SET(
 			req.Qualification.Weight,
 			req.Qualification.Closed,
+			req.Qualification.Public,
 			req.Qualification.Abbreviation,
 			req.Qualification.Title,
 			req.Qualification.Description,
@@ -466,7 +496,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *pbqualifications.
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
+	fieldsAttr, err := s.perms.Attr(userInfo, permsqualifications.QualificationsServicePerm, permsqualifications.QualificationsServiceDeleteQualificationPerm, permsqualifications.QualificationsServiceDeleteQualificationAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

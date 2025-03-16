@@ -49,6 +49,10 @@ export interface Qualification {
      */
     closed: boolean;
     /**
+     * @generated from protobuf field: bool public = 26;
+     */
+    public: boolean;
+    /**
      * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string abbreviation = 8;
@@ -161,6 +165,10 @@ export interface QualificationShort {
      * @generated from protobuf field: bool closed = 7;
      */
     closed: boolean;
+    /**
+     * @generated from protobuf field: bool public = 22;
+     */
+    public: boolean;
     /**
      * @sanitize: method=StripTags
      *
@@ -465,6 +473,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 26, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
@@ -491,6 +500,7 @@ class Qualification$Type extends MessageType<Qualification> {
         message.job = "";
         message.weight = 0;
         message.closed = false;
+        message.public = false;
         message.abbreviation = "";
         message.title = "";
         message.creatorJob = "";
@@ -527,6 +537,9 @@ class Qualification$Type extends MessageType<Qualification> {
                     break;
                 case /* bool closed */ 7:
                     message.closed = reader.bool();
+                    break;
+                case /* bool public */ 26:
+                    message.public = reader.bool();
                     break;
                 case /* string abbreviation */ 8:
                     message.abbreviation = reader.string();
@@ -615,6 +628,9 @@ class Qualification$Type extends MessageType<Qualification> {
         /* bool closed = 7; */
         if (message.closed !== false)
             writer.tag(7, WireType.Varint).bool(message.closed);
+        /* bool public = 26; */
+        if (message.public !== false)
+            writer.tag(26, WireType.Varint).bool(message.public);
         /* string abbreviation = 8; */
         if (message.abbreviation !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);
@@ -690,6 +706,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 22, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
@@ -708,6 +725,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         message.job = "";
         message.weight = 0;
         message.closed = false;
+        message.public = false;
         message.abbreviation = "";
         message.title = "";
         message.creatorJob = "";
@@ -742,6 +760,9 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
                     break;
                 case /* bool closed */ 7:
                     message.closed = reader.bool();
+                    break;
+                case /* bool public */ 22:
+                    message.public = reader.bool();
                     break;
                 case /* string abbreviation */ 8:
                     message.abbreviation = reader.string();
@@ -806,6 +827,9 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         /* bool closed = 7; */
         if (message.closed !== false)
             writer.tag(7, WireType.Varint).bool(message.closed);
+        /* bool public = 22; */
+        if (message.public !== false)
+            writer.tag(22, WireType.Varint).bool(message.public);
         /* string abbreviation = 8; */
         if (message.abbreviation !== "")
             writer.tag(8, WireType.LengthDelimited).string(message.abbreviation);

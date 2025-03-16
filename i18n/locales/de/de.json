@@ -2261,7 +2261,13 @@
             },
             "CreateQualification": {
                 "key": "Qualifizierungen erstellen",
-                "description": "Erstelle Qualifizierungen"
+                "description": "Erstelle Qualifizierungen",
+                "attrs": {
+                    "Public": "Öffentliche Qualifizierungen die jeder sehen kann"
+                },
+                "attrs_types": {
+                    "Fields": "Zugriff auf spezielle Freigaben von Qualifizierungen"
+                }
             },
             "UpdateQualification": {
                 "key": "Qualifizierung aktualisieren",

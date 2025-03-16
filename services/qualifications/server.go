@@ -52,7 +52,7 @@ type Server struct {
 
 	logger   *zap.Logger
 	db       *sql.DB
-	ps       perms.Permissions
+	perms    perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	notif    notifi.INotifi
@@ -81,7 +81,7 @@ func NewServer(p Params) *Server {
 		logger: p.Logger.Named("jobs"),
 
 		db:       p.DB,
-		ps:       p.Perms,
+		perms:    p.Perms,
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
 		notif:    p.Notif,
