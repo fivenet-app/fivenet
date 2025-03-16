@@ -114,11 +114,7 @@ export enum AccessLevel {
     /**
      * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 4;
      */
-    EDIT = 4,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_OWNER = 5;
-     */
-    OWNER = 5
+    EDIT = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class PageAccess$Type extends MessageType<PageAccess> {

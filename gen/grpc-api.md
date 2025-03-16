@@ -7335,7 +7335,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `ACCESS_LEVEL_VIEW` | 2 |  |
 | `ACCESS_LEVEL_ACCESS` | 3 |  |
 | `ACCESS_LEVEL_EDIT` | 4 |  |
-| `ACCESS_LEVEL_OWNER` | 5 |  |
 
 
  <!-- end enums -->

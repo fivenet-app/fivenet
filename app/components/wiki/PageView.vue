@@ -169,12 +169,11 @@ const accordionItems = computed(() =>
                                 can('WikiService.DeletePage').value &&
                                 checkPageAccess(page.access, page.meta.creator, AccessLevel.EDIT)
                             "
-                            :text="!page.meta.deletedAt ? $t('components.wiki.PageView.delete') : $t('common.restore')"
+                            :text="!page.meta.deletedAt ? $t('common.delete') : $t('common.restore')"
                         >
                             <UButton
                                 :color="!page.meta.deletedAt ? 'red' : 'green'"
                                 :icon="!page.meta.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
-                                :disabled="!checkPageAccess(page.access, page.meta.creator, AccessLevel.OWNER)"
                                 @click="
                                     modal.open(ConfirmModal, {
                                         confirm: async () => page && deletePage(page.id),

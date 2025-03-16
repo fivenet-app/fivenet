@@ -397,11 +397,11 @@ func (s *Server) CreatePage(ctx context.Context, req *pbwiki.CreatePageRequest) 
 	}
 
 	if req.Page.Access.IsEmpty() {
-		// Ensure at least one access entry allowing the user's rank and higher to "own" the page
+		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
 		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{
 			Job:          userInfo.Job,
 			MinimumGrade: userInfo.JobGrade,
-			Access:       wiki.AccessLevel_ACCESS_LEVEL_OWNER,
+			Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
 		})
 	}
 
@@ -559,17 +559,12 @@ func (s *Server) UpdatePage(ctx context.Context, req *pbwiki.UpdatePageRequest) 
 	}
 
 	if req.Page.Access.IsEmpty() {
-		// Ensure that the highest rank of the job has access to "own" the page when a page is updated
-		job := s.enricher.GetJobByName(page.Job)
-		if job != nil && len(job.Grades) > 0 {
-			jobGrade := job.Grades[len(job.Grades)-1]
-
-			req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{
-				Job:          page.Job,
-				MinimumGrade: jobGrade.Grade,
-				Access:       wiki.AccessLevel_ACCESS_LEVEL_OWNER,
-			})
-		}
+		// Ensure at least one access entry allowing the user's rank and higher to "edit" the page
+		req.Page.Access.Jobs = append(req.Page.Access.Jobs, &wiki.PageJobAccess{
+			Job:          userInfo.Job,
+			MinimumGrade: userInfo.JobGrade,
+			Access:       wiki.AccessLevel_ACCESS_LEVEL_EDIT,
+		})
 	}
 
 	// Begin transaction

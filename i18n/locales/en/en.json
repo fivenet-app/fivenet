@@ -1371,11 +1371,6 @@
         "access": {
             "add_entry": "Add Access",
             "remove_entry": "Remove Access"
-        },
-        "wiki": {
-            "PageView": {
-                "delete": "Delete (requires owner level access)"
-            }
         }
     },
     "notifications": {
