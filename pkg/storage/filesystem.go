@@ -75,7 +75,7 @@ func (s *Filesystem) Get(ctx context.Context, filePathIn string) (IObject, IObje
 	name := stat.Name()
 
 	return f, &ObjectInfo{
-		name:         name,
+		name:         strings.TrimPrefix(name, s.prefix),
 		extension:    strings.TrimPrefix(filepath.Ext(name), "."),
 		size:         stat.Size(),
 		lastModified: stat.ModTime(),
@@ -99,6 +99,7 @@ func (s *Filesystem) Stat(ctx context.Context, filePathIn string) (IObjectInfo, 
 	}
 
 	return &ObjectInfo{
+		name: strings.TrimPrefix(filePath, s.prefix),
 		size: stat.Size(),
 	}, nil
 }
@@ -174,7 +175,7 @@ func (s *Filesystem) List(ctx context.Context, filePathIn string, offset int, pa
 		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(name), "."))
 
 		files = append(files, &FileInfo{
-			Name:         name,
+			Name:         strings.TrimPrefix(name, s.prefix),
 			LastModified: info.ModTime(),
 			Size:         info.Size(),
 			ContentType:  contentType.MIME.Value,

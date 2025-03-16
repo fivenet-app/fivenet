@@ -112,7 +112,7 @@ func (s *S3) Get(ctx context.Context, filePathIn string) (IObject, IObjectInfo, 
 	}
 
 	return object, &ObjectInfo{
-		name:         info.Key,
+		name:         strings.TrimPrefix(info.Key, s.prefix),
 		extension:    strings.TrimPrefix(filepath.Ext(info.Key), "."),
 		contentType:  info.ContentType,
 		size:         info.Size,
@@ -154,9 +154,11 @@ func (s *S3) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {
 	}
 
 	return &ObjectInfo{
-		contentType: info.ContentType,
-		size:        info.Size,
-		expiration:  info.Expiration,
+		name:         strings.TrimPrefix(info.Key, s.prefix),
+		lastModified: info.LastModified,
+		contentType:  info.ContentType,
+		size:         info.Size,
+		expiration:   info.Expiration,
 	}, nil
 }
 
@@ -232,7 +234,7 @@ func (s *S3) List(ctx context.Context, filePathIn string, offset int, pageSize i
 		contentType := filetype.GetType(strings.TrimPrefix(filepath.Ext(object.Key), "."))
 
 		files = append(files, &FileInfo{
-			Name:         object.Key,
+			Name:         strings.TrimPrefix(object.Key, s.prefix),
 			LastModified: object.LastModified,
 			Size:         object.Size,
 			ContentType:  contentType.MIME.Value,
