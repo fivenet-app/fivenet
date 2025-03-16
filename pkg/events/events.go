@@ -2,6 +2,7 @@ package events
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 
@@ -48,8 +49,7 @@ type Result struct {
 }
 
 func New(p Params) (res Result, err error) {
-	// Connect to NATS
-	nc, err := nats.Connect(p.Config.NATS.URL,
+	connOpts := []nats.Option{
 		nats.Name("FiveNet"),
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			if !nc.IsClosed() {
@@ -68,7 +68,19 @@ func New(p Params) (res Result, err error) {
 				}
 			}
 		}),
-	)
+	}
+
+	if p.Config.NATS.NKey != nil {
+		nKeyOpt, err := nats.NkeyOptionFromSeed(*p.Config.NATS.NKey)
+		if err != nil {
+			return res, fmt.Errorf("failed to read nats nkey. %w", err)
+		}
+
+		connOpts = append(connOpts, nKeyOpt)
+	}
+
+	// Connect to NATS
+	nc, err := nats.Connect(p.Config.NATS.URL, connOpts...)
 	if err != nil {
 		return res, err
 	}
