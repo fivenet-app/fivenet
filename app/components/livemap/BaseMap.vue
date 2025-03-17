@@ -71,7 +71,7 @@ const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto 
 const mouseLat = ref<number>(0);
 const mouseLong = ref<number>(0);
 
-const currentHash = useRouteHash('');
+const currentLocationQuery = useRouteQuery<string>('loc', '');
 
 function getZoomOffset(zoom: number): number {
     if (!slideover.isOpen.value) {
@@ -114,8 +114,8 @@ watch(location, async () => {
         return;
     }
 
-    map?.panTo([location.value.y!, location.value.x! + getZoomOffset(zoom.value)], {
-        animate: true,
+    map.setView([location.value.y, location.value.x + getZoomOffset(location.value.zoom ?? zoom.value)], zoom.value, {
+        animate: false,
         duration: 0.75,
     });
 });
@@ -125,13 +125,13 @@ const isMoving = ref<boolean>(false);
 watchDebounced(
     isMoving,
     async () => {
-        if (!map || isMoving.value) {
+        if (map === undefined || isMoving.value) {
             return;
         }
 
         const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
-        if ((currentHash.value as string) !== newHash) {
-            currentHash.value = newHash;
+        if (currentLocationQuery.value !== newHash) {
+            currentLocationQuery.value = newHash;
         }
     },
     { debounce: 1000, maxWait: 3000 },
@@ -154,16 +154,12 @@ async function updateBackground(layer: string): Promise<void> {
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
     const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
 
-    const hash = '#' + [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
+    const hash = [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
     return hash;
 }
 
-function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined {
-    if (hash.indexOf('#') === 0) {
-        hash = hash.substring(1);
-    }
-
-    const args = hash.split('/');
+function parseLocationQuery(query: string): { latlng: L.LatLng; zoom: number } | undefined {
+    const args = query.split('/');
 
     const zoom = args[0] ? parseInt(args[0]) : 2;
     const lat = args[1] ? parseFloat(args[1]) : 0;
@@ -179,10 +175,11 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
     };
 }
 
-async function onMapReady(map: L.Map): Promise<void> {
+async function onMapReady(m: L.Map): Promise<void> {
+    map = m;
     map.invalidateSize();
 
-    const startPos = parseHash(currentHash.value as string);
+    const startPos = parseLocationQuery(currentLocationQuery.value as string);
     if (startPos) {
         map.setView(startPos.latlng, startPos.zoom);
     }

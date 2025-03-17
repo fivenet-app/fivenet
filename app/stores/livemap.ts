@@ -23,7 +23,7 @@ export const useLivemapStore = defineStore(
         const reconnecting = ref<boolean>(false);
         const reconnectBackoffTime = ref<number>(0);
 
-        const location = ref<Coordinate>({ x: 0, y: 0 });
+        const location = ref<Coordinate | undefined>();
         const showLocationMarker = ref<boolean>(false);
         const zoom = ref<number>(2);
 
@@ -35,6 +35,7 @@ export const useLivemapStore = defineStore(
 
         const markersMarkers = ref<Map<number, MarkerMarker>>(new Map());
         const markersUsers = ref<Map<number, UserMarker>>(new Map());
+        const ownMarker = ref<UserMarker | undefined>();
 
         const selectedMarker = ref<UserMarker | undefined>(undefined);
 
@@ -57,6 +58,7 @@ export const useLivemapStore = defineStore(
 
             logger.debug('Starting Stream');
 
+            const { activeChar } = useAuth();
             // Access settings
             const settingsStore = useSettingsStore();
             const { livemap } = storeToRefs(settingsStore);
@@ -128,6 +130,9 @@ export const useLivemapStore = defineStore(
                             // If a marker is selected, update it
                             if (livemap.value.centerSelectedMarker && v.userId === selectedMarker.value?.userId) {
                                 selectedMarker.value = v;
+                            }
+                            if (activeChar.value?.userId === v.userId) {
+                                ownMarker.value = v;
                             }
                         });
 
@@ -352,11 +357,13 @@ export const useLivemapStore = defineStore(
             markersMarkers.value.delete(id);
         };
 
-        const goto = async (loc: Coordinate): Promise<void> => {
+        const goto = async (loc: Coordinate, ingame = true): Promise<void> => {
             location.value = loc;
 
-            // Set in-game waypoint via NUI
-            return setWaypoint(loc.x, loc.y);
+            if (ingame) {
+                // Set in-game waypoint via NUI
+                return setWaypoint(loc.x, loc.y);
+            }
         };
 
         return {
@@ -374,6 +381,7 @@ export const useLivemapStore = defineStore(
             jobsUsers,
             markersMarkers,
             markersUsers,
+            ownMarker,
             selectedMarker,
 
             // Actions

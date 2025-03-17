@@ -40,7 +40,7 @@ const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
 
 const markerColor = computed(() => {
-    if (activeChar.value !== null && props.marker.user?.userId === activeChar.value?.userId) {
+    if (activeChar.value !== null && props.marker.userId === activeChar.value?.userId) {
         return livemap.userMarkers.activeCharColor;
     } else {
         return props.marker.color ?? livemap.userMarkers.fallbackColor;

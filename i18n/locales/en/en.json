@@ -567,7 +567,8 @@
         "zoom": "Zoom",
         "zoom_in": "Zoom In",
         "zoom_out": "Zoom Out",
-        "system": "System"
+        "system": "System",
+        "my_location": "My Location"
     },
     "components": {
         "partials": {

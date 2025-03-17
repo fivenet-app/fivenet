@@ -567,7 +567,8 @@
         "zoom": "Zoomstufe",
         "zoom_in": "Vergrößern",
         "zoom_out": "Verkleinern",
-        "system": "System"
+        "system": "System",
+        "my_location": "Mein Standort"
     },
     "components": {
         "partials": {

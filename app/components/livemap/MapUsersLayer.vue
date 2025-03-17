@@ -26,8 +26,8 @@ defineEmits<{
 const { t } = useI18n();
 
 const livemapStore = useLivemapStore();
-const { jobsUsers, markersUsers } = storeToRefs(livemapStore);
-const { startStream, stopStream } = livemapStore;
+const { jobsUsers, markersUsers, ownMarker } = storeToRefs(livemapStore);
+const { startStream, stopStream, goto } = livemapStore;
 
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
@@ -101,6 +101,17 @@ const playerMarkersFiltered = computedAsync(async () =>
             @selected="$emit('userSelected', marker)"
         />
     </LLayerGroup>
+
+    <LControl position="topleft">
+        <UTooltip v-if="ownMarker" :text="$t('common.my_location')" :popper="{ placement: 'right' }">
+            <UButton
+                icon="i-mdi-my-location"
+                block
+                class="inset-0 border border-black/20 bg-clip-padding p-1.5 hover:bg-[#f4f4f4]"
+                @click="async () => await goto({ x: ownMarker!.x, y: ownMarker!.y }, false)"
+            />
+        </UTooltip>
+    </LControl>
 
     <LControl v-if="showUserFilter" position="bottomleft">
         <div class="flex flex-col gap-2">
