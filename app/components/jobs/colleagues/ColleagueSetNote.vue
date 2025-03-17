@@ -57,6 +57,8 @@ async function setJobsUserNote(values: Schema): Promise<undefined | SetJobsUserP
         state.reason = '';
         emit('refresh');
 
+        state.note = response.props?.note ?? '';
+
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
@@ -111,12 +113,12 @@ const editing = ref(false);
             </UFormGroup>
         </div>
 
-        <template v-if="changed">
+        <template v-if="editing">
             <UFormGroup name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" />
+                <UInput v-model="state.reason" type="text" :disabled="!changed" />
             </UFormGroup>
 
-            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+            <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit || !changed" :loading="!canSubmit">
                 {{ $t('common.save') }}
             </UButton>
         </template>

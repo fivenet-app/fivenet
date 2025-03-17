@@ -75,8 +75,10 @@ async function setUserJobProp(userId: number, values: Schema): Promise<SetJobsUs
         const { response } = await call;
 
         changed.value = false;
+        editing.value = false;
         state.reason = '';
         emit('refresh');
+
         state.labels = labels.value?.list.map((l) => ({ ...l, selected: true })) ?? [];
 
         notifications.add({
@@ -201,18 +203,14 @@ const editing = ref(false);
             </ClientOnly>
         </UFormGroup>
 
-        <template v-if="changed">
+        <template v-if="editing">
             <UFormGroup name="reason" :label="$t('common.reason')" required>
-                <UInput v-model="state.reason" type="text" />
+                <UInput v-model="state.reason" type="text" :disabled="!changed" />
             </UFormGroup>
 
-            <UButtonGroup>
-                <UButton type="submit" icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                    {{ $t('common.save') }}
-                </UButton>
-
-                <UButton icon="i-mdi-cancel" color="red" @click="state.labels = labels?.list ?? []" />
-            </UButtonGroup>
+            <UButton type="submit" icon="i-mdi-content-save" :disabled="!changed || !canSubmit" :loading="!canSubmit">
+                {{ $t('common.save') }}
+            </UButton>
         </template>
     </UForm>
 </template>

@@ -132,7 +132,12 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 
 	// Generate the update sets
 	if in.Note != nil {
-		updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*in.Note)))
+		// Set empty note to null
+		if *in.Note == "" {
+			updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.StringExp(jet.NULL)))
+		} else {
+			updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*in.Note)))
+		}
 	} else {
 		in.Note = x.Note
 	}
@@ -237,7 +242,7 @@ func (x *JobsUserProps) HandleChanges(ctx context.Context, tx qrm.DB, in *JobsUs
 		})
 	}
 
-	if (in.Note == nil && x.Note != nil) || (in.Note != nil && x.Note == nil) || *in.Note != *x.Note {
+	if in.Note != nil && (x.Note == nil || *in.Note != *x.Note) {
 		activities = append(activities, &JobsUserActivity{
 			Job:          job,
 			SourceUserId: sourceUserId,
