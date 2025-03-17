@@ -1,5 +1,3 @@
-import { STRATEGIES } from 'vue-i18n-routing';
-
 const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -191,7 +189,7 @@ export default defineNuxtConfig({
     i18n: {
         lazy: true,
         parallelPlugin: true,
-        strategy: STRATEGIES.NO_PREFIX,
+        strategy: 'no_prefix',
         detectBrowserLanguage: false,
         defaultLocale: 'en',
         locales: [
