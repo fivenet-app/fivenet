@@ -128,7 +128,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *pbrector.SetJobPropsReque
 			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
 			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`logo_url`)"))),
-			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`settings`)"))),
+			tJobProps.Settings.SET(jet.StringExp(jet.Raw("VALUES(`settings`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
