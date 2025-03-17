@@ -268,7 +268,11 @@ func (s *Scheduler) watchForCompletions(msg jetstream.Msg) {
 		existing.NextScheduleTime = timestamp.New(nextTime)
 		existing.LastAttemptTime = timestamp.New(time.Now())
 
-		existing.Data.Merge(job.Data)
+		if existing.Data == nil {
+			existing.Data = job.Data
+		} else {
+			existing.Data = existing.Data.Merge(job.Data)
+		}
 
 		return existing, true, nil
 	}); err != nil {

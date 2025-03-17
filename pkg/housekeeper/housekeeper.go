@@ -14,7 +14,6 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/known/anypb"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
@@ -79,7 +78,7 @@ func New(p Params) *Housekeeper {
 			data.Data = &anypb.Any{}
 		}
 
-		if err := anypb.UnmarshalTo(data.Data, dest, proto.UnmarshalOptions{}); err != nil {
+		if err := data.Data.UnmarshalTo(dest); err != nil {
 			h.logger.Error("failed to unmarshal housekeeper cron data", zap.Error(err))
 		}
 
