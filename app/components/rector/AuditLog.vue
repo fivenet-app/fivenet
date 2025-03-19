@@ -78,7 +78,8 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         sort: sort.value,
         userIds: [],
         services: query.services,
-        methods: query.methods,
+        // Make sure to remove the service from the beginning
+        methods: query.methods.map((m) => m.split('/').pop() ?? m),
     };
 
     req.userIds = query.users.map((v) => v.userId);

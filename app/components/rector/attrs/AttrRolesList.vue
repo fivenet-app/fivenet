@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import AttrView from '~/components/rector/attrs/AttrView.vue';
 import { useCompletorStore } from '~/stores/completor';
 import { useNotificatorStore } from '~/stores/notificator';
@@ -176,6 +177,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         </div>
                     </template>
                 </UTable>
+
+                <Pagination :loading="loading" :refresh="refresh" hide-buttons hide-text />
             </div>
         </div>
 

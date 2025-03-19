@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </template>
                 </UTable>
 
-                <Pagination :loading="loading" :refresh="refresh" hide-buttons />
+                <Pagination :loading="loading" :refresh="refresh" hide-buttons hide-text />
 
                 <SingleHint class="mt-2" hint-id="rector_roles_superuser" />
             </div>
