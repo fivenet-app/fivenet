@@ -124,7 +124,11 @@ func (ws *WebsocketChannel) poll() error {
 		// TODO add handler to the websocket channel and then forward it to this.
 		interceptedRequest := makeGrpcRequest(req.WithContext(stream.ctx))
 		// grpclog.Infof("starting call to http server %q", interceptedRequest.Method)
-		go ws.handler.ServeHTTP(stream, interceptedRequest)
+		go func() {
+			defer delete(stream.channel.activeStreams, stream.id)
+
+			ws.handler.ServeHTTP(stream, interceptedRequest)
+		}()
 
 	case *grpcws.GrpcFrame_Body:
 		// grpclog.Infof("received Body for stream %v", frame.StreamId)

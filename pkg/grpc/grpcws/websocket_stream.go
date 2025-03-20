@@ -121,7 +121,6 @@ func (stream *GrpcStream) Close() error {
 
 	stream.cancel()
 	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
-	delete(stream.channel.activeStreams, stream.id)
 	return nil
 }
 
