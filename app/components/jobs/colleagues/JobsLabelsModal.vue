@@ -4,6 +4,7 @@ import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -43,7 +44,12 @@ async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     }
 }
 
-const { data: labels, error, refresh } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
+const {
+    data: labels,
+    pending: loading,
+    error,
+    refresh,
+} = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
 
 async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLabelsResponse> {
     try {
@@ -91,7 +97,8 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                     </div>
                 </template>
 
-                <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.label', 2)])" />
+                <DataErrorBlock v-else-if="error" :error="error" :retry="refresh" />
 
                 <UFormGroup v-else name="list" class="grid items-center gap-2" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
@@ -142,7 +149,13 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit || !!error" :loading="!canSubmit">
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            :loading="loading || !canSubmit"
+                            :disabled="!canSubmit || !!error"
+                        >
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>
