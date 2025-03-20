@@ -93,11 +93,8 @@ func (s *Server) UploadFile(ctx context.Context, req *pbrector.UploadFileRequest
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	obj, objInfo, err := s.st.Get(ctx, filestore.FilePrefix(filestore.StripURLPrefix(*req.File.Url)))
+	objInfo, err := s.st.Stat(ctx, filestore.FilePrefix(filestore.StripURLPrefix(*req.File.Url)))
 	if err != nil {
-		return nil, err
-	}
-	if err := obj.Close(); err != nil {
 		return nil, err
 	}
 

@@ -7,7 +7,6 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"slices"
 	"strings"
 	"time"
 
@@ -37,6 +36,12 @@ var HTTPServerModule = fx.Module("httpserver",
 	),
 	fx.Decorate(wrapLogger),
 )
+
+var allowedHeaders = []string{
+	"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive",
+	// For GRPC-Web User agent
+	"U-A",
+}
 
 type HTTPServer *http.Server
 
@@ -170,7 +175,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	e.Use(cors.New(cors.Config{
 		AllowOrigins:           p.Config.HTTP.Origins,
 		AllowMethods:           []string{"GET", "POST", "HEAD", "OPTIONS"},
-		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type", "Cookie"},
+		AllowHeaders:           allowedHeaders,
 		ExposeHeaders:          []string{"Content-Length", "Content-Type", "Accept-Encoding"},
 		AllowBrowserExtensions: true,
 		AllowWebSockets:        true,
@@ -211,21 +216,19 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// Register output dir for assets and other static files
 	e.Use(static.Serve("/", frontendFS))
 
-	// GRPC web + websocket handling
-	wrapperGrpc := grpcws.WrapServer(
-		p.GRPCSrv,
-		grpcws.WithAllowedRequestHeaders([]string{"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive"}), // Allow cookie header
-		grpcws.WithOriginFunc(func(origin string) bool {
-			return slices.Contains(p.Config.HTTP.Origins, origin)
-		}),
-		grpcws.WithWebsocketOriginFunc(func(req *http.Request) bool {
-			origin := req.Header.Get("Origin")
-			return slices.Contains(p.Config.HTTP.Origins, origin)
-		}),
+	// GRPC-web and websocket handling
+	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
+		grpcws.WithAllowedRequestHeaders(allowedHeaders),
 	)
-	ginWrappedGrpc := gin.WrapH(http.StripPrefix("/api/grpc", wrapperGrpc))
-	e.Any("/api/grpc", ginWrappedGrpc)
-	e.Any("/api/grpc/*path", ginWrappedGrpc)
+	e.GET("/api/grpcws", func(ctx *gin.Context) {
+		resp, req := ctx.Writer, ctx.Request
+		if wrapperGrpc.IsGrpcWebSocketChannelRequest(req) {
+			wrapperGrpc.HandleGrpcWebsocketChannelRequest(resp, req)
+		} else {
+			ctx.AbortWithStatus(http.StatusBadRequest)
+		}
+	})
+	e.POST("/api/grpc/*path", gin.WrapH(http.StripPrefix("/api/grpc", wrapperGrpc)))
 
 	// Setup not found handler
 	notFoundPage := []byte("404 page not found")

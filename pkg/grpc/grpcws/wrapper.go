@@ -4,7 +4,6 @@
 package grpcws
 
 import (
-	"context"
 	"encoding/base64"
 	"io"
 	"net/http"
@@ -174,17 +173,18 @@ func (w *WrappedGrpcServer) IsGrpcWebRequest(req *http.Request) bool {
 func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.ResponseWriter, req *http.Request) {
 	grpclog.Infof("handle grpc channel request %s", req.Host)
 
-	wsConn, err := websocket.Accept(resp, req, &websocket.AcceptOptions{
-		InsecureSkipVerify: true, // managed by ServeHTTP
+	c, err := websocket.Accept(resp, req, &websocket.AcceptOptions{
+		InsecureSkipVerify: true,
+		CompressionMode:    w.opts.websocketCompressionMode,
 		Subprotocols:       []string{"grpc-websocket-channel"},
 	})
 	if err != nil {
 		grpclog.Errorf("unable to upgrade websocket request: %v", err)
 		return
 	}
-	defer wsConn.CloseNow()
+	defer c.CloseNow()
 
-	wsConn.SetReadLimit(w.websocketReadLimit)
+	c.SetReadLimit(w.websocketReadLimit)
 
 	headers := make(http.Header)
 	for _, name := range w.allowedHeaders {
@@ -194,10 +194,8 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.Response
 	}
 	req.Header = headers
 
-	ctx, cancelFunc := context.WithCancel(req.Context())
-	defer cancelFunc()
-
-	websocketChannel := NewWebsocketChannel(wsConn, w.handler, ctx, w.opts.websocketChannelMaxStreamCount, req)
+	ctx := req.Context()
+	websocketChannel := NewWebsocketChannel(ctx, c, w.handler, w.opts.websocketChannelMaxStreamCount, req)
 	if w.opts.websocketPingInterval >= time.Second {
 		websocketChannel.enablePing(w.opts.websocketPingInterval)
 	}
@@ -223,6 +221,20 @@ func (w *WrappedGrpcServer) IsAcceptableGrpcCorsRequest(req *http.Request) bool 
 func (w *WrappedGrpcServer) isRequestForRegisteredEndpoint(req *http.Request) bool {
 	requestedEndpoint := w.endpointFunc(req)
 	return slices.Contains(w.registeredEndpoints, requestedEndpoint)
+}
+
+func makeGrpcRequest(req *http.Request) *http.Request {
+	// Hack, this should be a shallow copy, but let's see if this works
+	req.ProtoMajor = 2
+	req.ProtoMinor = 0
+
+	req.Header.Set("content-type", "application/grpc+proto")
+
+	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
+	// DATA frame payload lengths. https://http2.github.io/http2-spec/#malformed This effectively
+	// switches to chunked encoding which is the default for h2
+	req.Header.Del("content-length")
+	return req
 }
 
 // readerCloser combines an io.Reader and an io.Closer into an io.ReadCloser.

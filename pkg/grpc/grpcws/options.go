@@ -16,7 +16,7 @@ var defaultOptions = &options{
 	corsMaxAge:                     10 * time.Minute,
 	originFunc:                     func(origin string) bool { return false },
 	websocketCompressionMode:       websocket.CompressionDisabled,
-	websocketReadLimit:             256 * 1024,
+	websocketReadLimit:             32 * 1024,
 	websocketChannelMaxStreamCount: 7,
 	allowNonRootResources:          false,
 }
@@ -142,7 +142,7 @@ func WithWebsocketOriginFunc(websocketOriginFunc func(req *http.Request) bool) O
 
 // WithWebsocketsMessageReadLimit sets the maximum message read limit on the underlying websocket.
 //
-// The default message read limit is 256KB
+// The default message read limit is 32768 bytes
 func WithWebsocketsMessageReadLimit(websocketReadLimit int64) Option {
 	return func(o *options) {
 		o.websocketReadLimit = websocketReadLimit

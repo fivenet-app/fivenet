@@ -4,7 +4,7 @@ import { constructWebSocketAddress } from './bridge/utils';
 function _useGRPCWebsocketTransport(): GrpcWSTransport {
     const grpcWebsocketTransport = new GrpcWSTransport({
         wsUrl: constructWebSocketAddress(
-            `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/grpc`,
+            `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/grpcws`,
         ),
         debug: import.meta.dev,
         timeout: 8500,

@@ -16,14 +16,15 @@ import (
 )
 
 type WebsocketChannel struct {
-	wsConn          *websocket.Conn
+	ctx            context.Context
+	wsConn         *websocket.Conn
+	handler        http.Handler
+	maxStreamCount int
+	req            *http.Request
+
 	activeStreams   map[uint32]*GrpcStream
 	timeoutInterval time.Duration
 	timer           *timer.Timer
-	ctx             context.Context
-	handler         http.Handler
-	maxStreamCount  int
-	req             *http.Request
 }
 
 var framePingResponse = &grpcws.GrpcFrame{
@@ -35,16 +36,17 @@ var framePingResponse = &grpcws.GrpcFrame{
 	},
 }
 
-func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx context.Context, maxStreamCount int, req *http.Request) *WebsocketChannel {
+func NewWebsocketChannel(ctx context.Context, websocket *websocket.Conn, handler http.Handler, maxStreamCount int, req *http.Request) *WebsocketChannel {
 	return &WebsocketChannel{
-		wsConn:          websocket,
+		ctx:            ctx,
+		wsConn:         websocket,
+		handler:        handler,
+		maxStreamCount: maxStreamCount,
+		req:            req,
+
 		activeStreams:   make(map[uint32]*GrpcStream, maxStreamCount),
 		timeoutInterval: 12 * time.Second,
 		timer:           nil,
-		ctx:             ctx,
-		handler:         handler,
-		maxStreamCount:  maxStreamCount,
-		req:             req,
 	}
 }
 
@@ -104,12 +106,12 @@ func (ws *WebsocketChannel) poll() error {
 		ws.activeStreams[frame.StreamId] = stream
 
 		url, err := url.Parse("http://localhost/")
-		url.Scheme = ws.req.URL.Scheme
-		url.Host = ws.req.URL.Host
-		url.Path = "/" + frame.GetHeader().Operation
 		if err != nil {
 			return ws.writeError(frame.StreamId, err.Error())
 		}
+		url.Scheme = ws.req.URL.Scheme
+		url.Host = ws.req.URL.Host
+		url.Path = "/" + frame.GetHeader().Operation
 
 		req := &http.Request{
 			Method:     http.MethodPost,
@@ -180,35 +182,22 @@ func (ws *WebsocketChannel) poll() error {
 	return nil
 }
 
-func makeGrpcRequest(req *http.Request) *http.Request {
-	// Hack, this should be a shallow copy, but let's see if this works
-	req.ProtoMajor = 2
-	req.ProtoMinor = 0
-
-	req.Header.Set("content-type", "application/grpc+proto")
-
-	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
-	// DATA frame payload lengths. https://http2.github.io/http2-spec/#malformed This effectively
-	// switches to chunked encoding which is the default for h2
-	req.Header.Del("content-length")
-	return req
-}
-
 func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
 	// we assume a large limit is set for the websocket to avoid handling multiple frames.
-	typ, bytesValue, err := ws.wsConn.Read(ws.ctx)
+	msgType, bytesValue, err := ws.wsConn.Read(ws.ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	if typ != websocket.MessageBinary {
+	if msgType != websocket.MessageBinary {
 		return nil, errors.New("websocket channel only supports binary messages")
 	}
 
 	request := &grpcws.GrpcFrame{}
 	if err := proto.Unmarshal(bytesValue, request); err != nil {
-		return nil, fmt.Errorf("fram unmarshal error. %w", err)
+		return nil, fmt.Errorf("frame unmarshal error. %w", err)
 	}
+
 	return request, nil
 }
 
@@ -247,6 +236,4 @@ func (w *WebsocketChannel) ping() {
 	}
 }
 
-func (ws *WebsocketChannel) Close() {
-	fmt.Println("WebsocketChannel close called")
-}
+func (ws *WebsocketChannel) Close() {}
