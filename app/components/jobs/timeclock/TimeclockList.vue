@@ -656,14 +656,17 @@ const { game } = useAppConfig();
             class="flex-1"
         >
             <template #default>
-                <UTooltip
-                    v-if="query.mode === TimeclockMode.TIMELINE"
-                    :text="$t('components.jobs.timeclock.timeline.tooltip')"
-                    :shortcuts="['CTRL', '🖱']"
-                    :ui="{ shortcuts: 'inline-flex' }"
-                >
-                    <UIcon name="i-mdi-information-outline" class="size-4" />
-                </UTooltip>
+                <div>
+                    <UTooltip
+                        v-if="query.mode === TimeclockMode.TIMELINE"
+                        :text="$t('components.jobs.timeclock.timeline.tooltip')"
+                        :shortcuts="['CTRL', '🖱']"
+                        :popper="{ placement: 'left' }"
+                        :ui="{ shortcuts: 'inline-flex' }"
+                    >
+                        <UIcon name="i-mdi-information-outline" class="size-4" />
+                    </UTooltip>
+                </div>
             </template>
         </Pagination>
     </div>
