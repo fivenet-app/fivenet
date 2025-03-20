@@ -150,7 +150,10 @@ func (ws *WebsocketChannel) poll() error {
 
 		// grpclog.Infof("stream %v is canceled", frame.StreamId)
 		stream.cancel()
-		close(stream.inputFrames)
+		if !stream.inputClosed {
+			stream.inputClosed = true
+			close(stream.inputFrames)
+		}
 		delete(ws.activeStreams, frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
@@ -160,7 +163,10 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 		// grpclog.Infof("completing input stream %v", frame.StreamId)
-		close(stream.inputFrames)
+		if !stream.inputClosed {
+			stream.inputClosed = true
+			close(stream.inputFrames)
+		}
 
 	case *grpcws.GrpcFrame_Failure:
 		// grpclog.Infof("received Failure for stream %v", frame.StreamId)

@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -24,6 +23,7 @@ type GrpcStream struct {
 	remainingError    error
 	bytesToWrite      uint32
 	writeBuffer       []byte
+	inputClosed       bool
 	// TODO add a context to return to close the connection
 }
 
@@ -146,11 +146,11 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 			StreamId: stream.id,
 			Payload: &grpcws.GrpcFrame_Body{
 				Body: &grpcws.Body{
-					Data: data,
+					Data: stream.writeBuffer,
 				},
 			},
 		})
-		fmt.Println(len(stream.writeBuffer), len(stream.remainingBuffer))
+		stream.writeBuffer = nil
 		return len(data), err
 	}
 }
