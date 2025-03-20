@@ -113,7 +113,7 @@ func wrapGrpc(options []Option, handler http.Handler, endpointsFunc func() []str
 //
 // You can control the CORS behaviour using `With*` options in the WrapServer function.
 func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Request) {
-	if w.IsGrpcWebSocketChannelRequest(req) {
+	if IsGrpcWebSocketChannelRequest(req) {
 		if w.websocketOriginFunc(req) {
 			w.HandleGrpcWebsocketChannelRequest(resp, req)
 			return
@@ -124,7 +124,7 @@ func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	if w.IsAcceptableGrpcCorsRequest(req) || w.IsGrpcWebRequest(req) {
+	if w.IsAcceptableGrpcCorsRequest(req) || IsGrpcWebRequest(req) {
 		w.corsWrapperHandler.ServeHTTP(resp, req)
 		return
 	}
@@ -141,31 +141,6 @@ func (w *WrappedGrpcServer) HandleGrpcWebRequest(resp http.ResponseWriter, req *
 	intReq.URL.Path = w.endpointFunc(intReq)
 	w.handler.ServeHTTP(intResp, intReq)
 	intResp.finishRequest(req)
-}
-
-// IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Upgrade" header is set and
-// "Sec-Websocket-Protocol" header value is "grpc-websocket-channel" and that the "root" path is requested
-func (w *WrappedGrpcServer) IsGrpcWebSocketChannelRequest(req *http.Request) bool {
-	if strings.ToLower(req.Header.Get("Upgrade")) != "websocket" {
-		return false
-	}
-
-	for _, subproto := range req.Header.Values("Sec-Websocket-Protocol") {
-		for token := range strings.SplitSeq(subproto, ",") {
-			token = strings.TrimSpace(token)
-			if strings.EqualFold(token, "grpc-websocket-channel") {
-				return true
-			}
-		}
-	}
-
-	return false
-}
-
-// IsGrpcWebRequest determines if a request is a gRPC-Web request by checking that the "content-type" is
-// "application/grpc-web" and that the method is POST.
-func (w *WrappedGrpcServer) IsGrpcWebRequest(req *http.Request) bool {
-	return req.Method == http.MethodPost && strings.HasPrefix(req.Header.Get("content-type"), grpcWebContentType)
 }
 
 // HandleGrpcWebsocketChannelRequest takes a HTTP request that is assumed to be a gRPC-Websocket-channel request and starts a

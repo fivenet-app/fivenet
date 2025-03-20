@@ -196,10 +196,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
 	// Tracing
-	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP), otelgin.WithGinFilter(func(c *gin.Context) bool {
-		// Skip `/images/*` and `/api/grpc` requests
-		return !strings.HasPrefix(c.FullPath(), "/images/") && !strings.HasPrefix(c.FullPath(), "/api/grpc")
-	})))
+	e.Use(otelgin.Middleware("fivenet",
+		otelgin.WithTracerProvider(p.TP),
+		otelgin.WithGinFilter(func(c *gin.Context) bool {
+			// Skip `/images/*`, image proxy and GRPC-Web + GRPC-websocket requests
+			fullPath := c.FullPath()
+			return !strings.HasPrefix(fullPath, "/images/") && !strings.HasPrefix(fullPath, "/api/image_proxy") && !strings.HasPrefix(fullPath, "/api/grpc")
+		}),
+	))
 	e.Use(InjectToHeaders(p.TP))
 
 	for _, service := range p.Services {
@@ -210,11 +214,9 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		service.RegisterHTTP(e)
 	}
 
-	// Setup Nuxt generated files serving
+	// Setup assets and other static files serving
 	frontendFS := static.LocalFile(".output/public/", true)
 	fileServer := http.FileServer(frontendFS)
-	// Register output dir for assets and other static files
-	e.Use(static.Serve("/", frontendFS))
 
 	// GRPC-web and websocket handling
 	wrapperGrpc := grpcws.WrapServer(p.GRPCSrv,
@@ -222,7 +224,7 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	)
 	e.GET("/api/grpcws", func(ctx *gin.Context) {
 		resp, req := ctx.Writer, ctx.Request
-		if wrapperGrpc.IsGrpcWebSocketChannelRequest(req) {
+		if grpcws.IsGrpcWebSocketChannelRequest(req) {
 			wrapperGrpc.HandleGrpcWebsocketChannelRequest(resp, req)
 		} else {
 			ctx.AbortWithStatus(http.StatusBadRequest)
@@ -245,9 +247,6 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// 404 handling
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
-		if requestPath == "/" {
-			return
-		}
 
 		// If the target is a directory (e.g., `/livemap`), load root `index.html``
 		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
@@ -257,13 +256,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 			return
 		}
 
-		// Check if file exists
-		if frontendFS.Exists("/", c.Request.URL.Path) {
+		// Check if index file exists
+		if frontendFS.Exists("/", requestPath) {
 			fileServer.ServeHTTP(c.Writer, c.Request)
-		} else {
-			c.Data(http.StatusNotFound, "text/html; charset=utf-8", notFoundPage)
+			c.Abort()
+			return
 		}
-		c.Abort()
+
+		c.Data(http.StatusNotFound, "text/html; charset=utf-8", notFoundPage)
 	})
 
 	return e, nil
