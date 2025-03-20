@@ -2538,7 +2538,8 @@
             "ErrPropsNameDenied": "Sie haben keine Berechtigung den Namen des Kollegen zusetzen!",
             "ErrTimeclockOutOfRange": "In der Stempeluhr sind nur die letzten 6 Monate abrufbar!",
             "ErrAbsenceBeginOutOfRange": "Begin der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
-            "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne."
+            "ErrAbsenceEndOutOfRange": "Ende der Abwesenheit ist außerhalb der erlaubten Datumsspanne.",
+            "ErrLabelsNoPerms": "Sie haben keine Berechtigung die Kollegen-Labels zusehen!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
