@@ -2549,7 +2549,7 @@
             },
             "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!",
             "ErrExamDisabled": "Das Examen der Qualifizierung ist deaktiviert!",
-            "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifikationsanforderungen, die sich auf die Qualifikation beziehen, die Sie bearbeiten!",
+            "ErrRequirementSelfRef": "Bitte entfernen Sie alle Qualifizierungsanforderungen, die sich auf die Qualifizierung beziehen, die Sie bearbeiten!",
             "ErrQualiAccessDenied": "Sie haben keinen Zugriff auf diese Qualifizierung!"
         },
         "CalendarService": {
