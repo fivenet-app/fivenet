@@ -182,6 +182,7 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.Response
 		grpclog.Errorf("unable to upgrade websocket request: %v", err)
 		return
 	}
+	defer wsConn.CloseNow()
 
 	wsConn.SetReadLimit(w.websocketReadLimit)
 

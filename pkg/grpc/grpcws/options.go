@@ -6,16 +6,19 @@ package grpcws
 import (
 	"net/http"
 	"time"
+
+	"github.com/coder/websocket"
 )
 
 var defaultOptions = &options{
 	allowedRequestHeaders:          []string{"*"},
 	corsForRegisteredEndpointsOnly: true,
-	originFunc:                     func(origin string) bool { return false },
-	allowNonRootResources:          false,
 	corsMaxAge:                     10 * time.Minute,
-	websocketReadLimit:             5 * 1024 * 1024, // 5 MB
+	originFunc:                     func(origin string) bool { return false },
+	websocketCompressionMode:       websocket.CompressionDisabled,
+	websocketReadLimit:             256 * 1024,
 	websocketChannelMaxStreamCount: 7,
+	allowNonRootResources:          false,
 }
 
 type options struct {
@@ -25,10 +28,11 @@ type options struct {
 	originFunc                     func(origin string) bool
 	websocketPingInterval          time.Duration
 	websocketOriginFunc            func(req *http.Request) bool
-	allowNonRootResources          bool
-	endpointsFunc                  *func() []string
+	websocketCompressionMode       websocket.CompressionMode
 	websocketReadLimit             int64
 	websocketChannelMaxStreamCount int
+	allowNonRootResources          bool
+	endpointsFunc                  *func() []string
 }
 
 func evaluateOptions(opts []Option) *options {
@@ -138,7 +142,7 @@ func WithWebsocketOriginFunc(websocketOriginFunc func(req *http.Request) bool) O
 
 // WithWebsocketsMessageReadLimit sets the maximum message read limit on the underlying websocket.
 //
-// The default message read limit is 4MB
+// The default message read limit is 256KB
 func WithWebsocketsMessageReadLimit(websocketReadLimit int64) Option {
 	return func(o *options) {
 		o.websocketReadLimit = websocketReadLimit
@@ -162,5 +166,14 @@ func WithAllowNonRootResource(allowNonRootResources bool) Option {
 func WithWebsocketChannelMaxStreamCount(websocketChannelMaxStreamCount int) Option {
 	return func(o *options) {
 		o.websocketChannelMaxStreamCount = websocketChannelMaxStreamCount
+	}
+}
+
+// WithWebsocketCompressionMode sets compression mode for websocket requests
+//
+// The default mode is CompressionNoContextTakeover
+func WithWebsocketCompressionMode(compressionMode websocket.CompressionMode) Option {
+	return func(o *options) {
+		o.websocketCompressionMode = compressionMode
 	}
 }

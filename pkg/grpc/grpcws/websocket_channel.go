@@ -2,14 +2,11 @@ package grpcws
 
 import (
 	"context"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"strings"
-	"sync"
 	"time"
 
 	"github.com/coder/websocket"
@@ -19,8 +16,6 @@ import (
 )
 
 type WebsocketChannel struct {
-	mu sync.RWMutex
-
 	wsConn          *websocket.Conn
 	activeStreams   map[uint32]*GrpcStream
 	timeoutInterval time.Duration
@@ -29,25 +24,6 @@ type WebsocketChannel struct {
 	handler         http.Handler
 	maxStreamCount  int
 	req             *http.Request
-}
-
-type GrpcStream struct {
-	mu sync.Mutex
-
-	id                uint32
-	hasWrittenHeaders bool
-	responseHeaders   http.Header
-	inputFrames       chan *grpcws.GrpcFrame
-	channel           *WebsocketChannel
-	ctx               context.Context
-	cancel            context.CancelFunc
-	remainingBuffer   []byte
-	remainingError    error
-	readHeader        bool
-	bytesToWrite      uint32
-	writeBuffer       []byte
-	closed            bool
-	// TODO add a context to return to close the connection
 }
 
 var framePingResponse = &grpcws.GrpcFrame{
@@ -61,11 +37,8 @@ var framePingResponse = &grpcws.GrpcFrame{
 
 func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx context.Context, maxStreamCount int, req *http.Request) *WebsocketChannel {
 	return &WebsocketChannel{
-		mu: sync.RWMutex{},
-
-		wsConn: websocket,
-		activeStreams: make(
-			map[uint32]*GrpcStream),
+		wsConn:          websocket,
+		activeStreams:   make(map[uint32]*GrpcStream, maxStreamCount),
 		timeoutInterval: 12 * time.Second,
 		timer:           nil,
 		ctx:             ctx,
@@ -73,77 +46,6 @@ func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx co
 		maxStreamCount:  maxStreamCount,
 		req:             req,
 	}
-}
-
-func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize int) *GrpcStream {
-	ctx, cancel := context.WithCancel(channel.ctx)
-	return &GrpcStream{
-		mu: sync.Mutex{},
-
-		id:              streamId,
-		inputFrames:     make(chan *grpcws.GrpcFrame, streamBufferSize),
-		channel:         channel,
-		ctx:             ctx,
-		cancel:          cancel,
-		responseHeaders: make(http.Header),
-	}
-}
-
-func (stream *GrpcStream) Flush() {}
-
-func (stream *GrpcStream) Header() http.Header {
-	return stream.responseHeaders
-}
-
-func (stream *GrpcStream) close() {
-	if stream.closed {
-		return
-	}
-
-	stream.closed = true
-	close(stream.inputFrames)
-}
-
-func (stream *GrpcStream) Read(p []byte) (int, error) {
-	// grpclog.Infof("reading from channel %v", stream.id)
-	if stream.remainingBuffer != nil {
-		// If the remaining buffer fits completely inside the argument slice then read all of it and return any error
-		// that was retained from the original call
-		if len(stream.remainingBuffer) <= len(p) {
-			copy(p, stream.remainingBuffer)
-
-			remainingLength := len(stream.remainingBuffer)
-			err := stream.remainingError
-
-			// Clear the remaining buffer and error so that the next read will be a read from the websocket frame,
-			// unless the error terminates the stream
-			stream.remainingBuffer = nil
-			stream.remainingError = nil
-			return remainingLength, err
-		}
-
-		// The remaining buffer doesn't fit inside the argument slice, so copy the bytes that will fit and retain the
-		// bytes that don't fit - don't return the remainingError as there are still bytes to be read from the frame
-		copy(p, stream.remainingBuffer[:len(p)])
-		stream.remainingBuffer = stream.remainingBuffer[len(p):]
-
-		// Return the length of the argument slice as that was the length of the written bytes
-		return len(p), nil
-	}
-
-	frame, more := <-stream.inputFrames
-	// grpclog.Infof("received message %v more: %v", frame, more)
-	if more {
-		switch op := frame.Payload.(type) {
-		case *grpcws.GrpcFrame_Body:
-			stream.remainingBuffer = op.Body.Data
-			return stream.Read(p)
-		case *grpcws.GrpcFrame_Failure:
-			// TODO how to propagate this to the server?
-			return 0, errors.New("grpc client error")
-		}
-	}
-	return 0, io.EOF
 }
 
 func (ws *WebsocketChannel) Start() {
@@ -168,16 +70,10 @@ func (ws *WebsocketChannel) writeError(streamId uint32, message string) error {
 }
 
 func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
-	ws.mu.RLock()
-	defer ws.mu.RUnlock()
-
 	return ws.activeStreams[streamId]
 }
 
 func (ws *WebsocketChannel) deleteStream(streamId uint32) {
-	ws.mu.Lock()
-	defer ws.mu.Unlock()
-
 	delete(ws.activeStreams, streamId)
 }
 
@@ -193,7 +89,7 @@ func (ws *WebsocketChannel) poll() error {
 
 	stream := ws.getStream(frame.StreamId)
 
-	switch op := frame.Payload; op.(type) {
+	switch frame.Payload.(type) {
 	case *grpcws.GrpcFrame_Header:
 		// grpclog.Infof("received Header for stream %v %v", frame.StreamId, frame.GetHeader().Operation)
 		if stream != nil {
@@ -205,12 +101,7 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 		stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
-		func() {
-			ws.mu.Lock()
-			defer ws.mu.Unlock()
-
-			ws.activeStreams[frame.StreamId] = stream
-		}()
+		ws.activeStreams[frame.StreamId] = stream
 
 		url, err := url.Parse("http://localhost/")
 		url.Scheme = ws.req.URL.Scheme
@@ -356,99 +247,6 @@ func (w *WebsocketChannel) ping() {
 	}
 }
 
-func (ws *WebsocketChannel) Close() {}
-
-func (stream *GrpcStream) Close() error {
-	stream.mu.Lock()
-	defer stream.mu.Unlock()
-
-	if st, ok := stream.responseHeaders["Grpc-Status"]; ok && (len(st) == 0 || st[0] != "0") {
-		statusCode := st[0]
-		statusMessage, ok := stream.responseHeaders["Grpc-Message"]
-		if !ok {
-			statusMessage = []string{"Unknown"}
-		}
-
-		headers := map[string]*grpcws.HeaderValue{}
-		for k, v := range stream.responseHeaders {
-			headers[k] = &grpcws.HeaderValue{
-				Value: v,
-			}
-		}
-
-		stream.channel.write(
-			&grpcws.GrpcFrame{
-				StreamId: stream.id,
-				Payload: &grpcws.GrpcFrame_Failure{
-					Failure: &grpcws.Failure{
-						ErrorMessage: strings.Join(statusMessage, ";"),
-						ErrorStatus:  statusCode,
-						Headers:      headers,
-					},
-				},
-			},
-		)
-	} else {
-		stream.WriteHeader(http.StatusOK)
-	}
-
-	defer stream.cancel()
-	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
-	stream.channel.deleteStream(stream.id)
-
-	return nil
-}
-
-func (stream *GrpcStream) Write(data []byte) (int, error) {
-	stream.WriteHeader(http.StatusOK)
-	// grpclog.Infof("write body %v", len(data))
-
-	// Not sure if it is enough to check the writeBuffer length
-	if stream.bytesToWrite == 0 && !stream.readHeader {
-		stream.bytesToWrite += binary.BigEndian.Uint32(data[1:])
-		stream.writeBuffer = data[5:]
-		stream.readHeader = true
-		return len(data), nil
-	} else {
-		stream.bytesToWrite -= uint32(len(data))
-		stream.writeBuffer = append(stream.writeBuffer, data...)
-
-		if stream.bytesToWrite != 0 {
-			return len(data), nil
-		}
-
-		err := stream.channel.write(&grpcws.GrpcFrame{
-			StreamId: stream.id,
-			Payload: &grpcws.GrpcFrame_Body{
-				Body: &grpcws.Body{
-					Data: data,
-				},
-			},
-		})
-		stream.readHeader = false
-		return len(data), err
-	}
-}
-
-func (stream *GrpcStream) WriteHeader(statusCode int) {
-	if !stream.hasWrittenHeaders {
-		headerResponse := make(map[string]*grpcws.HeaderValue)
-		for key, element := range stream.responseHeaders {
-			headerResponse[key] = &grpcws.HeaderValue{
-				Value: element,
-			}
-		}
-		stream.hasWrittenHeaders = true
-		stream.channel.write(
-			&grpcws.GrpcFrame{
-				StreamId: stream.id,
-				Payload: &grpcws.GrpcFrame_Header{
-					Header: &grpcws.Header{
-						Operation: "",
-						Headers:   headerResponse,
-						Status:    int32(statusCode),
-					},
-				},
-			})
-	}
+func (ws *WebsocketChannel) Close() {
+	fmt.Println("WebsocketChannel close called")
 }
