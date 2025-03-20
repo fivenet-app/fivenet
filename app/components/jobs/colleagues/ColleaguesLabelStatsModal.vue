@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { StackedBar } from '@unovis/ts';
 import { VisAxis, VisStackedBar, VisTooltip, VisXYContainer } from '@unovis/vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { LabelCount } from '~~/gen/ts/resources/jobs/labels';
 import type { GetColleagueLabelsStatsResponse } from '~~/gen/ts/services/jobs/jobs';
 
@@ -11,7 +12,10 @@ const { isOpen } = useModal();
 const bodyRef = useTemplateRef('bodyRef');
 const { height, width } = useElementSize(bodyRef);
 
+const canSubmit = ref(true);
+
 async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsResponse> {
+    canSubmit.value = false;
     try {
         const { response } = await $grpc.jobs.jobs.getColleagueLabelsStats({
             labelIds: [],
@@ -24,7 +28,13 @@ async function getColleagueLabelsStats(): Promise<GetColleagueLabelsStatsRespons
     }
 }
 
-const { data: stats } = useLazyAsyncData('jobs-colleagues-labels-stats', () => getColleagueLabelsStats());
+const {
+    data: stats,
+    error,
+    refresh,
+} = useLazyAsyncData('jobs-colleagues-labels-stats', () =>
+    getColleagueLabelsStats().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
+);
 
 const totalCount = computed(() => stats.value?.count.reduce((stat, sum) => sum.count + stat, 0));
 
@@ -66,7 +76,9 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
             </template>
 
             <div ref="bodyRef" class="flex-1">
-                <ClientOnly>
+                <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
+
+                <ClientOnly v-else>
                     <VisXYContainer
                         :data="stats?.count ?? []"
                         :margin="{ top: 16, left: 32, right: 32, bottom: 16 }"
@@ -92,6 +104,8 @@ const tooltipTemplate = (d: LabelCount): string => (d.label?.name ? `${d.label?.
                     <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
+
+                    <UButton icon="i-mdi-refresh" :loading="!canSubmit" :disabled="!canSubmit" @click="refresh" />
                 </UButtonGroup>
             </template>
         </UCard>
