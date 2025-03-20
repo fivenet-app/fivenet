@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/binary"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -21,10 +22,8 @@ type GrpcStream struct {
 	cancel            context.CancelFunc
 	remainingBuffer   []byte
 	remainingError    error
-	readHeader        bool
 	bytesToWrite      uint32
 	writeBuffer       []byte
-	closed            bool
 	// TODO add a context to return to close the connection
 }
 
@@ -44,15 +43,6 @@ func (stream *GrpcStream) Flush() {}
 
 func (stream *GrpcStream) Header() http.Header {
 	return stream.responseHeaders
-}
-
-func (stream *GrpcStream) close() {
-	if stream.closed {
-		return
-	}
-
-	stream.closed = true
-	close(stream.inputFrames)
 }
 
 func (stream *GrpcStream) Read(p []byte) (int, error) {
@@ -129,10 +119,9 @@ func (stream *GrpcStream) Close() error {
 		stream.WriteHeader(http.StatusOK)
 	}
 
-	defer stream.cancel()
+	stream.cancel()
 	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
-	stream.channel.deleteStream(stream.id)
-
+	delete(stream.channel.activeStreams, stream.id)
 	return nil
 }
 
@@ -141,10 +130,9 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 	// grpclog.Infof("write body %v", len(data))
 
 	// Not sure if it is enough to check the writeBuffer length
-	if stream.bytesToWrite == 0 && !stream.readHeader {
+	if stream.bytesToWrite == 0 && len(data) != 0 {
 		stream.bytesToWrite += binary.BigEndian.Uint32(data[1:])
 		stream.writeBuffer = data[5:]
-		stream.readHeader = true
 		return len(data), nil
 	} else {
 		stream.bytesToWrite -= uint32(len(data))
@@ -162,7 +150,7 @@ func (stream *GrpcStream) Write(data []byte) (int, error) {
 				},
 			},
 		})
-		stream.readHeader = false
+		fmt.Println(len(stream.writeBuffer), len(stream.remainingBuffer))
 		return len(data), err
 	}
 }

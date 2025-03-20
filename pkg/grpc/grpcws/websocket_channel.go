@@ -75,10 +75,6 @@ func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
 	return ws.activeStreams[streamId]
 }
 
-func (ws *WebsocketChannel) deleteStream(streamId uint32) {
-	delete(ws.activeStreams, streamId)
-}
-
 func (ws *WebsocketChannel) poll() error {
 	frame, err := ws.readFrame()
 	if err == io.EOF {
@@ -142,7 +138,7 @@ func (ws *WebsocketChannel) poll() error {
 		// Close channel if body frame says so
 		body := frame.Payload.(*grpcws.GrpcFrame_Body)
 		if body.Body.Complete {
-			stream.close()
+			close(stream.inputFrames)
 		}
 
 	case *grpcws.GrpcFrame_Cancel:
@@ -154,8 +150,8 @@ func (ws *WebsocketChannel) poll() error {
 
 		// grpclog.Infof("stream %v is canceled", frame.StreamId)
 		stream.cancel()
-		stream.close()
-		ws.deleteStream(frame.StreamId)
+		close(stream.inputFrames)
+		delete(ws.activeStreams, frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
 		// grpclog.Infof("received complete for stream %v", frame.StreamId)
@@ -164,7 +160,7 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 		// grpclog.Infof("completing input stream %v", frame.StreamId)
-		stream.close()
+		close(stream.inputFrames)
 
 	case *grpcws.GrpcFrame_Failure:
 		// grpclog.Infof("received Failure for stream %v", frame.StreamId)
@@ -174,7 +170,8 @@ func (ws *WebsocketChannel) poll() error {
 
 		// grpclog.Infof("error on stream %v: %v", frame.StreamId, frame.GetFailure().ErrorMessage)
 		stream.inputFrames <- frame
-		ws.deleteStream(frame.StreamId)
+		close(stream.inputFrames)
+		delete(ws.activeStreams, frame.StreamId)
 
 	default:
 	}

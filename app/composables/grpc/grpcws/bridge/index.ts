@@ -42,7 +42,7 @@ export class GrpcWSTransport implements RpcTransport {
         const webSocket = useWebSocket(defaultOptions.wsUrl, {
             immediate: false,
             autoReconnect: {
-                delay: 850,
+                delay: 750,
             },
             protocols: ['grpc-websocket-channel'],
 
