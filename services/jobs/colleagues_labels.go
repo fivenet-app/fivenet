@@ -51,7 +51,10 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 	}
 
 	if !slices.Contains(types, "Labels") {
-		return resp, nil
+		// Fallback to checking if user has manage colleague labels permission
+		if !s.ps.Can(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceManageColleagueLabelsPerm) {
+			return nil, errorsjobs.ErrLabelsNoPerms
+		}
 	}
 
 	condition := tJobLabels.Job.EQ(jet.String(userInfo.Job))

@@ -18,4 +18,6 @@ var (
 	ErrAbsenceEndOutOfRange   = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrAbsenceEndOutOfRange"}, nil)
 
 	ErrTimeclockOutOfRange = common.I18nErr(codes.InvalidArgument, &common.TranslateItem{Key: "errors.JobsService.ErrTimeclockOutOfRange"}, nil)
+
+	ErrLabelsNoPerms = common.I18nErr(codes.PermissionDenied, &common.TranslateItem{Key: "errors.JobsService.ErrLabelsNoPerms.content"}, &common.TranslateItem{Key: "errors.JobsService.ErrLabelsNoPerms.title"})
 )

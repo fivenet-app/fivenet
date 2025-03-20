@@ -2538,7 +2538,8 @@
             "ErrPropsNameDenied": "You are not allowed to set your colleague's name!",
             "ErrTimeclockOutOfRange": "Only the last 6 months are available to view in the timeclock!",
             "ErrAbsenceBeginOutOfRange": "Absence begin date is outside the allowed range.",
-            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range."
+            "ErrAbsenceEndOutOfRange": "Absence end date is outside the allowed range.",
+            "ErrLabelsNoPerms": "You don't have permissions to list the colleagues labels!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

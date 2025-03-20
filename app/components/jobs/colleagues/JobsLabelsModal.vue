@@ -3,6 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useNotificatorStore } from '~/stores/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { GetColleagueLabelsResponse, ManageColleagueLabelsResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -42,7 +43,7 @@ async function getColleagueLabels(): Promise<GetColleagueLabelsResponse> {
     }
 }
 
-const { data: labels } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
+const { data: labels, error, refresh } = useLazyAsyncData('jobs-colleagues-labels', () => getColleagueLabels());
 
 async function manageColleagueLabels(values: Schema): Promise<ManageColleagueLabelsResponse> {
     try {
@@ -90,7 +91,9 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                     </div>
                 </template>
 
-                <UFormGroup name="list" class="grid items-center gap-2" :ui="{ container: '' }">
+                <DataErrorBlock v-if="error" :error="error" :retry="refresh" />
+
+                <UFormGroup v-else name="list" class="grid items-center gap-2" :ui="{ container: '' }">
                     <div class="flex flex-col gap-1">
                         <VueDraggable v-model="state.labels" class="flex flex-col gap-2">
                             <div v-for="(_, idx) in state.labels" :key="idx" class="flex items-center gap-1">
@@ -139,7 +142,7 @@ watch(labels, () => (state.labels = labels.value?.labels ?? []));
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit || !!error" :loading="!canSubmit">
                             {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>
