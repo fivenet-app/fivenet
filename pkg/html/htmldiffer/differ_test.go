@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Diff(t *testing.T) {
+func TestFancyDiff(t *testing.T) {
 	differ := New()
 
 	for _, run := range []struct {
@@ -54,6 +54,84 @@ func Test_Diff(t *testing.T) {
 		} else {
 			assert.NoError(t, err)
 		}
+		assert.Equal(t, run.result, out, run.msg)
+	}
+}
+
+func TestPatchDiff(t *testing.T) {
+	differ := New()
+
+	for _, run := range []struct {
+		old    string
+		new    string
+		result string
+		msg    string
+	}{
+		{
+			old:    "",
+			new:    "",
+			result: "",
+			msg:    "Empty strings should return an empty diff",
+		},
+		{
+			old: "<p>Hello World</p>",
+			new: "<p>Hello Universe</p>",
+			result: `--- a
++++ b
+@@ -1 +1 @@
+-<p>Hello World</p>
+\ No newline at end of file
++<p>Hello Universe</p>
+\ No newline at end of file
+`,
+			msg: "Basic content change",
+		},
+		{
+			old:    `<img src="data:image/png;base64,ABC123"/>`,
+			new:    `<img src="data:image/png;base64,XYZ456"/>`,
+			result: "",
+			msg:    "Image data should be replaced with placeholder (no diff)",
+		},
+		{
+			old: `<p><img src="data:image/png;base64,ABC123"/> Hello World!</p>`,
+			new: `<p><img src="data:image/png;base64,XYZ456"/> Hello Galaxy!</p>`,
+			result: `--- a
++++ b
+@@ -1 +1 @@
+-<p><img src="IMAGE_DATA_OMITTED"/> Hello World!</p>
+\ No newline at end of file
++<p><img src="IMAGE_DATA_OMITTED"/> Hello Galaxy!</p>
+\ No newline at end of file
+`,
+			msg: "Image data should be replaced with placeholder (no diff)",
+		},
+		{
+			old:    "<br/>",
+			new:    "<br>",
+			result: "",
+			msg:    "Self-closing <br/> should be normalized to <br> and considered equal",
+		},
+		{
+			old: "<p>Line 1<br/>Line 2</p>",
+			new: "<p>Line 1<br>Line 3</p>",
+			result: `--- a
++++ b
+@@ -1 +1 @@
+-<p>Line 1<br>Line 2</p>
+\ No newline at end of file
++<p>Line 1<br>Line 3</p>
+\ No newline at end of file
+`,
+			msg: "Line changes with normalized <br> tags",
+		},
+		{
+			old:    "<p>Unchanged</p>",
+			new:    "<p>Unchanged</p>",
+			result: "",
+			msg:    "Identical content should return an empty diff",
+		},
+	} {
+		out := differ.PatchDiff(run.old, run.new)
 		assert.Equal(t, run.result, out, run.msg)
 	}
 }

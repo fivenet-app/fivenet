@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"embed"
-	"errors"
 	"os"
 	"strconv"
 
@@ -15,9 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/go-jet/jet/v2/qrm"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/golang-migrate/migrate/v4"
-	mysqlmigrate "github.com/golang-migrate/migrate/v4/database/mysql"
-	"github.com/golang-migrate/migrate/v4/source/iofs"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/collectors"
@@ -88,74 +84,4 @@ func SetupDB(p Params) (*sql.DB, error) {
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
 	return db, nil
-}
-
-func NewMigrate(db *sql.DB, esxCompat bool) (*migrate.Migrate, error) {
-	// FiveNet's own `users` table
-	tableName := "fivenet_users"
-	if esxCompat {
-		// Use ESX's table
-		tableName = "users"
-	}
-
-	// Setup migrate source and driver
-	source, err := iofs.New(&templateFS{
-		data: map[string]any{
-			"UsersTableName": tableName,
-		},
-		FS: migrationsFS,
-	}, "migrations")
-	if err != nil {
-		return nil, err
-	}
-
-	driver, err := mysqlmigrate.WithInstance(db, &mysqlmigrate.Config{
-		MigrationsTable: "fivenet_zschema_migrations",
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	m, err := migrate.NewWithInstance(
-		"iofs", source,
-		"mysql", driver)
-	if err != nil {
-		return nil, err
-	}
-
-	return m, nil
-}
-
-func MigrateDB(logger *zap.Logger, dbDSN string, esxCompat bool) error {
-	logger.Info("starting database migrations")
-
-	dsn, err := dsn.PrepareDSN(dbDSN, dsn.WithMultiStatements())
-	if err != nil {
-		return err
-	}
-
-	// Connect to database
-	db, err := sql.Open("mysql", dsn)
-	if err != nil {
-		return err
-	}
-
-	m, err := NewMigrate(db, esxCompat)
-	if err != nil {
-		return err
-	}
-	m.Log = NewMigrateLogger(logger)
-
-	// Run migrations
-	if err := m.Up(); err != nil {
-		if !errors.Is(err, migrate.ErrNoChange) {
-			return err
-		} else {
-			logger.Info("database migrations have caused no changes")
-		}
-	} else {
-		logger.Info("completed database migrations changes have been made")
-	}
-
-	return db.Close()
 }

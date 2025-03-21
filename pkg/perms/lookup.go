@@ -1,8 +1,6 @@
 package perms
 
-import (
-	"github.com/fivenet-app/fivenet/pkg/utils"
-)
+import "slices"
 
 // Attrs
 
@@ -64,10 +62,10 @@ func (p *Perms) lookupRoleIDsForJobUpToGrade(job string, grade int32) ([]uint64,
 		return true
 	})
 
-	utils.SortInt32Slice(grades)
+	slices.Sort(grades)
 
 	gradeList := []uint64{}
-	for i := 0; i < len(grades); i++ {
+	for i := range grades {
 		grade, ok := gradesMap.Load(grades[i])
 		if !ok {
 			return nil, false

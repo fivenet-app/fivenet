@@ -38,6 +38,7 @@ func (b *Broker[T]) Start(ctx context.Context) {
 
 		case msgCh := <-b.unsubCh:
 			delete(subs, msgCh)
+			close(msgCh)
 			b.subs.Add(-1)
 
 		case msg := <-b.publishCh:

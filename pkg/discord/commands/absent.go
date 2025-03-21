@@ -176,7 +176,7 @@ func (c *AbsentCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandD
 	}
 
 	startDateOption := cmd.Data.Options.Find("start-date")
-	now := timeutils.TruncateToDay(time.Now())
+	now := timeutils.StartOfDay(time.Now())
 	startDate := time.Now()
 
 	startDateValue := strings.ToLower(startDateOption.String())

@@ -7,29 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSlicesDifference(t *testing.T) {
-	a := []string{"hello", "example", "abc"}
-	b := []string{"hello", "world", "test1", "abc"}
-
-	added, removed := SlicesDifference(a, b)
-	assert.ElementsMatch(t, []string{"world", "test1"}, added)
-	assert.ElementsMatch(t, []string{"example"}, removed)
-
-	a = []string{"hello", "world", "abc"}
-	b = []string{"hello", "world", "abc"}
-
-	added, removed = SlicesDifference(a, b)
-	assert.Equal(t, []string{}, added)
-	assert.Equal(t, []string{}, removed)
-
-	a = []string{"hello", "world", "abc"}
-	b = []string{"hello", "hello", "world", "abc"}
-
-	added, removed = SlicesDifference(a, b)
-	assert.Equal(t, []string{}, added)
-	assert.Equal(t, []string{}, removed)
-}
-
 func TestRemoveSliceDuplicates(t *testing.T) {
 	// Test with strings
 	input := []string{"a", "b", "a", "c", "b"}
@@ -69,19 +46,19 @@ func BenchmarkRemoveSliceDuplicates(b *testing.B) {
 	largeSlice := generateRandomSlice(10000) // 10,000 elements
 
 	b.Run("SmallSlice", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			RemoveSliceDuplicates(smallSlice)
 		}
 	})
 
 	b.Run("MediumSlice", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			RemoveSliceDuplicates(mediumSlice)
 		}
 	})
 
 	b.Run("LargeSlice", func(b *testing.B) {
-		for i := 0; i < b.N; i++ {
+		for b.Loop() {
 			RemoveSliceDuplicates(largeSlice)
 		}
 	})
@@ -94,4 +71,62 @@ func generateRandomSlice(size int) []int {
 		slice[i] = rand.Intn(size / 2) // Introduce duplicates
 	}
 	return slice
+}
+
+func TestSlicesDifference(t *testing.T) {
+	a := []string{"hello", "example", "abc"}
+	b := []string{"hello", "world", "test1", "abc"}
+
+	added, removed := SlicesDifference(a, b)
+	assert.ElementsMatch(t, []string{"world", "test1"}, added)
+	assert.ElementsMatch(t, []string{"example"}, removed)
+
+	a = []string{"hello", "world", "abc"}
+	b = []string{"hello", "world", "abc"}
+
+	added, removed = SlicesDifference(a, b)
+	assert.Equal(t, []string{}, added)
+	assert.Equal(t, []string{}, removed)
+
+	a = []string{"hello", "world", "abc"}
+	b = []string{"hello", "hello", "world", "abc"}
+
+	added, removed = SlicesDifference(a, b)
+	assert.Equal(t, []string{}, added)
+	assert.Equal(t, []string{}, removed)
+}
+
+func TestSlicesDifferenceFunc(t *testing.T) {
+	a := []string{"hello", "example", "abc"}
+	b := []string{"hello", "world", "test1", "abc"}
+
+	keyFn := func(in string) string {
+		return in // Use the string itself as the key
+	}
+
+	added, removed := SlicesDifferenceFunc(a, b, keyFn)
+	assert.ElementsMatch(t, []string{"world", "test1"}, added)
+	assert.ElementsMatch(t, []string{"example"}, removed)
+
+	a = []string{"hello", "world", "abc"}
+	b = []string{"hello", "world", "abc"}
+
+	added, removed = SlicesDifferenceFunc(a, b, keyFn)
+	assert.Equal(t, []string{}, added)
+	assert.Equal(t, []string{}, removed)
+
+	a = []string{"hello", "world", "abc"}
+	b = []string{"hello", "hello", "world", "abc"}
+
+	added, removed = SlicesDifferenceFunc(a, b, keyFn)
+	assert.Equal(t, []string{}, added)
+	assert.Equal(t, []string{}, removed)
+
+	// Test with slices having duplicates
+	a = []string{"hello", "example", "example", "abc"}
+	b = []string{"hello", "world", "test1", "abc", "abc"}
+
+	added, removed = SlicesDifferenceFunc(a, b, keyFn)
+	assert.ElementsMatch(t, []string{"world", "test1"}, added)
+	assert.ElementsMatch(t, []string{"example"}, removed)
 }
