@@ -244,7 +244,8 @@ defineShortcuts({
         </template>
 
         <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
-            <CitizenInfoPopover :user="vehicle.owner" />
+            <p v-if="vehicle.jobLabel" class="text-gray-900 dark:text-white">{{ vehicle.jobLabel }}</p>
+            <CitizenInfoPopover v-if="vehicle.owner" :user="vehicle.owner" />
         </template>
 
         <template #actions-data="{ row: vehicle }">

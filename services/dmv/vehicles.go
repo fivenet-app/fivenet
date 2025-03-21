@@ -173,7 +173,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbdmv.ListVehiclesReques
 	}
 
 	for i := range resp.Vehicles {
-		s.enricher.EnrichJobName(resp.Vehicles[i])
+		if resp.Vehicles[i].Job != nil && *resp.Vehicles[i].Job != "" {
+			s.enricher.EnrichJobName(resp.Vehicles[i])
+		}
 	}
 
 	resp.Pagination.Update(len(resp.Vehicles))
