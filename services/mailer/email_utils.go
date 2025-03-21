@@ -97,8 +97,8 @@ func (s *Server) generateEmailProposals(ctx context.Context, userInfo *userinfo.
 		domains = append(domains, defaultDomain)
 		emails = append(emails, getBasicNameEmails(user.Firstname, user.Lastname)...)
 
-		// Generate version without "prefixes" in name (e.g., `Dr.`)
-		firstname := string(namePrefixCleaner.ReplaceAll([]byte(user.Firstname), []byte("")))
+		// Generate version with "prefixes" (e.g., `Dr.`) removed
+		firstname := utils.RemoveTitlePrefixes(user.Firstname)
 		if firstname != user.Firstname {
 			emails = append(emails, getBasicNameEmails(firstname, user.Lastname)...)
 		}

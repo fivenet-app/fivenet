@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"strings"
 	"unicode"
 	"unicode/utf8"
 )
@@ -28,4 +29,33 @@ func StringFirstToLower(s string) string {
 		return s
 	}
 	return string(lc) + s[size:]
+}
+
+var commonTitlePrefixes = []string{
+	"prof.", "prof ",
+	"dr.", "dr ",
+	"sr.", "sr ",
+}
+
+func RemoveTitlePrefixes(s string) string {
+	s = strings.TrimSpace(s)
+	prefixes := commonTitlePrefixes
+
+	for {
+		lower := strings.ToLower(s)
+		matched := false
+		for _, p := range prefixes {
+			if strings.HasPrefix(lower, p) {
+				// Remove using the original string slice
+				s = strings.TrimSpace(s[len(p):])
+				matched = true
+				break
+			}
+		}
+		if !matched {
+			break
+		}
+	}
+
+	return s
 }

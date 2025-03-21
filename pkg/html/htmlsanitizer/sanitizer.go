@@ -24,7 +24,8 @@ var (
 	colorRegex            = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
 
-	boolFalseRegex    = regexp.MustCompile(`(?i)^false$`)
+	boolFalseRegex = regexp.MustCompile(`(?i)^false$`)
+	// Includes "checked" because it seems some browsers use it
 	boolTrueRegex     = regexp.MustCompile(`(?i)^(true|checked)$`)
 	inputTypeCheckbox = regexp.MustCompile(`(?i)checkbox`)
 )

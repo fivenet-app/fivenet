@@ -48,7 +48,7 @@ func Test_Diff(t *testing.T) {
 			msg:    "\"Invalid\" HTML",
 		},
 	} {
-		out, err := differ.Diff(run.old, run.new)
+		out, err := differ.FancyDiff(run.old, run.new)
 		if run.error {
 			assert.Error(t, err)
 		} else {

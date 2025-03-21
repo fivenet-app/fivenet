@@ -166,7 +166,7 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 	diff := &documents.DocUpdated{}
 
 	if !strings.EqualFold(old.Title, new.Title) {
-		titleDiff, err := s.htmlDiff.Diff(old.Title, new.Title)
+		titleDiff, err := s.htmlDiff.FancyDiff(old.Title, new.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -176,7 +176,7 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 	}
 
 	if !strings.EqualFold(old.State, new.State) {
-		stateDiff, err := s.htmlDiff.Diff(old.State, new.State)
+		stateDiff, err := s.htmlDiff.FancyDiff(old.State, new.State)
 		if err != nil {
 			return nil, err
 		}
@@ -189,7 +189,7 @@ func (s *Server) generateDocumentDiff(old *documents.Document, new *documents.Do
 	if err != nil {
 		return nil, err
 	}
-	if d := content.DiffHTML(*old.Content.RawContent, newRawContent); d != "" {
+	if d := s.htmlDiff.PatchDiff(*old.Content.RawContent, newRawContent); d != "" {
 		diff.ContentDiff = &d
 	}
 

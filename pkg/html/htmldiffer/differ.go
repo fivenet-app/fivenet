@@ -1,9 +1,11 @@
 package htmldiffer
 
 import (
+	"html"
 	"regexp"
 	"strings"
 
+	"github.com/aymanbagabas/go-udiff"
 	htmldiff "github.com/documize/html-diff"
 	"go.uber.org/fx"
 )
@@ -32,7 +34,7 @@ func New() *Differ {
 	}
 }
 
-func (d *Differ) Diff(oldContent string, newContent string) (string, error) {
+func (d *Differ) FancyDiff(oldContent string, newContent string) (string, error) {
 	oldContent = brFixer.ReplaceAllString(oldContent, "<br/>")
 	newContent = brFixer.ReplaceAllString(newContent, "<br/>")
 	res, err := d.htmldiff.HTMLdiff([]string{oldContent, newContent})
@@ -48,4 +50,23 @@ func (d *Differ) Diff(oldContent string, newContent string) (string, error) {
 	}
 
 	return out, nil
+}
+
+var removeImgData = regexp.MustCompile(`(?i)data:image/[^"']+`)
+
+func (d *Differ) PatchDiff(old string, new string) string {
+	old = removeImgData.ReplaceAllString(old, "\"IMAGE_DATA_OMITTED\"")
+	old = strings.ReplaceAll(old, "<br/>", "<br>")
+	old = html.UnescapeString(old)
+
+	new = removeImgData.ReplaceAllString(new, "\"IMAGE_DATA_OMITTED\"")
+	new = strings.ReplaceAll(new, "<br/>", "<br>")
+	new = html.UnescapeString(new)
+
+	if strings.EqualFold(old, new) {
+		return ""
+	}
+
+	out := udiff.Unified("a", "b", old, new)
+	return out
 }

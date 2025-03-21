@@ -154,7 +154,7 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 	diff := &wiki.PageUpdated{}
 
 	if !strings.EqualFold(old.Meta.Title, new.Meta.Title) {
-		titleDiff, err := s.htmlDiff.Diff(old.Meta.Title, new.Meta.Title)
+		titleDiff, err := s.htmlDiff.FancyDiff(old.Meta.Title, new.Meta.Title)
 		if err != nil {
 			return nil, err
 		}
@@ -164,7 +164,7 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 	}
 
 	if !strings.EqualFold(old.Meta.Description, new.Meta.Description) {
-		descriptionDiff, err := s.htmlDiff.Diff(old.Meta.Description, new.Meta.Description)
+		descriptionDiff, err := s.htmlDiff.FancyDiff(old.Meta.Description, new.Meta.Description)
 		if err != nil {
 			return nil, err
 		}
@@ -177,7 +177,7 @@ func (s *Server) generatePageDiff(old *wiki.Page, new *wiki.Page) (*wiki.PageUpd
 	if err != nil {
 		return nil, err
 	}
-	if d := content.DiffHTML(*old.Content.RawContent, newRawContent); d != "" {
+	if d := s.htmlDiff.PatchDiff(*old.Content.RawContent, newRawContent); d != "" {
 		diff.ContentDiff = &d
 	}
 

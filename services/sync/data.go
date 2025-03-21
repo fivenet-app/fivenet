@@ -554,7 +554,7 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 
 	for _, vehicle := range data.Vehicles.Vehicles {
 		stmt = stmt.VALUES(
-			vehicle.Owner,
+			vehicle.OwnerId,
 			vehicle.Plate,
 			vehicle.Model,
 			vehicle.Type,

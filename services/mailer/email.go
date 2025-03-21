@@ -3,7 +3,6 @@ package mailer
 import (
 	"context"
 	"errors"
-	"regexp"
 	"slices"
 	"strings"
 	"time"
@@ -30,8 +29,6 @@ const (
 	emailLastChangedInterval = 14 * 24 * time.Hour
 	listEmailsPageSize       = 20
 )
-
-var namePrefixCleaner = regexp.MustCompile(`(Prof\.|Dr\.|Sr(\.| ))[ ]*`)
 
 var (
 	tEmails = table.FivenetMailerEmails.AS("email")

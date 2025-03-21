@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"database/sql/driver"
 	"fmt"
-	"regexp"
 	"slices"
 	"strings"
 
@@ -19,8 +18,6 @@ import (
 const (
 	Version_v0 = "v0"
 )
-
-var headerTagRegex = regexp.MustCompile(`(?i)^h[1-6]$`)
 
 // Scan implements driver.Valuer for protobuf Content.
 func (x *Content) Scan(value any) error {
@@ -127,10 +124,8 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 	switch htmlNode.Type {
 	case html.ElementNode:
 		n.Tag = htmlNode.Data
-		break
 
 	case html.DocumentNode:
-		break
 
 	default:
 		return fmt.Errorf("given node needs to be an element or document")
@@ -210,9 +205,9 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 		e = e.NextSibling
 	}
 
-	if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
+	if len(n.Tag) == 2 && utils.IsHeaderTag(n.Tag) {
 		// Either empty id or "broken" id tag
-		if n.Id == nil || *n.Id == "" || headerTagRegex.MatchString(n.Tag) {
+		if n.Id == nil || *n.Id == "" || utils.IsHeaderTag(*n.Id) {
 			if n.Text != nil && *n.Text != "" {
 				id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
 				n.Id = &id
@@ -251,9 +246,9 @@ func (n *JSONNode) populateTo(htmlNode *html.Node) {
 
 	if n.Id != nil && *n.Id != "" {
 		// Make sure that headers have id
-		if len(n.Tag) == 2 && headerTagRegex.MatchString(n.Tag) {
+		if len(n.Tag) == 2 && utils.IsHeaderTag(n.Tag) {
 			// Either empty id or "broken" id tag
-			if *n.Id == "" || headerTagRegex.MatchString(*n.Id) {
+			if *n.Id == "" || utils.IsHeaderTag(*n.Id) {
 				if n.Text != nil && *n.Text != "" {
 					id := utils.SlugNoDots(fmt.Sprintf("%s-%s", n.Tag, *n.Text))
 					n.Id = &id
