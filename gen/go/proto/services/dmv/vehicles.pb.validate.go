@@ -175,6 +175,21 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 
 	}
 
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
+			err := ListVehiclesRequestValidationError{
+				field:  "Job",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListVehiclesRequestMultiError(errors)
 	}

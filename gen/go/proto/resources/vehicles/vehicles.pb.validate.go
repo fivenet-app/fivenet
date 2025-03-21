@@ -145,6 +145,36 @@ func (m *Vehicle) validate(all bool) error {
 
 	}
 
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
+			err := VehicleValidationError{
+				field:  "Job",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.JobLabel != nil {
+
+		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
+			err := VehicleValidationError{
+				field:  "JobLabel",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return VehicleMultiError(errors)
 	}

@@ -39,6 +39,14 @@ export interface Vehicle {
      * @generated from protobuf field: optional resources.users.UserShort owner = 5;
      */
     owner?: UserShort;
+    /**
+     * @generated from protobuf field: optional string job = 7;
+     */
+    job?: string;
+    /**
+     * @generated from protobuf field: optional string job_label = 8;
+     */
+    jobLabel?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Vehicle$Type extends MessageType<Vehicle> {
@@ -49,7 +57,9 @@ class Vehicle$Type extends MessageType<Vehicle> {
             { no: 3, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 4, name: "owner_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "owner_identifier", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
-            { no: 5, name: "owner", kind: "message", T: () => UserShort }
+            { no: 5, name: "owner", kind: "message", T: () => UserShort },
+            { no: 7, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 8, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<Vehicle>): Vehicle {
@@ -83,6 +93,12 @@ class Vehicle$Type extends MessageType<Vehicle> {
                 case /* optional resources.users.UserShort owner */ 5:
                     message.owner = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.owner);
                     break;
+                case /* optional string job */ 7:
+                    message.job = reader.string();
+                    break;
+                case /* optional string job_label */ 8:
+                    message.jobLabel = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -113,6 +129,12 @@ class Vehicle$Type extends MessageType<Vehicle> {
         /* optional resources.users.UserShort owner = 5; */
         if (message.owner)
             UserShort.internalBinaryWrite(message.owner, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string job = 7; */
+        if (message.job !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 8; */
+        if (message.jobLabel !== undefined)
+            writer.tag(8, WireType.LengthDelimited).string(message.jobLabel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

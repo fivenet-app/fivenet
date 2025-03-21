@@ -41,6 +41,10 @@ export interface ListVehiclesRequest {
      * @generated from protobuf field: optional int32 user_id = 5;
      */
     userId?: number;
+    /**
+     * @generated from protobuf field: optional string job = 6;
+     */
+    job?: string;
 }
 /**
  * @generated from protobuf message services.dmv.ListVehiclesResponse
@@ -63,7 +67,8 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
             { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
-            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } }
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 0 } } } },
+            { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
     create(value?: PartialMessage<ListVehiclesRequest>): ListVehiclesRequest {
@@ -92,6 +97,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
                 case /* optional int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
+                case /* optional string job */ 6:
+                    message.job = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -119,6 +127,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         /* optional int32 user_id = 5; */
         if (message.userId !== undefined)
             writer.tag(5, WireType.Varint).int32(message.userId);
+        /* optional string job = 6; */
+        if (message.job !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.job);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

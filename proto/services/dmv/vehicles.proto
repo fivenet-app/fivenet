@@ -15,6 +15,7 @@ message ListVehiclesRequest {
   optional string license_plate = 3 [(validate.rules).string.max_len = 32];
   optional string model = 4 [(validate.rules).string.max_len = 32];
   optional int32 user_id = 5 [(validate.rules).int32.gte = 0];
+  optional string job = 6 [(validate.rules).string.max_len = 20];
 }
 
 message ListVehiclesResponse {

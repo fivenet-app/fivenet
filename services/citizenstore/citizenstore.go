@@ -216,7 +216,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *pbcitizenstore.ListCitiz
 	resp.Pagination.Update(len(resp.Users))
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Users); i++ {
+	for i := range resp.Users {
 		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 			resp.Users[i].Job = *resp.Users[i].Props.JobName
 			if resp.Users[i].Props.JobGradeNumber != nil {

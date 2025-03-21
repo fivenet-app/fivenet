@@ -6162,6 +6162,8 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `owner_id` | [int32](#int32) | optional |  |
 | `owner_identifier` | [string](#string) | optional |  |
 | `owner` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `job` | [string](#string) | optional |  |
+| `job_label` | [string](#string) | optional |  |
 
 
 
@@ -9273,6 +9275,7 @@ Auth Service handles user authentication, character selection and oauth2 connect
 | `license_plate` | [string](#string) | optional | Search params |
 | `model` | [string](#string) | optional |  |
 | `user_id` | [int32](#int32) | optional |  |
+| `job` | [string](#string) | optional |  |
 
 
 

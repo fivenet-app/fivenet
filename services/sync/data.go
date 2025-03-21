@@ -61,6 +61,10 @@ func (s *Server) SendData(ctx context.Context, req *pbsync.SendDataRequest) (*pb
 }
 
 func (s *Server) handleJobsData(ctx context.Context, data *pbsync.SendDataRequest_Jobs) (int64, error) {
+	if len(data.Jobs.Jobs) == 0 {
+		return 0, nil
+	}
+
 	tJobs := tables.Jobs()
 
 	stmt := tJobs.
@@ -270,6 +274,10 @@ func (s *Server) handleJobGrades(ctx context.Context, job *users.Job) (int64, er
 }
 
 func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRequest_Licenses) (int64, error) {
+	if len(data.Licenses.Licenses) == 0 {
+		return 0, nil
+	}
+
 	tLicenses := tables.Licenses()
 
 	stmt := tLicenses.
@@ -288,7 +296,7 @@ func (s *Server) handleLicensesData(ctx context.Context, data *pbsync.SendDataRe
 		)
 	}
 
-	// ??? Shoud we delete jobs, that are not part of the list, from the database?
+	// ??? Shoud we delete licenses, that are not part of the list, from the database?
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {
@@ -537,36 +545,64 @@ func (s *Server) handleUserLicenses(ctx context.Context, identifier string, lice
 }
 
 func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRequest_Vehicles) (int64, error) {
+	if len(data.Vehicles.Vehicles) == 0 {
+		return 0, nil
+	}
+
 	tVehicles := tables.OwnedVehicles()
 
-	stmt := tVehicles.
-		INSERT(
-			tVehicles.Owner,
-			tVehicles.Plate,
-			tVehicles.Model,
-			tVehicles.Type,
-		).
+	var stmt jet.InsertStatement
+	if !tables.ESXCompatEnabled {
+		stmt = tVehicles.
+			INSERT(
+				tVehicles.Owner,
+				tVehicles.Plate,
+				tVehicles.Model,
+				tVehicles.Type,
+				tVehicles.Job,
+				tVehicles.Data,
+			)
+	} else {
+		stmt = tVehicles.
+			INSERT(
+				tVehicles.Owner,
+				tVehicles.Plate,
+				tVehicles.Model,
+				tVehicles.Type,
+			)
+	}
+
+	for _, vehicle := range data.Vehicles.Vehicles {
+		var ownerId jet.Expression
+		if vehicle.OwnerIdentifier != nil && *vehicle.OwnerIdentifier != "" {
+			ownerId = jet.String(*vehicle.OwnerIdentifier)
+		} else if vehicle.OwnerId != nil {
+			ownerId = jet.Int32(*vehicle.OwnerId)
+		}
+
+		values := []interface{}{
+			ownerId,
+			vehicle.Plate,
+			vehicle.Model,
+			vehicle.Type,
+		}
+
+		if !tables.ESXCompatEnabled {
+			values = append(values,
+				vehicle.Job,
+				jet.NULL,
+			)
+		}
+
+		stmt = stmt.VALUES(values[0], values[1:]...)
+	}
+
+	stmt = stmt.
 		ON_DUPLICATE_KEY_UPDATE(
 			tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
 			tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
 			tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
 		)
-
-	for _, vehicle := range data.Vehicles.Vehicles {
-		var ownerId jet.Expression
-		if vehicle.Owner != nil && vehicle.Owner.Identifier != nil && *vehicle.Owner.Identifier != "" {
-			ownerId = jet.String(*vehicle.Owner.Identifier)
-		} else if vehicle.OwnerId != nil {
-			ownerId = jet.Int32(*vehicle.OwnerId)
-		}
-
-		stmt = stmt.VALUES(
-			ownerId,
-			vehicle.Plate,
-			vehicle.Model,
-			vehicle.Type,
-		)
-	}
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {

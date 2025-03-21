@@ -53,6 +53,11 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbdmv.ListVehiclesReques
 			tUsers.ID.EQ(jet.Int32(*req.UserId)),
 		)
 		userCondition = jet.AND(userCondition, tUsers.ID.EQ(jet.Int32(*req.UserId)))
+	} else if req.Job != nil && *req.Job != "" && !tables.ESXCompatEnabled {
+		logRequest = true
+		condition = jet.AND(condition,
+			tVehicles.Job.EQ(jet.String(*req.Job)),
+		)
 	}
 
 	if logRequest {
@@ -126,6 +131,13 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbdmv.ListVehiclesReques
 		tUsers.Dateofbirth,
 	}
 
+	if !tables.ESXCompatEnabled {
+		columns = append(columns,
+			tVehicles.Job,
+			tVehicles.Data,
+		)
+	}
+
 	// Field Permission Check
 	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
@@ -158,6 +170,10 @@ func (s *Server) ListVehicles(ctx context.Context, req *pbdmv.ListVehiclesReques
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Vehicles); err != nil {
 		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
+	}
+
+	for i := range resp.Vehicles {
+		s.enricher.EnrichJobName(resp.Vehicles[i])
 	}
 
 	resp.Pagination.Update(len(resp.Vehicles))
