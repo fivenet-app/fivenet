@@ -175,11 +175,13 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 
     const map = currentValue.validValues.jobGradeList.jobs;
 
+    console.log(grade);
     map[job.name] = grade.grade;
-    if (!job.grades[grade.grade - 1]) {
+    const idx = job.grades.findIndex((g) => g.grade === grade.grade);
+    if (idx === -1) {
         return;
     }
-    jobGrades.value.set(job.name, job.grades[grade.grade - 1]!);
+    jobGrades.value.set(job.name, job.grades[idx]!);
 
     currentValue.validValues.jobGradeList.jobs = map;
     states.value.set(id.value, currentValue);
@@ -321,8 +323,7 @@ const { game } = useAppConfig();
                                                 (g) =>
                                                     maxValues &&
                                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) +
-                                                        1 >
+                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? game.startJobGrade) >
                                                         g.grade,
                                             )
                                         "
@@ -335,10 +336,13 @@ const { game } = useAppConfig();
                                         <template #label>
                                             <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
                                                 <span class="truncate text-gray-900 dark:text-white">{{
-                                                    job.grades[
-                                                        (currentValue.validValues.jobGradeList.jobs[job.name] ??
-                                                            game.startJobGrade) - 1
-                                                    ]?.label ?? $t('common.na')
+                                                    job.grades.find(
+                                                        (g) =>
+                                                            currentValue.validValues.oneofKind === 'jobGradeList' &&
+                                                            g.grade ===
+                                                                (currentValue.validValues.jobGradeList.jobs[job.name] ??
+                                                                    game.startJobGrade),
+                                                    )?.label ?? $t('common.na')
                                                 }}</span>
                                             </template>
                                         </template>

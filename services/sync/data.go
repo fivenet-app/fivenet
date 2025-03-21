@@ -600,14 +600,9 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 			tLocations.X,
 			tLocations.Y,
 			tLocations.Hidden,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tLocations.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tLocations.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
-			tLocations.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
-			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
 		)
 
+	atLeastOne := false
 	toDelete := []string{}
 	for _, location := range data.UserLocations.Users {
 		// Collect user locations are marked for removal
@@ -624,15 +619,28 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 				location.Coords.Y,
 				location.Hidden,
 			)
+		atLeastOne = true
 	}
 
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return 0, err
-	}
-	rowsAffected, err := res.RowsAffected()
-	if err != nil {
-		return 0, err
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(
+			tLocations.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tLocations.X.SET(jet.FloatExp(jet.Raw("VALUES(`x`)"))),
+			tLocations.Y.SET(jet.FloatExp(jet.Raw("VALUES(`y`)"))),
+			tLocations.Hidden.SET(jet.BoolExp(jet.Raw("VALUES(`hidden`)"))),
+		)
+
+	rowsAffected := int64(0)
+	if atLeastOne {
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return 0, err
+		}
+
+		rowsAffected, err = res.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	// Delete any user locations that have been marked for removal
