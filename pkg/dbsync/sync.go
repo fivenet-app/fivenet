@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/XSAM/otelsql"
@@ -38,10 +39,14 @@ type Sync struct {
 	logger *zap.Logger
 	db     *sql.DB
 
-	acfg  *config.Config
-	cfg   *DBSync
-	state *DBSyncState
-	cli   pbsync.SyncServiceClient
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	acfg    *config.Config
+	cfg     atomic.Pointer[DBSyncConfig]
+	state   *DBSyncState
+	cli     *grpc.ClientConn
+	syncCli pbsync.SyncServiceClient
 
 	jobs     *jobsSync
 	licenses *licensesSync
@@ -54,7 +59,8 @@ type Sync struct {
 type Params struct {
 	fx.In
 
-	LC fx.Lifecycle
+	LC         fx.Lifecycle
+	Shutdowner fx.Shutdowner
 
 	Logger *zap.Logger
 	Config *config.Config
@@ -66,25 +72,22 @@ func New(p Params) (*Sync, error) {
 
 		logger: p.Logger.Named("dbsync"),
 		acfg:   p.Config,
+		cfg:    atomic.Pointer[DBSyncConfig]{},
 
 		streamCh: make(chan *pbsync.StreamResponse, 12),
 	}
 
-	if err := s.loadConfig(); err != nil {
+	if err := s.loadConfig(p.Shutdowner); err != nil {
 		return nil, err
 	}
 
-	if !s.cfg.Enabled {
-		return nil, fmt.Errorf("dbsync is disabled in config")
-	}
-
 	// Load dbsync state from file if exists
-	s.state = NewDBSyncState(s.logger, s.cfg.StateFile)
+	s.state = NewDBSyncState(s.logger, s.cfg.Load().StateFile)
 	if err := s.state.Load(); err != nil {
 		return nil, err
 	}
 
-	dsn, err := dsn.PrepareDSN(s.cfg.Source.DSN)
+	dsn, err := dsn.PrepareDSN(s.cfg.Load().Source.DSN)
 	if err != nil {
 		return nil, err
 	}
@@ -112,62 +115,15 @@ func New(p Params) (*Sync, error) {
 	// Setup SQL Prometheus metrics collector
 	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
-	// Create GRPC client for sync if destination is given
-	if s.cfg.Destination.URL != "" {
-		transportCreds := insecure.NewCredentials()
-		if !s.cfg.Destination.Insecure {
-			transportCreds = credentials.NewTLS(&tls.Config{
-				ClientAuth: tls.NoClientCert,
-			})
-		}
+	s.ctx, s.cancel = context.WithCancel(context.Background())
 
-		cli, err := grpc.NewClient(s.cfg.Destination.URL,
-			grpc.WithTransportCredentials(transportCreds),
-			// Require transport security for release mode
-			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Destination.Token, s.acfg.Mode == "release")),
-		)
-		if err != nil {
-			return nil, err
-		}
-		s.cli = pbsync.NewSyncServiceClient(cli)
-	}
-
-	// Setup table syncers
-	syncer := &syncer{
-		logger: s.logger,
-		db:     s.db,
-		cfg:    s.cfg,
-		cli:    s.cli,
-	}
-	s.jobs = newJobsSync(syncer, s.state.Jobs)
-	s.licenses = newLicensesSync(syncer, s.state.Licenses)
-	s.users = newUsersSync(syncer, s.state.Users)
-	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
-
-	ctx, cancel := context.WithCancel(context.Background())
-
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		s.wg.Add(1)
-		go s.Run(ctx)
-
-		if s.cli != nil {
-			s.wg.Add(1)
-			go s.RunStream(ctx)
-		}
-
-		return nil
-	}))
-
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
-
-		s.wg.Wait()
-
-		if err := s.state.Save(); err != nil {
+	p.LC.Append(fx.StartHook(s.start))
+	p.LC.Append(fx.StopHook(func() error {
+		if err := s.stop(); err != nil {
 			return err
 		}
 
-		if err := db.Close(); err != nil {
+		if err := s.db.Close(); err != nil {
 			return err
 		}
 
@@ -175,6 +131,89 @@ func New(p Params) (*Sync, error) {
 	}))
 
 	return s, nil
+}
+
+func (s *Sync) createGRPCClient() error {
+	// Create GRPC client for sync if destination is given
+	if s.cfg.Load().Destination.URL != "" {
+		transportCreds := insecure.NewCredentials()
+		if !s.cfg.Load().Destination.Insecure {
+			transportCreds = credentials.NewTLS(&tls.Config{
+				ClientAuth: tls.NoClientCert,
+			})
+		}
+
+		cli, err := grpc.NewClient(s.cfg.Load().Destination.URL,
+			grpc.WithTransportCredentials(transportCreds),
+			// Require transport security for release mode
+			grpc.WithPerRPCCredentials(auth.NewClientTokenAuth(s.cfg.Load().Destination.Token, s.acfg.Mode == "release")),
+		)
+		if err != nil {
+			return err
+		}
+		s.cli = cli
+		s.syncCli = pbsync.NewSyncServiceClient(cli)
+	}
+
+	return nil
+}
+
+func (s *Sync) start() error {
+	if err := s.createGRPCClient(); err != nil {
+		return err
+	}
+
+	// Setup table syncers
+	syncer := &syncer{
+		logger: s.logger,
+		db:     s.db,
+		cfg:    s.cfg.Load(),
+		cli:    s.syncCli,
+	}
+	s.jobs = newJobsSync(syncer, s.state.Jobs)
+	s.licenses = newLicensesSync(syncer, s.state.Licenses)
+	s.users = newUsersSync(syncer, s.state.Users)
+	s.vehicles = newVehiclesSync(syncer, s.state.OwnedVehicles)
+
+	s.wg.Add(1)
+	go s.Run(s.ctx)
+
+	if s.syncCli != nil {
+		s.wg.Add(1)
+		go s.RunStream(s.ctx)
+	}
+
+	return nil
+}
+
+func (s *Sync) stop() error {
+	s.cancel()
+
+	s.wg.Wait()
+
+	s.cli.Close()
+
+	if err := s.state.Save(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Sync) restart() error {
+	s.logger.Info("stopping sync process")
+	if err := s.stop(); err != nil {
+		return err
+	}
+	s.logger.Info("stopped sync process")
+
+	s.logger.Info("starting sync process")
+	if err := s.start(); err != nil {
+		return err
+	}
+	s.logger.Info("sync process started")
+
+	return nil
 }
 
 func (s *Sync) Run(ctx context.Context) {
@@ -232,12 +271,12 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-ctx.Done():
 				return
 
-			case <-time.After(s.cfg.GetSyncInterval(&s.cfg.Tables.Users)):
+			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Users)):
 			}
 		}
 	}()
 
-	// Owned Vehicles data sync loop
+	// Vehicles data sync loop
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
@@ -251,7 +290,7 @@ func (s *Sync) run(ctx context.Context) error {
 			case <-ctx.Done():
 				return
 
-			case <-time.After(s.cfg.GetSyncInterval(&s.cfg.Tables.Vehicles)):
+			case <-time.After(s.cfg.Load().GetSyncInterval(&s.cfg.Load().Tables.Vehicles)):
 			}
 		}
 	}()

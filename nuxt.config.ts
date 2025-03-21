@@ -261,7 +261,7 @@ export default defineNuxtConfig({
             iconifyApiEndpoint: 'https://api.iconify.design',
             provider: 'iconify',
             clientBundle: {
-                scan: false,
+                scan: true,
             },
         },
     },

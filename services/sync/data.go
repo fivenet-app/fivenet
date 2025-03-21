@@ -597,12 +597,22 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 		stmt = stmt.VALUES(values[0], values[1:]...)
 	}
 
-	stmt = stmt.
-		ON_DUPLICATE_KEY_UPDATE(
-			tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
-			tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
-			tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+	assignments := []jet.ColumnAssigment{
+		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`owner`)"))),
+		tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
+		tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
+		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
+	}
+
+	if !tables.ESXCompatEnabled {
+		assignments = append(assignments,
+			tVehicles.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tVehicles.Data.SET(jet.StringExp(jet.Raw("VALUES(`data`)"))),
 		)
+	}
+
+	stmt = stmt.
+		ON_DUPLICATE_KEY_UPDATE(assignments...)
 
 	res, err := stmt.ExecContext(ctx, s.db)
 	if err != nil {

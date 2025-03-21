@@ -6,10 +6,13 @@ import (
 	"time"
 
 	"github.com/creasty/defaults"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
-func (s *Sync) loadConfig() error {
+func (s *Sync) loadConfig(shutdowner fx.Shutdowner) error {
 	v := viper.New()
 	// Viper config reading setup
 	v.SetEnvPrefix("FIVENET")
@@ -23,27 +26,52 @@ func (s *Sync) loadConfig() error {
 		v.AddConfigPath("/config")
 	}
 
-	// Find and read the dbsync config file
-	if err := v.ReadInConfig(); err != nil {
-		return fmt.Errorf("fatal error config file: %w", err)
+	loadConfig := func() error {
+		// Find and read the dbsync config file
+		if err := v.ReadInConfig(); err != nil {
+			return fmt.Errorf("fatal error config file: %w", err)
+		}
+
+		c := &DBSyncConfig{}
+		if err := defaults.Set(c); err != nil {
+			return fmt.Errorf("failed to set config defaults: %w", err)
+		}
+
+		if err := v.Unmarshal(c); err != nil {
+			return fmt.Errorf("failed to unmarshal config: %w", err)
+		}
+
+		s.cfg.Store(c)
+
+		return nil
 	}
 
-	c := &DBSync{}
-	if err := defaults.Set(c); err != nil {
-		return fmt.Errorf("failed to set config defaults: %w", err)
+	if err := loadConfig(); err != nil {
+		return err
 	}
 
-	if err := v.Unmarshal(c); err != nil {
-		return fmt.Errorf("failed to unmarshal config: %w", err)
-	}
+	v.WatchConfig()
+	v.OnConfigChange(func(_ fsnotify.Event) {
+		s.logger.Info("config change detected, reloading config")
+		if err := loadConfig(); err != nil {
+			s.logger.Error("failed to hot reload config", zap.Error(err))
+			return
+		}
 
-	s.cfg = c
+		if err := s.restart(); err != nil {
+			if err := shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+				s.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
+			}
+			s.logger.Error("failed to restart dbsync", zap.Error(err))
+			return
+		}
+	})
 
 	return nil
 }
 
-type DBSync struct {
-	Enabled bool `default:"false" yaml:"enabled"`
+type DBSyncConfig struct {
+	WatchConfig bool `default:"true" yaml:"watchConfig"`
 
 	StateFile string `default:"dbsync.state.yaml" yaml:"stateFile"`
 
@@ -132,7 +160,7 @@ type DBSyncTableSyncInterval interface {
 	GetSyncInterval() *time.Duration
 }
 
-func (c *DBSync) GetSyncInterval(table DBSyncTableSyncInterval) time.Duration {
+func (c *DBSyncConfig) GetSyncInterval(table DBSyncTableSyncInterval) time.Duration {
 	if table != nil && table.GetSyncInterval() != nil {
 		interval := table.GetSyncInterval()
 		return *interval

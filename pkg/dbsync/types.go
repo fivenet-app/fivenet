@@ -11,7 +11,7 @@ type syncer struct {
 	logger *zap.Logger
 	db     *sql.DB
 
-	cfg *DBSync
+	cfg *DBSyncConfig
 
 	cli pbsync.SyncServiceClient
 }

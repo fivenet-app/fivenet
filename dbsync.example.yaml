@@ -1,4 +1,4 @@
-enabled: true
+watchConfig: true
 
 stateFile: "dbsync.state.yaml"
 
@@ -10,6 +10,7 @@ destination:
   # Sync Interval can also be specified per table
   syncInterval: 5s
 
+# Changes to the source require a restart of the dbsync
 source:
   # Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   # Please note that the `parseTime` parameter is allows set to true
@@ -114,7 +115,7 @@ tables:
       LIMIT $limit
       OFFSET $offset;
   vehicles:
-    # Must return `owner_id`, `plate`, `type`, `model` columns
+    # Must return `owner_id` or `owner_identifier`, `plate`, `type`, `model` columns
     enabled: true
     query: |
       SELECT

@@ -34,7 +34,7 @@ func (s *Sync) RunStream(ctx context.Context) {
 }
 
 func (s *Sync) runStream(ctx context.Context) error {
-	stream, err := s.cli.Stream(ctx, &pbsync.StreamRequest{})
+	stream, err := s.syncCli.Stream(ctx, &pbsync.StreamRequest{})
 	if err != nil {
 		return err
 	}

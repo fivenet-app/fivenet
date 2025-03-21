@@ -71,7 +71,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["db-sync"],
+            "args": ["dbsync"],
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
