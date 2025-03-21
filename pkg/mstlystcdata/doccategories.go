@@ -3,6 +3,7 @@ package mstlystcdata
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strconv"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
@@ -10,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/multierr"
@@ -106,7 +108,9 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 
 	var dest []*documents.Category
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	errs := multierr.Combine()

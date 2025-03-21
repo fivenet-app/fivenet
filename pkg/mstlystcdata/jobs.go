@@ -3,6 +3,7 @@ package mstlystcdata
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"slices"
 	"strings"
 	"sync"
@@ -16,6 +17,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/go-jet/jet/v2/qrm"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -32,8 +34,7 @@ type Jobs struct {
 	store *store.Store[users.Job, *users.Job]
 	store.StoreRO[users.Job, *users.Job]
 
-	mu    sync.Mutex
-	index bleve.Index
+	updateCallbacks []updateCallbackFn
 }
 
 type Params struct {
@@ -57,14 +58,8 @@ func NewJobs(p Params) (*Jobs, error) {
 
 		tracer: p.TP.Tracer("mstlystcdata-cache"),
 
-		mu: sync.Mutex{},
+		updateCallbacks: []updateCallbackFn{},
 	}
-
-	index, err := c.newSearchIndex()
-	if err != nil {
-		return nil, err
-	}
-	c.index = index
 
 	ctxCancel, cancel := context.WithCancel(context.Background())
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
@@ -95,9 +90,10 @@ func NewJobs(p Params) (*Jobs, error) {
 				return err
 			}
 
-			if err := c.loadDataIntoIndex(ctx); err != nil {
-				c.logger.Error("failed to load jobs into index", zap.Error(err))
-				return err
+			for _, fn := range c.updateCallbacks {
+				if err := fn(ctx); err != nil {
+					return err
+				}
 			}
 
 			return nil
@@ -120,17 +116,6 @@ func NewJobs(p Params) (*Jobs, error) {
 	}))
 
 	return c, nil
-}
-
-func (c *Jobs) newSearchIndex() (bleve.Index, error) {
-	indexMapping := bleve.NewIndexMapping()
-
-	jobMapping := bleve.NewDocumentMapping()
-	gradesMapping := bleve.NewDocumentMapping()
-	jobMapping.AddSubDocumentMapping("grades", gradesMapping)
-	indexMapping.AddDocumentMapping("job", jobMapping)
-
-	return bleve.NewMemOnly(indexMapping)
 }
 
 func (c *Jobs) loadJobs(ctx context.Context) error {
@@ -157,7 +142,9 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 
 	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	// No jobs found in database, remove all from cache
@@ -196,7 +183,90 @@ func (c *Jobs) loadJobs(ctx context.Context) error {
 	return errs
 }
 
-func (c *Jobs) loadDataIntoIndex(ctx context.Context) error {
+type updateCallbackFn func(ctx context.Context) error
+
+// Only call during init/fx startup hooks!
+func (c *Jobs) addUpdateCallback(fn updateCallbackFn) {
+	c.updateCallbacks = append(c.updateCallbacks, fn)
+}
+
+func (c *Jobs) GetHighestJobGrade(job string) *users.JobGrade {
+	j, ok := c.Get(job)
+	if !ok {
+		return nil
+	}
+
+	if len(j.Grades) == 0 {
+		return nil
+	}
+
+	return j.Grades[len(j.Grades)-1]
+}
+
+type JobsSearchParams struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger *zap.Logger
+
+	Jobs *Jobs
+}
+
+type JobsSearch struct {
+	logger *zap.Logger
+
+	mu    sync.Mutex
+	index bleve.Index
+
+	*Jobs
+}
+
+func NewJobsSearch(p JobsSearchParams) (*JobsSearch, error) {
+	c := &JobsSearch{
+		logger: p.Logger,
+
+		mu:   sync.Mutex{},
+		Jobs: p.Jobs,
+	}
+
+	index, err := c.newSearchIndex()
+	if err != nil {
+		return nil, err
+	}
+	c.index = index
+
+	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
+		var err error
+		c.index, err = c.newSearchIndex()
+		if err != nil {
+			return err
+		}
+
+		c.Jobs.addUpdateCallback(c.loadDataIntoIndex)
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		return nil
+	}))
+
+	return c, nil
+}
+
+func (c *JobsSearch) newSearchIndex() (bleve.Index, error) {
+	indexMapping := bleve.NewIndexMapping()
+
+	jobMapping := bleve.NewDocumentMapping()
+	gradesMapping := bleve.NewDocumentMapping()
+	jobMapping.AddSubDocumentMapping("grades", gradesMapping)
+	indexMapping.AddDocumentMapping("job", jobMapping)
+
+	return bleve.NewMemOnly(indexMapping)
+}
+
+func (c *JobsSearch) loadDataIntoIndex(ctx context.Context) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
@@ -204,7 +274,7 @@ func (c *Jobs) loadDataIntoIndex(ctx context.Context) error {
 
 	batch := c.index.NewBatch()
 	// Fill jobs search from cache
-	c.Range(ctx, func(key string, value *users.Job) bool {
+	c.Jobs.Range(ctx, func(key string, value *users.Job) bool {
 		batch.Delete(key)
 
 		if err := batch.Index(key, value); err != nil {
@@ -221,20 +291,7 @@ func (c *Jobs) loadDataIntoIndex(ctx context.Context) error {
 	return errs
 }
 
-func (c *Jobs) GetHighestJobGrade(job string) *users.JobGrade {
-	j, ok := c.Get(job)
-	if !ok {
-		return nil
-	}
-
-	if len(j.Grades) == 0 {
-		return nil
-	}
-
-	return j.Grades[len(j.Grades)-1]
-}
-
-func (c *Jobs) Search(ctx context.Context, search string, exactMatch bool) ([]*users.Job, error) {
+func (c *JobsSearch) Search(ctx context.Context, search string, exactMatch bool) ([]*users.Job, error) {
 	var searchQuery query.Query
 	if search == "" {
 		searchQuery = bleve.NewMatchAllQuery()
@@ -262,7 +319,7 @@ func (c *Jobs) Search(ctx context.Context, search string, exactMatch bool) ([]*u
 
 	jobs := []*users.Job{}
 	for _, result := range result.Hits {
-		job, ok := c.Get(result.ID)
+		job, ok := c.Jobs.Get(result.ID)
 		if !ok {
 			c.logger.Error("no job found for search result id", zap.String("job", result.ID))
 			continue

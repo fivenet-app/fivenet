@@ -121,12 +121,12 @@ func (s *Server) CompleteJobs(ctx context.Context, req *pbcompletor.CompleteJobs
 	resp := &pbcompletor.CompleteJobsResponse{}
 	if search != "" {
 		var err error
-		resp.Jobs, err = s.jobs.Search(ctx, search, exactMatch)
+		resp.Jobs, err = s.jobsS.Search(ctx, search, exactMatch)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscompletor.ErrFailedSearch)
 		}
 	} else {
-		resp.Jobs = s.jobs.List()
+		resp.Jobs = s.jobsS.List()
 	}
 
 	return resp, nil

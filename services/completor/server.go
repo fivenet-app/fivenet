@@ -17,7 +17,7 @@ type Server struct {
 
 	db       *sql.DB
 	p        perms.Permissions
-	jobs     *mstlystcdata.Jobs
+	jobsS    *mstlystcdata.JobsSearch
 	laws     *mstlystcdata.Laws
 	tracker  tracker.ITracker
 	enricher *mstlystcdata.UserAwareEnricher
@@ -28,20 +28,20 @@ type Server struct {
 type Params struct {
 	fx.In
 
-	DB       *sql.DB
-	Perms    perms.Permissions
-	Jobs     *mstlystcdata.Jobs
-	Laws     *mstlystcdata.Laws
-	Tracker  tracker.ITracker
-	Enricher *mstlystcdata.UserAwareEnricher
-	Config   *config.Config
+	DB         *sql.DB
+	Perms      perms.Permissions
+	JobsSearch *mstlystcdata.JobsSearch
+	Laws       *mstlystcdata.Laws
+	Tracker    tracker.ITracker
+	Enricher   *mstlystcdata.UserAwareEnricher
+	Config     *config.Config
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
 		db:       p.DB,
 		p:        p.Perms,
-		jobs:     p.Jobs,
+		jobsS:    p.JobsSearch,
 		laws:     p.Laws,
 		tracker:  p.Tracker,
 		enricher: p.Enricher,

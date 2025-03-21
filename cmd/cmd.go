@@ -134,6 +134,7 @@ func getFxBaseOpts(startTimeout time.Duration, withServer bool) []fx.Option {
 		fx.Provide(
 			mstlystcdata.NewDocumentCategories,
 			mstlystcdata.NewJobs,
+			mstlystcdata.NewJobsSearch,
 			mstlystcdata.NewLaws,
 			mstlystcdata.NewEnricher,
 			mstlystcdata.NewUserAwareEnricher,
