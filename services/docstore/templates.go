@@ -425,6 +425,11 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *pbdocstore.UpdateTempl
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
+	tmpl.JobAccess, err = s.templateAccess.Jobs.List(ctx, s.db, req.Template.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &pbdocstore.UpdateTemplateResponse{

@@ -98,6 +98,7 @@ async function setFromProps(): Promise<void> {
                 examMode: QualificationExamMode.UNSPECIFIED,
                 requirements: [],
                 weight: 0,
+                public: false,
             };
         }
     } else if (entry.value.type === 'job') {
@@ -270,16 +271,18 @@ watch(props, () => setFromProps());
             <UFormGroup name="minimumGrade" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
-                        v-model="entry.minimumGrade"
+                        :model-value="
+                            jobs.find((j) => j.name === entry.job)?.grades.find((g) => g.grade === entry.minimumGrade)
+                        "
                         :disabled="disabled || !entry.job"
                         class="flex-1"
                         option-attribute="label"
-                        value-attribute="grade"
                         searchable
                         :search-attributes="['name', 'label']"
                         :options="jobs.find((j) => j.name === entry.job)?.grades ?? []"
                         :placeholder="$t('common.rank')"
                         :searchable-placeholder="$t('common.search_field')"
+                        @update:model-value="entry.minimumGrade = $event?.grade ?? undefined"
                     >
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

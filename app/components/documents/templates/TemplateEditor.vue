@@ -245,11 +245,11 @@ function setValuesFromTemplate(tpl: Template): void {
     state.content = tpl.content;
     state.contentState = tpl.state;
     state.category = tpl.category;
+    state.jobAccess = tpl.jobAccess;
     state.contentAccess = tpl.contentAccess ?? {
         jobs: [],
         users: [],
     };
-    state.jobAccess = tpl.jobAccess;
 
     const autoCloseDuration = fromDuration(tpl.workflow?.autoCloseSettings?.duration);
     state.workflow = {

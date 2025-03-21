@@ -12,5 +12,8 @@ message Vehicle {
   optional string model = 2 [(validate.rules).string.max_len = 64];
   string type = 3 [(validate.rules).string.max_len = 32];
   optional int32 owner_id = 4;
-  resources.users.UserShort owner = 5;
+  optional string owner_identifier = 6 [(validate.rules).string.max_len = 64];
+  optional resources.users.UserShort owner = 5;
+  optional string job = 7 [(validate.rules).string.max_len = 20];
+  optional string job_label = 8 [(validate.rules).string.max_len = 50];
 }
