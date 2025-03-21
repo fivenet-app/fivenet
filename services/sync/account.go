@@ -89,6 +89,7 @@ func (s *Server) RegisterAccount(ctx context.Context, req *pbsync.RegisterAccoun
 			UPDATE().
 			SET(
 				tAccounts.Password.SET(jet.StringExp(jet.NULL)),
+				tAccounts.RegToken.SET(jet.String(regToken)),
 			).
 			WHERE(jet.AND(
 				tAccounts.ID.EQ(jet.Uint64(acc.Id)),
