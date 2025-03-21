@@ -1,17 +1,13 @@
 package utils
 
-func RemoveSliceDuplicates[T comparable](in []T) []T {
-	allKeys := make(map[T]bool)
-	list := []T{}
+import (
+	"cmp"
+	"slices"
+)
 
-	for _, item := range in {
-		if _, value := allKeys[item]; !value {
-			allKeys[item] = true
-			list = append(list, item)
-		}
-	}
-
-	return list
+func RemoveSliceDuplicates[T ~[]E, E cmp.Ordered](in T) T {
+	slices.Sort(in)
+	return slices.Compact(in)
 }
 
 // SlicesDifference duplicates of values are ignored

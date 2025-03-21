@@ -553,8 +553,15 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 		)
 
 	for _, vehicle := range data.Vehicles.Vehicles {
+		var ownerId jet.Expression
+		if vehicle.Owner != nil && vehicle.Owner.Identifier != nil && *vehicle.Owner.Identifier != "" {
+			ownerId = jet.String(*vehicle.Owner.Identifier)
+		} else if vehicle.OwnerId != nil {
+			ownerId = jet.Int32(*vehicle.OwnerId)
+		}
+
 		stmt = stmt.VALUES(
-			vehicle.OwnerId,
+			ownerId,
 			vehicle.Plate,
 			vehicle.Model,
 			vehicle.Type,

@@ -253,13 +253,16 @@ defineShortcuts({
                     <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
                 </UTooltip>
 
-                <UTooltip v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens').value" :text="$t('common.show')">
+                <UTooltip
+                    v-if="!hideCitizenLink && vehicle.owner?.userId && can('CitizenStoreService.ListCitizens').value"
+                    :text="$t('common.show')"
+                >
                     <UButton
                         variant="link"
                         icon="i-mdi-account-eye"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: vehicle.owner?.userId ?? 0 },
+                            params: { id: vehicle.owner.userId },
                         }"
                     />
                 </UTooltip>
