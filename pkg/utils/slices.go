@@ -42,6 +42,7 @@ func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
 	return added, removed
 }
 
+// Doesn't handle multiple additions of the same value as the values are basically de-duplicated
 func SlicesDifferenceFunc[T comparable, S comparable](a, b []T, keyFn func(in T) S) (added []T, removed []T) {
 	temp := map[S]int{}
 	vals := map[S]T{}

@@ -112,17 +112,18 @@ func TestSlicesDifferenceFunc(t *testing.T) {
 	b = []string{"hello", "world", "abc"}
 
 	added, removed = SlicesDifferenceFunc(a, b, keyFn)
-	assert.Equal(t, []string{}, added)
-	assert.Equal(t, []string{}, removed)
+	assert.Len(t, added, 0)
+	assert.Len(t, removed, 0)
 
+	// Test with only duplicates added
 	a = []string{"hello", "world", "abc"}
 	b = []string{"hello", "hello", "world", "abc"}
 
 	added, removed = SlicesDifferenceFunc(a, b, keyFn)
-	assert.Equal(t, []string{}, added)
-	assert.Equal(t, []string{}, removed)
+	assert.Len(t, added, 0)
+	assert.Len(t, removed, 0)
 
-	// Test with slices having duplicates
+	// Test with slices having duplicates and new values
 	a = []string{"hello", "example", "example", "abc"}
 	b = []string{"hello", "world", "test1", "abc", "abc"}
 
