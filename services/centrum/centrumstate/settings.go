@@ -37,3 +37,16 @@ func (s *State) ListSettings(ctx context.Context) []*centrum.Settings {
 
 	return list
 }
+
+func (s *State) ListSettingsFunc(ctx context.Context, fn func(*centrum.Settings) bool) []*centrum.Settings {
+	list := []*centrum.Settings{}
+
+	s.settings.Range(func(_ string, settings *centrum.Settings) bool {
+		if fn(settings) {
+			list = append(list, settings)
+		}
+		return true
+	})
+
+	return list
+}

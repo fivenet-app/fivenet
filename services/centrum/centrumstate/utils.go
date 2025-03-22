@@ -15,9 +15,10 @@ func userIdKey(id int32) string {
 	return strconv.Itoa(int(id))
 }
 
-func (s *State) GetDispatchLocations(job string) *coords.Coords[*centrum.Dispatch] {
+func (s *State) GetDispatchLocations(job string) (*coords.Coords[*centrum.Dispatch], bool) {
 	s.dispatchLocationsMutex.RLock()
 	defer s.dispatchLocationsMutex.RUnlock()
 
-	return s.dispatchLocations[job]
+	locations, ok := s.dispatchLocations[job]
+	return locations, ok
 }

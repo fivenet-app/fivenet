@@ -10,7 +10,6 @@ import (
 	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	errorscentrum "github.com/fivenet-app/fivenet/services/centrum/errors"
 	"go.uber.org/zap"
@@ -101,24 +100,13 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 	}
 }
 
-func (s *Server) getJobBroker(job string) (*broker.Broker[*pbcentrum.StreamResponse], bool) {
-	s.brokersMutex.RLock()
-	defer s.brokersMutex.RUnlock()
-
-	broker, ok := s.brokers[job]
-	return broker, ok
-}
-
 func (s *Server) stream(srv pbcentrum.CentrumService_StreamServer, job string, userId int32) error {
 	s.logger.Debug("getting centrum job broker", zap.String("job", job), zap.Int32("user_id", userId))
-	broker, ok := s.getJobBroker(job)
+	broker, ok := s.brokers.GetJobBroker(job)
 	if !ok {
-		s.logger.Warn("no job broker found", zap.String("job", job), zap.Int32("user_id", userId))
-		<-srv.Context().Done()
-		return nil
+		return errorscentrum.ErrDisabled
 	}
 
-	s.logger.Debug("subscribing to centrum job broker", zap.String("job", job), zap.Int32("user_id", userId))
 	stream := broker.Subscribe()
 	defer broker.Unsubscribe(stream)
 	s.logger.Debug("starting broker watch", zap.String("job", job), zap.Int32("user_id", userId))
@@ -129,7 +117,11 @@ func (s *Server) stream(srv pbcentrum.CentrumService_StreamServer, job string, u
 		case <-srv.Context().Done():
 			return nil
 
-		case msg := <-stream:
+		case msg, more := <-stream:
+			if !more {
+				return errorscentrum.ErrDisabled
+			}
+
 			resp := &pbcentrum.StreamResponse{
 				Change: msg.Change,
 			}

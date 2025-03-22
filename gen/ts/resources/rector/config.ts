@@ -170,12 +170,6 @@ export interface UserTracker {
      * @generated from protobuf field: google.protobuf.Duration db_refresh_time = 2;
      */
     dbRefreshTime?: Duration;
-    /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: repeated string livemap_jobs = 3;
-     */
-    livemapJobs: string[];
 }
 /**
  * @generated from protobuf message resources.rector.Discord
@@ -754,13 +748,11 @@ class UserTracker$Type extends MessageType<UserTracker> {
     constructor() {
         super("resources.rector.UserTracker", [
             { no: 1, name: "refresh_time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "60" }, gte: { nanos: 500000000 } } } } },
-            { no: 2, name: "db_refresh_time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "60" }, gte: { nanos: 500000000 } } } } },
-            { no: 3, name: "livemap_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
+            { no: 2, name: "db_refresh_time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "60" }, gte: { nanos: 500000000 } } } } }
         ]);
     }
     create(value?: PartialMessage<UserTracker>): UserTracker {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.livemapJobs = [];
         if (value !== undefined)
             reflectionMergePartial<UserTracker>(this, message, value);
         return message;
@@ -775,9 +767,6 @@ class UserTracker$Type extends MessageType<UserTracker> {
                     break;
                 case /* google.protobuf.Duration db_refresh_time */ 2:
                     message.dbRefreshTime = Duration.internalBinaryRead(reader, reader.uint32(), options, message.dbRefreshTime);
-                    break;
-                case /* repeated string livemap_jobs */ 3:
-                    message.livemapJobs.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -797,9 +786,6 @@ class UserTracker$Type extends MessageType<UserTracker> {
         /* google.protobuf.Duration db_refresh_time = 2; */
         if (message.dbRefreshTime)
             Duration.internalBinaryWrite(message.dbRefreshTime, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string livemap_jobs = 3; */
-        for (let i = 0; i < message.livemapJobs.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.livemapJobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

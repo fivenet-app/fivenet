@@ -26,6 +26,7 @@ var (
 
 type ITracker interface {
 	GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
+	ListTrackedJobs() []string
 	GetUserById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
 
@@ -163,6 +164,17 @@ func (s *Tracker) watchForChanges(msg jetstream.Msg) {
 // Returns a `xsync.MapOf` with **copies** (proto cloned) of the `*livemap.UserMarker`
 func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
 	return s.usersByJob.Load(job)
+}
+
+func (s *Tracker) ListTrackedJobs() []string {
+	var jobs []string
+	s.usersByJob.Range(func(job string, _ *xsync.MapOf[int32, *livemap.UserMarker]) bool {
+		jobs = append(jobs, job)
+
+		return true
+	})
+
+	return jobs
 }
 
 func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {

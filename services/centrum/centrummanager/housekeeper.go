@@ -447,8 +447,9 @@ func (s *Housekeeper) runDispatchDeduplication(ctx context.Context, data *cron.C
 func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	wg := sync.WaitGroup{}
 
-	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
-		if locs := s.State.GetDispatchLocations(job); locs == nil {
+	for _, settings := range s.ListSettings(ctx) {
+		job := settings.Job
+		if locs, ok := s.State.GetDispatchLocations(job); locs == nil || !ok {
 			continue
 		}
 
@@ -481,8 +482,11 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				// Iterate over close by dispatches and collect the active ones
-				locs := s.State.GetDispatchLocations(dsp.Job)
+				// Iterate over close by dispatches and collect the active ones (if locations are available)
+				locs, ok := s.State.GetDispatchLocations(dsp.Job)
+				if locs != nil || !ok {
+					continue
+				}
 				closestsDsp := locs.KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*centrum.Dispatch).Id != dsp.Id
 				}, 45.0)
@@ -618,7 +622,9 @@ func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobDat
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
+	for _, settings := range s.ListSettings(ctx) {
+		job := settings.Job
+
 		dsps := s.State.FilterDispatches(ctx, job, nil, []centrum.StatusDispatch{
 			centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED,
@@ -678,7 +684,9 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
 func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
-	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
+	for _, settings := range s.ListSettings(ctx) {
+		job := settings.Job
+
 		units, ok := s.ListUnits(ctx, job)
 		if !ok {
 			continue
@@ -732,7 +740,9 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 	foundUserIds := []int32{}
 
-	for _, job := range s.appCfg.Get().UserTracker.LivemapJobs {
+	for _, settings := range s.ListSettings(ctx) {
+		job := settings.Job
+
 		units, ok := s.ListUnits(ctx, job)
 		if !ok {
 			continue

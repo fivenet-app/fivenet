@@ -794,8 +794,7 @@
                     "title": "User Tracker",
                     "description": "List of jobs to track on the livemap and to maintain timeclock updates for.",
                     "refresh_time": "Refresh Time",
-                    "db_refresh_time": "DB Refresh Time",
-                    "livemap_jobs": "Livemap Jobs"
+                    "db_refresh_time": "DB Refresh Time"
                 },
                 "discord": {
                     "description": "FiveNet Discord Bot settings.",
@@ -2520,7 +2519,11 @@
             },
             "ErrNotPartOfUnit": "You are not part of this unit!",
             "ErrStaticUnit": "Can't update a static unit's status to be available!",
-            "ErrUnitPermDenied": "You can't access this unit!"
+            "ErrUnitPermDenied": "You can't access this unit!",
+            "ErrDisabled": {
+                "title": "Dispatch Center is disabled!",
+                "content": "Please contact your leader to enable the dispatch center."
+            }
         },
         "general": {
             "internal_error": {

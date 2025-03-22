@@ -11,14 +11,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/access.proto](#resources_centrum_access-proto)
-    - [UnitAccess](#resources-centrum-UnitAccess)
-    - [UnitJobAccess](#resources-centrum-UnitJobAccess)
-    - [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess)
-    - [UnitUserAccess](#resources-centrum-UnitUserAccess)
-  
-    - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
-  
 - [resources/centrum/attributes.proto](#resources_centrum_attributes-proto)
     - [DispatchAttributes](#resources-centrum-DispatchAttributes)
     - [UnitAttributes](#resources-centrum-UnitAttributes)
@@ -38,6 +30,14 @@
   
 - [resources/centrum/user_unit.proto](#resources_centrum_user_unit-proto)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/access.proto](#resources_centrum_access-proto)
+    - [UnitAccess](#resources-centrum-UnitAccess)
+    - [UnitJobAccess](#resources-centrum-UnitJobAccess)
+    - [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess)
+    - [UnitUserAccess](#resources-centrum-UnitUserAccess)
+  
+    - [UnitAccessLevel](#resources-centrum-UnitAccessLevel)
   
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
@@ -129,13 +129,6 @@
     - [DocReference](#resources-documents-DocReference)
     - [DocRelation](#resources-documents-DocRelation)
   
-- [resources/documents/access.proto](#resources_documents_access-proto)
-    - [DocumentAccess](#resources-documents-DocumentAccess)
-    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
-    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
-  
-    - [AccessLevel](#resources-documents-AccessLevel)
-  
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
     - [DocAccessJobsDiff](#resources-documents-DocAccessJobsDiff)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
@@ -164,6 +157,13 @@
     - [ReminderSettings](#resources-documents-ReminderSettings)
     - [Workflow](#resources-documents-Workflow)
     - [WorkflowCronData](#resources-documents-WorkflowCronData)
+  
+- [resources/documents/access.proto](#resources_documents_access-proto)
+    - [DocumentAccess](#resources-documents-DocumentAccess)
+    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
+    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
+  
+    - [AccessLevel](#resources-documents-AccessLevel)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -244,13 +244,6 @@
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
   
-- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
-    - [QualificationAccess](#resources-qualifications-QualificationAccess)
-    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
-    - [QualificationUserAccess](#resources-qualifications-QualificationUserAccess)
-  
-    - [AccessLevel](#resources-qualifications-AccessLevel)
-  
 - [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
     - [ExamGrading](#resources-qualifications-ExamGrading)
     - [ExamGradingResponse](#resources-qualifications-ExamGradingResponse)
@@ -273,6 +266,13 @@
     - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
     - [ExamResponses](#resources-qualifications-ExamResponses)
     - [ExamUser](#resources-qualifications-ExamUser)
+  
+- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
+    - [QualificationAccess](#resources-qualifications-QualificationAccess)
+    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+    - [QualificationUserAccess](#resources-qualifications-QualificationUserAccess)
+  
+    - [AccessLevel](#resources-qualifications-AccessLevel)
   
 - [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
     - [Qualification](#resources-qualifications-Qualification)
@@ -369,13 +369,6 @@
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
   
-- [resources/calendar/access.proto](#resources_calendar_access-proto)
-    - [CalendarAccess](#resources-calendar-CalendarAccess)
-    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
-    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
-  
-    - [AccessLevel](#resources-calendar-AccessLevel)
-  
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
@@ -386,15 +379,15 @@
   
     - [RsvpResponses](#resources-calendar-RsvpResponses)
   
+- [resources/calendar/access.proto](#resources_calendar_access-proto)
+    - [CalendarAccess](#resources-calendar-CalendarAccess)
+    - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
+    - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
+  
+    - [AccessLevel](#resources-calendar-AccessLevel)
+  
 - [resources/stats/stats.proto](#resources_stats_stats-proto)
     - [Stat](#resources-stats-Stat)
-  
-- [resources/internet/access.proto](#resources_internet_access-proto)
-    - [PageAccess](#resources-internet-PageAccess)
-    - [PageJobAccess](#resources-internet-PageJobAccess)
-    - [PageUserAccess](#resources-internet-PageUserAccess)
-  
-    - [AccessLevel](#resources-internet-AccessLevel)
   
 - [resources/internet/ads.proto](#resources_internet_ads-proto)
     - [Ad](#resources-internet-Ad)
@@ -412,17 +405,16 @@
   
     - [PageLayoutType](#resources-internet-PageLayoutType)
   
+- [resources/internet/access.proto](#resources_internet_access-proto)
+    - [PageAccess](#resources-internet-PageAccess)
+    - [PageJobAccess](#resources-internet-PageJobAccess)
+    - [PageUserAccess](#resources-internet-PageUserAccess)
+  
+    - [AccessLevel](#resources-internet-AccessLevel)
+  
 - [resources/internet/domain.proto](#resources_internet_domain-proto)
     - [Domain](#resources-internet-Domain)
     - [TLD](#resources-internet-TLD)
-  
-- [resources/mailer/access.proto](#resources_mailer_access-proto)
-    - [Access](#resources-mailer-Access)
-    - [JobAccess](#resources-mailer-JobAccess)
-    - [QualificationAccess](#resources-mailer-QualificationAccess)
-    - [UserAccess](#resources-mailer-UserAccess)
-  
-    - [AccessLevel](#resources-mailer-AccessLevel)
   
 - [resources/mailer/email.proto](#resources_mailer_email-proto)
     - [Email](#resources-mailer-Email)
@@ -447,12 +439,13 @@
     - [MessageAttachmentDocument](#resources-mailer-MessageAttachmentDocument)
     - [MessageData](#resources-mailer-MessageData)
   
-- [resources/wiki/access.proto](#resources_wiki_access-proto)
-    - [PageAccess](#resources-wiki-PageAccess)
-    - [PageJobAccess](#resources-wiki-PageJobAccess)
-    - [PageUserAccess](#resources-wiki-PageUserAccess)
+- [resources/mailer/access.proto](#resources_mailer_access-proto)
+    - [Access](#resources-mailer-Access)
+    - [JobAccess](#resources-mailer-JobAccess)
+    - [QualificationAccess](#resources-mailer-QualificationAccess)
+    - [UserAccess](#resources-mailer-UserAccess)
   
-    - [AccessLevel](#resources-wiki-AccessLevel)
+    - [AccessLevel](#resources-mailer-AccessLevel)
   
 - [resources/wiki/page.proto](#resources_wiki_page-proto)
     - [Page](#resources-wiki-Page)
@@ -469,6 +462,13 @@
     - [PageUpdated](#resources-wiki-PageUpdated)
   
     - [PageActivityType](#resources-wiki-PageActivityType)
+  
+- [resources/wiki/access.proto](#resources_wiki_access-proto)
+    - [PageAccess](#resources-wiki-PageAccess)
+    - [PageJobAccess](#resources-wiki-PageJobAccess)
+    - [PageUserAccess](#resources-wiki-PageUserAccess)
+  
+    - [AccessLevel](#resources-wiki-AccessLevel)
   
 - [resources/sync/activity.proto](#resources_sync_activity-proto)
     - [JobsUserProps](#resources-sync-JobsUserProps)
@@ -1100,103 +1100,6 @@
 
 
 
-<a name="resources_centrum_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/access.proto
-
-
-
-<a name="resources-centrum-UnitAccess"></a>
-
-### UnitAccess
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [UnitJobAccess](#resources-centrum-UnitJobAccess) | repeated | @gotags: alias:"job_access" |
-| `qualifications` | [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess) | repeated | @gotags: alias:"qualification_access" |
-
-
-
-
-
-
-<a name="resources-centrum-UnitJobAccess"></a>
-
-### UnitJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitQualificationAccess"></a>
-
-### UnitQualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
-| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitUserAccess"></a>
-
-### UnitUserAccess
-
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-centrum-UnitAccessLevel"></a>
-
-### UnitAccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_centrum_attributes-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1411,6 +1314,103 @@
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_centrum_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/access.proto
+
+
+
+<a name="resources-centrum-UnitAccess"></a>
+
+### UnitAccess
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [UnitJobAccess](#resources-centrum-UnitJobAccess) | repeated | @gotags: alias:"job_access" |
+| `qualifications` | [UnitQualificationAccess](#resources-centrum-UnitQualificationAccess) | repeated | @gotags: alias:"qualification_access" |
+
+
+
+
+
+
+<a name="resources-centrum-UnitJobAccess"></a>
+
+### UnitJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitQualificationAccess"></a>
+
+### UnitQualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
+| `access` | [UnitAccessLevel](#resources-centrum-UnitAccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitUserAccess"></a>
+
+### UnitUserAccess
+
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-centrum-UnitAccessLevel"></a>
+
+### UnitAccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `UNIT_ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `UNIT_ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `UNIT_ACCESS_LEVEL_JOIN` | 2 |  |
+
 
  <!-- end enums -->
 
@@ -2696,99 +2696,6 @@ Wrapped translated message for the client @dbscanner: json
 
 
 
-<a name="resources_documents_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/access.proto
-
-
-
-<a name="resources-documents-DocumentAccess"></a>
-
-### DocumentAccess
-@dbscanner: json
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"user_access" |
-
-
-
-
-
-
-<a name="resources-documents-DocumentJobAccess"></a>
-
-### DocumentJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| `required` | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="resources-documents-DocumentUserAccess"></a>
-
-### DocumentUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
-| `required` | [bool](#bool) | optional |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-documents-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_COMMENT` | 3 |  |
-| `ACCESS_LEVEL_STATUS` | 4 |  |
-| `ACCESS_LEVEL_ACCESS` | 5 |  |
-| `ACCESS_LEVEL_EDIT` | 6 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_documents_activity-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3235,6 +3142,99 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_documents_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/access.proto
+
+
+
+<a name="resources-documents-DocumentAccess"></a>
+
+### DocumentAccess
+@dbscanner: json
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-documents-DocumentJobAccess"></a>
+
+### DocumentJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| `required` | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="resources-documents-DocumentUserAccess"></a>
+
+### DocumentUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `access` | [AccessLevel](#resources-documents-AccessLevel) |  |  |
+| `required` | [bool](#bool) | optional |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-documents-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_COMMENT` | 3 |  |
+| `ACCESS_LEVEL_STATUS` | 4 |  |
+| `ACCESS_LEVEL_ACCESS` | 5 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
+
 
  <!-- end enums -->
 
@@ -4354,87 +4354,6 @@ Dummy - DO NOT USE!
 
 
 
-<a name="resources_qualifications_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/qualifications/access.proto
-
-
-
-<a name="resources-qualifications-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationJobAccess"></a>
-
-### QualificationJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationUserAccess"></a>
-
-### QualificationUserAccess
-Dummy - DO NOT USE!
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-qualifications-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_REQUEST` | 3 |  |
-| `ACCESS_LEVEL_TAKE` | 4 |  |
-| `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_MANAGE` | 6 |  |
-| `ACCESS_LEVEL_EDIT` | 7 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_qualifications_exam-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -4776,6 +4695,87 @@ Dummy - DO NOT USE!
 
 
  <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_qualifications_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/access.proto
+
+
+
+<a name="resources-qualifications-QualificationAccess"></a>
+
+### QualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationJobAccess"></a>
+
+### QualificationJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationUserAccess"></a>
+
+### QualificationUserAccess
+Dummy - DO NOT USE!
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-qualifications-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_REQUEST` | 3 |  |
+| `ACCESS_LEVEL_TAKE` | 4 |  |
+| `ACCESS_LEVEL_GRADE` | 5 |  |
+| `ACCESS_LEVEL_MANAGE` | 6 |  |
+| `ACCESS_LEVEL_EDIT` | 7 |  |
+
 
  <!-- end enums -->
 
@@ -5304,7 +5304,6 @@ Dummy - DO NOT USE!
 | ----- | ---- | ----- | ----------- |
 | `refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 | `db_refresh_time` | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| `livemap_jobs` | [string](#string) | repeated | @sanitize: method=StripTags |
 
 
 
@@ -6179,96 +6178,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_calendar_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/calendar/access.proto
-
-
-
-<a name="resources-calendar-CalendarAccess"></a>
-
-### CalendarAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:"user_access" |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarJobAccess"></a>
-
-### CalendarJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarUserAccess"></a>
-
-### CalendarUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-calendar-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_SHARE` | 3 |  |
-| `ACCESS_LEVEL_EDIT` | 4 |  |
-| `ACCESS_LEVEL_MANAGE` | 5 |  |
-
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
 <a name="resources_calendar_calendar-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6440,6 +6349,96 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources_calendar_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/calendar/access.proto
+
+
+
+<a name="resources-calendar-CalendarAccess"></a>
+
+### CalendarAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [CalendarJobAccess](#resources-calendar-CalendarJobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [CalendarUserAccess](#resources-calendar-CalendarUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarJobAccess"></a>
+
+### CalendarJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarUserAccess"></a>
+
+### CalendarUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `access` | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-calendar-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_SHARE` | 3 |  |
+| `ACCESS_LEVEL_EDIT` | 4 |  |
+| `ACCESS_LEVEL_MANAGE` | 5 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_stats_stats-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6462,95 +6461,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_internet_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/internet/access.proto
-
-
-
-<a name="resources-internet-PageAccess"></a>
-
-### PageAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
-
-
-
-
-
-
-<a name="resources-internet-PageJobAccess"></a>
-
-### PageJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-internet-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-internet-PageUserAccess"></a>
-
-### PageUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-internet-AccessLevel) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-internet-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_EDIT` | 3 |  |
-| `ACCESS_LEVEL_OWNER` | 4 |  |
-
 
  <!-- end enums -->
 
@@ -6763,6 +6673,95 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
+<a name="resources_internet_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/internet/access.proto
+
+
+
+<a name="resources-internet-PageAccess"></a>
+
+### PageAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [PageJobAccess](#resources-internet-PageJobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [PageUserAccess](#resources-internet-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-internet-PageJobAccess"></a>
+
+### PageJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-internet-PageUserAccess"></a>
+
+### PageUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `access` | [AccessLevel](#resources-internet-AccessLevel) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-internet-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_EDIT` | 3 |  |
+| `ACCESS_LEVEL_OWNER` | 4 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
 <a name="resources_internet_domain-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6818,116 +6817,6 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
  <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="resources_mailer_access-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/mailer/access.proto
-
-
-
-<a name="resources-mailer-Access"></a>
-
-### Access
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `jobs` | [JobAccess](#resources-mailer-JobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [UserAccess](#resources-mailer-UserAccess) | repeated | @gotags: alias:"user_access" |
-| `qualifications` | [QualificationAccess](#resources-mailer-QualificationAccess) | repeated | @gotags: alias:"qualification_access" |
-
-
-
-
-
-
-<a name="resources-mailer-JobAccess"></a>
-
-### JobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-mailer-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `qualification_id` | [uint64](#uint64) |  |  |
-| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-mailer-UserAccess"></a>
-
-### UserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `id` | [uint64](#uint64) |  |  |
-| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| `target_id` | [uint64](#uint64) |  |  |
-| `user_id` | [int32](#int32) |  |  |
-| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
-
-<a name="resources-mailer-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
-| `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_READ` | 2 |  |
-| `ACCESS_LEVEL_WRITE` | 3 |  |
-| `ACCESS_LEVEL_MANAGE` | 4 |  |
-
 
  <!-- end enums -->
 
@@ -7261,32 +7150,55 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 
 
 
-<a name="resources_wiki_access-proto"></a>
+<a name="resources_mailer_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/wiki/access.proto
+## resources/mailer/access.proto
 
 
 
-<a name="resources-wiki-PageAccess"></a>
+<a name="resources-mailer-Access"></a>
 
-### PageAccess
+### Access
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `jobs` | [PageJobAccess](#resources-wiki-PageJobAccess) | repeated | @gotags: alias:"job_access" |
-| `users` | [PageUserAccess](#resources-wiki-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+| `jobs` | [JobAccess](#resources-mailer-JobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [UserAccess](#resources-mailer-UserAccess) | repeated | @gotags: alias:"user_access" |
+| `qualifications` | [QualificationAccess](#resources-mailer-QualificationAccess) | repeated | @gotags: alias:"qualification_access" |
 
 
 
 
 
 
-<a name="resources-wiki-PageJobAccess"></a>
+<a name="resources-mailer-JobAccess"></a>
 
-### PageJobAccess
+### JobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  | @gotags: sql:"primary_key" alias:"id" |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-mailer-QualificationAccess"></a>
+
+### QualificationAccess
 
 
 
@@ -7295,20 +7207,18 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `id` | [uint64](#uint64) |  |  |
 | `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | `target_id` | [uint64](#uint64) |  |  |
-| `job` | [string](#string) |  |  |
-| `job_label` | [string](#string) | optional |  |
-| `minimum_grade` | [int32](#int32) |  |  |
-| `job_grade_label` | [string](#string) | optional |  |
-| `access` | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+| `qualification_id` | [uint64](#uint64) |  |  |
+| `qualification` | [resources.qualifications.QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
+| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
 
 
 
 
 
 
-<a name="resources-wiki-PageUserAccess"></a>
+<a name="resources-mailer-UserAccess"></a>
 
-### PageUserAccess
+### UserAccess
 
 
 
@@ -7319,7 +7229,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `target_id` | [uint64](#uint64) |  |  |
 | `user_id` | [int32](#int32) |  |  |
 | `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| `access` | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+| `access` | [AccessLevel](#resources-mailer-AccessLevel) |  |  |
 
 
 
@@ -7328,7 +7238,7 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
  <!-- end messages -->
 
 
-<a name="resources-wiki-AccessLevel"></a>
+<a name="resources-mailer-AccessLevel"></a>
 
 ### AccessLevel
 
@@ -7337,9 +7247,9 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | ---- | ------ | ----------- |
 | `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
 | `ACCESS_LEVEL_BLOCKED` | 1 |  |
-| `ACCESS_LEVEL_VIEW` | 2 |  |
-| `ACCESS_LEVEL_ACCESS` | 3 |  |
-| `ACCESS_LEVEL_EDIT` | 4 |  |
+| `ACCESS_LEVEL_READ` | 2 |  |
+| `ACCESS_LEVEL_WRITE` | 3 |  |
+| `ACCESS_LEVEL_MANAGE` | 4 |  |
 
 
  <!-- end enums -->
@@ -7581,6 +7491,95 @@ Timestamp for storage messages. We've defined a new local type wrapper of google
 | `PAGE_ACTIVITY_TYPE_ACCESS_UPDATED` | 3 |  |
 | `PAGE_ACTIVITY_TYPE_OWNER_CHANGED` | 4 |  |
 | `PAGE_ACTIVITY_TYPE_DELETED` | 5 |  |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="resources_wiki_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/wiki/access.proto
+
+
+
+<a name="resources-wiki-PageAccess"></a>
+
+### PageAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `jobs` | [PageJobAccess](#resources-wiki-PageJobAccess) | repeated | @gotags: alias:"job_access" |
+| `users` | [PageUserAccess](#resources-wiki-PageUserAccess) | repeated | @gotags: alias:"user_access" |
+
+
+
+
+
+
+<a name="resources-wiki-PageJobAccess"></a>
+
+### PageJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `job` | [string](#string) |  |  |
+| `job_label` | [string](#string) | optional |  |
+| `minimum_grade` | [int32](#int32) |  |  |
+| `job_grade_label` | [string](#string) | optional |  |
+| `access` | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-wiki-PageUserAccess"></a>
+
+### PageUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `id` | [uint64](#uint64) |  |  |
+| `created_at` | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| `target_id` | [uint64](#uint64) |  |  |
+| `user_id` | [int32](#int32) |  |  |
+| `user` | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| `access` | [AccessLevel](#resources-wiki-AccessLevel) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="resources-wiki-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| `ACCESS_LEVEL_UNSPECIFIED` | 0 |  |
+| `ACCESS_LEVEL_BLOCKED` | 1 |  |
+| `ACCESS_LEVEL_VIEW` | 2 |  |
+| `ACCESS_LEVEL_ACCESS` | 3 |  |
+| `ACCESS_LEVEL_EDIT` | 4 |  |
 
 
  <!-- end enums -->

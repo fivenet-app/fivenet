@@ -82,7 +82,6 @@ const schema = z.object({
     userTracker: z.object({
         refreshTime: zodDurationSchema,
         dbRefreshTime: zodDurationSchema,
-        livemapJobs: z.string().array().max(99),
     }),
     discord: z.object({
         enabled: z.boolean(),
@@ -145,7 +144,6 @@ const state = reactive<Schema>({
     userTracker: {
         dbRefreshTime: 1.0,
         refreshTime: 3.35,
-        livemapJobs: [],
     },
     discord: {
         enabled: false,
@@ -176,7 +174,6 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.website = values.website;
     config.value.config.jobInfo = values.jobInfo;
     config.value.config.userTracker = {
-        livemapJobs: values.userTracker.livemapJobs,
         dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
         refreshTime: toDuration(values.userTracker.refreshTime),
     };
@@ -254,7 +251,6 @@ function setSettingsValues(): void {
         if (config.value.config.userTracker.refreshTime) {
             state.userTracker.refreshTime = fromDuration(config.value.config.userTracker.refreshTime);
         }
-        state.userTracker.livemapJobs = config.value.config.userTracker.livemapJobs;
     }
     if (config.value.config.discord) {
         state.discord.enabled = config.value.config.discord.enabled;
@@ -721,44 +717,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
                                         </template>
                                     </UInput>
-                                </UFormGroup>
-
-                                <UFormGroup
-                                    name="userTracker.livemapJobs"
-                                    :label="$t('components.rector.app_config.user_tracker.livemap_jobs')"
-                                    class="grid grid-cols-2 items-center gap-2"
-                                    :ui="{ container: '' }"
-                                >
-                                    <ClientOnly>
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                v-model="state.userTracker.livemapJobs"
-                                                multiple
-                                                :options="jobs ?? []"
-                                                searchable
-                                                value-attribute="name"
-                                                :searchable-placeholder="$t('common.search_field')"
-                                            >
-                                                <template #label>
-                                                    <template v-if="state.userTracker.livemapJobs.length">
-                                                        <span class="truncate">{{
-                                                            state.userTracker.livemapJobs.join(', ')
-                                                        }}</span>
-                                                    </template>
-
-                                                    <template v-else>
-                                                        <span class="truncate">{{
-                                                            $t('common.none_selected', [$t('common.job')])
-                                                        }}</span>
-                                                    </template>
-                                                </template>
-
-                                                <template #option="{ option: job }">
-                                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </ClientOnly>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>

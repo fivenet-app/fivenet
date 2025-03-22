@@ -76,6 +76,13 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 		if err := s.State.UpdateSettings(ctx, settings.Job, settings); err != nil {
 			return err
 		}
+
+		// Ensure job broker(s) are created or removed based on settings
+		if settings.Enabled {
+			s.brokers.GetOrCreateJobBroker(settings.Job)
+		} else {
+			s.brokers.RemoveJobBroker(settings.Job)
+		}
 	}
 
 	return nil
@@ -129,12 +136,6 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	}
 
 	perJob := map[string][]*jobs.Colleague{}
-	for _, j := range s.appCfg.Get().UserTracker.LivemapJobs {
-		if _, ok := perJob[j]; !ok {
-			perJob[j] = []*jobs.Colleague{}
-		}
-	}
-
 	for _, user := range dest {
 		if _, ok := perJob[user.Job]; !ok {
 			perJob[user.Job] = []*jobs.Colleague{}
@@ -150,8 +151,8 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 			return fmt.Errorf("failed to update disponents for specific job. %w", err)
 		}
 	} else {
-		for job, us := range perJob {
-			if err := s.UpdateDisponents(ctx, job, us); err != nil {
+		for job, disponents := range perJob {
+			if err := s.UpdateDisponents(ctx, job, disponents); err != nil {
 				return fmt.Errorf("failed to update disponents for all jobs. %w", err)
 			}
 		}

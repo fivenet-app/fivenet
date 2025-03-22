@@ -201,7 +201,10 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		otelgin.WithGinFilter(func(c *gin.Context) bool {
 			// Skip `/images/*`, image proxy and GRPC-Web + GRPC-websocket requests
 			fullPath := c.FullPath()
-			return !strings.HasPrefix(fullPath, "/images/") && !strings.HasPrefix(fullPath, "/api/image_proxy") && !strings.HasPrefix(fullPath, "/api/grpc")
+			return !strings.HasPrefix(fullPath, "/images/") &&
+				!strings.HasPrefix(fullPath, "/api/grpc") &&
+				!strings.HasPrefix(fullPath, "/api/image_proxy") &&
+				!strings.HasPrefix(fullPath, "/api/filestore")
 		}),
 	))
 	e.Use(InjectToHeaders(p.TP))

@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
@@ -32,7 +31,7 @@ type State struct {
 	units      *store.Store[centrum.Unit, *centrum.Unit]
 	dispatches *store.Store[centrum.Dispatch, *centrum.Dispatch]
 
-	dispatchLocationsMutex sync.RWMutex
+	dispatchLocationsMutex *sync.RWMutex
 	dispatchLocations      map[string]*coords.Coords[*centrum.Dispatch]
 
 	userIDToUnitID *store.Store[centrum.UserUnitMapping, *centrum.UserUnitMapping]
@@ -43,9 +42,8 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger    *zap.Logger
-	JS        *events.JSWrapper
-	AppConfig appconfig.IConfig
+	Logger *zap.Logger
+	JS     *events.JSWrapper
 }
 
 func New(p Params) (*State, error) {
@@ -60,13 +58,11 @@ func New(p Params) (*State, error) {
 
 		settings: xsync.NewMapOf[string, *centrum.Settings](),
 
-		dispatchLocationsMutex: sync.RWMutex{},
+		dispatchLocationsMutex: &sync.RWMutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		s.handleAppConfigUpdate(p.AppConfig.Get())
-
 		disponents, err := store.New[centrum.Disponents, *centrum.Disponents](ctxStartup, logger, p.JS, "centrum_disponents")
 		if err != nil {
 			return err
@@ -89,7 +85,7 @@ func New(p Params) (*State, error) {
 					return dsp, nil
 				}
 
-				if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
+				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
 					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
 							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
@@ -114,7 +110,7 @@ func New(p Params) (*State, error) {
 					return nil
 				}
 
-				if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
+				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
 					if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
 						locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
 					}
@@ -147,21 +143,6 @@ func New(p Params) (*State, error) {
 		}
 		s.dispatches = dispatches
 
-		// Handle app config updates
-		go func() {
-			configUpdateCh := p.AppConfig.Subscribe()
-			for {
-				select {
-				case <-ctxCancel.Done():
-					p.AppConfig.Unsubscribe(configUpdateCh)
-					return
-
-				case cfg := <-configUpdateCh:
-					s.handleAppConfigUpdate(cfg)
-				}
-			}
-		}()
-
 		return nil
 	}))
 
@@ -172,17 +153,6 @@ func New(p Params) (*State, error) {
 	}))
 
 	return s, nil
-}
-
-func (s *State) handleAppConfigUpdate(appCfg *appconfig.Cfg) {
-	s.dispatchLocationsMutex.Lock()
-	defer s.dispatchLocationsMutex.Unlock()
-
-	for _, job := range appCfg.UserTracker.LivemapJobs {
-		if _, ok := s.dispatchLocations[job]; !ok {
-			s.dispatchLocations[job] = coords.New[*centrum.Dispatch]()
-		}
-	}
 }
 
 // Expose the stores for deeper interaction with updates

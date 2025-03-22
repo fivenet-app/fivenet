@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/services/centrum/centrumstate"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -35,6 +36,7 @@ type Manager struct {
 	enricher *mstlystcdata.Enricher
 	tracker  tracker.ITracker
 	postals  postals.Postals
+	brokers  *centrumbrokers.Brokers
 
 	appCfg appconfig.IConfig
 
@@ -56,6 +58,7 @@ type Params struct {
 	Postals   postals.Postals
 	Tracker   tracker.ITracker
 	AppConfig appconfig.IConfig
+	Brokers   *centrumbrokers.Brokers
 
 	State *centrumstate.State
 }
@@ -70,8 +73,9 @@ func New(p Params) *Manager {
 		db:       p.DB,
 		js:       p.JS,
 		enricher: p.Enricher,
-		postals:  p.Postals,
 		tracker:  p.Tracker,
+		postals:  p.Postals,
+		brokers:  p.Brokers,
 
 		appCfg: p.AppConfig,
 

@@ -707,7 +707,7 @@ func (s *Manager) ListUnitAccess(ctx context.Context, id uint64) (*centrum.UnitA
 	}
 	access.Jobs = jobsAccess
 
-	for i := 0; i < len(access.Jobs); i++ {
+	for i := range access.Jobs {
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 

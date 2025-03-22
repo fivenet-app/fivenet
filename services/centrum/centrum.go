@@ -7,9 +7,7 @@ import (
 
 	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	eventscentrum "github.com/fivenet-app/fivenet/services/centrum/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel/trace"
@@ -47,18 +45,6 @@ func (s *Server) registerSubscriptions(ctxStartup context.Context, ctxCancel con
 	return nil
 }
 
-func (s *Server) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) {
-	s.brokersMutex.Lock()
-	defer s.brokersMutex.Unlock()
-
-	for _, job := range cfg.UserTracker.LivemapJobs {
-		if _, ok := s.brokers[job]; !ok {
-			s.brokers[job] = broker.New[*pbcentrum.StreamResponse]()
-			go s.brokers[job].Start(ctx)
-		}
-	}
-}
-
 func (s *Server) watchForChanges(msg jetstream.Msg) {
 	remoteCtx, _ := events.GetJetstreamMsgContext(msg)
 	_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
@@ -78,7 +64,7 @@ func (s *Server) watchForChanges(msg jetstream.Msg) {
 		return
 	}
 
-	broker, ok := s.getJobBroker(job)
+	broker, ok := s.brokers.GetJobBroker(job)
 	if !ok {
 		s.logger.Debug("no broker found for job", zap.String("job", job))
 		return
@@ -108,6 +94,12 @@ func (s *Server) watchForChanges(msg jetstream.Msg) {
 
 			resp.Change = &pbcentrum.StreamResponse_Settings{
 				Settings: dest,
+			}
+
+			if dest.Enabled {
+				s.brokers.GetOrCreateJobBroker(dest.Job)
+			} else {
+				s.brokers.RemoveJobBroker(dest.Job)
 			}
 		}
 

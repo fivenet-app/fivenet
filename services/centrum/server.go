@@ -15,7 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
-	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/services/centrum/centrummanager"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -30,6 +30,7 @@ type Server struct {
 
 	logger *zap.Logger
 	wg     sync.WaitGroup
+	ctx    context.Context
 	jsCons jetstream.ConsumeContext
 
 	tracer   trace.Tracer
@@ -42,10 +43,8 @@ type Server struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.UserAwareEnricher
 
-	brokersMutex sync.RWMutex
-	brokers      map[string]*broker.Broker[*pbcentrum.StreamResponse]
-
-	state *centrummanager.Manager
+	brokers *centrumbrokers.Brokers
+	state   *centrummanager.Manager
 }
 
 type Params struct {
@@ -65,16 +64,16 @@ type Params struct {
 	Postals   postals.Postals
 	Manager   *centrummanager.Manager
 	Enricher  *mstlystcdata.UserAwareEnricher
+	Brokers   *centrumbrokers.Brokers
 }
 
 func NewServer(p Params) (*Server, error) {
 	ctxCancel, cancel := context.WithCancel(context.Background())
 
-	brokers := map[string]*broker.Broker[*pbcentrum.StreamResponse]{}
-
 	s := &Server{
 		logger: p.Logger.Named("centrum"),
 		wg:     sync.WaitGroup{},
+		ctx:    ctxCancel,
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
@@ -87,36 +86,14 @@ func NewServer(p Params) (*Server, error) {
 		appCfg:   p.AppConfig,
 		enricher: p.Enricher,
 
-		brokersMutex: sync.RWMutex{},
-		brokers:      brokers,
-
-		state: p.Manager,
+		brokers: p.Brokers,
+		state:   p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
-		s.handleAppConfigUpdate(ctxCancel, p.AppConfig.Get())
-
 		if err := s.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return fmt.Errorf("failed to subscribe to events: %w", err)
 		}
-
-		// Handle app config updates
-		go func() {
-			configUpdateCh := p.AppConfig.Subscribe()
-			for {
-				select {
-				case <-ctxCancel.Done():
-					p.AppConfig.Unsubscribe(configUpdateCh)
-					return
-
-				case cfg := <-configUpdateCh:
-					if cfg == nil {
-						continue
-					}
-					s.handleAppConfigUpdate(ctxCancel, cfg)
-				}
-			}
-		}()
 
 		return nil
 	}))

@@ -73,9 +73,7 @@ func (x *AppConfig) Default() {
 	}
 
 	if x.UserTracker == nil {
-		x.UserTracker = &UserTracker{
-			LivemapJobs: []string{},
-		}
+		x.UserTracker = &UserTracker{}
 	}
 	if x.UserTracker.RefreshTime == nil {
 		x.UserTracker.RefreshTime = durationpb.New(DefaultUserTrackerRefreshTime)

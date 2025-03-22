@@ -794,8 +794,7 @@
                     "title": "Spieler-Tracker",
                     "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
                     "refresh_time": "Aktualisierungszeit",
-                    "db_refresh_time": "Datenbank-Aktualisierungszeit",
-                    "livemap_jobs": "Livemap-Berufe"
+                    "db_refresh_time": "Datenbank-Aktualisierungszeit"
                 },
                 "discord": {
                     "description": "FiveNet Discord-Bot-Einstellungen.",

@@ -272,14 +272,6 @@ func (m *UserTracker) Sanitize() error {
 		}
 	}
 
-	// Field: LivemapJobs
-	for idx, item := range m.LivemapJobs {
-		_, _ = idx, item
-
-		m.LivemapJobs[idx] = htmlsanitizer.StripTags(m.LivemapJobs[idx])
-
-	}
-
 	// Field: RefreshTime
 	if m.RefreshTime != nil {
 		if v, ok := any(m.GetRefreshTime()).(interface{ Sanitize() error }); ok {

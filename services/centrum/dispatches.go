@@ -182,7 +182,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *pbcentrum.ListDispatch
 			}
 
 			if resp.Dispatches[i].Creator != nil {
-				// Clear dispatch creator's job info if not a visible job
+				// Clear dispatch creator's job info if it isn't a public job
 				if !slices.Contains(publicJobs, resp.Dispatches[i].Creator.Job) {
 					resp.Dispatches[i].Creator.Job = ""
 				}

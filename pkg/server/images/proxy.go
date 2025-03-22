@@ -1,9 +1,11 @@
 package images
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"willnorris.com/go/imageproxy"
@@ -35,6 +37,9 @@ func (p *ImageProxy) RegisterHTTP(e *gin.Engine) {
 
 	proxy.AllowHosts = p.config.Options.AllowHosts
 	proxy.DenyHosts = p.config.Options.DenyHosts
+	proxy.UserAgent = fmt.Sprintf("FiveNet Image Proxy %s", version.Version)
+	proxy.ContentTypes = []string{"image/*"}
+	proxy.ScaleUp = false
 
 	// Example URL: http://localhost:3000/api/image_proxy/500/https://octodex.github.com/images/codercat.jpg
 	e.GET("/api/image_proxy/*url", gin.WrapH(http.StripPrefix("/api/image_proxy", proxy)))

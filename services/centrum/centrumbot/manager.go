@@ -33,7 +33,7 @@ var Module = fx.Module("centrum_bot_manager",
 
 type Manager struct {
 	logger *zap.Logger
-	mutex  sync.RWMutex
+	mutex  *sync.RWMutex
 	wg     sync.WaitGroup
 
 	tracer trace.Tracer
@@ -62,7 +62,7 @@ func NewManager(p Params) *Manager {
 
 	b := &Manager{
 		logger: p.Logger.Named("centrum.bot.manager"),
-		mutex:  sync.RWMutex{},
+		mutex:  &sync.RWMutex{},
 		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("centrum-cache"),

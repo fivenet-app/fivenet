@@ -65,6 +65,11 @@ func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId 
 func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	settings := s.GetSettings(ctx, job)
 
+	// If centrum is disabled, why bother with the bot
+	if !settings.Enabled {
+		return false
+	}
+
 	if settings.Mode == centrum.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
 		return true
 	}

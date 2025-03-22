@@ -51,7 +51,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 	}
 	if userInfo.SuperUser {
 		usersJobs = map[string]int32{}
-		for _, j := range s.appCfg.Get().UserTracker.GetLivemapJobs() {
+		for _, j := range s.tracker.ListTrackedJobs() {
 			usersJobs[j] = -1
 		}
 	}
@@ -116,7 +116,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 					continue
 				}
 
-				// Send delete user markers event to clients
+				// Send delete user markers event to client
 				deleted := []int32{}
 				for job, grade := range usersJobs {
 					if _, ok := (*event.Users)[job]; !ok {
@@ -147,7 +147,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 					return err
 				}
 			} else if event.MarkerUpdate != nil {
-				// Send delete marker event to clients
+				// Send delete marker event to client
 				resp := &pblivemapper.StreamResponse{
 					Data: &pblivemapper.StreamResponse_Markers{
 						Markers: &pblivemapper.MarkerMarkersUpdates{
@@ -160,7 +160,7 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 					return err
 				}
 			} else if event.MarkerDelete != nil {
-				// Send delete marker event to clients
+				// Send delete marker event to client
 				resp := &pblivemapper.StreamResponse{
 					Data: &pblivemapper.StreamResponse_Markers{
 						Markers: &pblivemapper.MarkerMarkersUpdates{

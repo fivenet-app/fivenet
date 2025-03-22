@@ -1362,17 +1362,6 @@ func (m *UserTracker) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetLivemapJobs()) > 100 {
-		err := UserTrackerValidationError{
-			field:  "LivemapJobs",
-			reason: "value must contain no more than 100 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if len(errors) > 0 {
 		return UserTrackerMultiError(errors)
 	}
