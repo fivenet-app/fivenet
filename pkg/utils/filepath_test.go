@@ -29,7 +29,7 @@ func TestCleanFilePath(t *testing.T) {
 			name:     "Empty path",
 			input:    "",
 			expected: "",
-			valid:    true,
+			valid:    false,
 		},
 		{
 			name:     "Path with redundant elements",
