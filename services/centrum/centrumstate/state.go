@@ -2,6 +2,8 @@ package centrumstate
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"sync"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
@@ -105,14 +107,35 @@ func New(p Params) (*State, error) {
 			}),
 
 			store.WithOnDeleteFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
-				if dsp == nil {
+				key := entry.Key()
+				if dsp == nil && key == "" {
 					logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
 					return nil
 				}
 
-				if locs, ok := s.GetDispatchLocations(dsp.Job); ok && locs != nil {
-					if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
-						locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
+				var job string
+				var dspId uint64
+				if dsp != nil {
+					job = dsp.Job
+					dspId = dsp.Id
+				} else {
+					split := strings.Split(key, ".")
+					if len(split) < 2 {
+						logger.Warn("unable to delete dispatch location, invalid key", zap.String("store_dispatch_key", entry.Key()))
+						return nil
+					}
+
+					job = split[0]
+					dspId, err = strconv.ParseUint(split[1], 10, 64)
+					if err != nil {
+						logger.Warn("unable to delete dispatch location, fallback to key failed", zap.String("store_dispatch_key", entry.Key()))
+						return nil
+					}
+				}
+
+				if locs, ok := s.GetDispatchLocations(job); ok && locs != nil {
+					if locs.Has(dsp, centrum.DispatchPointMatchFn(dspId)) {
+						locs.Remove(dsp, centrum.DispatchPointMatchFn(dspId))
 					}
 				}
 
