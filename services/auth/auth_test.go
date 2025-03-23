@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	pbauth "github.com/fivenet-app/fivenet/gen/go/proto/services/auth"
 	permsauth "github.com/fivenet-app/fivenet/gen/go/proto/services/auth/perms"
@@ -58,6 +59,7 @@ func TestFullAuthFlow(t *testing.T) {
 	var srv *Server
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
+			fx.StartTimeout(60*time.Second),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {

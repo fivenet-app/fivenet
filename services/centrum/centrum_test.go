@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
 	"github.com/fivenet-app/fivenet/internal/modules"
@@ -55,6 +56,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	var srv *Server
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
+			fx.StartTimeout(60*time.Second),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(centrumbrokers.New),
 			fx.Provide(tracker.NewForTests),

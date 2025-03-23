@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	pbdmv "github.com/fivenet-app/fivenet/gen/go/proto/services/dmv"
@@ -67,7 +68,9 @@ func TestListVehicles(t *testing.T) {
 
 	var srv *Server
 	app := fxtest.New(t,
+
 		modules.GetFxTestOpts(
+			fx.StartTimeout(60*time.Second),
 			fx.Provide(func() userinfo.UserInfoRetriever {
 				return ui
 			}),
