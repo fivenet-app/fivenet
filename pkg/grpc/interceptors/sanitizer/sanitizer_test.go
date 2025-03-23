@@ -72,7 +72,7 @@ func TestUnaryServerInterceptor(t *testing.T) {
 	interceptor := UnaryServerInterceptor()
 
 	for _, test := range tests {
-		for i := 0; i < 3; i++ {
+		for range 3 {
 			_, err := interceptor(ctx, test.req, nil, unaryHandler)
 			if test.err == nil {
 				assert.NoError(t, err, test.msg)
