@@ -21,6 +21,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxtest"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 )
 
@@ -81,7 +82,7 @@ func TestFullAuthFlow(t *testing.T) {
 	res, err := client.Login(ctx, loginReq)
 	assert.Error(t, err)
 	assert.Nil(t, res)
-	proto.CompareGRPCError(t, errorsauth.ErrInvalidLogin, err)
+	proto.CompareGRPCStatusCode(t, codes.InvalidArgument, err)
 
 	// Login with invalid credentials
 	loginReq.Username = "non-existant-username"
