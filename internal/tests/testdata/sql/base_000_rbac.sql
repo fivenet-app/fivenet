@@ -278,6 +278,35 @@ INSERT INTO `fivenet_role_permissions` (`role_id`, `permission_id`, `val`) VALUE
 /*!40000 ALTER TABLE `fivenet_role_permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
+LOCK TABLES `fivenet_job_permissions` WRITE;
+/*!40000 ALTER TABLE `fivenet_job_permissions` DISABLE KEYS */;
+INSERT INTO `fivenet_job_permissions` (`job`, `permission_id`, `val`) VALUES ('ambulance',1,1),
+('ambulance',3,1),
+('ambulance',6,0),
+('ambulance',8,0),
+('ambulance',10,1),
+('ambulance',11,1),
+('ambulance',16,1),
+('ambulance',17,1),
+('ambulance',18,1),
+('ambulance',19,1),
+('ambulance',22,1),
+('ambulance',23,1),
+('ambulance',24,1),
+('ambulance',25,1),
+('ambulance',26,1),
+('ambulance',27,1),
+('ambulance',28,1),
+('ambulance',29,1),
+('ambulance',30,1),
+('ambulance',31,1),
+('ambulance',74,1),
+('ambulance',75,1),
+('ambulance',76,1),
+('ambulance',77,1),
+('ambulance',82,1),
+('ambulance',7595,0);
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

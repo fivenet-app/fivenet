@@ -46,7 +46,7 @@ func TestMain(m *testing.M) {
 func TestBasicCentrumFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
@@ -72,6 +72,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	assert.NotNil(t, app)
 
 	app.RequireStart()
+	defer app.RequireStop()
 	assert.NotNil(t, srv)
 
 	client := pbcentrum.NewCentrumServiceClient(clientConn)

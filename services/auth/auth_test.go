@@ -49,7 +49,7 @@ func TestMain(m *testing.M) {
 func TestFullAuthFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	clientConn, grpcSrvModule, err := modules.TestGRPCServer(ctx)
@@ -71,6 +71,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NotNil(t, app)
 
 	app.RequireStart()
+	defer app.RequireStop()
 	assert.NotNil(t, srv)
 
 	client := pbauth.NewAuthServiceClient(clientConn)
@@ -190,6 +191,4 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
 	assert.NotNil(t, chooseCharRes.Char)
-
-	app.RequireStop()
 }

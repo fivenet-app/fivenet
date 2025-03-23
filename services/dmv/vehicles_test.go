@@ -83,6 +83,7 @@ func TestListVehicles(t *testing.T) {
 	assert.NotNil(t, app)
 
 	app.RequireStart()
+	defer app.RequireStop()
 	assert.NotNil(t, srv)
 
 	client := pbdmv.NewDMVServiceClient(clientConn)

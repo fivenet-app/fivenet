@@ -106,6 +106,7 @@ LOCK TABLES `fivenet_documents_templates` WRITE;
 INSERT INTO `fivenet_documents_templates` (`id`, `created_at`, `updated_at`, `deleted_at`, `weight`, `category_id`, `title`, `description`, `content_title`, `content`, `access`, `schema`, `creator_job`) VALUES (1,'2023-03-17 19:31:28.661','2023-03-17 19:31:35.698',NULL,10,1,'Patientenakte','LSMD Patientenakten Template','Patientenakte NAME','Patientenakte für Name','{}',NULL,'ambulance');
 /*!40000 ALTER TABLE `fivenet_documents_templates` ENABLE KEYS */;
 UNLOCK TABLES;
+
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;

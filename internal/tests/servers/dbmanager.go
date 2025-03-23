@@ -185,7 +185,7 @@ func (m *dbServer) Stop() error {
 	return nil
 }
 
-// Reset truncates all `fivenet_*` tables and loads the base test data
+// Reset truncates all `fivenet_*` tables and reloads the base test data
 func (m *dbServer) Reset() error {
 	initDB, err := m.getMultiStatementDB()
 	if err != nil {
@@ -204,7 +204,7 @@ func (m *dbServer) Reset() error {
 		}
 
 		// Placeholders aren't supported for table names, see
-		// https://github.com/go-sql-driver/mysql/issues/848#issuecomment-414910152`
+		// https://github.com/go-sql-driver/mysql/issues/848#issuecomment-414910152
 		if _, err := initDB.Exec("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE `" + tableName + "`; SET FOREIGN_KEY_CHECKS = 1;"); err != nil {
 			log.Printf("failed to truncate %s table: %s", tableName, err)
 		}
