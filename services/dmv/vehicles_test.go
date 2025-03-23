@@ -118,6 +118,4 @@ func TestListVehicles(t *testing.T) {
 	assert.NotNil(t, res)
 	assert.NotNil(t, res.Pagination)
 	assert.Len(t, res.Vehicles, 5)
-
-	app.RequireStop()
 }

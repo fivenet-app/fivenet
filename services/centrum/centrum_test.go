@@ -79,6 +79,4 @@ func TestBasicCentrumFlow(t *testing.T) {
 	defer cancel()
 	_ = ctx
 	_ = client
-
-	app.RequireStop()
 }
