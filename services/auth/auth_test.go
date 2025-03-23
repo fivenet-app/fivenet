@@ -158,7 +158,7 @@ func TestFullAuthFlow(t *testing.T) {
 
 	role, err := srv.ps.GetRoleByJobAndGrade(ctx, "ambulance", 1)
 	assert.NoError(t, err)
-	assert.NotNil(t, role)
+	require.NotNil(t, role)
 
 	perm, err := srv.ps.GetPermission(ctx, permsauth.AuthServicePerm, permsauth.AuthServiceChooseCharacterPerm)
 	assert.NoError(t, err)

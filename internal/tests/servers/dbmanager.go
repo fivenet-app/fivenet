@@ -107,7 +107,7 @@ func (m *dbServer) DB() (*sql.DB, error) {
 
 func (m *dbServer) getDSN() string {
 	// Using `root` isn't cool, but a workaround for now to create triggers in the database
-	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&loc=Local", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&loc=Local&parseTime=true", m.resource.GetPort("3306/tcp"))
 }
 
 func (m *dbServer) prepareDBForFirstUse() error {
@@ -126,7 +126,7 @@ func (m *dbServer) prepareDBForFirstUse() error {
 
 func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 	// Open db connection with multiStatements param so we can apply sql files
-	initDB, err := sql.Open("mysql", m.getDSN()+"&multiStatements=true")
+	initDB, err := sql.Open("mysql", m.getDSN()+"&parseTime=true&multiStatements=true")
 	if err != nil {
 		return nil, fmt.Errorf("failed to open test database connection for multi statement exec: %w", err)
 	}
