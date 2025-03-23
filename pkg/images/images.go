@@ -2,10 +2,18 @@ package images
 
 import (
 	"bytes"
+	"errors"
 	"image"
 	"io"
+	"strings"
 
 	"golang.org/x/image/draw"
+)
+
+var (
+	ErrUnsupportedImageType = errors.New("unsupported image type")
+	ErrZeroDimensions       = errors.New("image has zero dimensions")
+	ErrZeroResize           = errors.New("resize height and width are both zero")
 )
 
 type ImageType interface {
@@ -18,7 +26,7 @@ type ResizeTypeFn = func(input io.Reader, height uint, width uint) ([]byte, erro
 func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, error) {
 	var imgType ImageType
 
-	switch ext {
+	switch strings.ToLower(ext) {
 	case "png":
 		imgType = PNG{}
 	case "jpg":
@@ -26,7 +34,7 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 	case "jpeg":
 		imgType = JPEG{}
 	default:
-		return nil, nil
+		return nil, ErrUnsupportedImageType
 	}
 
 	// Decode image to image.Image
@@ -35,7 +43,10 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 		return nil, err
 	}
 
-	dst := resizeImageIfNecessary(img, height, width)
+	dst, err := resizeImageIfNecessary(img, height, width)
+	if err != nil {
+		return nil, err
+	}
 	if dst == nil {
 		return nil, nil
 	}
@@ -50,10 +61,14 @@ func ResizeImage(ext string, input io.Reader, height uint, width uint) ([]byte, 
 }
 
 // Resize logic is heavily inspired by https://github.com/KononK/resize code
-func resizeImageIfNecessary(src image.Image, height uint, width uint) *image.RGBA {
+func resizeImageIfNecessary(src image.Image, height uint, width uint) (*image.RGBA, error) {
 	// Source image has no or "negative" pixels
 	if src.Bounds().Dx() <= 0 || src.Bounds().Dy() <= 0 {
-		return nil
+		return nil, ErrZeroDimensions
+	}
+
+	if width == 0 && height == 0 {
+		return nil, ErrZeroResize
 	}
 
 	scaleX, scaleY := calcScaleFactors(width, height, float64(src.Bounds().Dx()), float64(src.Bounds().Dy()))
@@ -66,7 +81,7 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) *image.RGB
 
 	// Nothing to do, return src image
 	if int(width) == src.Bounds().Dx() && int(height) == src.Bounds().Dy() {
-		return nil
+		return nil, nil
 	}
 
 	// Create the destination image with the expected size we want
@@ -75,7 +90,7 @@ func resizeImageIfNecessary(src image.Image, height uint, width uint) *image.RGB
 	// Resize image go's draw builtin bilinear interpolator
 	draw.ApproxBiLinear.Scale(dst, dst.Rect, src, src.Bounds(), draw.Over, nil)
 
-	return dst
+	return dst, nil
 }
 
 // Calculates scaling factors using old and new image dimensions.

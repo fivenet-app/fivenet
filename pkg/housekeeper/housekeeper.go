@@ -31,6 +31,8 @@ type Housekeeper struct {
 	tracer trace.Tracer
 
 	db *sql.DB
+
+	getTablesListFn func() map[string]*Table
 }
 
 type Params struct {
@@ -53,6 +55,9 @@ func New(p Params) *Housekeeper {
 		logger: p.Logger.Named("housekeeper"),
 		tracer: p.TP.Tracer("housekeeper"),
 		db:     p.DB,
+		getTablesListFn: func() map[string]*Table {
+			return tablesList
+		},
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -99,6 +104,8 @@ func New(p Params) *Housekeeper {
 func (h *Housekeeper) runHousekeeper(ctx context.Context, data *cron.GenericCronData) error {
 	tablesMu.Lock()
 	defer tablesMu.Unlock()
+
+	tablesList := h.getTablesListFn()
 
 	keys := []string{}
 	for key := range tablesList {

@@ -3,6 +3,7 @@ package locks
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"os"
 	"path"
 	"sync"
@@ -99,11 +100,11 @@ func TestNats_MultipleLocks(t *testing.T) {
 
 	tracker := int32(0)
 	wg := sync.WaitGroup{}
-	for i := 0; i < 500; i++ {
+	for i := range 500 {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			//<-time.After(time.Duration(200+mrand.Float64()*(2000-200+1)) * time.Millisecond)
+			<-time.After(time.Duration(200+rand.Float64()*(2000-200+1)) * time.Millisecond)
 			n := getNatsClient(t, "basic")
 			connName := fmt.Sprintf("nats-%d", i)
 
@@ -117,7 +118,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 				panic("Had a concurrent lock")
 			}
 
-			// fmt.Printf("Worker %d has the lock (%v)\n", i, v)
+			t.Logf("worker %d has the lock (%v)", i, v)
 
 			atomic.AddInt32(&tracker, -1)
 
