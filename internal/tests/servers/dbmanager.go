@@ -3,7 +3,6 @@ package servers
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"sort"
@@ -187,29 +186,10 @@ func (m *dbServer) Stop() error {
 
 // Reset truncates all `fivenet_*` tables and reloads the base test data
 func (m *dbServer) Reset() error {
-	initDB, err := m.getMultiStatementDB()
-	if err != nil {
-		return fmt.Errorf("failed to get mutli statement db: %w", err)
+	if err := m.Stop(); err != nil {
+		return fmt.Errorf("failed to stop db for reset: %w", err)
 	}
 
-	rows, err := initDB.Query("SHOW TABLES LIKE 'fivenet_%';")
-	if err != nil {
-		return fmt.Errorf("failed to list fivenet tables in test database: %q", err)
-	}
-
-	for rows.Next() {
-		var tableName string
-		if err := rows.Scan(&tableName); err != nil {
-			return fmt.Errorf("failed to scan table name to string: %q", err)
-		}
-
-		// Placeholders aren't supported for table names, see
-		// https://github.com/go-sql-driver/mysql/issues/848#issuecomment-414910152
-		if _, err := initDB.Exec("SET FOREIGN_KEY_CHECKS = 0; TRUNCATE TABLE `" + tableName + "`; SET FOREIGN_KEY_CHECKS = 1;"); err != nil {
-			log.Printf("failed to truncate %s table: %s", tableName, err)
-		}
-	}
-
-	// Load base test data after every reset
-	return m.LoadBaseData()
+	// Setup new db
+	return m.Setup()
 }
