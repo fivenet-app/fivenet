@@ -15,7 +15,7 @@ func TestSanitizeKey(t *testing.T) {
 		{"key:value", "key.value"},
 		{"key/value", "key.value"},
 		{"key=value", "key_value"},
-		{"key#value:key/value=other", "key.value.value.value_other"},
+		{"key#value:key/value=other", "key.value.key.value_other"},
 		{"plainkey", "plainkey"},
 		{"", ""},
 	}
