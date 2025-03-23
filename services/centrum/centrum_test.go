@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
 	grpcserver "github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
+	"github.com/fivenet-app/fivenet/services/centrum/centrumbrokers"
 	"github.com/fivenet-app/fivenet/services/centrum/centrummanager"
 	"github.com/fivenet-app/fivenet/services/centrum/centrumstate"
 	"github.com/stretchr/testify/assert"
@@ -55,6 +56,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			fx.Provide(modules.TestUserInfoRetriever),
+			fx.Provide(centrumbrokers.New),
 			fx.Provide(tracker.NewForTests),
 			centrumstate.StateModule,
 			centrummanager.Module,
