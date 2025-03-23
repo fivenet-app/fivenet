@@ -14,14 +14,19 @@ func EndOfDay(t time.Time) time.Time {
 }
 
 // Based upon https://stackoverflow.com/a/55093788 from `Kamil Dziedzic`
-func InTimeSpan(start time.Time, end time.Time, check time.Time) bool {
+
+func InTimeSpan(start time.Time, end time.Time, current time.Time) bool {
+	if start.After(end) {
+		return !current.Before(end) && !current.After(start)
+	}
+
 	if start.Before(end) {
-		return !check.Before(start) && !check.After(end)
+		return !current.Before(start) && !current.After(end)
 	}
 
 	if start.Equal(end) {
-		return check.Equal(start)
+		return current.Equal(start)
 	}
 
-	return !start.After(check) || !end.Before(check)
+	return !start.After(current) || !end.Before(current)
 }

@@ -6,17 +6,17 @@ import (
 )
 
 type MockUserInfoRetriever struct {
-	userInfo map[int32]*UserInfo
+	UserInfo map[int32]*UserInfo
 }
 
-func NewMockUserInfoRetriever(userInfo map[int32]*UserInfo) UserInfoRetriever {
+func NewMockUserInfoRetriever(userInfo map[int32]*UserInfo) *MockUserInfoRetriever {
 	return &MockUserInfoRetriever{
-		userInfo: userInfo,
+		UserInfo: userInfo,
 	}
 }
 
 func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error) {
-	if userInfo, ok := ui.userInfo[userId]; ok {
+	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}
 
@@ -24,7 +24,7 @@ func (ui *MockUserInfoRetriever) GetUserInfo(ctx context.Context, userId int32, 
 }
 
 func (ui *MockUserInfoRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId int32) (*UserInfo, error) {
-	if userInfo, ok := ui.userInfo[userId]; ok {
+	if userInfo, ok := ui.UserInfo[userId]; ok {
 		return userInfo, nil
 	}
 

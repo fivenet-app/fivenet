@@ -56,22 +56,23 @@ INSERT INTO `fivenet_documents_comments` (`id`, `created_at`, `updated_at`, `del
 UNLOCK TABLES;
 
 --
--- Dumping data for table `fivenet_documents_job_access`
+-- Dumping data for table `fivenet_documents_access`
 --
 
-LOCK TABLES `fivenet_documents_job_access` WRITE;
-/*!40000 ALTER TABLE `fivenet_documents_job_access` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_job_access` (`id`, `created_at`, `document_id`, `job`, `minimum_grade`, `access`) VALUES (1,'2023-03-17 19:16:34.383',3,'ambulance',0,3),
-(2,'2023-03-17 19:16:51.213',4,'ambulance',0,3),
-(3,'2023-03-17 19:18:18.375',4,'doj',0,3),
-(4,'2023-03-17 19:18:18.384',5,'ambulance',0,3),
-(5,'2023-03-17 19:18:18.394',5,'doj',0,3),
-(6,'2023-03-17 19:18:18.410',6,'police',0,3),
-(7,'2023-03-17 19:18:18.420',7,'doj',0,3),
-(8,'2023-03-17 19:18:18.429',7,'ambulance',0,2),
-(9,'2023-03-17 19:29:05.154',8,'ambulance',0,3),
-(10,'2023-03-17 19:29:05.171',9,'ambulance',17,3);
-/*!40000 ALTER TABLE `fivenet_documents_job_access` ENABLE KEYS */;
+LOCK TABLES `fivenet_documents_access` WRITE;
+/*!40000 ALTER TABLE `fivenet_documents_access` DISABLE KEYS */;
+INSERT INTO `fivenet_documents_access` (`id`, `target_id`, `job`, `minimum_grade`, `access`) VALUES (1,3,'ambulance',0,3),
+(2,4,'ambulance',0,3),
+(3,4,'doj',0,3),
+(4,5,'ambulance',0,3),
+(5,5,'doj',0,3),
+(6,6,'police',0,3),
+(7,7,'doj',0,3),
+(8,7,'ambulance',0,2),
+(9,8,'ambulance',0,3),
+(10,9,'ambulance',17,3);
+INSERT INTO `fivenet_documents_access` (`id`, `target_id`, `user_id`, `access`) VALUES (11,4,5,1);
+/*!40000 ALTER TABLE `fivenet_documents_access` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -104,16 +105,6 @@ LOCK TABLES `fivenet_documents_templates` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_templates` DISABLE KEYS */;
 INSERT INTO `fivenet_documents_templates` (`id`, `created_at`, `updated_at`, `deleted_at`, `weight`, `category_id`, `title`, `description`, `content_title`, `content`, `access`, `schema`, `creator_job`) VALUES (1,'2023-03-17 19:31:28.661','2023-03-17 19:31:35.698',NULL,10,1,'Patientenakte','LSMD Patientenakten Template','Patientenakte NAME','Patientenakte für Name','{}',NULL,'ambulance');
 /*!40000 ALTER TABLE `fivenet_documents_templates` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Dumping data for table `fivenet_documents_user_access`
---
-
-LOCK TABLES `fivenet_documents_user_access` WRITE;
-/*!40000 ALTER TABLE `fivenet_documents_user_access` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_user_access` (`id`, `created_at`, `document_id`, `user_id`, `access`) VALUES (1,'2023-03-17 19:29:36.055',4,5,1);
-/*!40000 ALTER TABLE `fivenet_documents_user_access` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 

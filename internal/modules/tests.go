@@ -30,7 +30,6 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		perms.Module,
 		fx.Provide(TestDBClient),
 		fx.Provide(TestJetStreamClient),
-		fx.Provide(TestUserInfoRetriever),
 		fx.Provide(TestTokenMgr),
 		fx.Provide(TestAudit),
 		fx.Provide(postals.NewForTests),

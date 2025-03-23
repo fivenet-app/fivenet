@@ -26,7 +26,7 @@ import (
 
 func TestMain(m *testing.M) {
 	if err := servers.TestDBServer.Setup(); err != nil {
-		fmt.Println("failed to setup mysql test server: %w", err)
+		fmt.Printf("failed to setup mysql test server. %v\n", err)
 		return
 	}
 	defer servers.TestDBServer.Stop()
@@ -57,6 +57,7 @@ func TestFullAuthFlow(t *testing.T) {
 	var srv *Server
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
+			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {
 				srv = NewServer(p)
@@ -187,6 +188,7 @@ func TestFullAuthFlow(t *testing.T) {
 	chooseCharRes, err = client.ChooseCharacter(ctx, chooseCharReq)
 	assert.NoError(t, err)
 	assert.NotNil(t, chooseCharRes)
+	assert.NotNil(t, chooseCharRes.Char)
 
 	app.RequireStop()
 }

@@ -93,7 +93,7 @@ EXECUTE stmt;
 -- ) ENGINE = InnoDB AUTO_INCREMENT = 1;
 
 -- Table: `users` - Add `firstname` + `lastname` fulltext index if the table exists
-set @x := (select 1 from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_firstname_lastname_fulltext' and table_schema = database());
+set @x := (select 1 from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_firstname_lastname_fulltext' and column_name = 'firstname' and table_schema = database());
 set @sql := if( @x is null or @x > 0, 'select ''users name fulltext index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

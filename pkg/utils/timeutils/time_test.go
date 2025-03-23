@@ -24,56 +24,73 @@ func TestEndOfDay(t *testing.T) {
 }
 
 func TestInTimeSpan(t *testing.T) {
-	start := time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC)
-	end := time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC)
-
 	tests := []struct {
 		name     string
+		start    time.Time
+		end      time.Time
 		check    time.Time
 		expected bool
 	}{
 		{
 			name:     "Within range",
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
 			check:    time.Date(2023, 10, 1, 15, 0, 0, 0, time.UTC),
 			expected: true,
 		},
 		{
 			name:     "Before range",
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
 			check:    time.Date(2023, 10, 1, 9, 0, 0, 0, time.UTC),
 			expected: false,
 		},
 		{
 			name:     "After range",
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
 			check:    time.Date(2023, 10, 1, 21, 0, 0, 0, time.UTC),
 			expected: false,
 		},
 		{
 			name:     "At start of range",
-			check:    start,
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
+			check:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 			expected: true,
 		},
 		{
 			name:     "At end of range",
-			check:    end,
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
+			check:    time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
 			expected: true,
 		},
 		{
 			name:     "Start equals end, match",
-			check:    start,
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			check:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 			expected: true,
 		},
 		{
 			name:     "Start equals end, no match",
+			start:    time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 			check:    time.Date(2023, 10, 1, 11, 0, 0, 0, time.UTC),
 			expected: false,
 		},
 		{
 			name:     "Start after end, within range",
-			check:    time.Date(2023, 10, 1, 5, 0, 0, 0, time.UTC),
+			start:    time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
+			check:    time.Date(2023, 10, 1, 11, 0, 0, 0, time.UTC),
 			expected: true,
 		},
 		{
 			name:     "Start after end, outside range",
+			start:    time.Date(2023, 10, 1, 20, 0, 0, 0, time.UTC),
+			end:      time.Date(2023, 10, 1, 10, 0, 0, 0, time.UTC),
 			check:    time.Date(2023, 10, 1, 22, 0, 0, 0, time.UTC),
 			expected: false,
 		},
@@ -81,7 +98,7 @@ func TestInTimeSpan(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result := InTimeSpan(start, end, tt.check)
+			result := InTimeSpan(tt.start, tt.end, tt.check)
 			assert.Equal(t, tt.expected, result)
 		})
 	}

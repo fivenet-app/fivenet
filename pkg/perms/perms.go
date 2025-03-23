@@ -170,7 +170,7 @@ func New(p Params) (Permissions, error) {
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {
 		cfgDefaultPerms := p.AppConfig.Get().Perms.Default
 		defaultPerms := make([]string, len(cfgDefaultPerms))
-		for i := 0; i < len(cfgDefaultPerms); i++ {
+		for i := range cfgDefaultPerms {
 			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
 		}
 

@@ -23,7 +23,7 @@ import (
 
 func TestMain(m *testing.M) {
 	if err := servers.TestDBServer.Setup(); err != nil {
-		fmt.Println("failed to setup mysql test server: %w", err)
+		fmt.Printf("failed to setup mysql test server. %v\n", err)
 		return
 	}
 	defer servers.TestDBServer.Stop()
@@ -54,6 +54,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	var srv *Server
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
+			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(tracker.NewForTests),
 			centrumstate.StateModule,
 			centrummanager.Module,

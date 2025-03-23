@@ -289,7 +289,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 
 			index := slices.Index(existingRoles, role.ID)
 			if index >= 0 {
-				existingRoles = append(existingRoles[:index], existingRoles[index+1:]...)
+				existingRoles = slices.Delete(existingRoles, index, index+1)
 			}
 		}
 	}

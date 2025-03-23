@@ -6,16 +6,17 @@ import (
 	"net"
 
 	grpcsvc "github.com/fivenet-app/fivenet/pkg/grpc"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	grpc_auth "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/auth"
+	grpc_permission "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/permission"
+	grpc_sanitizer "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/sanitizer"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
+	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/validator"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
-
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	grpc_auth "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/auth"
-	grpc_permission "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/permission"
 )
 
 type GRPCServerParams struct {
@@ -35,10 +36,12 @@ func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerPar
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
-	conn, err := grpc.NewClient("",
+	conn, err := grpc.NewClient("passthrough:///Non-Existent.Server:80",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return lis.Dial()
-		}), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		}),
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("error connecting to test grpc server: %v", err)
 	}
@@ -48,11 +51,14 @@ func TestGRPCServer(ctx context.Context) (*grpc.ClientConn, func(p GRPCServerPar
 			grpc.ChainUnaryInterceptor(
 				grpc_auth.UnaryServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 				grpc_permission.UnaryServerInterceptor(p.GRPCPerm.GRPCPermissionUnaryFunc),
+				validator.UnaryServerInterceptor(),
+				grpc_sanitizer.UnaryServerInterceptor(),
 				recovery.UnaryServerInterceptor(),
 			),
 			grpc.ChainStreamInterceptor(
 				grpc_auth.StreamServerInterceptor(p.GRPCAuth.GRPCAuthFunc),
 				grpc_permission.StreamServerInterceptor(p.GRPCPerm.GRPCPermissionStreamFunc),
+				validator.StreamServerInterceptor(),
 				recovery.StreamServerInterceptor(),
 			),
 		)
