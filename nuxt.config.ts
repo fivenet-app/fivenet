@@ -77,7 +77,7 @@ export default defineNuxtConfig({
 
     icon: {
         collections: ['simple-icons', 'mdi', 'flagpack'],
-        provider: 'server',
+        provider: 'iconify',
         iconifyApiEndpoint: '/api/icons',
         fallbackToApi: false,
         clientBundle: {
