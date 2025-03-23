@@ -1,9 +1,7 @@
 package oauth2
 
 import (
-	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -14,12 +12,9 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/server/oauth2/providers"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
-	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
@@ -44,8 +39,9 @@ type OAuth2 struct {
 	db     *sql.DB
 	tm     *auth.TokenMgr
 
-	domain       string
-	oauthConfigs map[string]providers.IProvider
+	domain        string
+	oauthConfigs  map[string]providers.IProvider
+	userInfoStore userInfoStore
 }
 
 func New(p Params) *OAuth2 {
@@ -59,6 +55,9 @@ func New(p Params) *OAuth2 {
 		tm:           p.TM,
 		domain:       p.Config.HTTP.Sessions.Domain,
 		oauthConfigs: make(map[string]providers.IProvider, len(p.Config.OAuth2.Providers)),
+		userInfoStore: &oauth2UserInfo{
+			db: p.DB,
+		},
 	}
 
 	for _, p := range p.Config.OAuth2.Providers {
@@ -81,6 +80,7 @@ func New(p Params) *OAuth2 {
 					Name: p.Name,
 				},
 			}
+
 		default:
 			provider = &providers.Generic{
 				BaseProvider: providers.BaseProvider{
@@ -174,7 +174,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 
 	tokenVal, err := c.Cookie("fivenet_token")
 	if err != nil && connectOnly {
-		o.logger.Error("failed to parse token cookie for connect only request", zap.Error(err))
+		o.logger.Error("failed to get token cookie for connect only request", zap.Error(err))
 		o.handleRedirect(c, false, false, "invalid_request_token")
 		return
 	}
@@ -243,7 +243,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	userInfo, err := provider.GetUserInfo(c, c.Request.FormValue("code"))
+	userInfo, err := provider.GetUserInfo(c.Request.Context(), c.Request.FormValue("code"))
 	if err != nil {
 		o.logger.Error("failed to get userinfo from provider", zap.Error(err))
 		o.handleRedirect(c, connectOnly, false, "provider_failed")
@@ -257,7 +257,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 			return
 		}
 
-		if err := o.storeUserInfo(c, claims.AccID, provider.GetName(), userInfo); err != nil {
+		if err := o.userInfoStore.storeUserInfo(c.Request.Context(), claims.AccID, provider.GetName(), userInfo); err != nil {
 			o.logger.Error("failed to store user info", zap.Error(err))
 			if dbutils.IsDuplicateError(err) {
 				o.handleRedirect(c, connectOnly, false, "already_in_use")
@@ -272,7 +272,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	}
 
 	// Take care of logging user in
-	account, err := o.getUserInfo(c, provider.GetName(), userInfo)
+	account, err := o.userInfoStore.getUserInfo(c.Request.Context(), provider.GetName(), userInfo)
 	if err != nil {
 		o.logger.Error("failed to store userinfo in database", zap.Error(err))
 		o.handleRedirect(c, connectOnly, false, ReasonInternalError)
@@ -302,58 +302,4 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		url.QueryEscape(*account.Username),
 		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
 	))
-}
-
-func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
-	stmt := tOAuthAccs.
-		SELECT(
-			tAccs.ID,
-			tAccs.Username,
-			tAccs.License,
-		).
-		FROM(tOAuthAccs.
-			INNER_JOIN(tAccs,
-				tAccs.ID.EQ(tOAuthAccs.AccountID),
-			),
-		).
-		WHERE(jet.AND(
-			tOAuthAccs.Provider.EQ(jet.String(provider)),
-			tOAuthAccs.ExternalID.EQ(jet.String(userInfo.ID)),
-			tAccs.Enabled.IS_TRUE(),
-		)).
-		LIMIT(1)
-
-	var dest model.FivenetAccounts
-	if err := stmt.QueryContext(ctx, o.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-		return nil, nil
-	}
-
-	return &dest, nil
-}
-
-func (o *OAuth2) storeUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
-	stmt := tOAuthAccs.
-		INSERT(
-			tOAuthAccs.AccountID,
-			tOAuthAccs.Provider,
-			tOAuthAccs.ExternalID,
-			tOAuthAccs.Username,
-			tOAuthAccs.Avatar,
-		).
-		VALUES(
-			accountId,
-			provider,
-			userInfo.ID,
-			userInfo.Username,
-			userInfo.Avatar,
-		)
-
-	if _, err := stmt.ExecContext(ctx, o.db); err != nil {
-		return err
-	}
-
-	return nil
 }

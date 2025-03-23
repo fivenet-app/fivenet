@@ -97,7 +97,7 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(ctxCancel context.Context, logg
 func (j *JSWrapper) consumeErrHandlerWithRestart(ctxCancel context.Context, logger *zap.Logger, restartFn ConsumeErrRestartFn) error {
 	var err error
 	sleep := InitialRestartBackoffTime
-	for try := 0; try < MaxRestartRetries; try++ {
+	for try := range MaxRestartRetries {
 		if func() bool {
 			ctxTimeout, cancel := context.WithTimeout(ctxCancel, 10*time.Second)
 			defer cancel()
