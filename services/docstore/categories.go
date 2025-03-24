@@ -70,12 +70,10 @@ func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Categor
 		FROM(
 			tDCategory,
 		).
-		WHERE(
-			jet.AND(
-				tDCategory.Job.EQ(jet.String(userInfo.Job)),
-				tDCategory.ID.EQ(jet.Uint64(id)),
-			),
-		).
+		WHERE(jet.AND(
+			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.ID.EQ(jet.Uint64(id)),
+		)).
 		LIMIT(1)
 
 	var dest documents.Category
@@ -198,12 +196,10 @@ func (s *Server) DeleteCategory(ctx context.Context, req *pbdocstore.DeleteCateg
 	tDCategory := table.FivenetDocumentsCategories
 	stmt := tDCategory.
 		DELETE().
-		WHERE(
-			jet.AND(
-				tDCategory.Job.EQ(jet.String(userInfo.Job)),
-				tDCategory.ID.IN(ids...),
-			),
-		).
+		WHERE(jet.AND(
+			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.ID.IN(ids...),
+		)).
 		LIMIT(int64(len(req.Ids)))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

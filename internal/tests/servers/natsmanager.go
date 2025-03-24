@@ -64,3 +64,12 @@ func (m *natsServer) Stop() {
 	m.Stop()
 	m = nil
 }
+
+func (m *natsServer) Reset() {
+	if m == nil {
+		return
+	}
+
+	m.Stop()
+	m.Setup()
+}

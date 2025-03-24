@@ -57,15 +57,13 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocstore.GetD
 		FROM(
 			tDocRef,
 		).
-		WHERE(
-			jet.AND(
-				tDocRef.DeletedAt.IS_NULL(),
-				jet.OR(
-					tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
-					tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
-				),
+		WHERE(jet.AND(
+			tDocRef.DeletedAt.IS_NULL(),
+			jet.OR(
+				tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+				tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
 			),
-		)
+		))
 
 	if err := idStmt.QueryContext(ctx, s.db, &docsIds); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -158,15 +156,13 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *pbdocstore.GetD
 					tDocRef.CreatorID.EQ(tRefCreator.ID),
 				),
 		).
-		WHERE(
-			jet.AND(
-				tDocRef.DeletedAt.IS_NULL(),
-				jet.OR(
-					tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
-					tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
-				),
+		WHERE(jet.AND(
+			tDocRef.DeletedAt.IS_NULL(),
+			jet.OR(
+				tDocRef.SourceDocumentID.EQ(jet.Uint64(req.DocumentId)),
+				tDocRef.TargetDocumentID.EQ(jet.Uint64(req.DocumentId)),
 			),
-		).
+		)).
 		ORDER_BY(
 			tDocRef.CreatedAt.DESC(),
 		).
@@ -632,12 +628,10 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 					tTargetUser.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
-		WHERE(
-			jet.AND(
-				tDocRel.DocumentID.EQ(jet.Uint64(documentId)),
-				tDocRel.DeletedAt.IS_NULL(),
-			),
-		).
+		WHERE(jet.AND(
+			tDocRel.DocumentID.EQ(jet.Uint64(documentId)),
+			tDocRel.DeletedAt.IS_NULL(),
+		)).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
 		).

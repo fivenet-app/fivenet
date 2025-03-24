@@ -145,11 +145,9 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 
 	return q.
 		FROM(tables).
-		WHERE(
-			jet.AND(
-				wheres...,
-			),
-		).
+		WHERE(jet.AND(
+			wheres...,
+		)).
 		ORDER_BY(
 			tQuali.Abbreviation.ASC(),
 			tQualiResults.ID.DESC(),

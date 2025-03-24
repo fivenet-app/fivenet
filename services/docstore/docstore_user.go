@@ -187,12 +187,10 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *pbdocstore.ListUser
 					tASource.ID.EQ(tDocRel.SourceUserID),
 				),
 		).
-		WHERE(
-			jet.AND(
-				tDocument.DeletedAt.IS_NULL(),
-				tDocRel.ID.IN(rIds...),
-			),
-		).
+		WHERE(jet.AND(
+			tDocument.DeletedAt.IS_NULL(),
+			tDocRel.ID.IN(rIds...),
+		)).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
 		).

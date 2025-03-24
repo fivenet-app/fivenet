@@ -49,6 +49,7 @@ func TestMain(m *testing.M) {
 
 func TestFullAuthFlow(t *testing.T) {
 	defer servers.TestDBServer.Reset()
+	defer servers.TestNATSServer.Reset()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()

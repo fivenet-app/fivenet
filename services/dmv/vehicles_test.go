@@ -47,6 +47,7 @@ func TestMain(m *testing.M) {
 
 func TestListVehicles(t *testing.T) {
 	defer servers.TestDBServer.Reset()
+	defer servers.TestNATSServer.Reset()
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()

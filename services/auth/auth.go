@@ -266,12 +266,10 @@ func (s *Server) CreateAccount(ctx context.Context, req *pbauth.CreateAccountReq
 			tAccounts.Password.SET(jet.String(string(hashedPassword))),
 			tAccounts.RegToken.SET(jet.StringExp(jet.NULL)),
 		).
-		WHERE(
-			jet.AND(
-				tAccounts.ID.EQ(jet.Uint64(acc.ID)),
-				tAccounts.RegToken.EQ(jet.String(req.RegToken)),
-			),
-		)
+		WHERE(jet.AND(
+			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+			tAccounts.RegToken.EQ(jet.String(req.RegToken)),
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		if dbutils.IsDuplicateError(err) {
@@ -547,7 +545,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 
 	// If last char lock is enabled ensure to mark the one char as available only
 	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil {
-		for i := 0; i < len(resp.Chars); i++ {
+		for i := range resp.Chars {
 			if resp.Chars[i].Char.UserId == *acc.LastChar ||
 				slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
 				resp.Chars[i].Available = true
@@ -567,7 +565,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *pbauth.GetCharactersReq
 			}
 		})
 	} else {
-		for i := 0; i < len(resp.Chars); i++ {
+		for i := range resp.Chars {
 			resp.Chars[i].Available = true
 		}
 	}

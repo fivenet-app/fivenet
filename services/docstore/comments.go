@@ -264,12 +264,10 @@ func (s *Server) EditComment(ctx context.Context, req *pbdocstore.EditCommentReq
 		SET(
 			tDComments.Comment.SET(jet.String(*req.Comment.Content.RawContent)),
 		).
-		WHERE(
-			jet.AND(
-				tDComments.ID.EQ(jet.Uint64(req.Comment.Id)),
-				tDComments.DeletedAt.IS_NULL(),
-			),
-		)
+		WHERE(jet.AND(
+			tDComments.ID.EQ(jet.Uint64(req.Comment.Id)),
+			tDComments.DeletedAt.IS_NULL(),
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
@@ -390,12 +388,10 @@ func (s *Server) DeleteComment(ctx context.Context, req *pbdocstore.DeleteCommen
 		SET(
 			tDComments.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
-		WHERE(
-			jet.AND(
-				tDComments.ID.EQ(jet.Uint64(req.CommentId)),
-				tDComments.DeletedAt.IS_NULL(),
-			),
-		)
+		WHERE(jet.AND(
+			tDComments.ID.EQ(jet.Uint64(req.CommentId)),
+			tDComments.DeletedAt.IS_NULL(),
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
