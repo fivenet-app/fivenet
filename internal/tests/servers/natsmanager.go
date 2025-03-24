@@ -61,8 +61,8 @@ func (m *natsServer) Stop() {
 		return
 	}
 
-	m.Stop()
-	m = nil
+	m.server.Shutdown()
+	m.server = nil
 }
 
 func (m *natsServer) Reset() {
