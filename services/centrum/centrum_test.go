@@ -2,7 +2,6 @@ package centrum
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -24,29 +23,16 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	if err := servers.TestDBServer.Setup(); err != nil {
-		fmt.Printf("failed to setup mysql test server. %v\n", err)
-		return
-	}
-	defer servers.TestDBServer.Stop()
-
-	if err := servers.TestNATSServer.Setup(); err != nil {
-		fmt.Println("failed to setup nats test server: %w", err)
-		return
-	}
-	defer servers.TestNATSServer.Stop()
-
-	// All tests assume esx compat mode
+	// All tests assume esx compat mode for now
 	tables.EnableESXCompat()
 
 	code := m.Run()
-
 	os.Exit(code)
 }
 
 func TestBasicCentrumFlow(t *testing.T) {
-	defer servers.TestDBServer.Reset()
-	defer servers.TestNATSServer.Reset()
+	dbServer := servers.NewDBServer(t, true)
+	natsServer := servers.NewNATSServer(t, true)
 
 	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
@@ -58,6 +44,8 @@ func TestBasicCentrumFlow(t *testing.T) {
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			fx.StartTimeout(180*time.Second),
+			dbServer.FxProvide(),
+			natsServer.FxProvide(),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(centrumbrokers.New),
 			fx.Provide(tracker.NewForTests),

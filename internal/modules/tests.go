@@ -1,14 +1,10 @@
 package modules
 
 import (
-	"database/sql"
-
-	"github.com/fivenet-app/fivenet/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/pkg/croner"
-	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/html/htmlsanitizer"
@@ -28,8 +24,6 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		htmlsanitizer.Module,
 		TracerProviderModule,
 		perms.TestModule,
-		fx.Provide(TestDBClient),
-		fx.Provide(TestJetStreamClient),
 		fx.Provide(TestTokenMgr),
 		fx.Provide(TestAudit),
 		fx.Provide(postals.NewForTests),
@@ -53,33 +47,6 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 	to = append(to, opts...)
 
 	return to
-}
-
-func TestConfig() (*config.Config, error) {
-	cfg, err := config.LoadTestConfig()
-
-	if cfg != nil {
-		cfg.NATS.URL = servers.TestNATSServer.GetURL()
-	}
-
-	return cfg, err
-}
-
-func TestDBClient() (*sql.DB, error) {
-	db, err := servers.TestDBServer.DB()
-
-	return db, err
-}
-
-func TestJetStreamClient() (*events.JSWrapper, error) {
-	js, err := servers.TestNATSServer.GetJS()
-	if err != nil {
-		return nil, err
-	}
-
-	return &events.JSWrapper{
-		JetStream: js,
-	}, nil
 }
 
 func TestUserInfoRetriever() userinfo.UserInfoRetriever {

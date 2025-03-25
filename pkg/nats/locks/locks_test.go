@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
-	"os"
 	"path"
 	"sync"
 	"sync/atomic"
@@ -17,22 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func TestMain(m *testing.M) {
-	if err := servers.TestNATSServer.Setup(); err != nil {
-		fmt.Println("failed to setup nats test server: %w", err)
-		return
-	}
-	defer servers.TestNATSServer.Stop()
-
-	code := m.Run()
-
-	os.Exit(code)
-}
-
-func getNatsClient(t *testing.T, bucket string) *Locks {
-	js, err := servers.TestNATSServer.GetJS()
-	require.NoError(t, err)
-
+func getNatsClient(t *testing.T, js jetstream.JetStream, bucket string) *Locks {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -51,7 +35,10 @@ func getNatsClient(t *testing.T, bucket string) *Locks {
 }
 
 func TestNats_LockUnlock(t *testing.T) {
-	n := getNatsClient(t, "basic")
+	natsServer := servers.NewNATSServer(t, true)
+	js := natsServer.GetJS()
+
+	n := getNatsClient(t, js, "basic")
 
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
@@ -67,11 +54,14 @@ func TestNats_LockUnlock(t *testing.T) {
 }
 
 func TestNats_MultipleLocks(t *testing.T) {
+	natsServer := servers.NewNATSServer(t, true)
+	js := natsServer.GetJS()
+
 	lockKey := path.Join("acme", "example.com", "sites", "example.com")
 
-	n1 := getNatsClient(t, "basic")
-	n2 := getNatsClient(t, "basic")
-	n3 := getNatsClient(t, "basic")
+	n1 := getNatsClient(t, js, "basic")
+	n2 := getNatsClient(t, js, "basic")
+	n3 := getNatsClient(t, js, "basic")
 
 	err := n1.Lock(context.Background(), lockKey)
 	if err != nil {
@@ -105,7 +95,7 @@ func TestNats_MultipleLocks(t *testing.T) {
 		go func(i int) {
 			defer wg.Done()
 			<-time.After(time.Duration(200+rand.Float64()*(2000-200+1)) * time.Millisecond)
-			n := getNatsClient(t, "basic")
+			n := getNatsClient(t, js, "basic")
 			connName := fmt.Sprintf("nats-%d", i)
 
 			err := n.Lock(context.Background(), lockKey)

@@ -6,18 +6,20 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"testing"
 
 	"github.com/fivenet-app/fivenet/internal/tests"
 	"github.com/fivenet-app/fivenet/query"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ory/dockertest/v3"
 	"github.com/ory/dockertest/v3/docker"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
-var TestDBServer = &dbServer{}
-
 type dbServer struct {
+	t *testing.T
+
 	db       *sql.DB
 	pool     *dockertest.Pool
 	resource *dockertest.Resource
@@ -25,18 +27,30 @@ type dbServer struct {
 	stopped bool
 }
 
+func NewDBServer(t *testing.T, setup bool) *dbServer {
+	s := &dbServer{
+		t: t,
+	}
+
+	if setup {
+		s.Setup()
+	}
+
+	return s
+}
+
 func (m *dbServer) Setup() error {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	var err error
 	m.pool, err = dockertest.NewPool("")
 	if err != nil {
-		return fmt.Errorf("could not construct pool: %q", err)
+		m.t.Fatalf("could not construct pool: %q", err)
 	}
 
 	// uses pool to try to connect to Docker
 	err = m.pool.Client.Ping()
 	if err != nil {
-		return fmt.Errorf("could not connect to Docker: %q", err)
+		m.t.Fatalf("could not connect to Docker: %q", err)
 	}
 
 	// pulls an image, creates a container based on it and runs it
@@ -66,7 +80,7 @@ func (m *dbServer) Setup() error {
 		},
 	)
 	if err != nil {
-		return fmt.Errorf("could not start resource: %q", err)
+		m.t.Fatalf("could not start resource: %q", err)
 	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
@@ -77,7 +91,7 @@ func (m *dbServer) Setup() error {
 		}
 		return db.Ping()
 	}); err != nil {
-		return fmt.Errorf("could not connect to database: %q", err)
+		m.t.Fatalf("could not connect to database: %q", err)
 	}
 
 	if err := m.prepareDBForFirstUse(); err != nil {
@@ -90,8 +104,15 @@ func (m *dbServer) Setup() error {
 
 	m.db, err = sql.Open("mysql", m.getDSN())
 	if err != nil {
-		return fmt.Errorf("could not connect to database after setup: %q", err)
+		m.t.Fatalf("could not connect to database after setup: %q", err)
 	}
+
+	m.t.Cleanup(m.Stop)
+	// Auto stop server when test context is done
+	go func() {
+		<-m.t.Context().Done()
+		m.Stop()
+	}()
 
 	return nil
 }
@@ -117,7 +138,7 @@ func (m *dbServer) prepareDBForFirstUse() error {
 
 	// Use DB migrations to handle the rest (esx compat mode is true)
 	if err := query.MigrateDB(zap.NewNop(), m.getDSN(), true); err != nil {
-		return fmt.Errorf("failed to migrate test database: %w", err)
+		m.t.Fatalf("failed to migrate test database: %v", err)
 	}
 
 	return nil
@@ -127,7 +148,7 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 	// Open db connection with multiStatements param so we can apply sql files
 	initDB, err := sql.Open("mysql", m.getDSN()+"&parseTime=true&multiStatements=true")
 	if err != nil {
-		return nil, fmt.Errorf("failed to open test database connection for multi statement exec: %w", err)
+		return nil, fmt.Errorf("failed to open test database connection for multi statement exec: %v", err)
 	}
 
 	return initDB, nil
@@ -136,16 +157,16 @@ func (m *dbServer) getMultiStatementDB() (*sql.DB, error) {
 func (m *dbServer) loadSQLFile(file string) error {
 	initDB, err := m.getMultiStatementDB()
 	if err != nil {
-		return fmt.Errorf("failed to get mult istatement db: %w", err)
+		m.t.Fatalf("failed to get mult istatement db: %v", err)
 	}
 
 	c, ioErr := os.ReadFile(file)
 	if ioErr != nil {
-		return fmt.Errorf("failed to read %s for tests: %w", file, ioErr)
+		m.t.Fatalf("failed to read %s for tests: %v", file, ioErr)
 	}
 	sqlBase := string(c)
 	if _, err := initDB.Exec(sqlBase); err != nil {
-		return fmt.Errorf("failed to apply %s for tests: %w", file, err)
+		m.t.Fatalf("failed to apply %s for tests: %v", file, err)
 	}
 
 	return nil
@@ -155,7 +176,7 @@ func (m *dbServer) LoadBaseData() error {
 	path := filepath.Join(tests.TestDataSQLPath, "base_*.sql")
 	files, err := filepath.Glob(path)
 	if err != nil {
-		return fmt.Errorf("failed to find base data sql files (%s): %w", path, err)
+		m.t.Fatalf("failed to find base data sql files (%s): %v", path, err)
 	}
 	// Sort the found files as they might not be in lexical order which we
 	// need for this case https://github.com/golang/go/issues/17153
@@ -170,26 +191,20 @@ func (m *dbServer) LoadBaseData() error {
 	return nil
 }
 
-func (m *dbServer) Stop() error {
+func (m *dbServer) Stop() {
 	if m.stopped {
-		return nil
+		return
 	}
 	m.stopped = true
 
 	// You can't defer this because os.Exit doesn't care for defer
 	if err := m.pool.Purge(m.resource); err != nil {
-		return fmt.Errorf("could not purge container resource: %w", err)
+		m.t.Fatalf("could not purge container resource: %v", err)
 	}
-
-	return nil
 }
 
-// Reset truncates all `fivenet_*` tables and reloads the base test data
-func (m *dbServer) Reset() error {
-	if err := m.Stop(); err != nil {
-		return fmt.Errorf("failed to stop db for reset: %w", err)
-	}
-
-	// Setup new db
-	return m.Setup()
+func (m *dbServer) FxProvide() fx.Option {
+	return fx.Provide(func() *sql.DB {
+		return m.db
+	})
 }
