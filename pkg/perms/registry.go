@@ -56,8 +56,10 @@ func BuildGuardWithKey(category Category, name Name, key Key) string {
 }
 
 func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
-	if err := p.cleanupRoles(ctx); err != nil {
-		return err
+	if !p.devMode {
+		if err := p.cleanupRoles(ctx); err != nil {
+			return err
+		}
 	}
 
 	for _, perm := range permsList {
@@ -278,7 +280,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	existingRoles := allRoles.IDs()
 
 	// Iterate over current job and job grades to find any non-existant roles in our database
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		for _, grade := range dest[i].Grades {
 			role, err := p.GetRoleByJobAndGrade(ctx, dest[i].Name, grade.Grade)
 			if err != nil {
@@ -296,7 +298,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	}
 
 	// Remove all roles that shouldn't exist anymore
-	for i := 0; i < len(existingRoles); i++ {
+	for i := range existingRoles {
 		if err := p.DeleteRole(ctx, existingRoles[i]); err != nil {
 			return err
 		}

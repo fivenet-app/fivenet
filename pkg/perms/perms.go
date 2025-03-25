@@ -90,6 +90,8 @@ type Perms struct {
 	js     *events.JSWrapper
 	jsCons jetstream.ConsumeContext
 
+	// Enable fast "init" mode, skipping clean ups. Should only be used for dev/test environments
+	devMode       bool
 	startJobGrade int32
 
 	permsMap *xsync.MapOf[uint64, *cachePerm]
@@ -150,6 +152,7 @@ func New(p Params) (Permissions, error) {
 
 		js: p.JS,
 
+		devMode:       false,
 		startJobGrade: p.Cfg.Game.StartJobGrade,
 
 		permsMap:          xsync.NewMapOf[uint64, *cachePerm](),
@@ -188,16 +191,19 @@ func New(p Params) (Permissions, error) {
 			return fmt.Errorf("failed to register permissions. %w", err)
 		}
 
-		ps.wg.Add(1)
-		go func() {
-			defer ps.wg.Done()
+		// Skip apply job perms when in dev mode
+		if !ps.devMode {
+			ps.wg.Add(1)
+			go func() {
+				defer ps.wg.Done()
 
-			if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
-				ps.logger.Error("failed to apply job permissions", zap.Error(err))
-				return
-			}
-			ps.logger.Debug("successfully applied job permissions")
-		}()
+				if err := ps.ApplyJobPermissions(ctxCancel, ""); err != nil {
+					ps.logger.Error("failed to apply job permissions", zap.Error(err))
+					return
+				}
+				ps.logger.Debug("successfully applied job permissions")
+			}()
+		}
 
 		return nil
 	}))

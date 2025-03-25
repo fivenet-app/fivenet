@@ -27,7 +27,7 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		fx.Provide(appconfig.NewTest),
 		htmlsanitizer.Module,
 		TracerProviderModule,
-		perms.Module,
+		perms.TestModule,
 		fx.Provide(TestDBClient),
 		fx.Provide(TestJetStreamClient),
 		fx.Provide(TestTokenMgr),
