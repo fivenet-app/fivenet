@@ -81,9 +81,7 @@ func Load() (Result, error) {
 }
 
 var TestModule = fx.Module("config_test",
-	fx.Provide(
-		LoadTestConfig,
-	),
+	fx.Provide(LoadTestConfig),
 )
 
 func LoadTestConfig() (*Config, error) {

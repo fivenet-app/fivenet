@@ -177,10 +177,12 @@ func New(p Params) (Permissions, error) {
 		if err := ps.load(ctxStartup); err != nil {
 			return err
 		}
+		ps.logger.Debug("permissions loaded")
 
 		if err := ps.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
 			return err
 		}
+		ps.logger.Debug("registered events subscription")
 
 		if err := ps.register(ctxStartup, defaultPerms); err != nil {
 			return fmt.Errorf("failed to register permissions. %w", err)
@@ -194,6 +196,7 @@ func New(p Params) (Permissions, error) {
 				ps.logger.Error("failed to apply job permissions", zap.Error(err))
 				return
 			}
+			ps.logger.Debug("successfully applied job permissions")
 		}()
 
 		return nil
