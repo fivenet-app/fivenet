@@ -183,7 +183,7 @@ func New(p Params) (Permissions, error) {
 		ps.logger.Debug("permissions loaded")
 
 		if err := ps.registerSubscriptions(ctxStartup, ctxCancel); err != nil {
-			return err
+			return fmt.Errorf("failed to register events subscriptions. %w", err)
 		}
 		ps.logger.Debug("registered events subscription")
 
@@ -255,27 +255,27 @@ func (p *Perms) load(ctx context.Context) error {
 	defer span.End()
 
 	if err := p.loadPermissions(ctx); err != nil {
-		return err
+		return fmt.Errorf("failed to load permissions. %w", err)
 	}
 
 	if err := p.loadAttributes(ctx); err != nil {
-		return err
+		return fmt.Errorf("failed to load attributes. %w", err)
 	}
 
 	if err := p.loadRoles(ctx, 0); err != nil {
-		return err
+		return fmt.Errorf("failed to load roles. %w", err)
 	}
 
 	if err := p.loadRolePermissions(ctx, 0); err != nil {
-		return err
+		return fmt.Errorf("failed to load role permissions. %w", err)
 	}
 
 	if err := p.loadRoleAttributes(ctx, 0); err != nil {
-		return err
+		return fmt.Errorf("failed to load role attributes. %w", err)
 	}
 
 	if err := p.loadJobAttrs(ctx, ""); err != nil {
-		return err
+		return fmt.Errorf("failed to load job attributes. %w", err)
 	}
 
 	return nil
@@ -295,7 +295,7 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 	var dest []*cachePerm
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query permissions. %w", err)
 		}
 	}
 
@@ -332,13 +332,13 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query attributes. %w", err)
 		}
 	}
 
 	for _, attr := range dest {
 		if err := p.addOrUpdateAttributeInMap(attr.PermissionID, attr.ID, attr.Key, attr.Type, attr.ValidValues); err != nil {
-			return err
+			return fmt.Errorf("failed to add/update attribute in map. %w", err)
 		}
 	}
 
@@ -366,7 +366,7 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query roles. %w", err)
 		}
 	}
 
@@ -412,7 +412,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query role permissions. %w", err)
 		}
 	}
 
@@ -451,7 +451,7 @@ func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query job attributes. %w", err)
 		}
 	}
 
@@ -504,7 +504,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query role attributes. %w", err)
 		}
 	}
 

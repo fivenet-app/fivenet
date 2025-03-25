@@ -25,3 +25,25 @@ func (x *Settings) Default(job string) {
 		x.Timings.RequireUnitReminderSeconds = 180
 	}
 }
+
+func (x *Settings) Merge(in *Settings) *Settings {
+	x.Job = in.Job
+	x.Enabled = in.Enabled
+
+	x.Mode = in.Mode
+	x.FallbackMode = in.FallbackMode
+
+	if in.PredefinedStatus == nil {
+		x.PredefinedStatus = &PredefinedStatus{}
+	} else {
+		x.PredefinedStatus = in.PredefinedStatus
+	}
+
+	if in.Timings == nil {
+		x.Timings = &Timings{}
+	} else {
+		x.Timings = in.Timings
+	}
+
+	return x
+}

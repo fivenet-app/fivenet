@@ -3,6 +3,7 @@ package perms
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
@@ -25,6 +26,11 @@ var (
 	tJobPerms  = table.FivenetJobPermissions
 )
 
+type AddPerm struct {
+	Id  uint64
+	Val bool
+}
+
 func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
@@ -45,7 +51,7 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get job roles for job %s. %w", job, err)
 		}
 	}
 
@@ -73,7 +79,7 @@ func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (c
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get job roles up to grade %d for job %s. %w", grade, job, err)
 		}
 	}
 
@@ -101,7 +107,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get roles. %w", err)
 		}
 	}
 
@@ -126,7 +132,7 @@ func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get closest job role for job %s and grade %d. %w", job, grade, err)
 		}
 	}
 
@@ -146,7 +152,7 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 	var dest database.DataCount
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return -1, err
+			return -1, fmt.Errorf("failed to count roles for job %s. %w", job, err)
 		}
 	}
 
@@ -168,7 +174,7 @@ func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, er
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to get role with ID %d. %w", id, err)
 	}
 
 	return &dest, nil
@@ -187,24 +193,24 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 
 	res, err := stmt.ExecContext(ctx, p.db)
 	if err != nil && !dbutils.IsDuplicateError(err) {
-		return nil, err
+		return nil, fmt.Errorf("failed to create role for job %s and grade %d. %w", job, grade, err)
 	}
 
 	var role *model.FivenetRoles
 	if res != nil {
 		lastId, err := res.LastInsertId()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve last insert ID for role creation. %w", err)
 		}
 
 		role, err = p.GetRole(ctx, uint64(lastId))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve created role with ID %d. %w", lastId, err)
 		}
 	} else {
 		role, err = p.GetRoleByJobAndGrade(ctx, job, grade)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to retrieve existing role for job %s and grade %d. %w", job, grade, err)
 		}
 	}
 
@@ -221,7 +227,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		RoleID: role.ID,
 		Job:    role.Job,
 	}); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to publish role creation message for role ID %d. %w", role.ID, err)
 	}
 
 	return role, nil
@@ -230,7 +236,7 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	role, err := p.GetRole(ctx, id)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to retrieve role for deletion with ID %d. %w", id, err)
 	}
 
 	if err := p.publishMessage(ctx, RoleDeletedSubject, RoleIDEvent{
@@ -238,7 +244,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		Job:    role.Job,
 		Grade:  role.Grade,
 	}); err != nil {
-		return err
+		return fmt.Errorf("failed to publish role deletion message for role ID %d. %w", role.ID, err)
 	}
 
 	p.deleteRole(role.ID, role.Job, role.Grade)
@@ -250,7 +256,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 		).LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-		return err
+		return fmt.Errorf("failed to delete role with ID %d. %w", id, err)
 	}
 
 	return nil
@@ -287,7 +293,7 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 		if errors.Is(err, qrm.ErrNoRows) {
 			return nil, nil
 		} else {
-			return nil, err
+			return nil, fmt.Errorf("failed to get role for job %s and grade %d. %w", job, grade, err)
 		}
 	}
 
@@ -322,16 +328,11 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get permissions for role ID %d. %w", id, err)
 		}
 	}
 
 	return dest, nil
-}
-
-type AddPerm struct {
-	Id  uint64
-	Val bool
 }
 
 func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms ...AddPerm) error {
@@ -365,7 +366,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return err
+			return fmt.Errorf("failed to update permissions for role ID %d. %w", roleId, err)
 		}
 	}
 
@@ -379,7 +380,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
 		RoleID: roleId,
 	}); err != nil {
-		return err
+		return fmt.Errorf("failed to publish role permission update message for role ID %d. %w", roleId, err)
 	}
 
 	return nil
@@ -400,7 +401,7 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		LIMIT(int64(len(ids)))
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-		return err
+		return fmt.Errorf("failed to remove permissions from role ID %d. %w", roleId, err)
 	}
 
 	if permsRoleMap, ok := p.permsRoleMap.Load(roleId); ok {
@@ -412,7 +413,7 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 	if err := p.publishMessage(ctx, RolePermUpdateSubject, RoleIDEvent{
 		RoleID: roleId,
 	}); err != nil {
-		return err
+		return fmt.Errorf("failed to publish role permission removal message for role ID %d. %w", roleId, err)
 	}
 
 	return nil
@@ -442,7 +443,7 @@ func (p *Perms) GetJobPermissions(ctx context.Context, job string) ([]*permissio
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to get permissions for job %s. %w", job, err)
 		}
 	}
 
@@ -467,7 +468,7 @@ func (p *Perms) UpdateJobPermissions(ctx context.Context, job string, id uint64,
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return err
+			return fmt.Errorf("failed to update job permissions for job %s and permission ID %d. %w", job, id, err)
 		}
 	}
 

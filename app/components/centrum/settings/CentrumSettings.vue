@@ -49,8 +49,10 @@ const schema = z.object({
     enabled: z.boolean(),
     mode: z.nativeEnum(CentrumMode),
     fallbackMode: z.nativeEnum(CentrumMode),
-    unitStatus: z.string().array().max(10),
-    dispatchStatus: z.string().array().max(10),
+    predefinedStatus: z.object({
+        unitStatus: z.string().array().max(10),
+        dispatchStatus: z.string().array().max(10),
+    }),
     timings: z.object({
         dispatchMaxWait: z.coerce.number().min(30).max(6000),
         requireUnit: z.boolean(),
@@ -64,8 +66,10 @@ const state = reactive<Schema>({
     enabled: false,
     mode: CentrumMode.MANUAL,
     fallbackMode: CentrumMode.AUTO_ROUND_ROBIN,
-    unitStatus: [],
-    dispatchStatus: [],
+    predefinedStatus: {
+        unitStatus: [],
+        dispatchStatus: [],
+    },
     timings: {
         dispatchMaxWait: 900,
         requireUnit: false,
@@ -81,10 +85,7 @@ async function updateSettings(values: Schema): Promise<void> {
                 enabled: values.enabled,
                 mode: values.mode,
                 fallbackMode: values.fallbackMode,
-                predefinedStatus: {
-                    dispatchStatus: values.dispatchStatus,
-                    unitStatus: values.unitStatus,
-                },
+                predefinedStatus: values.predefinedStatus,
                 timings: values.timings,
             },
         });
@@ -113,8 +114,11 @@ function setSettingsValues(): void {
     state.enabled = settings.value.enabled;
     state.mode = settings.value.mode;
     state.fallbackMode = settings.value.fallbackMode;
-    state.dispatchStatus = settings.value.predefinedStatus?.dispatchStatus ?? [];
-    state.unitStatus = settings.value.predefinedStatus?.unitStatus ?? [];
+    console.log('status', settings.value.predefinedStatus);
+    state.predefinedStatus = settings.value.predefinedStatus ?? {
+        unitStatus: [],
+        dispatchStatus: [],
+    };
 }
 
 watch(settings, () => setSettingsValues());
@@ -285,10 +289,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :ui="{ container: '' }"
                             >
                                 <div class="flex flex-col gap-1">
-                                    <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
+                                    <div
+                                        v-for="(_, idx) in state.predefinedStatus.unitStatus"
+                                        :key="idx"
+                                        class="flex items-center gap-1"
+                                    >
                                         <UFormGroup :name="`unitStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
-                                                v-model="state.unitStatus[idx]"
+                                                v-model="state.predefinedStatus.unitStatus[idx]"
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
@@ -299,7 +307,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <UButton
                                                 :ui="{ rounded: 'rounded-full' }"
                                                 icon="i-mdi-close"
-                                                @click="state.unitStatus.splice(idx, 1)"
+                                                @click="state.predefinedStatus.unitStatus.splice(idx, 1)"
                                             />
                                         </UTooltip>
                                     </div>
@@ -309,9 +317,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UButton
                                         :ui="{ rounded: 'rounded-full' }"
                                         icon="i-mdi-plus"
-                                        :disabled="!canSubmit || state.unitStatus.length >= 8"
-                                        :class="state.unitStatus.length ? 'mt-2' : ''"
-                                        @click="state.unitStatus.push('')"
+                                        :disabled="!canSubmit || state.predefinedStatus.unitStatus.length >= 8"
+                                        :class="state.predefinedStatus.unitStatus.length ? 'mt-2' : ''"
+                                        @click="state.predefinedStatus.unitStatus.push('')"
                                     />
                                 </UTooltip>
                             </UFormGroup>
@@ -324,10 +332,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :ui="{ container: '' }"
                             >
                                 <div class="flex flex-col gap-1">
-                                    <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
+                                    <div
+                                        v-for="(_, idx) in state.predefinedStatus.dispatchStatus"
+                                        :key="idx"
+                                        class="flex items-center gap-1"
+                                    >
                                         <UFormGroup :name="`dispatchStatus.${idx}`" :ui="{ container: '' }" class="flex-1">
                                             <UInput
-                                                v-model="state.dispatchStatus[idx]"
+                                                v-model="state.predefinedStatus.dispatchStatus[idx]"
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
@@ -339,7 +351,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :ui="{ rounded: 'rounded-full' }"
                                                 icon="i-mdi-close"
                                                 :disabled="!canSubmit"
-                                                @click="state.dispatchStatus.splice(idx, 1)"
+                                                @click="state.predefinedStatus.dispatchStatus.splice(idx, 1)"
                                             />
                                         </UTooltip>
                                     </div>
@@ -349,9 +361,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UButton
                                         :ui="{ rounded: 'rounded-full' }"
                                         icon="i-mdi-plus"
-                                        :disabled="!canSubmit || state.dispatchStatus.length >= 8"
-                                        :class="state.dispatchStatus.length ? 'mt-2' : ''"
-                                        @click="state.dispatchStatus.push('')"
+                                        :disabled="!canSubmit || state.predefinedStatus.dispatchStatus.length >= 8"
+                                        :class="state.predefinedStatus.dispatchStatus.length ? 'mt-2' : ''"
+                                        @click="state.predefinedStatus.dispatchStatus.push('')"
                                     />
                                 </UTooltip>
                             </UFormGroup>

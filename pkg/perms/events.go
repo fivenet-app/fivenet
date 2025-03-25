@@ -43,7 +43,7 @@ func (p *Perms) registerSubscriptions(ctxStartup context.Context, ctxCancel cont
 	}
 
 	if _, err := p.js.CreateOrUpdateStream(ctxStartup, cfg); err != nil {
-		return err
+		return fmt.Errorf("failed to create or update stream. %w", err)
 	}
 
 	consumer, err := p.js.CreateConsumer(ctxStartup, cfg.Name, jetstream.ConsumerConfig{
@@ -51,7 +51,7 @@ func (p *Perms) registerSubscriptions(ctxStartup context.Context, ctxCancel cont
 		FilterSubject: fmt.Sprintf("%s.>", BaseSubject),
 	})
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create consumer. %w", err)
 	}
 
 	if p.jsCons != nil {
@@ -62,7 +62,7 @@ func (p *Perms) registerSubscriptions(ctxStartup context.Context, ctxCancel cont
 	p.jsCons, err = consumer.Consume(p.handleMessageFunc(ctxCancel),
 		p.js.ConsumeErrHandlerWithRestart(ctxCancel, p.logger, p.registerSubscriptions))
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to start consumer. %w", err)
 	}
 
 	return nil
@@ -144,11 +144,11 @@ func (p *Perms) handleMessageFunc(ctx context.Context) jetstream.MessageHandler 
 func (p *Perms) publishMessage(ctx context.Context, subj events.Type, data any) error {
 	out, err := json.Marshal(data)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to marshal data. %w", err)
 	}
 
 	if _, err := p.js.Publish(ctx, string(BaseSubject)+"."+string(subj), out); err != nil {
-		return err
+		return fmt.Errorf("failed to publish message to subject %s. %w", string(BaseSubject)+"."+string(subj), err)
 	}
 
 	return nil

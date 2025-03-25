@@ -32,12 +32,12 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 	res, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
 		if !dbutils.IsDuplicateError(err) {
-			return 0, err
+			return 0, fmt.Errorf("failed to execute insert statement. %w", err)
 		}
 
 		permId, ok := p.lookupPermIDByGuard(guard)
 		if !ok {
-			return 0, fmt.Errorf("created permission not found in our cache ")
+			return 0, fmt.Errorf("created permission not found in our cache")
 		}
 
 		return permId, nil
@@ -45,7 +45,7 @@ func (p *Perms) CreatePermission(ctx context.Context, category Category, name Na
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to retrieve last insert ID. %w", err)
 	}
 
 	return uint64(lastId), nil
@@ -70,7 +70,7 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 	var dest model.FivenetPermissions
 	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query permission by guard. %w", err)
 	}
 
 	return &dest, nil
@@ -96,7 +96,7 @@ func (p *Perms) UpdatePermission(ctx context.Context, id uint64, category Catego
 
 	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute update statement. %w", err)
 	}
 
 	return nil
@@ -121,7 +121,7 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, fmt.Errorf("failed to query all permissions. %w", err)
 		}
 	}
 
@@ -129,8 +129,12 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 }
 
 func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
 	wIds := make([]jet.Expression, len(ids))
-	for i := 0; i < len(ids); i++ {
+	for i := range ids {
 		wIds[i] = jet.Uint64(ids[i])
 	}
 
@@ -142,15 +146,19 @@ func (p *Perms) RemovePermissionsByIDs(ctx context.Context, ids ...uint64) error
 
 	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to execute delete statement. %w", err)
 	}
 
 	return nil
 }
 
 func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error) {
+	if len(ids) == 0 {
+		return nil, nil
+	}
+
 	wIds := make([]jet.Expression, len(ids))
-	for i := 0; i < len(ids); i++ {
+	for i := range ids {
 		wIds[i] = jet.Uint64(ids[i])
 	}
 
@@ -175,7 +183,7 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 	var dest []*permissions.Permission
 	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query permissions by IDs. %w", err)
 	}
 
 	return dest, nil
@@ -202,7 +210,7 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 	var dest permissions.Permission
 	err := stmt.QueryContext(ctx, p.db, &dest)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to query permission by category and name. %w", err)
 	}
 
 	return &dest, nil

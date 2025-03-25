@@ -131,7 +131,7 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 	var dest []*jobs.Colleague
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query centrum disponents. %w", err)
 		}
 	}
 
@@ -204,7 +204,7 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		}
 	}
 
-	for i := 0; i < len(units); i++ {
+	for i := range units {
 		access, err := s.ListUnitAccess(ctx, units[i].Id)
 		if err != nil {
 			return err
@@ -341,7 +341,7 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 	}
 
 	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
-	for i := 0; i < len(dsps); i++ {
+	for i := range dsps {
 		var err error
 		dsps[i].Units, err = s.LoadDispatchAssignments(ctx, dsps[i].Job, dsps[i].Id)
 		if err != nil {
@@ -420,7 +420,7 @@ func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispa
 	}
 
 	// Resolve units based on the dispatch unit assignments
-	for i := 0; i < len(dest); i++ {
+	for i := range dest {
 		unit, err := s.GetUnit(ctx, job, dest[i].UnitId)
 		if unit == nil || err != nil {
 			return nil, fmt.Errorf("no unit found with id")

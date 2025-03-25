@@ -19,8 +19,7 @@ func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
 
 func (s *State) UpdateSettings(ctx context.Context, job string, in *centrum.Settings) error {
 	current := s.GetSettings(ctx, job)
-	// Simply use protobuf merge to update existing settings with incoming settings
-	proto.Merge(current, in)
+	current.Merge(in)
 
 	s.settings.Store(job, current)
 

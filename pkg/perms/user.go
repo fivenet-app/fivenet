@@ -105,7 +105,7 @@ func (p *Perms) Can(userInfo *userinfo.UserInfo, category Category, name Name) b
 	return result
 }
 
-func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) (result bool) {
+func (p *Perms) checkIfCan(permId uint64, userInfo *userinfo.UserInfo) bool {
 	if check, ok := p.checkRoleJob(userInfo.Job, userInfo.JobGrade, permId); ok {
 		return check
 	}
