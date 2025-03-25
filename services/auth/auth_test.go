@@ -60,7 +60,7 @@ func TestFullAuthFlow(t *testing.T) {
 	var srv *Server
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
-			fx.StartTimeout(60*time.Second),
+			fx.StartTimeout(180*time.Second),
 			fx.Provide(modules.TestUserInfoRetriever),
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) *Server {

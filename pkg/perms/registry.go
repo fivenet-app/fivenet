@@ -78,6 +78,7 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 				return err
 			}
 		}
+		p.logger.Debug("registered permission", zap.String("guard", BuildGuard(perm.Category, perm.Name)))
 	}
 
 	if err := p.SetDefaultRolePerms(ctx, defaultRolePerms); err != nil {

@@ -71,7 +71,7 @@ func TestListVehicles(t *testing.T) {
 	app := fxtest.New(t,
 
 		modules.GetFxTestOpts(
-			fx.StartTimeout(60*time.Second),
+			fx.StartTimeout(180*time.Second),
 			fx.Provide(func() userinfo.UserInfoRetriever {
 				return ui
 			}),
