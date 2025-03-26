@@ -221,7 +221,10 @@ func (p *Perms) registerOrUpdateAttribute(ctx context.Context, permId uint64, ke
 		}
 
 		if attr.Type != string(aType) || (attr.ValidValues == nil || validVals != attrValidValues) {
-			return attr.ID, fmt.Errorf("failed to update attribute. %w", p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validVals))
+			if err := p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validVals); err != nil {
+				return attr.ID, fmt.Errorf("failed to update attribute. %w", err)
+			}
+			return attr.ID, nil
 		}
 
 		return attr.ID, nil
