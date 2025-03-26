@@ -306,6 +306,8 @@ INSERT INTO `fivenet_job_permissions` (`job`, `permission_id`, `val`) VALUES ('a
 ('ambulance',77,1),
 ('ambulance',82,1),
 ('ambulance',7595,0);
+/*!40000 ALTER TABLE `fivenet_job_permissions` ENABLE KEYS */;
+UNLOCK TABLES;
 
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
