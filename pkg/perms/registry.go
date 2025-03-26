@@ -66,7 +66,7 @@ func (p *Perms) register(ctx context.Context, defaultRolePerms []string) error {
 	for _, perm := range permsList {
 		permId, err := p.createOrUpdatePermission(ctx, perm.Category, perm.Name)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create or update permission (category: %s, name: %s). %w", perm.Category, perm.Name, err)
 		}
 		p.permsMap.Store(permId, &cachePerm{
 			ID:        permId,

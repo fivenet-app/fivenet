@@ -47,13 +47,10 @@ func (m *natsServer) Setup() {
 	if !ns.ReadyForConnections(8 * time.Second) {
 		m.t.Fatal("nats: not ready connection after 8 seconds")
 	}
-
-	// Auto stop server when test context is done
-	go func() {
-		<-m.t.Context().Done()
-		m.Stop()
-	}()
 	m.server = ns
+
+	// Auto stop server when test is done
+	m.t.Cleanup(m.Stop)
 }
 
 func (m *natsServer) GetURL() string {

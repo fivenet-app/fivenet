@@ -39,7 +39,7 @@ func NewDBServer(t *testing.T, setup bool) *dbServer {
 	return s
 }
 
-func (m *dbServer) Setup() error {
+func (m *dbServer) Setup() {
 	// uses a sensible default on windows (tcp/http) and linux/osx (socket)
 	var err error
 	m.pool, err = dockertest.NewPool("")
@@ -87,19 +87,27 @@ func (m *dbServer) Setup() error {
 	if err := m.pool.Retry(func() error {
 		db, err := sql.Open("mysql", m.getDSN())
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to open database connection. %w", err)
 		}
-		return db.Ping()
+		if err := db.Ping(); err != nil {
+			return fmt.Errorf("failed to ping database. %w", err)
+		}
+
+		if _, err := db.Query("SELECT 1;"); err != nil {
+			return fmt.Errorf("failed to execute test query on database. %w", err)
+		}
+
+		return nil
 	}); err != nil {
 		m.t.Fatalf("could not connect to database: %q", err)
 	}
 
 	if err := m.prepareDBForFirstUse(); err != nil {
-		return err
+		m.t.Fatalf("failed to prepare database for first use: %q", err)
 	}
 
 	if err := m.LoadBaseData(); err != nil {
-		return err
+		m.t.Fatalf("failed to load base data into database: %q", err)
 	}
 
 	m.db, err = sql.Open("mysql", m.getDSN())
@@ -107,14 +115,8 @@ func (m *dbServer) Setup() error {
 		m.t.Fatalf("could not connect to database after setup: %q", err)
 	}
 
+	// Auto stop server when test is done
 	m.t.Cleanup(m.Stop)
-	// Auto stop server when test context is done
-	go func() {
-		<-m.t.Context().Done()
-		m.Stop()
-	}()
-
-	return nil
 }
 
 func (m *dbServer) DB() (*sql.DB, error) {
