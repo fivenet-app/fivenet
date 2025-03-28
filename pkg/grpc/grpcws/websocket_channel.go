@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"sync"
 	"time"
 
 	"github.com/coder/websocket"
@@ -16,6 +17,7 @@ import (
 )
 
 type WebsocketChannel struct {
+	mu             sync.Mutex
 	ctx            context.Context
 	wsConn         *websocket.Conn
 	handler        http.Handler
@@ -38,6 +40,7 @@ var framePingResponse = &grpcws.GrpcFrame{
 
 func NewWebsocketChannel(ctx context.Context, websocket *websocket.Conn, handler http.Handler, maxStreamCount int, req *http.Request) *WebsocketChannel {
 	return &WebsocketChannel{
+		mu:             sync.Mutex{},
 		ctx:            ctx,
 		wsConn:         websocket,
 		handler:        handler,
@@ -141,7 +144,8 @@ func (ws *WebsocketChannel) poll() error {
 
 		// Close channel if body frame says so
 		body := frame.Payload.(*grpcws.GrpcFrame_Body)
-		if body.Body.Complete {
+		if body.Body.Complete && !stream.inputClosed {
+			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
 
