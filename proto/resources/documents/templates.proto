@@ -38,7 +38,7 @@ message Template {
     min_len: 0,
     max_bytes: 2000000 // 2 Megabytes
   }]; // @gotags: alias:"content"
-  string state = 12 [(validate.rules).string.max_len = 32]; // @gotags: alias:"state"
+  string state = 12 [(validate.rules).string.max_len = 512]; // @gotags: alias:"state"
   resources.documents.TemplateSchema schema = 13; // @gotags: alias:"schema"
   string creator_job = 14 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 15 [(validate.rules).string.max_len = 50];

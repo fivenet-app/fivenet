@@ -48,7 +48,7 @@ const schema = z.object({
     icon: z.string().max(64).optional(),
     contentTitle: z.string().min(3).max(2048),
     content: z.string().min(3).max(1500000),
-    contentState: z.union([z.string().min(1).max(2048), z.string().length(0)]),
+    contentState: z.union([z.string().min(1).max(512), z.string().length(0)]),
     category: z.custom<Category>().optional(),
     jobAccess: z.custom<TemplateJobAccess>().array().max(maxAccessEntries),
     contentAccess: z.object({
