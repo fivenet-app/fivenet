@@ -9,30 +9,30 @@ importers:
   .:
     devDependencies:
       '@protobuf-ts/plugin':
-        specifier: 2.9.5
-        version: 2.9.5
+        specifier: 2.9.6
+        version: 2.9.6
       google-protobuf:
         specifier: 3.21.4
         version: 3.21.4
 
 packages:
 
-  '@protobuf-ts/plugin-framework@2.9.5':
-    resolution: {integrity: sha512-DYNQ8Ga3xwPZMfaZGRCnDOcEdQZK9MorTXngVoFLnHWEE8zLhUjFVtdkChZtTih6rl8Z6akyA7hRgj/GrJF58Q==}
+  '@protobuf-ts/plugin-framework@2.9.6':
+    resolution: {integrity: sha512-w7A1RXrDCiVzcaRE6YJP7FCARuAFe/Vc4SNQnHAi4CF0V6mEtyjAYEIC5BNYgIRaJEqB26zzsBQjIem3R02SCA==}
 
-  '@protobuf-ts/plugin@2.9.5':
-    resolution: {integrity: sha512-KCzNRTFye837XdfPjS85gGzxgPGVDR3W8Px2G3etXuouNog9W+Cr+U0IBTFADrRWXC2x+OSNjXxrdZEiw+H5Cw==}
+  '@protobuf-ts/plugin@2.9.6':
+    resolution: {integrity: sha512-Wpv5rkXeu6E5Y4r0TjWE0bzRGddiTYl/RM+tLgVlS0r8CqOBqNAmlWv+s8ltf/F75rVrahUal0cpyhFwha9GRA==}
     hasBin: true
 
-  '@protobuf-ts/protoc@2.9.5':
-    resolution: {integrity: sha512-n6a7OHfr/Ubw483L6kNJB0wBCe/Ops0A652zB6J6nR2x1o+pjVFrMCeeQQsqxkYpQwQ8FCIETSxrMpfOBKTIvQ==}
+  '@protobuf-ts/protoc@2.9.6':
+    resolution: {integrity: sha512-c0XvAPDIBAovH9HxV8gBv8gzOTreQIqibcusrB1+DxvFiSvy+2V1tjbUmG5gJEbjk3aAOaoj0a3+QuE+P28xUw==}
     hasBin: true
 
-  '@protobuf-ts/runtime-rpc@2.9.5':
-    resolution: {integrity: sha512-NWAb1TaV4CR+BknZr1WRVT5Ws2AupVwGgRNes4oPAFrgLNXQotDFl2E6pmsjPwME8sAgJVzeSr7bUqQVyoAK2A==}
+  '@protobuf-ts/runtime-rpc@2.9.6':
+    resolution: {integrity: sha512-0UeqDRzNxgsh08lY5eWzFJNfD3gZ8Xf+WG1HzbIAbVAigzigwjwsYNNhTeas5H3gco1U5owTzCg177aambKOOw==}
 
-  '@protobuf-ts/runtime@2.9.5':
-    resolution: {integrity: sha512-SsumigRe3IqNTCQvVZUqDQExsKF72eyAMiWlYb5Jwj3eU4z8UH7JLlSfb/Wjidz4b/chTN6zh5AXBSKl0Asm3A==}
+  '@protobuf-ts/runtime@2.9.6':
+    resolution: {integrity: sha512-C0CfpKx4n4LBbUrajOdRj2BTbd3qBoK0SiKWLq7RgCoU6xiN4wesBMFHUOBp3fFzKeZwgU8Q2KtzaqzIvPLRXg==}
 
   google-protobuf@3.21.4:
     resolution: {integrity: sha512-MnG7N936zcKTco4Jd2PX2U96Kf9PxygAPKBug+74LHzmHXmceN16MmRcdgZv+DGef/S9YvQAfRsNCn4cjf9yyQ==}
@@ -44,26 +44,26 @@ packages:
 
 snapshots:
 
-  '@protobuf-ts/plugin-framework@2.9.5':
+  '@protobuf-ts/plugin-framework@2.9.6':
     dependencies:
-      '@protobuf-ts/runtime': 2.9.5
+      '@protobuf-ts/runtime': 2.9.6
       typescript: 3.9.10
 
-  '@protobuf-ts/plugin@2.9.5':
+  '@protobuf-ts/plugin@2.9.6':
     dependencies:
-      '@protobuf-ts/plugin-framework': 2.9.5
-      '@protobuf-ts/protoc': 2.9.5
-      '@protobuf-ts/runtime': 2.9.5
-      '@protobuf-ts/runtime-rpc': 2.9.5
+      '@protobuf-ts/plugin-framework': 2.9.6
+      '@protobuf-ts/protoc': 2.9.6
+      '@protobuf-ts/runtime': 2.9.6
+      '@protobuf-ts/runtime-rpc': 2.9.6
       typescript: 3.9.10
 
-  '@protobuf-ts/protoc@2.9.5': {}
+  '@protobuf-ts/protoc@2.9.6': {}
 
-  '@protobuf-ts/runtime-rpc@2.9.5':
+  '@protobuf-ts/runtime-rpc@2.9.6':
     dependencies:
-      '@protobuf-ts/runtime': 2.9.5
+      '@protobuf-ts/runtime': 2.9.6
 
-  '@protobuf-ts/runtime@2.9.5': {}
+  '@protobuf-ts/runtime@2.9.6': {}
 
   google-protobuf@3.21.4: {}
 
