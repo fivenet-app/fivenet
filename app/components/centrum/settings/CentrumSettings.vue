@@ -114,7 +114,6 @@ function setSettingsValues(): void {
     state.enabled = settings.value.enabled;
     state.mode = settings.value.mode;
     state.fallbackMode = settings.value.fallbackMode;
-    console.log('status', settings.value.predefinedStatus);
     state.predefinedStatus = settings.value.predefinedStatus ?? {
         unitStatus: [],
         dispatchStatus: [],

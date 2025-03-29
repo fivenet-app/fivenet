@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
+
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { DocActivity } from '~~/gen/ts/resources/documents/activity';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { getDocAtivityIcon } from '../helpers';
+import ActivityAccessUpdated from './ActivityAccessUpdated.vue';
 
 defineProps<{
     entry: DocActivity;
@@ -13,6 +15,7 @@ defineProps<{
 
 function spoilerNeeded(activityType: DocActivityType): boolean {
     switch (activityType) {
+        case DocActivityType.ACCESS_UPDATED:
         case DocActivityType.UPDATED:
             return true;
 
@@ -34,7 +37,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-2 text-sm font-medium">
-                        <span class="font-bold">
+                        <span class="font-bold text-gray-900 dark:text-white">
                             {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
                         <span v-if="entry.data">
@@ -82,7 +85,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
                             <h3 class="inline-flex items-center text-sm font-medium">
-                                <span class="font-bold">
+                                <span class="font-bold text-gray-900 dark:text-white">
                                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
@@ -116,13 +119,24 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                 </div>
             </template>
 
-            <template v-if="entry.activityType === DocActivityType.UPDATED" #item>
-                <div class="bg-background rounded-md p-2">
-                    <ActivityDocUpdatedDiff
-                        v-if="entry.data?.data.oneofKind === 'updated'"
-                        :update="entry.data?.data.updated"
-                    />
-                </div>
+            <template #item>
+                <template v-if="entry.activityType === DocActivityType.UPDATED">
+                    <div class="bg-background rounded-md p-2">
+                        <ActivityDocUpdatedDiff
+                            v-if="entry.data?.data.oneofKind === 'updated'"
+                            :update="entry.data?.data.updated"
+                        />
+                    </div>
+                </template>
+                <template
+                    v-else-if="
+                        entry.activityType === DocActivityType.ACCESS_UPDATED && entry.data?.data.oneofKind === 'accessUpdated'
+                    "
+                >
+                    <div class="bg-background rounded-md p-2">
+                        <ActivityAccessUpdated :data="entry.data?.data.accessUpdated" />
+                    </div>
+                </template>
             </template>
         </UAccordion>
     </li>

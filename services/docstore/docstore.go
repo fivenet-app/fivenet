@@ -58,7 +58,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *pbdocstore.ListDocument
 	}
 	if len(req.CategoryIds) > 0 {
 		ids := make([]jet.Expression, len(req.CategoryIds))
-		for i := 0; i < len(req.CategoryIds); i++ {
+		for i := range req.CategoryIds {
 			ids[i] = jet.Uint64(req.CategoryIds[i])
 		}
 

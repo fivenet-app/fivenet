@@ -77,7 +77,13 @@ const isOpen = ref(false);
                         </span>
                     </UButton>
 
-                    <UButton trailing-icon="i-mdi-plus" color="gray" truncate @click="modal.open(TemplatesModal, {})">
+                    <UButton
+                        v-if="can('DocStoreService.CreateDocument').value"
+                        trailing-icon="i-mdi-plus"
+                        color="gray"
+                        truncate
+                        @click="modal.open(TemplatesModal, {})"
+                    >
                         <span class="hidden truncate sm:block">
                             {{ $t('common.create') }}
                         </span>

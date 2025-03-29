@@ -20,6 +20,8 @@ const props = withDefaults(
 
 const { isOpen } = useModal();
 
+const { can } = useAuth();
+
 const template = ref<undefined | TemplateShort>();
 const reqs = ref<undefined | TemplateRequirements>();
 
@@ -128,6 +130,14 @@ async function clipboardDialog(): Promise<void> {
 
     isOpen.value = false;
 }
+
+onBeforeMount(async () => {
+    if (!can('DocStoreService.CreateDocument').value) {
+        await navigateTo({
+            name: 'documents-create',
+        });
+    }
+});
 </script>
 
 <template>

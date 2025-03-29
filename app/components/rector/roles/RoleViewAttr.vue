@@ -175,7 +175,6 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 
     const map = currentValue.validValues.jobGradeList.jobs;
 
-    console.log(grade);
     map[job.name] = grade.grade;
     const idx = job.grades.findIndex((g) => g.grade === grade.grade);
     if (idx === -1) {
