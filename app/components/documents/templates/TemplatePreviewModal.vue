@@ -75,28 +75,34 @@ async function getTemplate(): Promise<Template> {
 
                 <template v-else>
                     <div>
-                        <label class="mb-2 block text-sm font-medium leading-6">
+                        <label class="mb-2 block text-sm text-xl font-medium leading-6">
                             {{ $t('common.title') }}
                         </label>
-                        <h1 class="mt-4 break-words rounded-lg p-2 text-2xl font-bold">
+                        <h2 class="mt-4 break-words rounded-lg p-2 text-2xl font-bold">
                             {{ template?.title }}
-                        </h1>
+                        </h2>
                     </div>
+
+                    <UDivider class="mb-4" />
+
                     <div>
-                        <label class="mb-2 block text-sm font-medium leading-6">
+                        <label class="mb-2 block text-sm text-xl font-medium leading-6">
                             {{ $t('common.state') }}
                         </label>
+
                         <p class="mt-4 break-words rounded-lg p-2 text-base font-bold">
                             {{ template?.state }}
                         </p>
                     </div>
 
-                    <label class="mb-2 block text-sm font-medium leading-6">
+                    <UDivider class="mb-4" />
+
+                    <label class="mb-2 block text-sm text-xl font-medium leading-6">
                         {{ $t('common.content') }}
                     </label>
                     <div class="mt-4 break-words rounded-lg p-2">
                         <div
-                            class="tiptap ProseMirror prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
+                            class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
                             :class="[
                                 'hover:prose-a:text-blue-500',
                                 'dark:hover:prose-a:text-blue-300',

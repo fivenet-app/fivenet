@@ -15,7 +15,7 @@ defineOptions({
     <HTMLContentRenderer
         v-bind="$attrs"
         :value="value"
-        class="tiptap ProseMirror prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
+        class="tiptap prose prose-sm sm:prose-base lg:prose-lg dark:prose-invert min-w-full max-w-full break-words"
         :class="[
             'hover:prose-a:text-blue-500',
             'dark:hover:prose-a:text-blue-300',
