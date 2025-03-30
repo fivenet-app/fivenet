@@ -75,7 +75,17 @@ func (ws *WebsocketChannel) writeError(streamId uint32, message string) error {
 }
 
 func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
+	ws.mu.Lock()
+	defer ws.mu.Unlock()
+
 	return ws.activeStreams[streamId]
+}
+
+func (ws *WebsocketChannel) deleteStream(streamId uint32) {
+	ws.mu.Lock()
+	defer ws.mu.Unlock()
+
+	delete(ws.activeStreams, streamId)
 }
 
 func (ws *WebsocketChannel) poll() error {
@@ -97,12 +107,22 @@ func (ws *WebsocketChannel) poll() error {
 			ws.writeError(frame.StreamId, "stream already exists")
 		}
 
-		if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
-			return ws.writeError(frame.StreamId, "rejecting max number of streams reached for this channel")
-		}
+		stream, err := func() (*GrpcStream, error) {
+			ws.mu.Lock()
+			defer ws.mu.Unlock()
 
-		stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
-		ws.activeStreams[frame.StreamId] = stream
+			if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
+				return nil, ws.writeError(frame.StreamId, "rejecting max number of streams reached for this channel")
+			}
+
+			stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
+			ws.activeStreams[frame.StreamId] = stream
+
+			return stream, nil
+		}()
+		if err != nil {
+			return err
+		}
 
 		url, err := url.Parse("http://localhost/")
 		if err != nil {
@@ -128,7 +148,7 @@ func (ws *WebsocketChannel) poll() error {
 		interceptedRequest := makeGrpcRequest(req.WithContext(stream.ctx))
 		// grpclog.Infof("starting call to http server %q", interceptedRequest.Method)
 		go func() {
-			defer delete(stream.channel.activeStreams, stream.id)
+			defer ws.deleteStream(stream.id)
 
 			ws.handler.ServeHTTP(stream, interceptedRequest)
 		}()
@@ -162,7 +182,7 @@ func (ws *WebsocketChannel) poll() error {
 			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
-		delete(ws.activeStreams, frame.StreamId)
+		ws.deleteStream(frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
 		// grpclog.Infof("received complete for stream %v", frame.StreamId)
@@ -185,7 +205,7 @@ func (ws *WebsocketChannel) poll() error {
 		// grpclog.Infof("error on stream %v: %v", frame.StreamId, frame.GetFailure().ErrorMessage)
 		stream.inputFrames <- frame
 		close(stream.inputFrames)
-		delete(ws.activeStreams, frame.StreamId)
+		ws.deleteStream(frame.StreamId)
 
 	default:
 	}
