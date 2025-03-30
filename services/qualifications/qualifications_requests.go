@@ -489,7 +489,7 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *pbqualificatio
 		return &pbqualifications.DeleteQualificationReqResponse{}, nil
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

@@ -537,7 +537,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *pbqualifica
 		return &pbqualifications.DeleteQualificationResultResponse{}, nil
 	}
 
-	check, err := s.access.CanUserAccessTarget(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.access.CanUserAccessTarget(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

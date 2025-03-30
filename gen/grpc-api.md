@@ -4773,8 +4773,7 @@ Dummy - DO NOT USE!
 | `ACCESS_LEVEL_REQUEST` | 3 |  |
 | `ACCESS_LEVEL_TAKE` | 4 |  |
 | `ACCESS_LEVEL_GRADE` | 5 |  |
-| `ACCESS_LEVEL_MANAGE` | 6 |  |
-| `ACCESS_LEVEL_EDIT` | 7 |  |
+| `ACCESS_LEVEL_EDIT` | 6 |  |
 
 
  <!-- end enums -->

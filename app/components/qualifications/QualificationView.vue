@@ -93,7 +93,7 @@ const canDo = computed(() => ({
     request: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.REQUEST),
     take: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.TAKE),
     grade: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.GRADE),
-    edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.MANAGE),
+    edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
     delete: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
 }));
 

@@ -93,13 +93,9 @@ export enum AccessLevel {
      */
     GRADE = 5,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_MANAGE = 6;
+     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 6;
      */
-    MANAGE = 6,
-    /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 7;
-     */
-    EDIT = 7
+    EDIT = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class QualificationAccess$Type extends MessageType<QualificationAccess> {
