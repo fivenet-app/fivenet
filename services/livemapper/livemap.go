@@ -88,10 +88,11 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 		return err
 	}
 
-	updatedAt := time.Now()
-	if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, time.Time{}); end || err != nil {
+	end, lastUpdatedAt, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, time.Time{})
+	if end || err != nil {
 		return err
 	}
+	updatedAt := lastUpdatedAt
 
 	// Refresh Ticker
 	refreshTime := s.appCfg.Get().UserTracker.RefreshTime.AsDuration()
@@ -174,25 +175,26 @@ func (s *Server) Stream(req *pblivemapper.StreamRequest, srv pblivemapper.Livema
 			}
 
 		case <-updateTicker.C:
-			if end, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt); end || err != nil {
+			end, lastUpdatedAt, err := s.sendChunkedUserMarkers(srv, usersJobs, userInfo, updatedAt)
+			if end || err != nil {
 				return err
 			}
 
-			updatedAt = time.Now().Add(-refreshTime)
+			updatedAt = lastUpdatedAt
 		}
 	}
 }
 
 // Sends out chunked current user markers
-func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) (bool, error) {
-	updatedUsers, deletedUsers, onDutyState, err := s.getUserLocations(usersJobs, userInfo, updatedAt)
+func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_StreamServer, usersJobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) (bool, time.Time, error) {
+	updatedUsers, deletedUsers, onDutyState, lastUpdatedAt, err := s.getUserLocations(usersJobs, userInfo, updatedAt)
 	if err != nil {
-		return true, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
+		return true, lastUpdatedAt, errswrap.NewError(err, errorslivemapper.ErrStreamFailed)
 	}
 
 	// UpdatedAt is zero and no user updates or deletions? Early return
 	if !updatedAt.IsZero() && len(updatedUsers) == 0 && len(deletedUsers) == 0 {
-		return false, nil
+		return false, lastUpdatedAt, nil
 	}
 
 	// Less than chunk size or no markers, no need to chunk the response early return
@@ -210,10 +212,10 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		}
 
 		if err := srv.Send(resp); err != nil {
-			return true, err
+			return true, lastUpdatedAt, err
 		}
 
-		return false, nil
+		return false, lastUpdatedAt, nil
 	}
 
 	totalParts := int32(len(updatedUsers) / userMarkerChunkSize)
@@ -238,14 +240,14 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 		currentPart--
 
 		if err := srv.Send(resp); err != nil {
-			return true, err
+			return true, lastUpdatedAt, err
 		}
 
 		updatedUsers = updatedUsers[userMarkerChunkSize:]
 
 		select {
 		case <-srv.Context().Done():
-			return true, nil
+			return true, lastUpdatedAt, nil
 
 		case <-time.After(25 * time.Millisecond):
 		}
@@ -263,11 +265,11 @@ func (s *Server) sendChunkedUserMarkers(srv pblivemapper.LivemapperService_Strea
 			UserOnDuty: &onDutyState,
 		}
 		if err := srv.Send(resp); err != nil {
-			return true, err
+			return true, lastUpdatedAt, err
 		}
 	}
 
-	return false, nil
+	return false, lastUpdatedAt, nil
 }
 
 // Send out chunked current marker markers
@@ -354,7 +356,7 @@ func (s *Server) sendMarkerMarkers(srv pblivemapper.LivemapperService_StreamServ
 	return false, nil
 }
 
-func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) ([]*livemap.UserMarker, []int32, bool, error) {
+func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo, updatedAt time.Time) ([]*livemap.UserMarker, []int32, bool, time.Time, error) {
 	updated := []*livemap.UserMarker{}
 	deleted := []int32{}
 
@@ -363,6 +365,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 		found = true
 	}
 
+	lastUpdatedAt := updatedAt
 	for job, grade := range jobs {
 		markers, ok := s.tracker.GetUsersByJob(job)
 		if !ok {
@@ -374,6 +377,10 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 			if grade == -1 || (marker.User.JobGrade <= grade || key == userInfo.UserId) {
 				// Either no input updatedAt time set or the marker has been updated in the mean time
 				if updatedAt.IsZero() || (marker.UpdatedAt != nil && updatedAt.Sub(marker.UpdatedAt.AsTime()) < 0) {
+					if lastUpdatedAt.IsZero() || lastUpdatedAt.Sub(marker.UpdatedAt.AsTime()) < 0 {
+						lastUpdatedAt = marker.UpdatedAt.AsTime()
+					}
+
 					if marker.Hidden {
 						deleted = append(deleted, marker.UserId)
 					} else {
@@ -391,9 +398,13 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 		})
 	}
 
-	if found {
-		return updated, deleted, true, nil
+	if lastUpdatedAt.IsZero() {
+		lastUpdatedAt = updatedAt
 	}
 
-	return nil, nil, false, nil
+	if found {
+		return updated, deleted, true, lastUpdatedAt, nil
+	}
+
+	return nil, nil, false, lastUpdatedAt, nil
 }
