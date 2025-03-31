@@ -1,6 +1,7 @@
 package filestore
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -83,7 +84,10 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 
 	filePath := path.Join(prefix, fileName)
 
-	url, err := s.st.GetURL(c, filePath, 1*time.Hour, url.Values{})
+	ctx, cancel := context.WithTimeout(c, 6*time.Second)
+	defer cancel()
+
+	url, err := s.st.GetURL(ctx, filePath, 1*time.Hour, url.Values{})
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)
@@ -99,7 +103,7 @@ func (s *FilestoreHTTP) GET(c *gin.Context) {
 		return
 	}
 
-	object, objInfo, err := s.st.Get(c, path.Join(prefix, fileName))
+	object, objInfo, err := s.st.Get(ctx, path.Join(prefix, fileName))
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)

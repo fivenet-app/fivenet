@@ -2891,14 +2891,16 @@
         "footer": "Type {key1} for citizens, {key2} for documents search."
     },
     "zodI18n": {
-        "custom": {
-            "duration": {
-                "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
-            },
-            "filelist": {
-                "required": "File must be provided",
-                "wrong_file_type": "File must be one of the valid file types: {types}",
-                "size_too_big": "File must be less than {size}MB"
+        "errors": {
+            "custom": {
+                "duration": {
+                    "invalid": "Invalid duration format, must be in format of \"1.23s\" and be at least \"0.01s\""
+                },
+                "filelist": {
+                    "required": "File must be provided",
+                    "wrong_file_type": "File must be one of the valid file types: {types}",
+                    "size_too_big": "File must be less than {size}MB"
+                }
             }
         }
     }

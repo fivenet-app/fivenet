@@ -8,7 +8,9 @@ export const zodDurationSchema = z
         if (!duration || duration < 0) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.duration.invalid',
+                params: {
+                    i18n: 'zodI18n.errors.custom.duration.invalid',
+                },
             });
             return false;
         }
@@ -17,7 +19,9 @@ export const zodDurationSchema = z
         if (!/^\d+(\.\d+)?$/.test(d)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.duration.invalid',
+                params: {
+                    i18n: 'zodI18n.errors.custom.duration.invalid',
+                },
             });
             return false;
         }
@@ -26,7 +30,9 @@ export const zodDurationSchema = z
         if (val.seconds <= 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.duration.invalid',
+                params: {
+                    i18n: 'zodI18n.errors.custom.duration.invalid',
+                },
             });
             return false;
         }
@@ -44,7 +50,9 @@ export function zodFileSingleSchema(
             if (!optional) {
                 ctx.addIssue({
                     code: z.ZodIssueCode.custom,
-                    message: 'zodI18n.custom.filelist.required',
+                    params: {
+                        i18n: 'zodI18n.errors.custom.filelist.required',
+                    },
                 });
                 return false;
             }
@@ -55,8 +63,8 @@ export function zodFileSingleSchema(
         if (!types.includes(files[0].type)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.filelist.wrong_file_type',
                 params: {
+                    i18n: 'filelist.errors.custom.wrong_file_type',
                     types: types,
                 },
             });
@@ -66,8 +74,8 @@ export function zodFileSingleSchema(
         if (files[0].size > fileSize) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.filelist.wrong_file_type',
                 params: {
+                    i18n: 'zodI18n.errors.custom.filelist.wrong_file_type',
                     size: Math.ceil(fileSize / 10240),
                 },
             });

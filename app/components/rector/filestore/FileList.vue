@@ -19,9 +19,14 @@ const { streamerMode } = storeToRefs(settingsStore);
 const prefix = ref('');
 
 const page = useRouteQuery('page', '1', { transform: Number });
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+const offset = computed(() => (files.value?.pagination?.pageSize ? files.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`files-${page.value}`, () => listFiles(prefix.value));
+const {
+    data: files,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`files-${page.value}`, () => listFiles(prefix.value));
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
@@ -45,9 +50,9 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
             path,
         });
 
-        const idx = data.value?.files.findIndex((f) => f.name === path);
-        if (idx !== undefined && idx > -1 && data.value !== null) {
-            data.value!.files = data.value?.files.splice(idx, 1) ?? [];
+        const idx = files.value?.files.findIndex((f) => f.name === path);
+        if (idx !== undefined && idx > -1 && files.value !== null) {
+            files.value?.files.splice(idx, 1);
         }
 
         return response;
@@ -60,15 +65,15 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
 watch(offset, async () => refresh());
 
 function addUploadedFile(file: FileInfo): void {
-    const idx = data.value?.files.findIndex((f) => f.name === file.name);
+    const idx = files.value?.files.findIndex((f) => f.name === file.name);
     if (idx === undefined) {
         return;
     }
 
     if (idx > -1) {
-        data.value?.files.unshift(file);
+        files.value?.files.unshift(file);
     } else {
-        data.value?.files.splice(idx, 1, file);
+        files.value?.files.splice(idx, 1, file);
     }
 }
 
@@ -146,7 +151,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             v-else
             :loading="loading"
             :columns="columns"
-            :rows="data?.files"
+            :rows="files?.files"
             :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
             class="flex-1"
         >
@@ -191,6 +196,6 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        <Pagination v-model="page" :pagination="files?.pagination" :loading="loading" :refresh="refresh" />
     </template>
 </template>

@@ -5,6 +5,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
@@ -86,6 +87,9 @@ func (s *Server) UploadFile(ctx context.Context, req *pbrector.UploadFileRequest
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
+
+	ctx, cancel := context.WithTimeout(ctx, 12*time.Second)
+	defer cancel()
 
 	if err := req.File.Upload(ctx, s.st, filestore.FilePrefix(req.Prefix), req.Name); err != nil {
 		return nil, err

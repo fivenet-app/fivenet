@@ -2519,7 +2519,11 @@
             },
             "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
             "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!",
-            "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!"
+            "ErrUnitPermDenied": "Kein Zugriff auf diese Einheit!",
+            "ErrDisabled": {
+                "title": "Leitstelle ist deaktiviert!",
+                "content": "Bitte kontaktieren Sie ihre Leitung, um die Leitstelle zu aktivieren."
+            }
         },
         "general": {
             "internal_error": {
@@ -2887,14 +2891,16 @@
         "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
     },
     "zodI18n": {
-        "custom": {
-            "duration": {
-                "invalid": "Ungültiges Dauerformat, muss im Format \"1.23s\" sein und mindestens \"0.01s\" betragen"
-            },
-            "filelist": {
-                "required": "Datei muss ausgewählt sein",
-                "wrong_file_type": "Die Datei muss einer der gültigen Dateitypen sein: {types}",
-                "size_too_big": "Datei darf nicht größer als {size}MB sein."
+        "errors": {
+            "custom": {
+                "duration": {
+                    "invalid": "Ungültiges Dauerformat, muss im Format \"1.23s\" sein und mindestens \"0.01s\" betragen"
+                },
+                "filelist": {
+                    "required": "Datei muss ausgewählt sein",
+                    "wrong_file_type": "Die Datei muss einer der gültigen Dateitypen sein: {types}",
+                    "size_too_big": "Datei darf nicht größer als {size}MB sein."
+                }
             }
         }
     }

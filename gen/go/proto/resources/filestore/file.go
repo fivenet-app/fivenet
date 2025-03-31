@@ -7,7 +7,9 @@ import (
 	"database/sql/driver"
 	"encoding/base64"
 	"fmt"
+	"net/url"
 	"path"
+	"path/filepath"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/pkg/images"
@@ -130,14 +132,20 @@ func (x *File) Upload(ctx context.Context, st storage.IStorage, prefix FilePrefi
 		}
 	}
 
+	// Remove original file extension if any
+	fileName = strings.TrimSuffix(fileName, filepath.Ext(fileName))
+
 	fileName = path.Join(prefix, fmt.Sprintf("%s.%s", fileName, *x.Extension))
-	url, err := st.Put(ctx, fileName, bytes.NewReader(x.Data), int64(len(x.Data)), *x.ContentType)
+	outPath, err := st.Put(ctx, fileName, bytes.NewReader(x.Data), int64(len(x.Data)), *x.ContentType)
 	if err != nil {
 		return err
 	}
-	url = FilestoreURLPrefix + url
+	outPath, err = url.JoinPath(FilestoreURLPrefix, outPath)
+	if err != nil {
+		return err
+	}
 
-	x.Url = &url
+	x.Url = &outPath
 	x.Data = nil
 
 	return nil
