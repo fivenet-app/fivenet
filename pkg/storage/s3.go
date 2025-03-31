@@ -150,6 +150,10 @@ func (s *S3) Stat(ctx context.Context, filePathIn string) (IObjectInfo, error) {
 
 	info, err := s.s3.StatObject(ctx, s.bucketName, filePath, minio.GetObjectOptions{})
 	if err != nil {
+		if minio.ToErrorResponse(err).Code == "NoSuchKey" {
+			return nil, ErrNotFound
+		}
+
 		return nil, err
 	}
 
@@ -182,7 +186,7 @@ func (s *S3) PutWithTTL(ctx context.Context, filePathIn string, reader io.Reader
 		return "", err
 	}
 
-	return uploadInfo.Key, nil
+	return strings.TrimPrefix(uploadInfo.Key, s.prefix), nil
 }
 
 func (s *S3) Delete(ctx context.Context, filePathIn string) error {

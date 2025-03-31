@@ -20,10 +20,10 @@ func TestCleanFilePath(t *testing.T) {
 			valid:    true,
 		},
 		{
-			name:     "Invalid non-local path",
+			name:     "Absolute path",
 			input:    "/absolute/path/file.txt",
-			expected: "",
-			valid:    false,
+			expected: "/absolute/path/file.txt",
+			valid:    true,
 		},
 		{
 			name:     "Empty path",

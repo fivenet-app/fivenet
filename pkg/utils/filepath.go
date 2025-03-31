@@ -5,7 +5,7 @@ import (
 )
 
 func CleanFilePath(filePath string) (string, bool) {
-	if !filepath.IsLocal(filePath) {
+	if !filepath.IsLocal(filePath) && !filepath.IsAbs(filePath) {
 		return "", false
 	}
 

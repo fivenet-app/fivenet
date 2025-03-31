@@ -96,7 +96,7 @@ func (s *Filesystem) Stat(ctx context.Context, filePathIn string) (IObjectInfo, 
 
 	stat, err := os.Stat(filePath)
 	if os.IsNotExist(err) {
-		return nil, err
+		return nil, ErrNotFound
 	}
 
 	return &ObjectInfo{

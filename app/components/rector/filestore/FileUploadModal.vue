@@ -2,8 +2,10 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import NotSupportedTabletBlock from '~/components/partials/NotSupportedTabletBlock.vue';
+import { useNotificatorStore } from '~/stores/notificator';
 import { useSettingsStore } from '~/stores/settings';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
 const emit = defineEmits<{
@@ -15,6 +17,8 @@ const { $grpc } = useNuxtApp();
 const appConfig = useAppConfig();
 
 const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
 const { nuiEnabled } = storeToRefs(settingsStore);
@@ -45,14 +49,21 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse | undefine
     file.data = new Uint8Array(await values.file[0].arrayBuffer());
 
     try {
-        const { response } = await $grpc.rector.rectorFilestore.uploadFile({
+        const call = $grpc.rector.rectorFilestore.uploadFile({
             prefix: values.category,
             name: values.name,
             file: file,
         });
+        const { response } = await call;
 
         if (response.file) {
             emit('uploaded', response.file);
+
+            notifications.add({
+                title: { key: 'notifications.action_successfull.title', parameters: {} },
+                description: { key: 'notifications.action_successfull.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
         }
 
         isOpen.value = false;
