@@ -1,11 +1,11 @@
-package centrum
+package livemapper
 
 import (
 	"context"
 	"os"
 	"testing"
 
-	pbcentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum"
+	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
 	"github.com/fivenet-app/fivenet/internal/modules"
 	"github.com/fivenet-app/fivenet/internal/tests/servers"
 	"github.com/fivenet-app/fivenet/pkg/dbutils/tables"
@@ -50,9 +50,9 @@ func TestBasicCentrumFlow(t *testing.T) {
 			centrumstate.StateModule,
 			centrummanager.Module,
 			fx.Provide(grpcSrvModule),
-			fx.Provide(grpcserver.AsService(func(p Params) (*Server, error) {
-				srv, err = NewServer(p)
-				return srv, err
+			fx.Provide(grpcserver.AsService(func(p Params) *Server {
+				srv = NewServer(p)
+				return srv
 			})),
 
 			fx.Invoke(func(*grpc.Server) {}),
@@ -64,7 +64,7 @@ func TestBasicCentrumFlow(t *testing.T) {
 	defer app.RequireStop()
 	assert.NotNil(t, srv)
 
-	client := pbcentrum.NewCentrumServiceClient(clientConn)
+	client := pblivemapper.NewLivemapperServiceClient(clientConn)
 	defer cancel()
 	_ = ctx
 	_ = client

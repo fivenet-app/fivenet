@@ -1,6 +1,8 @@
 package modules
 
 import (
+	"time"
+
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
@@ -18,6 +20,7 @@ import (
 
 func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 	to := []fx.Option{
+		fx.StartTimeout(180 * time.Second),
 		LoggerModule,
 		config.TestModule,
 		fx.Provide(appconfig.NewTest),

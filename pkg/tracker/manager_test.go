@@ -42,7 +42,6 @@ func TestRefreshUserLocations(t *testing.T) {
 	var manager *Manager
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
-			fx.StartTimeout(180*time.Second),
 			dbServer.FxProvide(),
 			natsServer.FxProvide(),
 			centrumstate.StateModule,
