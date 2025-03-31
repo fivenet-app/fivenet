@@ -236,8 +236,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			dest[i].Color = &defaultColor
 		}
 
-		postal := m.postals.Closest(dest[i].X, dest[i].Y)
-		if postal != nil {
+		postal, ok := m.postals.Closest(dest[i].X, dest[i].Y)
+		if postal != nil && ok {
 			dest[i].Postal = postal.Code
 		}
 

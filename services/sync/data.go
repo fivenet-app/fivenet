@@ -632,7 +632,8 @@ func (s *Server) handleUserLocations(ctx context.Context, data *pbsync.SendDataR
 	// Handle clear all
 	if data.UserLocations.ClearAll != nil && *data.UserLocations.ClearAll {
 		stmt := tLocations.
-			DELETE()
+			DELETE().
+			WHERE(tLocations.Identifier.IS_NOT_NULL().OR(tLocations.Identifier.IS_NULL()))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return 0, err

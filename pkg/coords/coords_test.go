@@ -43,8 +43,9 @@ func TestBasicFunctionality(t *testing.T) {
 	result = cs.Has(point1, nil)
 	assert.True(t, result)
 
-	closeBy := cs.Closest(point1.X, point1.Y)
+	closeBy, ok := cs.Closest(point1.X, point1.Y)
 	assert.NotNil(t, closeBy)
+	assert.True(t, ok)
 	assert.Equal(t, point1, closeBy)
 
 	point3 := &TestPointer{

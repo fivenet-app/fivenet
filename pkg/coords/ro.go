@@ -37,9 +37,12 @@ func (p *CoordsRO[V]) Get(point orb.Pointer, fn quadtree.FilterFunc) V {
 	return found.(V)
 }
 
-func (p *CoordsRO[V]) Closest(x, y float64) V {
+func (p *CoordsRO[V]) Closest(x, y float64) (V, bool) {
 	point := p.tree.Find(orb.Point{x, y})
-	return point.(V)
+	if point == nil {
+		return *(new(V)), false
+	}
+	return point.(V), true
 }
 
 func (p *CoordsRO[V]) KNearest(point orb.Pointer, max int, fn quadtree.FilterFunc, maxDistance float64) []orb.Pointer {

@@ -15,7 +15,7 @@ type ICoords[V orb.Pointer] interface {
 	Remove(orb.Pointer, quadtree.FilterFunc) bool
 	Replace(orb.Pointer, quadtree.FilterFunc) error
 
-	Closest(float64, float64) V
+	Closest(float64, float64) (V, bool)
 	KNearest(orb.Pointer, int, quadtree.FilterFunc, float64) []orb.Pointer
 }
 
@@ -91,12 +91,15 @@ func (p *Coords[V]) Replace(point orb.Pointer, fn quadtree.FilterFunc, equalFn C
 	return nil
 }
 
-func (p *Coords[V]) Closest(x, y float64) V {
+func (p *Coords[V]) Closest(x, y float64) (V, bool) {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
 	point := p.tree.Find(orb.Point{x, y})
-	return point.(V)
+	if point == nil {
+		return *(new(V)), false
+	}
+	return point.(V), true
 }
 
 func (p *Coords[V]) KNearest(point orb.Pointer, max int, fn quadtree.FilterFunc, maxDistance float64) []orb.Pointer {

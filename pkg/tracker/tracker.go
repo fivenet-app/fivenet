@@ -31,7 +31,7 @@ type ITracker interface {
 	IsUserOnDuty(userId int32) bool
 
 	Subscribe() chan *livemap.UsersUpdateEvent
-	Unsubscribe(c chan *livemap.UsersUpdateEvent)
+	Unsubscribe(ch chan *livemap.UsersUpdateEvent)
 }
 
 type Tracker struct {
@@ -194,6 +194,6 @@ func (s *Tracker) Subscribe() chan *livemap.UsersUpdateEvent {
 	return s.broker.Subscribe()
 }
 
-func (s *Tracker) Unsubscribe(c chan *livemap.UsersUpdateEvent) {
-	s.broker.Unsubscribe(c)
+func (s *Tracker) Unsubscribe(ch chan *livemap.UsersUpdateEvent) {
+	s.broker.Unsubscribe(ch)
 }

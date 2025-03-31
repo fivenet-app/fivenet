@@ -49,6 +49,7 @@ require (
 	github.com/prometheus/client_golang v1.21.1
 	github.com/puzpuzpuz/xsync/v3 v3.5.1
 	github.com/rs/cors v1.11.1
+	github.com/sethvargo/go-retry v0.3.0
 	github.com/spf13/viper v1.20.0
 	github.com/stretchr/testify v1.10.0
 	github.com/yosssi/gohtml v0.0.0-20201013000340-ee4748c638f4
