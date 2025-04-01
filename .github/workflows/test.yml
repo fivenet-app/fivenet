@@ -21,6 +21,8 @@ jobs:
           go-version: '^1.24.1'
 
       - name: Run Go Tests
+        env:
+          TZ: "Europe/Berlin"
         run: go test ./...
 
   node-tests:

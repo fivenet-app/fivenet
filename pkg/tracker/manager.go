@@ -148,7 +148,6 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 
 		// Marker has been updated in the latest 15 seconds, skip it
 		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 15*time.Second {
-			m.logger.Debug("skipping marker not old enough", zap.Int32("user_id", marker.UserId), zap.Time("updated_at", marker.UpdatedAt.AsTime()))
 			continue
 		}
 

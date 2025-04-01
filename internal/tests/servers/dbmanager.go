@@ -63,6 +63,7 @@ func (m *dbServer) Setup() {
 				"MYSQL_USER=fivenet",
 				"MYSQL_PASSWORD=changeme",
 				"MYSQL_DATABASE=fivenettest",
+				"TZ=Europe/Berlin",
 			},
 			Cmd: []string{
 				"mysqld",
