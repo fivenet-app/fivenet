@@ -92,29 +92,10 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *pbcentrum.CreateOr
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		// Only set access for new units when it isn't empty
-		if req.Unit.Access != nil && !req.Unit.Access.IsEmpty() {
-			req.Unit.Access.ClearQualificationResults()
-
-			if _, err := s.state.GetUnitAccess().HandleAccessChanges(ctx, s.db, unit.Id, req.Unit.Access.Jobs, nil, req.Unit.Access.Qualifications); err != nil {
-				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-			}
-		}
-
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
-		}
-
-		if req.Unit.Access == nil {
-			req.Unit.Access = &centrum.UnitAccess{}
-		} else {
-			req.Unit.Access.ClearQualificationResults()
-		}
-
-		if _, err := s.state.GetUnitAccess().HandleAccessChanges(ctx, s.db, unit.Id, req.Unit.Access.Jobs, nil, req.Unit.Access.Qualifications); err != nil {
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 

@@ -357,6 +357,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 }
 
 func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit) (*centrum.Unit, error) {
+	if unit.Access == nil {
+		unit.Access = &centrum.UnitAccess{}
+	}
+	unit.Access.ClearQualificationResults()
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -406,6 +411,10 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, err
 	}
 
+	if _, err := s.GetUnitAccess().HandleAccessChanges(ctx, tx, unit.Id, unit.Access.Jobs, nil, unit.Access.Qualifications); err != nil {
+		return nil, err
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, err
@@ -434,6 +443,19 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 		description = *unit.Description
 	}
 
+	if unit.Access == nil {
+		unit.Access = &centrum.UnitAccess{}
+	}
+	unit.Access.ClearQualificationResults()
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	stmt := tUnits.
 		UPDATE(
 			tUnits.Name,
@@ -456,7 +478,16 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 			tUnits.ID.EQ(jet.Uint64(unit.Id)),
 		))
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, err
+	}
+
+	if _, err := s.GetUnitAccess().HandleAccessChanges(ctx, tx, unit.Id, unit.Access.Jobs, nil, unit.Access.Qualifications); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
 

@@ -117,6 +117,10 @@ async function updateUnitInForm(): Promise<void> {
     state.color = props.unit.color;
     state.attributes = props.unit.attributes?.list ?? [];
     state.homePostal = props.unit.homePostal;
+    state.access = {
+        jobs: props.unit.access?.jobs ?? [],
+        qualifications: props.unit.access?.qualifications ?? [],
+    };
 }
 
 watch(props, async () => updateUnitInForm());
