@@ -5,7 +5,7 @@ go 1.24.1
 require (
 	github.com/fivenet-app/fivenet v0.9.4
 	github.com/lyft/protoc-gen-star/v2 v2.0.4
-	google.golang.org/protobuf v1.36.5
+	google.golang.org/protobuf v1.36.6
 )
 
 require (
