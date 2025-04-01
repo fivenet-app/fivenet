@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/nats/locks"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -414,7 +415,7 @@ func (s *Store[T, U]) Start(ctx context.Context, wait bool) error {
 			select {
 			case <-ctx.Done():
 				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, jetstream.ErrConsumerNotFound) {
+					if !errors.Is(err, nats.ErrConsumerNotFound) {
 						s.logger.Error("error while stopping watcher", zap.Error(err))
 					}
 				} else {

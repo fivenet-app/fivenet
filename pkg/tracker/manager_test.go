@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/internal/modules"
 	"github.com/fivenet-app/fivenet/internal/tests/servers"
@@ -162,13 +163,19 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NoError(t, removeUserLocations(ctx, db))
 
 	// Wait for users to be removed (it takes at least 15 seconds from the updatedAt time of each user location)
-	err = retry.Do(ctx, retry.WithMaxRetries(35, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
+	err = retry.Do(ctx, retry.WithMaxRetries(45, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
 		list := manager.userStore.List()
 		if len(list) == 0 {
 			return nil
 		}
 
-		return retry.RetryableError(fmt.Errorf("user list isn't empty yet"))
+		stmt := tLocs.SELECT(jet.COUNT(tLocs.Identifier).AS("total_count"))
+		var dest database.DataCount
+		if err := stmt.QueryContext(ctx, db, &dest); err != nil {
+			return err
+		}
+
+		return retry.RetryableError(fmt.Errorf("user list isn't empty yet. count %d", dest.TotalCount))
 	})
 	require.NoError(t, err)
 

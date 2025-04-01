@@ -7,6 +7,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
@@ -62,7 +63,7 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 			select {
 			case <-ctx.Done():
 				if err := watcher.Stop(); err != nil {
-					if !errors.Is(err, jetstream.ErrConsumerNotFound) {
+					if !errors.Is(err, nats.ErrConsumerNotFound) {
 						c.logger.Error("error while stopping watcher", zap.Error(err))
 					}
 				} else {
