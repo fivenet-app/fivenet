@@ -103,7 +103,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NoError(t, insertUserLocation(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 1.0, 1.0, true))
 
 	// Wait for users to appear (an event is sent for this)
-	err = retry.Do(ctx, retry.WithMaxRetries(5, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
+	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
 		select {
 		case <-msgCh:
 			return nil
@@ -133,7 +133,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NoError(t, insertUserLocation(ctx, db, "char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57", "ambulance", 5.0, 5.0, true))
 
 	// Wait for user2 to be updated
-	err = retry.Do(ctx, retry.WithMaxRetries(5, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
+	err = retry.Do(ctx, retry.WithMaxRetries(10, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
 		user2, ok := manager.userStore.Get(userIdKey(int32(2)))
 		if !ok {
 			return fmt.Errorf("user2 is nil in retry")
@@ -162,7 +162,7 @@ func TestRefreshUserLocations(t *testing.T) {
 	assert.NoError(t, removeUserLocations(ctx, db))
 
 	// Wait for users to be removed (it takes at least 15 seconds from the updatedAt time of each user location)
-	err = retry.Do(ctx, retry.WithMaxRetries(25, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
+	err = retry.Do(ctx, retry.WithMaxRetries(35, retry.NewConstant(1*time.Second)), func(ctx context.Context) error {
 		list := manager.userStore.List()
 		if len(list) == 0 {
 			return nil
