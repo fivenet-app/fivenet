@@ -3,11 +3,12 @@ watchConfig: true
 stateFile: "dbsync.state.yaml"
 
 destination:
-  # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs)
-  url: "example.fivenet.app"
+  # Host + port to your FiveNet instance (requires HTTPS/valid TLS certs, unless insecure is set to `true`)
+  url: "fivenet.example.com"
   token: "YOUR_SYNC_API_TOKEN"
+  # Disable TLS verification (not recommended)
   insecure: false
-  # Sync Interval can also be specified per table
+  # Sync Interval can also be specified per table in the `tables:` section
   syncInterval: 5s
 
 # Changes to the source require a restart of the dbsync
@@ -20,29 +21,29 @@ source:
 tables:
   # The example queries here are for the ESX framework
   jobs:
-    # Must return `name`, `label` columns
+    # Must return `job.name`, `job.label` columns
     enabled: true
     query: |
       SELECT
-        `name`,
-        `label`
+        `jobs`.`name` AS `job.name`,
+        `jobs`.`label` AS `job.label`
       FROM
         `jobs`
       LIMIT $limit
       OFFSET $offset;
   jobGrades:
-    # Must return `job_name`, `grade`, `label` columns (with condition for the `job_name`)
+    # Must return `job_grade.job_name`, `job_grade.grade`, `job_grade.label` columns (with condition for the `job_name`)
     enabled: true
     query:
       SELECT
-        `job_name`,
-        `grade`,
-        `name`,
-        `label`
+        `job_grades`.`job_name` AS `job_grade.job_name`,
+        `job_grades`.`grade` AS `job_grade.grade`,
+        `job_grades`.`name` AS `job_grade.name`,
+        `job_grades`.`label` AS `job_grade.label`
       FROM
         `job_grades`
       WHERE
-        `job_name` = $jobName
+        `job_grades.job_name` = $jobName
       LIMIT $limit
       OFFSET $offset;
   licenses:
@@ -50,15 +51,15 @@ tables:
     enabled: true
     query: |
       SELECT
-        `type`,
-        `label`
+        `license.type`,
+        `license.label`
       FROM
         `licenses`
       LIMIT $limit
       OFFSET $offset;
   users:
-    # Must return `id`, `identifier`, `group`, `firstname`, `lastname`, `dateofbirth`, `job`, `job_grade`, `sex`, `phone_number` columns
-    # Optional columns: `height`, `visum`, `playtime`
+    # Must return `user.id`, `user.identifier`, `user.group`, `user.firstname`, `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
+    # Optional columns: `user.height`, `user.visum`, `user.playtime`
     enabled: true
     # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
     # configure it here so that after the initial sync only the changed data is synced again.
@@ -67,19 +68,19 @@ tables:
     # E.g., it is prefered to use a ESX like identifier layout for that case `charX:LICENSE`
     query: |
       SELECT
-        `id`,
-        `identifier`,
-        `group`,
-        `firstname`,
-        `lastname`,
-        `dateofbirth`,
-        `job`,
-        `job_grade`,
-        `sex`,
-        `phone_number`,
-        `height`,
-        `visum`,
-        `playtime`
+        `users`.`id` AS `user.id`,
+        `users`.`identifier` AS `user.identifier`,
+        `users`.`group` AS `user.group`,
+        `users`.`firstname` AS `user.firstname`,
+        `users`.`lastname` AS `user.lastname`,
+        `users`.`dateofbirth` AS `user.dateofbirth`,
+        `users`.`job` AS `user.job`,
+        `users`.`job_grade` AS `user.job_grade`,
+        `users`.`sex` AS `user.sex`,
+        `users`.`phone_number` AS `user.phone_number`,
+        `users`.`height` AS `user.height`,
+        `users`.`visum` AS `user.visum`,
+        `users`.`playtime` AS `user.playtime`
       FROM
         `users`
       $whereCondition
@@ -88,6 +89,7 @@ tables:
     # If a lastname is not returned by the query, attempt to split the firstname into "two" parts
     splitName: true
     # Normalize date of birth value to the output format if possible
+    # Please see the Go `time` pkg documentation on potential date format layouts: https://pkg.go.dev/time#Layout
     dateOfBirth:
       formats:
         - "2006-01-02" # 2000-10-18 = YYYY-MM-DD
@@ -102,12 +104,12 @@ tables:
         values:
           '1': 'f'
   userLicenses:
-    # Must return `type`, `owner` columns
+    # Must return `user_license.type`, `user_license.owner` columns
     enabled: true
     query: |
       SELECT
-        `type`,
-        `owner`
+        `user_licenses`.`type` AS `user_license.type`,
+        `user_licenses`.`owner AS `user_license.owner``
       FROM
         `user_licenses`
       WHERE
@@ -115,14 +117,14 @@ tables:
       LIMIT $limit
       OFFSET $offset;
   vehicles:
-    # Must return `owner_id` or `owner_identifier`, `plate`, `type`, `model` columns
+    # Must return `vehicle.owner_id` (the user's DB ID) or `vehicle.owner_identifier`, `vehicle.plate`, `vehicle.type`, `vehicle.model` columns
     enabled: true
     query: |
       SELECT
-        `owner`,
-        `plate`,
-        `type`,
-        `model`
+        `owned_vehicles`.`owner` AS `vehicle.owner_identifier`,
+        `owned_vehicles`.`plate` AS `vehicle.plate`,
+        `owned_vehicles`.`type` AS `vehicle.type`,
+        `owned_vehicles`.`model` AS `vehicle.model`
       FROM
         `owned_vehicles`
       LIMIT $limit
