@@ -87,7 +87,10 @@ func GetUserLabels(ctx context.Context, tx qrm.DB, userId int32, jobs []string) 
 		WHERE(jet.AND(
 			tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
 			tJobCitizenLabels.Job.IN(jobsExp...),
-		))
+		)).
+		ORDER_BY(
+			tJobCitizenLabels.SortKey.ASC(),
+		)
 
 	if err := stmt.QueryContext(ctx, tx, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

@@ -103,7 +103,7 @@ func (c *DocumentCategories) loadCategories(ctx context.Context) error {
 		FROM(tDCategory).
 		ORDER_BY(
 			tDCategory.Job.ASC(),
-			tDCategory.Name.ASC(),
+			tDCategory.SortKey.ASC(),
 		)
 
 	var dest []*documents.Category

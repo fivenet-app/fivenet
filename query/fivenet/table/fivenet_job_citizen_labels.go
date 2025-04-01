@@ -17,10 +17,11 @@ type fivenetJobCitizenLabelsTable struct {
 	mysql.Table
 
 	// Columns
-	ID    mysql.ColumnInteger
-	Job   mysql.ColumnString
-	Name  mysql.ColumnString
-	Color mysql.ColumnString
+	ID      mysql.ColumnInteger
+	Job     mysql.ColumnString
+	Name    mysql.ColumnString
+	SortKey mysql.ColumnString
+	Color   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -65,9 +66,10 @@ func newFivenetJobCitizenLabelsTableImpl(schemaName, tableName, alias string) fi
 		IDColumn       = mysql.IntegerColumn("id")
 		JobColumn      = mysql.StringColumn("job")
 		NameColumn     = mysql.StringColumn("name")
+		SortKeyColumn  = mysql.StringColumn("sort_key")
 		ColorColumn    = mysql.StringColumn("color")
-		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, ColorColumn}
-		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, ColorColumn}
+		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, SortKeyColumn, ColorColumn}
+		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, SortKeyColumn, ColorColumn}
 		defaultColumns = mysql.ColumnList{ColorColumn}
 	)
 
@@ -75,10 +77,11 @@ func newFivenetJobCitizenLabelsTableImpl(schemaName, tableName, alias string) fi
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:    IDColumn,
-		Job:   JobColumn,
-		Name:  NameColumn,
-		Color: ColorColumn,
+		ID:      IDColumn,
+		Job:     JobColumn,
+		Name:    NameColumn,
+		SortKey: SortKeyColumn,
+		Color:   ColorColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

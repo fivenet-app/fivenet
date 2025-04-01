@@ -17,6 +17,7 @@ type FivenetLawbooksLaws struct {
 	UpdatedAt     *time.Time `json:"updated_at"`
 	LawbookID     uint64     `json:"lawbook_id"`
 	Name          string     `json:"name"`
+	SortKey       *string    `json:"sort_key"`
 	Description   *string    `json:"description"`
 	Hint          *string    `json:"hint"`
 	Fine          *uint64    `json:"fine"`

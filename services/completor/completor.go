@@ -94,7 +94,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *pbcompletor.Complete
 
 	if currentJob {
 		jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-		for i := 0; i < len(dest); i++ {
+		for i := range dest {
 			jobInfoFn(dest[i])
 		}
 	}
@@ -153,7 +153,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompleto
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
 	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
+	for i := range jobs {
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
@@ -177,7 +177,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *pbcompleto
 		FROM(tDCategory).
 		WHERE(condition).
 		ORDER_BY(
-			tDCategory.Name.ASC(),
+			tDCategory.SortKey.ASC(),
 		).
 		LIMIT(15)
 
@@ -218,7 +218,7 @@ func (s *Server) CompleteCitizenLabels(ctx context.Context, req *pbcompletor.Com
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
 
 	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
+	for i := range jobs {
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
@@ -238,7 +238,7 @@ func (s *Server) CompleteCitizenLabels(ctx context.Context, req *pbcompletor.Com
 		FROM(tJobCitizenLabels).
 		WHERE(condition).
 		ORDER_BY(
-			tJobCitizenLabels.Name.ASC(),
+			tJobCitizenLabels.SortKey.ASC(),
 		).
 		LIMIT(10)
 

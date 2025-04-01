@@ -65,7 +65,7 @@ func (s *Server) ManageCitizenLabels(ctx context.Context, req *pbcitizenstore.Ma
 			return in.Name
 		})
 
-	for i := 0; i < len(req.Labels); i++ {
+	for i := range req.Labels {
 		req.Labels[i].Job = &userInfo.Job
 	}
 
@@ -175,12 +175,12 @@ func (s *Server) validateCitizenLabels(ctx context.Context, userInfo *userinfo.U
 	}
 
 	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
+	for i := range jobs {
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
 	idsExp := make([]jet.Expression, len(attributes))
-	for i := 0; i < len(attributes); i++ {
+	for i := range attributes {
 		idsExp[i] = jet.Uint64(attributes[i].Id)
 	}
 
@@ -193,9 +193,6 @@ func (s *Server) validateCitizenLabels(ctx context.Context, userInfo *userinfo.U
 			tJobCitizenLabels.Job.IN(jobsExp...),
 			tJobCitizenLabels.ID.IN(idsExp...),
 		)).
-		ORDER_BY(
-			tJobCitizenLabels.Name.DESC(),
-		).
 		LIMIT(10)
 
 	var count database.DataCount
@@ -223,7 +220,7 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 	}
 
 	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
+	for i := range jobs {
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
@@ -243,7 +240,10 @@ func (s *Server) getUserLabels(ctx context.Context, userInfo *userinfo.UserInfo,
 		WHERE(jet.AND(
 			tUserCitizenLabels.UserID.EQ(jet.Int32(userId)),
 			tJobCitizenLabels.Job.IN(jobsExp...),
-		))
+		)).
+		ORDER_BY(
+			tJobCitizenLabels.SortKey.ASC(),
+		)
 
 	list := &users.CitizenLabels{
 		List: []*users.CitizenLabel{},

@@ -40,7 +40,7 @@ func (s *Server) ListCategories(ctx context.Context, req *pbdocstore.ListCategor
 			tDCategory.Job.EQ(jet.String(userInfo.Job)),
 		).
 		ORDER_BY(
-			tDCategory.Name.ASC(),
+			tDCategory.SortKey.ASC(),
 		)
 
 	resp := &pbdocstore.ListCategoriesResponse{

@@ -8,9 +8,10 @@
 package model
 
 type FivenetJobsLabels struct {
-	ID    uint64  `sql:"primary_key" json:"id"`
-	Job   string  `json:"job"`
-	Name  string  `json:"name"`
-	Color *string `json:"color"`
-	Order *int32  `json:"order"`
+	ID      uint64  `sql:"primary_key" json:"id"`
+	Job     string  `json:"job"`
+	Name    string  `json:"name"`
+	SortKey *string `json:"sort_key"`
+	Color   *string `json:"color"`
+	Order   *int32  `json:"order"`
 }

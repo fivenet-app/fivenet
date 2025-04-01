@@ -22,6 +22,7 @@ type fivenetLawbooksLawsTable struct {
 	UpdatedAt     mysql.ColumnTimestamp
 	LawbookID     mysql.ColumnInteger
 	Name          mysql.ColumnString
+	SortKey       mysql.ColumnString
 	Description   mysql.ColumnString
 	Hint          mysql.ColumnString
 	Fine          mysql.ColumnInteger
@@ -73,13 +74,14 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		UpdatedAtColumn     = mysql.TimestampColumn("updated_at")
 		LawbookIDColumn     = mysql.IntegerColumn("lawbook_id")
 		NameColumn          = mysql.StringColumn("name")
+		SortKeyColumn       = mysql.StringColumn("sort_key")
 		DescriptionColumn   = mysql.StringColumn("description")
 		HintColumn          = mysql.StringColumn("hint")
 		FineColumn          = mysql.IntegerColumn("fine")
 		DetentionTimeColumn = mysql.IntegerColumn("detention_time")
 		StvoPointsColumn    = mysql.IntegerColumn("stvo_points")
-		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
-		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, LawbookIDColumn, NameColumn, SortKeyColumn, DescriptionColumn, HintColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 		defaultColumns      = mysql.ColumnList{CreatedAtColumn, FineColumn, DetentionTimeColumn, StvoPointsColumn}
 	)
 
@@ -92,6 +94,7 @@ func newFivenetLawbooksLawsTableImpl(schemaName, tableName, alias string) fivene
 		UpdatedAt:     UpdatedAtColumn,
 		LawbookID:     LawbookIDColumn,
 		Name:          NameColumn,
+		SortKey:       SortKeyColumn,
 		Description:   DescriptionColumn,
 		Hint:          HintColumn,
 		Fine:          FineColumn,

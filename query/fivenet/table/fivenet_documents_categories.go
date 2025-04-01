@@ -19,6 +19,7 @@ type fivenetDocumentsCategoriesTable struct {
 	// Columns
 	ID          mysql.ColumnInteger
 	Name        mysql.ColumnString
+	SortKey     mysql.ColumnString
 	Description mysql.ColumnString
 	Job         mysql.ColumnString
 	Color       mysql.ColumnString
@@ -66,12 +67,13 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		NameColumn        = mysql.StringColumn("name")
+		SortKeyColumn     = mysql.StringColumn("sort_key")
 		DescriptionColumn = mysql.StringColumn("description")
 		JobColumn         = mysql.StringColumn("job")
 		ColorColumn       = mysql.StringColumn("color")
 		IconColumn        = mysql.StringColumn("icon")
-		allColumns        = mysql.ColumnList{IDColumn, NameColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
-		mutableColumns    = mysql.ColumnList{NameColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
+		allColumns        = mysql.ColumnList{IDColumn, NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
+		mutableColumns    = mysql.ColumnList{NameColumn, SortKeyColumn, DescriptionColumn, JobColumn, ColorColumn, IconColumn}
 		defaultColumns    = mysql.ColumnList{ColorColumn}
 	)
 
@@ -81,6 +83,7 @@ func newFivenetDocumentsCategoriesTableImpl(schemaName, tableName, alias string)
 		//Columns
 		ID:          IDColumn,
 		Name:        NameColumn,
+		SortKey:     SortKeyColumn,
 		Description: DescriptionColumn,
 		Job:         JobColumn,
 		Color:       ColorColumn,

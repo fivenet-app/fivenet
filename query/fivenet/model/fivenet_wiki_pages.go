@@ -23,6 +23,7 @@ type FivenetWikiPages struct {
 	Public      bool       `json:"public"`
 	Slug        string     `json:"slug"`
 	Title       string     `json:"title"`
+	SortKey     *string    `json:"sort_key"`
 	Description string     `json:"description"`
 	Content     string     `json:"content"`
 	Data        *string    `json:"data"`

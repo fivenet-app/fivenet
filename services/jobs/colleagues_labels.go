@@ -81,6 +81,7 @@ func (s *Server) GetColleagueLabels(ctx context.Context, req *pbjobs.GetColleagu
 		WHERE(condition).
 		ORDER_BY(
 			tJobLabels.Order.ASC(),
+			tJobLabels.SortKey.ASC(),
 		)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Labels); err != nil {
@@ -129,7 +130,7 @@ func (s *Server) ManageColleagueLabels(ctx context.Context, req *pbjobs.ManageCo
 			return in.Id
 		})
 
-	for i := 0; i < len(req.Labels); i++ {
+	for i := range req.Labels {
 		req.Labels[i].Job = &userInfo.Job
 		req.Labels[i].Order = int32(i)
 	}
@@ -232,7 +233,7 @@ func (s *Server) validateLabels(ctx context.Context, userInfo *userinfo.UserInfo
 	}
 
 	idsExp := make([]jet.Expression, len(labels))
-	for i := 0; i < len(labels); i++ {
+	for i := range labels {
 		idsExp[i] = jet.Uint64(labels[i].Id)
 	}
 

@@ -6,13 +6,13 @@ import (
 	"errors"
 	"slices"
 	"sort"
-	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/maruel/natural"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -105,8 +105,8 @@ func (c *Laws) loadLaws(ctx context.Context, lawBookId uint64) error {
 			),
 		).
 		ORDER_BY(
-			tLawBooks.Name.ASC(),
-			tLaws.Name.ASC(),
+			tLawBooks.SortKey.ASC(),
+			tLaws.SortKey.ASC(),
 		)
 
 	if lawBookId > 0 {
@@ -157,7 +157,7 @@ func (c *Laws) GetLawBooks() []*laws.LawBook {
 	})
 
 	sort.Slice(lawBooks, func(i, j int) bool {
-		return strings.EqualFold(lawBooks[i].Name, lawBooks[j].Name)
+		return natural.Less(lawBooks[i].Name, lawBooks[j].Name)
 	})
 
 	return lawBooks

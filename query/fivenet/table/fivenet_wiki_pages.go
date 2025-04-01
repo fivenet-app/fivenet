@@ -28,6 +28,7 @@ type fivenetWikiPagesTable struct {
 	Public      mysql.ColumnBool
 	Slug        mysql.ColumnString
 	Title       mysql.ColumnString
+	SortKey     mysql.ColumnString
 	Description mysql.ColumnString
 	Content     mysql.ColumnString
 	Data        mysql.ColumnString
@@ -84,12 +85,13 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		PublicColumn      = mysql.BoolColumn("public")
 		SlugColumn        = mysql.StringColumn("slug")
 		TitleColumn       = mysql.StringColumn("title")
+		SortKeyColumn     = mysql.StringColumn("sort_key")
 		DescriptionColumn = mysql.StringColumn("description")
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{JobColumn, ParentIDColumn, ContentTypeColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TocColumn, PublicColumn, SlugColumn, TitleColumn, SortKeyColumn, DescriptionColumn, ContentColumn, DataColumn, CreatorIDColumn}
 		defaultColumns    = mysql.ColumnList{CreatedAtColumn, TocColumn, PublicColumn}
 	)
 
@@ -108,6 +110,7 @@ func newFivenetWikiPagesTableImpl(schemaName, tableName, alias string) fivenetWi
 		Public:      PublicColumn,
 		Slug:        SlugColumn,
 		Title:       TitleColumn,
+		SortKey:     SortKeyColumn,
 		Description: DescriptionColumn,
 		Content:     ContentColumn,
 		Data:        DataColumn,

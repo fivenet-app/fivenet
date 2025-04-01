@@ -10,6 +10,7 @@ package model
 type FivenetDocumentsCategories struct {
 	ID          uint64  `sql:"primary_key" json:"id"`
 	Name        string  `json:"name"`
+	SortKey     *string `json:"sort_key"`
 	Description *string `json:"description"`
 	Job         string  `json:"job"`
 	Color       *string `json:"color"`
