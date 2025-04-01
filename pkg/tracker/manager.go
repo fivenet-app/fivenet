@@ -128,6 +128,8 @@ func (m *Manager) refreshCache(ctx context.Context) {
 func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any) error {
 	event := &livemap.UsersUpdateEvent{}
 
+	now := time.Now()
+	m.logger.Debug("cleaning up user IDs", zap.Any("found_user_ids", foundUserIDs))
 	keys := m.userStore.Keys(ctx, "")
 	for _, key := range keys {
 		idKey, err := strconv.ParseInt(key, 10, 32)
@@ -145,7 +147,8 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, foundUserIDs map[int32]any
 		}
 
 		// Marker has been updated in the latest 15 seconds, skip it
-		if marker.UpdatedAt != nil && time.Since(marker.UpdatedAt.AsTime()) <= 15*time.Second {
+		if marker.UpdatedAt != nil && now.Sub(marker.UpdatedAt.AsTime()) <= 15*time.Second {
+			m.logger.Debug("skipping marker not old enough", zap.Int32("user_id", marker.UserId), zap.Time("updated_at", marker.UpdatedAt.AsTime()))
 			continue
 		}
 
