@@ -8,10 +8,10 @@ import (
 )
 
 func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
-	settings, _ := s.settings.LoadOrCompute(job, func() *centrum.Settings {
+	settings, _ := s.settings.LoadOrCompute(job, func() (*centrum.Settings, bool) {
 		s := &centrum.Settings{}
 		s.Default(job)
-		return s
+		return s, false
 	})
 
 	return proto.Clone(settings).(*centrum.Settings)

@@ -9,7 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -17,7 +17,7 @@ import (
 type Cache[T any, U protoutils.ProtoMessage[T]] struct {
 	logger *zap.Logger
 
-	data *xsync.MapOf[string, *EntryWrapper[T, U]]
+	data *xsync.Map[string, *EntryWrapper[T, U]]
 
 	kv     jetstream.KeyValue
 	prefix string
@@ -35,7 +35,7 @@ func New[T any, U protoutils.ProtoMessage[T]](logger *zap.Logger, kv jetstream.K
 	c := &Cache[T, U]{
 		logger: logger.Named("cache").With(zap.String("bucket", kv.Bucket())),
 
-		data: xsync.NewMapOf[string, *EntryWrapper[T, U]](),
+		data: xsync.NewMap[string, *EntryWrapper[T, U]](),
 
 		kv: kv,
 	}

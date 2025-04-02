@@ -18,7 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -55,8 +55,8 @@ type Server struct {
 	aud      audit.IAuditer
 	appCfg   appconfig.IConfig
 
-	markersCache        *xsync.MapOf[string, []*livemap.MarkerMarker]
-	markersDeletedCache *xsync.MapOf[string, []uint64]
+	markersCache        *xsync.Map[string, []*livemap.MarkerMarker]
+	markersDeletedCache *xsync.Map[string, []uint64]
 
 	broker *broker.Broker[*brokerEvent]
 }
@@ -99,8 +99,8 @@ func NewServer(p Params) *Server {
 		aud:      p.Audit,
 		appCfg:   p.AppConfig,
 
-		markersCache:        xsync.NewMapOf[string, []*livemap.MarkerMarker](),
-		markersDeletedCache: xsync.NewMapOf[string, []uint64](),
+		markersCache:        xsync.NewMap[string, []*livemap.MarkerMarker](),
+		markersDeletedCache: xsync.NewMap[string, []uint64](),
 
 		broker: broker.New[*brokerEvent](),
 	}

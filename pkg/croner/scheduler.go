@@ -12,7 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -50,7 +50,7 @@ type Scheduler struct {
 
 	jsCons jetstream.ConsumeContext
 
-	jobs *xsync.MapOf[string, *jobWrapper]
+	jobs *xsync.Map[string, *jobWrapper]
 }
 
 func NewScheduler(p SchedulerParams) (*Scheduler, error) {
@@ -62,7 +62,7 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 		js:     p.JS,
 		gron:   gronx.New(),
 
-		jobs: xsync.NewMapOf[string, *jobWrapper](),
+		jobs: xsync.NewMap[string, *jobWrapper](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

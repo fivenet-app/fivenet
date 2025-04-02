@@ -15,7 +15,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/pkg/errors"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -190,8 +190,8 @@ func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key,
 
 	p.attrsMap.Store(attrId, attr)
 
-	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() *xsync.MapOf[string, uint64] {
-		return xsync.NewMapOf[string, uint64]()
+	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() (*xsync.Map[string, uint64], bool) {
+		return xsync.NewMap[string, uint64](), false
 	})
 	pAttrMap.Store(string(key), attrId)
 

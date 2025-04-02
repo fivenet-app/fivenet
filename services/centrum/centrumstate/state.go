@@ -13,7 +13,7 @@ import (
 	centrumutils "github.com/fivenet-app/fivenet/services/centrum/utils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/paulmach/orb"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -28,7 +28,7 @@ type State struct {
 
 	logger *zap.Logger
 
-	settings   *xsync.MapOf[string, *centrum.Settings]
+	settings   *xsync.Map[string, *centrum.Settings]
 	disponents *store.Store[centrum.Disponents, *centrum.Disponents]
 	units      *store.Store[centrum.Unit, *centrum.Unit]
 	dispatches *store.Store[centrum.Dispatch, *centrum.Dispatch]
@@ -58,7 +58,7 @@ func New(p Params) (*State, error) {
 
 		logger: logger,
 
-		settings: xsync.NewMapOf[string, *centrum.Settings](),
+		settings: xsync.NewMap[string, *centrum.Settings](),
 
 		dispatchLocationsMutex: &sync.RWMutex{},
 		dispatchLocations:      map[string]*coords.Coords[*centrum.Dispatch]{},

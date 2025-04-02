@@ -13,7 +13,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/maruel/natural"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -25,7 +25,7 @@ type Laws struct {
 
 	tracer trace.Tracer
 
-	lawBooks *xsync.MapOf[uint64, *laws.LawBook]
+	lawBooks *xsync.Map[uint64, *laws.LawBook]
 }
 
 func NewLaws(p Params) *Laws {
@@ -37,7 +37,7 @@ func NewLaws(p Params) *Laws {
 
 		tracer: p.TP.Tracer("mstlystcdata-laws"),
 
-		lawBooks: xsync.NewMapOf[uint64, *laws.LawBook](),
+		lawBooks: xsync.NewMap[uint64, *laws.LawBook](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

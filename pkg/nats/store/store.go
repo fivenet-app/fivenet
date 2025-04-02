@@ -16,7 +16,7 @@ import (
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -48,8 +48,8 @@ type Store[T any, U protoutils.ProtoMessageWithMerge[T]] struct {
 
 	prefix string
 
-	mu   *xsync.MapOf[string, *sync.Mutex]
-	data *xsync.MapOf[string, U]
+	mu   *xsync.Map[string, *sync.Mutex]
+	data *xsync.Map[string, U]
 
 	onUpdate   OnUpdateFn[T, U]
 	onDelete   OnDeleteFn[T, U]
@@ -64,8 +64,8 @@ type (
 	OnNotFoundFn[T any, U protoutils.ProtoMessageWithMerge[T]] func(s *Store[T, U], ctx context.Context, key string) (U, error)
 )
 
-func mutexCompute() *sync.Mutex {
-	return &sync.Mutex{}
+func mutexCompute() (*sync.Mutex, bool) {
+	return &sync.Mutex{}, false
 }
 
 func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
@@ -75,8 +75,8 @@ func New[T any, U protoutils.ProtoMessageWithMerge[T]](ctx context.Context, logg
 
 		cl: true,
 
-		mu:   xsync.NewMapOf[string, *sync.Mutex](),
-		data: xsync.NewMapOf[string, U](),
+		mu:   xsync.NewMap[string, *sync.Mutex](),
+		data: xsync.NewMap[string, U](),
 	}
 
 	for _, opt := range opts {

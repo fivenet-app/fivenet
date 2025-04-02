@@ -11,7 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/services/centrum/centrummanager"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -38,7 +38,7 @@ type Manager struct {
 
 	tracer trace.Tracer
 
-	bots *xsync.MapOf[string, *Bot]
+	bots *xsync.Map[string, *Bot]
 	js   *events.JSWrapper
 
 	state   *centrummanager.Manager
@@ -67,7 +67,7 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:    xsync.NewMapOf[string, *Bot](),
+		bots:    xsync.NewMap[string, *Bot](),
 		js:      p.JS,
 		state:   p.State,
 		tracker: p.Tracker,

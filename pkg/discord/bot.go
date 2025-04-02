@@ -26,7 +26,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -102,7 +102,7 @@ type Bot struct {
 	syncTime  atomic.Pointer[time.Duration]
 
 	dc           *state.State
-	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
+	activeGuilds *xsync.Map[discord.GuildID, *Guild]
 }
 
 type Result struct {
@@ -135,7 +135,7 @@ func New(p BotParams) Result {
 		workCh: make(chan *Guild, 3),
 
 		dc:           p.Discord,
-		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
+		activeGuilds: xsync.NewMap[discord.GuildID, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctxStartup context.Context) error {

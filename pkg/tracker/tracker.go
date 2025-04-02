@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -25,7 +25,7 @@ var (
 )
 
 type ITracker interface {
-	GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool)
+	GetUsersByJob(job string) (*xsync.Map[int32, *livemap.UserMarker], bool)
 	ListTrackedJobs() []string
 	GetUserById(id int32) (*livemap.UserMarker, bool)
 	IsUserOnDuty(userId int32) bool
@@ -44,7 +44,7 @@ type Tracker struct {
 	jsCons jetstream.ConsumeContext
 
 	userStore  *store.Store[livemap.UserMarker, *livemap.UserMarker]
-	usersByJob *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
+	usersByJob *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
 
 	broker *broker.Broker[*livemap.UsersUpdateEvent]
 }
@@ -67,7 +67,7 @@ func New(p Params) (ITracker, error) {
 		tracer: p.TP.Tracer("tracker"),
 		js:     p.JS,
 
-		usersByJob: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
+		usersByJob: xsync.NewMap[string, *xsync.Map[int32, *livemap.UserMarker]](),
 
 		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
@@ -86,8 +86,8 @@ func New(p Params) (ITracker, error) {
 					return um, nil
 				}
 
-				jobUsers, _ := t.usersByJob.LoadOrCompute(um.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
-					return xsync.NewMapOf[int32, *livemap.UserMarker]()
+				jobUsers, _ := t.usersByJob.LoadOrCompute(um.Job, func() (*xsync.Map[int32, *livemap.UserMarker], bool) {
+					return xsync.NewMap[int32, *livemap.UserMarker](), false
 				})
 				// Maybe we can be smarter about updating the user marker here, but
 				// without mutexes it will be problematic (data races and Co.)
@@ -161,14 +161,14 @@ func (s *Tracker) watchForChanges(msg jetstream.Msg) {
 	s.broker.Publish(dest)
 }
 
-// Returns a `xsync.MapOf` with **copies** (proto cloned) of the `*livemap.UserMarker`
-func (s *Tracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
+// Returns a `xsync.Map` with **copies** (proto cloned) of the `*livemap.UserMarker`
+func (s *Tracker) GetUsersByJob(job string) (*xsync.Map[int32, *livemap.UserMarker], bool) {
 	return s.usersByJob.Load(job)
 }
 
 func (s *Tracker) ListTrackedJobs() []string {
 	var jobs []string
-	s.usersByJob.Range(func(job string, _ *xsync.MapOf[int32, *livemap.UserMarker]) bool {
+	s.usersByJob.Range(func(job string, _ *xsync.Map[int32, *livemap.UserMarker]) bool {
 		jobs = append(jobs, job)
 
 		return true

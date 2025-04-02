@@ -5,7 +5,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	"go.uber.org/fx"
 )
 
@@ -14,8 +14,8 @@ type TestTracker struct {
 
 	broker *broker.Broker[*livemap.UsersUpdateEvent]
 
-	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
-	usersIDs   *xsync.MapOf[int32, *livemap.UserMarker]
+	usersCache *xsync.Map[string, *xsync.Map[int32, *livemap.UserMarker]]
+	usersIDs   *xsync.Map[int32, *livemap.UserMarker]
 }
 
 type TestParams struct {
@@ -26,8 +26,8 @@ type TestParams struct {
 
 func NewForTests(p TestParams) ITracker {
 	t := &TestTracker{
-		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewMapOf[int32, *livemap.UserMarker](),
+		usersCache: xsync.NewMap[string, *xsync.Map[int32, *livemap.UserMarker]](),
+		usersIDs:   xsync.NewMap[int32, *livemap.UserMarker](),
 
 		broker: broker.New[*livemap.UsersUpdateEvent](),
 	}
@@ -48,7 +48,7 @@ func NewForTests(p TestParams) ITracker {
 	return t
 }
 
-func (s *TestTracker) GetUsersByJob(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
+func (s *TestTracker) GetUsersByJob(job string) (*xsync.Map[int32, *livemap.UserMarker], bool) {
 	return s.usersCache.Load(job)
 }
 

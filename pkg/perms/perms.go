@@ -20,7 +20,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
-	"github.com/puzpuzpuz/xsync/v3"
+	"github.com/puzpuzpuz/xsync/v4"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -94,24 +94,24 @@ type Perms struct {
 	devMode       bool
 	startJobGrade int32
 
-	permsMap *xsync.MapOf[uint64, *cachePerm]
+	permsMap *xsync.Map[uint64, *cachePerm]
 	// Guard name to permission ID
-	permsGuardToIDMap *xsync.MapOf[string, uint64]
+	permsGuardToIDMap *xsync.Map[string, uint64]
 	// Job name to map of grade numbers to role ID
-	permsJobsRoleMap *xsync.MapOf[string, *xsync.MapOf[int32, uint64]]
+	permsJobsRoleMap *xsync.Map[string, *xsync.Map[int32, uint64]]
 	// Role ID to map of permissions ID and result
-	permsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, bool]]
+	permsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, bool]]
 	// Role ID to Job map
-	roleIDToJobMap *xsync.MapOf[uint64, string]
+	roleIDToJobMap *xsync.Map[uint64, string]
 
 	// Attribute map (key: ID of attribute)
-	attrsMap *xsync.MapOf[uint64, *cacheAttr]
+	attrsMap *xsync.Map[uint64, *cacheAttr]
 	// Role ID to map of role attributes
-	attrsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]]
+	attrsRoleMap *xsync.Map[uint64, *xsync.Map[uint64, *cacheRoleAttr]]
 	// Perm ID to map `Key` -> cached attribute
-	attrsPermsMap *xsync.MapOf[uint64, *xsync.MapOf[string, uint64]]
+	attrsPermsMap *xsync.Map[uint64, *xsync.Map[string, uint64]]
 	// Job to map attr ID to job max value attribute
-	attrsJobMaxValuesMap *xsync.MapOf[string, *xsync.MapOf[uint64, *permissions.AttributeValues]]
+	attrsJobMaxValuesMap *xsync.Map[string, *xsync.Map[uint64, *permissions.AttributeValues]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[userCacheKey, bool]
@@ -155,16 +155,16 @@ func New(p Params) (Permissions, error) {
 		devMode:       false,
 		startJobGrade: p.Cfg.Game.StartJobGrade,
 
-		permsMap:          xsync.NewMapOf[uint64, *cachePerm](),
-		permsGuardToIDMap: xsync.NewMapOf[string, uint64](),
-		permsJobsRoleMap:  xsync.NewMapOf[string, *xsync.MapOf[int32, uint64]](),
-		permsRoleMap:      xsync.NewMapOf[uint64, *xsync.MapOf[uint64, bool]](),
-		roleIDToJobMap:    xsync.NewMapOf[uint64, string](),
+		permsMap:          xsync.NewMap[uint64, *cachePerm](),
+		permsGuardToIDMap: xsync.NewMap[string, uint64](),
+		permsJobsRoleMap:  xsync.NewMap[string, *xsync.Map[int32, uint64]](),
+		permsRoleMap:      xsync.NewMap[uint64, *xsync.Map[uint64, bool]](),
+		roleIDToJobMap:    xsync.NewMap[uint64, string](),
 
-		attrsMap:             xsync.NewMapOf[uint64, *cacheAttr](),
-		attrsRoleMap:         xsync.NewMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
-		attrsPermsMap:        xsync.NewMapOf[uint64, *xsync.MapOf[string, uint64]](),
-		attrsJobMaxValuesMap: xsync.NewMapOf[string, *xsync.MapOf[uint64, *permissions.AttributeValues]](),
+		attrsMap:             xsync.NewMap[uint64, *cacheAttr](),
+		attrsRoleMap:         xsync.NewMap[uint64, *xsync.Map[uint64, *cacheRoleAttr]](),
+		attrsPermsMap:        xsync.NewMap[uint64, *xsync.Map[string, uint64]](),
+		attrsJobMaxValuesMap: xsync.NewMap[string, *xsync.Map[uint64, *permissions.AttributeValues]](),
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -371,8 +371,8 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() *xsync.MapOf[int32, uint64] {
-			return xsync.NewMapOf[int32, uint64]()
+		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() (*xsync.Map[int32, uint64], bool) {
+			return xsync.NewMap[int32, uint64](), false
 		})
 		grades.Store(role.Grade, role.ID)
 
@@ -417,8 +417,8 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, rolePerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, func() *xsync.MapOf[uint64, bool] {
-			return xsync.NewMapOf[uint64, bool]()
+		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, func() (*xsync.Map[uint64, bool], bool) {
+			return xsync.NewMap[uint64, bool](), false
 		})
 		perms.Store(rolePerms.ID, rolePerms.Val)
 	}
@@ -460,8 +460,8 @@ func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
 		p.attrsJobMaxValuesMap.Delete(job)
 	} else {
 		for _, jobAttrs := range dest {
-			attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() *xsync.MapOf[uint64, *permissions.AttributeValues] {
-				return xsync.NewMapOf[uint64, *permissions.AttributeValues]()
+			attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() (*xsync.Map[uint64, *permissions.AttributeValues], bool) {
+				return xsync.NewMap[uint64, *permissions.AttributeValues](), false
 			})
 			attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
 		}
@@ -522,8 +522,8 @@ func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId ui
 		return
 	}
 
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() *xsync.MapOf[uint64, *cacheRoleAttr] {
-		return xsync.NewMapOf[uint64, *cacheRoleAttr]()
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() (*xsync.Map[uint64, *cacheRoleAttr], bool) {
+		return xsync.NewMap[uint64, *cacheRoleAttr](), false
 	})
 	cached, ok := attrRoleMap.Load(attrId)
 	if !ok {
