@@ -106,7 +106,7 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 					val = activity.OldValue
 				}
 
-				docId, err := strconv.Atoi(val)
+				docId, err := strconv.ParseInt(val, 10, 64)
 				if err != nil {
 					return err
 				}
@@ -172,15 +172,15 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 			case "Plugin.Jail":
 				activity.Type = users.UserActivityType_USER_ACTIVITY_TYPE_JAIL
 
-				seconds := 0
+				seconds := int32(0)
 				if activity.NewValue != "" {
-					newVal, err := strconv.Atoi(activity.NewValue)
+					newVal, err := strconv.ParseInt(activity.NewValue, 10, 32)
 					if err != nil {
 						return err
 					}
 
 					if newVal != 0 {
-						seconds = newVal
+						seconds = int32(newVal)
 					} else if newVal == 0 {
 						seconds = 0
 					} else {
@@ -270,7 +270,7 @@ func (c *UserActivityMigrateCmd) run(ctx context.Context, logger *zap.Logger, db
 				if err != nil {
 					return err
 				}
-				newPoints, err := strconv.Atoi(activity.NewValue)
+				newPoints, err := strconv.ParseInt(activity.NewValue, 10, 32)
 				if err != nil {
 					return err
 				}

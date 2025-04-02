@@ -132,7 +132,7 @@ function counted() {
 }
 
 function maskedIn(val: string) {
-    return val.replace('*', 'x');
+    return val.replace(/\*/g, 'x');
 }
 
 function lastIsOperand() {
