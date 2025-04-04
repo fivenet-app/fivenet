@@ -58,7 +58,7 @@ WHERE
 
 ALTER TABLE `fivenet_user_citizen_attributes` DROP FOREIGN KEY `fk_fivenet_user_citizen_attributes_user_id`;
 RENAME TABLE `fivenet_user_citizen_attributes` TO `fivenet_user_citizen_labels`;
-ALTER TABLE `fivenet_user_citizen_labels` ADD CONSTRAINT `fk_fivenet_user_citizen_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `fivenet_user_citizen_labels` ADD CONSTRAINT `fk_fivenet_user_citizen_labels_user_id` FOREIGN KEY (`user_id`) REFERENCES `{{.UsersTableName}}` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 RENAME TABLE `fivenet_job_citizen_attributes` TO `fivenet_job_citizen_labels`;
 
