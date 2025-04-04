@@ -1,5 +1,30 @@
 BEGIN;
 
+-- Table: fivenet_users
+CREATE TABLE IF NOT EXISTS `fivenet_users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `identifier` varchar(64) NOT NULL,
+  `group` varchar(50) DEFAULT NULL,
+  `job` varchar(20) DEFAULT 'unemployed',
+  `job_grade` int DEFAULT '0',
+  `firstname` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) DEFAULT NULL,
+  `dateofbirth` varchar(25) DEFAULT NULL,
+  `sex` varchar(10) DEFAULT NULL,
+  `height` varchar(5) DEFAULT NULL,
+  `phone_number` varchar(20) DEFAULT NULL,
+  `disabled` tinyint(1) DEFAULT '0',
+  `visum` int DEFAULT NULL,
+  `playtime` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`identifier`),
+  UNIQUE KEY `id` (`id`),
+  KEY `idx_fivenet_users_job` (`job`),
+  KEY `idx_fivenet_users_dateofbirth` (`dateofbirth`),
+  FULLTEXT KEY `idx_fivenet_users_firstname_lastname_fulltext` (`firstname`, `lastname`)
+) ENGINE=InnoDB;
+
 -- Table: fivenet_accounts
 CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
