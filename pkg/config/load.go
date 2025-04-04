@@ -26,7 +26,7 @@ type Result struct {
 }
 
 func Load() (Result, error) {
-	v := viper.New()
+	v := viper.NewWithOptions(viper.ExperimentalBindStruct())
 	// Viper config reading setup
 	v.SetEnvPrefix("FIVENET")
 	v.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -63,11 +63,13 @@ func Load() (Result, error) {
 	// Handle non-DSN database connection details
 	if c.Database.DSN == "" {
 		m := mysql.NewConfig()
+		m.Net = c.Database.Net
 		m.Addr = fmt.Sprintf("%s:%d", c.Database.Host, c.Database.Port)
 		m.User = c.Database.Username
 		m.Passwd = c.Database.Password
 		m.DBName = c.Database.Database
 		m.Collation = c.Database.Collation
+		m.ParseTime = true
 
 		c.Database.DSN = m.FormatDSN()
 	}

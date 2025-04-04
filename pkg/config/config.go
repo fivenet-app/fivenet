@@ -75,6 +75,7 @@ type Database struct {
 	// Refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
 	DSN string `yaml:"dsn"`
 
+	Net       string `default:"tcp" yaml:"net"`
 	Host      string `yaml:"host"`
 	Port      int32  `default:"3306" yaml:"port"`
 	Username  string `yaml:"username"`
