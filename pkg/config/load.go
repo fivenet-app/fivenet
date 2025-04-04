@@ -63,7 +63,7 @@ func Load() (Result, error) {
 	// Handle non-DSN database connection details
 	if c.Database.DSN == "" {
 		m := mysql.NewConfig()
-		m.Addr = c.Database.Host
+		m.Addr = fmt.Sprintf("%s:%d", c.Database.Host, c.Database.Port)
 		m.User = c.Database.Username
 		m.Passwd = c.Database.Password
 		m.DBName = c.Database.Database

@@ -76,6 +76,7 @@ type Database struct {
 	DSN string `yaml:"dsn"`
 
 	Host      string `yaml:"host"`
+	Port      int32  `default:"3306" yaml:"port"`
 	Username  string `yaml:"username"`
 	Password  string `yaml:"password"`
 	Database  string `yaml:"database"`

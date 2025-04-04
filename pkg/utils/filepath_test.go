@@ -32,8 +32,20 @@ func TestCleanFilePath(t *testing.T) {
 			valid:    false,
 		},
 		{
-			name:     "Path with redundant elements",
+			name:     "Path with redundant elements 1",
 			input:    "./test/../file.txt",
+			expected: "file.txt",
+			valid:    true,
+		},
+		{
+			name:     "Path with redundant elements 2",
+			input:    "./test/../../../../../file.txt",
+			expected: "",
+			valid:    false,
+		},
+		{
+			name:     "Path with redundant elements 3",
+			input:    "./test/dir/..//../file.txt",
 			expected: "file.txt",
 			valid:    true,
 		},
