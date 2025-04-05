@@ -88,7 +88,7 @@ func (s *Server) Stream(req *pbcentrum.StreamRequest, srv pbcentrum.CentrumServi
 		}
 
 		if err := s.stream(srv, userInfo.Job, userInfo.UserId); err != nil {
-			return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			return err
 		}
 
 		select {
@@ -126,7 +126,7 @@ func (s *Server) stream(srv pbcentrum.CentrumService_StreamServer, job string, u
 				Change: msg.Change,
 			}
 			if err := srv.Send(resp); err != nil {
-				return err
+				return errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 		}
 	}
