@@ -391,6 +391,19 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 					user.Height,
 					user.Visum,
 					user.Playtime,
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tUsers.Group.SET(tUsers.NEW.Group),
+					tUsers.Firstname.SET(tUsers.NEW.Firstname),
+					tUsers.Lastname.SET(tUsers.NEW.Lastname),
+					tUsers.Dateofbirth.SET(tUsers.NEW.Dateofbirth),
+					tUsers.Job.SET(tUsers.NEW.Job),
+					tUsers.JobGrade.SET(tUsers.NEW.JobGrade),
+					tUsers.Sex.SET(tUsers.NEW.Sex),
+					tUsers.PhoneNumber.SET(tUsers.NEW.PhoneNumber),
+					tUsers.Height.SET(tUsers.NEW.Height),
+					tUsers.Visum.SET(tUsers.NEW.Visum),
+					tUsers.Playtime.SET(tUsers.NEW.Playtime),
 				)
 
 			res, err := insertStmt.ExecContext(ctx, s.db)
@@ -580,21 +593,23 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 			ownerId = jet.Int32(*vehicle.OwnerId)
 		}
 
-		values := []interface{}{
-			ownerId,
-			vehicle.Plate,
-			vehicle.Model,
-			vehicle.Type,
-		}
-
 		if !tables.ESXCompatEnabled {
-			values = append(values,
+			stmt = stmt.VALUES(
+				ownerId,
+				vehicle.Plate,
+				vehicle.Model,
+				vehicle.Type,
 				vehicle.Job,
 				jet.NULL,
 			)
+		} else {
+			stmt = stmt.VALUES(
+				ownerId,
+				vehicle.Plate,
+				vehicle.Model,
+				vehicle.Type,
+			)
 		}
-
-		stmt = stmt.VALUES(values[0], values[1:]...)
 	}
 
 	assignments := []jet.ColumnAssigment{

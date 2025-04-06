@@ -146,6 +146,10 @@ func (c *ValueMapping) IsEmpty() bool {
 }
 
 func (c *ValueMapping) Process(input *string) {
+	if input == nil {
+		return
+	}
+
 	val, ok := c.Values[*input]
 	if !ok {
 		if c.Fallback != nil {

@@ -3,11 +3,13 @@ package dbsync
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/sync"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/vehicles"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 type vehiclesSync struct {
@@ -49,6 +51,8 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 		}
 	}
 
+	s.logger.Debug("vehiclesSync", zap.Any("vehicles", vehicles))
+
 	if len(vehicles) == 0 {
 		s.state.Set(0, nil)
 		return nil
@@ -63,7 +67,7 @@ func (s *vehiclesSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return fmt.Errorf("failed to send vehicles data to FiveNet server. %w", err)
 		}
 	}
 

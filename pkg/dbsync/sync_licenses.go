@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 type licensesSync struct {
@@ -39,6 +40,8 @@ func (s *licensesSync) Sync(ctx context.Context) error {
 			return err
 		}
 	}
+
+	s.logger.Debug("licensesSync", zap.Any("licenses", licenses))
 
 	if len(licenses) == 0 {
 		return nil

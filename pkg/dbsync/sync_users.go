@@ -3,6 +3,7 @@ package dbsync
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 	"time"
@@ -12,6 +13,7 @@ import (
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
+	"go.uber.org/zap"
 )
 
 type usersSync struct {
@@ -49,9 +51,11 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	users := []*users.User{}
 	if _, err := qrm.Query(ctx, s.db, query, []any{}, &users); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return err
+			return fmt.Errorf("failed to query users table. %w", err)
 		}
 	}
+
+	s.logger.Debug("usersSync", zap.Any("users", users))
 
 	if len(users) == 0 {
 		s.state.Set(0, nil)
@@ -70,7 +74,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 
 			users[k].Licenses, err = s.retrieveLicenses(ctx, users[k].UserId, identifier)
 			if err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to retrieve users %s licenses. %w", identifier, err))
 			}
 		}
 
@@ -82,7 +86,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 	for k := range users {
 		// Value mapping logic
 		if s.cfg.Tables.Users.ValueMapping != nil {
-			if !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
+			if users[k].Sex != nil && !s.cfg.Tables.Users.ValueMapping.Sex.IsEmpty() {
 				s.cfg.Tables.Users.ValueMapping.Sex.Process(users[k].Sex)
 			}
 		}
@@ -120,7 +124,7 @@ func (s *usersSync) Sync(ctx context.Context) error {
 				},
 			},
 		}); err != nil {
-			return err
+			return fmt.Errorf("failed to send users data to server. %w", err)
 		}
 	}
 

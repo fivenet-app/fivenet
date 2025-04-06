@@ -43,22 +43,22 @@ tables:
       FROM
         `job_grades`
       WHERE
-        `job_grades.job_name` = $jobName
+        `job_grades`.`job_name` = $jobName
       LIMIT $limit
       OFFSET $offset;
   licenses:
-    # Must return `type`, `label` columns
+    # Must return `license.type`, `license.label` columns
     enabled: true
     query: |
       SELECT
-        `license.type`,
-        `license.label`
+        `licenses`.`type` AS `license.type`,
+        `licenses`.`label` AS `license.label`
       FROM
         `licenses`
       LIMIT $limit
       OFFSET $offset;
   users:
-    # Must return `user.id`, `user.identifier`, `user.group`, `user.firstname`, `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
+    # Must return `user.user_id`, `user.identifier`, `user.group`, `user.firstname`, `user.lastname`, `user.dateofbirth`, `user.job`, `user.job_grade`, `user.sex`, `user.phone_number` columns
     # Optional columns: `user.height`, `user.visum`, `user.playtime`
     enabled: true
     # If your "players"/"users" data has a timestamp/datetime column that is updated on update,
@@ -109,11 +109,11 @@ tables:
     query: |
       SELECT
         `user_licenses`.`type` AS `user_license.type`,
-        `user_licenses`.`owner AS `user_license.owner``
+        `user_licenses`.`owner` AS `user_license.owner`
       FROM
         `user_licenses`
       WHERE
-        `owner` = $identifier
+        `user_licenses`.`owner` = $identifier
       LIMIT $limit
       OFFSET $offset;
   vehicles:

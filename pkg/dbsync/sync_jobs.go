@@ -9,6 +9,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	pbsync "github.com/fivenet-app/fivenet/gen/go/proto/services/sync"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
 
 type jobsSync struct {
@@ -40,6 +41,8 @@ func (s *jobsSync) Sync(ctx context.Context) error {
 			return err
 		}
 	}
+
+	s.logger.Debug("jobsSync", zap.Any("jobs", jobs))
 
 	if len(jobs) == 0 {
 		return nil
