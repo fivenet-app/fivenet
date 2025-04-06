@@ -393,17 +393,17 @@ func (s *Server) handleUsersData(ctx context.Context, data *pbsync.SendDataReque
 					user.Playtime,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tUsers.Group.SET(tUsers.NEW.Group),
-					tUsers.Firstname.SET(tUsers.NEW.Firstname),
-					tUsers.Lastname.SET(tUsers.NEW.Lastname),
-					tUsers.Dateofbirth.SET(tUsers.NEW.Dateofbirth),
-					tUsers.Job.SET(tUsers.NEW.Job),
-					tUsers.JobGrade.SET(tUsers.NEW.JobGrade),
-					tUsers.Sex.SET(tUsers.NEW.Sex),
-					tUsers.PhoneNumber.SET(tUsers.NEW.PhoneNumber),
-					tUsers.Height.SET(tUsers.NEW.Height),
-					tUsers.Visum.SET(tUsers.NEW.Visum),
-					tUsers.Playtime.SET(tUsers.NEW.Playtime),
+					tUsers.Group.SET(jet.StringExp(jet.Raw("VALUES(`group`)"))),
+					tUsers.Firstname.SET(jet.StringExp(jet.Raw("VALUES(`firstname`)"))),
+					tUsers.Lastname.SET(jet.StringExp(jet.Raw("VALUES(`lastname`)"))),
+					tUsers.Dateofbirth.SET(jet.StringExp(jet.Raw("VALUES(`dateofbirth`)"))),
+					tUsers.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+					tUsers.JobGrade.SET(jet.IntExp(jet.Raw("VALUES(`job_grade`)"))),
+					tUsers.Sex.SET(jet.StringExp(jet.Raw("VALUES(`sex`)"))),
+					tUsers.PhoneNumber.SET(jet.StringExp(jet.Raw("VALUES(`phone_number`)"))),
+					tUsers.Height.SET(jet.StringExp(jet.Raw("VALUES(`height`)"))),
+					tUsers.Visum.SET(jet.IntExp(jet.Raw("VALUES(`visum`)"))),
+					tUsers.Playtime.SET(jet.IntExp(jet.Raw("VALUES(`playtime`)"))),
 				)
 
 			res, err := insertStmt.ExecContext(ctx, s.db)
@@ -613,7 +613,7 @@ func (s *Server) handleVehiclesData(ctx context.Context, data *pbsync.SendDataRe
 	}
 
 	assignments := []jet.ColumnAssigment{
-		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`owner`)"))),
+		tVehicles.Owner.SET(jet.StringExp(jet.Raw("VALUES(`owner`)"))),
 		tVehicles.Plate.SET(jet.StringExp(jet.Raw("VALUES(`plate`)"))),
 		tVehicles.Model.SET(jet.StringExp(jet.Raw("VALUES(`model`)"))),
 		tVehicles.Type.SET(jet.StringExp(jet.Raw("VALUES(`type`)"))),
