@@ -20,6 +20,7 @@ defineProps<{
             base: 'h-5 w-5',
         }"
     />
+    <br v-else-if="value.tag === 'br'" v-bind="value.attrs" />
     <component
         :is="value.tag === 'body' ? 'div' : value.tag"
         v-else
@@ -31,3 +32,16 @@ defineProps<{
         <UIcon v-if="value.tag === 'a' && !value.attrs.href?.startsWith('/')" class="ml-0.5 size-4" name="i-mdi-open-in-new" />
     </component>
 </template>
+
+<style scoped>
+@supports (height: 1lh) {
+    p:empty {
+        height: 1lh;
+    }
+}
+@supports not (height: 1lh) {
+    p:empty::after {
+        content: '\00A0';
+    }
+}
+</style>

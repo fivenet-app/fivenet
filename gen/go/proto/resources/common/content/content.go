@@ -223,7 +223,7 @@ func (n *JSONNode) populateFrom(htmlNode *html.Node) error {
 
 func walkContentForText(ns []*JSONNode) string {
 	text := ""
-	for i := 0; i < len(ns); i++ {
+	for i := range ns {
 		element := ns[i]
 		if element.Text == nil || *element.Text == "" {
 			text += walkContentForText(element.Content)

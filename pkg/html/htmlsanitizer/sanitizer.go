@@ -21,7 +21,7 @@ var (
 )
 
 var (
-	colorRegex            = regexp.MustCompile(`(?m)(?i)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
+	colorRegex            = regexp.MustCompile(`(?mi)^(#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})|rgb\(\d{1,3},[ ]*\d{1,3},[ ]*\d{1,3}\))$`)
 	prosemirrorClassRegex = regexp.MustCompile(`(?m)^ProseMirror-[A-Za-z]+$`)
 
 	boolFalseRegex = regexp.MustCompile(`(?i)^false$`)
