@@ -367,6 +367,7 @@ defineShortcuts({
 
                         <LControl position="bottomright">
                             <UButton
+                                v-if="canStream && settings?.enabled"
                                 class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                                 size="2xs"
                                 :icon="open ? 'i-mdi-chevron-double-right' : 'i-mdi-chevron-double-left'"
@@ -379,7 +380,7 @@ defineShortcuts({
                         </LControl>
                     </template>
 
-                    <template v-if="canStream" #afterMap>
+                    <template v-if="canStream && settings?.enabled" #afterMap>
                         <div>
                             <Transition
                                 enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"

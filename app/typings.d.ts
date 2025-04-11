@@ -13,6 +13,12 @@ declare module 'vue-router' {
     }
 }
 
+declare module '@nuxtjs/i18n' {
+    interface LocaleObject {
+        icon: string;
+    }
+}
+
 export type ServerAppConfig = {
     defaultLocale: string;
 

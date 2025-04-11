@@ -714,30 +714,10 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	// Load permissions of user
-	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
-		UserId:   char.UserId,
-		Job:      char.Job,
-		JobGrade: char.JobGrade,
-	})
+	ps, err := s.listUserPerms(account, char, isSuperUser)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
+		return nil, err
 	}
-
-	ps := userPs.GuardNames()
-	if isSuperUser {
-		ps = append(ps, auth.PermCanBeSuperKey)
-
-		if account.Superuser != nil && *account.Superuser {
-			ps = append(ps, auth.PermSuperUserKey)
-		}
-	}
-
-	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
-	}
-	ps = append(ps, attrs...)
 
 	if len(ps) == 0 || (!isSuperUser && !slices.Contains(ps, "authservice-choosecharacter")) {
 		return nil, errorsauth.ErrUnableToChooseChar
@@ -764,6 +744,35 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *pbauth.ChooseCharacte
 	}, nil
 }
 
+func (s *Server) listUserPerms(account *model.FivenetAccounts, char *users.User, isSuperUser bool) ([]string, error) {
+	// Load permissions of user
+	userPs, err := s.ps.GetPermissionsOfUser(&userinfo.UserInfo{
+		UserId:   char.UserId,
+		Job:      char.Job,
+		JobGrade: char.JobGrade,
+	})
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrUnableToChooseChar)
+	}
+
+	ps := userPs.GuardNames()
+	if isSuperUser {
+		ps = append(ps, auth.PermCanBeSuperKey)
+
+		if account.Superuser != nil && *account.Superuser {
+			ps = append(ps, auth.PermSuperUserKey)
+		}
+	}
+
+	attrs, err := s.ps.FlattenRoleAttributes(char.Job, char.JobGrade)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
+	ps = append(ps, attrs...)
+
+	return ps, nil
+}
+
 func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserModeRequest) (*pbauth.SetSuperUserModeResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
@@ -786,12 +795,18 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
 
+	// Set user's job as requested job when superuser mode is turned on
+	if req.Job == nil {
+		req.Job = &userInfo.Job
+	}
+
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
 		return nil, errswrap.NewError(fmt.Errorf("failed to get char %d. %w", claims.CharID, err), errorsauth.ErrNoCharFound)
 	}
 
 	var jobProps *users.JobProps
+	var ps []string
 
 	// Reset override job when switching off superuser mode
 	if !req.Superuser {
@@ -807,7 +822,15 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 			return nil, errswrap.NewError(fmt.Errorf("failed to get job props for '%s' job. %w", char.Job, err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
-	} else if req.Job != nil {
+
+		not := false
+		ps, err = s.listUserPerms(&model.FivenetAccounts{
+			Superuser: &not,
+		}, char, true)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get user perms. %w", err)
+		}
+	} else {
 		// Only set job if requested
 		job, jobGrade, jProps, err := s.getJobWithProps(ctx, *req.Job)
 		if err != nil {
@@ -823,6 +846,8 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 		char.Job = job.Name
 		char.JobGrade = jobGrade
 		s.enricher.EnrichJobInfo(char)
+
+		ps = []string{auth.PermCanBeSuperKey, auth.PermSuperUserKey}
 	}
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
@@ -847,9 +872,10 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *pbauth.SetSuperUserM
 	}
 
 	return &pbauth.SetSuperUserModeResponse{
-		Expires:  timestamp.New(newClaims.ExpiresAt.Time),
-		JobProps: jobProps,
-		Char:     char,
+		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
+		JobProps:    jobProps,
+		Char:        char,
+		Permissions: ps,
 	}, nil
 }
 

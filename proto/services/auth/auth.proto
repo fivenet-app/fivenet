@@ -139,8 +139,9 @@ message SetSuperUserModeRequest {
 
 message SetSuperUserModeResponse {
   resources.timestamp.Timestamp expires = 1;
-  optional resources.users.JobProps job_props = 2;
-  resources.users.User char = 3;
+  repeated string permissions = 2;
+  optional resources.users.JobProps job_props = 3;
+  resources.users.User char = 4; // @gotags: alias:"user"
 }
 
 // Auth Service handles user authentication, character selection and oauth2 connections

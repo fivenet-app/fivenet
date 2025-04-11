@@ -14,7 +14,7 @@ const { t } = useI18n();
 const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
-const { dispatches, ownDispatches } = storeToRefs(centrumStore);
+const { dispatches, ownDispatches, settings } = storeToRefs(centrumStore);
 
 const settingsStore = useSettingsStore();
 const { addOrUpdateLivemapLayer, addOrUpdateLivemapCategory } = settingsStore;
@@ -90,7 +90,7 @@ onBeforeMount(() => {
     </LLayerGroup>
 
     <LControl position="bottomleft">
-        <div class="flex flex-col gap-2">
+        <div v-if="settings?.enabled" class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"
                 class="max-w-40"

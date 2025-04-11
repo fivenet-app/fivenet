@@ -232,6 +232,7 @@ export const useAuthStore = defineStore(
 
                 setAccessTokenExpiration(toDate(response.expires));
                 setActiveChar(response.char!);
+                setPermissions(response.permissions);
                 setJobProps(response.jobProps);
 
                 useNotificatorStore().add({

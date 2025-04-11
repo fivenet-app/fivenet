@@ -256,13 +256,17 @@ export interface SetSuperUserModeResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.users.JobProps job_props = 2;
+     * @generated from protobuf field: repeated string permissions = 2;
+     */
+    permissions: string[];
+    /**
+     * @generated from protobuf field: optional resources.users.JobProps job_props = 3;
      */
     jobProps?: JobProps;
     /**
-     * @generated from protobuf field: resources.users.User char = 3;
+     * @generated from protobuf field: resources.users.User char = 4;
      */
-    char?: User;
+    char?: User; // @gotags: alias:"user"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
@@ -1323,12 +1327,14 @@ class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse
     constructor() {
         super("services.auth.SetSuperUserModeResponse", [
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 2, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 3, name: "char", kind: "message", T: () => User }
+            { no: 2, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "job_props", kind: "message", T: () => JobProps },
+            { no: 4, name: "char", kind: "message", T: () => User }
         ]);
     }
     create(value?: PartialMessage<SetSuperUserModeResponse>): SetSuperUserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.permissions = [];
         if (value !== undefined)
             reflectionMergePartial<SetSuperUserModeResponse>(this, message, value);
         return message;
@@ -1341,10 +1347,13 @@ class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse
                 case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* optional resources.users.JobProps job_props */ 2:
+                case /* repeated string permissions */ 2:
+                    message.permissions.push(reader.string());
+                    break;
+                case /* optional resources.users.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
-                case /* resources.users.User char */ 3:
+                case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -1362,12 +1371,15 @@ class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse
         /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
             Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.JobProps job_props = 2; */
+        /* repeated string permissions = 2; */
+        for (let i = 0; i < message.permissions.length; i++)
+            writer.tag(2, WireType.LengthDelimited).string(message.permissions[i]);
+        /* optional resources.users.JobProps job_props = 3; */
         if (message.jobProps)
-            JobProps.internalBinaryWrite(message.jobProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.User char = 3; */
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 4; */
         if (message.char)
-            User.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -6,7 +6,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const logger = useLogger('📡 GRPC');
 
-const throttledErrorCodes = ['INTERNAL', 'DEADLINE_EXCEEDED', 'CANCELLED', 'PERMISSION_DENIED', 'UNAUTHENTICATED'];
+const throttledErrorCodes = ['internal', 'deadline_exceeded', 'cancelled', 'permission_denied', 'unauthenticated'];
 
 const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
     receivedAt: undefined,

@@ -1648,6 +1648,10 @@
                     "title": "You are not in any unit",
                     "content": "Please join an unit!"
                 }
+            },
+            "disabled": {
+                "title": "Dispatch center is disabled!",
+                "content": "You job's dispatch center is disabled, please contact your job leader."
             }
         },
         "components": {

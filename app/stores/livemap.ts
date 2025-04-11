@@ -165,8 +165,8 @@ export const useLivemapStore = defineStore(
             } catch (e) {
                 const err = e as RpcError;
 
-                // Only restart if not CANCELLED or ABORTED
-                if (err.code !== 'CANCELLED' && err.code !== 'ABORTED') {
+                // Only restart if not cancelled or aborted
+                if (err.code !== 'cancelled' && err.code !== 'aborted') {
                     logger.error('Stream failed', err.code, err.message, err.cause);
 
                     // If we haven't manually aborted, attempt restart

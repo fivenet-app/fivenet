@@ -569,11 +569,27 @@ export const useCentrumStore = defineStore(
                 }
             } catch (e) {
                 const rpcError = e as RpcError;
-                if (rpcError.code !== 'CANCELLED' && rpcError.code !== 'ABORTED') {
+                if (rpcError.code !== 'cancelled' && rpcError.code !== 'aborted') {
                     logger.error('Stream failed', rpcError.code, rpcError.message, rpcError.cause);
 
-                    // only restart if not aborted
-                    if (abort.value && !abort.value.signal.aborted) {
+                    if (rpcError.code === 'invalid_argument' && rpcError.message.includes('.ErrDisabled')) {
+                        // Create empty settings object with enabled set to false
+                        settings.value = {
+                            enabled: false,
+                            mode: CentrumMode.UNSPECIFIED,
+                            fallbackMode: CentrumMode.UNSPECIFIED,
+                            job: '',
+                            timings: undefined,
+                        };
+
+                        useNotificatorStore().add({
+                            title: { key: 'notifications.centrum.disabled.title', parameters: {} },
+                            description: { key: 'notifications.centrum.disabled.content', parameters: {} },
+                            type: NotificationType.INFO,
+                            actions: getNotificationActions(),
+                        });
+                    } else if (abort.value && !abort.value.signal.aborted) {
+                        // only restart if not aborted
                         restartStream();
                     } else {
                         error.value = rpcError;

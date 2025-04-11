@@ -502,7 +502,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #label>
                                             <template v-if="state.defaultLocale">
                                                 <UIcon
-                                                    :name="locales.find((l) => l.code === state.defaultLocale.code)?.icon"
+                                                    :name="
+                                                        locales.find((l) => l.code === state.defaultLocale.code)?.icon ??
+                                                        'i-mdi-question-mark'
+                                                    "
                                                     class="size-4"
                                                 />
                                                 <span class="truncate">{{

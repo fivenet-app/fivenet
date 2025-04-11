@@ -114,7 +114,7 @@ watch(location, async () => {
         return;
     }
 
-    map.setView([location.value.y, location.value.x + getZoomOffset(location.value.zoom ?? zoom.value)], zoom.value, {
+    map.setView([location.value.y, location.value.x + getZoomOffset(zoom.value)], zoom.value, {
         animate: false,
         duration: 0.75,
     });

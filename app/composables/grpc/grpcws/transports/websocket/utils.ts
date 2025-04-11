@@ -16,7 +16,7 @@ export function createRpcError(metaData: Metadata, methodDefinition: MethodInfo<
     const err = new RpcError(message, status ?? '0', metaData.headersMap);
     err.serviceName = methodDefinition.service.typeName;
     err.methodName = methodDefinition.name;
-    err.code = (GrpcStatusCode[parseInt(err.code)] ?? GrpcStatusCode[GrpcStatusCode.INTERNAL])?.toLowerCase();
+    err.code = (GrpcStatusCode[parseInt(err.code)] ?? GrpcStatusCode[GrpcStatusCode.INTERNAL])?.toUpperCase();
 
     return err;
 }
