@@ -3,7 +3,7 @@
   description = "Basic flake for FiveNet development";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs?ref=nixos-unstable";
+    nixpkgs.url = "github:nixos/nixpkgs?ref=master";
   };
 
   outputs = { self, nixpkgs }:
@@ -19,7 +19,7 @@
         };
       });
 
-      unstable = import (builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/nixos-unstable) { config = { allowUnfree = true; }; };
+      unstable = import (builtins.fetchTarball https://github.com/nixos/nixpkgs/tarball/master) { config = { allowUnfree = true; }; };
     in
     {
       overlays.default = final: prev: {
