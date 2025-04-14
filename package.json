@@ -23,7 +23,7 @@
         "@galexrt/nuxt-update": "1.1.0",
         "@iconify-json/flagpack": "1.2.2",
         "@iconify-json/mdi": "1.2.3",
-        "@iconify-json/simple-icons": "1.2.31",
+        "@iconify-json/simple-icons": "1.2.32",
         "@nuxt/content": "2.13.4",
         "@nuxt/fonts": "0.11.1",
         "@nuxt/ui-pro": "1.7.1",
@@ -90,7 +90,7 @@
         "@types/google-protobuf": "3.15.12",
         "@types/leaflet": "1.9.17",
         "@types/leaflet-contextmenu": "1.4.3",
-        "@types/node": "22.14.0",
+        "@types/node": "22.14.1",
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.5",
@@ -128,7 +128,7 @@
     "resolutions": {
         "@nuxt/kit": "3.16.2"
     },
-    "packageManager": "pnpm@10.7.1+sha512.2d92c86b7928dc8284f53494fb4201f983da65f0fb4f0d40baafa5cf628fa31dae3e5968f12466f17df7e97310e30f343a648baea1b9b350685dafafffdf5808",
+    "packageManager": "pnpm@10.8.1+sha512.c50088ba998c67b8ca8c99df8a5e02fd2ae2e2b29aaf238feaa9e124248d3f48f9fb6db2424949ff901cffbb5e0f0cc1ad6aedb602cd29450751d11c35023677",
     "pnpm": {
         "onlyBuiltDependencies": [
             "@intlify/vue-i18n-bridge",
