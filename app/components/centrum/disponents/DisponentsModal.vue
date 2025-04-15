@@ -11,18 +11,18 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
-    <UModal :ui="{ width: '!max-w-2xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+    <UModal :ui="{ width: 'max-w-2xl!' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('common.disponents', 2) }}
-                        <UBadge color="gray">
+                        <UBadge color="neutral">
                             {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
                         </UBadge>
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -38,7 +38,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                     :key="disponent.userId"
                     :title="`${disponent.firstname} ${disponent.lastname}`"
                     :ui="{
-                        title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                        title: 'text-neutral-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
                     }"
                 >
                     <PhoneNumberBlock :number="disponent.phoneNumber" />
@@ -46,7 +46,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
             </UPageGrid>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

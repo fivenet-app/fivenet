@@ -95,15 +95,15 @@ const items = [
 </script>
 
 <template>
-    <UDashboardPage>
         <UDashboardPanel grow>
+            <template #header>
             <UDashboardNavbar :title="$t('common.overview')" />
+        </template>
 
-            <UDashboardPanelContent>
+            <template #body>
                 <CardsList :items="items" />
 
                 <FiveNetHints class="mt-4" />
-            </UDashboardPanelContent>
+            </template>
         </UDashboardPanel>
-    </UDashboardPage>
 </template>

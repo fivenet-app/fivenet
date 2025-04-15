@@ -17,7 +17,7 @@ const isBright = computed(() => isColourBright(unitColorHex.value));
 
 <template>
     <li
-        class="col-span-1 flex rounded-md shadow-sm"
+        class="shadow-2xs col-span-1 flex rounded-md"
         @click="
             slideover.open(UnitDetailsSlideover, {
                 unit: unit,
@@ -31,10 +31,10 @@ const isBright = computed(() => isColourBright(unitColorHex.value));
         >
             {{ unit.initials }}
         </div>
-        <div class="flex flex-1 items-center justify-between truncate border border-gray-200">
+        <div class="flex flex-1 items-center justify-between truncate border border-neutral-200">
             <div class="flex-1 px-1 py-2 text-sm">
                 <span class="font-medium">{{ unit.name }}</span>
-                <p :class="unit.users.length === 0 ? 'text-gray-400' : 'text-gray-300'">
+                <p :class="unit.users.length === 0 ? 'text-neutral-400' : 'text-neutral-300'">
                     {{ $t('common.member', unit.users.length) }}
                 </p>
             </div>

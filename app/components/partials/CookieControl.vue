@@ -14,7 +14,7 @@ const open = ref(cookiesState.value === null);
     <div>
         <UCard
             v-if="open"
-            class="fixed inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5"
+            class="backdrop-blur-xs fixed inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 dark:bg-white/5"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -31,7 +31,7 @@ const open = ref(cookiesState.value === null);
                         >
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="open = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="open = false" />
                 </div>
             </template>
 
@@ -71,7 +71,7 @@ const open = ref(cookiesState.value === null);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="open = false">
+                    <UButton color="neutral" block class="flex-1" @click="open = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

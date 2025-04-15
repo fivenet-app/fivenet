@@ -249,7 +249,7 @@ const { game } = useAppConfig();
                                 :key="value"
                                 class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="value"
                                     :model-value="!!attrValue.validValues.stringList.strings.find((v) => v === value)"
                                     :disabled="disabled"
@@ -281,7 +281,7 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!attrValue.validValues.jobList?.strings.find((v) => v === job.name)"
                                     :disabled="disabled"
@@ -312,7 +312,7 @@ const { game } = useAppConfig();
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                             >
-                                <UToggle
+                                <USwitch
                                     :name="job.name"
                                     :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
                                     :disabled="disabled"
@@ -343,7 +343,7 @@ const { game } = useAppConfig();
                                     >
                                         <template #label>
                                             <template v-if="job.grades && attrValue.validValues.jobGradeList.jobs[job.name]">
-                                                <span class="truncate text-gray-900 dark:text-white"
+                                                <span class="truncate text-neutral-900 dark:text-white"
                                                     >{{
                                                         job.grades.find(
                                                             (g) =>
@@ -422,7 +422,7 @@ const { game } = useAppConfig();
                                     @update:model-value="toggleJobGradeListFineGrained($event)"
                                 />
 
-                                <UFormGroup
+                                <UFormField
                                     :label="$t('components.rector.role_view.fine_grained_toggle.title')"
                                     :description="$t('components.rector.role_view.fine_grained_toggle.description')"
                                 />

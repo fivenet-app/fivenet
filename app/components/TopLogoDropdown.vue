@@ -25,13 +25,13 @@ watch(notificationsCount, () => {
 </script>
 
 <template>
-    <UDropdown v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
-        <UButton color="gray" variant="ghost" :class="[open && 'bg-gray-50 dark:bg-gray-800']" class="w-full">
+    <UDropdownMenu v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
+        <UButton color="neutral" variant="ghost" :class="[open && 'bg-neutral-50 dark:bg-neutral-800']" class="w-full">
             <FiveNetLogo class="size-4" />
 
-            <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet</span>
+            <span class="truncate font-semibold text-neutral-900 dark:text-white">FiveNet</span>
         </UButton>
-    </UDropdown>
+    </UDropdownMenu>
 
     <UTooltip :text="$t('components.partials.sidebar_notifications')" :shortcuts="['B']">
         <UChip
@@ -41,7 +41,7 @@ watch(notificationsCount, () => {
             :text="notificationsCount <= 9 ? notificationsCount : '9+'"
             size="xl"
         >
-            <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
+            <UButton color="neutral" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
                 <UIcon
                     :name="
                         doNotDisturb

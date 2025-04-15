@@ -37,8 +37,8 @@ export const useNotificatorStore = defineStore(
         };
 
         const add = (notification: Notification): void => {
-            if (notification.timeout === undefined) {
-                notification.timeout = useAppConfig().timeouts.notification;
+            if (notification.duration === undefined) {
+                notification.duration = useAppConfig().timeouts.notification;
             }
             notifications.value.push(notification);
         };

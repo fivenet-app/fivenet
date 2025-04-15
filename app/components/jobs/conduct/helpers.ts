@@ -4,7 +4,7 @@ import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeColor {
     switch (status) {
         case ConductType.NEUTRAL:
-            return 'gray';
+            return 'neutral';
         case ConductType.POSITIVE:
             return 'success';
         case ConductType.NEGATIVE:

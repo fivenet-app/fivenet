@@ -27,7 +27,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
                 <template #right>
@@ -37,7 +37,7 @@ const templatesListRef = useTemplateRef('templatesListRef');
                         <UButton
                             v-if="can('DocStoreService.CreateTemplate').value"
                             :to="{ name: 'documents-templates-create' }"
-                            color="gray"
+                            color="neutral"
                             trailing-icon="i-mdi-plus"
                         >
                             {{ $t('pages.documents.templates.create_template') }}
@@ -52,5 +52,5 @@ const templatesListRef = useTemplateRef('templatesListRef');
 
             <Pagination :loading="templatesListRef?.loading" :refresh="templatesListRef?.refresh" hide-buttons hide-text />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

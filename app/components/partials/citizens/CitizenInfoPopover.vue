@@ -155,7 +155,7 @@ watchOnce(opened, async () => {
                     />
                 </div>
 
-                <div v-else-if="loading && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="loading && !user" class="flex flex-col gap-2 text-neutral-900 dark:text-white">
                     <USkeleton class="h-8 w-[250px]" />
 
                     <div class="flex flex-row items-center gap-2">
@@ -164,7 +164,7 @@ watchOnce(opened, async () => {
                     </div>
                 </div>
 
-                <div v-else-if="user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                <div v-else-if="user" class="flex flex-col gap-2 text-neutral-900 dark:text-white">
                     <div class="inline-flex flex-row gap-2">
                         <ProfilePictureImg
                             v-if="showAvatar === undefined || showAvatar"

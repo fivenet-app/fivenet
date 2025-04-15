@@ -18,7 +18,7 @@ const modal = useModal();
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.citizens.title')">
                 <template #right>
@@ -33,5 +33,5 @@ const modal = useModal();
 
             <CitizensList />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

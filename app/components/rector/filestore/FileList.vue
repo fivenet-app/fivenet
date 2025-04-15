@@ -180,7 +180,7 @@ const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
                 </UTooltip>
             </template>
             <template #name-data="{ row: file }">
-                <span class="text-gray-900 dark:text-white">
+                <span class="text-neutral-900 dark:text-white">
                     {{ file.name }}
                 </span>
             </template>

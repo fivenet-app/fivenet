@@ -75,10 +75,10 @@ defineShortcuts({
                 <div
                     class="cursor-pointer border-l-2 p-4 text-sm"
                     :class="[
-                        !!thread.state?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+                        !!thread.state?.unread ? 'text-neutral-900 dark:text-white' : 'text-neutral-600 dark:text-neutral-300',
                         selectedThread && selectedThread.id === thread.id
-                            ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
-                            : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+                            ? 'border-primary-500 bg-primary-100 dark:border-primary-400 dark:bg-primary-900/25'
+                            : 'hover:border-primary-500/25 hover:bg-primary-100/50 dark:hover:border-primary-400/25 dark:hover:bg-primary-900/10 border-white dark:border-neutral-900',
                     ]"
                     @click="selectedThread = thread"
                 >
@@ -116,7 +116,7 @@ defineShortcuts({
                     </div>
                 </div>
 
-                <UDivider v-if="index < threads.length" />
+                <USeparator v-if="index < threads.length" />
             </div>
 
             <slot name="after" />

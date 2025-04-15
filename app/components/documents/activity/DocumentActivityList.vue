@@ -58,7 +58,7 @@ watch(offset, async () => refresh());
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
-        <ul v-else role="list" class="mb-1 divide-y divide-gray-100 dark:divide-gray-800">
+        <ul v-else role="list" class="mb-1 divide-y divide-neutral-100 dark:divide-neutral-800">
             <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
         </ul>
 

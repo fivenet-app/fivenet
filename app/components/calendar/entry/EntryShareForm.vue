@@ -67,7 +67,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -79,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
 
             <div>
-                <UFormGroup name="participants" :label="$t('common.guest', 2)" class="flex-1">
+                <UFormField name="participants" :label="$t('common.guest', 2)" class="flex-1">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.users"
@@ -117,14 +117,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
                 <div class="mt-2 overflow-hidden rounded-md bg-neutral-100 dark:bg-base-900">
-                    <ul role="list" class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3">
+                    <ul role="list" class="grid grid-cols-2 text-sm font-medium text-neutral-100 lg:grid-cols-3">
                         <li
                             v-for="user in state.users"
                             :key="user.userId"
-                            class="flex items-center border-b border-gray-100 px-4 py-2 dark:border-gray-800"
+                            class="flex items-center border-b border-neutral-100 px-4 py-2 dark:border-neutral-800"
                         >
                             <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
                         </li>
@@ -134,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="$emit('close')">
+                    <UButton color="neutral" block class="flex-1" @click="$emit('close')">
                         {{ $t('common.cancel', 1) }}
                     </UButton>
 

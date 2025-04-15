@@ -75,7 +75,7 @@ const items = [
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.control_panel')" />
 
@@ -83,5 +83,5 @@ const items = [
                 <CardsList :items="items" />
             </UDashboardPanelContent>
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

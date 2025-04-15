@@ -48,7 +48,7 @@ ${props.error ? JSON.stringify(props.error) : 'Unknown error'}
 }
 
 const kbdBlockClasses =
-    'inline-flex items-center rounded bg-gray-100 px-1 text-gray-900 ring-1 ring-inset ring-gray-300 dark:bg-gray-800 dark:text-white dark:ring-gray-700';
+    'inline-flex items-center rounded bg-neutral-100 px-1 text-neutral-900 ring-1 ring-inset ring-neutral-300 dark:bg-neutral-800 dark:text-white dark:ring-neutral-700';
 
 const isDev = import.meta.dev;
 </script>
@@ -60,7 +60,7 @@ const isDev = import.meta.dev;
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="flex h-full flex-col items-center justify-center">
-            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4 z-10" />
+            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="neutral" class="absolute top-4 z-10" />
 
             <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
                 <template #header>
@@ -142,7 +142,7 @@ const isDev = import.meta.dev;
                                 block
                                 class="flex-1"
                                 size="lg"
-                                color="green"
+                                color="success"
                                 :disabled="buttonDisabled"
                                 @click="handleError(route.fullPath)"
                             >
@@ -155,7 +155,7 @@ const isDev = import.meta.dev;
                                 block
                                 class="flex-1"
                                 size="lg"
-                                color="amber"
+                                color="warning"
                                 @click="copyError"
                             >
                                 {{ $t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message' }}
@@ -164,6 +164,7 @@ const isDev = import.meta.dev;
 
                         <UButton
                             v-if="isDev"
+                            color="neutral"
                             @click="
                                 updateAppConfig({ version: 'UNKNOWN' });
                                 clearError();

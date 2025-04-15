@@ -85,19 +85,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('common.upload') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup name="category" :label="$t('common.category')" class="flex-1" required>
+                    <UFormField name="category" :label="$t('common.category')" class="flex-1" required>
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.category"
@@ -105,13 +105,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :searchable-placeholder="$t('common.search_field')"
                             />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
+                    <UFormField name="name" :label="$t('common.name')" class="flex-1" required>
                         <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
+                    <UFormField name="file" :label="$t('common.file')" class="flex-1">
                         <NotSupportedTabletBlock v-if="nuiEnabled" />
                         <template v-else>
                             <UInput
@@ -122,12 +122,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 @change="state.file = $event"
                             />
                         </template>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

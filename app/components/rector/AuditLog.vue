@@ -186,7 +186,7 @@ const expand = ref({
         <template #default>
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                    <UFormField name="date" :label="$t('common.time_range')" class="flex-1">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
                             mode="date"
@@ -199,9 +199,9 @@ const expand = ref({
                                 clearable: true,
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="user" :label="$t('common.user')" class="flex-1">
+                    <UFormField name="user" :label="$t('common.user')" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.users"
@@ -243,9 +243,9 @@ const expand = ref({
                                 <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="service" :label="$t('common.service')" class="flex-1">
+                    <UFormField name="service" :label="$t('common.service')" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="query.services"
@@ -264,9 +264,9 @@ const expand = ref({
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="method" :label="$t('common.method')" class="flex-1">
+                    <UFormField name="method" :label="$t('common.method')" class="flex-1">
                         <USelectMenu
                             v-model="query.methods"
                             multiple
@@ -283,9 +283,9 @@ const expand = ref({
                                 {{ $t('common.not_found', [$t('common.method')]) }}
                             </template>
                         </USelectMenu>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
+                    <UFormField name="data" :label="$t('common.data')" class="flex-1">
                         <UInput
                             v-model="query.search"
                             type="text"
@@ -298,7 +298,7 @@ const expand = ref({
                             <template #trailing>
                                 <UButton
                                     v-show="query.search !== ''"
-                                    color="gray"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
                                     :padded="false"
@@ -306,7 +306,7 @@ const expand = ref({
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </UForm>
         </template>

@@ -60,17 +60,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UFormGroup v-if="status?.transferable" :label="$t('components.internet.transfer_code')">
+        <UFormField v-if="status?.transferable" :label="$t('components.internet.transfer_code')">
             <UInput v-model="state.transferCode" type="text" />
-        </UFormGroup>
+        </UFormField>
 
         <!-- Even without a transfer code "are you sure" confirmation -->
-        <UFormGroup :label="$t('components.internet.pages.nic_registrar.register_form.submit')">
+        <UFormField :label="$t('components.internet.pages.nic_registrar.register_form.submit')">
             <div class="flex gap-2">
                 <UButton :label="$t('common.yes')" type="submit" />
 
                 <UButton :label="$t('common.cancel')" color="error" class="flex-1" @click="$emit('cancel')" />
             </div>
-        </UFormGroup>
+        </UFormField>
     </UForm>
 </template>

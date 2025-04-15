@@ -137,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         padding: 'px-1 py-2 sm:p-2',
                     },
                     ring: '',
-                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                    divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 }"
             >
                 <template #header>
@@ -151,7 +151,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </h3>
 
                         <UButton
-                            color="gray"
+                            color="neutral"
                             variant="ghost"
                             icon="i-mdi-window-close"
                             class="-my-1"
@@ -172,9 +172,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="name">
+                                <UFormField name="name">
                                     <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -184,14 +184,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="description">
+                                <UFormField name="description">
                                     <UInput
                                         v-model="state.description"
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -201,14 +201,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="expiresAt">
+                                <UFormField name="expiresAt">
                                     <DatePickerPopoverClient
                                         v-model="state.expiresAt"
                                         date-format="dd.MM.yyyy HH:mm"
                                         :popover="{ popper: { placement: 'bottom-start' } }"
                                         :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
 
@@ -219,9 +219,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="color">
+                                <UFormField name="color">
                                     <ColorPickerClient v-model="state.color" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -231,7 +231,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="markerType">
+                                <UFormField name="markerType">
                                     <ClientOnly>
                                         <USelectMenu
                                             v-model="state.markerType"
@@ -253,7 +253,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div
@@ -266,7 +266,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="circleRadius">
+                                <UFormField name="circleRadius">
                                     <UInput
                                         v-model="state.circleRadius"
                                         type="number"
@@ -275,7 +275,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :max="250"
                                         :placeholder="$t('common.radius')"
                                     />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                         <div
@@ -288,9 +288,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <UFormGroup name="icon">
+                                <UFormField name="icon">
                                     <IconSelectMenu v-model="state.icon" :color="state.color" />
-                                </UFormGroup>
+                                </UFormField>
                             </dd>
                         </div>
                     </dl>
@@ -303,7 +303,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton
-                            color="black"
+                            color="neutral"
                             block
                             class="flex-1"
                             @click="

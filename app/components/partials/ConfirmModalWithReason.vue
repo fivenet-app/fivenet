@@ -55,9 +55,9 @@ const { isOpen } = useModal();
         @update:model-value="cancel && cancel()"
     >
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UFormGroup name="reason" :label="$t('common.reason')" class="sm:px-4">
+            <UFormField name="reason" :label="$t('common.reason')" class="sm:px-4">
                 <UInput v-model="state.reason" :placeholder="$t('common.reason')" :ui="{ base: 'w-full' }" />
-            </UFormGroup>
+            </UFormField>
 
             <div class="flex flex-shrink-0 items-center gap-x-1.5 px-4 py-4 sm:px-4">
                 <UButton type="submit" :color="color" :label="$t('common.confirm')" />

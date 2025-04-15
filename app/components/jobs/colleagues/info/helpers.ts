@@ -3,22 +3,22 @@ import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/activity';
 export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType | undefined): string {
     switch (activityType) {
         case JobsUserActivityType.ABSENCE_DATE:
-            return '!text-yellow-300';
+            return 'text-yellow-300!';
         case JobsUserActivityType.HIRED:
-            return '!text-blue-500';
+            return 'text-blue-500!';
         case JobsUserActivityType.FIRED:
-            return '!text-red-500';
+            return 'text-red-500!';
         case JobsUserActivityType.PROMOTED:
-            return '!text-green-500';
+            return 'text-green-500!';
         case JobsUserActivityType.DEMOTED:
-            return '!text-orange-500';
+            return 'text-orange-500!';
         case JobsUserActivityType.NOTE:
-            return '!text-teal-500';
+            return 'text-teal-500!';
         case JobsUserActivityType.NAME:
-            return '!text-pink-500';
+            return 'text-pink-500!';
         case JobsUserActivityType.UNSPECIFIED:
         default:
-            return '!text-info-500';
+            return 'text-info-500!';
     }
 }
 

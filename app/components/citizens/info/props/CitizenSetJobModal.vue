@@ -96,23 +96,23 @@ onBeforeMount(async () => listJobs());
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
-                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')" required>
+                    <UFormField class="flex-1" name="reason" :label="$t('common.reason')" required>
                         <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
+                    <UFormField class="flex-1" name="job" :label="$t('common.job')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.job"
@@ -139,9 +139,9 @@ onBeforeMount(async () => listJobs());
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
+                    <UFormField class="flex-1" name="grade" :label="$t('common.job_grade')">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.grade"
@@ -168,7 +168,7 @@ onBeforeMount(async () => listJobs());
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
 
                 <template #footer>
@@ -189,7 +189,7 @@ onBeforeMount(async () => listJobs());
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>

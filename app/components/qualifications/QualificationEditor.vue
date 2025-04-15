@@ -343,7 +343,7 @@ const selectedTab = computed({
         <UDashboardNavbar :title="qualificationId ? $t('pages.qualifications.edit.title') : $t('pages.qualifications.create')">
             <template #right>
                 <UButton
-                    color="black"
+                    color="neutral"
                     icon="i-mdi-arrow-back"
                     :to="qualificationId ? { name: 'qualifications-id', params: { id: qualificationId } } : '/qualifications'"
                 >
@@ -390,7 +390,7 @@ const selectedTab = computed({
                             <template #default>
                                 <div class="flex w-full flex-col gap-2">
                                     <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup
+                                        <UFormField
                                             name="abbreviation"
                                             :label="$t('common.abbreviation')"
                                             class="max-w-48 shrink"
@@ -404,9 +404,9 @@ const selectedTab = computed({
                                                 :placeholder="$t('common.abbreviation')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
+                                        <UFormField name="title" :label="$t('common.title')" class="flex-1" required>
                                             <UInput
                                                 v-model="state.title"
                                                 name="title"
@@ -415,11 +415,11 @@ const selectedTab = computed({
                                                 :placeholder="$t('common.title')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </div>
 
                                     <div class="flex w-full flex-row gap-2">
-                                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                                        <UFormField name="description" :label="$t('common.description')" class="flex-1">
                                             <UTextarea
                                                 v-model="state.description"
                                                 name="description"
@@ -427,23 +427,23 @@ const selectedTab = computed({
                                                 :placeholder="$t('common.description')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
                                         <div class="flex flex-initial flex-col">
-                                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
-                                                <UToggle v-model="state.closed" :disabled="!canDo.edit" />
-                                            </UFormGroup>
+                                            <UFormField name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                                <USwitch v-model="state.closed" :disabled="!canDo.edit" />
+                                            </UFormField>
 
-                                            <UFormGroup name="public" :label="$t('common.public')" class="flex-initial">
-                                                <UToggle v-model="state.public" :disabled="!canDo.public" />
-                                            </UFormGroup>
+                                            <UFormField name="public" :label="$t('common.public')" class="flex-initial">
+                                                <USwitch v-model="state.public" :disabled="!canDo.public" />
+                                            </UFormField>
                                         </div>
                                     </div>
                                 </div>
                             </template>
                         </UDashboardToolbar>
 
-                        <UFormGroup
+                        <UFormField
                             v-if="canDo.edit"
                             name="content"
                             class="flex flex-1 overflow-y-hidden"
@@ -454,18 +454,18 @@ const selectedTab = computed({
                                 <TiptapEditor
                                     v-model="state.content"
                                     :disabled="!canDo.edit"
-                                    class="mx-auto w-full max-w-screen-xl flex-1 overflow-y-hidden"
+                                    class="max-w-(--breakpoint-xl) mx-auto w-full flex-1 overflow-y-hidden"
                                     rounded="rounded-none"
                                 />
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
                     </template>
                 </template>
 
                 <template #details>
                     <div class="flex flex-col gap-2 overflow-y-auto px-2">
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text- text-neutral-900 dark:text-white">
                                 {{ $t('common.access') }}
                             </h2>
 
@@ -479,7 +479,7 @@ const selectedTab = computed({
                         </div>
 
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text- text-neutral-900 dark:text-white">
                                 {{ $t('common.requirements', 2) }}
                             </h2>
 
@@ -510,20 +510,20 @@ const selectedTab = computed({
                             >
                                 <template #discord>
                                     <UContainer>
-                                        <UFormGroup
+                                        <UFormField
                                             name="discordSettings.enabled"
                                             :label="$t('common.enabled')"
                                             :ui="{ container: 'inline-flex gap-2' }"
                                         >
-                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
+                                            <USwitch v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
                                                 <span class="sr-only">
                                                     {{ $t('common.enabled') }}
                                                 </span>
-                                            </UToggle>
+                                            </USwitch>
                                             <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
+                                        <UFormField name="discordSettings.roleName" :label="$t('common.role')">
                                             <UInput
                                                 v-model="state.discordSettings.roleName"
                                                 name="discordSettings.roleName"
@@ -531,9 +531,9 @@ const selectedTab = computed({
                                                 :placeholder="$t('common.role')"
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup
+                                        <UFormField
                                             name="discordSettings.roleFormat"
                                             :label="
                                                 $t(
@@ -557,26 +557,26 @@ const selectedTab = computed({
                                                 "
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </UContainer>
                                 </template>
 
                                 <template #label>
                                     <UContainer>
-                                        <UFormGroup
+                                        <UFormField
                                             name="labelSyncEnabled"
                                             :label="$t('common.enabled')"
                                             :ui="{ container: 'inline-flex gap-2' }"
                                         >
-                                            <UToggle v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
+                                            <USwitch v-model="state.labelSyncEnabled" :disabled="!canDo.edit">
                                                 <span class="sr-only">
                                                     {{ $t('common.enabled') }}
                                                 </span>
-                                            </UToggle>
+                                            </USwitch>
                                             <span class="text-sm font-medium">{{ $t('common.enabled') }}</span>
-                                        </UFormGroup>
+                                        </UFormField>
 
-                                        <UFormGroup
+                                        <UFormField
                                             name="labelSyncFormat"
                                             :label="
                                                 $t('components.qualifications.qualification_editor.label_sync_format.label')
@@ -596,18 +596,18 @@ const selectedTab = computed({
                                                 "
                                                 :disabled="!canDo.edit"
                                             />
-                                        </UFormGroup>
+                                        </UFormField>
                                     </UContainer>
                                 </template>
                             </UAccordion>
                         </div>
 
                         <div>
-                            <h2 class="text- text-gray-900 dark:text-white">
+                            <h2 class="text- text-neutral-900 dark:text-white">
                                 {{ $t('common.exam', 1) }}
                             </h2>
 
-                            <UFormGroup name="examMode">
+                            <UFormField name="examMode">
                                 <ClientOnly>
                                     <USelectMenu
                                         v-model="state.examMode"
@@ -642,7 +642,7 @@ const selectedTab = computed({
                                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                                     </USelectMenu>
                                 </ClientOnly>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </div>
                 </template>

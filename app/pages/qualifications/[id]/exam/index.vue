@@ -24,9 +24,9 @@ const route = useRoute('qualifications-id');
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <ExamView :qualification-id="parseInt(route.params.id)" />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

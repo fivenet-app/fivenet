@@ -164,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     v-if="ownEntry && showRemove"
                     icon="i-mdi-calendar-remove"
-                    color="white"
+                    color="neutral"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),

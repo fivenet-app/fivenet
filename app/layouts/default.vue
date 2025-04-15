@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { Group } from '#ui/types';
+import type { CommandPaletteGroup, CommandPaletteItem } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
-import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
 import MathCalculatorModal from '~/components/quickbuttons/mathcalculator/MathCalculatorModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
@@ -20,7 +19,7 @@ const { can, activeChar, jobProps, isSuperuser } = useAuth();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
-const modal = useModal();
+const overlay = useOverlay();
 
 const { website } = useAppConfig();
 
@@ -200,7 +199,7 @@ const footerLinks = computed(() =>
         {
             label: t('common.help'),
             icon: 'i-mdi-question-mark-circle-outline',
-            click: () => (isHelpSlideoverOpen.value = true),
+            onClick: () => (isHelpSlideoverOpen.value = true),
         },
         {
             label: t('common.about'),
@@ -210,7 +209,7 @@ const footerLinks = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const groups = computed(() => [
+const groups = computed<CommandPaletteGroup<CommandPaletteItem>[]>(() => [
     {
         key: 'links',
         label: t('common.goto'),
@@ -368,6 +367,8 @@ const groups = computed(() => [
     },
 ]);
 
+const clipboardModal = overlay.create(ClipboardModal, {});
+
 const clipboardLink = computed(() =>
     [
         activeChar.value &&
@@ -375,13 +376,14 @@ const clipboardLink = computed(() =>
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
-                  click: () => modal.open(ClipboardModal, {}),
+                  onClick: () => clipboardModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
-const { isDashboardSidebarSlideoverOpen } = useUIState();
+const penaltyCalculatorModal = overlay.create(PenaltyCalculatorModal, {});
+const mathCalculatorModal = overlay.create(MathCalculatorModal, {});
 
 const quickAccessButtons = computed(() =>
     [
@@ -389,30 +391,14 @@ const quickAccessButtons = computed(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-gavel',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(PenaltyCalculatorModal);
-                  },
-              }
-            : undefined,
-        jobProps.value?.quickButtons?.bodyCheckup || isSuperuser.value
-            ? {
-                  label: t('components.bodycheckup.title'),
-                  icon: 'i-mdi-human',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(BodyCheckupModal, {});
-                  },
+                  onClick: () => penaltyCalculatorModal.open(),
               }
             : undefined,
         jobProps.value?.quickButtons?.mathCalculator || isSuperuser.value
             ? {
                   label: t('components.mathcalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => {
-                      isDashboardSidebarSlideoverOpen.value = false;
-                      modal.open(MathCalculatorModal, {});
-                  },
+                  onClick: () => mathCalculatorModal.open(),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -420,44 +406,42 @@ const quickAccessButtons = computed(() =>
 </script>
 
 <template>
-    <UDashboardLayout>
-        <UDashboardPanel id="mainleftsidebar" :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
-            <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
-                <template #left>
-                    <TopLogoDropdown />
-                </template>
-            </UDashboardNavbar>
+    <UDashboardGroup>
+        <UDashboardSidebar id="mainleftsidebar" :default-size="225" resizable :min-size="175" :max-size="275">
+            <template #header>
+                <UDashboardNavbar>
+                    <template #left>
+                        <TopLogoDropdown />
+                    </template>
+                </UDashboardNavbar>
+            </template>
 
-            <UDashboardSidebar>
-                <template #header>
-                    <UDashboardSearchButton :label="$t('common.search_field')" />
-                </template>
+            <UDashboardSearchButton :label="$t('common.search_field')" />
 
-                <UDashboardSidebarLinks :links="links" />
+            <UNavigationMenu :items="links" orientation="vertical" />
 
-                <template v-if="clipboardLink.length > 0">
-                    <UDivider />
+            <template v-if="clipboardLink.length > 0">
+                <USeparator />
 
-                    <UDashboardSidebarLinks :links="clipboardLink" />
-                </template>
+                <UNavigationMenu :items="clipboardLink" orientation="vertical" />
+            </template>
 
-                <template v-if="quickAccessButtons">
-                    <UDivider />
+            <template v-if="quickAccessButtons">
+                <USeparator />
 
-                    <UDashboardSidebarLinks :links="quickAccessButtons" />
-                </template>
+                <UNavigationMenu :items="quickAccessButtons" orientation="vertical" />
+            </template>
 
-                <div class="flex-1" />
+            <div class="flex-1" />
 
-                <UDashboardSidebarLinks :links="footerLinks" />
+            <UNavigationMenu :items="footerLinks" orientation="vertical" />
 
-                <UDivider class="sticky bottom-0" />
+            <USeparator class="sticky bottom-0" />
 
-                <template #footer>
-                    <UserDropdown />
-                </template>
-            </UDashboardSidebar>
-        </UDashboardPanel>
+            <template #footer>
+                <UserDropdown />
+            </template>
+        </UDashboardSidebar>
 
         <slot />
 
@@ -480,8 +464,8 @@ const quickAccessButtons = computed(() =>
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
                 :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
-                :groups="groups as Group[]"
+                :groups="groups"
             />
         </ClientOnly>
-    </UDashboardLayout>
+    </UDashboardGroup>
 </template>

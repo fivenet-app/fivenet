@@ -67,7 +67,7 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
         notifications.add({
             title: { key: 'notifications.clipboard.document_removed.title', parameters: {} },
             description: { key: 'notifications.clipboard.document_removed.content', parameters: {} },
-            timeout: 3250,
+            duration: 3250,
             type: NotificationType.INFO,
         });
     }
@@ -89,7 +89,7 @@ async function removeAll(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.clipboard.documents_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.documents_removed.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -123,7 +123,7 @@ watch(props, async (newVal) => {
             }
         "
     />
-    <table v-else class="min-w-full divide-y divide-gray-700">
+    <table v-else class="min-w-full divide-y divide-neutral-700">
         <thead>
             <tr>
                 <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
@@ -141,13 +141,13 @@ watch(props, async (newVal) => {
                 </th>
             </tr>
         </thead>
-        <tbody class="divide-y divide-gray-800">
+        <tbody class="divide-y divide-neutral-800">
             <tr v-for="item in documents" :key="item.id">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     <UButton
                         v-if="specs && specs.max === 1"
                         block
-                        :color="selected.includes(item) ? 'gray' : 'primary'"
+                        :color="selected.includes(item) ? 'neutral' : 'primary'"
                         @click="select(item)"
                     >
                         {{

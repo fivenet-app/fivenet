@@ -50,9 +50,9 @@ if (APP_VERSION !== settings.version) {
 
 // Set locale and theme colors in app config
 async function setThemeColors(): Promise<void> {
-    appConfig.ui.primary = design.value.ui.primary;
-    appConfig.ui.gray = design.value.ui.gray;
-    setTabletColors(appConfig.ui.primary, appConfig.ui.gray);
+    appConfig.ui.colors.primary = design.value.ui.primary;
+    appConfig.ui.colors.neutral = design.value.ui.gray;
+    setTabletColors(appConfig.ui.colors.primary, appConfig.ui.colors.neutral);
 }
 setThemeColors();
 watch(design.value, setThemeColors);
@@ -131,15 +131,12 @@ watch(updateAvailable, async () => {
         actions: [
             {
                 label: t('common.refresh'),
-                click: () => reloadNuxtApp({ persistState: false, force: true }),
+                onClick: () => reloadNuxtApp({ persistState: false, force: true }),
             },
         ],
         icon: 'i-mdi-update',
         color: 'primary',
-        timeout: 20000,
-        closeButton: {
-            disabled: true,
-        },
+        duration: 20000,
     });
 });
 
@@ -170,7 +167,7 @@ const route = router.currentRoute;
 </script>
 
 <template>
-    <div>
+    <UApp>
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
         <NuxtRouteAnnouncer />
 
@@ -184,14 +181,10 @@ const route = router.currentRoute;
 
         <BannerMessage v-if="appConfig.system.bannerMessage" :message="appConfig.system.bannerMessage" />
 
-        <UNotifications />
-        <UModals />
-        <USlideovers />
-
         <ClientOnly>
             <NotificationProvider />
         </ClientOnly>
 
         <CookieControl v-if="!nuiEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
-    </div>
+    </UApp>
 </template>

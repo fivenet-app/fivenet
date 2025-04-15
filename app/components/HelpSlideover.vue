@@ -1,10 +1,8 @@
 <script setup lang="ts">
-import type { ButtonColor } from '#ui/types';
+import type { ButtonProps } from '#ui/types';
 import { useSettingsStore } from '~/stores/settings';
 
 const { isHelpSlideoverOpen } = useDashboard();
-const { metaSymbol } = useShortcuts();
-
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -19,10 +17,8 @@ const links = computed(() =>
             label: t('common.shortcuts'),
             icon: 'i-mdi-key',
             trailingIcon: 'i-mdi-arrow-right',
-            color: 'gray' as ButtonColor,
-            onClick: () => {
-                shortcuts.value = true;
-            },
+            color: 'neutral' as ButtonProps['color'],
+            onClick: () => (shortcuts.value = true),
         },
         !nuiEnabled.value
             ? {
@@ -40,7 +36,7 @@ const categories = computed(() => [
     {
         title: t('commandpalette.categories.general'),
         items: [
-            { shortcuts: [metaSymbol.value, 'K'], name: t('common.commandpalette') },
+            { shortcuts: ['meta', 'K'], name: t('common.commandpalette') },
             { shortcuts: ['B'], name: t('common.notification', 2) },
             { shortcuts: ['?'], name: t('common.help') },
             { shortcuts: ['/'], name: t('common.search') },
@@ -133,7 +129,7 @@ const filteredCategories = computed(() => {
         <template #title>
             <UButton
                 v-if="shortcuts"
-                color="gray"
+                color="neutral"
                 variant="ghost"
                 size="sm"
                 icon="i-mdi-arrow-left"
@@ -144,16 +140,16 @@ const filteredCategories = computed(() => {
         </template>
 
         <div v-if="shortcuts" class="space-y-6">
-            <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="gray" />
+            <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="neutral" />
 
             <div v-for="(category, index) in filteredCategories" :key="index">
-                <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+                <p class="mb-3 text-sm font-semibold text-neutral-900 dark:text-white">
                     {{ category.title }}
                 </p>
 
                 <div class="space-y-2">
                     <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
-                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.name }}</span>
+                        <span class="text-sm text-neutral-500 dark:text-neutral-400">{{ item.name }}</span>
 
                         <div class="flex shrink-0 items-center justify-end gap-0.5">
                             <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">

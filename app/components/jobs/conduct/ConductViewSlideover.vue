@@ -23,7 +23,7 @@ const { isOpen } = useSlideover();
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
             }"
         >
             <template #header>
@@ -35,7 +35,7 @@ const { isOpen } = useSlideover();
                         </h3>
                     </div>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -105,7 +105,7 @@ const { isOpen } = useSlideover();
             </div>
 
             <template #footer>
-                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

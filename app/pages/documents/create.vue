@@ -13,9 +13,9 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <DocumentEditor />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

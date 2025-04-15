@@ -52,7 +52,7 @@ onBeforeMount(async () => {
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')">
                 <template #right>
@@ -62,5 +62,5 @@ onBeforeMount(async () => {
 
             <AccountInfo />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

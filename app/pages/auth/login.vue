@@ -91,7 +91,7 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
+    <UCard class="backdrop-blur-xs w-full max-w-md bg-white/75 dark:bg-white/5">
         <div class="space-y-4">
             <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
@@ -105,11 +105,11 @@ const canSubmit = ref(true);
             </UTabs>
 
             <div v-if="login.signupEnabled" class="space-y-4">
-                <UDivider orientation="horizontal" />
+                <USeparator orientation="horizontal" />
 
                 <UButton
                     block
-                    color="gray"
+                    color="neutral"
                     trailing-icon="i-mdi-account-plus"
                     :to="{ name: 'auth-registration' }"
                     :disabled="!canSubmit"

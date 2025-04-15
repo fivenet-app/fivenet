@@ -175,7 +175,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :state="state" :schema="schema" class="flex flex-col gap-y-2" @submit="onSubmitThrottle">
-        <UFormGroup
+        <UFormField
             :label="$t('common.mail')"
             :description="
                 $t('components.mailer.manage.email.description') +
@@ -184,7 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             class="flex flex-1 flex-col"
         >
             <div class="flex w-full flex-1 flex-col gap-1 sm:flex-row">
-                <UFormGroup name="email" class="flex-1">
+                <UFormField name="email" class="flex-1">
                     <USelectMenu
                         v-if="proposals?.emails && proposals.emails.length > 0"
                         v-model="state.email"
@@ -204,11 +204,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :disabled="disabled"
                         class="flex-1"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <span class="flex-initial font-semibold">@</span>
 
-                <UFormGroup name="domain" class="flex-1">
+                <UFormField name="domain" class="flex-1">
                     <USelectMenu
                         v-if="proposals?.domains && proposals.domains.length > 1"
                         v-model="state.domain"
@@ -228,23 +228,23 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         disabled
                         class="flex-1"
                     />
-                </UFormGroup>
+                </UFormField>
             </div>
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup v-if="!hideLabel" name="label" :label="$t('common.label')">
+        <UFormField v-if="!hideLabel" name="label" :label="$t('common.label')">
             <UInput v-model="state.label" type="text" :disabled="disabled" />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup
+        <UFormField
             v-if="modelValue?.id !== undefined && (isSuperuser || state.deactivated)"
             name="disabled"
             :label="$t('common.disabled')"
         >
-            <UToggle v-model="state.deactivated" :disabled="disabled" />
-        </UFormGroup>
+            <USwitch v-model="state.deactivated" :disabled="disabled" />
+        </UFormField>
 
-        <UFormGroup v-if="!personalEmail" name="access" :label="$t('common.access')">
+        <UFormField v-if="!personalEmail" name="access" :label="$t('common.access')">
             <AccessManager
                 v-model:jobs="state.access!.jobs"
                 v-model:users="state.access!.users"
@@ -259,9 +259,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :disabled="disabled"
                 default-access-type="job"
             />
-        </UFormGroup>
+        </UFormField>
 
-        <UFormGroup>
+        <UFormField>
             <DataErrorBlock
                 v-if="modelValue?.deactivated"
                 :title="$t('errors.MailerService.ErrEmailDisabled.title')"
@@ -274,6 +274,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 block
                 :label="modelValue?.id !== undefined ? $t('common.update') : $t('common.create')"
             />
-        </UFormGroup>
+        </UFormField>
     </UForm>
 </template>

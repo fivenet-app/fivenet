@@ -31,7 +31,7 @@ onBeforeMount(() => bmiCalculate());
                     {{ $t('components.bodycheckup.height') }}
                 </label>
                 <div>
-                    <div class="relative rounded-md shadow-sm">
+                    <div class="relative rounded-md shadow-2xs">
                         <UInput
                             v-model="height"
                             v-maska
@@ -53,7 +53,7 @@ onBeforeMount(() => bmiCalculate());
                     {{ $t('components.bodycheckup.mass') }}
                 </label>
                 <div>
-                    <div class="relative rounded-md shadow-sm">
+                    <div class="relative rounded-md shadow-2xs">
                         <UInput
                             v-model="mass"
                             v-maska

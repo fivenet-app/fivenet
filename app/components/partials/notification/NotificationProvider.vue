@@ -101,11 +101,12 @@ function createNotifications(notifications: Notification[]): void {
             description: t(notification.description.key, notification.description.parameters ?? {}),
             icon: notificationTypeToIcon(notification.type),
             color: notificationTypeToColor(notification.type),
-            timeout: notification.timeout ?? timeouts.notification,
+            duration: notification.duration ?? timeouts.notification,
             actions: notification.actions?.map((action) => ({
                 ...action,
                 label: t(action.label.key, action.label.parameters ?? {}),
             })),
+            // TODO not available anymore?
             callback: () => {
                 if (notification.id) {
                     notificatorStore.remove(notification.id);

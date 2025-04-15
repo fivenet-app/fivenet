@@ -53,7 +53,7 @@ const selectedTab = computed({
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #right>
@@ -61,7 +61,7 @@ const selectedTab = computed({
                         v-if="can('QualificationsService.CreateQualification').value"
                         :to="{ name: 'qualifications-create' }"
                         trailing-icon="i-mdi-plus"
-                        color="gray"
+                        color="neutral"
                     >
                         {{ $t('components.qualifications.create_new_qualification') }}
                     </UButton>
@@ -87,5 +87,5 @@ const selectedTab = computed({
                 </UTabs>
             </UDashboardPanelContent>
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

@@ -37,7 +37,7 @@ const links = computed(() =>
             ? {
                   label: t('components.auth.RegistrationForm.title'),
                   trailingIcon: 'i-mdi-account-plus',
-                  color: 'gray' as ButtonColor,
+                  color: 'neutral' as ButtonColor,
                   size: 'lg' as ButtonSize,
                   to: '/auth/registration',
               }
@@ -50,10 +50,10 @@ const links = computed(() =>
     <div class="flex min-h-[calc(100dvh-(2*var(--header-height)))] flex-col">
         <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
 
-        <ULandingHero :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :links="links" class="flex-1">
+        <UPageHero :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :items="links" class="flex-1">
             <template #headline>
                 <UButton
-                    color="gray"
+                    color="neutral"
                     :to="`https://github.com/fivenet-app/fivenet/v2025/releases/tag/${appVersion}`"
                     :external="true"
                     :label="$t('pages.index.whats_new_in', { version: appVersion })"
@@ -62,7 +62,7 @@ const links = computed(() =>
                     class="rounded-full"
                 />
             </template>
-        </ULandingHero>
+        </UPageHero>
     </div>
 </template>
 

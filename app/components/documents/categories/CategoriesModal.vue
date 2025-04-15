@@ -133,7 +133,7 @@ watch(props, () => setFromProps());
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
@@ -150,13 +150,13 @@ watch(props, () => setFromProps());
                             </template>
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
                 <div>
                     <div>
-                        <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                        <UFormField name="name" :label="$t('common.name')" class="flex-1">
                             <UInput
                                 v-model="state.name"
                                 type="text"
@@ -165,24 +165,24 @@ watch(props, () => setFromProps());
                                 :placeholder="$t('common.name', 1)"
                                 :label="$t('common.name', 1)"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UFormField name="description" :label="$t('common.description')" class="flex-1">
                             <UTextarea
                                 v-model="state.description"
                                 name="description"
                                 :disabled="!canEdit"
                                 :placeholder="$t('common.description')"
                             />
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row">
+                        <UFormField name="color" :label="$t('common.color')" class="flex-1 flex-row">
                             <div class="flex flex-1 gap-1">
                                 <ColorPickerTW v-model="state.color" class="flex-1" :disabled="!canEdit" />
                             </div>
-                        </UFormGroup>
+                        </UFormField>
 
-                        <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                        <UFormField name="icon" :label="$t('common.icon')" class="flex-1">
                             <div class="flex flex-1 gap-1">
                                 <IconSelectMenu
                                     v-model="state.icon"
@@ -194,13 +194,13 @@ watch(props, () => setFromProps());
 
                                 <UButton v-if="canEdit" icon="i-mdi-backspace" @click="state.icon = undefined" />
                             </div>
-                        </UFormGroup>
+                        </UFormField>
                     </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

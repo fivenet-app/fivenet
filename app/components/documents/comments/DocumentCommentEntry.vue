@@ -168,11 +168,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div v-else-if="canComment" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
-                    <UFormGroup name="comment">
+                    <UFormField name="comment">
                         <ClientOnly>
                             <TiptapEditor v-model="state.comment" wrapper-class="min-h-44" comment-mode :limit="1250" />
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
                     <div class="mt-2 shrink-0">
                         <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">

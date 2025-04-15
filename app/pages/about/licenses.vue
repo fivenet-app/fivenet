@@ -34,7 +34,7 @@ const licenses = [
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <div class="flex h-full flex-col justify-between">
                 <div>
@@ -69,5 +69,5 @@ const licenses = [
                 </div>
             </div>
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

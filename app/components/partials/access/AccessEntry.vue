@@ -126,7 +126,7 @@ watch(props, () => setFromProps());
             name="required"
         />
 
-        <UFormGroup class="w-40 flex-initial">
+        <UFormField class="w-40 flex-initial">
             <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.name" />
             <ClientOnly v-else>
                 <USelectMenu
@@ -157,10 +157,10 @@ watch(props, () => setFromProps());
                     </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <template v-if="entry.type === 'user'">
-            <UFormGroup name="userId" class="flex-1">
+            <UFormField name="userId" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
                         v-model="selectedUser"
@@ -197,11 +197,11 @@ watch(props, () => setFromProps());
                         <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
         </template>
 
         <template v-else-if="entry.type === 'qualification'">
-            <UFormGroup name="qualificationId" class="flex-1">
+            <UFormField name="qualificationId" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
                         v-model="selectedQualification"
@@ -241,11 +241,11 @@ watch(props, () => setFromProps());
                         <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
         </template>
 
         <template v-else>
-            <UFormGroup name="job" class="flex-1">
+            <UFormField name="job" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
                         v-model="entry.job"
@@ -266,9 +266,9 @@ watch(props, () => setFromProps());
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup name="minimumGrade" class="flex-1">
+            <UFormField name="minimumGrade" class="flex-1">
                 <ClientOnly>
                     <USelectMenu
                         :model-value="
@@ -291,10 +291,10 @@ watch(props, () => setFromProps());
                         <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
-            </UFormGroup>
+            </UFormField>
         </template>
 
-        <UFormGroup name="access" class="w-60 flex-initial">
+        <UFormField name="access" class="w-60 flex-initial">
             <ClientOnly>
                 <USelectMenu
                     v-model="entry.access"
@@ -319,7 +319,7 @@ watch(props, () => setFromProps());
                     <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <UTooltip v-if="!disabled" :text="$t('components.access.remove_entry')">
             <UButton :ui="{ rounded: 'rounded-full' }" class="flex-initial" icon="i-mdi-close" @click="$emit('delete')" />

@@ -7,5 +7,5 @@ const links = computed(() => breadcrumbs.value.map((b) => ({ label: t(b.title), 
 </script>
 
 <template>
-    <UBreadcrumb class="hidden md:flex" :links="links" />
+    <UBreadcrumb class="hidden md:flex" :items="links" />
 </template>

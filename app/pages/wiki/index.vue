@@ -63,7 +63,7 @@ watch(pages, async () => {
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.wiki')">
                 <template #center>
@@ -73,7 +73,7 @@ watch(pages, async () => {
                 <template #right>
                     <UButton
                         v-if="can('WikiService.CreatePage').value"
-                        color="gray"
+                        color="neutral"
                         trailing-icon="i-mdi-plus"
                         to="/wiki/create"
                     >
@@ -82,7 +82,7 @@ watch(pages, async () => {
                 </template>
             </UDashboardNavbar>
 
-            <UDashboardToolbar class="!flex lg:!hidden">
+            <UDashboardToolbar class="flex! lg:hidden!">
                 <template #default>
                     <PageSearch />
                 </template>
@@ -121,5 +121,5 @@ watch(pages, async () => {
                 </UPageGrid>
             </UDashboardPanelContent>
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

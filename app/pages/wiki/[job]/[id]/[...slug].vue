@@ -77,8 +77,8 @@ const editing = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+
+        <UDashboardPanel class="shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800" grow>
             <PageView
                 v-if="!editing"
                 :loading="loading"
@@ -101,5 +101,5 @@ const editing = ref(false);
             </PageView>
             <PageEditor v-else v-model="page" :pages="pages ?? []" @close="editing = !editing" />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

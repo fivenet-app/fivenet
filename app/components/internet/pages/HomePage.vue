@@ -85,7 +85,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
 
 <template>
     <UPage>
-        <ULandingHero
+        <UPageHero
             :description="$t('components.internet.pages.homepage.description')"
             :ui="{
                 wrapper: 'py-6 sm:py-6 md:py-6',
@@ -94,12 +94,12 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
             <template #title>
                 <img src="/images/components/internet/homepage/logo.png" :alt="$t('common.logo')" class="mx-auto h-48" />
             </template>
-        </ULandingHero>
+        </UPageHero>
 
-        <ULandingSection :ui="{ wrapper: 'pt-0 sm:pt-0 pb-6 sm:pb-6' }">
+        <UPageSection :ui="{ wrapper: 'pt-0 sm:pt-0 pb-6 sm:pb-6' }">
             <div class="flex w-full flex-1 flex-col items-center gap-1">
                 <UForm :schema="schema" :state="state" class="inline-flex gap-1" @submit="onSubmitThrottle">
-                    <UFormGroup name="search">
+                    <UFormField name="search">
                         <UInput
                             v-model="state.search"
                             type="text"
@@ -113,7 +113,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                             <template #trailing>
                                 <UButton
                                     v-show="state.search !== ''"
-                                    color="gray"
+                                    color="neutral"
                                     variant="link"
                                     icon="i-mdi-close"
                                     :padded="false"
@@ -121,7 +121,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                                 />
                             </template>
                         </UInput>
-                    </UFormGroup>
+                    </UFormField>
 
                     <UButton type="submit" icon="i-mdi-search" size="xl" :disabled="!canSubmit" />
                 </UForm>
@@ -134,7 +134,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
 
                 <div
                     v-if="searchResults"
-                    class="grid w-full max-w-lg grid-cols-1 divide-y divide-gray-200 dark:divide-gray-800"
+                    class="grid w-full max-w-lg grid-cols-1 divide-y divide-neutral-200 dark:divide-neutral-800"
                 >
                     <UCard
                         v-for="result in searchResults.results"
@@ -162,17 +162,17 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                     </UCard>
                 </div>
             </div>
-        </ULandingSection>
+        </UPageSection>
 
-        <ULandingSection :ui="{ wrapper: 'py-6 sm:py-6' }">
+        <UPageSection :ui="{ wrapper: 'py-6 sm:py-6' }">
             <DataPendingBlock v-if="loadingAds" :message="$t('common.loading', [$t('common.ad', 1)])" />
             <UPageGrid v-else>
                 <SponsoredAdCard v-for="(ad, idx) in ads?.ads" :key="idx" :ad="ad" />
             </UPageGrid>
-        </ULandingSection>
+        </UPageSection>
 
-        <ULandingSection :ui="{ wrapper: 'py-3 sm:py-3 mx-auto max-w-lg' }">
-            <ULandingCard
+        <UPageSection :ui="{ wrapper: 'py-3 sm:py-3 mx-auto max-w-lg' }">
+            <UPageCard
                 icon="i-mdi-web-box"
                 orientation="horizontal"
                 :title="$t('components.internet.pages.homepage.nic_registrar_cta.title')"
@@ -185,7 +185,7 @@ const { data: ads, pending: loadingAds } = useLazyAsyncData(`internet-ads`, () =
                         @click="internetStore.goTo('nic.ls')"
                     />
                 </template>
-            </ULandingCard>
-        </ULandingSection>
+            </UPageCard>
+        </UPageSection>
     </UPage>
 </template>

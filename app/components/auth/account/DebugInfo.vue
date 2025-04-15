@@ -43,7 +43,7 @@ async function sendTestNotifications(): Promise<void> {
             actions: [
                 {
                     label: { key: 'common.click_here' },
-                    click: () => alert('Test was successful!'),
+                    onClick: () => alert('Test was successful!'),
                 },
             ],
         });
@@ -74,8 +74,8 @@ const version = APP_VERSION;
 
 <template>
     <UDashboardPanelContent>
-        <UDashboardSection :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
-            <UFormGroup
+        <UPageCard :title="$t('components.debug_info.title')" :description="$t('components.debug_info.subtitle')">
+            <UFormField
                 name="version"
                 :label="$t('components.debug_info.version')"
                 class="grid grid-cols-2 items-center gap-2"
@@ -85,9 +85,9 @@ const version = APP_VERSION;
                     <span> {{ version }}/ {{ settings.version }} </span>
                     <CopyToClipboardButton :value="`${version}/ ${settings.version}`" />
                 </div>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 v-if="activeChar"
                 name="activeCharId"
                 :label="$t('components.debug_info.active_char_id')"
@@ -100,9 +100,9 @@ const version = APP_VERSION;
                     </span>
                     <CopyToClipboardButton :value="activeChar.userId" />
                 </div>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 v-if="activeChar"
                 name="activeCharJob"
                 :label="$t('common.job')"
@@ -113,9 +113,9 @@ const version = APP_VERSION;
                     <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
                     <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
                 </div>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 v-if="accessTokenExpiration"
                 name="accessTokenExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
@@ -124,9 +124,9 @@ const version = APP_VERSION;
             >
                 <GenericTime :value="accessTokenExpiration" ago />
                 (<GenericTime :value="accessTokenExpiration" type="long" />)
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 name="nuiInfo"
                 :label="$t('components.debug_info.nui_info')"
                 class="grid grid-cols-2 items-center gap-2"
@@ -134,9 +134,9 @@ const version = APP_VERSION;
             >
                 {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
                 {{ settings.nuiResourceName ?? $t('common.na') }}
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 name="status"
                 :label="$t('common.status')"
                 class="grid grid-cols-2 items-center gap-2"
@@ -144,9 +144,9 @@ const version = APP_VERSION;
             >
                 {{ $t('common.active') }}: {{ wsInitiated ? $t('common.yes') : $t('common.no') }}<br />
                 {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 name="debugFunctions"
                 :label="$t('components.debug_info.debug_functions')"
                 class="grid grid-cols-2 items-center gap-2"
@@ -162,22 +162,22 @@ const version = APP_VERSION;
                     <UButton block color="error" :external="true" to="/api/clear-site-data">
                         <span>{{ $t('components.debug_info.factory_reset') }}</span>
                     </UButton>
-                    <UButton block color="gray" @click="sendTestNotifications">
+                    <UButton block color="neutral" @click="sendTestNotifications">
                         <span>{{ $t('components.debug_info.test_notifications') }}</span>
                     </UButton>
-                    <UButton block color="gray" @click="triggerBannerMessage">
+                    <UButton block color="neutral" @click="triggerBannerMessage">
                         <span>{{ $t('components.debug_info.trigger_banner_message') }}</span>
                     </UButton>
-                    <UButton block color="gray" @click="triggerErrorPage">
+                    <UButton block color="neutral" @click="triggerErrorPage">
                         <span>{{ $t('components.debug_info.trigger_error') }}</span>
                     </UButton>
-                    <UButton v-if="isDevEnv || isSuperuser" block color="white" @click="setLogLevel">
+                    <UButton v-if="isDevEnv || isSuperuser" block color="neutral" @click="setLogLevel">
                         <span>{{ $t('components.debug_info.toggle_log_level') }}</span>
                     </UButton>
                 </UButtonGroup>
-            </UFormGroup>
+            </UFormField>
 
-            <UFormGroup
+            <UFormField
                 name="permissions"
                 :label="$t('components.debug_info.perms')"
                 class="grid grid-cols-2 items-center gap-2"
@@ -192,13 +192,13 @@ const version = APP_VERSION;
                         <p v-if="!activeChar">
                             {{ $t('components.debug_info.no_char_selected') }}
                         </p>
-                        <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                        <ul v-else role="list" class="divide-y divide-neutral-100 dark:divide-neutral-800">
                             <li
                                 v-for="perm in permissions"
                                 :key="perm"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
-                                <UIcon name="i-mdi-key" class="size-5 shrink-0 text-gray-400" />
+                                <UIcon name="i-mdi-key" class="size-5 shrink-0 text-neutral-400" />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">
                                         {{ perm }}
@@ -208,9 +208,9 @@ const version = APP_VERSION;
                         </ul>
                     </template>
                 </UAccordion>
-            </UFormGroup>
-        </UDashboardSection>
+            </UFormField>
+        </UPageCard>
 
-        <UDivider class="mb-4" />
+        <USeparator class="mb-4" />
     </UDashboardPanelContent>
 </template>

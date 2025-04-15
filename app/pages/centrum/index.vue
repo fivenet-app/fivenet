@@ -13,7 +13,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
+
         <DispatchCenter />
-    </UDashboardPage>
+
 </template>

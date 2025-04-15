@@ -14,7 +14,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
+
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('components.auth.UserSettingsPanel.title')">
                 <template #right>
@@ -24,5 +24,5 @@ definePageMeta({
 
             <UserSettingsPanel />
         </UDashboardPanel>
-    </UDashboardPage>
+
 </template>

@@ -81,7 +81,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
     <li :key="request.id" class="hover:bg-neutral/5 flex justify-between gap-x-4 py-4 transition-colors">
         <div class="flex min-w-0 gap-x-2 px-2">
             <div class="min-w-0 flex-auto">
-                <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
+                <p class="text-base font-semibold leading-6 text-neutral-100" :title="`${$t('common.id')}: ${request.id}`">
                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[request.requestType]}`) }}
                 </p>
                 <p class="mt-1 flex gap-1 text-sm leading-5">
@@ -136,21 +136,21 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     />
                 </UButtonGroup>
 
-                <UDropdown
+                <UDropdownMenu
                     v-if="canDelete"
                     :items="[
                         [
                             {
                                 label: $t('common.delete'),
                                 icon: 'i-mdi-delete',
-                                click: async () => deleteDocumentReq(request.id),
+                                onClick: async () => deleteDocumentReq(request.id),
                             },
                         ],
                     ]"
                     :popper="{ placement: 'bottom-start' }"
                 >
-                    <UButton size="md" color="white" icon="i-mdi-menu" trailing-icon="i-mdi-chevron-down" />
-                </UDropdown>
+                    <UButton size="md" color="neutral" icon="i-mdi-menu" trailing-icon="i-mdi-chevron-down" />
+                </UDropdownMenu>
             </div>
         </div>
     </li>

@@ -6,7 +6,7 @@ defineProps<{
 
 <template>
     <UPage>
-        <UHeader :title="title" :links="[]" />
+        <UHeader :title="title" :items="[]" />
 
         <UMain>
             <slot />
@@ -14,7 +14,7 @@ defineProps<{
 
         <UFooter>
             <template #top>
-                <UFooterColumns :links="[]" />
+                <UFooterColumns :items="[]" />
             </template>
         </UFooter>
     </UPage>

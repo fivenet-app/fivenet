@@ -131,7 +131,7 @@ watch(data, async () => {
                 <UButton
                     v-else-if="!data?.examUser?.endedAt"
                     size="xl"
-                    color="gray"
+                    color="neutral"
                     icon="i-mdi-play"
                     block
                     class="w-full"

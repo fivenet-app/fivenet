@@ -41,7 +41,7 @@ const modal = useModal();
 </script>
 
 <template>
-    <UHeader :links="links">
+    <UHeader :items="links">
         <template #logo>
             <FiveNetLogo class="h-10 w-auto" />
         </template>
@@ -50,18 +50,18 @@ const modal = useModal();
             <UButton
                 :label="$t('common.language')"
                 icon="i-mdi-translate"
-                color="gray"
+                color="neutral"
                 @click="modal.open(LanguageSwitcherModal, {})"
             />
 
             <template v-if="!username">
-                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
+                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="neutral" to="/auth/login" />
                 <UButton
                     v-if="appConfig.login.signupEnabled"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
-                    color="black"
+                    color="neutral"
                     to="/auth/registration"
                     class="hidden lg:flex"
                 />

@@ -116,7 +116,7 @@ const columns = [
                 </UTooltip>
             </h2>
 
-            <DispatchStatusBreakdown v-if="dispatches === undefined" class="font-semibold text-gray-100" />
+            <DispatchStatusBreakdown v-if="dispatches === undefined" class="font-semibold text-neutral-100" />
         </div>
 
         <div class="flex-1">
@@ -201,7 +201,7 @@ const columns = [
                     </template>
                     <template #status-data="{ row: dispatch }">
                         <span
-                            class="text-gray-900 dark:text-white"
+                            class="text-neutral-900 dark:text-white"
                             :class="[
                                 dispatchStatusToBGColor(dispatch.status?.status),
                                 dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : '',

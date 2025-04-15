@@ -4,7 +4,7 @@ export function sexToColor(sex: string): string {
     } else if (sex === 'm') {
         return 'blue';
     } else if (sex === 'd') {
-        return 'gray';
+        return 'neutral';
     }
 
     return 'white';
@@ -16,7 +16,7 @@ export function sexToTextColor(sex: string): string {
     } else if (sex === 'm') {
         return 'text-blue-300';
     } else if (sex === 'd') {
-        return 'text-gray-300';
+        return 'text-neutral-300';
     }
 
     return 'text-white-300';

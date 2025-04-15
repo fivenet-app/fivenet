@@ -41,24 +41,24 @@ if (!settings.value.time) {
 <template>
     <div class="mt-2 flex flex-col gap-2 px-2">
         <UForm :schema="schema" :state="settings">
-            <h2 class="text- text-gray-900 dark:text-white">
+            <h2 class="text- text-neutral-900 dark:text-white">
                 {{ $t('common.settings') }}
             </h2>
 
-            <UFormGroup name="settings.time" :label="$t('common.duration')">
+            <UFormField name="settings.time" :label="$t('common.duration')">
                 <UInput v-model="settings.time!.seconds" type="number" :min="1" :step="1" :placeholder="$t('common.duration')">
                     <template #trailing>
-                        <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                        <span class="text-xs text-neutral-500 dark:text-neutral-400">s</span>
                     </template>
                 </UInput>
-            </UFormGroup>
+            </UFormField>
 
             <h3>{{ $t('common.question', 2) }}</h3>
 
             <UContainer>
                 <VueDraggable
                     v-model="questions.questions"
-                    class="flex flex-col gap-4 divide-y divide-gray-100 dark:divide-gray-800"
+                    class="flex flex-col gap-4 divide-y divide-neutral-100 dark:divide-neutral-800"
                 >
                     <ExamEditorQuestion
                         v-for="(question, idx) in questions?.questions"

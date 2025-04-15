@@ -1,6 +1,103 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import "@nuxt/ui-pro";
+
+@theme {
+  --color-base-100: #e2e3e6;
+  --color-base-200: #c4c6cd;
+  --color-base-300: #a7aab4;
+  --color-base-400: #898d9b;
+  --color-base-500: #6c7182;
+  --color-base-600: #565a68;
+  --color-base-700: #41444e;
+  --color-base-800: #2b2d34;
+  --color-base-900: #16171a;
+
+  --color-error-100: #f7d4d7;
+  --color-error-200: #efa8af;
+  --color-error-300: #e77d88;
+  --color-error-400: #df5160;
+  --color-error-500: #d72638;
+  --color-error-600: #ac1e2d;
+  --color-error-700: #811722;
+  --color-error-800: #560f16;
+  --color-error-900: #2b080b;
+
+  --color-warn-100: #fdefd5;
+  --color-warn-200: #fbdfab;
+  --color-warn-300: #face81;
+  --color-warn-400: #f8be57;
+  --color-warn-500: #f6ae2d;
+  --color-warn-600: #c58b24;
+  --color-warn-700: #94681b;
+  --color-warn-800: #624612;
+  --color-warn-900: #312309;
+
+  --color-info-100: #ddf8f9;
+  --color-info-200: #bbf1f3;
+  --color-info-300: #99ebec;
+  --color-info-400: #77e4e6;
+  --color-info-500: #55dde0;
+  --color-info-600: #44b1b3;
+  --color-info-700: #338586;
+  --color-info-800: #22585a;
+  --color-info-900: #112c2d;
+
+  --color-success-100: #d3f5e1;
+  --color-success-200: #a7ebc4;
+  --color-success-300: #7be2a6;
+  --color-success-400: #4fd889;
+  --color-success-500: #23ce6b;
+  --color-success-600: #1ca556;
+  --color-success-700: #157c40;
+  --color-success-800: #0e522b;
+  --color-success-900: #072915;
+
+  --font-sans: DM Sans, DM Sans fallback;
+
+  --container-screen: 100vw;
+
+  --height-dscreen: 100dvh;
+
+  --animate-wiggle: wiggle 1s infinite;
+
+  --z-index-150: 150;
+
+  @keyframes wiggle {
+    0% {
+      transform: rotate(0deg);
+    }
+    80% {
+      transform: rotate(0deg);
+    }
+    85% {
+      transform: rotate(5deg);
+    }
+    95% {
+      transform: rotate(-5deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-neutral-200, currentcolor);
+  }
+}
 
 @layer base {
     input[type='number']::-webkit-inner-spin-button,

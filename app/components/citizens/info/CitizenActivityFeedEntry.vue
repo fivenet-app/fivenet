@@ -157,7 +157,7 @@ const props = defineProps<{
     <template v-else-if="activity.type === UserActivityType.JOB && activity.data?.data.oneofKind === 'jobChange'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <UIcon name="i-mdi-briefcase" class="size-full text-gray-400" />
+                <UIcon name="i-mdi-briefcase" class="size-full text-neutral-400" />
             </div>
 
             <div class="flex-1 space-y-1">
@@ -207,7 +207,7 @@ const props = defineProps<{
                     :class="
                         activity.data.data.trafficInfractionPointsChange.old >
                         activity.data.data.trafficInfractionPointsChange.new
-                            ? 'text-gray-400'
+                            ? 'text-neutral-400'
                             : 'text-orange-400'
                     "
                 />
@@ -253,7 +253,7 @@ const props = defineProps<{
                 <UIcon
                     name="i-mdi-camera-account"
                     class="size-full text-amber-400"
-                    :class="activity.data.data.mugshotChange.new ? 'text-gray-400' : 'text-amber-400'"
+                    :class="activity.data.data.mugshotChange.new ? 'text-neutral-400' : 'text-amber-400'"
                 />
             </div>
 
@@ -308,7 +308,7 @@ const props = defineProps<{
                                 :key="attribute.name"
                                 :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2 line-through"
-                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                 size="xs"
                             >
                                 {{ attribute.name }}
@@ -319,7 +319,7 @@ const props = defineProps<{
                                 :key="attribute.name"
                                 :style="{ backgroundColor: attribute.color }"
                                 class="justify-between gap-2"
-                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? 'text-black!' : 'text-white!'"
                                 size="xs"
                             >
                                 {{ attribute.name }}

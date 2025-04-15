@@ -112,7 +112,7 @@ function addToClipboard(vehicle: Vehicle): void {
     notifications.add({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -158,7 +158,7 @@ defineShortcuts({
     <UDashboardToolbar>
         <template #default>
             <UForm :schema="schema" :state="query" class="flex w-full flex-row gap-2" @submit="refresh()">
-                <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
+                <UFormField name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
                     <UInput
                         ref="input"
                         v-model="query.licensePlate"
@@ -172,13 +172,13 @@ defineShortcuts({
                             <UKbd value="/" />
                         </template>
                     </UInput>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
+                <UFormField v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
                     <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.owner')" class="flex-1">
+                <UFormField v-if="userId === undefined" name="selectedUser" :label="$t('common.owner')" class="flex-1">
                     <ClientOnly>
                         <UInputMenu
                             v-model="selectedUser"
@@ -213,7 +213,7 @@ defineShortcuts({
                             <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
                         </UInputMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
             </UForm>
         </template>
     </UDashboardToolbar>
@@ -244,7 +244,7 @@ defineShortcuts({
         </template>
 
         <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
-            <p v-if="vehicle.jobLabel" class="text-gray-900 dark:text-white">{{ vehicle.jobLabel }}</p>
+            <p v-if="vehicle.jobLabel" class="text-neutral-900 dark:text-white">{{ vehicle.jobLabel }}</p>
             <CitizenInfoPopover v-if="vehicle.owner" :user="vehicle.owner" />
         </template>
 

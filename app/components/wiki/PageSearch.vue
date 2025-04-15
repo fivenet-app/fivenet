@@ -43,7 +43,7 @@ const groups = [
     <UButton
         v-bind="$attrs"
         :icon="appConfig.ui.icons.search"
-        color="gray"
+        color="neutral"
         class="w-full"
         :label="$t('common.search_field')"
         truncate

@@ -63,7 +63,7 @@ const props = withDefaults(
         placeholder: undefined,
         hideToolbar: false,
         commentMode: false,
-        rounded: 'rounded',
+        rounded: 'rounded-xs',
     },
 );
 
@@ -128,18 +128,18 @@ const extensions: Extensions = [
         resizable: true,
         allowTableNodeSelection: true,
         HTMLAttributes: {
-            class: 'border border-collapse border-solid border-gray-500',
+            class: 'border border-collapse border-solid border-neutral-500',
         },
     }),
     TableRow,
     TableHeader.configure({
         HTMLAttributes: {
-            class: 'border border-solid border-gray-600 bg-gray-100 dark:bg-gray-800',
+            class: 'border border-solid border-neutral-600 bg-neutral-100 dark:bg-neutral-800',
         },
     }),
     TableCell.configure({
         HTMLAttributes: {
-            class: 'border border-solid border-gray-500',
+            class: 'border border-solid border-neutral-500',
         },
     }),
     // Misc
@@ -169,7 +169,7 @@ const editor = useEditor({
     content: '',
     editorProps: {
         attributes: {
-            class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-none dark:prose-invert max-w-full break-words',
+            class: 'prose prose-sm sm:prose-base lg:prose-lg m-5 focus:outline-hidden dark:prose-invert max-w-full break-words',
         },
     },
     editable: !props.disabled,
@@ -394,8 +394,8 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div class="relative flex flex-col border border-gray-100 dark:border-gray-800" :class="rounded">
-        <div v-if="editor && !hideToolbar" class="shrink-0 bg-gray-100 p-0.5 dark:bg-gray-800">
+    <div class="relative flex flex-col border border-neutral-100 dark:border-neutral-800 rounded-xs">
+        <div v-if="editor && !hideToolbar" class="shrink-0 bg-neutral-100 p-0.5 dark:bg-neutral-800">
             <div class="flex snap-x flex-wrap gap-1">
                 <UButtonGroup>
                     <UTooltip :text="$t('components.partials.TipTapEditor.bold')" :popper="{ placement: 'top' }">
@@ -475,10 +475,10 @@ onBeforeUnmount(() => {
                     </UTooltip>
                 </UButtonGroup>
 
-                <UDivider
+                <USeparator
                     v-if="!commentMode"
                     orientation="vertical"
-                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
+                    :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }"
                 />
 
                 <!-- Text Align -->
@@ -521,7 +521,7 @@ onBeforeUnmount(() => {
                     </UTooltip>
                 </UButtonGroup>
 
-                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <USeparator orientation="vertical" :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }" />
 
                 <!-- Font Family -->
                 <UTooltip :text="$t('components.partials.TipTapEditor.font_family')" :popper="{ placement: 'top' }">
@@ -568,7 +568,7 @@ onBeforeUnmount(() => {
                             <div class="inline-flex flex-col gap-1 p-4">
                                 <UButton
                                     class="rounded-md"
-                                    color="white"
+                                    color="neutral"
                                     variant="outline"
                                     icon="i-mdi-water-off"
                                     :label="$t('common.default')"
@@ -688,7 +688,7 @@ onBeforeUnmount(() => {
                             <div class="inline-flex flex-col gap-1 p-4">
                                 <UButton
                                     class="rounded-md"
-                                    color="white"
+                                    color="neutral"
                                     variant="outline"
                                     icon="i-mdi-water-off"
                                     :label="$t('common.reset')"
@@ -712,10 +712,10 @@ onBeforeUnmount(() => {
                     </UPopover>
                 </UButtonGroup>
 
-                <UDivider
+                <USeparator
                     v-if="!commentMode"
                     orientation="vertical"
-                    :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }"
+                    :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }"
                 />
 
                 <UButtonGroup>
@@ -748,7 +748,7 @@ onBeforeUnmount(() => {
                     </UTooltip>
                 </UButtonGroup>
 
-                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <USeparator orientation="vertical" :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }" />
 
                 <UTooltip
                     v-if="!commentMode"
@@ -780,21 +780,21 @@ onBeforeUnmount(() => {
                     <template #panel>
                         <div class="p-4">
                             <UForm :state="{}" @submit="createTable">
-                                <UFormGroup :label="$t('common.rows')">
+                                <UFormField :label="$t('common.rows')">
                                     <UInput v-model="tableCreation.rows" type="text" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup :label="$t('common.cols')">
+                                <UFormField :label="$t('common.cols')">
                                     <UInput v-model="tableCreation.cols" type="text" />
-                                </UFormGroup>
+                                </UFormField>
 
-                                <UFormGroup :label="$t('common.with_header_row')">
-                                    <UToggle v-model="tableCreation.withHeaderRow" type="text" />
-                                </UFormGroup>
+                                <UFormField :label="$t('common.with_header_row')">
+                                    <USwitch v-model="tableCreation.withHeaderRow" type="text" />
+                                </UFormField>
 
-                                <UFormGroup>
+                                <UFormField>
                                     <UButton type="submit" :label="$t('common.create')" />
-                                </UFormGroup>
+                                </UFormField>
                             </UForm>
                         </div>
                     </template>
@@ -813,9 +813,9 @@ onBeforeUnmount(() => {
                     <template #panel="{ close }">
                         <div class="p-4">
                             <UForm :state="linkState" @submit="($event) => setLink($event.data)">
-                                <UFormGroup :label="$t('common.url')">
+                                <UFormField :label="$t('common.url')">
                                     <UInput v-model="linkState.url" type="text" />
-                                </UFormGroup>
+                                </UFormField>
 
                                 <slot name="linkModal" :editor="editor" :state="linkState" />
 
@@ -869,7 +869,7 @@ onBeforeUnmount(() => {
                     </UTooltip>
                     <!--
                     <UButton
-                        color="white"
+                        color="neutral"
                         variant="ghost"
                         icon="i-mdi-format-page-break"
                         @click="editor.chain().focus().setHardBreak().run()"
@@ -879,7 +879,7 @@ onBeforeUnmount(() => {
 
                 <div class="flex-1"></div>
 
-                <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                <USeparator orientation="vertical" :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }" />
 
                 <UButtonGroup>
                     <UPopover>
@@ -893,19 +893,19 @@ onBeforeUnmount(() => {
                         <template #panel>
                             <div class="flex flex-1 gap-0.5 p-4">
                                 <UForm :state="searchAndReplace">
-                                    <UFormGroup name="search" :label="$t('common.search')">
+                                    <UFormField name="search" :label="$t('common.search')">
                                         <UInput v-model="searchAndReplace.search" />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup name="replace" :label="$t('components.partials.TipTapEditor.replace')">
+                                    <UFormField name="replace" :label="$t('components.partials.TipTapEditor.replace')">
                                         <UInput v-model="searchAndReplace.replace" />
-                                    </UFormGroup>
+                                    </UFormField>
 
-                                    <UFormGroup name="caseSensitive" :label="$t('common.case_sensitive')">
-                                        <UToggle v-model="searchAndReplace.caseSensitive" />
-                                    </UFormGroup>
+                                    <UFormField name="caseSensitive" :label="$t('common.case_sensitive')">
+                                        <USwitch v-model="searchAndReplace.caseSensitive" />
+                                    </UFormField>
 
-                                    <UFormGroup class="flex flex-col lg:flex-row">
+                                    <UFormField class="flex flex-col lg:flex-row">
                                         <UButtonGroup>
                                             <UButton
                                                 color="error"
@@ -914,25 +914,25 @@ onBeforeUnmount(() => {
                                                 @click="clear"
                                             />
                                             <UButton
-                                                color="white"
+                                                color="neutral"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.previous')"
                                                 @click="previous"
                                             />
                                             <UButton
-                                                color="white"
+                                                color="neutral"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.next')"
                                                 @click="next"
                                             />
                                             <UButton
-                                                color="white"
+                                                color="neutral"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.replace')"
                                                 @click="replace"
                                             />
                                             <UButton
-                                                color="white"
+                                                color="neutral"
                                                 variant="outline"
                                                 :label="$t('components.partials.TipTapEditor.replace_all')"
                                                 @click="replaceAll"
@@ -949,7 +949,7 @@ onBeforeUnmount(() => {
                                             /
                                             {{ editor?.storage?.searchAndReplace?.results.length }}
                                         </div>
-                                    </UFormGroup>
+                                    </UFormField>
                                 </UForm>
                             </div>
                         </template>
@@ -976,7 +976,7 @@ onBeforeUnmount(() => {
                 </UButtonGroup>
 
                 <template v-if="!commentMode">
-                    <UDivider orientation="vertical" :ui="{ border: { base: 'border-gray-200 dark:border-gray-700' } }" />
+                    <UDivider orientation="vertical" :ui="{ border: { base: 'border-neutral-200 dark:border-neutral-700' } }" />
 
                     <UTooltip :text="$t('components.partials.TipTapEditor.source_code')" :popper="{ placement: 'top' }">
                         <UButton
@@ -1033,7 +1033,7 @@ onBeforeUnmount(() => {
             ]"
         />
 
-        <div v-if="editor" class="flex w-full flex-none justify-between bg-gray-100 px-1 text-center dark:bg-gray-800">
+        <div v-if="editor" class="flex w-full flex-none justify-between bg-neutral-100 px-1 text-center dark:bg-neutral-800">
             <div class="flex flex-1">
                 <slot name="footer" />
             </div>

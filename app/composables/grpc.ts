@@ -16,7 +16,7 @@ const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
 function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: number): void {
     notification.actions?.push({
         label: { key: 'pages.error.copy_error' },
-        click: async () => {
+        onClick: async () => {
             copyToClipboardWrapper(
                 `## Error occured at ${new Date().toISOString()}:
 **Service/Method**: \`${err.serviceName}/${err.methodName}\` => \`${err.code}\`
@@ -27,7 +27,7 @@ function addCopyActionToNotification(notification: Notification, err: RpcError, 
             useNotificatorStore().add({
                 title: { key: 'notifications.clipboard.copied.title', parameters: {} },
                 description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-                timeout: 3250,
+                duration: 3250,
                 type: NotificationType.INFO,
             });
         },

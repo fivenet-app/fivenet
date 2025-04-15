@@ -342,7 +342,7 @@ const { game } = useAppConfig();
                 </div>
 
                 <div class="flex flex-1 justify-between gap-2">
-                    <UFormGroup name="date" :label="$t('common.time_range')" class="flex-1">
+                    <UFormField name="date" :label="$t('common.time_range')" class="flex-1">
                         <DateRangePickerPopoverClient
                             v-model="query.date"
                             mode="date"
@@ -355,9 +355,9 @@ const { game } = useAppConfig();
                                 ],
                             }"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup
+                    <UFormField
                         v-if="query.mode !== TimeclockMode.TIMELINE"
                         name="perDay"
                         :label="$t('common.per_day')"
@@ -365,9 +365,9 @@ const { game } = useAppConfig();
                         :ui="{ container: 'flex-1 flex' }"
                     >
                         <div class="flex flex-1 items-center">
-                            <UToggle v-model="query.perDay" />
+                            <USwitch v-model="query.perDay" />
                         </div>
-                    </UFormGroup>
+                    </UFormField>
                 </div>
             </template>
 
@@ -383,7 +383,7 @@ const { game } = useAppConfig();
                         <UButton
                             v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
                             :to="{ name: 'jobs-timeclock-inactive' }"
-                            color="black"
+                            color="neutral"
                             trailing-icon="i-mdi-arrow-right"
                         >
                             {{ $t('common.inactive_colleagues') }}
@@ -396,7 +396,7 @@ const { game } = useAppConfig();
                         class="grid flex-1 gap-2"
                         :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
                     >
-                        <UFormGroup v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
+                        <UFormField v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
                             <ClientOnly>
                                 <USelectMenu
                                     v-model="query.users"
@@ -439,10 +439,10 @@ const { game } = useAppConfig();
                                     </template>
                                 </USelectMenu>
                             </ClientOnly>
-                        </UFormGroup>
+                        </UFormField>
 
                         <div class="flex flex-1 flex-row gap-1">
-                            <UFormGroup
+                            <UFormField
                                 name="end"
                                 :label="
                                     query.mode === TimeclockMode.WEEKLY
@@ -526,9 +526,9 @@ const { game } = useAppConfig();
                                         ],
                                     }"
                                 />
-                            </UFormGroup>
+                            </UFormField>
 
-                            <UFormGroup
+                            <UFormField
                                 v-if="query.mode !== TimeclockMode.DAILY && query.mode !== TimeclockMode.TIMELINE"
                                 name="perDay"
                                 :label="$t('common.per_day')"
@@ -536,9 +536,9 @@ const { game } = useAppConfig();
                                 :ui="{ container: 'flex-1 flex' }"
                             >
                                 <div class="flex flex-1 items-center">
-                                    <UToggle v-model="query.perDay" />
+                                    <USwitch v-model="query.perDay" />
                                 </div>
-                            </UFormGroup>
+                            </UFormField>
                         </div>
                     </div>
                 </div>
@@ -551,7 +551,7 @@ const { game } = useAppConfig();
     </div>
 
     <UCard v-else-if="query.userMode === TimeclockUserMode.SELF && !query.perDay">
-        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white">
+        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-neutral-900 dark:text-white">
             {{
                 totalTimeSum === 0
                     ? $t('common.not_found', [$t('common.entry', 2)])
@@ -586,7 +586,7 @@ const { game } = useAppConfig();
         </template>
 
         <template #date-data="{ row: entry }">
-            <div class="text-gray-900 dark:text-white">
+            <div class="text-neutral-900 dark:text-white">
                 {{ $d(toDate(entry.date), 'date') }}
             </div>
         </template>

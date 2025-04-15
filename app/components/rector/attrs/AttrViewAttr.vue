@@ -183,7 +183,7 @@ const { game } = useAppConfig();
                             :key="value"
                             class="flex flex-initial flex-row flex-nowrap gap-1"
                         >
-                            <UToggle
+                            <USwitch
                                 :name="value"
                                 :model-value="!!attrValue.validValues.stringList.strings.find((v) => v === value)"
                                 @update:model-value="toggleStringListValue(value)"
@@ -203,7 +203,7 @@ const { game } = useAppConfig();
                         class="flex flex-row flex-wrap gap-2"
                     >
                         <div v-for="job in jobs" :key="job.name" class="flex flex-initial flex-row flex-nowrap gap-1">
-                            <UToggle
+                            <USwitch
                                 :name="job.name"
                                 :model-value="!!attrValue.validValues.jobList?.strings.find((v) => v === job.name)"
                                 @update:model-value="toggleJobListValue(job.name)"
@@ -224,7 +224,7 @@ const { game } = useAppConfig();
                             :key="job.name"
                             class="flex flex-initial flex-row flex-nowrap items-center gap-1"
                         >
-                            <UToggle
+                            <USwitch
                                 :name="job.name"
                                 :model-value="!!attrValue.validValues?.jobGradeList.jobs[job.name]"
                                 @update:model-value="toggleJobGradeValue(job, $event)"

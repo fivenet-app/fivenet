@@ -62,38 +62,38 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }" :prevent-close="!canSubmit">
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{ $t('components.auth.ChangeUsernameModal.change_username') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
-                <UFormGroup name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
+                <UFormField name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
                     <UInput
                         v-model="state.currentUsername"
                         type="text"
                         autocomplete="current-username"
                         :placeholder="$t('components.auth.ChangeUsernameModal.current_username')"
                     />
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="newUsername" :label="$t('components.auth.ChangeUsernameModal.new_username')">
+                <UFormField name="newUsername" :label="$t('components.auth.ChangeUsernameModal.new_username')">
                     <UInput
                         v-model="state.newUsername"
                         type="text"
                         autocomplete="new-username"
                         :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
                     />
-                </UFormGroup>
+                </UFormField>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        <UButton color="neutral" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
 

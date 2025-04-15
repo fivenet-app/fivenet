@@ -127,7 +127,7 @@ const links = computed(() =>
                     <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
 
                     <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                        <UHorizontalNavigation :links="links" />
+                        <UNavigationMenu orientation="horizontal" :items="links" />
                     </UDashboardToolbar>
 
                     <NuxtPage :colleague="colleague.colleague" @refresh="refresh()" />

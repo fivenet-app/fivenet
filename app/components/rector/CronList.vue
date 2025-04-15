@@ -138,7 +138,7 @@ const expand = ref({
         </template>
 
         <template #name-data="{ row }">
-            <span class="text-gray-900 dark:text-white">
+            <span class="text-neutral-900 dark:text-white">
                 <pre>{{ row.name }}</pre>
             </span>
         </template>

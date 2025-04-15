@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 class="flex flex-row gap-2"
                 @submit="refresh()"
             >
-                <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
+                <UFormField name="grade" :label="$t('common.job_grade')" class="flex-1">
                     <ClientOnly>
                         <USelectMenu
                             v-model="state.jobGrade"
@@ -138,9 +138,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </USelectMenu>
                     </ClientOnly>
-                </UFormGroup>
+                </UFormField>
 
-                <UFormGroup name="submit" label="&nbsp;">
+                <UFormField name="submit" label="&nbsp;">
                     <UButton
                         :disabled="state.jobGrade === undefined || state.jobGrade!.grade < 0 || !canSubmit"
                         :loading="!canSubmit"
@@ -159,7 +159,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     >
                         {{ $t('common.create') }}
                     </UButton>
-                </UFormGroup>
+                </UFormField>
             </UForm>
 
             <div>
@@ -182,7 +182,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     }"
                 >
                     <template #rank-data="{ row: role }">
-                        <div class="text-gray-900 dark:text-white">
+                        <div class="text-neutral-900 dark:text-white">
                             {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
                         </div>
                     </template>

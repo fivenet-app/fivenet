@@ -57,7 +57,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
 
 <template>
     <div class="my-2 flex flex-row items-center">
-        <UFormGroup name="selectedQualification" class="flex-1">
+        <UFormField name="selectedQualification" class="flex-1">
             <ClientOnly>
                 <USelectMenu
                     v-model="selectedQualification"
@@ -86,7 +86,7 @@ watch(selectedQualification, () => emit('update-qualification', selectedQualific
                     <template #empty> {{ $t('common.not_found', [$t('common.qualification', 2)]) }} </template>
                 </USelectMenu>
             </ClientOnly>
-        </UFormGroup>
+        </UFormField>
 
         <UTooltip :text="$t('components.qualifications.remove_requirement')">
             <UButton :ui="{ rounded: 'rounded-full' }" class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />

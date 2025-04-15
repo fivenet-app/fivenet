@@ -14,7 +14,7 @@ function addToClipboard(): void {
     notifications.add({
         title: { key: 'notifications.clipboard.copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.copied.content', parameters: {} },
-        timeout: 3250,
+        duration: 3250,
         type: NotificationType.INFO,
     });
 }
@@ -25,7 +25,7 @@ function addToClipboard(): void {
         <UButton
             icon="i-mdi-clipboard-plus"
             variant="outline"
-            color="black"
+            color="neutral"
             size="xs"
             :ui="{ padding: { xs: '' } }"
             class="px-1 py-1"

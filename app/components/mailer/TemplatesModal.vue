@@ -54,7 +54,7 @@ const editing = ref(false);
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -65,11 +65,11 @@ const editing = ref(false);
                         {{ $t('common.template', 2) }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
-            <div class="mx-auto flex w-full max-w-screen-xl flex-col gap-2">
+            <div class="max-w-(--breakpoint-xl) mx-auto flex w-full flex-col gap-2">
                 <UButton
                     v-if="!creating && !editing && canManage"
                     :label="$t('common.create')"
@@ -130,7 +130,7 @@ const editing = ref(false);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

@@ -19,7 +19,7 @@ const { isOpen } = useModal();
         <UCard
             :ui="{
                 ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                divide: 'divide-y divide-neutral-100 dark:divide-neutral-800',
                 base: 'flex flex-1 flex-col',
                 body: { base: 'flex flex-1 flex-col' },
             }"
@@ -30,7 +30,7 @@ const { isOpen } = useModal();
                         {{ $t('common.attachment', 2) }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -44,7 +44,7 @@ const { isOpen } = useModal();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    <UButton block class="flex-1" color="neutral" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>

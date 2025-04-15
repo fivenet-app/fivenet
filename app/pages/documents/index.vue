@@ -43,135 +43,133 @@ const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel class="shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
-            <UDashboardNavbar :title="$t('pages.documents.title')">
-                <template #right>
-                    <UButtonGroup class="inline-flex 2xl:hidden">
-                        <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories').value"
-                            :to="{ name: 'documents-categories' }"
-                            icon="i-mdi-shape"
-                            truncate
-                        >
-                            <span class="hidden truncate sm:block">
-                                {{ $t('common.category', 2) }}
-                            </span>
-                        </UButton>
-
-                        <UButton
-                            v-if="can('DocStoreService.ListTemplates').value"
-                            :to="{ name: 'documents-templates' }"
-                            icon="i-mdi-file-code"
-                            truncate
-                        >
-                            <span class="hidden truncate sm:block">
-                                {{ $t('common.template', 2) }}
-                            </span>
-                        </UButton>
-                    </UButtonGroup>
-
-                    <UButton trailing-icon="i-mdi-pin" color="gray" class="2xl:hidden" truncate @click="isOpen = true">
+    <UDashboardPanel class="shrink-0 border-b border-neutral-200 lg:border-b-0 lg:border-r dark:border-neutral-800" grow>
+        <UDashboardNavbar :title="$t('pages.documents.title')">
+            <template #right>
+                <UButtonGroup class="inline-flex 2xl:hidden">
+                    <UButton
+                        v-if="can('CompletorService.CompleteDocumentCategories').value"
+                        :to="{ name: 'documents-categories' }"
+                        icon="i-mdi-shape"
+                        truncate
+                    >
                         <span class="hidden truncate sm:block">
-                            {{ $t('common.pinned') }}
+                            {{ $t('common.category', 2) }}
                         </span>
                     </UButton>
 
                     <UButton
-                        v-if="can('DocStoreService.CreateDocument').value"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
+                        v-if="can('DocStoreService.ListTemplates').value"
+                        :to="{ name: 'documents-templates' }"
+                        icon="i-mdi-file-code"
                         truncate
-                        @click="modal.open(TemplatesModal, {})"
                     >
                         <span class="hidden truncate sm:block">
-                            {{ $t('common.create') }}
+                            {{ $t('common.template', 2) }}
                         </span>
                     </UButton>
-                </template>
-            </UDashboardNavbar>
+                </UButtonGroup>
 
-            <DocumentList />
-        </UDashboardPanel>
+                <UButton trailing-icon="i-mdi-pin" color="neutral" class="2xl:hidden" truncate @click="isOpen = true">
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.pinned') }}
+                    </span>
+                </UButton>
 
-        <UDashboardPanel
-            v-model="isOpen"
-            collapsible
-            side="right"
-            class="max-w-72"
-            breakpoint="2xl"
-            :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
-        >
-            <UDashboardNavbar>
-                <template #toggle>
-                    <UDashboardNavbarToggle class="lg:block 2xl:hidden" />
-                </template>
-
-                <template #right>
-                    <UButtonGroup class="hidden truncate 2xl:inline-flex">
-                        <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories').value"
-                            :to="{ name: 'documents-categories' }"
-                            icon="i-mdi-shape"
-                            truncate
-                        >
-                            <span class="truncate">
-                                {{ $t('common.category', 2) }}
-                            </span>
-                        </UButton>
-
-                        <UButton
-                            v-if="can('DocStoreService.ListTemplates').value"
-                            :to="{ name: 'documents-templates' }"
-                            icon="i-mdi-file-code"
-                            truncate
-                        >
-                            <span class="truncate">
-                                {{ $t('common.template', 2) }}
-                            </span>
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UDashboardNavbar>
-
-            <UDashboardPanelContent class="p-2">
-                <UDashboardSection
-                    :ui="{
-                        wrapper: 'divide-y space-y-0 *:pt-2 first:*:pt-2 first:*:pt-2 mb-6',
-                    }"
-                    :title="$t('common.pinned_document', 2)"
+                <UButton
+                    v-if="can('DocStoreService.CreateDocument').value"
+                    trailing-icon="i-mdi-plus"
+                    color="neutral"
+                    truncate
+                    @click="modal.open(TemplatesModal, {})"
                 >
-                    <div class="flex flex-col gap-2">
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
-                            :error="error"
-                            :retry="refresh"
+                    <span class="hidden truncate sm:block">
+                        {{ $t('common.create') }}
+                    </span>
+                </UButton>
+            </template>
+        </UDashboardNavbar>
+
+        <DocumentList />
+    </UDashboardPanel>
+
+    <UDashboardPanel
+        v-model="isOpen"
+        collapsible
+        side="right"
+        class="max-w-72"
+        breakpoint="2xl"
+        :ui="{ collapsible: 'lg:hidden! 2xl:flex!', slideover: 'lg:flex! 2xl:hidden' }"
+    >
+        <UDashboardNavbar>
+            <template #toggle>
+                <UDashboardSidebarToggle class="lg:block 2xl:hidden" />
+            </template>
+
+            <template #right>
+                <UButtonGroup class="hidden truncate 2xl:inline-flex">
+                    <UButton
+                        v-if="can('CompletorService.CompleteDocumentCategories').value"
+                        :to="{ name: 'documents-categories' }"
+                        icon="i-mdi-shape"
+                        truncate
+                    >
+                        <span class="truncate">
+                            {{ $t('common.category', 2) }}
+                        </span>
+                    </UButton>
+
+                    <UButton
+                        v-if="can('DocStoreService.ListTemplates').value"
+                        :to="{ name: 'documents-templates' }"
+                        icon="i-mdi-file-code"
+                        truncate
+                    >
+                        <span class="truncate">
+                            {{ $t('common.template', 2) }}
+                        </span>
+                    </UButton>
+                </UButtonGroup>
+            </template>
+        </UDashboardNavbar>
+
+        <UDashboardPanelContent class="p-2">
+            <UPageCard
+                :ui="{
+                    wrapper: 'divide-y space-y-0 *:pt-2 *:first:pt-2 *:first:pt-2 mb-6',
+                }"
+                :title="$t('common.pinned_document', 2)"
+            >
+                <div class="flex flex-col gap-2">
+                    <DataErrorBlock
+                        v-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
+                        :error="error"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock
+                        v-else-if="!data || data.documents.length === 0"
+                        icon="i-mdi-pin-outline"
+                        :type="$t('common.pinned_document', 0)"
+                    />
+
+                    <template v-else-if="loading">
+                        <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
+                    </template>
+
+                    <template v-else>
+                        <DocumentInfoPopover
+                            v-for="doc in data?.documents"
+                            :key="doc.id"
+                            :document="doc"
+                            button-class="line-clamp-3 hyphens-auto break-words flex flex-col items-start"
+                            hide-trailing
                         />
-                        <DataNoDataBlock
-                            v-else-if="!data || data.documents.length === 0"
-                            icon="i-mdi-pin-outline"
-                            :type="$t('common.pinned_document', 0)"
-                        />
+                    </template>
+                </div>
+            </UPageCard>
+        </UDashboardPanelContent>
 
-                        <template v-else-if="loading">
-                            <USkeleton v-for="idx in 10" :key="idx" class="h-16 w-full" />
-                        </template>
-
-                        <template v-else>
-                            <DocumentInfoPopover
-                                v-for="doc in data?.documents"
-                                :key="doc.id"
-                                :document="doc"
-                                button-class="line-clamp-3 hyphens-auto break-words flex flex-col items-start"
-                                hide-trailing
-                            />
-                        </template>
-                    </div>
-                </UDashboardSection>
-            </UDashboardPanelContent>
-
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-        </UDashboardPanel>
-    </UDashboardPage>
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    </UDashboardPanel>
 </template>

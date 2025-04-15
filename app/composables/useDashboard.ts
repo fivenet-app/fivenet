@@ -5,6 +5,7 @@ const _useDashboard = () => {
     const router = useRouter();
     const isHelpSlideoverOpen = ref(false);
     const isNotificationsSlideoverOpen = ref(false);
+    const isDashboardSearchModalOpen = ref(false);
 
     defineShortcuts({
         'g-h': () => router.push('/'),
@@ -35,6 +36,7 @@ const _useDashboard = () => {
     return {
         isHelpSlideoverOpen,
         isNotificationsSlideoverOpen,
+        isDashboardSearchModalOpen,
     };
 };
 

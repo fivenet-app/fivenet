@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UCard, UContainer, ULandingCard, ULandingHero, ULandingSection, UPage, UPageGrid } from '#components';
+import { UCard, UContainer, UPage, UPageCard, UPageGrid, UPageHero, UPageSection } from '#components';
 import type { Component } from 'vue';
 import type { ContentNode } from '~~/gen/ts/resources/internet/page';
 
@@ -12,9 +12,9 @@ const availableComponents: Record<string, Component> = {
     UPageGrid: UPageGrid,
     UContainer: UContainer,
     UCard: UCard,
-    ULandingHero: ULandingHero,
-    ULandingSection: ULandingSection,
-    ULandingCard: ULandingCard,
+    UPageHero: UPageHero,
+    UPageSection: UPageSection,
+    UPageCard: UPageCard,
 };
 
 const component = availableComponents[Object.keys(availableComponents).find((c) => c === props.value.tag) ?? ''];

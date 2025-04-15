@@ -267,7 +267,7 @@ const accordionItems = computed(() =>
                     <div class="mb-2 flex gap-2">
                         <OpenClosedBadge :closed="qualification.closed" />
 
-                        <UBadge v-if="qualification.public" color="black" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="qualification.public" color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-earth" class="size-5" />
                             <span>
                                 {{ $t('common.public') }}
@@ -317,7 +317,7 @@ const accordionItems = computed(() =>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-account" class="size-5" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
@@ -325,7 +325,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UBadge color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-calendar" class="size-5" />
 
                             <span>
@@ -334,7 +334,7 @@ const accordionItems = computed(() =>
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="qualification?.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="qualification?.updatedAt" color="neutral" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-calendar-edit" class="size-5" />
                             <span>
                                 {{ $t('common.updated_at') }}
@@ -393,7 +393,9 @@ const accordionItems = computed(() =>
                                 {{ $t('common.content') }}
                             </h2>
 
-                            <div class="mx-auto w-full max-w-screen-xl !break-words rounded-lg bg-neutral-100 dark:bg-base-900">
+                            <div
+                                class="max-w-(--breakpoint-xl) break-words! mx-auto w-full rounded-lg bg-neutral-100 dark:bg-base-900"
+                            >
                                 <HTMLContent
                                     v-if="qualification.content?.content"
                                     class="px-4 py-2"

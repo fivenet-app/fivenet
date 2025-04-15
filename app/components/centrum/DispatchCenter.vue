@@ -57,7 +57,7 @@ onBeforeRouteLeave(async (to) => {
                     <div class="relative size-full">
                         <div
                             v-if="error || (abort === undefined && !reconnecting)"
-                            class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
+                            class="absolute inset-0 z-30 flex items-center justify-center bg-neutral-600/70"
                         >
                             <DataErrorBlock
                                 v-if="error"
@@ -103,11 +103,11 @@ onBeforeRouteLeave(async (to) => {
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: rgb(var(--color-neutral-800));
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: rgb(var(--color-gray-800));
+    background-color: rgb(var(--color-neutral-800));
 }
 </style>

@@ -50,7 +50,7 @@ if (!props.hideJoin) {
             <UButton
                 :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
                 :color="
-                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'success'
+                    getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'neutral' : disponents.length === 0 ? 'amber' : 'success'
                 "
                 truncate
                 @click="modal.open(DisponentsModal, {})"

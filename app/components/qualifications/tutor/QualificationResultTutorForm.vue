@@ -116,14 +116,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-neutral-100 dark:divide-neutral-800' }">
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
                         {{ $t('components.qualifications.result_modal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton color="neutral" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
                 </div>
             </template>
 
@@ -131,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <slot />
 
                 <template v-if="!viewOnly">
-                    <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
+                    <UFormField v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="selectedUser"
@@ -171,9 +171,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                    <UFormField name="status" :label="$t('common.status')" class="flex-1">
                         <ClientOnly>
                             <USelectMenu
                                 v-model="state.status"
@@ -204,9 +204,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </USelectMenu>
                         </ClientOnly>
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
+                    <UFormField name="score" :label="$t('common.score')" class="flex-1">
                         <UInput
                             v-model="state.score"
                             name="score"
@@ -218,17 +218,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :label="$t('common.score')"
                             trailing-icon="i-mdi-star-check"
                         />
-                    </UFormGroup>
+                    </UFormField>
 
-                    <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
+                    <UFormField name="summary" :label="$t('common.summary')" class="flex-1">
                         <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
-                    </UFormGroup>
+                    </UFormField>
                 </template>
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="$emit('close')">
+                    <UButton color="neutral" block class="flex-1" @click="$emit('close')">
                         {{ $t('common.close', 1) }}
                     </UButton>
 

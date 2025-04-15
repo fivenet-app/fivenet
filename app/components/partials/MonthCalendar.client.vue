@@ -55,16 +55,16 @@ defineExpose({
 
 <style>
 :root {
-    --vc-gray-50: rgb(var(--color-gray-50));
-    --vc-gray-100: rgb(var(--color-gray-100));
-    --vc-gray-200: rgb(var(--color-gray-200));
-    --vc-gray-300: rgb(var(--color-gray-300));
-    --vc-gray-400: rgb(var(--color-gray-400));
-    --vc-gray-500: rgb(var(--color-gray-500));
-    --vc-gray-600: rgb(var(--color-gray-600));
-    --vc-gray-700: rgb(var(--color-gray-700));
-    --vc-gray-800: rgb(var(--color-gray-800));
-    --vc-gray-900: rgb(var(--color-gray-900));
+    --vc-neutral-50: rgb(var(--color-neutral-50));
+    --vc-neutral-100: rgb(var(--color-neutral-100));
+    --vc-neutral-200: rgb(var(--color-neutral-200));
+    --vc-neutral-300: rgb(var(--color-neutral-300));
+    --vc-neutral-400: rgb(var(--color-neutral-400));
+    --vc-neutral-500: rgb(var(--color-neutral-500));
+    --vc-neutral-600: rgb(var(--color-neutral-600));
+    --vc-neutral-700: rgb(var(--color-neutral-700));
+    --vc-neutral-800: rgb(var(--color-neutral-800));
+    --vc-neutral-900: rgb(var(--color-neutral-900));
 }
 
 .vc-primary {
@@ -91,8 +91,8 @@ defineExpose({
 }
 
 .custom-calendar:deep(.vc-container) {
-    --day-border: 1px solid rgb(var(--color-gray-700));
-    --day-border-highlight: 1px solid rgb(var(--color-gray-600));
+    --day-border: 1px solid rgb(var(--color-neutral-700));
+    --day-border-highlight: 1px solid rgb(var(--color-neutral-600));
     --day-width: 110px;
     --day-height: 115px;
     --weekday-border: 1px solid rgb(var(--color-primary-900));
@@ -140,11 +140,11 @@ defineExpose({
     }
 
     .vc-day:hover {
-        background-color: rgb(var(--color-gray-800));
+        background-color: rgb(var(--color-neutral-800));
 
         &.weekday-1:hover,
         &.weekday-7:hover {
-            background-color: rgb(var(--color-gray-700));
+            background-color: rgb(var(--color-neutral-700));
         }
     }
 
@@ -153,13 +153,13 @@ defineExpose({
         text-align: left;
         min-height: var(--day-height);
         min-width: var(--day-width);
-        background-color: rgb(var(--color-gray-900));
+        background-color: rgb(var(--color-neutral-900));
 
         height: 100%;
 
         &.weekday-1,
         &.weekday-7 {
-            background-color: rgb(var(--color-gray-800));
+            background-color: rgb(var(--color-neutral-800));
         }
 
         &:not(.on-bottom) {

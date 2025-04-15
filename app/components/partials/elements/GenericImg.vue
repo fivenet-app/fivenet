@@ -47,11 +47,11 @@ function toggleBlur(): void {
     <template v-if="!src || !enablePopup">
         <UAvatar
             :size="size"
-            :class="[visible ? '' : 'blur', imgClass]"
+            :class="[visible ? '' : 'blur-xs', imgClass]"
             :src="src"
             :alt="alt"
             :text="text"
-            :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
+            :ui="{ rounded: rounded ? 'rounded-full' : 'rounded-xs' }"
             :img-class="imgClass"
             @click="toggleBlur()"
         />
@@ -60,11 +60,11 @@ function toggleBlur(): void {
         <UButton variant="link" :padded="false">
             <UAvatar
                 :size="size"
-                :class="[visible ? '' : 'blur', imgClass]"
+                :class="[visible ? '' : 'blur-xs', imgClass]"
                 :src="src"
                 :alt="alt"
                 :text="text"
-                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded' }"
+                :ui="{ rounded: rounded ? 'rounded-full' : 'rounded-xs' }"
                 :img-class="imgClass"
             />
         </UButton>
@@ -73,7 +73,7 @@ function toggleBlur(): void {
             <div class="p-4">
                 <img
                     class="h-96 max-w-full"
-                    :class="[visible ? '' : 'blur', rounded && 'rounded-md']"
+                    :class="[visible ? '' : 'blur-xs', rounded && 'rounded-md']"
                     :src="src"
                     :alt="alt"
                     @click="toggleBlur()"

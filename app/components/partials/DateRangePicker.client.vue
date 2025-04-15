@@ -68,16 +68,16 @@ const attrs = {
         DM Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji', DM Sans, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --vc-gray-50: rgb(var(--color-gray-50));
-    --vc-gray-100: rgb(var(--color-gray-100));
-    --vc-gray-200: rgb(var(--color-gray-200));
-    --vc-gray-300: rgb(var(--color-gray-300));
-    --vc-gray-400: rgb(var(--color-gray-400));
-    --vc-gray-500: rgb(var(--color-gray-500));
-    --vc-gray-600: rgb(var(--color-gray-600));
-    --vc-gray-700: rgb(var(--color-gray-700));
-    --vc-gray-800: rgb(var(--color-gray-800));
-    --vc-gray-900: rgb(var(--color-gray-900));
+    --vc-neutral-50: rgb(var(--color-neutral-50));
+    --vc-neutral-100: rgb(var(--color-neutral-100));
+    --vc-neutral-200: rgb(var(--color-neutral-200));
+    --vc-neutral-300: rgb(var(--color-neutral-300));
+    --vc-neutral-400: rgb(var(--color-neutral-400));
+    --vc-neutral-500: rgb(var(--color-neutral-500));
+    --vc-neutral-600: rgb(var(--color-neutral-600));
+    --vc-neutral-700: rgb(var(--color-neutral-700));
+    --vc-neutral-800: rgb(var(--color-neutral-800));
+    --vc-neutral-900: rgb(var(--color-neutral-900));
 }
 
 .vc-primary {
