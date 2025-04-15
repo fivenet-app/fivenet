@@ -56,10 +56,10 @@ func (m *License) validate(all bool) error {
 
 	var errors []error
 
-	if l := utf8.RuneCountInString(m.GetType()); l < 3 || l > 60 {
+	if l := utf8.RuneCountInString(m.GetType()); l < 1 || l > 60 {
 		err := LicenseValidationError{
 			field:  "Type",
-			reason: "value length must be between 3 and 60 runes, inclusive",
+			reason: "value length must be between 1 and 60 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -67,7 +67,16 @@ func (m *License) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Label
+	if utf8.RuneCountInString(m.GetLabel()) > 60 {
+		err := LicenseValidationError{
+			field:  "Label",
+			reason: "value length must be at most 60 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return LicenseMultiError(errors)

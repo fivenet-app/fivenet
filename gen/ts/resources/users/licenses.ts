@@ -40,8 +40,8 @@ export interface UserLicenses {
 class License$Type extends MessageType<License> {
     constructor() {
         super("resources.users.License", [
-            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "60" } } } },
-            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "60" } } } },
+            { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "60" } } } }
         ]);
     }
     create(value?: PartialMessage<License>): License {
