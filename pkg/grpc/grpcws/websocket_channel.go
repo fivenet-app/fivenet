@@ -20,7 +20,7 @@ type WebsocketChannel struct {
 	mu             sync.Mutex
 	ctx            context.Context
 	wsConn         *websocket.Conn
-	handler        http.Handler
+	grpcHandler    func(resp http.ResponseWriter, req *http.Request)
 	maxStreamCount int
 	req            *http.Request
 
@@ -38,12 +38,12 @@ var framePingResponse = &grpcws.GrpcFrame{
 	},
 }
 
-func NewWebsocketChannel(ctx context.Context, websocket *websocket.Conn, handler http.Handler, maxStreamCount int, req *http.Request) *WebsocketChannel {
+func NewWebsocketChannel(ctx context.Context, websocket *websocket.Conn, grpcHandler func(resp http.ResponseWriter, req *http.Request), maxStreamCount int, req *http.Request) *WebsocketChannel {
 	return &WebsocketChannel{
 		mu:             sync.Mutex{},
 		ctx:            ctx,
 		wsConn:         websocket,
-		handler:        handler,
+		grpcHandler:    grpcHandler,
 		maxStreamCount: maxStreamCount,
 		req:            req,
 
@@ -102,7 +102,6 @@ func (ws *WebsocketChannel) poll() error {
 
 	switch frame.Payload.(type) {
 	case *grpcws.GrpcFrame_Header:
-		// grpclog.Infof("received Header for stream %v %v", frame.StreamId, frame.GetHeader().Operation)
 		if stream != nil {
 			ws.writeError(frame.StreamId, "stream already exists")
 		}
@@ -142,24 +141,20 @@ func (ws *WebsocketChannel) poll() error {
 		for key, element := range frame.GetHeader().Headers {
 			req.Header[key] = element.Value
 		}
-		// grpclog.Infof("starting grpc request to %v", url)
 
-		// TODO add handler to the websocket channel and then forward it to this.
-		interceptedRequest := makeGrpcRequest(req.WithContext(stream.ctx))
-		// grpclog.Infof("starting call to http server %q", interceptedRequest.Method)
+		interceptedReq := makeGrpcRequest(req.WithContext(stream.ctx))
+		// Forward the request to the grpcHandler
 		go func() {
 			defer ws.deleteStream(stream.id)
 
-			ws.handler.ServeHTTP(stream, interceptedRequest)
+			ws.grpcHandler(stream, interceptedReq)
 		}()
 
 	case *grpcws.GrpcFrame_Body:
-		// grpclog.Infof("received Body for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		// grpclog.Infof("received body %v", frame)
 		stream.inputFrames <- frame
 
 		// Close channel if body frame says so
@@ -170,13 +165,11 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 	case *grpcws.GrpcFrame_Cancel:
-		// grpclog.Infof("received cancel for stream %v", frame.StreamId)
 		if stream == nil {
 			// If a stream is being cancelled and it's not there anymore, don't return an error
 			return nil
 		}
 
-		// grpclog.Infof("stream %v is canceled", frame.StreamId)
 		stream.cancel()
 		if !stream.inputClosed {
 			stream.inputClosed = true
@@ -185,29 +178,29 @@ func (ws *WebsocketChannel) poll() error {
 		ws.deleteStream(frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
-		// grpclog.Infof("received complete for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		// grpclog.Infof("completing input stream %v", frame.StreamId)
 		if !stream.inputClosed {
 			stream.inputClosed = true
 			close(stream.inputFrames)
 		}
 
 	case *grpcws.GrpcFrame_Failure:
-		// grpclog.Infof("received Failure for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		// grpclog.Infof("error on stream %v: %v", frame.StreamId, frame.GetFailure().ErrorMessage)
 		stream.inputFrames <- frame
-		close(stream.inputFrames)
+		if !stream.inputClosed {
+			stream.inputClosed = true
+			close(stream.inputFrames)
+		}
 		ws.deleteStream(frame.StreamId)
 
 	default:
+		return ws.writeError(frame.StreamId, "unknown frame type")
 	}
 
 	return nil

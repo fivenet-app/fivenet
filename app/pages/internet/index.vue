@@ -26,9 +26,7 @@ function updateQuery(): void {
     });
 }
 
-onMounted(async () => {
-    updateQuery();
-});
+onMounted(async () => updateQuery());
 
 watch(tab, () => updateQuery(), { deep: true });
 </script>

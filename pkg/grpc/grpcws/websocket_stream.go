@@ -11,6 +11,8 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws"
 )
 
+var ClientErr = errors.New("grpc client error")
+
 type GrpcStream struct {
 	id                uint32
 	hasWrittenHeaders bool
@@ -46,7 +48,6 @@ func (stream *GrpcStream) Header() http.Header {
 }
 
 func (stream *GrpcStream) Read(p []byte) (int, error) {
-	// grpclog.Infof("reading from channel %v", stream.id)
 	if stream.remainingBuffer != nil {
 		// If the remaining buffer fits completely inside the argument slice then read all of it and return any error
 		// that was retained from the original call
@@ -73,7 +74,6 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 	}
 
 	frame, more := <-stream.inputFrames
-	// grpclog.Infof("received message %v more: %v", frame, more)
 	if more {
 		switch op := frame.Payload.(type) {
 		case *grpcws.GrpcFrame_Body:
@@ -81,8 +81,7 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 			return stream.Read(p)
 
 		case *grpcws.GrpcFrame_Failure:
-			// TODO how to propagate this to the server?
-			return 0, errors.New("grpc client error")
+			return 0, ClientErr
 		}
 	}
 	return 0, io.EOF
@@ -126,7 +125,6 @@ func (stream *GrpcStream) Close() error {
 
 func (stream *GrpcStream) Write(data []byte) (int, error) {
 	stream.WriteHeader(http.StatusOK)
-	// grpclog.Infof("write body %v", len(data))
 
 	// Not sure if it is enough to check the writeBuffer length
 	if stream.bytesToWrite == 0 && len(data) != 0 {
